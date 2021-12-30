@@ -1,0 +1,12 @@
+flask
+werkzeug
+flask-jwt-extended
+pymongo
+Flask-PyMongo
+flask-bcrypt
+schema
+flask-cors
+sendgrid
+gunicorn
+dnspython
+requests

@@ -1,0 +1,72 @@
+{
+  "name": "hammergen",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "build_azure": "vue-cli-service build --mode azure_prod",
+    "build_staging": "vue-cli-service build --mode staging",
+    "lint": "vue-cli-service lint",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bootstrap": "^4.5.0",
+    "bootstrap-vue": "^2.15.0",
+    "colorette": "^1.2.1",
+    "core-js": "^3.6.5",
+    "file-saver": "^2.0.2",
+    "vee-validate": "^3.3.2",
+    "vue": "^2.6.10",
+    "vue-router": "^3.3.2",
+    "vuex": "^3.4.0",
+    "vue-recaptcha-v3": "^1.9.0",
+    "vue-gtag": "^1.9.1",
+    "vue-kofi": "^1.1.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.5.13",
+    "@vue/cli-plugin-eslint": "^4.5.13",
+    "@vue/cli-service": "^4.5.13",
+    "babel-eslint": "10.1.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.2.3",
+    "vue-template-compiler": "^2.6.13",
+    "prettier": "^2.3.1",
+    "sass-loader": "^10.2.0",
+    "node-sass": "^6.0.1",
+    "jest": "^27.0.4"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "jest": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {
+      "no-unused-vars": [
+        1,
+        {
+          "vars": "all",
+          "args": "after-used",
+          "ignoreRestSiblings": false
+        }
+      ]
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
+  "prettier": {
+    "printWidth": 120
+  }
+}

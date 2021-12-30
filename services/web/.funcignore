@@ -1,0 +1,10 @@
+.*
+frontend
+instance
+local.settings.json
+requirements_docker_build.txt
+Dockerfile
+
+__pycache__/
+*.py[cod]
+*$py.class
