@@ -11,7 +11,7 @@ services:
     expose:
       - 5000
     env_file:
-      - ./.env.dev
+      - ./.env.prod
       - .env.secrets.staging
   nginx:
     build: ./services/nginx

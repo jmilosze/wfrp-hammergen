@@ -1,1 +1,4 @@
+.env.secrets.local
 .env.secrets.staging
+.deployment.prod.json
+.deployment.staging.json
