@@ -9,10 +9,10 @@ COPY ./frontend/public ./public
 COPY ./frontend/src ./src
 COPY ./frontend/babel.config.js .
 COPY ./frontend/package.json .
-COPY ./frontend/.env.staging .
+COPY ./frontend/.env.container_staging .
 
 RUN npm install
-RUN npm run-script build_staging
+RUN npm run-script build_container_staging
 
 #########
 # FINAL #
