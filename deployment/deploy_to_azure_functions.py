@@ -7,7 +7,7 @@ import subprocess
 import mimetypes
 import argparse
 
-from azure.identity import DefaultAzureCredential, ClientSecretCredential
+from azure.identity import ClientSecretCredential
 from azure.storage.blob import ContainerClient, ContentSettings
 from msrestazure.azure_active_directory import ServicePrincipalCredentials
 import requests
@@ -17,12 +17,12 @@ FRONTEND_DIR = ROOT_DIR / "services" / "web" / "frontend"
 WEB_DIR = ROOT_DIR / "services" / "web"
 
 
-def auth():
+def auth(tenant_id, client_id, client_secret):
     credentials = ServicePrincipalCredentials(
-        os.environ["AZURE_CLIENT_ID"],
-        os.environ["AZURE_CLIENT_SECRET"],
+        client_id,
+        client_secret,
         resource="https://management.azure.com",
-        tenant=os.environ["AZURE_TENANT_ID"],
+        tenant=tenant_id,
     )
     credentials.set_token()
 
@@ -51,21 +51,17 @@ def clear_old_static(credentials, frontend_account_url):
         container_client.delete_blobs(blob)
 
 
-def purge_cache(env):
+def purge_cache(env, cdn, subscription, resource_group, tenant_id, client_id, client_secret):
     if env != "prod":
         return
 
-    subscription = os.environ["AZURE_SUBSCRIPTION_ID"]
-    resource_group = "HammergenStatic"
-    profile = "HammergenCDN"
-    endpoint = "hammergen"
-
     api_url = (
         f"https://management.azure.com/subscriptions/{subscription}/resourceGroups/"
-        f"{resource_group}/providers/Microsoft.Cdn/profiles/{profile}/endpoints/{endpoint}/purge?api-version=2019-12-31"
+        f"{resource_group}/providers/Microsoft.Cdn/profiles/{cdn['profile']}/endpoints/{cdn['endpoint']}/"
+        f"purge?api-version=2019-12-31"
     )
 
-    headers = {"Authorization": f"Bearer {auth()}"}
+    headers = {"Authorization": f"Bearer {auth(tenant_id, client_id, client_secret)}"}
     request_body = {"contentPaths": ["/*"]}
 
     result = requests.post(api_url, headers=headers, json=request_body)
@@ -99,7 +95,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def deploy_api(api_name, env):
+def deploy_api(api_name):
     if "PYCHARM_HOSTED" in os.environ:
         del os.environ["PYCHARM_HOSTED"]
 
@@ -131,7 +127,8 @@ if __name__ == "__main__":
         CREDENTIALS = ClientSecretCredential(ds["tenant_id"], ds["client_id"], ds["client_secret"])
         clear_old_static(CREDENTIALS, ds["frontend_account_url"])
         upload_new_static(CREDENTIALS, ds["frontend_account_url"])
-        purge_cache(ARGS.env)
+        purge_cache(ARGS.env, ds["cdn"], ds["subscription"], ds["resource_group"], ds["tenant_id"], ds["client_id"],
+                    ds["client_secret"])
     if ARGS.part in ["api", "all"]:
         os.chdir(WEB_DIR)
-        deploy_api(ds["api_name"], ARGS.env)
+        deploy_api(ds["api_name"])
