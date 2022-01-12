@@ -12,7 +12,8 @@ from azure.storage.blob import ContainerClient, ContentSettings
 from msrestazure.azure_active_directory import ServicePrincipalCredentials
 import requests
 
-ROOT_DIR = Path(__file__).parent.parent.absolute()
+ROOT_DIR = Path(__file__).parent.absolute()
+TOP_DIR = ROOT_DIR.parent.parent.absolute()
 FRONTEND_DIR = ROOT_DIR / "services" / "web" / "frontend"
 WEB_DIR = ROOT_DIR / "services" / "web"
 
