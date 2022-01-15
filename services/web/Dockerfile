@@ -3,6 +3,7 @@
 ###########
 
 FROM node:16 as builder
+ARG build=build_container_staging
 
 WORKDIR /frontend
 COPY ./frontend/public ./public
@@ -12,7 +13,7 @@ COPY ./frontend/package.json .
 COPY ./frontend/.env.container_staging .
 
 RUN npm install
-RUN npm run-script build_container_staging
+RUN npm run-script $build
 
 #########
 # FINAL #

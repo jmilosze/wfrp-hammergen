@@ -1,2 +1,2 @@
-.deployment.prod.json
-.deployment.staging.json
+prod/.secrets.json
+staging/.secrets.json

@@ -14,8 +14,8 @@ import requests
 
 ROOT_DIR = Path(__file__).parent.absolute()
 TOP_DIR = ROOT_DIR.parent.parent.absolute()
-FRONTEND_DIR = ROOT_DIR / "services" / "web" / "frontend"
-WEB_DIR = ROOT_DIR / "services" / "web"
+FRONTEND_DIR = TOP_DIR / "services" / "web" / "frontend"
+WEB_DIR = TOP_DIR / "services" / "web"
 
 
 def auth(tenant_id, client_id, client_secret):
@@ -107,7 +107,7 @@ def deploy_api(api_name):
 
 
 def read_deployment_secrets(env):
-    with open(ROOT_DIR / f".deployment.{env}.json") as f:
+    with open(ROOT_DIR / f"{env}" / f".secrets.json") as f:
         return json.loads(f.read())
 
 

@@ -1,2 +1,2 @@
-.env.secrets.local
+.env.secrets.dev
 .env.secrets.staging
