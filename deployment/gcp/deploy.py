@@ -49,8 +49,8 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def read_deployment_secrets(env):
-    with open(SCRIPT_DIR / f"{env}" / f".secrets.json") as f:
+def read_deployment_config(env):
+    with open(SCRIPT_DIR / f"{env}" / f".config.json") as f:
         return json.loads(f.read())
 
 
@@ -60,14 +60,34 @@ def run_and_output(command):
     print(output.stderr.decode())
 
 
-def docker_build_and_push(docker_login, docker_password, docker_image_name):
+def docker_build_and_push(deploy_config):
+    image_name = deploy_config["image_name"]
+    ar_registry = deploy_config["ar_registry"]
+    ar_prefix = deploy_config["project"] + "/" + deploy_config["ar_repository"]
+
     if "PYCHARM_HOSTED" in os.environ:
         del os.environ["PYCHARM_HOSTED"]
 
-    run_and_output(f"docker login -u {docker_login} -p {docker_password}")
-    run_and_output(f"docker build -f Dockerfile_api_only -t {docker_login}/{docker_image_name} .")
-    run_and_output(f"docker push {docker_login}/{docker_image_name}")
-    run_and_output(f"docker logout")
+    run_and_output(f"gcloud auth configure-docker {ar_registry} --quiet")
+    run_and_output(f"docker build -f Dockerfile_api_only -t {ar_registry}/{ar_prefix}/{image_name} .")
+    run_and_output(f"docker push {ar_registry}/{ar_prefix}/{image_name}")
+
+
+def deploy_to_cloud_run(deploy_config):
+    service_name = deploy_config["service_name"]
+    region = deploy_config["region"]
+    project = deploy_config["project"]
+    concurrency = deploy_config["concurrency"]
+
+    image = "/".join(
+        [deploy_config["ar_registry"], project, deploy_config["ar_repository"], deploy_config["image_name"]])
+
+    env_vars = ",".join([f"{k}=\"{v}\"" for k, v in deploy_config["env_variables"].items()])
+
+    command = f"gcloud run deploy {service_name} --region={region} --project={project} --image={image} " \
+              f"--allow-unauthenticated --concurrency={concurrency} --set-env-vars={env_vars}"
+
+    run_and_output(command)
 
 
 if __name__ == "__main__":
@@ -79,7 +99,7 @@ if __name__ == "__main__":
         if x != "yes":
             sys.exit()
 
-    secrets = read_deployment_secrets(ARGS.env)
+    DEPLOY_CONFIG = read_deployment_config(ARGS.env)
 
     if ARGS.part in ["frontend", "all"]:
         os.chdir(FRONTEND_DIR)
@@ -89,4 +109,5 @@ if __name__ == "__main__":
 
     if ARGS.part in ["api", "all"]:
         os.chdir(WEB_DIR)
-        docker_build_and_push(secrets["docker_login"], secrets["docker_password"], secrets["docker_image_name"])
+        docker_build_and_push(DEPLOY_CONFIG)
+        deploy_to_cloud_run(DEPLOY_CONFIG)

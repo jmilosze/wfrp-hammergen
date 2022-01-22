@@ -13,8 +13,8 @@ services:
     expose:
       - 5000
     env_file:
-      - ../../../services/web/.env
-      - ../../../services/web/.env.secrets.staging
+      - .env
+      - .env.secrets
   nginx:
     build: ../../../services/nginx
     image: dirac1234/hammergen_nginx

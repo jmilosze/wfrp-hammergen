@@ -7,9 +7,11 @@ COPY api ./api
 COPY requirements_docker_build.txt ./requirements.txt
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 RUN chown -R appuser:appusergroup /app
 USER appuser
 
-CMD bash -c "gunicorn --threads 8 --workers 1 --timeout 0 -k gthread -b 0.0.0.0:5000 api:create_app\(\)"
+ENV PYTHONUNBUFFERED True
+
+CMD bash -c "gunicorn --threads 8 --workers 1 --timeout 0 -k gthread -b :$PORT --log-level=debug api:create_app\(\)"
