@@ -12,10 +12,10 @@ from azure.storage.blob import ContainerClient, ContentSettings
 from msrestazure.azure_active_directory import ServicePrincipalCredentials
 import requests
 
-ROOT_DIR = Path(__file__).parent.absolute()
-TOP_DIR = ROOT_DIR.parent.parent.absolute()
-FRONTEND_DIR = TOP_DIR / "services" / "web" / "frontend"
-WEB_DIR = TOP_DIR / "services" / "web"
+SCRIPT_DIR = Path(__file__).parent.absolute()
+ROOT_DIR = SCRIPT_DIR.parent.parent.absolute()
+FRONTEND_DIR = ROOT_DIR / "services" / "web" / "frontend"
+WEB_DIR = ROOT_DIR / "services" / "web"
 
 
 def auth(tenant_id, client_id, client_secret):
@@ -106,8 +106,8 @@ def deploy_api(api_name):
     print(output.stderr.decode())
 
 
-def read_deployment_secrets(env):
-    with open(ROOT_DIR / f"{env}" / f".secrets.json") as f:
+def read_deployment_config(env):
+    with open(SCRIPT_DIR / f"{env}" / f".config.json") as f:
         return json.loads(f.read())
 
 
@@ -120,16 +120,16 @@ if __name__ == "__main__":
         if x != "yes":
             sys.exit()
 
-    ds = read_deployment_secrets(ARGS.env)
+    DC = read_deployment_config(ARGS.env)
 
     if ARGS.part in ["frontend", "all"]:
         os.chdir(FRONTEND_DIR)
         build_new_static(ARGS.env)
-        CREDENTIALS = ClientSecretCredential(ds["tenant_id"], ds["client_id"], ds["client_secret"])
-        clear_old_static(CREDENTIALS, ds["frontend_account_url"])
-        upload_new_static(CREDENTIALS, ds["frontend_account_url"])
-        purge_cache(ARGS.env, ds["cdn"], ds["subscription"], ds["resource_group"], ds["tenant_id"], ds["client_id"],
-                    ds["client_secret"])
+        CREDENTIALS = ClientSecretCredential(DC["tenant_id"], DC["client_id"], DC["client_secret"])
+        clear_old_static(CREDENTIALS, DC["frontend_account_url"])
+        upload_new_static(CREDENTIALS, DC["frontend_account_url"])
+        purge_cache(ARGS.env, DC["cdn"], DC["subscription"], DC["resource_group"], DC["tenant_id"], DC["client_id"],
+                    DC["client_secret"])
     if ARGS.part in ["api", "all"]:
         os.chdir(WEB_DIR)
-        deploy_api(ds["api_name"])
+        deploy_api(DC["api_name"])

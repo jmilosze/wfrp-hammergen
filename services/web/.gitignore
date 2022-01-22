@@ -1,2 +1,1 @@
-.env.secrets.dev
-.env.secrets.staging
+.firebase/
