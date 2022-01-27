@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hammergen
+  labels:
+    app: hammergen
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 120
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: hammergen
+  template:
+    metadata:
+      name: hammergen
+      labels:
+        app: hammergen
+    spec:
+      - name: web
+        image:
