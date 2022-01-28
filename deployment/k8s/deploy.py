@@ -43,7 +43,7 @@ def hydrate_template(name, env, values=None):
 
 
 def encode64(x):
-    return {k: base64.b64encode(v.encode("ascii")).decode("utf-8") for k, v in x.items()}
+    return {k: base64.b64encode(v.encode()).decode() for k, v in x.items()}
 
 
 if __name__ == "__main__":
