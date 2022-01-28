@@ -37,4 +37,4 @@ RUN pip install -r requirements.txt
 RUN chown -R appuser:appusergroup /app
 USER appuser
 
-CMD bash -c "cp -r /app/dist/* /app/static && gunicorn -w 3 -k gthread --threads 10 -b 0.0.0.0:5000 api:create_app\(\)"
+CMD bash -c "cp -r /app/dist/* /app/static && gunicorn -w 1 -k gthread --threads 8 -b 0.0.0.0:5000 --log-level=debug api:create_app\(\)"
