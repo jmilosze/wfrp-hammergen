@@ -50,7 +50,7 @@ def parse_arguments():
 
 
 def read_deployment_config(env):
-    with open(SCRIPT_DIR / f"{env}" / f".config.json") as f:
+    with open(SCRIPT_DIR / f"{env}" / f"config.json") as f:
         return json.loads(f.read())
 
 

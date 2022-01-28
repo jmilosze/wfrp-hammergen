@@ -1,3 +1,4 @@
-secrets.yaml
-deployment.yaml
+namespace.yaml
+secret.yaml
+configmap.yaml
 config.json

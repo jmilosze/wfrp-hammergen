@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hammergen-env-variables
+  namespace: hammergen-{{ ENV }}
+data:
+  ACCESS_TOKEN_EXPIRES_MINUTES: "{{ ACCESS_TOKEN_EXPIRES_MINUTES }}"
+  REFRESH_TOKEN_EXPIRES_DAYS: "{{ REFRESH_TOKEN_EXPIRES_DAYS }}"
