@@ -4,6 +4,7 @@ metadata:
   name: hammergen
   labels:
     app: hammergen
+  namespace: hammergen-{{ ENV }}
 spec:
   replicas: 2
   progressDeadlineSeconds: 120
@@ -20,5 +21,21 @@ spec:
       labels:
         app: hammergen
     spec:
-      - name: web
-        image:
+      restartPolicy: Always
+      containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              name: nginx-config
+            - mountPath: /app/static
+              name: static
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+        - name: static
+          emptyDir: { }

@@ -53,5 +53,6 @@ if __name__ == "__main__":
     hydrate_template("namespace.yaml", ARGS.env)
     hydrate_template("configmap.yaml", ARGS.env, DEPLOY_CONFIG["web_env_vars"])
     hydrate_template("secret.yaml", ARGS.env, encode64(DEPLOY_CONFIG["web_env_vars"]))
+    hydrate_template("deployment.yaml", ARGS.env)
 
 
