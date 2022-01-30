@@ -3,7 +3,7 @@ version: "3.7"
 services:
   web:
     build:
-      context: ../../../services/web
+      context: ../../../src
       args:
         build: build_container_staging
     image: dirac1234/hammergen_web
@@ -14,11 +14,10 @@ services:
       - 5000
     env_file:
       - .env
-      - .env.secrets
   nginx:
-    build: ../../../services/nginx
-    image: dirac1234/hammergen_nginx
+    image: nginx
     volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/app/static
     restart: always
     ports:

@@ -14,8 +14,8 @@ import requests
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent.parent.absolute()
-FRONTEND_DIR = ROOT_DIR / "services" / "web" / "frontend"
-WEB_DIR = ROOT_DIR / "services" / "web"
+FRONTEND_DIR = ROOT_DIR / "src" / "frontend"
+WEB_DIR = ROOT_DIR / "src"
 
 
 def auth(tenant_id, client_id, client_secret):

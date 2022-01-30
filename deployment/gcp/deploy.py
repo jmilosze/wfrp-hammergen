@@ -8,8 +8,8 @@ import argparse
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent.parent.absolute()
-FRONTEND_DIR = ROOT_DIR / "services" / "web" / "frontend"
-WEB_DIR = ROOT_DIR / "services" / "web"
+FRONTEND_DIR = ROOT_DIR / "src" / "frontend"
+WEB_DIR = ROOT_DIR / "src"
 
 
 def build_new_static(env):
