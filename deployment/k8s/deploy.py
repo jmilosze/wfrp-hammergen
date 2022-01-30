@@ -45,12 +45,15 @@ def encode64(x):
     return {k: base64.b64encode(v.encode()).decode() for k, v in x.items()}
 
 
-def build_image(image_full_path, dockerfile):
+def build_image(image_full_path, dockerfile, buildargs=None):
+    if not buildargs:
+        buildargs = {}
     client = docker.from_env()
     _, logs = client.images.build(
         path=str(WEB_DIR),
         tag=image_full_path,
-        dockerfile=dockerfile
+        dockerfile=dockerfile,
+        buildargs=buildargs
     )
 
     for log in logs:
@@ -80,7 +83,12 @@ if __name__ == "__main__":
     if ARGS.build:
         build_image(DEPLOY_CONFIG["api_image_full_path"], "Dockerfile")
         push_image(DEPLOY_CONFIG["api_image_full_path"])
-        build_image(DEPLOY_CONFIG["dist_image_full_path"], "Dockerfile_build_dist")
+
+        if ARGS.env == "prod":
+            buildargs = {"build": "build_container_prod"}
+        else:
+            buildargs = {"build": "build_container_staging"}
+        build_image(DEPLOY_CONFIG["dist_image_full_path"], "Dockerfile_build_dist", buildargs)
         push_image(DEPLOY_CONFIG["dist_image_full_path"])
 
     hydrate_template("namespace.yaml", ARGS.env)
