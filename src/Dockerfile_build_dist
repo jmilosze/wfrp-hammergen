@@ -1,0 +1,15 @@
+FROM node:16
+ARG build=build_container_staging
+
+WORKDIR /frontend
+COPY ./frontend/public ./public
+COPY ./frontend/src ./src
+COPY ./frontend/babel.config.js .
+COPY ./frontend/package.json .
+COPY ./frontend/.env.container_staging .
+
+RUN npm install && npm run-script $build && rm -r node_modules
+
+RUN mkdir /dist
+
+CMD bash -c "cp -r /frontend/dist/* /dist"

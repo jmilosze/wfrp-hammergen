@@ -8,8 +8,8 @@ import argparse
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent.parent.absolute()
-FRONTEND_DIR = ROOT_DIR / "services" / "web" / "frontend"
-WEB_DIR = ROOT_DIR / "services" / "web"
+FRONTEND_DIR = ROOT_DIR / "src" / "frontend"
+WEB_DIR = ROOT_DIR / "src"
 
 
 def build_new_static(env):
@@ -50,7 +50,7 @@ def parse_arguments():
 
 
 def read_deployment_config(env):
-    with open(SCRIPT_DIR / f"{env}" / f".config.json") as f:
+    with open(SCRIPT_DIR / f"{env}" / f"config.json") as f:
         return json.loads(f.read())
 
 
@@ -69,7 +69,7 @@ def docker_build_and_push(deploy_config):
         del os.environ["PYCHARM_HOSTED"]
 
     run_and_output(f"gcloud auth configure-docker {ar_registry} --quiet")
-    run_and_output(f"docker build -f Dockerfile_api_only -t {ar_registry}/{ar_prefix}/{image_name} .")
+    run_and_output(f"docker build -f Dockerfile -t {ar_registry}/{ar_prefix}/{image_name} .")
     run_and_output(f"docker push {ar_registry}/{ar_prefix}/{image_name}")
 
 
