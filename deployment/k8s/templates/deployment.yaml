@@ -33,6 +33,39 @@ spec:
               name: nginx-config
             - mountPath: /app/static
               name: static
+        - name: web
+          image: {{ IMAGE_FULL_PATH }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: env-variables
+          env:
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: env-variables
+                  key: FLASK_SECRET_KEY
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: env-variables
+                  key: MONGO_URI
+            - name: SENDGRID_API_KEY_2
+              valueFrom:
+                secretKeyRef:
+                  name: env-variables
+                  key: SENDGRID_API_KEY_2
+            - name: RECAPTCHA_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: env-variables
+                  key: RECAPTCHA_SECRET
+          volumeMounts:
+            - mountPath: /app/static
+              name: static
+
       volumes:
         - name: nginx-config
           configMap:
