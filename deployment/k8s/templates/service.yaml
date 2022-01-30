@@ -1,12 +1,25 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: hammergen
+  name: hammergen-api
   namespace: hammergen-{{ ENV }}
 spec:
   type: ClusterIP
   selector:
-    app: hammergen
+    app: hammergen-api
+  ports:
+    - port: 5000
+      targetPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hammergen-nginx
+  namespace: hammergen-{{ ENV }}
+spec:
+  type: ClusterIP
+  selector:
+    app: hammergen-nginx
   ports:
     - port: 80
       targetPort: 80
