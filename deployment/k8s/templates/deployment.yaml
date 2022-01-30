@@ -31,10 +31,17 @@ spec:
           volumeMounts:
             - mountPath: /etc/nginx/conf.d
               name: nginx-config
-            - mountPath: /app/static
-              name: static
+            - mountPath: /dist
+              name: dist
+          readinessProbe:
+            exec:
+              command:
+                - cat
+                - /dist/index.html
+            initialDelaySeconds: 5
+            periodSeconds: 5
         - name: web
-          image: {{ IMAGE_FULL_PATH }}
+          image: {{ API_IMAGE_FULL_PATH }}
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
@@ -62,13 +69,16 @@ spec:
                 secretKeyRef:
                   name: env-variables
                   key: RECAPTCHA_SECRET
+      initContainers:
+        - name: dist
+          image: {{ DIST_IMAGE_FULL_PATH }}
+          imagePullPolicy: Always
           volumeMounts:
-            - mountPath: /app/static
-              name: static
-
+            - mountPath: /dist
+              name: dist
       volumes:
         - name: nginx-config
           configMap:
             name: nginx-config
-        - name: static
+        - name: dist
           emptyDir: { }

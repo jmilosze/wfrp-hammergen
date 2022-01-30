@@ -4,6 +4,7 @@ metadata:
   name: env-variables
   namespace: hammergen-{{ ENV }}
 data:
+  PORT: "{{ PORT }}"
   ACCESS_TOKEN_EXPIRES_MINUTES: "{{ ACCESS_TOKEN_EXPIRES_MINUTES }}"
   REFRESH_TOKEN_EXPIRES_DAYS: "{{ REFRESH_TOKEN_EXPIRES_DAYS }}"
 ---
@@ -54,7 +55,7 @@ data:
         }
 
         location / {
-            root /app/static;
+            root /dist;
             index index.html;
             try_files $uri $uri/ /index.html;
         }

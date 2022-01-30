@@ -69,7 +69,7 @@ def docker_build_and_push(deploy_config):
         del os.environ["PYCHARM_HOSTED"]
 
     run_and_output(f"gcloud auth configure-docker {ar_registry} --quiet")
-    run_and_output(f"docker build -f Dockerfile_api_only -t {ar_registry}/{ar_prefix}/{image_name} .")
+    run_and_output(f"docker build -f Dockerfile -t {ar_registry}/{ar_prefix}/{image_name} .")
     run_and_output(f"docker push {ar_registry}/{ar_prefix}/{image_name}")
 
 

@@ -45,12 +45,12 @@ def encode64(x):
     return {k: base64.b64encode(v.encode()).decode() for k, v in x.items()}
 
 
-def build_image(image_full_path):
+def build_image(image_full_path, dockerfile):
     client = docker.from_env()
     _, logs = client.images.build(
         path=str(WEB_DIR),
         tag=image_full_path,
-        dockerfile="Dockerfile"
+        dockerfile=dockerfile
     )
 
     for log in logs:
@@ -78,13 +78,16 @@ if __name__ == "__main__":
     DEPLOY_CONFIG = read_deployment_config(ARGS.env)
 
     if ARGS.build:
-        build_image(DEPLOY_CONFIG["image_full_path"])
-        push_image(DEPLOY_CONFIG["image_full_path"])
+        build_image(DEPLOY_CONFIG["api_image_full_path"], "Dockerfile")
+        push_image(DEPLOY_CONFIG["api_image_full_path"])
+        build_image(DEPLOY_CONFIG["dist_image_full_path"], "Dockerfile_build_dist")
+        push_image(DEPLOY_CONFIG["dist_image_full_path"])
 
     hydrate_template("namespace.yaml", ARGS.env)
     hydrate_template("configmap.yaml", ARGS.env, DEPLOY_CONFIG["web_env_vars"])
     hydrate_template("secret.yaml", ARGS.env, encode64(DEPLOY_CONFIG["web_env_vars"]))
-    hydrate_template("deployment.yaml", ARGS.env, {"IMAGE_FULL_PATH": DEPLOY_CONFIG["image_full_path"]})
+    hydrate_template("deployment.yaml", ARGS.env, {"API_IMAGE_FULL_PATH": DEPLOY_CONFIG["api_image_full_path"],
+                                                   "DIST_IMAGE_FULL_PATH": DEPLOY_CONFIG["dist_image_full_path"]})
     hydrate_template("service.yaml", ARGS.env)
     hydrate_template("ingress.yaml", ARGS.env)
 
