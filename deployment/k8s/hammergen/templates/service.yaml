@@ -4,13 +4,14 @@ metadata:
   name: {{ include "hammergen.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
-    app.kubernetes.io/name: {{ include "hammergen.name" . }}
+    {{- include "hammergen.labels" . | nindent 4 }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.service.serviceType }}
   selector:
-    app.kubernetes.io/name: {{ include "hammergen.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "hammergen.selectorLabels" . | nindent 4 }}
   ports:
-    - port: 5000
-      targetPort: 5000
+    - port: 80
+      targetPort: 80
+      {{- if eq .Values.service.serviceType "NodePort" }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
