@@ -4,28 +4,29 @@
 
 namespace: hammergen
 
-replicaCount: 1
+deployment:
+  replicaCount: 1
 
-apiImage:
-    repository: "dirac1234/hammergen"
+  apiImage:
+      repository: "dirac1234/hammergen"
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "latest"
+  webserverImage:
+    repository: "nginx"
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "1.21"
+  distImage:
+    repository: "dirac1234/hammergen_dist"
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
-webserverImage:
-  repository: "nginx"
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.21"
-distImage:
-  repository: "dirac1234/hammergen_dist"
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
 
-podAnnotations: {}
-nodeSelector: {}
-tolerations: []
-affinity: {}
+  podAnnotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 config:
   access_token_expires_minutes: 120

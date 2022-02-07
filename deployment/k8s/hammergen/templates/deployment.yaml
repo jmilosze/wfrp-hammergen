@@ -6,13 +6,13 @@ metadata:
   labels:
     {{- include "hammergen.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.deployment.replicaCount }}
   selector:
     matchLabels:
       {{- include "hammergen.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.deployment.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
         - name: api
-          image: "{{ .Values.apiImage.repository }}:{{ .Values.apiImage.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.apiImage.pullPolicy }}
+          image: "{{ .Values.deployment.apiImage.repository }}:{{ .Values.deployment.apiImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.deployment.apiImage.pullPolicy }}
           ports:
             - containerPort: 5000
           livenessProbe:
@@ -61,8 +61,8 @@ spec:
                 name: {{ include "hammergen.fullname" . }}
                 key: recaptcha_secret
         - name: webserver
-          image: "{{ .Values.webserverImage.repository }}:{{ .Values.webserverImage.tag }}"
-          imagePullPolicy: {{ .Values.webserverImage.pullPolicy }}
+          image: "{{ .Values.deployment.webserverImage.repository }}:{{ .Values.deployment.webserverImage.tag }}"
+          imagePullPolicy: {{ .Values.deployment.webserverImage.pullPolicy }}
           ports:
             - containerPort: 80
           livenessProbe:
@@ -80,8 +80,8 @@ spec:
               name: dist
       initContainers:
         - name: dist
-          image: "{{ .Values.distImage.repository }}:{{ .Values.distImage.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.distImage.pullPolicy }}
+          image: "{{ .Values.deployment.distImage.repository }}:{{ .Values.deployment.distImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.deployment.distImage.pullPolicy }}
           volumeMounts:
             - mountPath: /dist
               name: dist
@@ -91,15 +91,15 @@ spec:
             name: {{ include "hammergen.fullname" . }}
         - name: dist
           emptyDir: { }
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.deployment.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.deployment.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
