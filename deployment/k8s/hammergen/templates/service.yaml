@@ -2,14 +2,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "hammergen.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "hammergen.labels" . | nindent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "hammergen.name" . }}
 spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+  type: ClusterIP
   selector:
-    {{- include "hammergen.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "hammergen.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - port: 5000
+      targetPort: 5000

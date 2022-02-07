@@ -2,15 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "hammergen.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "hammergen.labels" . | nindent 4 }}
+    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "hammergen.name" . }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
-      {{- include "hammergen.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: {{ include "hammergen.name" . }}
+{{- /* app.kubernetes.io/instance is included in common.labels  */}}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,35 +20,50 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "hammergen.selectorLabels" . | nindent 8 }}
+        {{- include "common.labels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ include "hammergen.name" . }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "hammergen.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+        - name: api
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
+            - containerPort: 5000
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /api/keepwarm
+              port: 5000
           readinessProbe:
             httpGet:
-              path: /
-              port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+              path: /api/keepwarm
+              port: 5000
+          env:
+          - name: PORT
+            value: "5000"
+          - name: ACCESS_TOKEN_EXPIRES_MINUTES
+            value: {{ .Values.config.access_token_expires_minutes | quote }}
+          - name: REFRESH_TOKEN_EXPIRES_DAYS
+            value: {{ .Values.config.refresh_token_expires_days | quote }}
+          - name: FLASK_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hammergen.fullname" . }}
+                key: flask_secret_key
+          - name: MONGO_URI
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hammergen.fullname" . }}
+                key: mongo_uri
+          - name: SENDGRID_API_KEY_2
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hammergen.fullname" . }}
+                key: sendgrid_api_key
+          - name: RECAPTCHA_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hammergen.fullname" . }}
+                key: recaptcha_secret
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
