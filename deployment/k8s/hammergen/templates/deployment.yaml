@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hammergen.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "hammergen.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "hammergen.name" . }}
+{{- /* app.kubernetes.io/instance is included in common.labels  */}}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "common.labels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ include "hammergen.name" . }}
+    spec:
+      containers:
+        - name: api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /api/keepwarm
+              port: 5000
+          readinessProbe:
+            httpGet:
+              path: /api/keepwarm
+              port: 5000
+          env:
+          - name: PORT
+            value: "5000"
+          - name: ACCESS_TOKEN_EXPIRES_MINUTES
+            value: {{ .Values.config.access_token_expires_minutes | quote }}
+          - name: REFRESH_TOKEN_EXPIRES_DAYS
+            value: {{ .Values.config.refresh_token_expires_days | quote }}
+          - name: FLASK_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hammergen.fullname" . }}
+                key: flask_secret_key
+          - name: MONGO_URI
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hammergen.fullname" . }}
+                key: mongo_uri
+          - name: SENDGRID_API_KEY_2
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hammergen.fullname" . }}
+                key: sendgrid_api_key
+          - name: RECAPTCHA_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hammergen.fullname" . }}
+                key: recaptcha_secret
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

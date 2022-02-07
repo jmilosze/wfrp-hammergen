@@ -1,7 +1,1 @@
-namespace.yaml
-secret.yaml
-configmap.yaml
-deployment.yaml
-service.yaml
-ingress.yaml
-config.json
+values.yaml
