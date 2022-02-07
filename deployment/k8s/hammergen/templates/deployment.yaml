@@ -4,15 +4,12 @@ metadata:
   name: {{ include "hammergen.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
-    app.kubernetes.io/name: {{ include "hammergen.name" . }}
+    {{- include "hammergen.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "hammergen.name" . }}
-{{- /* app.kubernetes.io/instance is included in common.labels  */}}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "hammergen.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -20,13 +17,12 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "common.labels" . | nindent 8 }}
-        app.kubernetes.io/name: {{ include "hammergen.name" . }}
+        {{- include "hammergen.labels" . | nindent 8 }}
     spec:
       containers:
         - name: api
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.apiImage.repository }}:{{ .Values.apiImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.apiImage.pullPolicy }}
           ports:
             - containerPort: 5000
           livenessProbe:
@@ -64,6 +60,37 @@ spec:
               secretKeyRef:
                 name: {{ include "hammergen.fullname" . }}
                 key: recaptcha_secret
+        - name: webserver
+          image: "{{ .Values.webserverImage.repository }}:{{ .Values.webserverImage.tag }}"
+          imagePullPolicy: {{ .Values.webserverImage.pullPolicy }}
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              name: nginx-config
+            - mountPath: /dist
+              name: dist
+      initContainers:
+        - name: dist
+          image: "{{ .Values.distImage.repository }}:{{ .Values.distImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.distImage.pullPolicy }}
+          volumeMounts:
+            - mountPath: /dist
+              name: dist
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ include "hammergen.fullname" . }}
+        - name: dist
+          emptyDir: { }
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
