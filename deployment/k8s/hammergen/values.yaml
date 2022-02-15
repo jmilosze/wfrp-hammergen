@@ -8,10 +8,10 @@ deployment:
   replicaCount: 1
 
   apiImage:
-      repository: "dirac1234/hammergen"
-      pullPolicy: IfNotPresent
-      # Overrides the image tag whose default is the chart appVersion.
-      tag: "latest"
+    repository: "dirac1234/hammergen"
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "latest"
   webserverImage:
     repository: "nginx"
     pullPolicy: IfNotPresent
@@ -23,10 +23,10 @@ deployment:
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
 
-  podAnnotations: {}
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
+  podAnnotations: { }
+  nodeSelector: { }
+  tolerations: [ ]
+  affinity: { }
 
 config:
   access_token_expires_minutes: 120
@@ -45,8 +45,12 @@ service:
 
 ingress:
   enabled: true
-  className: ""
-  annotations: {}
+  className: "kong"
+  annotations: { }
+  tls:
+    - hosts:
+        - localhost
+      secretName: localhost-cert
   hosts:
     - host: localhost
       paths:
