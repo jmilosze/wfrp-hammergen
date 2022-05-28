@@ -2,14 +2,13 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/golangjwt"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/memdb"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockcaptcha"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockemail"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mongodb"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/http"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
 	"log"
@@ -25,20 +24,13 @@ func main() {
 }
 
 func run() error {
-
-	cfg, err := config.NewFromEnv()
-	if err != nil {
-		return fmt.Errorf("getting service config from environment: %w", err)
-	}
+	cfg := config.NewDefault()
 
 	val := validator.New()
 	jwtService := golangjwt.NewHmacService(cfg.JwtConfig.HmacSecret, cfg.JwtConfig.AccessExpiry, cfg.JwtConfig.ResetExpiry)
 	emailService := mockemail.NewEmailService(cfg.EmailConfig.FromAddress)
 	captchaService := mockcaptcha.NewCaptchaService()
-
-	mongoDbService := mongodb.NewDbService(cfg.MongoDbConfig.Uri, cfg.MongoDbConfig.DbName)
-	defer mongoDbService.Disconnect()
-	userDbService := mongodb.NewUserDbService(mongoDbService, cfg.MongoDbConfig.UserCollection, cfg.MongoDbConfig.CreateIndexes)
+	userDbService := memdb.NewUserDbService()
 
 	userService := services.NewUserService(cfg.UserServiceConfig, userDbService, emailService, jwtService, val)
 

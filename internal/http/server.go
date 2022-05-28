@@ -19,7 +19,7 @@ type Server struct {
 func NewServer(cfg *config.ServerConfig, router http.Handler) *Server {
 	server := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
-		Handler: http.TimeoutHandler(router, cfg.HandlerTimeout, "service unavailable\n"),
+		Handler: router,
 	}
 
 	return &Server{

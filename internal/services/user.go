@@ -1,11 +1,14 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"golang.org/x/crypto/bcrypt"
+	"log"
+	"time"
 )
 
 type UserService struct {
@@ -16,73 +19,48 @@ type UserService struct {
 	JwtService    domain.JwtService
 }
 
-func NewUserService(cfg *config.UserServiceConfig,
-	db domain.UserDbService,
-	email domain.EmailService,
-	jwt domain.JwtService,
-	v *validator.Validate) *UserService {
+func NewUserService(cfg *config.UserServiceConfig, db domain.UserDbService, email domain.EmailService, jwt domain.JwtService, v *validator.Validate) *UserService {
+	return &UserService{
+		BcryptCost:    cfg.BcryptCost,
+		UserDbService: db,
+		EmailService:  email,
+		JwtService:    jwt,
+		Validator:     v}
 
-	for id, u := range cfg.SeedUsers {
-		userDb := db.NewUserDb()
+}
 
-		userDb.Id = id
-		userDb.Username = &u.Username
-		userDb.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(u.Password), cfg.BcryptCost)
-		userDb.SharedAccountIds = u.SharedAccountsIds
+func (s *UserService) SeedUsers(ctx context.Context, users []*config.UserSeed) {
+	for _, u := range users {
+		userDb := domain.NewUserDb()
+
+		userDb.Id = u.Id
+		userDb.Username = u.Username
+		userDb.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(u.Password), s.BcryptCost)
+		userDb.SharedAccounts = u.SharedAccounts
 		userDb.Admin = &u.Admin
 
-		if err := db.Create(userDb); err != nil {
-			panic(err)
+		if _, err := s.UserDbService.Create(ctx, userDb); err != nil {
+			log.Fatal(err)
 		}
 	}
-
-	return &UserService{BcryptCost: cfg.BcryptCost, UserDbService: db, EmailService: email, JwtService: jwt, Validator: v}
 }
 
-func (s *UserService) Get(id string) (*domain.User, *domain.UserError) {
-	userDb, err1 := s.UserDbService.Retrieve("id", id)
-	if err1 != nil {
-		switch err1.Type {
+func (s *UserService) Get(ctx context.Context, id string) (*domain.User, *domain.UserError) {
+	userDb, err := s.UserDbService.Retrieve(ctx, "id", id)
+	if err != nil {
+		switch err.Type {
 		case domain.DbNotFoundError:
-			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err1}
+			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err}
 		default:
-			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err1}
+			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err}
 		}
 	}
 
-	linkedUsers, err2 := s.UserDbService.RetrieveMany("id", userDb.SharedAccountIds)
-	if err2 != nil {
-		return nil, &domain.UserError{Type: domain.UserInternalError, Err: err2}
-	}
-	user := domain.User{
-		Id:                 userDb.Id,
-		Admin:              userDb.Admin,
-		Username:           userDb.Username,
-		SharedAccountNames: idsToUsernames(userDb.SharedAccountIds, linkedUsers),
-	}
-
-	return &user, nil
+	return userDb.ToUser(), nil
 }
 
-func idsToUsernames(ids []string, userDbs []*domain.UserDb) []string {
-	userDbMap := map[string]string{}
-	for _, u := range userDbs {
-		if u.Username != nil {
-			userDbMap[u.Id] = *u.Username
-		}
-	}
-
-	usernames := make([]string, 0)
-	for _, id := range ids {
-		if username, ok := userDbMap[id]; ok {
-			usernames = append(usernames, username)
-		}
-	}
-	return usernames
-}
-
-func (s *UserService) Exists(username string) (bool, *domain.UserError) {
-	_, err := s.UserDbService.Retrieve("username", username)
+func (s *UserService) Exists(ctx context.Context, username string) (bool, *domain.UserError) {
+	_, err := s.UserDbService.Retrieve(ctx, "username", username)
 	if err != nil {
 		switch err.Type {
 		case domain.DbNotFoundError:
@@ -94,14 +72,14 @@ func (s *UserService) Exists(username string) (bool, *domain.UserError) {
 	return true, nil
 }
 
-func (s *UserService) Authenticate(username string, password string) (*domain.User, *domain.UserError) {
-	userDb, err1 := s.UserDbService.Retrieve("username", username)
-	if err1 != nil {
-		switch err1.Type {
+func (s *UserService) Authenticate(ctx context.Context, username string, password string) (*domain.User, *domain.UserError) {
+	userDb, err := s.UserDbService.Retrieve(ctx, "username", username)
+	if err != nil {
+		switch err.Type {
 		case domain.DbNotFoundError:
-			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err1}
+			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err}
 		default:
-			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err1}
+			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err}
 		}
 	}
 
@@ -109,18 +87,16 @@ func (s *UserService) Authenticate(username string, password string) (*domain.Us
 		return nil, &domain.UserError{Type: domain.UserIncorrectPassword, Err: errors.New("incorrect password")}
 	}
 
-	linkedUsers, err2 := s.UserDbService.RetrieveMany("id", userDb.SharedAccountIds)
-	if err2 != nil {
-		return nil, &domain.UserError{Type: domain.UserInternalError, Err: err2}
-	}
-	user := domain.User{
-		Id:                 userDb.Id,
-		Admin:              userDb.Admin,
-		Username:           userDb.Username,
-		SharedAccountNames: idsToUsernames(userDb.SharedAccountIds, linkedUsers),
+	if _, err := s.UserDbService.Update(ctx, &domain.UserDb{Id: userDb.Id, LastAuthOn: time.Now()}); err != nil {
+		switch err.Type {
+		case domain.DbNotFoundError:
+			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err}
+		default:
+			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err}
+		}
 	}
 
-	return &user, nil
+	return userDb.ToUser(), nil
 }
 
 func authenticate(user *domain.UserDb, password string) bool {
@@ -130,7 +106,7 @@ func authenticate(user *domain.UserDb, password string) bool {
 	return false
 }
 
-func (s *UserService) Create(cred *domain.UserWriteCredentials, user *domain.UserWrite) (*domain.User, *domain.UserError) {
+func (s *UserService) Create(ctx context.Context, cred *domain.UserWriteCredentials, user *domain.UserWrite) (*domain.User, *domain.UserError) {
 	if len(cred.Username) == 0 || len(cred.Password) == 0 {
 		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("missing username or password")}
 	}
@@ -142,94 +118,59 @@ func (s *UserService) Create(cred *domain.UserWriteCredentials, user *domain.Use
 		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
 	}
 
-	linkedUsers, err1 := s.UserDbService.RetrieveMany("username", user.SharedAccountNames)
+	passwordHash, err1 := bcrypt.GenerateFromPassword([]byte(cred.Password), s.BcryptCost)
 	if err1 != nil {
 		return nil, &domain.UserError{Type: domain.UserInternalError, Err: err1}
 	}
 
-	userDb := s.UserDbService.NewUserDb()
-	userDb.Username = &cred.Username
-	userDb.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(cred.Password), s.BcryptCost)
-	userDb.SharedAccountIds = usernamesToIds(user.SharedAccountNames, linkedUsers)
+	userDb := domain.NewUserDb()
+	userDb.Username = cred.Username
+	userDb.PasswordHash = passwordHash
+	userDb.SharedAccounts = user.SharedAccounts
 
-	if err := s.UserDbService.Create(userDb); err != nil {
-		switch err.Type {
-		case domain.DbAlreadyExistsError:
-			return nil, &domain.UserError{Type: domain.UserAlreadyExistsError, Err: err}
-		default:
-			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err}
-		}
-	}
-
-	userCreated := domain.User{
-		Id:                 userDb.Id,
-		Admin:              userDb.Admin,
-		Username:           userDb.Username,
-		SharedAccountNames: idsToUsernames(userDb.SharedAccountIds, linkedUsers),
-	}
-
-	return &userCreated, nil
-}
-
-func usernamesToIds(usernames []string, userDbs []*domain.UserDb) []string {
-	userDbMap := map[string]string{}
-	for _, u := range userDbs {
-		if u.Username != nil {
-			userDbMap[*u.Username] = u.Id
-		}
-	}
-
-	ids := make([]string, 0)
-	for _, u := range usernames {
-		if id, ok := userDbMap[u]; ok {
-			ids = append(ids, id)
-		}
-	}
-	return ids
-}
-
-func (s *UserService) Update(id string, user *domain.UserWrite) (*domain.User, *domain.UserError) {
-	if err := s.Validator.Struct(user); err != nil {
-		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
-	}
-
-	linkedUsers, err2 := s.UserDbService.RetrieveMany("username", user.SharedAccountNames)
-	if err2 != nil {
-		return nil, &domain.UserError{Type: domain.UserInternalError, Err: err2}
-	}
-
-	userUpdate := domain.UserDb{
-		Id:               id,
-		SharedAccountIds: usernamesToIds(user.SharedAccountNames, linkedUsers),
-	}
-
-	userDb, err2 := s.UserDbService.Update(&userUpdate)
-
+	createdUserDb, err2 := s.UserDbService.Create(ctx, userDb)
 	if err2 != nil {
 		switch err2.Type {
-		case domain.DbNotFoundError:
-			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err2}
+		case domain.DbAlreadyExistsError:
+			return nil, &domain.UserError{Type: domain.UserAlreadyExistsError, Err: err2}
 		default:
 			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err2}
 		}
 	}
 
-	userUpdated := domain.User{
-		Id:                 userDb.Id,
-		Admin:              userDb.Admin,
-		Username:           userDb.Username,
-		SharedAccountNames: idsToUsernames(userDb.SharedAccountIds, linkedUsers),
-	}
-
-	return &userUpdated, nil
+	return createdUserDb.ToUser(), nil
 }
 
-func (s *UserService) UpdateCredentials(id string, currentPasswd string, cred *domain.UserWriteCredentials) (*domain.User, *domain.UserError) {
+func (s *UserService) Update(ctx context.Context, id string, user *domain.UserWrite) (*domain.User, *domain.UserError) {
+	if err := s.Validator.Struct(user); err != nil {
+		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
+	}
+
+	userUpdate := domain.UserDb{
+		Id:             id,
+		SharedAccounts: user.SharedAccounts,
+	}
+
+	userDb, err := s.UserDbService.Update(ctx, &userUpdate)
+
+	if err != nil {
+		switch err.Type {
+		case domain.DbNotFoundError:
+			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err}
+		default:
+			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err}
+		}
+	}
+
+	return userDb.ToUser(), nil
+}
+
+func (s *UserService) UpdateCredentials(ctx context.Context, id string, currentPasswd string, cred *domain.UserWriteCredentials) (*domain.User, *domain.UserError) {
 	if err := s.Validator.Struct(cred); err != nil {
 		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
 	}
 
-	userDb, err1 := s.UserDbService.Retrieve("id", id)
+	userDb, err1 := s.UserDbService.Retrieve(ctx, "id", id)
 	if err1 != nil {
 		switch err1.Type {
 		case domain.DbNotFoundError:
@@ -243,10 +184,10 @@ func (s *UserService) UpdateCredentials(id string, currentPasswd string, cred *d
 		return nil, &domain.UserError{Type: domain.UserIncorrectPassword, Err: errors.New("incorrect password")}
 	}
 
-	userDb.Username = &cred.Username
+	userDb.Username = cred.Username
 	userDb.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(cred.Password), s.BcryptCost)
 
-	if _, err := s.UserDbService.Update(userDb); err != nil {
+	if _, err := s.UserDbService.Update(ctx, userDb); err != nil {
 		switch err.Type {
 		case domain.DbNotFoundError:
 			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err}
@@ -255,54 +196,30 @@ func (s *UserService) UpdateCredentials(id string, currentPasswd string, cred *d
 		}
 	}
 
-	linkedUsers, err2 := s.UserDbService.RetrieveMany("id", userDb.SharedAccountIds)
-	if err2 != nil {
-		return nil, &domain.UserError{Type: domain.UserInternalError, Err: err2}
-	}
-
-	userUpdated := domain.User{
-		Id:                 userDb.Id,
-		Admin:              userDb.Admin,
-		Username:           userDb.Username,
-		SharedAccountNames: idsToUsernames(userDb.SharedAccountIds, linkedUsers),
-	}
-
-	return &userUpdated, nil
+	return userDb.ToUser(), nil
 }
 
-func (s *UserService) UpdateClaims(id string, claims *domain.UserWriteClaims) (*domain.User, *domain.UserError) {
+func (s *UserService) UpdateClaims(ctx context.Context, id string, claims *domain.UserWriteClaims) (*domain.User, *domain.UserError) {
 	if err := s.Validator.Struct(claims); err != nil {
 		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
 	}
 
 	userUpdate := domain.UserDb{Id: id, Admin: claims.Admin}
-	userDb, err1 := s.UserDbService.Update(&userUpdate)
-	if err1 != nil {
-		switch err1.Type {
+	userDb, err := s.UserDbService.Update(ctx, &userUpdate)
+	if err != nil {
+		switch err.Type {
 		case domain.DbNotFoundError:
-			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err1}
+			return nil, &domain.UserError{Type: domain.UserNotFoundError, Err: err}
 		default:
-			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err1}
+			return nil, &domain.UserError{Type: domain.UserInternalError, Err: err}
 		}
 	}
 
-	linkedUsers, err2 := s.UserDbService.RetrieveMany("id", userDb.SharedAccountIds)
-	if err2 != nil {
-		return nil, &domain.UserError{Type: domain.UserInternalError, Err: err2}
-	}
-
-	userUpdated := domain.User{
-		Id:                 userDb.Id,
-		Admin:              userDb.Admin,
-		Username:           userDb.Username,
-		SharedAccountNames: idsToUsernames(userDb.SharedAccountIds, linkedUsers),
-	}
-
-	return &userUpdated, nil
+	return userDb.ToUser(), nil
 }
 
-func (s *UserService) Delete(id string) *domain.UserError {
-	if err := s.UserDbService.Delete(id); err != nil {
+func (s *UserService) Delete(ctx context.Context, id string) *domain.UserError {
+	if err := s.UserDbService.Delete(ctx, id); err != nil {
 		return &domain.UserError{Type: domain.UserInternalError, Err: err}
 
 	} else {
@@ -310,8 +227,8 @@ func (s *UserService) Delete(id string) *domain.UserError {
 	}
 }
 
-func (s *UserService) List() ([]*domain.User, *domain.UserError) {
-	usersDb, err := s.UserDbService.List()
+func (s *UserService) List(ctx context.Context) ([]*domain.User, *domain.UserError) {
+	usersDb, err := s.UserDbService.RetrieveAll(ctx)
 
 	if err != nil {
 		return nil, &domain.UserError{Type: domain.UserInternalError, Err: err}
@@ -319,21 +236,17 @@ func (s *UserService) List() ([]*domain.User, *domain.UserError) {
 
 	users := make([]*domain.User, len(usersDb))
 	for i, udb := range usersDb {
-		users[i] = &domain.User{
-			Id:                 udb.Id,
-			Admin:              udb.Admin,
-			Username:           udb.Username,
-			SharedAccountNames: idsToUsernames(udb.SharedAccountIds, usersDb)}
+		users[i] = udb.ToUser()
 	}
 	return users, nil
 }
 
-func (s *UserService) SendResetPassword(username string) *domain.UserError {
+func (s *UserService) SendResetPassword(ctx context.Context, username string) *domain.UserError {
 	if len(username) == 0 {
 		return &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("missing username")}
 	}
 
-	userDb, uErr := s.UserDbService.Retrieve("username", username)
+	userDb, uErr := s.UserDbService.Retrieve(ctx, "username", username)
 	if uErr != nil {
 		return &domain.UserError{Type: domain.UserInternalError, Err: uErr}
 	}
@@ -342,7 +255,7 @@ func (s *UserService) SendResetPassword(username string) *domain.UserError {
 		return &domain.UserError{Type: domain.UserNotFoundError, Err: errors.New("user not found")}
 	}
 
-	claims := domain.Claims{Id: userDb.Id, Admin: *userDb.Admin, SharedAccounts: userDb.SharedAccountIds, ResetPassword: true}
+	claims := domain.Claims{Id: userDb.Id, Admin: *userDb.Admin, SharedAccounts: userDb.SharedAccounts, ResetPassword: true}
 	resetToken, err := s.JwtService.GenerateResetPasswordToken(&claims)
 
 	if err != nil {
@@ -350,7 +263,7 @@ func (s *UserService) SendResetPassword(username string) *domain.UserError {
 	}
 
 	email := domain.Email{
-		ToAddress: *userDb.Username,
+		ToAddress: userDb.Username,
 		Subject:   "password reset",
 		Content:   resetToken,
 	}
@@ -362,7 +275,7 @@ func (s *UserService) SendResetPassword(username string) *domain.UserError {
 	return nil
 }
 
-func (s *UserService) ResetPassword(token string, newPassword string) *domain.UserError {
+func (s *UserService) ResetPassword(ctx context.Context, token string, newPassword string) *domain.UserError {
 	if len(token) == 0 || len(newPassword) == 0 {
 		return &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("missing token or username")}
 	}
@@ -384,7 +297,7 @@ func (s *UserService) ResetPassword(token string, newPassword string) *domain.Us
 	newHash, _ := bcrypt.GenerateFromPassword([]byte(newCreds.Password), s.BcryptCost)
 	userUpdate := domain.UserDb{Id: claims.Id, PasswordHash: newHash}
 
-	if _, err4 := s.UserDbService.Update(&userUpdate); err4 != nil {
+	if _, err4 := s.UserDbService.Update(ctx, &userUpdate); err4 != nil {
 		switch err4.Type {
 		case domain.DbNotFoundError:
 			return &domain.UserError{Type: domain.UserNotFoundError, Err: err4}
