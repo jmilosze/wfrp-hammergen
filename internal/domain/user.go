@@ -12,6 +12,7 @@ const (
 	UserInternalError
 	UserIncorrectPassword
 	UserInvalidArguments
+	UserSendEmailError
 )
 
 type UserWrite struct {

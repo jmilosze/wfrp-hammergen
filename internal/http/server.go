@@ -37,9 +37,11 @@ func (s *Server) Start() {
 	}()
 }
 
-func (s *Server) Stop() error {
+func (s *Server) Stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), s.ShutdownTimeout)
 	defer cancel()
 
-	return s.Server.Shutdown(ctx)
+	if err := s.Server.Shutdown(ctx); err != nil {
+		panic(err)
+	}
 }

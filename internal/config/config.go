@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strconv"
 	"time"
@@ -17,6 +18,9 @@ const (
 	EnvJwtResetExpirySeconds        = "JWT_RESET_EXPIRY_SEC"
 	EnvJwtHmacSecret                = "JWT_HMAC_SECRET"
 	EnvEmailFromAddress             = "EMAIL_FROM_ADDRESS"
+	EnvEmailFromName                = "EMAIL_FROM_NAME"
+	EnvEmailPublicApiKey            = "EMAIL_PUBLIC_API_KEY"
+	EnvEmailPrivateApiKey           = "EMAIL_PRIVATE_API_KEY"
 	EnvMongoDbUri                   = "MONGODB_URI"
 )
 
@@ -28,7 +32,8 @@ type ServerConfig struct {
 }
 
 type UserServiceConfig struct {
-	BcryptCost int
+	BcryptCost  int
+	FrontEndUrl *url.URL
 }
 
 type JwtConfig struct {
@@ -38,7 +43,10 @@ type JwtConfig struct {
 }
 
 type EmailConfig struct {
-	FromAddress string
+	FromAddress   string
+	FromName      string
+	PublicApiKey  string
+	PrivateApiKey string
 }
 
 type MongoDbConfig struct {
@@ -66,6 +74,11 @@ type UserSeed struct {
 
 func NewDefault() *Config {
 
+	frontEndUrl, err := url.Parse("http://localhost:8080")
+	if err != nil {
+		panic(err)
+	}
+
 	return &Config{
 		ServerConfig: &ServerConfig{
 			Host:            "localhost",
@@ -73,32 +86,39 @@ func NewDefault() *Config {
 			ShutdownTimeout: 10 * time.Second,
 			RequestTimeout:  10 * time.Second,
 		},
+
 		UserServiceConfig: &UserServiceConfig{
-			BcryptCost: 12,
+			BcryptCost:  12,
+			FrontEndUrl: frontEndUrl,
 		},
 		JwtConfig: &JwtConfig{
 			AccessExpiry: 24 * time.Hour,
 			ResetExpiry:  48 * time.Hour,
 			HmacSecret:   "some_secret",
 		},
-		EmailConfig:   &EmailConfig{FromAddress: "admin@hammergen.net"},
-		MongoDbConfig: &MongoDbConfig{Uri: "", DbName: "hammergenGo", UserCollection: "user", CreateIndexes: true},
+		EmailConfig:   &EmailConfig{FromAddress: "admin@hammergen.net", FromName: "Hammergen Admin"},
+		MongoDbConfig: &MongoDbConfig{DbName: "hammergenGo", UserCollection: "user", CreateIndexes: true},
 	}
 }
 
-func NewFromEnv() (*Config, error) {
+func NewFromEnv() *Config {
 	cfg := NewDefault()
-	var err error
 
+	var err error
 	cfg.ServerConfig.Host = readEnv(EnvServerHost, cfg.ServerConfig.Host)
 	cfg.ServerConfig.Port, err = strconv.Atoi(readEnv(EnvServerPort, fmt.Sprintf("%d", cfg.ServerConfig.Port)))
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	cfg.MongoDbConfig.Uri = readEnv(EnvMongoDbUri, cfg.MongoDbConfig.Uri)
 
-	return cfg, nil
+	cfg.EmailConfig.FromAddress = readEnv(EnvEmailFromAddress, cfg.EmailConfig.FromAddress)
+	cfg.EmailConfig.FromName = readEnv(EnvEmailFromName, cfg.EmailConfig.FromName)
+	cfg.EmailConfig.PublicApiKey = readEnv(EnvEmailPublicApiKey, cfg.EmailConfig.PublicApiKey)
+	cfg.EmailConfig.PrivateApiKey = readEnv(EnvEmailPrivateApiKey, cfg.EmailConfig.PrivateApiKey)
+
+	return cfg
 }
 
 func readEnv(key string, def string) string {

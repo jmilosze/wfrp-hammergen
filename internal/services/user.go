@@ -3,11 +3,14 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"net/url"
+	"path"
 	"time"
 )
 
@@ -17,6 +20,7 @@ type UserService struct {
 	UserDbService domain.UserDbService
 	EmailService  domain.EmailService
 	JwtService    domain.JwtService
+	FrontEndUrl   *url.URL
 }
 
 func NewUserService(cfg *config.UserServiceConfig, db domain.UserDbService, email domain.EmailService, jwt domain.JwtService, v *validator.Validate) *UserService {
@@ -25,7 +29,9 @@ func NewUserService(cfg *config.UserServiceConfig, db domain.UserDbService, emai
 		UserDbService: db,
 		EmailService:  email,
 		JwtService:    jwt,
-		Validator:     v}
+		Validator:     v,
+		FrontEndUrl:   cfg.FrontEndUrl,
+	}
 
 }
 
@@ -246,9 +252,14 @@ func (s *UserService) SendResetPassword(ctx context.Context, username string) *d
 		return &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("missing username")}
 	}
 
-	userDb, uErr := s.UserDbService.Retrieve(ctx, "username", username)
-	if uErr != nil {
-		return &domain.UserError{Type: domain.UserInternalError, Err: uErr}
+	userDb, err1 := s.UserDbService.Retrieve(ctx, "username", username)
+	if err1 != nil {
+		switch err1.Type {
+		case domain.DbNotFoundError:
+			return &domain.UserError{Type: domain.UserNotFoundError, Err: err1}
+		default:
+			return &domain.UserError{Type: domain.UserInternalError, Err: err1}
+		}
 	}
 
 	if userDb == nil {
@@ -256,20 +267,25 @@ func (s *UserService) SendResetPassword(ctx context.Context, username string) *d
 	}
 
 	claims := domain.Claims{Id: userDb.Id, Admin: *userDb.Admin, SharedAccounts: userDb.SharedAccounts, ResetPassword: true}
-	resetToken, err := s.JwtService.GenerateResetPasswordToken(&claims)
+	resetToken, err2 := s.JwtService.GenerateResetPasswordToken(&claims)
 
-	if err != nil {
-		return &domain.UserError{Type: domain.UserInternalError, Err: err}
+	if err2 != nil {
+		return &domain.UserError{Type: domain.UserInternalError, Err: err2}
 	}
 
+	clickUrl := s.FrontEndUrl
+	resetTokenPath := fmt.Sprintf("/resetPassword/%s", resetToken)
+	clickUrl.Path = path.Join(clickUrl.Path, resetTokenPath)
+
+	emailMessage := fmt.Sprintf("Please reset your password by <a href=%s>clicking here</a>", clickUrl.String())
 	email := domain.Email{
 		ToAddress: userDb.Username,
-		Subject:   "password reset",
-		Content:   resetToken,
+		Subject:   "Reset password",
+		Content:   emailMessage,
 	}
 
-	if eErr := s.EmailService.Send(&email); eErr != nil {
-		return &domain.UserError{Type: domain.UserInternalError, Err: eErr}
+	if err3 := s.EmailService.Send(ctx, &email); err3 != nil {
+		return &domain.UserError{Type: domain.UserSendEmailError, Err: err3}
 	}
 
 	return nil

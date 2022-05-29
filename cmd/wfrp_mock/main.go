@@ -49,12 +49,8 @@ func run() error {
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 
 	server.Start()
-
 	<-done
-
-	if err := server.Stop(); err != nil {
-		log.Fatalf("Server Shutdown Failed:%+v", err)
-	}
+	server.Stop()
 
 	return nil
 }

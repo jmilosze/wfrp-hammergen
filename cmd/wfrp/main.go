@@ -2,13 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/golangjwt"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mailjet"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockcaptcha"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockemail"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mongodb"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/http"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
@@ -26,14 +25,11 @@ func main() {
 
 func run() error {
 
-	cfg, err := config.NewFromEnv()
-	if err != nil {
-		return fmt.Errorf("getting service config from environment: %w", err)
-	}
+	cfg := config.NewFromEnv()
 
 	val := validator.New()
 	jwtService := golangjwt.NewHmacService(cfg.JwtConfig.HmacSecret, cfg.JwtConfig.AccessExpiry, cfg.JwtConfig.ResetExpiry)
-	emailService := mockemail.NewEmailService(cfg.EmailConfig.FromAddress)
+	emailService := mailjet.NewEmailService(cfg.EmailConfig.FromAddress, cfg.EmailConfig.PublicApiKey, cfg.EmailConfig.PrivateApiKey)
 	captchaService := mockcaptcha.NewCaptchaService()
 
 	mongoDbService := mongodb.NewDbService(cfg.MongoDbConfig.Uri, cfg.MongoDbConfig.DbName)
@@ -57,12 +53,8 @@ func run() error {
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 
 	server.Start()
-
 	<-done
-
-	if err := server.Stop(); err != nil {
-		log.Fatalf("Server Shutdown Failed:%+v", err)
-	}
+	server.Stop()
 
 	return nil
 }

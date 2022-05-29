@@ -318,6 +318,8 @@ func resetSendPasswordHandler(us domain.UserService, cs domain.CaptchaService) f
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err.Error()})
 			case domain.UserNotFoundError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "user not found"})
+			case domain.UserSendEmailError:
+				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": err.Error()})
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
 			}
