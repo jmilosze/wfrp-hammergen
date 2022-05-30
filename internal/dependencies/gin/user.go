@@ -48,7 +48,7 @@ func createHandler(us domain.UserService, cs domain.CaptchaService) func(*gin.Co
 			switch err.Type {
 			case domain.UserAlreadyExistsError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "user already exists"})
-			case domain.UserInvalidArguments:
+			case domain.UserInvalidArgumentsError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err.Error()})
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
@@ -74,43 +74,23 @@ func userToMap(user *domain.User) map[string]interface{} {
 func getHandler(us domain.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		userId := c.Param("userId")
+		claims := getUserClaims(c)
 
-		if !authorizeGet(c, userId) {
-			c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
-			return
-		}
-
-		user, err := us.Get(c.Request.Context(), userId)
+		user, err := us.Get(c.Request.Context(), claims, userId)
 
 		if err != nil {
-			if err.Type == domain.UserNotFoundError {
+			switch err.Type {
+			case domain.UserNotFoundError:
 				c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "user not found"})
-				return
+			case domain.UserUnauthorizedError:
+				c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
+			default:
+				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
 			}
-
-			c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": userToMap(user)})
-	}
-}
-
-func authorizeGet(c *gin.Context, userId string) bool {
-	claims := getUserClaims(c)
-	return userId == claims.Id || claims.Admin
-}
-
-func getExistsHandler(us domain.UserService) func(*gin.Context) {
-	return func(c *gin.Context) {
-		userId := c.Param("userName")
-
-		exists, err := us.Exists(c.Request.Context(), userId)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": gin.H{"exists": exists}})
 	}
 }
 
@@ -126,46 +106,41 @@ func getUserClaims(c *gin.Context) *domain.Claims {
 	return &claims
 }
 
-func listHandler(us domain.UserService) func(*gin.Context) {
+func getExistsHandler(us domain.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		allUsers, err := us.List(c.Request.Context())
+		userId := c.Param("userName")
+
+		exists, err := us.Exists(c.Request.Context(), userId)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "internal server error"})
+			c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
 			return
 		}
-
-		visibleUsers := authorizeList(c, allUsers)
-
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": visibleUsers})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": gin.H{"exists": exists}})
 	}
 }
 
-func authorizeList(c *gin.Context, userList []*domain.User) []*domain.User {
-	claims := getUserClaims(c)
-
-	var visibleUsers []*domain.User
-	if claims.Admin {
-		visibleUsers = userList
-	} else {
-		for _, u := range userList {
-			if claims.Id == u.Id {
-				visibleUsers = append(visibleUsers, u)
-				break
+func listHandler(us domain.UserService) func(*gin.Context) {
+	return func(c *gin.Context) {
+		claims := getUserClaims(c)
+		allUsers, err := us.List(c.Request.Context(), claims)
+		if err != nil {
+			switch err.Type {
+			case domain.UserUnauthorizedError:
+				c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
+			default:
+				c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "internal server error"})
 			}
+			return
 		}
-	}
 
-	return visibleUsers
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": allUsers})
+	}
 }
 
 func updateHandler(users domain.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		userId := c.Param("userId")
-
-		if !authorizeModify(c, userId) {
-			c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
-			return
-		}
+		claims := getUserClaims(c)
 
 		var userData domain.UserWrite
 		if err := c.ShouldBindJSON(&userData); err != nil {
@@ -173,13 +148,15 @@ func updateHandler(users domain.UserService) func(*gin.Context) {
 			return
 		}
 
-		userRead, err := users.Update(c.Request.Context(), userId, &userData)
+		userRead, err := users.Update(c.Request.Context(), claims, userId, &userData)
 		if err != nil {
 			switch err.Type {
 			case domain.UserNotFoundError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "user not found"})
-			case domain.UserInvalidArguments:
+			case domain.UserInvalidArgumentsError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err.Error()})
+			case domain.UserUnauthorizedError:
+				c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
 			}
@@ -188,11 +165,6 @@ func updateHandler(users domain.UserService) func(*gin.Context) {
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": userToMap(userRead)})
 	}
-}
-
-func authorizeModify(c *gin.Context, userId string) bool {
-	claims := getUserClaims(c)
-	return userId == claims.Id
 }
 
 type UserCredentials struct {
@@ -204,10 +176,7 @@ type UserCredentials struct {
 func updateCredentialsHandler(us domain.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		userId := c.Param("userId")
-		if !authorizeModify(c, userId) {
-			c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
-			return
-		}
+		claims := getUserClaims(c)
 
 		var uc UserCredentials
 		if err := c.ShouldBindJSON(&uc); err != nil {
@@ -217,15 +186,17 @@ func updateCredentialsHandler(us domain.UserService) func(*gin.Context) {
 
 		userWriteCredentials := domain.UserWriteCredentials{Username: uc.Username, Password: uc.Password}
 
-		userRead, err := us.UpdateCredentials(c.Request.Context(), userId, uc.CurrentPassword, &userWriteCredentials)
+		userRead, err := us.UpdateCredentials(c.Request.Context(), claims, userId, uc.CurrentPassword, &userWriteCredentials)
 		if err != nil {
 			switch err.Type {
 			case domain.UserNotFoundError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "user not found"})
-			case domain.UserInvalidArguments:
+			case domain.UserInvalidArgumentsError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err.Error()})
-			case domain.UserIncorrectPassword:
+			case domain.UserIncorrectPasswordError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "incorrect password"})
+			case domain.UserUnauthorizedError:
+				c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
 			default:
 				c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "internal server error"})
 			}
@@ -239,11 +210,7 @@ func updateCredentialsHandler(us domain.UserService) func(*gin.Context) {
 func updateClaims(us domain.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		userId := c.Param("userId")
-
-		if !authorizeModifyClaims(c) {
-			c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
-			return
-		}
+		claims := getUserClaims(c)
 
 		var userData domain.UserWriteClaims
 		if err := c.ShouldBindJSON(&userData); err != nil {
@@ -251,13 +218,15 @@ func updateClaims(us domain.UserService) func(*gin.Context) {
 			return
 		}
 
-		userRead, err := us.UpdateClaims(c.Request.Context(), userId, &userData)
+		userRead, err := us.UpdateClaims(c.Request.Context(), claims, userId, &userData)
 		if err != nil {
 			switch err.Type {
 			case domain.UserNotFoundError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "user not found"})
-			case domain.UserInvalidArguments:
+			case domain.UserInvalidArgumentsError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err.Error()})
+			case domain.UserUnauthorizedError:
+				c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
 			}
@@ -268,22 +237,18 @@ func updateClaims(us domain.UserService) func(*gin.Context) {
 	}
 }
 
-func authorizeModifyClaims(c *gin.Context) bool {
-	claims := getUserClaims(c)
-	return claims.Admin
-}
-
 func deleteHandler(us domain.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		userId := c.Param("userId")
+		claims := getUserClaims(c)
 
-		if !authorizeModify(c, userId) {
-			c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
-			return
-		}
-
-		if err := us.Delete(c.Request.Context(), userId); err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "internal server error"})
+		if err := us.Delete(c.Request.Context(), claims, userId); err != nil {
+			switch err.Type {
+			case domain.UserUnauthorizedError:
+				c.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "unauthorized"})
+			default:
+				c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "internal server error"})
+			}
 			return
 		}
 
@@ -314,7 +279,7 @@ func resetSendPasswordHandler(us domain.UserService, cs domain.CaptchaService) f
 
 		if err != nil {
 			switch err.Type {
-			case domain.UserInvalidArguments:
+			case domain.UserInvalidArgumentsError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err.Error()})
 			case domain.UserNotFoundError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "user not found"})

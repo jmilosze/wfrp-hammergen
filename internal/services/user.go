@@ -51,7 +51,11 @@ func (s *UserService) SeedUsers(ctx context.Context, users []*config.UserSeed) {
 	}
 }
 
-func (s *UserService) Get(ctx context.Context, id string) (*domain.User, *domain.UserError) {
+func (s *UserService) Get(ctx context.Context, userClaims *domain.Claims, id string) (*domain.User, *domain.UserError) {
+	if !(id == userClaims.Id || userClaims.Admin) {
+		return nil, &domain.UserError{Type: domain.UserUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
 	userDb, err := s.UserDbService.Retrieve(ctx, "id", id)
 	if err != nil {
 		switch err.Type {
@@ -90,7 +94,7 @@ func (s *UserService) Authenticate(ctx context.Context, username string, passwor
 	}
 
 	if !authenticate(userDb, password) {
-		return nil, &domain.UserError{Type: domain.UserIncorrectPassword, Err: errors.New("incorrect password")}
+		return nil, &domain.UserError{Type: domain.UserIncorrectPasswordError, Err: errors.New("incorrect password")}
 	}
 
 	if _, err := s.UserDbService.Update(ctx, &domain.UserDb{Id: userDb.Id, LastAuthOn: time.Now()}); err != nil {
@@ -114,14 +118,14 @@ func authenticate(user *domain.UserDb, password string) bool {
 
 func (s *UserService) Create(ctx context.Context, cred *domain.UserWriteCredentials, user *domain.UserWrite) (*domain.User, *domain.UserError) {
 	if len(cred.Username) == 0 || len(cred.Password) == 0 {
-		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("missing username or password")}
+		return nil, &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: errors.New("missing username or password")}
 	}
 
 	if err := s.Validator.Struct(cred); err != nil {
-		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
+		return nil, &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: err}
 	}
 	if err := s.Validator.Struct(user); err != nil {
-		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
+		return nil, &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: err}
 	}
 
 	passwordHash, err1 := bcrypt.GenerateFromPassword([]byte(cred.Password), s.BcryptCost)
@@ -147,9 +151,13 @@ func (s *UserService) Create(ctx context.Context, cred *domain.UserWriteCredenti
 	return createdUserDb.ToUser(), nil
 }
 
-func (s *UserService) Update(ctx context.Context, id string, user *domain.UserWrite) (*domain.User, *domain.UserError) {
+func (s *UserService) Update(ctx context.Context, userClaims *domain.Claims, id string, user *domain.UserWrite) (*domain.User, *domain.UserError) {
+	if id != userClaims.Id {
+		return nil, &domain.UserError{Type: domain.UserUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
 	if err := s.Validator.Struct(user); err != nil {
-		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
+		return nil, &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: err}
 	}
 
 	userUpdate := domain.UserDb{
@@ -171,9 +179,13 @@ func (s *UserService) Update(ctx context.Context, id string, user *domain.UserWr
 	return userDb.ToUser(), nil
 }
 
-func (s *UserService) UpdateCredentials(ctx context.Context, id string, currentPasswd string, cred *domain.UserWriteCredentials) (*domain.User, *domain.UserError) {
+func (s *UserService) UpdateCredentials(ctx context.Context, userClaims *domain.Claims, id string, currentPasswd string, cred *domain.UserWriteCredentials) (*domain.User, *domain.UserError) {
+	if id != userClaims.Id {
+		return nil, &domain.UserError{Type: domain.UserUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
 	if err := s.Validator.Struct(cred); err != nil {
-		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
+		return nil, &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: err}
 	}
 
 	userDb, err1 := s.UserDbService.Retrieve(ctx, "id", id)
@@ -187,7 +199,7 @@ func (s *UserService) UpdateCredentials(ctx context.Context, id string, currentP
 	}
 
 	if !authenticate(userDb, currentPasswd) {
-		return nil, &domain.UserError{Type: domain.UserIncorrectPassword, Err: errors.New("incorrect password")}
+		return nil, &domain.UserError{Type: domain.UserIncorrectPasswordError, Err: errors.New("incorrect password")}
 	}
 
 	userDb.Username = cred.Username
@@ -205,9 +217,13 @@ func (s *UserService) UpdateCredentials(ctx context.Context, id string, currentP
 	return userDb.ToUser(), nil
 }
 
-func (s *UserService) UpdateClaims(ctx context.Context, id string, claims *domain.UserWriteClaims) (*domain.User, *domain.UserError) {
+func (s *UserService) UpdateClaims(ctx context.Context, userClaims *domain.Claims, id string, claims *domain.UserWriteClaims) (*domain.User, *domain.UserError) {
+	if !userClaims.Admin {
+		return nil, &domain.UserError{Type: domain.UserUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
 	if err := s.Validator.Struct(claims); err != nil {
-		return nil, &domain.UserError{Type: domain.UserInvalidArguments, Err: err}
+		return nil, &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: err}
 	}
 
 	userUpdate := domain.UserDb{Id: id, Admin: claims.Admin}
@@ -224,7 +240,11 @@ func (s *UserService) UpdateClaims(ctx context.Context, id string, claims *domai
 	return userDb.ToUser(), nil
 }
 
-func (s *UserService) Delete(ctx context.Context, id string) *domain.UserError {
+func (s *UserService) Delete(ctx context.Context, userClaims *domain.Claims, id string) *domain.UserError {
+	if id != userClaims.Id {
+		return &domain.UserError{Type: domain.UserUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
 	if err := s.UserDbService.Delete(ctx, id); err != nil {
 		return &domain.UserError{Type: domain.UserInternalError, Err: err}
 
@@ -233,7 +253,11 @@ func (s *UserService) Delete(ctx context.Context, id string) *domain.UserError {
 	}
 }
 
-func (s *UserService) List(ctx context.Context) ([]*domain.User, *domain.UserError) {
+func (s *UserService) List(ctx context.Context, userClaims *domain.Claims) ([]*domain.User, *domain.UserError) {
+	if !userClaims.Admin {
+		return nil, &domain.UserError{Type: domain.UserUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
 	usersDb, err := s.UserDbService.RetrieveAll(ctx)
 
 	if err != nil {
@@ -249,7 +273,7 @@ func (s *UserService) List(ctx context.Context) ([]*domain.User, *domain.UserErr
 
 func (s *UserService) SendResetPassword(ctx context.Context, username string) *domain.UserError {
 	if len(username) == 0 {
-		return &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("missing username")}
+		return &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: errors.New("missing username")}
 	}
 
 	userDb, err1 := s.UserDbService.Retrieve(ctx, "username", username)
@@ -293,21 +317,21 @@ func (s *UserService) SendResetPassword(ctx context.Context, username string) *d
 
 func (s *UserService) ResetPassword(ctx context.Context, token string, newPassword string) *domain.UserError {
 	if len(token) == 0 || len(newPassword) == 0 {
-		return &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("missing token or username")}
+		return &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: errors.New("missing token or username")}
 	}
 
 	claims, err1 := s.JwtService.ParseToken(token)
 	if err1 != nil {
-		return &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("invalid token")}
+		return &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: errors.New("invalid token")}
 	}
 
 	if !claims.ResetPassword {
-		return &domain.UserError{Type: domain.UserInvalidArguments, Err: errors.New("invalid token")}
+		return &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: errors.New("invalid token")}
 	}
 
 	var newCreds = domain.UserWriteCredentials{Username: "", Password: newPassword}
 	if err2 := s.Validator.Struct(newCreds); err2 != nil {
-		return &domain.UserError{Type: domain.UserInvalidArguments, Err: err2}
+		return &domain.UserError{Type: domain.UserInvalidArgumentsError, Err: err2}
 	}
 
 	newHash, _ := bcrypt.GenerateFromPassword([]byte(newCreds.Password), s.BcryptCost)
