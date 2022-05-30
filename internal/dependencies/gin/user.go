@@ -9,8 +9,9 @@ import (
 func RegisterUserRoutes(router *gin.Engine, us domain.UserService, js domain.JwtService, cs domain.CaptchaService) {
 	router.POST("api/user", createHandler(us, cs))
 	router.GET("api/user/:userId", RequireJwt(js), getHandler(us))
+	router.GET("api/user", RequireJwt(js), getHandler(us))
 	router.GET("api/user/exists/:userName", RequireJwt(js), getExistsHandler(us))
-	router.GET("api/user", RequireJwt(js), listHandler(us))
+	router.GET("api/user/list", RequireJwt(js), listHandler(us))
 	router.PUT("api/user/:userId", RequireJwt(js), updateHandler(us))
 	router.PUT("api/user/credentials/:userId", RequireJwt(js), updateCredentialsHandler(us))
 	router.PUT("api/user/claims/:userId", RequireJwt(js), updateClaims(us))
@@ -75,6 +76,10 @@ func getHandler(us domain.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		userId := c.Param("userId")
 		claims := getUserClaims(c)
+
+		if userId == "" {
+			userId = claims.Id
+		}
 
 		user, err := us.Get(c.Request.Context(), claims, userId)
 
