@@ -27,8 +27,9 @@ type Server struct {
 }
 
 type UserService struct {
-	BcryptCost  int      `default:"12" split_words:"true"`
-	FrontEndUrl *url.URL `default:"http://localhost:8080" split_words:"true"`
+	BcryptCost      int      `default:"12" split_words:"true"`
+	FrontEndUrl     *url.URL `default:"http://localhost:8080" split_words:"true"`
+	CreateMockUsers bool     `default:"true" split_words:"true"`
 }
 
 type Jwt struct {

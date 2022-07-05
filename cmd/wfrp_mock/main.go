@@ -36,8 +36,11 @@ func run() error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.RequestTimeout)
 	defer cancel()
-	mockUsers := config.NewMockUsers()
-	userService.SeedUsers(ctx, mockUsers)
+
+	if cfg.UserService.CreateMockUsers {
+		mockUsers := config.NewMockUsers()
+		userService.SeedUsers(ctx, mockUsers)
+	}
 
 	router := gin.NewRouter(cfg.Server.RequestTimeout)
 	gin.RegisterUserRoutes(router, userService, jwtService, captchaService)
