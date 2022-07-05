@@ -24,26 +24,26 @@ func main() {
 }
 
 func run() error {
-	cfg := config.NewDefault()
+	cfg := config.NewConfig()
 
 	val := validator.New()
-	jwtService := golangjwt.NewHmacService(cfg.JwtConfig.HmacSecret, cfg.JwtConfig.AccessExpiry, cfg.JwtConfig.ResetExpiry)
-	emailService := mockemail.NewEmailService(cfg.EmailConfig.FromAddress)
+	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, cfg.Jwt.AccessExpiry, cfg.Jwt.ResetExpiry)
+	emailService := mockemail.NewEmailService(cfg.Email.FromAddress)
 	captchaService := mockcaptcha.NewCaptchaService()
 	userDbService := memdb.NewUserDbService()
 
-	userService := services.NewUserService(cfg.UserServiceConfig, userDbService, emailService, jwtService, val)
+	userService := services.NewUserService(cfg.UserService, userDbService, emailService, jwtService, val)
 
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.ServerConfig.RequestTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.RequestTimeout)
 	defer cancel()
 	mockUsers := config.NewMockUsers()
 	userService.SeedUsers(ctx, mockUsers)
 
-	router := gin.NewRouter(cfg.ServerConfig.RequestTimeout)
+	router := gin.NewRouter(cfg.Server.RequestTimeout)
 	gin.RegisterUserRoutes(router, userService, jwtService, captchaService)
 	gin.RegisterAuthRoutes(router, userService, jwtService)
 
-	server := http.NewServer(cfg.ServerConfig, router)
+	server := http.NewServer(cfg.Server, router)
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)

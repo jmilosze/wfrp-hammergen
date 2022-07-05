@@ -23,7 +23,7 @@ type UserService struct {
 	FrontEndUrl   *url.URL
 }
 
-func NewUserService(cfg *config.UserServiceConfig, db domain.UserDbService, email domain.EmailService, jwt domain.JwtService, v *validator.Validate) *UserService {
+func NewUserService(cfg *config.UserService, db domain.UserDbService, email domain.EmailService, jwt domain.JwtService, v *validator.Validate) *UserService {
 	return &UserService{
 		BcryptCost:    cfg.BcryptCost,
 		UserDbService: db,

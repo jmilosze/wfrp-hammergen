@@ -7,6 +7,7 @@ require (
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/hashicorp/go-memdb v1.3.2
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mailjet/mailjet-apiv3-go/v3 v3.2.0
 	github.com/rs/xid v1.4.0
 	github.com/vearne/gin-timeout v0.0.9

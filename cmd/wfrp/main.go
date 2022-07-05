@@ -25,29 +25,29 @@ func main() {
 
 func run() error {
 
-	cfg := config.NewFromEnv()
+	cfg := config.NewConfig()
 
 	val := validator.New()
-	jwtService := golangjwt.NewHmacService(cfg.JwtConfig.HmacSecret, cfg.JwtConfig.AccessExpiry, cfg.JwtConfig.ResetExpiry)
-	emailService := mailjet.NewEmailService(cfg.EmailConfig.FromAddress, cfg.EmailConfig.PublicApiKey, cfg.EmailConfig.PrivateApiKey)
+	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, cfg.Jwt.AccessExpiry, cfg.Jwt.ResetExpiry)
+	emailService := mailjet.NewEmailService(cfg.Email.FromAddress, cfg.Email.PublicApiKey, cfg.Email.PrivateApiKey)
 	captchaService := mockcaptcha.NewCaptchaService()
 
-	mongoDbService := mongodb.NewDbService(cfg.MongoDbConfig.Uri, cfg.MongoDbConfig.DbName)
+	mongoDbService := mongodb.NewDbService(cfg.MongoDb.Uri, cfg.MongoDb.DbName)
 	defer mongoDbService.Disconnect()
-	userDbService := mongodb.NewUserDbService(mongoDbService, cfg.MongoDbConfig.UserCollection, cfg.MongoDbConfig.CreateIndexes)
+	userDbService := mongodb.NewUserDbService(mongoDbService, cfg.MongoDb.UserCollection, cfg.MongoDb.CreateIndexes)
 
-	userService := services.NewUserService(cfg.UserServiceConfig, userDbService, emailService, jwtService, val)
+	userService := services.NewUserService(cfg.UserService, userDbService, emailService, jwtService, val)
 
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.ServerConfig.RequestTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.RequestTimeout)
 	defer cancel()
 	mockUsers := config.NewMockUsers()
 	userService.SeedUsers(ctx, mockUsers)
 
-	router := gin.NewRouter(cfg.ServerConfig.RequestTimeout)
+	router := gin.NewRouter(cfg.Server.RequestTimeout)
 	gin.RegisterUserRoutes(router, userService, jwtService, captchaService)
 	gin.RegisterAuthRoutes(router, userService, jwtService)
 
-	server := http.NewServer(cfg.ServerConfig, router)
+	server := http.NewServer(cfg.Server, router)
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
