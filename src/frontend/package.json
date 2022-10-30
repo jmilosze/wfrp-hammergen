@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build_azure_prod": "vue-cli-service build --mode azure_prod",
-    "build_azure_staging": "vue-cli-service build --mode azure_staging",
-    "build_gcp_prod": "vue-cli-service build --mode gcp_prod",
-    "build_gcp_staging": "vue-cli-service build --mode gcp_staging",
+    "build_azure_prod": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --mode azure_prod",
+    "build_azure_staging": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --mode azure_staging",
+    "build_gcp_prod": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --mode gcp_prod",
+    "build_gcp_staging": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --mode gcp_staging",
     "build_container_prod": "vue-cli-service build --mode container_prod",
     "build_container_staging": "vue-cli-service build --mode container_staging",
     "lint": "vue-cli-service lint",
@@ -39,7 +39,7 @@
     "vue-template-compiler": "^2.6.13",
     "prettier": "^2.3.1",
     "sass-loader": "^10.2.0",
-    "node-sass": "^6.0.1",
+    "sass": "^1.55.0",
     "jest": "^27.0.4"
   },
   "eslintConfig": {

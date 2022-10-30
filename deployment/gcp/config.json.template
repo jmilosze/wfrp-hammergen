@@ -1,0 +1,17 @@
+{
+  "image_name": "",
+  "ar_registry": "",
+  "ar_repository": "",
+  "service_name": "",
+  "region": "",
+  "project": "",
+  "concurrency": "",
+  "env_variables": {
+    "ACCESS_TOKEN_EXPIRES_MINUTES": "120",
+    "REFRESH_TOKEN_EXPIRES_DAYS": "1",
+    "FLASK_SECRET_KEY": "",
+    "MONGO_URI": "",
+    "SENDGRID_API_KEY_2": "",
+    "RECAPTCHA_SECRET": ""
+  }
+}

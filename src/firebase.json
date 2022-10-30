@@ -1,8 +1,7 @@
 {
   "hosting": [
     {
-      "target": "prod",
-      "site": "",
+      "target": "production",
       "public": "frontend/dist",
       "ignore": [
         "firebase.json",

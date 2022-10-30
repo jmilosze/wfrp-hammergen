@@ -10,12 +10,13 @@ SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent.parent.absolute()
 FRONTEND_DIR = ROOT_DIR / "src" / "frontend"
 WEB_DIR = ROOT_DIR / "src"
+CONFIG_JSON = "config.json"
 
 
 def build_new_static(env):
     shutil.rmtree("dist", ignore_errors=True)
 
-    if env == "prod":
+    if env == "production":
         output = subprocess.run("npm run-script build_gcp_prod", shell=True, capture_output=True)
     else:
         output = subprocess.run("npm run-script build_gcp_staging", shell=True, capture_output=True)
@@ -38,8 +39,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "env",
-        choices=["prod", "staging"],
-        help="Allowed values: prod, staging.",
+        choices=["production", "staging"],
+        help="Allowed values: production, staging.",
     )
     parser.add_argument(
         "part",
@@ -50,7 +51,7 @@ def parse_arguments():
 
 
 def read_deployment_config(env):
-    with open(SCRIPT_DIR / f"{env}" / f"config.json") as f:
+    with open(SCRIPT_DIR / f"{env}" / CONFIG_JSON) as f:
         return json.loads(f.read())
 
 
@@ -93,21 +94,21 @@ def deploy_to_cloud_run(deploy_config):
 if __name__ == "__main__":
     ARGS = parse_arguments()
 
-    if ARGS.env == "prod":
-        print("Are you sure you want to deploy to prod?")
+    if ARGS.env == "production":
+        print("Are you sure you want to deploy to production?")
         x = input()
         if x != "yes":
             sys.exit()
 
     DEPLOY_CONFIG = read_deployment_config(ARGS.env)
 
+    if ARGS.part in ["api", "all"]:
+        os.chdir(WEB_DIR)
+        docker_build_and_push(DEPLOY_CONFIG)
+        deploy_to_cloud_run(DEPLOY_CONFIG)
+
     if ARGS.part in ["frontend", "all"]:
         os.chdir(FRONTEND_DIR)
         build_new_static(ARGS.env)
         os.chdir(WEB_DIR)
         deploy_static(ARGS.env)
-
-    if ARGS.part in ["api", "all"]:
-        os.chdir(WEB_DIR)
-        docker_build_and_push(DEPLOY_CONFIG)
-        deploy_to_cloud_run(DEPLOY_CONFIG)
