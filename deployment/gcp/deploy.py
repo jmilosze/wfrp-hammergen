@@ -61,7 +61,7 @@ def run_and_output(command):
     print(output.stderr.decode())
 
 
-def docker_build_and_push(deploy_config):
+def docker_build_and_push(env, deploy_config):
     image_name = deploy_config["image_name"]
     ar_registry = deploy_config["ar_registry"]
     ar_prefix = deploy_config["project"] + "/" + deploy_config["ar_repository"]
@@ -70,11 +70,11 @@ def docker_build_and_push(deploy_config):
         del os.environ["PYCHARM_HOSTED"]
 
     run_and_output(f"gcloud auth configure-docker {ar_registry} --quiet")
-    run_and_output(f"docker build -f Dockerfile -t {ar_registry}/{ar_prefix}/{image_name} .")
-    run_and_output(f"docker push {ar_registry}/{ar_prefix}/{image_name}")
+    run_and_output(f"docker build -f Dockerfile -t {ar_registry}/{ar_prefix}/{image_name}:{env} .")
+    run_and_output(f"docker push {ar_registry}/{ar_prefix}/{image_name}:{env}")
 
 
-def deploy_to_cloud_run(deploy_config):
+def deploy_to_cloud_run(env, deploy_config):
     service_name = deploy_config["service_name"]
     region = deploy_config["region"]
     project = deploy_config["project"]
@@ -85,7 +85,7 @@ def deploy_to_cloud_run(deploy_config):
 
     env_vars = ",".join([f"{k}=\"{v}\"" for k, v in deploy_config["env_variables"].items()])
 
-    command = f"gcloud run deploy {service_name} --region={region} --project={project} --image={image} " \
+    command = f"gcloud run deploy {service_name} --region={region} --project={project} --image={image}:{env} " \
               f"--allow-unauthenticated --concurrency={concurrency} --set-env-vars={env_vars}"
 
     run_and_output(command)
@@ -104,8 +104,8 @@ if __name__ == "__main__":
 
     if ARGS.part in ["api", "all"]:
         os.chdir(WEB_DIR)
-        docker_build_and_push(DEPLOY_CONFIG)
-        deploy_to_cloud_run(DEPLOY_CONFIG)
+        docker_build_and_push(ARGS.env, DEPLOY_CONFIG)
+        deploy_to_cloud_run(ARGS.env, DEPLOY_CONFIG)
 
     if ARGS.part in ["frontend", "all"]:
         os.chdir(FRONTEND_DIR)
