@@ -554,10 +554,6 @@ import { authRequest } from "../../services/auth";
 import { saveAs } from "file-saver";
 import { CharacterApi, generateEmptyCharacterForDisplay, characterForDisplayToCsv } from "../../services/wh/character";
 
-function csvStr(stringValue) {
-  return '"' + stringValue.replace(/"/g, '""') + '"';
-}
-
 export default {
   name: "ViewCharacter",
   props: {

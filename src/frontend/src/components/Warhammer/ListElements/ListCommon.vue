@@ -22,6 +22,7 @@ export default {
       try {
         const rawElementList = await logoutIfUnauthorized(this.elementApi.listElements)();
         this.listOfElements = rawElementList.map((x) => this.formatList(x));
+        this.loaded = true;
       } catch (error) {
         this.errors.push("Server Error.");
         throw error;

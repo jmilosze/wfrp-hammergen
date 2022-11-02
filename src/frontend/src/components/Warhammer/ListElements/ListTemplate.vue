@@ -125,7 +125,9 @@ export default {
       return this.$store.state.auth.isLoggedIn;
     },
     totalRows: function () {
-      return this.listOfElements.length < this.filteredItemsLength ? this.listOfElements.length : this.filteredItemsLength;
+      return this.listOfElements.length < this.filteredItemsLength
+        ? this.listOfElements.length
+        : this.filteredItemsLength;
     },
   },
   methods: {

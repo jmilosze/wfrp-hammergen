@@ -4,11 +4,18 @@
       <h1>Available Items</h1>
 
       <ElementList
+        v-if="loaded"
         :displayFields="displayFields"
         :listOfElements="listOfElements"
         elementType="item"
         @elementDeleted="deleteElement"
       />
+
+      <div v-else class="text-center">
+        <div class="spinner-border" style="width: 3rem; height: 3rem" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
 
       <div v-if="errors.length" class="text-danger field-validation-error mt-3">
         <ul>
@@ -45,6 +52,7 @@ export default {
       ],
       listOfElements: [],
       errors: [],
+      loaded: false,
     };
   },
   created() {

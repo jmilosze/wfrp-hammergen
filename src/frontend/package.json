@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
     "build_azure_prod": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --mode azure_prod",
     "build_azure_staging": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --mode azure_staging",
     "build_gcp_prod": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --mode gcp_prod",

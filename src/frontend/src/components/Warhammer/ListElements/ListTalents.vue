@@ -4,11 +4,18 @@
       <h1>Available Talents</h1>
 
       <ElementList
+        v-if="loaded"
         :displayFields="displayFields"
         :listOfElements="listOfElements"
         elementType="talent"
         @elementDeleted="deleteElement"
       />
+
+      <div v-else class="text-center">
+        <div class="spinner-border" style="width: 3rem; height: 3rem" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
 
       <div v-if="errors.length" class="text-danger field-validation-error mt-3">
         <ul>
@@ -20,7 +27,7 @@
 </template>
 
 <script>
-import {TalentApi, talentAttributes} from "../../../services/wh/talent";
+import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
 import { addSpaces } from "../../../utils/stringUtils";
 import ElementList from "./ListTemplate";
@@ -61,6 +68,7 @@ export default {
       ],
       listOfElements: [],
       errors: [],
+      loaded: false,
     };
   },
   created() {
