@@ -1,23 +1,22 @@
 import datetime
 import json
+import logging
 import os
 import urllib.parse
 from copy import deepcopy
 from datetime import timedelta
-import logging
 
+import requests
+from bson import ObjectId
 from flask_bcrypt import generate_password_hash, check_password_hash
-from pymongo.errors import DuplicateKeyError
 from flask_jwt_extended import create_access_token, create_refresh_token, decode_token, get_jwt_identity, get_jwt
 from jwt.exceptions import ExpiredSignatureError
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-from bson import ObjectId
-import requests
+from pymongo.errors import DuplicateKeyError
 
 from ..user.claims import UserClaims
 
-SENDGRID_API_KEY = os.environ["SENDGRID_API_KEY_2"]
+MAILJET_API_KEY = os.environ["MAILJET_API_KEY"]
+MAILJET_API_SECRET = os.environ["MAILJET_API_SECRET"]
 RECAPTCHA_SECRET = os.environ["RECAPTCHA_SECRET"]
 FRONTEND_URL = os.getenv("FRONTEND_URL", "")
 
@@ -26,6 +25,8 @@ RESET_PASSWORD_PAGE = "/resetPassword/{reset_token}"
 RESET_PASSWORD_FROM_EMAIL = "admin@hammergen.net"
 RESET_PASSWORD_SUBJECT = "Reset password"
 RESET_PASSWORD_CONTENT = "Please reset your password by <a href={url}>clicking here</a>"
+MAILJET_API_URL = "https://api.mailjet.com/v3.1/send"
+MAILJET_API_TIMEOUT_SECONDS = 60
 
 LOG = logging.getLogger(__name__)
 
@@ -214,19 +215,32 @@ def send_reset_password(send_reset_data, domain_name, request_ip, user_collectio
 def _send_reset_password_email(email, reset_token, domain_name):
     url = urllib.parse.urljoin(domain_name, RESET_PASSWORD_PAGE.format(reset_token=reset_token))
 
-    message = Mail(
-        from_email=RESET_PASSWORD_FROM_EMAIL,
-        to_emails=email,
-        subject=RESET_PASSWORD_SUBJECT,
-        html_content=RESET_PASSWORD_CONTENT.format(url=url),
-    )
+    data = {
+        'Messages': [
+            {
+                "From": {
+                    "Email": RESET_PASSWORD_FROM_EMAIL,
+                    "Name": "Hammergen admin"
+                },
+                "To": [{"Email": email}],
+                "Subject": RESET_PASSWORD_SUBJECT,
+                "HTMLPart": RESET_PASSWORD_CONTENT.format(url=url)
+            }
+        ]
+    }
 
-    sg = SendGridAPIClient(SENDGRID_API_KEY)
-
+    headers = {"Content-type": "application/json"}
     try:
-        sg.send(message)
+        result = requests.post(MAILJET_API_URL, data=json.dumps(data), headers=headers,
+                               auth=(MAILJET_API_KEY, MAILJET_API_SECRET),
+                               timeout=MAILJET_API_TIMEOUT_SECONDS, verify=True, stream=False)
     except Exception as exp:
         LOG.exception(str(exp))
+        raise SendEmailError
+
+    if result.status_code != requests.codes.ok:
+        LOG.exception("Invalid response from Mailjet server, response code %s, response body %s", result.status_code,
+                      result.json())
         raise SendEmailError
 
 
@@ -276,3 +290,7 @@ def username_to_id(user_id, username_list, user_collection):
 def user_exists(username, user_collection):
     element = user_collection.find_one({"username": username})
     return {"exists": True if element else False}
+
+
+if __name__ == "__main__":
+    _send_reset_password_email("jacek.miloszewski@gmail.com", "zxc", "asd")

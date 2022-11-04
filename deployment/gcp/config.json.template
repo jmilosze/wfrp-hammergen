@@ -11,7 +11,8 @@
     "REFRESH_TOKEN_EXPIRES_DAYS": "1",
     "FLASK_SECRET_KEY": "",
     "MONGO_URI": "",
-    "SENDGRID_API_KEY_2": "",
+    "MAILJET_API_KEY": "",
+    "MAILJET_API_SECRET": "",
     "RECAPTCHA_SECRET": ""
   }
 }
