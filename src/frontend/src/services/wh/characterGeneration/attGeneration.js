@@ -9,6 +9,8 @@ export function speciesAtts(species) {
     return JSON.parse(JSON.stringify(racialAttributes.halfling));
   } else if (species === 2) {
     return JSON.parse(JSON.stringify(racialAttributes.dwarf));
+  } else if (species === 5) {
+    return JSON.parse(JSON.stringify(racialAttributes.gnome));
   } else if (species === 3 || species === 4) {
     return JSON.parse(JSON.stringify(racialAttributes.elf));
   } else {

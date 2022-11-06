@@ -563,6 +563,45 @@ const WOOD_ELF_SURNAMES = [
   "Youngleaf",
 ];
 
+const GNOME_MALE_FORENAMES = [
+  "Breward",
+  "Daveth",
+  "Gwinear",
+  "Mawnan",
+  "Meriasek",
+  "Nivet",
+  "Talan",
+  "Ythel",
+  "Glimbrin",
+];
+const GNOME_FEMALE_FORENAMES = [
+  "Elowen",
+  "Ia",
+  "Kerra",
+  "Ladoca",
+  "Metheven",
+  "Morwen",
+  "Steren",
+  "Tryfena",
+  "Aren",
+  "Berowen",
+];
+const GNOME_NICKNAMES = [
+  "Mudfoot",
+  "Glittereye",
+  "Soleheart",
+  "Patchcloak",
+  "Fancyvest",
+  "Largehat",
+  "Blackboot",
+  "Goldhand",
+  "Smallshadow",
+  "Longnose",
+];
+const GNOME_CLANS = ["Annearil", "Frayne", "Hawken", "Landweth", "Peddlar", "Scantleburn", "Thorne", "Trethewey"];
+
+const GNOME_NICKNAME_PROB = 0.5;
+
 const ELF_ELEMENT_1 = ["Aes", "Ath", "Dor", "Far", "Gal", "Im", "Lin", "Mal", "Mor", "Ullia"];
 const ElF_ELEMENT_2 = ["a", "ath", "dia", "en", "for", "lor", "mar", "ol", "sor", "than"];
 const HIGH_ELF_ENDINGS = ["andril", "anel", "ellion", "fin", "il", "irian", "mor", "nil", "ric", "wing"];
@@ -607,6 +646,18 @@ function generateHumanHalflingName(species, gender) {
   return forename + " " + surname;
 }
 
+function generateGnomeName(gender) {
+  let forenameTables = [GNOME_MALE_FORENAMES, GNOME_FEMALE_FORENAMES];
+  let forename = selectRandom(forenameTables[gender]);
+  let surname = selectRandom(GNOME_CLANS);
+
+  if (Math.random() < GNOME_NICKNAME_PROB) {
+    return forename + " (" + selectRandom(GNOME_NICKNAMES) + ") " + surname;
+  } else {
+    return forename + " " + surname;
+  }
+}
+
 export default function generateName(species, gender) {
   let selected_gender = gender;
   if (gender === 2) {
@@ -617,6 +668,8 @@ export default function generateName(species, gender) {
     return generateHumanHalflingName(species, selected_gender);
   } else if (species === 2) {
     return generateDwarfName(selected_gender);
+  } else if (species === 5) {
+    return generateGnomeName(selected_gender);
   } else {
     return generateElfName(species);
   }

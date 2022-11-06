@@ -7,7 +7,7 @@ function getWoundsFormula(speciesValue, T, WP, S) {
   const WPB = Math.floor(WP / 10);
   const SB = Math.floor(S / 10);
 
-  if (speciesValue === 1) {
+  if (speciesValue === 1 || speciesValue === 5) {
     return 2 * TB + WPB;
   } else {
     return SB + 2 * TB + WPB;
@@ -15,7 +15,7 @@ function getWoundsFormula(speciesValue, T, WP, S) {
 }
 
 function getMovementFormula(speciesValue) {
-  if (speciesValue === 1 || speciesValue === 2) {
+  if (speciesValue === 1 || speciesValue === 2 || speciesValue === 5) {
     return 3;
   } else if (speciesValue === 0) {
     return 4;
