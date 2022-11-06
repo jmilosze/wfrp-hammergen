@@ -65,10 +65,10 @@ export function generateSpeciesTalents(speciesTalents, resolvedTalentGroups, ran
 }
 
 function getMaxRank(talent, atts) {
-  if (talent.max_rank_att > 0) {
-    return talent.max_rank + Math.floor(atts[attributes[talent.max_rank_att]] / 10);
+  if (talent.maxRankAtt > 0) {
+    return talent.maxRank + Math.floor(atts[attributes[talent.maxRankAtt]] / 10);
   } else {
-    return talent.max_rank;
+    return talent.maxRank;
   }
 }
 
