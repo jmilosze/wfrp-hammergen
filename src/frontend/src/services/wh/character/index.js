@@ -29,6 +29,7 @@ const racialAttributes = {
   halfling: { WS: 10, BS: 30, S: 10, T: 20, I: 20, Ag: 20, Dex: 30, Int: 20, WP: 30, Fel: 30 },
   dwarf: { WS: 30, BS: 20, S: 20, T: 30, I: 20, Ag: 10, Dex: 30, Int: 20, WP: 40, Fel: 10 },
   elf: { WS: 30, BS: 30, S: 20, T: 20, I: 40, Ag: 30, Dex: 30, Int: 30, WP: 30, Fel: 20 },
+  gnome: { WS: 20, BS: 10, S: 10, T: 15, I: 30, Ag: 30, Dex: 30, Int: 30, WP: 40, Fel: 15 },
 };
 
 const attributes = {
@@ -50,6 +51,7 @@ const species = {
   2: "Dwarf",
   3: "High Elf",
   4: "Wood Elf",
+  5: "Gnome",
 };
 
 function speciesAtts(species) {
@@ -61,6 +63,8 @@ function speciesAtts(species) {
     return JSON.parse(JSON.stringify(racialAttributes.dwarf));
   } else if (species === 3 || species === 4) {
     return JSON.parse(JSON.stringify(racialAttributes.elf));
+  } else if (species === 5) {
+    return JSON.parse(JSON.stringify(racialAttributes.gnome));
   } else {
     return JSON.parse(JSON.stringify(racialAttributes.none));
   }
@@ -388,7 +392,6 @@ const compareCharacter = (character1, character2) => {
       return false;
     }
   }
-
   return true;
 };
 

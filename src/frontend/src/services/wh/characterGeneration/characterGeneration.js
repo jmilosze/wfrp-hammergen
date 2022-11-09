@@ -6,9 +6,10 @@ import { generateSkills } from "./skillGeneration";
 import { genTalentsAndAdvances } from "./talentGeneration";
 
 const SPECIES_ROLLS = [
-  [0, 1, 91],
-  [1, 91, 94],
-  [2, 94, 99],
+  [0, 1, 90],
+  [1, 90, 94],
+  [2, 94, 98],
+  [5, 98, 99],
   [3, 99, 100],
   [4, 100, 101],
 ];
@@ -33,6 +34,10 @@ function generateFateAndResilience(species) {
   } else if (species === 2) {
     fate = 0;
     resilience = 2;
+    extra = 2;
+  } else if (species === 5) {
+    fate = 2;
+    resilience = 0;
     extra = 2;
   } else {
     fate = 0;
