@@ -7,11 +7,6 @@
         <hr />
       </div>
 
-      <div class="alert alert-danger" role="alert">
-        Hammergen will be undergoing maintenance on 11/11/2022. During that time the site
-        will be unavailable.
-      </div>
-
       <div class="text-sm-left">
         <div class="h3">What is Hammergen?</div>
         <p>
