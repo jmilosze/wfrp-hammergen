@@ -1,18 +1,25 @@
 import enum
 import os
+import sys
 
 from pymongo import MongoClient
 
 MONGO_URI = os.environ["MONGO_URI"]
 DB_NAME = os.environ["DB_NAME"]
 
+
+print(f"Are you sure you want to run this migration in {MONGO_URI}?")
+x = input()
+if x != "yes":
+    sys.exit()
+
 db = MongoClient(MONGO_URI, 27017).get_database(name=DB_NAME)
 collection = db.other
 collection_talent = db.talent
 collection_skill = db.skill
 
-talents = list(collection_talent.find())
-skills = list(collection_skill.find())
+talents = list(collection_talent.find({"owner_id": "admin"}))
+skills = list(collection_skill.find({"owner_id": "admin"}))
 
 
 class Species(enum.IntEnum):
@@ -69,9 +76,7 @@ random_talents = [
 random_talents_ids = []
 
 for r_talent in random_talents:
-    random_talents_ids.append(
-        [find_id(r_talent[0], talents), r_talent[1], r_talent[2] + 1]
-    )
+    random_talents_ids.append([find_id(r_talent[0], talents), r_talent[1], r_talent[2] + 1])
 
 species_talents = {
     str(Species.HUMAN.value): ["Doomed", ["Savvy", "Suave"]],
@@ -219,12 +224,6 @@ for species, s_skills in species_skills.items():
     for s_skill in s_skills:
         species_skills_ids[species].append(find_id(s_skill, skills))
 
-collection.update_one(
-    {"name": "generation_props"}, {"$set": {"random_talents": random_talents_ids}}
-)
-collection.update_one(
-    {"name": "generation_props"}, {"$set": {"species_talents": species_talents_ids}}
-)
-collection.update_one(
-    {"name": "generation_props"}, {"$set": {"species_skills": species_skills_ids}}
-)
+collection.update_one({"name": "generation_props"}, {"$set": {"random_talents": random_talents_ids}})
+collection.update_one({"name": "generation_props"}, {"$set": {"species_talents": species_talents_ids}})
+collection.update_one({"name": "generation_props"}, {"$set": {"species_skills": species_skills_ids}})
