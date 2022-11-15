@@ -8,6 +8,20 @@
       </div>
 
       <div class="text-sm-left">
+        <div class="alert alert-danger" role="alert">
+          <div class="h3">Update!</div>
+          <p>
+            We have finally added new resources to Hammergen! Hammergen now includes Gnomes from
+            <b>Rough Nights & Hard Days</b> and new careers and items from <b>Archives of the Empire: Volume I</b>.
+            We will be adding more resources soon. Full list of resources can be found
+            <b-link href="#resources">below</b-link> on this page.
+          </p>
+          <p>
+            To keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
+            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link> :)
+          </p>
+        </div>
+
         <div class="h3">What is Hammergen?</div>
         <p>
           Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th Edition character generator. It lets you create,
@@ -40,6 +54,13 @@
         <p>
           You can see example characters (even without registering) by going to Characters in the top navigation bar.
         </p>
+        <div class="h3" id="resources">Included resources</div>
+        <ul>
+          <li><b>Warhammer Fantasy Roleplay Rulebook</b></li>
+          <li><b>Rough Nights & Hard Days</b>: Gnomes</li>
+          <li><b>Archives of the Empire: Volume I</b>: 4 new careers, talents, and items</li>
+        </ul>
+
         <div class="h3">How do I use it?</div>
         <p>
           To start making characters you need to create an account using email address as login name. We do not verify

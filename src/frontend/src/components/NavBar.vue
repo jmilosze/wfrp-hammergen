@@ -17,7 +17,7 @@
           </b-nav-item-dropdown>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item href="https://ko-fi.com/Q5Q12E0KB}" target="_blank">Support Hammergen</b-nav-item>
+          <b-nav-item href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Support Hammergen</b-nav-item>
           <b-nav-item v-if="!isLoggedIn" :to="{ name: 'register' }">Register</b-nav-item>
           <b-nav-item v-if="!isLoggedIn" :to="{ name: 'login' }">Login</b-nav-item>
           <b-nav-item v-if="isLoggedIn" :to="{ name: 'manage' }">Manage Account</b-nav-item>
