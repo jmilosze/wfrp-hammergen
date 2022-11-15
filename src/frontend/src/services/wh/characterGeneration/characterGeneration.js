@@ -115,7 +115,7 @@ export default function generateCharacter(
 
   if (genCareer === -1) {
     let careerTable = generationProps.career_gen_table[species];
-    let careerId = rollInTable(100, 1, careerTable);
+    let careerId = rollInTable(1000, 1, careerTable);
     career = listOfCareers.find((x) => x.id === careerId);
     exp += 50;
   } else {
