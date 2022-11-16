@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import TableCommon from "./TableCommon";
+import TableCommon from "./TableCommon.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { SkillApi, skillAttributeTypesGroup, skillTypesGroup } from "../../../services/wh/skill";
 import { authRequest } from "../../../services/auth";

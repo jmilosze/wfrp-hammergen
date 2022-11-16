@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import TableCommon from "./TableCommon";
+import TableCommon from "./TableCommon.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { SpellApi } from "../../../services/wh/spell";
 import { authRequest } from "../../../services/auth";

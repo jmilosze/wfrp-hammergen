@@ -4,13 +4,13 @@
       <NavBar />
     </header>
     <div class="content">
-      <router-view :key="$route.fullPath"> </router-view>
+      <router-view :key="$route.fullPath"></router-view>
     </div>
     <footer class="border-top footer">
       <b-container>
         <div class="text-center mt-2">
           <p>
-            &copy; 2019 - 2021 Hammergen - Contact:
+            &copy; 2019 - 2022 Hammergen - Contact:
             <a href="mailto:admin@hammergen.net">admin@hammergen.net</a>
           </p>
         </div>
@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import NavBar from "./components/NavBar";
-import { authRequest } from "@/services/auth";
-import { logoutIfUnauthorized } from "@/utils/navigation";
+import NavBar from "./components/NavBar.vue";
+import { authRequest } from "./services/auth";
+import { logoutIfUnauthorized } from "./utils/navigation";
 
 export default {
   name: "app",

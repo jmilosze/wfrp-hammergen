@@ -400,10 +400,10 @@
 </template>
 
 <script>
-import CreateElement from "../CreateElement";
-import CreateSubmit from "../CreateSubmit";
-import CareerSelectTable from "./CareerSelectTable";
-import PublicElementBox from "../PublicElementBox";
+import CreateElement from "../CreateElement.vue";
+import CreateSubmit from "../CreateSubmit.vue";
+import CareerSelectTable from "./CareerSelectTable.vue";
+import PublicElementBox from "../PublicElementBox.vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { SkillApi } from "../../../services/wh/skill";
 import { TalentApi } from "../../../services/wh/talent";

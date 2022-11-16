@@ -27,12 +27,12 @@
 </template>
 
 <script>
+import ElementList from "./ListTemplate.vue";
+import ListCommon from "./ListCommon.vue";
 import { CareerApi, careerClasses } from "../../../services/wh/career";
 import { species } from "../../../services/wh/character";
 import { authRequest } from "../../../services/auth";
 import { addSpaces } from "../../../utils/stringUtils";
-import ElementList from "./ListTemplate";
-import ListCommon from "./ListCommon";
 
 const MAX_CHARS = 15;
 

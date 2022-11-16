@@ -979,17 +979,16 @@
 </template>
 
 <script>
-import CreateElement from "../CreateElement";
-import CreateSubmit from "../CreateSubmit";
-import CharacterCareerTable from "./CharacterCareerTable";
-import CharacterSkillsTable from "./CharacterSkillsTable";
-import CharacterTalentsTable from "./CharacterTalentsTable";
-import CharacterItemsTable from "./CharacterItemsTable";
-import CharacterSpellsTable from "./CharacterSpellsTable";
-import CharacterMutationsTable from "./CharacterMutationsTable";
-import PublicElementBox from "../PublicElementBox";
+import CreateElement from "../CreateElement.vue";
+import CreateSubmit from "../CreateSubmit.vue";
+import CharacterCareerTable from "./CharacterCareerTable.vue";
+import CharacterSkillsTable from "./CharacterSkillsTable.vue";
+import CharacterTalentsTable from "./CharacterTalentsTable.vue";
+import CharacterItemsTable from "./CharacterItemsTable.vue";
+import CharacterSpellsTable from "./CharacterSpellsTable.vue";
+import CharacterMutationsTable from "./CharacterMutationsTable.vue";
+import PublicElementBox from "../PublicElementBox.vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
-
 import generateName from "../../../services/wh/characterGeneration/nameGeneration";
 import generateDescription from "../../../services/wh/characterGeneration/descriptionGeneration";
 import generateCharacter from "../../../services/wh/characterGeneration/characterGeneration";
@@ -1086,12 +1085,12 @@ export default {
       );
     },
     classItems() {
-      if (this.listOfCareers.length < 1 || !this.element.career.hasOwnProperty("id")) {
+      if (this.listOfCareers.length < 1 || !Object.hasOwn(this.element.career, "id")) {
         return {};
       } else {
         let selectedCareer = this.listOfCareers.find((x) => x.id === this.element.career.id);
 
-        if (selectedCareer && this.generationProps && this.generationProps.hasOwnProperty("class_items")) {
+        if (selectedCareer && this.generationProps && Object.hasOwn(this.generationProps, "class_items")) {
           return this.generationProps.class_items[selectedCareer.class];
         } else {
           return {};
@@ -1293,7 +1292,7 @@ export default {
       }
     },
     "element.career"(newVal, oldVal) {
-      if (!oldVal.hasOwnProperty("id")) {
+      if (!Object.hasOwn(oldVal, "id")) {
         this.elementOriginal.career = { id: newVal.id, number: newVal.number };
       }
     },

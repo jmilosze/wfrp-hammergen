@@ -57,23 +57,23 @@
 
         <div class="col-md-9">
           <div v-if="selectedTab.profile">
-            <Profile />
+            <UserProfile />
           </div>
 
           <div v-if="selectedTab.username">
-            <Username />
+            <UserName />
           </div>
 
           <div v-if="selectedTab.password">
-            <Password />
+            <UserPassword />
           </div>
 
           <div v-if="selectedTab.delete">
-            <Delete />
+            <UserDelete />
           </div>
 
           <div v-if="selectedTab.shared">
-            <Shared />
+            <UserShared />
           </div>
         </div>
       </div>
@@ -82,15 +82,15 @@
 </template>
 
 <script>
-import Profile from "./Manage/Profile";
-import Username from "./Manage/Username";
-import Password from "./Manage/Password";
-import Delete from "./Manage/Delete";
-import Shared from "./Manage/Shared";
+import UserProfile from "./Manage/Profile.vue";
+import UserName from "./Manage/Username.vue";
+import UserPassword from "./Manage/Password.vue";
+import UserDelete from "./Manage/Delete.vue";
+import UserShared from "./Manage/Shared.vue";
 
 export default {
-  name: "Manage",
-  components: { Delete, Profile, Username, Password, Shared },
+  name: "UserManage",
+  components: { UserDelete, UserProfile, UserName, UserPassword, UserShared },
   data() {
     return {
       selectedTab: {

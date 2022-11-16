@@ -47,7 +47,7 @@ import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 
 export default {
-  name: "Password",
+  name: "UserPassword",
   data() {
     return {
       errors: [],

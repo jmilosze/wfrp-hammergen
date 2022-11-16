@@ -52,8 +52,8 @@ const mutationTypes = {
 const compareMutation = (mutation1, mutation2) => {
   for (let [key, value] of Object.entries(mutation1)) {
     if (mutation2[key] !== value) {
-        return false;
-      }
+      return false;
+    }
   }
   return true;
 };

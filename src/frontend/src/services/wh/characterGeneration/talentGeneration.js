@@ -13,7 +13,7 @@ export function resolveTalentGroups(listOfTalents) {
   for (let talent of listOfTalents) {
     if (talent.group.length > 0) {
       for (let group of talent.group) {
-        if (resolvedGroups.hasOwnProperty(group)) {
+        if (Object.hasOwn(resolvedGroups, group)) {
           resolvedGroups[group].push(talent.id);
         } else {
           resolvedGroups[group] = [talent.id];
@@ -50,7 +50,7 @@ export function generateSpeciesTalents(speciesTalents, resolvedTalentGroups, ran
     let validSelection = false;
     while (validSelection === false) {
       let newSelection = rollInTable(100, 1, randomTalents);
-      if (resolvedTalentGroups.hasOwnProperty(newSelection)) {
+      if (Object.hasOwn(resolvedTalentGroups, newSelection)) {
         newSelection = selectRandom(resolvedTalentGroups[newSelection]);
       }
 
@@ -91,7 +91,7 @@ function generateLevelTalent(previousTalents, talentList, talentGroups, talentsR
   let cost = currentCost;
 
   for (let talent of talentList) {
-    if (talentGroupsCopy.hasOwnProperty(talent)) {
+    if (Object.hasOwn(talentGroupsCopy, talent)) {
       if (talentGroupsCopy[talent].length > 0) {
         let newTalent = selectRandom(talentGroupsCopy[talent]);
         let indexToRemove = talentGroupsCopy[talent].indexOf(newTalent);
@@ -121,7 +121,7 @@ function generateLevelTalent(previousTalents, talentList, talentGroups, talentsR
       break;
     }
     let newSelected = selectRandom(availTalents);
-    if (selectedTalents.hasOwnProperty(newSelected)) {
+    if (Object.hasOwn(selectedTalents, newSelected)) {
       selectedTalents[newSelected] += 1;
     } else {
       selectedTalents[newSelected] = 1;

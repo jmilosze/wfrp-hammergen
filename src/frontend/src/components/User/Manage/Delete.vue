@@ -35,7 +35,7 @@ import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 
 export default {
-  name: "Delete",
+  name: "UserDelete",
   data() {
     return {
       errors: [],

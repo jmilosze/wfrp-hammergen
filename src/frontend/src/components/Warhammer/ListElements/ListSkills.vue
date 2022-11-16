@@ -27,11 +27,11 @@
 </template>
 
 <script>
+import ElementList from "./ListTemplate.vue";
+import ListCommon from "./ListCommon.vue";
 import { SkillApi, skillAttributeTypesGroup, skillTypesGroup } from "../../../services/wh/skill";
 import { authRequest } from "../../../services/auth";
 import { addSpaces } from "../../../utils/stringUtils";
-import ElementList from "./ListTemplate";
-import ListCommon from "./ListCommon";
 
 const MAX_CHARS = 15;
 

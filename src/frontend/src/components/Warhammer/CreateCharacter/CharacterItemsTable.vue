@@ -9,7 +9,7 @@
           :responsive="true"
           :sort-by="displayEquippedFields[0].key"
         >
-          <template v-slot:thead-top="data">
+          <template #thead-top>
             <b-tr>
               <b-th colspan="2">Equipped</b-th>
             </b-tr>
@@ -24,7 +24,7 @@
           :responsive="true"
           :sort-by="displayCarriedFields[0].key"
         >
-          <template v-slot:thead-top="data">
+          <template #thead-top>
             <b-tr>
               <b-th colspan="2">Carried</b-th>
             </b-tr>
@@ -39,7 +39,7 @@
           :responsive="true"
           :sort-by="displayStoredFields[0].key"
         >
-          <template v-slot:thead-top="data">
+          <template #thead-top>
             <b-tr>
               <b-th colspan="2">Owned and Stored</b-th>
             </b-tr>
@@ -47,13 +47,7 @@
         </b-table>
       </b-col>
     </b-row>
-    <b-button
-      size="sm"
-      class="mb-2 mr-2"
-      @click="showEdit('edit-items')"
-      variant="primary"
-      :disabled="disabled"
-    >
+    <b-button size="sm" class="mb-2 mr-2" @click="showEdit('edit-items')" variant="primary" :disabled="disabled">
       Add/Modify
     </b-button>
 
@@ -67,41 +61,15 @@
       Add Class Items
     </b-button>
 
-    <b-button
-      size="sm"
-      class="mb-2 mr-2"
-      @click="clearAll"
-      variant="danger"
-      :disabled="disabled"
-    >
-      Clear All
-    </b-button>
+    <b-button size="sm" class="mb-2 mr-2" @click="clearAll" variant="danger" :disabled="disabled"> Clear All </b-button>
 
-    <b-modal
-      id="edit-items"
-      title="Add/Remove Items"
-      ok-only
-      ok-title="Close"
-      size="lg"
-      scrollable
-    >
+    <b-modal id="edit-items" title="Add/Remove Items" ok-only ok-title="Close" size="lg" scrollable>
       <b-form-group>
-        <b-button
-          variant="secondary"
-          size="sm"
-          class="mr-2 mb-1"
-          @click="$emit('createNew')"
-          :disabled="!canSave"
-        >
+        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="$emit('createNew')" :disabled="!canSave">
           Create New
         </b-button>
 
-        <b-button
-          variant="secondary"
-          size="sm"
-          class="mr-2 mb-1"
-          @click="loadData"
-        >
+        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData">
           <span v-if="editLoading" class="spinner-border spinner-border-sm" />
           Reload List
         </b-button>
@@ -112,12 +80,7 @@
       </b-form-group>
       <b-form-group>
         <b-input-group>
-          <b-form-input
-            v-model="editFilter"
-            type="search"
-            id="filterInput"
-            placeholder="Type to Search"
-          >
+          <b-form-input v-model="editFilter" type="search" id="filterInput" placeholder="Type to Search">
           </b-form-input>
         </b-input-group>
       </b-form-group>
@@ -144,11 +107,9 @@
           </b-form-invalid-feedback>
         </template>
 
-        <template v-slot:cell(actions)="row">
+        <template #cell(actions)="row">
           <b-button size="sm" @click="row.toggleDetails">
-            <div class="text-nowrap">
-              {{ row.detailsShowing ? "Hide" : "Show" }} Details
-            </div>
+            <div class="text-nowrap">{{ row.detailsShowing ? "Hide" : "Show" }} Details</div>
           </b-button>
         </template>
 
@@ -201,12 +162,7 @@
 
             <dt class="col-sm-4">Weapon Damage</dt>
             <dd class="col-sm-8">
-              {{
-                formatConstPlusSB(
-                  row.item.stats.dmg,
-                  row.item.stats.dmg_sb_mult
-                )
-              }}
+              {{ formatConstPlusSB(row.item.stats.dmg, row.item.stats.dmg_sb_mult) }}
             </dd>
 
             <dt class="col-sm-4">Weapon Reach</dt>
@@ -223,22 +179,12 @@
 
             <dt class="col-sm-4">Weapon Damage</dt>
             <dd class="col-sm-8">
-              {{
-                formatConstPlusSB(
-                  row.item.stats.dmg,
-                  row.item.stats.dmg_sb_mult
-                )
-              }}
+              {{ formatConstPlusSB(row.item.stats.dmg, row.item.stats.dmg_sb_mult) }}
             </dd>
 
             <dt class="col-sm-4">Weapon Range</dt>
             <dd class="col-sm-8">
-              {{
-                formatConstPlusSB(
-                  row.item.stats.rng,
-                  row.item.stats.rng_sb_mult
-                )
-              }}
+              {{ formatConstPlusSB(row.item.stats.rng, row.item.stats.rng_sb_mult) }}
             </dd>
           </dl>
 
@@ -255,9 +201,7 @@
 
             <dt class="col-sm-4">Range Modification</dt>
             <dd class="col-sm-8">
-              {{
-                formatAmmunitionMod(row.item.stats.rng, row.item.stats.rng_mult)
-              }}
+              {{ formatAmmunitionMod(row.item.stats.rng, row.item.stats.rng_mult) }}
             </dd>
           </dl>
 
@@ -285,29 +229,26 @@
         </template>
       </b-table>
 
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="totalRows"
-        :per-page="perPage"
-      ></b-pagination>
+      <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage"></b-pagination>
       <p>{{ resultRange }}</p>
     </b-modal>
   </div>
 </template>
 
 <script>
-import TableCommon from "./TableCommon";
+import TableCommon from "./TableCommon.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { generateClassItems } from "../../../services/wh/characterGeneration/characterGeneration";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 import {
   ammunitionGroups,
-  armorGroups, armorLocations,
+  armorGroups,
+  armorLocations,
   ItemApi,
   meleeGroups,
   meleeReach,
-  rangedGroups
+  rangedGroups,
 } from "../../../services/wh/item";
 
 const MAX_CHARS = 15;
@@ -334,10 +275,10 @@ export default {
     },
   },
   mixins: [TableCommon],
-  data () {
+  data() {
     return {
       itemApi: new ItemApi(authRequest),
-      
+
       editFilter: null,
       listOfItems: [],
       displayCarriedFields: [
@@ -369,22 +310,22 @@ export default {
     this.loadData();
   },
   watch: {
-    listOfItems () {
+    listOfItems() {
       this.totalRows = this.listOfItems.length;
     },
-    itemsEquipped (newVal) {
+    itemsEquipped(newVal) {
       if (this.listOfItems.length < 1) {
         return;
       }
       this.resetItems(newVal, "equipped");
     },
-    itemsCarried (newVal) {
+    itemsCarried(newVal) {
       if (this.listOfItems.length < 1) {
         return;
       }
       this.resetItems(newVal, "carried");
     },
-    itemsStored (newVal) {
+    itemsStored(newVal) {
       if (this.listOfItems.length < 1) {
         return;
       }
@@ -392,49 +333,49 @@ export default {
     },
   },
   computed: {
-    classItemsEmpty () {
+    classItemsEmpty() {
       return !Object.keys(this.classItems).length;
     },
-    displayCarriedItems () {
+    displayCarriedItems() {
       try {
         return this.listOfItems.filter((x) => x.carried !== 0);
       } catch {
         return [];
       }
     },
-    displayStoredItems () {
+    displayStoredItems() {
       try {
         return this.listOfItems.filter((x) => x.stored !== 0);
       } catch {
         return [];
       }
     },
-    displayEquippedItems () {
+    displayEquippedItems() {
       try {
         return this.listOfItems.filter((x) => x.equipped !== 0);
       } catch {
         return [];
       }
     },
-    isValid () {
+    isValid() {
       return this.listOfItems.reduce((x, y) => x && y.state, true);
     },
   },
   methods: {
-    onSort (ctx) {
+    onSort(ctx) {
       this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
     },
-    sortListOfItems (key, sortDesc) {
+    sortListOfItems(key, sortDesc) {
       if (key !== "equipped" && key !== "carried" && key !== "stored") {
         this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
       } else {
-        this.listOfItems.sort((a, b) => a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0);
+        this.listOfItems.sort((a, b) => (a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0));
       }
       if (sortDesc) {
         this.listOfItems.reverse();
       }
     },
-    addClassItems () {
+    addClassItems() {
       let items = generateClassItems(this.classItems);
       for (let itemType of ["equipped", "carried"]) {
         for (let item of items[itemType]) {
@@ -446,7 +387,7 @@ export default {
         }
       }
     },
-    clearAll () {
+    clearAll() {
       this.listOfItems.forEach((x) => {
         for (let itemType of ["equipped", "carried", "stored"]) {
           if (x[itemType] !== 0) {
@@ -456,7 +397,7 @@ export default {
         }
       });
     },
-    resetItems (newItems, itemType) {
+    resetItems(newItems, itemType) {
       this.listOfItems.forEach((x) => {
         x[itemType] = 0;
         x.state = true;
@@ -483,13 +424,13 @@ export default {
       this.$emit("stateChanged", this.isValid);
       this.sortListOfItems("equipped", true);
     },
-    formatMeleeGroup (group) {
+    formatMeleeGroup(group) {
       return meleeGroups[group];
     },
-    formatMeleeReach (reach) {
+    formatMeleeReach(reach) {
       return meleeReach[reach];
     },
-    formatConstPlusSB (constPart, multPart) {
+    formatConstPlusSB(constPart, multPart) {
       const elems = [];
       if (multPart === 1) {
         elems.push("SB");
@@ -502,7 +443,7 @@ export default {
       }
       return elems.join("+");
     },
-    formatAmmunitionMod (const_part, multPart) {
+    formatAmmunitionMod(const_part, multPart) {
       if (const_part === 0 && multPart === 1) {
         return "-";
       }
@@ -518,37 +459,32 @@ export default {
       }
       return elems.join(const_part > 0 ? "+" : "");
     },
-    formatRangedGroup (group) {
+    formatRangedGroup(group) {
       return rangedGroups[group];
     },
-    formatAmmunitionGroup (group) {
+    formatAmmunitionGroup(group) {
       return ammunitionGroups[group];
     },
-    formatArmorGroup (group) {
+    formatArmorGroup(group) {
       return armorGroups[group];
     },
-    formatArmorLocations (locationList) {
+    formatArmorLocations(locationList) {
       return locationList.map((x) => armorLocations[x]).join(", ");
     },
-    selectItem (item, type) {
+    selectItem(item, type) {
       item.state = true;
       for (let itemType of itemTypes) {
-        item.state =
-          item.state &&
-          Number.isInteger(item[itemType]) &&
-          item[itemType] >= 0 &&
-          item[itemType] <= 1000;
+        item.state = item.state && Number.isInteger(item[itemType]) && item[itemType] >= 0 && item[itemType] <= 1000;
       }
       this.$emit(`${type}Changed`, { id: item.id, number: item[type] });
       this.$emit("stateChanged", this.isValid);
     },
-    isCarriable (item) {
+    isCarriable(item) {
       return !(item.stats.type === 5 && !item.stats.carryType.carriable);
     },
-    isWearable (item) {
+    isWearable(item) {
       return (
-        !(item.stats.type === 5 && !item.stats.carryType.wearable) &&
-        !(item.stats.type === 4 && !item.stats.wearable)
+        !(item.stats.type === 5 && !item.stats.carryType.wearable) && !(item.stats.type === 4 && !item.stats.wearable)
       );
     },
     async loadData() {

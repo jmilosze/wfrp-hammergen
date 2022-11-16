@@ -55,7 +55,7 @@ import { emailErrors, passwordErrors, nameErrors } from "../../utils/userValidat
 import { anonRequest } from "../../services/auth";
 
 export default {
-  name: "Register",
+  name: "UserRegister",
   created() {
     this.$recaptchaLoaded().then(() => {
       this.$recaptchaInstance.showBadge();

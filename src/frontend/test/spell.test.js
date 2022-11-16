@@ -148,7 +148,7 @@ test("test createElement calls axios with expected arguments", async () => {
     shared: true,
   });
 
-  mockAxios.post.mockClear()
+  mockAxios.post.mockClear();
   await client.createElement({
     id: "id2",
     name: "prayer2",
@@ -201,7 +201,7 @@ test("test updateElement calls axios with expected arguments", async () => {
     shared: true,
   });
 
-  mockAxios.post.mockClear()
+  mockAxios.post.mockClear();
   await client.updateElement({
     id: "id2",
     name: "prayer2",

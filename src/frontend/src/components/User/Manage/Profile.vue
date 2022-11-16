@@ -42,7 +42,7 @@ import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 
 export default {
-  name: "Profile",
+  name: "UserProfile",
   created() {
     logoutIfUnauthorized(authRequest.get)("/api/user")
       .then(

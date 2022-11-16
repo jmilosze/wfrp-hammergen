@@ -160,10 +160,10 @@
 </template>
 
 <script>
-import CreateElement2 from "./CreateElement";
-import CreateSubmit from "./CreateSubmit";
-import PublicElementBox from "./PublicElementBox";
-import SelectTable from "./SelectTable";
+import CreateElement2 from "./CreateElement.vue";
+import CreateSubmit from "./CreateSubmit.vue";
+import PublicElementBox from "./PublicElementBox.vue";
+import SelectTable from "./SelectTable.vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import {
   compareTalent,

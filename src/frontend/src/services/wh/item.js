@@ -162,7 +162,7 @@ const convertApiToModelData = (apiData) => {
       dmgSbMult: apiData.stats.dmg_sb_mult,
       reach: apiData.stats.reach,
       group: apiData.stats.group,
-    }
+    };
   } else if (apiData.stats.type === 1) {
     item.stats[1] = {
       hands: apiData.stats.hands,
@@ -171,32 +171,32 @@ const convertApiToModelData = (apiData) => {
       rng: apiData.stats.rng,
       rngSbMult: apiData.stats.rng_sb_mult,
       group: apiData.stats.group,
-    }
+    };
   } else if (apiData.stats.type === 2) {
     item.stats[2] = {
       dmg: apiData.stats.dmg,
       rng: apiData.stats.rng,
       rngMult: apiData.stats.rng_mult,
       group: apiData.stats.group,
-    }
+    };
   } else if (apiData.stats.type === 3) {
     item.stats[3] = {
       points: apiData.stats.points,
       location: JSON.parse(JSON.stringify(apiData.stats.location)),
       group: apiData.stats.group,
-    }
+    };
   } else if (apiData.stats.type === 4) {
     item.stats[4] = {
       capacity: apiData.stats.capacity,
       wearable: apiData.stats.wearable,
-    }
+    };
   } else {
     item.stats[5] = {
       carryType: {
         carriable: apiData.stats.carry_type.carriable,
         wearable: apiData.stats.carry_type.wearable,
       },
-    }
+    };
   }
 
   return item;
@@ -233,7 +233,7 @@ const convertModelToApiData = (item, includeId) => {
       dmg_sb_mult: item.stats[0].dmgSbMult,
       reach: item.stats[0].reach,
       group: item.stats[0].group,
-    }
+    };
   } else if (item.type === 1) {
     apiData.stats = {
       type: 1,
@@ -243,7 +243,7 @@ const convertModelToApiData = (item, includeId) => {
       rng: item.stats[1].rng,
       rng_sb_mult: item.stats[1].rngSbMult,
       group: item.stats[1].group,
-    }
+    };
   } else if (item.type === 2) {
     apiData.stats = {
       type: 2,
@@ -251,20 +251,20 @@ const convertModelToApiData = (item, includeId) => {
       rng: item.stats[2].rng,
       rng_mult: item.stats[2].rngMult,
       group: item.stats[2].group,
-    }
+    };
   } else if (item.type === 3) {
     apiData.stats = {
       type: 3,
       points: item.stats[3].points,
       location: JSON.parse(JSON.stringify(item.stats[3].location)),
       group: item.stats[3].group,
-    }
+    };
   } else if (item.type === 4) {
     apiData.stats = {
       type: 4,
       capacity: item.stats[4].capacity,
       wearable: item.stats[4].wearable,
-    }
+    };
   } else {
     apiData.stats = {
       type: 5,
@@ -272,7 +272,7 @@ const convertModelToApiData = (item, includeId) => {
         carriable: item.stats[5].carryType.carriable,
         wearable: item.stats[5].carryType.wearable,
       },
-    }
+    };
   }
 
   apiData.stats.type = item.type;
