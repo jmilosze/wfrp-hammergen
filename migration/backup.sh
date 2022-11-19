@@ -1,3 +1,4 @@
 #!/bin/bash
 
-mongodump --archive=hammergen --gzip --uri="$1"
+name=hammergen_$(date +%d_%m_%Y)
+mongodump --archive=$name --gzip --uri="$1"
