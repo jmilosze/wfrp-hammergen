@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import TableCommon from "./TableCommon";
+import TableCommon from "./TableCommon.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { MutationApi, mutationTypes } from "../../../services/wh/mutation";
 import { authRequest } from "../../../services/auth";
@@ -202,8 +202,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.rank {
-  min-width: 65px;
-}
-</style>
+<style scoped></style>

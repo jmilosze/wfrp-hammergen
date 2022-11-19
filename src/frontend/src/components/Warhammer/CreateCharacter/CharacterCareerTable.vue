@@ -57,8 +57,8 @@
 </template>
 
 <script>
+import TableCommon from "./TableCommon.vue";
 import { addSpaces } from "../../../utils/stringUtils";
-import TableCommon from "./TableCommon";
 import { CareerApi } from "../../../services/wh/career";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";

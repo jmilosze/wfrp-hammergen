@@ -1,10 +1,6 @@
 <template>
   <div class="create-submit">
-    <b-form-group
-      v-if="showAddAnother"
-      label="Add another after saving?"
-      label-for="and-another-input"
-    >
+    <b-form-group v-if="showAddAnother" label="Add another after saving?" label-for="and-another-input">
       <b-form-radio-group
         id="and-another-input"
         :disabled="disabled"
@@ -18,18 +14,11 @@
       </b-form-radio-group>
     </b-form-group>
 
-    <b-button
-      :disabled="disabled"
-      type="submit"
-      variant="primary"
-      class="mr-2 mb-1"
-    >
+    <b-button :disabled="disabled" type="submit" variant="primary" class="mr-2 mb-1">
       <span v-if="submitting" class="spinner-border spinner-border-sm" />
       Save
     </b-button>
-    <b-button @click="$emit('goBack')" variant="primary" class="mr-2 mb-1">
-      Back
-    </b-button>
+    <b-button @click="$emit('goBack')" variant="primary" class="mr-2 mb-1"> Back </b-button>
   </div>
 </template>
 

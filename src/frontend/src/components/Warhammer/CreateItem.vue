@@ -601,10 +601,10 @@
 </template>
 
 <script>
-import CreateElement from "./CreateElement";
-import CreateSubmit from "./CreateSubmit";
-import SelectTable from "./SelectTable";
-import PublicElementBox from "./PublicElementBox";
+import CreateElement from "./CreateElement.vue";
+import CreateSubmit from "./CreateSubmit.vue";
+import SelectTable from "./SelectTable.vue";
+import PublicElementBox from "./PublicElementBox.vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import {
   itemTypes,

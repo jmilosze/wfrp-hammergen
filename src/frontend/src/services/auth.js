@@ -5,16 +5,16 @@ const REFRESH_TOKEN = "refresh_token";
 const USERNAME = "username";
 
 const anonRequest = axios.create({
-  baseURL: process.env.VUE_APP_ROOT_API,
-  timeout: process.env.VUE_APP_API_TIMEOUT,
+  baseURL: import.meta.env.VITE_ROOT_API,
+  timeout: import.meta.env.VITE_API_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 const authRequest = axios.create({
-  baseURL: process.env.VUE_APP_ROOT_API,
-  timeout: process.env.VUE_APP_API_TIMEOUT,
+  baseURL: import.meta.env.VITE_ROOT_API,
+  timeout: import.meta.env.VITE_API_TIMEOUT,
   skipIntercept: false,
   headers: {
     "Content-Type": "application/json",

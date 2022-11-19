@@ -1,12 +1,13 @@
-FROM node:16
+FROM node:18.12.1
 ARG build=build_container_staging
 
 WORKDIR /frontend
 COPY ./frontend/public ./public
 COPY ./frontend/src ./src
-COPY ./frontend/babel.config.js .
+COPY ./frontend/.eslintrc.cjs .
+COPY ./frontend/index.html .
 COPY ./frontend/package.json .
-COPY ./frontend/.env.container_staging .
+COPY ./frontend/vite.config.js .
 
 RUN npm install && npm run-script $build && rm -r node_modules
 

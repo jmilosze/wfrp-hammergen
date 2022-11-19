@@ -128,9 +128,9 @@
 </template>
 
 <script>
-import CreateElement2 from "./CreateElement";
-import CreateSubmit from "./CreateSubmit";
-import PublicElementBox from "./PublicElementBox";
+import CreateElement2 from "./CreateElement.vue";
+import CreateSubmit from "./CreateSubmit.vue";
+import PublicElementBox from "./PublicElementBox.vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { SpellApi, generateEmptySpell, generateNewSpell, spellTypes, compareSpell } from "../../services/wh/spell";
 import { authRequest } from "../../services/auth";

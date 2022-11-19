@@ -42,10 +42,10 @@ const mockAxios = {
   }),
   post: jest.fn(async () => {
     return {
-        data: {
-          data: "inserted_id",
-        },
-      };
+      data: {
+        data: "inserted_id",
+      },
+    };
   }),
   delete: jest.fn(),
 };
@@ -99,7 +99,7 @@ test("test createElement calls axios with expected arguments", async () => {
     shared: true,
   });
 
-  expect(result).toBe("inserted_id")
+  expect(result).toBe("inserted_id");
 
   expect(mockAxios.post).toHaveBeenCalledWith("/api/mutation", {
     name: "mutation1",
@@ -120,7 +120,7 @@ test("test updateItemProperty calls axios with expected arguments", async () => 
     shared: true,
   });
 
-  expect(result).toBe("inserted_id")
+  expect(result).toBe("inserted_id");
 
   expect(mockAxios.post).toHaveBeenCalledWith("/api/mutation/update", {
     id: "id1",
@@ -157,7 +157,6 @@ test("test compareMutation returns true if objects are the same", () => {
     shared: true,
   });
   expect(result).toBe(true);
-
 });
 
 test("test compareMutation returns false if objects are different", () => {

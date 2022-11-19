@@ -1,4 +1,4 @@
-import { required, regex, max, between, integer } from "vee-validate/dist/rules";
+import { between, integer, max, regex, required } from "vee-validate/dist/rules";
 import { messages } from "vee-validate/dist/locale/en.json";
 import { extend } from "vee-validate";
 

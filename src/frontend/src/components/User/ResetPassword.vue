@@ -45,7 +45,7 @@ import { passwordErrors } from "../../utils/userValidators";
 import { anonRequest } from "../../services/auth";
 
 export default {
-  name: "NewPasswordWithToken",
+  name: "UserNewPassword",
   props: {
     token: {
       type: String,

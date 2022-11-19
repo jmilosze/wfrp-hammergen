@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import TableCommon from "./TableCommon";
+import TableCommon from "./TableCommon.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";

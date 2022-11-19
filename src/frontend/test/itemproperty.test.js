@@ -44,10 +44,10 @@ const mockAxios = {
   }),
   post: jest.fn(async () => {
     return {
-        data: {
-          data: "inserted_id",
-        },
-      };
+      data: {
+        data: "inserted_id",
+      },
+    };
   }),
   delete: jest.fn(),
 };
@@ -105,7 +105,7 @@ test("test createElement calls axios with expected arguments", async () => {
     shared: true,
   });
 
-  expect(result).toBe("inserted_id")
+  expect(result).toBe("inserted_id");
 
   expect(mockAxios.post).toHaveBeenCalledWith("/api/item_property", {
     name: "itemProperty1",
@@ -128,7 +128,7 @@ test("test updateElement calls axios with expected arguments", async () => {
     shared: true,
   });
 
-  expect(result).toBe("inserted_id")
+  expect(result).toBe("inserted_id");
 
   expect(mockAxios.post).toHaveBeenCalledWith("/api/item_property/update", {
     id: "id1",

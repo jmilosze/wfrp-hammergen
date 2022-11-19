@@ -81,7 +81,7 @@ import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 
 export default {
-  name: "Shared",
+  name: "UserShared",
   data() {
     return {
       updateSuccessful: false,

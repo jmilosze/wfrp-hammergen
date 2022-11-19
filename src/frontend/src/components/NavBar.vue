@@ -13,7 +13,7 @@
             <b-dropdown-item :to="{ name: 'list_property' }">Qualities and Flaws</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'list_spell' }">Prayers and Spells</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'list_mutation' }">Mutations</b-dropdown-item>
-             <b-dropdown-item :to="{ name: 'list_career' }">Careers</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'list_career' }">Careers</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">

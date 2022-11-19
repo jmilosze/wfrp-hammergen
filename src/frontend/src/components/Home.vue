@@ -12,8 +12,8 @@
           <div class="h3">Update!</div>
           <p>
             We have finally added new resources to Hammergen! Hammergen now includes Gnomes from
-            <b>Rough Nights & Hard Days</b> and new careers and items from <b>Archives of the Empire: Volume I</b>.
-            We will be adding more resources soon. Full list of resources can be found
+            <b>Rough Nights & Hard Days</b> and new careers and items from <b>Archives of the Empire: Volume I</b>. We
+            will be adding more resources soon. Full list of resources can be found
             <b-link href="#resources">below</b-link> on this page.
           </p>
           <p>
@@ -101,7 +101,7 @@
 
 <script>
 export default {
-  name: "Home",
+  name: "HomePage",
 };
 </script>
 

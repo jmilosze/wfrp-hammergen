@@ -1,48 +1,46 @@
 import Vue from "vue";
 import Router from "vue-router";
-
-import Register from "./components/User/Register";
-import Login from "./components/User/Login";
-import Manage from "./components/User/Manage";
-import Home from "./components/Home";
-import ForgotPassword from "./components/User/ForgotPassword";
-import ResetPassword from "./components/User/ResetPassword";
-
-import CreateProperty from "./components/Warhammer/CreateProperty";
-import CreateSpell from "./components/Warhammer/CreateSpell";
-import CreateMutation from "./components/Warhammer/CreateMutation";
-import CreateItem from "./components/Warhammer/CreateItem";
-import CreateTalent from "./components/Warhammer/CreateTalent";
-import CreateSkill from "./components/Warhammer/CreateSkill";
-import CreateCareer from "./components/Warhammer/CreateCareer/CreateCareer";
-import CreateCharacter from "./components/Warhammer/CreateCharacter/CreateCharacter";
-import ViewCharacter from "./components/Warhammer/ViewCharacter";
-import ListCharacters from "./components/Warhammer/ListElements/ListCharacters";
-import ListItems from "./components/Warhammer/ListElements/ListItems";
-import ListSkills from "./components/Warhammer/ListElements/ListSkills";
-import ListTalents from "./components/Warhammer/ListElements/ListTalents";
-import ListItemProperties from "./components/Warhammer/ListElements/ListItemProperties";
-import ListSpells from "./components/Warhammer/ListElements/ListSpells";
-import ListMutations from "./components/Warhammer/ListElements/ListMutations";
-import ListCareers from "./components/Warhammer/ListElements/ListCareers";
+import UserRegister from "./components/User/Register.vue";
+import UserLogin from "./components/User/Login.vue";
+import UserManage from "./components/User/Manage.vue";
+import HomePage from "./components/Home.vue";
+import UserForgotPassword from "./components/User/ForgotPassword.vue";
+import UserNewPassword from "./components/User/ResetPassword.vue";
+import CreateProperty from "./components/Warhammer/CreateProperty.vue";
+import CreateSpell from "./components/Warhammer/CreateSpell.vue";
+import CreateMutation from "./components/Warhammer/CreateMutation.vue";
+import CreateItem from "./components/Warhammer/CreateItem.vue";
+import CreateTalent from "./components/Warhammer/CreateTalent.vue";
+import CreateSkill from "./components/Warhammer/CreateSkill.vue";
+import CreateCareer from "./components/Warhammer/CreateCareer/CreateCareer.vue";
+import CreateCharacter from "./components/Warhammer/CreateCharacter/CreateCharacter.vue";
+import ViewCharacter from "./components/Warhammer/ViewCharacter.vue";
+import ListCharacters from "./components/Warhammer/ListElements/ListCharacters.vue";
+import ListItems from "./components/Warhammer/ListElements/ListItems.vue";
+import ListSkills from "./components/Warhammer/ListElements/ListSkills.vue";
+import ListTalents from "./components/Warhammer/ListElements/ListTalents.vue";
+import ListItemProperties from "./components/Warhammer/ListElements/ListItemProperties.vue";
+import ListSpells from "./components/Warhammer/ListElements/ListSpells.vue";
+import ListMutations from "./components/Warhammer/ListElements/ListMutations.vue";
+import ListCareers from "./components/Warhammer/ListElements/ListCareers.vue";
 
 Vue.use(Router);
 
 export const router = new Router({
   mode: "history",
   routes: [
-    { path: "/register", name: "register", component: Register },
-    { path: "/login", name: "login", component: Login, props: true },
-    { path: "/manage", name: "manage", component: Manage },
+    { path: "/register", name: "register", component: UserRegister },
+    { path: "/login", name: "login", component: UserLogin, props: true },
+    { path: "/manage", name: "manage", component: UserManage },
     {
       path: "/forgotPassword",
       name: "forgotPassword",
-      component: ForgotPassword,
+      component: UserForgotPassword,
     },
     {
       path: "/resetPassword/:token",
       name: "newPasswordWithToken",
-      component: ResetPassword,
+      component: UserNewPassword,
       props: true,
     },
     {
@@ -131,7 +129,7 @@ export const router = new Router({
       props: true,
     },
 
-    { path: "/", name: "home", component: Home },
+    { path: "/", name: "home", component: HomePage },
 
     { path: "*", redirect: "/" },
   ],

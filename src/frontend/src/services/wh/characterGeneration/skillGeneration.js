@@ -12,7 +12,7 @@ export function resolveSkillGroups(listOfSkills) {
   for (let skill of listOfSkills) {
     if (skill.group.length > 0) {
       for (let group of skill.group) {
-        if (resolvedGroups.hasOwnProperty(group)) {
+        if (Object.hasOwn(resolvedGroups, group)) {
           resolvedGroups[group].push(skill.id);
         } else {
           resolvedGroups[group] = [skill.id];
@@ -32,7 +32,7 @@ export function generateSpeciesSkills(speciesSkills, resolvedSkillGroups) {
       let newSkill = selectRandom(skillList);
       skillList = skillList.filter((x) => x !== newSkill);
 
-      if (resolvedSkillGroups.hasOwnProperty(newSkill)) {
+      if (Object.hasOwn(resolvedSkillGroups, newSkill)) {
         let newSubSkill = selectRandom(resolvedSkillGroups[newSkill]);
         generatedSkills[newSubSkill] = advances;
       } else {
@@ -74,7 +74,7 @@ function genAvailSkills(resolvedSkillGroups, careerSkills) {
 
   for (let lvl = 0; lvl < 4; ++lvl) {
     for (let skill of careerSkills[lvl]) {
-      if (skillGroups.hasOwnProperty(skill)) {
+      if (Object.hasOwn(skillGroups, skill)) {
         if (skillGroups[skill].length > 0) {
           let newSkill = selectRandom(skillGroups[skill]);
           let indexToRemove = skillGroups[skill].indexOf(newSkill);
@@ -114,7 +114,7 @@ function fillUpLvlSkill(previousSkills, availSkills, fillUpTo, numSkills, curren
         break;
       }
 
-      if (skills.hasOwnProperty(skill)) {
+      if (Object.hasOwn(skills, skill)) {
         cost += skillCost(skills[skill]);
         skills[skill] += 1;
       } else {
@@ -139,7 +139,7 @@ function genLvlSkill(previousSkills, availSkills, advNumber, maxAdvPerSkill, cur
 
     let skill = selectRandom(availSkillArray);
 
-    if (skills.hasOwnProperty(skill)) {
+    if (Object.hasOwn(skills, skill)) {
       cost += skillCost(skills[skill]);
       skills[skill] += 1;
     } else {
@@ -147,7 +147,7 @@ function genLvlSkill(previousSkills, availSkills, advNumber, maxAdvPerSkill, cur
       skills[skill] = 1;
     }
 
-    if (advCounter.hasOwnProperty(skill)) {
+    if (Object.hasOwn(advCounter, skill)) {
       advCounter[skill] += 1;
     } else {
       advCounter[skill] = 1;

@@ -53,7 +53,7 @@ import { emailErrors } from "../../utils/userValidators";
 import { anonRequest } from "../../services/auth";
 
 export default {
-  name: "ForgotPassword",
+  name: "UserForgotPassword",
   created() {
     this.$recaptchaLoaded().then(() => {
       this.$recaptchaInstance.showBadge();
