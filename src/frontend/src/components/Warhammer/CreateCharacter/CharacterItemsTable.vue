@@ -101,7 +101,7 @@
         stacked="lg"
       >
         <template v-slot:cell(name)="row">
-          {{ row.item.name }}
+          <b-link :to="'/item/' + row.item.id" target="_blank">{{ row.item.name }}</b-link>
           <b-form-invalid-feedback :state="row.item.state">
             Item quantity must an integer be between 0 and 1000.
           </b-form-invalid-feedback>

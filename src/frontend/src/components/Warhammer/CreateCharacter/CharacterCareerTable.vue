@@ -53,6 +53,10 @@
           </b-form-checkbox>
         </template>
 
+        <template #cell(name)="row">
+          <b-link :to="'/career/' + row.item.id" target="_blank">{{ row.item.name }}</b-link>
+        </template>
+
         <template #cell(actions)="row">
           <b-button size="sm" @click="row.toggleDetails">
             <div class="text-nowrap">{{ row.detailsShowing ? "Hide" : "Show" }} Details</div>

@@ -48,6 +48,10 @@
         @sort-changed="onSort"
         @filtered="onFiltered"
       >
+        <template #cell(name)="row">
+          <b-link :to="'/talent/' + row.item.id" target="_blank">{{ row.item.name }}</b-link>
+        </template>
+
         <template v-slot:cell(actions)="row">
           <b-button size="sm" @click="row.toggleDetails">
             <div class="text-nowrap">{{ row.detailsShowing ? "Hide" : "Show" }} Details</div>
