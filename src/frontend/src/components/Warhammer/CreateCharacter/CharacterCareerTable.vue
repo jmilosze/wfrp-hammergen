@@ -34,15 +34,39 @@
         :current-page="currentPage"
         @sort-changed="onSort"
         @filtered="onFiltered"
+        stacked="lg"
       >
-        <template v-slot:cell(select)="row">
-          <b-form-checkbox :checked="row.item.current" @change="selectCurrent($event, row.item.id, row.item.number)">
+        <template #cell(select)="row">
+          <b-form-checkbox
+            :disabled="row.item.past"
+            :checked="row.item.current"
+            @change="selectCurrent($event, row.item.id, row.item.number)"
+          >
             Current
           </b-form-checkbox>
-
-          <b-form-checkbox :checked="row.item.past" @change="selectPast($event, row.item.id, row.item.number)">
+          <b-form-checkbox
+            :disabled="row.item.current"
+            :checked="row.item.past"
+            @change="selectPast($event, row.item.id, row.item.number)"
+          >
             Past
           </b-form-checkbox>
+        </template>
+
+        <template #cell(actions)="row">
+          <b-button size="sm" @click="row.toggleDetails">
+            <div class="text-nowrap">{{ row.detailsShowing ? "Hide" : "Show" }} Details</div>
+          </b-button>
+        </template>
+
+        <template #row-details="row">
+          <dl class="row">
+            <dt class="col-sm-4">Class</dt>
+            <dd class="col-sm-8">{{ row.item.class }}</dd>
+
+            <dt class="col-sm-4">Species</dt>
+            <dd class="col-sm-8">{{ row.item.species }}</dd>
+          </dl>
         </template>
       </b-table>
 
@@ -59,9 +83,10 @@
 <script>
 import TableCommon from "./TableCommon.vue";
 import { addSpaces } from "../../../utils/stringUtils";
-import { CareerApi } from "../../../services/wh/career";
+import { CareerApi, careerClasses } from "../../../services/wh/career";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
+import { species } from "../../../services/wh/character";
 
 const MAX_CHARS = 15;
 
@@ -89,6 +114,7 @@ export default {
       editFilter: null,
       editFields: [
         { key: "name", sortable: true },
+        { key: "actions", sortable: false },
         { key: "select", sortable: true },
       ],
       displayFields: [{ key: "name", sortable: false }],
@@ -116,6 +142,7 @@ export default {
       }
     },
     selectCurrent(selected, id, number) {
+      // if there is already other current career selected, deselect it
       if (this.internalCurrentCareer.id) {
         let oldSelected = this.listOfLevels.find(
           (x) => x.id === this.internalCurrentCareer.id && x.number === this.internalCurrentCareer.number
@@ -123,15 +150,17 @@ export default {
         oldSelected.current = false;
       }
 
+      // if selected is being toggled on, mark a new career as current
       if (selected) {
         let newSelected = this.listOfLevels.find((x) => x.id === id && x.number === number);
         if (!newSelected) {
           newSelected = this.listOfLevels[0];
         }
-
         newSelected.current = true;
         this.internalCurrentCareer = { id: newSelected.id, number: newSelected.number };
-      } else {
+      }
+      // if selected is being toggle off, make current as empty
+      else {
         this.internalCurrentCareer = {};
       }
       this.$emit("update:currentCareer", Object.assign({}, this.internalCurrentCareer));
@@ -171,12 +200,16 @@ export default {
         ]) {
           let lvlName = i[0];
           let lvlNumber = i[1];
+
+          let allowedSpecies = career.species.map((x) => species[x]).join(", ");
           listOfLevels.push({
             id: career.id,
             number: lvlNumber,
             name: addSpaces(`${career.name}  ${lvlNumber} (${career[lvlName].name})`, MAX_CHARS),
             past: false,
             current: false,
+            class: careerClasses[career.class],
+            species: allowedSpecies,
             idx: idx,
           });
           ++idx;

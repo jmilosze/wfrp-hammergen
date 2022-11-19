@@ -154,75 +154,75 @@
         </template>
 
         <template v-slot:row-details="row">
-          <dl class="row" v-if="row.item.stats.type === 0">
+          <dl class="row" v-if="row.item.type === 0">
             <dt class="col-sm-4">Weapon Group</dt>
             <dd class="col-sm-8">
-              {{ formatMeleeGroup(row.item.stats.group) }}
+              {{ formatMeleeGroup(row.item.stats[0].group) }}
             </dd>
 
             <dt class="col-sm-4">Weapon Damage</dt>
             <dd class="col-sm-8">
-              {{ formatConstPlusSB(row.item.stats.dmg, row.item.stats.dmg_sb_mult) }}
+              {{ formatConstPlusSB(row.item.stats[0].dmg, row.item.stats[0].dmgSbMult) }}
             </dd>
 
             <dt class="col-sm-4">Weapon Reach</dt>
             <dd class="col-sm-8">
-              {{ formatMeleeReach(row.item.stats.reach) }}
+              {{ formatMeleeReach(row.item.stats[0].reach) }}
             </dd>
           </dl>
 
-          <dl class="row" v-if="row.item.stats.type === 1">
+          <dl class="row" v-if="row.item.type === 1">
             <dt class="col-sm-4">Weapon Group</dt>
             <dd class="col-sm-8">
-              {{ formatRangedGroup(row.item.stats.group) }}
+              {{ formatRangedGroup(row.item.stats[1].group) }}
             </dd>
 
             <dt class="col-sm-4">Weapon Damage</dt>
             <dd class="col-sm-8">
-              {{ formatConstPlusSB(row.item.stats.dmg, row.item.stats.dmg_sb_mult) }}
+              {{ formatConstPlusSB(row.item.stats[1].dmg, row.item.stats[1].dmgSbMult) }}
             </dd>
 
             <dt class="col-sm-4">Weapon Range</dt>
             <dd class="col-sm-8">
-              {{ formatConstPlusSB(row.item.stats.rng, row.item.stats.rng_sb_mult) }}
+              {{ formatConstPlusSB(row.item.stats[1].rng, row.item.stats[1].rngSbMult) }}
             </dd>
           </dl>
 
-          <dl class="row" v-if="row.item.stats.type === 2">
+          <dl class="row" v-if="row.item.type === 2">
             <dt class="col-sm-4">Ammunition Group</dt>
             <dd class="col-sm-8">
-              {{ formatAmmunitionGroup(row.item.stats.group) }}
+              {{ formatAmmunitionGroup(row.item.stats[2].group) }}
             </dd>
 
             <dt class="col-sm-4">Damage Modification</dt>
             <dd class="col-sm-8">
-              {{ formatAmmunitionMod(row.item.stats.dmg, 1) }}
+              {{ formatAmmunitionMod(row.item.stats[2].dmg, 1) }}
             </dd>
 
             <dt class="col-sm-4">Range Modification</dt>
             <dd class="col-sm-8">
-              {{ formatAmmunitionMod(row.item.stats.rng, row.item.stats.rng_mult) }}
+              {{ formatAmmunitionMod(row.item.stats[2].rng, row.item.stats[2].rngMult) }}
             </dd>
           </dl>
 
-          <dl class="row" v-if="row.item.stats.type === 3">
+          <dl class="row" v-if="row.item.type === 3">
             <dt class="col-sm-4">Armor Group</dt>
             <dd class="col-sm-8">
-              {{ formatArmorGroup(row.item.stats.group) }}
+              {{ formatArmorGroup(row.item.stats[3].group) }}
             </dd>
 
             <dt class="col-sm-4">Armor Locations</dt>
             <dd class="col-sm-8">
-              {{ formatArmorLocations(row.item.stats.location) }}
+              {{ formatArmorLocations(row.item.stats[3].location) }}
             </dd>
 
             <dt class="col-sm-4">Armor Points</dt>
-            <dd class="col-sm-8">{{ row.item.stats.points }}</dd>
+            <dd class="col-sm-8">{{ row.item.stats[3].points }}</dd>
           </dl>
 
-          <dl class="row" v-if="row.item.stats.type === 4">
+          <dl class="row" v-if="row.item.type === 4">
             <dt class="col-sm-4">Container Capacity</dt>
-            <dd class="col-sm-8">{{ row.item.stats.capacity }}</dd>
+            <dd class="col-sm-8">{{ row.item.stats[4].capacity }}</dd>
           </dl>
 
           {{ row.item.description }}
