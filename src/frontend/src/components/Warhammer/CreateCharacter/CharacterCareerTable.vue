@@ -64,6 +64,7 @@
         </template>
 
         <template #row-details="row">
+          <p>{{ row.item.levelName }}</p>
           <dl class="row">
             <dt class="col-sm-4">Class</dt>
             <dd class="col-sm-8">{{ row.item.class }}</dd>
@@ -209,7 +210,8 @@ export default {
           listOfLevels.push({
             id: career.id,
             number: lvlNumber,
-            name: addSpaces(`${career.name}  ${lvlNumber} (${career[lvlName].name})`, MAX_CHARS),
+            name: addSpaces(`${career.name}  ${lvlNumber}`, MAX_CHARS),
+            levelName: career[lvlName].name,
             past: false,
             current: false,
             class: careerClasses[career.class],
