@@ -62,9 +62,7 @@
                 </b-form-group>
               </b-col>
             </b-row>
-            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvl1 = false">
-            Hide
-          </b-button>
+            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvl1 = false"> Hide </b-button>
             <b-button @click="genLvl1Details = !genLvl1Details" variant="primary" class="mr-2 mb-1" size="sm">
               {{ genLvl1Details ? "Hide" : "Show" }} Details
             </b-button>
@@ -121,9 +119,7 @@
                 </b-form-group>
               </b-col>
             </b-row>
-            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvln = false">
-            Hide
-          </b-button>
+            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvln = false"> Hide </b-button>
             <b-button @click="genLvlnDetails = !genLvlnDetails" variant="primary" class="mr-2 mb-1" size="sm">
               {{ genLvlnDetails ? "Hide" : "Show" }} Details
             </b-button>
@@ -919,6 +915,9 @@
                   :disabled="!element.canEdit"
                   :characterTalents="initialTalents"
                   :characterAtts="total"
+                  :speciesTalents="speciesTalents"
+                  :randomTalents="randomTalents"
+                  :characterSpecies="element.species"
                   :canSave="validCustom && !failed"
                   @listOfTalents="listOfTalents = $event"
                   @selectedChanged="updateIdNumberList(element.talents, $event)"
@@ -1119,6 +1118,20 @@ export default {
         } else {
           return {};
         }
+      }
+    },
+    speciesTalents() {
+      if (this.generationProps && Object.hasOwn(this.generationProps, "species_talents")) {
+        return this.generationProps.species_talents[this.element.species];
+      } else {
+        return [];
+      }
+    },
+    randomTalents() {
+      if (this.generationProps && Object.hasOwn(this.generationProps, "random_talents")) {
+        return this.generationProps.random_talents;
+      } else {
+        return [];
       }
     },
     genLvl1species(includeRandom) {

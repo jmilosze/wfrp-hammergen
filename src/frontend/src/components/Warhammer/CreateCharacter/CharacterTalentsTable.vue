@@ -10,6 +10,16 @@
       Add/Modify
     </b-button>
 
+    <b-button
+      size="sm"
+      class="mb-2 mr-2"
+      @click="addSpeciesTalents"
+      variant="primary"
+      :disabled="disabled || !canGenerateTalents"
+    >
+      Add Species Talents
+    </b-button>
+
     <b-button size="sm" class="mb-2 mr-2" @click="clearAll" variant="danger" :disabled="disabled"> Clear All </b-button>
 
     <b-modal id="edit-talents" title="Add/Remove Talents" ok-only ok-title="Close" scrollable>
@@ -18,7 +28,7 @@
           Create New
         </b-button>
 
-        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData">
+        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData(true)">
           <span v-if="editLoading" class="spinner-border spinner-border-sm" />
           Reload List
         </b-button>
@@ -102,6 +112,7 @@ import { addSpaces } from "../../../utils/stringUtils";
 import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
+import { generateSpeciesTalents, resolveTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
 
 const MAX_CHARS = 15;
 
@@ -115,6 +126,18 @@ export default {
     },
     characterAtts: {
       type: Object,
+      required: true,
+    },
+    speciesTalents: {
+      type: Array,
+      required: true,
+    },
+    randomTalents: {
+      type: Array,
+      required: true,
+    },
+    characterSpecies: {
+      type: Number,
       required: true,
     },
   },
@@ -143,6 +166,9 @@ export default {
     this.loadData();
   },
   computed: {
+    canGenerateTalents() {
+      return !!this.speciesTalents.length && !!this.randomTalents.length;
+    },
     displayItems() {
       try {
         return this.listOfItems.filter((x) => x.number !== 0);
@@ -242,8 +268,27 @@ export default {
       this.$emit("selectedChanged", { id: talent.id, number: talent.number });
       this.$emit("stateChanged", this.isValid);
     },
-    async loadData() {
+    addSpeciesTalents() {
+      let resolvedTalentGroups = resolveTalentGroups(this.listOfItems);
+      let generatedTalents = generateSpeciesTalents(
+        this.speciesTalents,
+        resolvedTalentGroups,
+        this.randomTalents,
+        this.characterSpecies
+      );
+
+      for (let generatedTalent of generatedTalents) {
+        let talentToUpdate = this.listOfItems.find((x) => x.id === generatedTalent.id);
+        if (talentToUpdate && talentToUpdate.number < generatedTalent.number) {
+          talentToUpdate.number = generatedTalent.number;
+          this.selectItem(talentToUpdate);
+        }
+      }
+    },
+    async loadData(reload = false) {
       this.editLoading = true;
+      let currentTalents = this.getCurrentTalents();
+
       let listOfItems = await logoutIfUnauthorized(this.talentApi.listElements)();
       listOfItems = listOfItems.filter((x) => !x.isGroup);
       this.$emit("listOfTalents", JSON.parse(JSON.stringify(listOfItems)));
@@ -255,8 +300,24 @@ export default {
         item.description = addSpaces(item.description, MAX_CHARS);
       }
       this.listOfItems = listOfItems;
-      this.resetItems(this.characterTalents);
+
+      if (reload) {
+        this.resetItems(currentTalents);
+      } else {
+        this.resetItems(this.characterTalents);
+      }
+
       this.editLoading = false;
+    },
+
+    getCurrentTalents() {
+      let currentTalents = [];
+      for (let item of this.listOfItems) {
+        if (item.number > 0) {
+          currentTalents.push({ id: item.id, number: item.number });
+        }
+      }
+      return currentTalents;
     },
   },
 };

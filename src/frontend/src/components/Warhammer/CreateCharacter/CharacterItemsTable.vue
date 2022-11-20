@@ -69,7 +69,7 @@
           Create New
         </b-button>
 
-        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData">
+        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData(true)">
           <span v-if="editLoading" class="spinner-border spinner-border-sm" />
           Reload List
         </b-button>
@@ -487,8 +487,11 @@ export default {
         !(item.stats.type === 5 && !item.stats.carryType.wearable) && !(item.stats.type === 4 && !item.stats.wearable)
       );
     },
-    async loadData() {
+    async loadData(reload = false) {
       this.editLoading = true;
+      let currentEquipped = this.getCurrentItems("equipped");
+      let currentCarried = this.getCurrentItems("carried");
+      let currentStored = this.getCurrentItems("stored");
 
       const listOfItems = await logoutIfUnauthorized(this.itemApi.listElements)();
       for (let item of listOfItems) {
@@ -501,10 +504,27 @@ export default {
       }
 
       this.listOfItems = listOfItems;
-      this.resetItems(this.itemsEquipped, "equipped");
-      this.resetItems(this.itemsCarried, "carried");
-      this.resetItems(this.itemsStored, "stored");
+
+      if (reload) {
+        this.resetItems(currentEquipped, "equipped");
+        this.resetItems(currentCarried, "carried");
+        this.resetItems(currentStored, "stored");
+      } else {
+        this.resetItems(this.itemsEquipped, "equipped");
+        this.resetItems(this.itemsCarried, "carried");
+        this.resetItems(this.itemsStored, "stored");
+      }
+
       this.editLoading = false;
+    },
+    getCurrentItems(itemType) {
+      let currentItems = [];
+      for (let item of this.listOfItems) {
+        if (item[itemType] > 0) {
+          currentItems.push({ id: item.id, number: item[itemType] });
+        }
+      }
+      return currentItems;
     },
   },
 };

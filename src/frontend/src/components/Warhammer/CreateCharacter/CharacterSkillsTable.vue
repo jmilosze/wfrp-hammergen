@@ -21,7 +21,7 @@
           Create New
         </b-button>
 
-        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData">
+        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData(true)">
           <span v-if="editLoading" class="spinner-border spinner-border-sm" />
           Reload List
         </b-button>
@@ -165,7 +165,7 @@ export default {
       if (this.listOfItems.length < 1) {
         return;
       }
-      this.resetSkills(this.characterSkills);
+      this.resetItems(this.characterSkills);
     },
   },
   methods: {
@@ -190,7 +190,7 @@ export default {
         }
       });
     },
-    resetSkills(newSkills) {
+    resetItems(newSkills) {
       this.listOfItems.forEach((x) => {
         x.number = 0;
         x.state = true;
@@ -214,8 +214,10 @@ export default {
       this.$emit("selectedChanged", { id: item.id, number: item.number });
       this.$emit("stateChanged", this.isValid);
     },
-    async loadData() {
+    async loadData(reload = false) {
       this.editLoading = true;
+      let currentSkills = this.getCurrentSkills();
+
       let listOfItems = await logoutIfUnauthorized(this.skillApi.listElements)();
       listOfItems = listOfItems.filter((x) => !x.isGroup);
       this.$emit("listOfSkills", JSON.parse(JSON.stringify(listOfItems)));
@@ -229,8 +231,23 @@ export default {
         skill.typeName = skillTypesGroup[skill.type];
       }
       this.listOfItems = listOfItems;
-      this.resetSkills(this.characterSkills);
+
+      if (reload) {
+        this.resetItems(currentSkills);
+      } else {
+        this.resetItems(this.characterSkills);
+      }
+
       this.editLoading = false;
+    },
+    getCurrentSkills() {
+      let currentSkills = [];
+      for (let item of this.listOfItems) {
+        if (item.number > 0) {
+          currentSkills.push({ id: item.id, number: item.number });
+        }
+      }
+      return currentSkills;
     },
   },
 };

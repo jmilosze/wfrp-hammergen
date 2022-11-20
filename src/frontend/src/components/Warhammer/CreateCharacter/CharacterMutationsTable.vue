@@ -25,7 +25,7 @@
           Create New
         </b-button>
 
-        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData">
+        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData(true)">
           <span v-if="editLoading" class="spinner-border spinner-border-sm" />
           Reload List
         </b-button>
@@ -188,8 +188,9 @@ export default {
     selectItem(id, selected) {
       this.$emit("changed", { id, selected });
     },
-    async loadData() {
+    async loadData(reload = false) {
       this.editLoading = true;
+      let currentMutations = this.getCurrentMutations();
 
       const listOfItems = await logoutIfUnauthorized(this.mutationApi.listElements)();
       for (let item of listOfItems) {
@@ -199,8 +200,23 @@ export default {
       }
 
       this.listOfItems = listOfItems;
-      this.resetItems(this.selectedItems);
+
+      if (reload) {
+        this.resetItems(currentMutations);
+      } else {
+        this.resetItems(this.selectedItems);
+      }
+
       this.editLoading = false;
+    },
+    getCurrentMutations() {
+      let currentMutations = [];
+      for (let item of this.listOfItems) {
+        if (item.selected > 0) {
+          currentMutations.push(item.id);
+        }
+      }
+      return currentMutations;
     },
   },
 };

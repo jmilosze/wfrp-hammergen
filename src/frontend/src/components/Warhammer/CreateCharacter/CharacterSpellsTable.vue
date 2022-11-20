@@ -25,7 +25,7 @@
           Create New
         </b-button>
 
-        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData">
+        <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="loadData(true)">
           <span v-if="editLoading" class="spinner-border spinner-border-sm" />
           Reload List
         </b-button>
@@ -199,8 +199,9 @@ export default {
     selectItem(id, selected) {
       this.$emit("changed", { id, selected });
     },
-    async loadData() {
+    async loadData(reload = false) {
       this.editLoading = true;
+      let currentSpells = this.getCurrentSpells();
 
       const listOfItems = await logoutIfUnauthorized(this.spellApi.listElements)();
 
@@ -214,8 +215,24 @@ export default {
       }
 
       this.listOfItems = listOfItems;
-      this.resetItems(this.selectedItems);
+
+      if (reload) {
+        this.resetItems(currentSpells);
+      } else {
+        this.resetItems(this.selectedItems);
+      }
+
       this.editLoading = false;
+    },
+
+    getCurrentSpells() {
+      let currentSpells = [];
+      for (let item of this.listOfItems) {
+        if (item.selected > 0) {
+          currentSpells.push(item.id);
+        }
+      }
+      return currentSpells;
     },
   },
 };
