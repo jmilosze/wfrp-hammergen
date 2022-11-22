@@ -67,7 +67,7 @@
         </template>
 
         <template v-slot:cell(selected)="row">
-          <b-form-checkbox v-model="row.item.selected" @change="selectItem(row.item.id, $event)"></b-form-checkbox>
+          <b-form-checkbox v-model="row.item.selected" @change="selectItem(row.item)"></b-form-checkbox>
         </template>
 
         <template v-slot:row-details="row">
@@ -93,6 +93,7 @@ import { addSpaces } from "../../../utils/stringUtils";
 import { MutationApi, mutationTypes } from "../../../services/wh/mutation";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
+import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 
 const MAX_CHARS = 15;
 
@@ -121,6 +122,8 @@ export default {
       currentPage: 1,
       totalRows: 1,
       editLoading: false,
+
+      mutationsWithModifiers: [],
     };
   },
   created() {
@@ -167,7 +170,7 @@ export default {
       this.listOfItems.forEach((x) => {
         if (x.selected) {
           x.selected = false;
-          this.selectItem(x.id, x.selected);
+          this.selectItem(x);
         }
       });
     },
@@ -183,10 +186,20 @@ export default {
           // this.$emit("changed", { id: newItem, selected: false });
         }
       }
+      let newModifiers = this.calcModifiers();
+      this.$emit("modifiersChanged", newModifiers);
       this.sortListOfItems("selected", true);
     },
-    selectItem(id, selected) {
-      this.$emit("changed", { id, selected });
+    selectItem(item) {
+      this.$emit("changed", { id: item.id, selected: item.selected });
+
+      if (item.hasModifiers) {
+        let newModifiers = this.calcModifiers();
+        this.$emit("modifiersChanged", newModifiers);
+      }
+    },
+    calcModifiers() {
+      return sumAndMultModifiers(this.mutationsWithModifiers.map((m) => ({ multiplier: m.selected ? 1: 0, modifiers: m.modifiers })));
     },
     async loadData(reload = false) {
       this.editLoading = true;
@@ -197,6 +210,10 @@ export default {
         item.selected = false;
         item.name = addSpaces(item.name, MAX_CHARS);
         item.description = addSpaces(item.description, MAX_CHARS);
+
+        if (item.hasModifiers === true) {
+          this.mutationsWithModifiers.push(item);
+        }
       }
 
       this.listOfItems = listOfItems;

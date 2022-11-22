@@ -5,6 +5,7 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
+import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
 
 const apiBasePath = "/api/mutation";
 
@@ -14,6 +15,8 @@ const convertApiToModelData = (apiData) => {
     name: apiData.name,
     description: apiData.description,
     type: apiData.type,
+    hasModifiers: checkModifiers(apiData.modifiers),
+    modifiers: apiData.modifiers,
     canEdit: apiData.can_edit,
     shared: apiData.shared,
   };
@@ -24,6 +27,7 @@ const convertModelToApiData = (mutation, includeId) => {
     name: mutation.name,
     description: mutation.description,
     type: mutation.type,
+    modifiers: mutation.modifiers,
     shared: mutation.shared,
   };
 
@@ -51,11 +55,13 @@ const mutationTypes = {
 
 const compareMutation = (mutation1, mutation2) => {
   for (let [key, value] of Object.entries(mutation1)) {
-    if (mutation2[key] !== value) {
-      return false;
+    if (key !== "modifiers") {
+      if (mutation2[key] !== value) {
+        return false;
+      }
     }
   }
-  return true;
+  return compareModifiers(mutation1.modifiers, mutation2.modifiers);
 };
 
 const generateEmptyMutation = () => {
@@ -64,6 +70,8 @@ const generateEmptyMutation = () => {
     name: "",
     description: "",
     type: 0,
+    hasModifiers: false,
+    modifiers: generateEmptyModifiers(),
     canEdit: false,
     shared: false,
   };

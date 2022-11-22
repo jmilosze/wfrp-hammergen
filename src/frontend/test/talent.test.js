@@ -8,7 +8,8 @@ const talent1 = {
   max_rank: 4,
   max_rank_att: 2,
   modifiers: {
-    size: -1,
+    size: 0,
+    movement: 1,
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
   },
   is_group: true,
@@ -26,6 +27,7 @@ const talent2 = {
   max_rank_att: 1,
   modifiers: {
     size: 0,
+    movement: 0,
     attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   },
   is_group: false,
@@ -66,7 +68,7 @@ const mockAxios = {
   delete: jest.fn(),
 };
 
-test("test getElement returns expected talents", async () => {
+test("test getElement returns expected talents, talent has modifiers", async () => {
   const client = new TalentApi(mockAxios);
   const result = await client.getElement("id1");
 
@@ -79,11 +81,36 @@ test("test getElement returns expected talents", async () => {
     maxRankAtt: 2,
     hasModifiers: true,
     modifiers: {
-      size: -1,
+      size: 0,
+      movement: 1,
       attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
     },
     isGroup: true,
     group: ["a", "b"],
+    canEdit: true,
+    shared: true,
+  });
+});
+
+test("test getElement returns expected talents, talent does not have modifiers", async () => {
+  const client = new TalentApi(mockAxios);
+  const result = await client.getElement("id2");
+
+  expect(result).toMatchObject({
+    id: "id2",
+    name: "talent2",
+    description: "desc2",
+    tests: "asd",
+    maxRank: 2,
+    maxRankAtt: 1,
+    hasModifiers: false,
+    modifiers: {
+      size: 0,
+      movement: 0,
+      attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
+    isGroup: false,
+    group: [],
     canEdit: true,
     shared: true,
   });
@@ -195,6 +222,12 @@ test("test compareTalent returns true if objects are the same", () => {
     tests: "qwe",
     maxRank: 4,
     maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     isGroup: true,
     group: ["a", "b"],
     canEdit: true,
@@ -208,6 +241,12 @@ test("test compareTalent returns true if objects are the same", () => {
     tests: "qwe",
     maxRank: 4,
     maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     isGroup: true,
     group: ["a", "b"],
     canEdit: true,
@@ -222,6 +261,12 @@ test("test compareTalent returns true if objects are the same", () => {
     tests: "qwe",
     maxRank: 4,
     maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     isGroup: true,
     group: ["b", "a"],
     canEdit: true,
@@ -238,6 +283,12 @@ test("test compareTalent returns false if objects are different", () => {
     tests: "qwe",
     maxRank: 4,
     maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     isGroup: true,
     group: ["a", "b"],
     canEdit: true,
@@ -251,6 +302,12 @@ test("test compareTalent returns false if objects are different", () => {
     tests: "qwe",
     maxRank: 4,
     maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     isGroup: true,
     group: ["a", "b"],
     canEdit: true,
@@ -265,6 +322,12 @@ test("test compareTalent returns false if objects are different", () => {
     tests: "qwe",
     maxRank: 4,
     maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     isGroup: true,
     group: ["a"],
     canEdit: true,
@@ -279,10 +342,56 @@ test("test compareTalent returns false if objects are different", () => {
     tests: "qwe",
     maxRank: 4,
     maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     isGroup: true,
     group: ["c", "d"],
     canEdit: true,
     shared: true,
   });
   expect(result3).toBe(false);
+
+  const result4 = compareTalent(talent, {
+    id: "id",
+    name: "apiTalent",
+    description: "desc",
+    tests: "qwe",
+    maxRank: 4,
+    maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 1,
+      movement: 1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
+    isGroup: true,
+    group: ["a", "b"],
+    canEdit: true,
+    shared: true,
+  });
+  expect(result4).toBe(false);
+
+  const result5 = compareTalent(talent, {
+    id: "id",
+    name: "apiTalent",
+    description: "desc",
+    tests: "qwe",
+    maxRank: 4,
+    maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 4,
+      attributes: { WS: 1, BS: 2, S: 3, T: 4, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
+    isGroup: true,
+    group: ["a", "b"],
+    canEdit: true,
+    shared: true,
+  });
+  expect(result5).toBe(false);
 });

@@ -5,6 +5,11 @@ const mutation1 = {
   name: "mutation1",
   description: "desc1",
   type: 0,
+  modifiers: {
+    size: 0,
+    movement: 1,
+    attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+  },
   can_edit: true,
   shared: true,
 };
@@ -14,6 +19,11 @@ const mutation2 = {
   name: "mutation2",
   description: "desc2",
   type: 1,
+  modifiers: {
+    size: 0,
+    movement: 0,
+    attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+  },
   can_edit: false,
   shared: false,
 };
@@ -50,7 +60,7 @@ const mockAxios = {
   delete: jest.fn(),
 };
 
-test("test getElement returns expected mutation", async () => {
+test("test getElement returns expected mutation, mutation has modifiers", async () => {
   const client = new MutationApi(mockAxios);
   const result = await client.getElement("id1");
 
@@ -59,8 +69,34 @@ test("test getElement returns expected mutation", async () => {
     name: "mutation1",
     description: "desc1",
     type: 0,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+    },
     canEdit: true,
     shared: true,
+  });
+});
+
+test("test getElement returns expected mutation, mutation does not have modifiers", async () => {
+  const client = new MutationApi(mockAxios);
+  const result = await client.getElement("id2");
+
+  expect(result).toMatchObject({
+    id: "id2",
+    name: "mutation2",
+    description: "desc2",
+    type: 1,
+    hasModifiers: false,
+    modifiers: {
+      size: 0,
+      movement: 0,
+      attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
+    canEdit: false,
+    shared: false,
   });
 });
 
@@ -144,6 +180,11 @@ test("test compareMutation returns true if objects are the same", () => {
     name: "mutation",
     description: "desc",
     type: 0,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     canEdit: true,
     shared: true,
   };
@@ -153,6 +194,11 @@ test("test compareMutation returns true if objects are the same", () => {
     name: "mutation",
     description: "desc",
     type: 0,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     canEdit: true,
     shared: true,
   });
@@ -165,17 +211,57 @@ test("test compareMutation returns false if objects are different", () => {
     name: "mutation",
     description: "desc",
     type: 0,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     canEdit: true,
     shared: true,
   };
 
-  const result = compareMutation(mutation, {
+  const result1 = compareMutation(mutation, {
     id: "otherId",
     name: "mutation",
     description: "desc",
     type: 0,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
     canEdit: true,
     shared: true,
   });
-  expect(result).toBe(false);
+  expect(result1).toBe(false);
+
+  const result2 = compareMutation(mutation, {
+    id: "id",
+    name: "mutation",
+    description: "desc",
+    type: 0,
+    hasModifiers: true,
+    modifiers: {
+      size: 0,
+      attributes: { WS: 1, BS: 2, S: 3, T: 5, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
+    canEdit: true,
+    shared: true,
+  });
+  expect(result2).toBe(false);
+
+  const result3 = compareMutation(mutation, {
+    id: "id",
+    name: "mutation",
+    description: "desc",
+    type: 0,
+    hasModifiers: true,
+    modifiers: {
+      size: -1,
+      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
+    canEdit: true,
+    shared: true,
+  });
+  expect(result3).toBe(false);
 });

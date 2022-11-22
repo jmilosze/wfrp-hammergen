@@ -79,6 +79,7 @@ export default {
       if (this.goBackChain.length === 0) {
         this.$router.push({ name: `list_${this.elementType}` }).catch(() => {});
       } else {
+        // eslint-disable-next-line vue/no-mutating-props
         const goTo = this.goBackChain.pop();
 
         this.$router
@@ -119,6 +120,7 @@ export default {
       this.afterSubmit();
     },
     redirectAfterSubmit(elementId, redirectElementName) {
+      // eslint-disable-next-line vue/no-mutating-props
       this.goBackChain.push({ name: this.elementType, id: elementId });
       this.$router
         .push({

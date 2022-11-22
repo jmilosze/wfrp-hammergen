@@ -1,11 +1,12 @@
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
 import {
+  createElementFunc,
+  deleteElementFunc,
   getElementFunc,
   listElementsFunc,
-  createElementFunc,
   updateElementFunc,
-  deleteElementFunc,
 } from "./crudGenerator";
+import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
 
 const apiBasePath = "/api/talent";
 
@@ -24,19 +25,6 @@ const convertApiToModelData = (apiData) => {
     canEdit: apiData.can_edit,
     shared: apiData.shared,
   };
-};
-
-const checkModifiers = (modifiers) => {
-  if (modifiers.size !== 0) {
-    return true;
-  } else {
-    for (let att of Object.values(modifiers.attributes)) {
-      if (att !== 0) {
-        return true;
-      }
-    }
-  }
-  return false;
 };
 
 const convertModelToApiData = (talent, includeId) => {
@@ -82,13 +70,7 @@ const compareTalent = (talent1, talent2) => {
     return false;
   }
 
-  for (let [key, value] of Object.entries(talent1.modifiers.attributes)) {
-    if (value !== talent2.modifiers.attributes[key]) {
-      return false;
-    }
-  }
-
-  return talent1.modifiers.size === talent2.modifiers.size;
+  return compareModifiers(talent1.modifiers, talent2.modifiers);
 };
 
 const generateEmptyTalent = () => {
@@ -105,13 +87,6 @@ const generateEmptyTalent = () => {
     group: [],
     canEdit: false,
     shared: false,
-  };
-};
-
-const generateEmptyModifiers = () => {
-  return {
-    size: 0,
-    attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   };
 };
 

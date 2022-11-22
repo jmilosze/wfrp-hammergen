@@ -2,7 +2,6 @@
   <div class="character">
     <b-container>
       <h1>{{ titlePrefix }} Character</h1>
-      test: {{ talentModifiers.size }}
 
       <div v-if="errors.length" class="text-danger field-validation-error mt-3">
         <ul>
@@ -596,9 +595,9 @@
                           <b-td>{{ racial.BS }}</b-td>
                         </b-tr>
                         <b-tr>
-                          <b-th>Base</b-th>
-                          <b-td>{{ base.WS }}</b-td>
-                          <b-td>{{ base.BS }}</b-td>
+                          <b-th>Other</b-th>
+                          <b-td>{{ element.modifiers.attributes.WS }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.BS }}</b-td>
                         </b-tr>
                         <b-tr>
                           <b-th>Adv</b-th>
@@ -695,10 +694,10 @@
                           <b-td>{{ racial.Ag }}</b-td>
                         </b-tr>
                         <b-tr>
-                          <b-td>{{ base.S }}</b-td>
-                          <b-td>{{ base.T }}</b-td>
-                          <b-td>{{ base.I }}</b-td>
-                          <b-td>{{ base.Ag }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.S }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.T }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.I }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.Ag }}</b-td>
                         </b-tr>
                         <b-tr>
                           <b-td>
@@ -817,10 +816,10 @@
                           <b-td>{{ racial.Fel }}</b-td>
                         </b-tr>
                         <b-tr>
-                          <b-td>{{ base.Dex }}</b-td>
-                          <b-td>{{ base.Int }}</b-td>
-                          <b-td>{{ base.WP }}</b-td>
-                          <b-td>{{ base.Fel }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.Dex }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.Int }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.WP }}</b-td>
+                          <b-td>{{ element.modifiers.attributes.Fel }}</b-td>
                         </b-tr>
                         <b-tr>
                           <b-td>
@@ -977,6 +976,7 @@
                   :selectedItems="initialMutations"
                   @changed="updateIdList(element.mutations, $event)"
                   @createNew="validateAndSubmit('mutation')"
+                  @modifiersChanged="mutationModifiers = $event"
                 ></CharacterMutationsTable>
               </b-form-group>
             </b-col>
@@ -1031,6 +1031,7 @@ import {
   generateNewCharacter,
 } from "../../../services/wh/character";
 import { statusStandings, statusTiers } from "../../../services/wh/career";
+import { generateEmptyModifiers, sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 
 export default {
   name: "CreateCharacter",
@@ -1094,9 +1095,8 @@ export default {
       generationProps: null,
       generationLevel: 2,
 
-      talentModifiers: {
-        size: 0,
-      },
+      talentModifiers: generateEmptyModifiers(),
+      mutationModifiers: generateEmptyModifiers(),
     };
   },
   created() {
@@ -1338,6 +1338,18 @@ export default {
       if (!Object.hasOwn(oldVal, "id")) {
         this.elementOriginal.career = { id: newVal.id, number: newVal.number };
       }
+    },
+    talentModifiers() {
+      this.element.modifiers = sumAndMultModifiers([
+        { multiplier: 1, modifiers: this.talentModifiers },
+        { multiplier: 1, modifiers: this.mutationModifiers },
+      ]);
+    },
+    mutationModifiers() {
+      this.element.modifiers = sumAndMultModifiers([
+        { multiplier: 1, modifiers: this.talentModifiers },
+        { multiplier: 1, modifiers: this.mutationModifiers },
+      ]);
     },
   },
 };

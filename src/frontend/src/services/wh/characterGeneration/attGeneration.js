@@ -1,6 +1,6 @@
 import { diceRoll } from "../../../utils/randomUtils";
 import { attCost } from "./expCost";
-import { racialAttributes, attributes } from "../character";
+import { racialAttributes, attributes } from "../attributes";
 
 export function speciesAtts(species) {
   if (species === 0) {

@@ -8,17 +8,23 @@
       </div>
 
       <div class="text-sm-left">
-        <div class="alert alert-danger" role="alert">
-          <div class="h3">Update!</div>
+        <div class="alert alert-success" role="alert">
+          <div class="h3">More updates!</div>
           <p>
-            We have finally added new resources to Hammergen! Hammergen now includes Gnomes from
-            <b>Rough Nights & Hard Days</b> and new careers and items from <b>Archives of the Empire: Volume I</b>. We
-            will be adding more resources soon. Full list of resources can be found
-            <b-link href="#resources">below</b-link> on this page.
+            Talents and Mutations that permanently alter <b>Attributes</b>, <b>Size</b>, or <b>Movement</b> are now
+            automatically taken into account when creating and viewing character. For example if you add Talent
+            Coolheaded (+5WP), it will be added to attributes and skills. As usual, you can also create your custom
+            Talents and Mutations that automatically modify those characteristics.
           </p>
           <p>
-            To keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
-            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link> :)
+            You can read more about this and previous updates in the new section
+            <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link> in the <b>About</b> tab.
+          </p>
+          <p>
+            From now on, we will post (roughly once a month) updates on Hammergen
+            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link> page where you can add comments
+            and suggestions. As always, to keep Hammergen up-to-date and add-free please consider supporting us with a
+            small donation via <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link> :)
           </p>
         </div>
 

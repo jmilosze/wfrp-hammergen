@@ -1,6 +1,6 @@
 import { rollInTable, selectRandom } from "../../../utils/randomUtils";
 import { generateAdv, fillUpAdv } from "./attGeneration";
-import { racialAttributes, attributes } from "../character";
+import { sumAndMultAttr, attributes, getAttributes } from "../attributes";
 
 let LEVEL_1_TALENT_NUMBER = 1;
 let LEVEL_N_TALENT_NUMBER = 2;
@@ -72,14 +72,17 @@ function getMaxRank(talent, atts) {
   }
 }
 
-function getTalentsRank(talentList, baseAtts, advAtts) {
-  let atts = {};
-  for (let attName of Object.keys(baseAtts)) {
-    atts[attName] = baseAtts[attName] + advAtts[attName];
-  }
+export function getAllTalentsMaxRank(talents, talentDict, baseAtts, advances) {
+  let talentAtts = getTalentAtts(talents, talentDict);
+
+  let atts = sumAndMultAttr([
+    { multiplier: 1, attributes: baseAtts },
+    { multiplier: 1, attributes: talentAtts },
+    { multiplier: 1, attributes: advances },
+  ]);
 
   let talentsRank = {};
-  for (let talent of talentList) {
+  for (let talent of Object.values(talentDict)) {
     talentsRank[talent.id] = getMaxRank(talent, atts);
   }
   return talentsRank;
@@ -144,6 +147,14 @@ function generateLevelTalent(previousTalents, talentList, talentGroups, talentsR
   return [generatedTalents, cost];
 }
 
+export function getTalentAtts(selectedTalents, talentDict) {
+  let modifiersList = selectedTalents.map((t) => ({
+    multiplier: t.number,
+    attributes: talentDict[t.id].modifiers.attributes,
+  }));
+  return sumAndMultAttr(modifiersList);
+}
+
 export function genTalentsAndAdvances(
   species,
   speciesTalents,
@@ -155,7 +166,7 @@ export function genTalentsAndAdvances(
   level
 ) {
   let expSpent = 0;
-  let advances = JSON.parse(JSON.stringify(racialAttributes.none));
+  let advances = getAttributes();
   if (careerAtts[0].length > 0) {
     [advances, expSpent] = generateAdv(careerAtts[0], LEVEL_1_ATT_NUMBER, advances, expSpent);
   }
@@ -163,7 +174,9 @@ export function genTalentsAndAdvances(
   let resolvedTalentGroups = resolveTalentGroups(listOfTalents);
   let genSpecTalents = generateSpeciesTalents(speciesTalents[species], resolvedTalentGroups, randomTalents, species);
 
-  let talentsRank = getTalentsRank(listOfTalents, baseAtts, advances);
+  let talentDict = listOfTalents.reduce((a, v) => ({ ...a, [v.id]: v }), {});
+
+  let talentsRank = getAllTalentsMaxRank(genSpecTalents, talentDict, baseAtts, advances);
   let talents;
   [talents, expSpent] = generateLevelTalent(
     genSpecTalents,
@@ -177,6 +190,7 @@ export function genTalentsAndAdvances(
   expSpent = 0;
 
   if (level > 1) {
+    talentsRank = getAllTalentsMaxRank(talents, talentDict, baseAtts, advances);
     [talents, expSpent] = generateLevelTalent(
       talents,
       careerTalents[0],
@@ -197,7 +211,7 @@ export function genTalentsAndAdvances(
       [advances, expSpent] = generateAdv(allCareerAtts, LEVEL_N_ATT_NUMBER, advances, expSpent);
     }
 
-    talentsRank = getTalentsRank(listOfTalents, baseAtts, advances);
+    talentsRank = getAllTalentsMaxRank(talents, talentDict, baseAtts, advances);
     [talents, expSpent] = generateLevelTalent(
       talents,
       careerTalents[tmpLvl - 1],
