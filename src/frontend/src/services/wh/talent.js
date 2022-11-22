@@ -19,9 +19,24 @@ const convertApiToModelData = (apiData) => {
     maxRankAtt: apiData.max_rank_att,
     isGroup: apiData.is_group,
     group: apiData.group,
+    hasModifiers: checkModifiers(apiData.modifiers),
+    modifiers: apiData.modifiers,
     canEdit: apiData.can_edit,
     shared: apiData.shared,
   };
+};
+
+const checkModifiers = (modifiers) => {
+  if (modifiers.size !== 0) {
+    return true;
+  } else {
+    for (let att of Object.values(modifiers.attributes)) {
+      if (att !== 0) {
+        return true;
+      }
+    }
+  }
+  return false;
 };
 
 const convertModelToApiData = (talent, includeId) => {
@@ -31,6 +46,7 @@ const convertModelToApiData = (talent, includeId) => {
     tests: talent.tests,
     max_rank: talent.maxRank,
     max_rank_att: talent.maxRankAtt,
+    modifiers: talent.modifiers,
     is_group: talent.isGroup,
     group: talent.group,
     shared: talent.shared,
@@ -55,17 +71,24 @@ class TalentApi {
 
 const compareTalent = (talent1, talent2) => {
   for (let [key, value] of Object.entries(talent1)) {
-    if (key !== "group") {
+    if (key !== "group" && key !== "modifiers") {
       if (talent2[key] !== value) {
-        return false;
-      }
-    } else {
-      if (!compareArrayIgnoreOrder(talent1.group, talent2.group)) {
         return false;
       }
     }
   }
-  return true;
+
+  if (!compareArrayIgnoreOrder(talent1.group, talent2.group)) {
+    return false;
+  }
+
+  for (let [key, value] of Object.entries(talent1.modifiers.attributes)) {
+    if (value !== talent2.modifiers.attributes[key]) {
+      return false;
+    }
+  }
+
+  return talent1.modifiers.size === talent2.modifiers.size;
 };
 
 const generateEmptyTalent = () => {
@@ -76,10 +99,19 @@ const generateEmptyTalent = () => {
     tests: "",
     maxRank: 0,
     maxRankAtt: 0,
+    hasModifiers: false,
+    modifiers: generateEmptyModifiers(),
     isGroup: false,
     group: [],
     canEdit: false,
     shared: false,
+  };
+};
+
+const generateEmptyModifiers = () => {
+  return {
+    size: 0,
+    attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   };
 };
 

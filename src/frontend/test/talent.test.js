@@ -7,6 +7,10 @@ const talent1 = {
   tests: "qwe",
   max_rank: 4,
   max_rank_att: 2,
+  modifiers: {
+    size: -1,
+    attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+  },
   is_group: true,
   group: ["a", "b"],
   can_edit: true,
@@ -20,6 +24,10 @@ const talent2 = {
   tests: "asd",
   max_rank: 2,
   max_rank_att: 1,
+  modifiers: {
+    size: 0,
+    attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+  },
   is_group: false,
   group: [],
   can_edit: true,
@@ -69,6 +77,11 @@ test("test getElement returns expected talents", async () => {
     tests: "qwe",
     maxRank: 4,
     maxRankAtt: 2,
+    hasModifiers: true,
+    modifiers: {
+      size: -1,
+      attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+    },
     isGroup: true,
     group: ["a", "b"],
     canEdit: true,

@@ -160,6 +160,8 @@ export default {
       currentPage: 1,
       totalRows: 1,
       editLoading: false,
+
+      talnetsWithModifiers: [],
     };
   },
   created() {
@@ -239,6 +241,7 @@ export default {
         }
       }
       this.$emit("stateChanged", this.isValid);
+      this.$emit("modifiersChanged", this.calcModifiers());
       this.sortListOfItems("select", true);
     },
     formatMaxRank(talent) {
@@ -263,9 +266,26 @@ export default {
         return talent.maxRank;
       }
     },
+    calcModifiers() {
+      let modifiers = { size: 0 };
+      for (let talent of this.talnetsWithModifiers) {
+        modifiers.size = modifiers.size + talent.number * talent.modifiers.size;
+      }
+
+      return modifiers;
+    },
     selectItem(talent) {
       talent.state = Number.isInteger(talent.number) && talent.number >= 0 && talent.number <= this.getMaxRank(talent);
-      this.$emit("selectedChanged", { id: talent.id, number: talent.number });
+
+      this.$emit("selectedChanged", {
+        id: talent.id,
+        number: talent.number,
+      });
+
+      if (talent.hasModifiers) {
+        this.$emit("modifiersChanged", this.calcModifiers());
+      }
+
       this.$emit("stateChanged", this.isValid);
     },
     addSpeciesTalents() {
@@ -293,11 +313,24 @@ export default {
       listOfItems = listOfItems.filter((x) => !x.isGroup);
       this.$emit("listOfTalents", JSON.parse(JSON.stringify(listOfItems)));
 
+      this.talnetsWithModifiers = [];
+
       for (let item of listOfItems) {
         item.number = 0;
         item.state = true;
         item.name = addSpaces(item.name, MAX_CHARS);
         item.description = addSpaces(item.description, MAX_CHARS);
+
+        // FIXME Delete after updating API
+        if (item.name === "Small") {
+          item.modifiers = { size: -1 };
+        }
+        if (Object.hasOwn(item, "modifiers") && Object.keys(item.modifiers).length !== 0) {
+          item.hasModifiers = true;
+          this.talnetsWithModifiers.push(item);
+        } else {
+          item.hasModifiers = false;
+        }
       }
       this.listOfItems = listOfItems;
 

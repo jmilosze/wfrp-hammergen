@@ -145,6 +145,11 @@ TALENT_COMPONENTS = {
     "max_rank": And(int, lambda x: 1000 >= x >= 0),
     "max_rank_att": Or(*list(Attribute)),
     "is_group": bool,
+    "has_modifiers": bool,
+    "modifiers": {
+        "size": And(int, lambda x: -3 >= x >= 3),
+        "attributes": ATTRIBUTES_SCHEMA,
+    },
     "group": [ID_SCHEMA],
     "shared": bool,
 }

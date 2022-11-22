@@ -2,6 +2,7 @@
   <div class="character">
     <b-container>
       <h1>{{ titlePrefix }} Character</h1>
+      test: {{ talentModifiers.size }}
 
       <div v-if="errors.length" class="text-danger field-validation-error mt-3">
         <ul>
@@ -923,6 +924,7 @@
                   @selectedChanged="updateIdNumberList(element.talents, $event)"
                   @stateChanged="validTalents = $event"
                   @createNew="validateAndSubmit('talent')"
+                  @modifiersChanged="talentModifiers = $event"
                 ></CharacterTalentsTable>
                 <b-form-invalid-feedback :state="validTalents">
                   Invalid value of one or more Talents.
@@ -1091,6 +1093,10 @@ export default {
       createEnabled: true,
       generationProps: null,
       generationLevel: 2,
+
+      talentModifiers: {
+        size: 0,
+      },
     };
   },
   created() {
