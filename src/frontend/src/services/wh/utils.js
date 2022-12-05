@@ -1,16 +1,36 @@
-import { skillAttributeTypesGroup } from "../skill";
-import { ammunitionGroups, armorGroups, armorLocations, meleeGroups, meleeReach, rangedGroups } from "../item";
-import { mutationTypes } from "../mutation";
+import { skillAttributeTypesGroup } from "./skill";
+import { ammunitionGroups, armorGroups, armorLocations, meleeGroups, meleeReach, rangedGroups } from "./item";
+import { mutationTypes } from "./mutation";
 
-function getWoundsFormula(speciesValue, T, WP, S) {
+const sizes = {
+  tiny: 0,
+  little: 1,
+  small: 2,
+  average: 3,
+  large: 4,
+  enormous: 5,
+  monstrous: 6,
+};
+
+function getWoundsFormula(size, T, WP, S) {
   const TB = Math.floor(T / 10);
   const WPB = Math.floor(WP / 10);
   const SB = Math.floor(S / 10);
 
-  if (speciesValue === 1 || speciesValue === 5) {
+  if (size <= sizes.tiny) {
+    return 1;
+  } else if (size === sizes.little) {
+    return TB;
+  } else if (size === sizes.small) {
     return 2 * TB + WPB;
-  } else {
+  } else if (size === sizes.average) {
     return SB + 2 * TB + WPB;
+  } else if (size === sizes.large) {
+    return (SB + 2 * TB + WPB) * 2;
+  } else if (size === sizes.enormous) {
+    return (SB + 2 * TB + WPB) * 4;
+  } else {
+    return (SB + 2 * TB + WPB) * 8;
   }
 }
 
@@ -169,4 +189,5 @@ export {
   getCareerName,
   getCareerLevelName,
   csvStr,
+
 };

@@ -36,7 +36,8 @@
                 >
                 </b-form-select>
               </b-form-group>
-
+            </b-col>
+            <b-col md="6">
               <ValidationProvider v-slot="{ errors, valid }" :rules="descValid" name="Description">
                 <b-form-group label="Description" label-for="description-input">
                   <b-form-textarea
@@ -52,7 +53,28 @@
                   </b-form-invalid-feedback>
                 </b-form-group>
               </ValidationProvider>
+            </b-col>
+          </b-row>
 
+          <CharacterModifiers
+            :size.sync="element.modifiers.size"
+            :movement.sync="element.modifiers.movement"
+            :ws.sync="element.modifiers.attributes.WS"
+            :bs.sync="element.modifiers.attributes.BS"
+            :s.sync="element.modifiers.attributes.S"
+            :t.sync="element.modifiers.attributes.T"
+            :i.sync="element.modifiers.attributes.I"
+            :ag.sync="element.modifiers.attributes.Ag"
+            :dex.sync="element.modifiers.attributes.Dex"
+            :int.sync="element.modifiers.attributes.Int"
+            :wp.sync="element.modifiers.attributes.WP"
+            :fel.sync="element.modifiers.attributes.Fel"
+            @valid="validAtt = $event"
+            :disabled="!element.canEdit"
+          />
+
+          <b-row class="mt-4">
+            <b-col md="6">
               <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Mutation" />
 
               <CreateSubmit
@@ -74,6 +96,7 @@
 import CreateElement2 from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import PublicElementBox from "./PublicElementBox.vue";
+import CharacterModifiers from "./CharacterModifiers.vue";
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import {
   MutationApi,
@@ -88,6 +111,7 @@ export default {
   name: "CreateMutation",
   mixins: [CreateElement2],
   components: {
+    CharacterModifiers,
     ValidationObserver,
     ValidationProvider,
     CreateSubmit,
@@ -103,6 +127,7 @@ export default {
       mutationTypeOptions: Object.keys(mutationTypes).map((key) => {
         return { value: parseInt(key), text: mutationTypes[key] };
       }),
+      validAtt: true,
     };
   },
   created() {
@@ -116,6 +141,11 @@ export default {
     setElementToNew(canEdit) {
       this.element = generateNewMutation(canEdit);
       this.elementOriginal = generateNewMutation(canEdit);
+    },
+    validateAndSubmit(redirectElementType = null) {
+      if (this.validAtt) {
+        return this.submitForm(redirectElementType);
+      }
     },
   },
 };

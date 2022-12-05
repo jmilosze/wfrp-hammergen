@@ -51,6 +51,25 @@ ATTRIBUTES_SCHEMA = Schema(
     }
 )
 
+MODIFIERS_SCHEMA = Schema(
+    {
+        "size": And(int, lambda x: 3 >= x >= -3),
+        "movement": And(int, lambda x: 3 >= x >= -3),
+        "attributes": {
+            "WS": And(int, lambda x: 99 >= x >= -99),
+            "BS": And(int, lambda x: 99 >= x >= -99),
+            "S": And(int, lambda x: 99 >= x >= -99),
+            "T": And(int, lambda x: 99 >= x >= -99),
+            "I": And(int, lambda x: 99 >= x >= -99),
+            "Ag": And(int, lambda x: 99 >= x >= -99),
+            "Dex": And(int, lambda x: 99 >= x >= -99),
+            "Int": And(int, lambda x: 99 >= x >= -99),
+            "WP": And(int, lambda x: 99 >= x >= -99),
+            "Fel": And(int, lambda x: 99 >= x >= -99),
+        },
+    },
+)
+
 ITEM_PROPERTY_COMPONENTS = {
     "name": NAME_SCHEMA,
     "applicable_to": [*list(Item)],
@@ -73,6 +92,7 @@ MUTATION_COMPONENTS = {
     "name": NAME_SCHEMA,
     "type": Or(*list(Mutation)),
     "description": DESCRIPTION_SCHEMA,
+    "modifiers": MODIFIERS_SCHEMA,
     "shared": bool,
 }
 
@@ -145,6 +165,7 @@ TALENT_COMPONENTS = {
     "max_rank": And(int, lambda x: 1000 >= x >= 0),
     "max_rank_att": Or(*list(Attribute)),
     "is_group": bool,
+    "modifiers": MODIFIERS_SCHEMA,
     "group": [ID_SCHEMA],
     "shared": bool,
 }

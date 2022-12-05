@@ -1,11 +1,12 @@
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
 import {
+  createElementFunc,
+  deleteElementFunc,
   getElementFunc,
   listElementsFunc,
-  createElementFunc,
   updateElementFunc,
-  deleteElementFunc,
 } from "./crudGenerator";
+import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
 
 const apiBasePath = "/api/talent";
 
@@ -19,6 +20,8 @@ const convertApiToModelData = (apiData) => {
     maxRankAtt: apiData.max_rank_att,
     isGroup: apiData.is_group,
     group: apiData.group,
+    hasModifiers: checkModifiers(apiData.modifiers),
+    modifiers: apiData.modifiers,
     canEdit: apiData.can_edit,
     shared: apiData.shared,
   };
@@ -31,6 +34,7 @@ const convertModelToApiData = (talent, includeId) => {
     tests: talent.tests,
     max_rank: talent.maxRank,
     max_rank_att: talent.maxRankAtt,
+    modifiers: talent.modifiers,
     is_group: talent.isGroup,
     group: talent.group,
     shared: talent.shared,
@@ -55,17 +59,18 @@ class TalentApi {
 
 const compareTalent = (talent1, talent2) => {
   for (let [key, value] of Object.entries(talent1)) {
-    if (key !== "group") {
+    if (key !== "group" && key !== "modifiers") {
       if (talent2[key] !== value) {
-        return false;
-      }
-    } else {
-      if (!compareArrayIgnoreOrder(talent1.group, talent2.group)) {
         return false;
       }
     }
   }
-  return true;
+
+  if (!compareArrayIgnoreOrder(talent1.group, talent2.group)) {
+    return false;
+  }
+
+  return compareModifiers(talent1.modifiers, talent2.modifiers);
 };
 
 const generateEmptyTalent = () => {
@@ -76,6 +81,8 @@ const generateEmptyTalent = () => {
     tests: "",
     maxRank: 0,
     maxRankAtt: 0,
+    hasModifiers: false,
+    modifiers: generateEmptyModifiers(),
     isGroup: false,
     group: [],
     canEdit: false,

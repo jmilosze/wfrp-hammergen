@@ -202,6 +202,14 @@
                 <b-td>{{ char.baseAttributes.I }}</b-td>
               </b-tr>
               <b-tr>
+                <b-td>Other</b-td>
+                <b-td>{{ char.otherAttributes.WS }}</b-td>
+                <b-td>{{ char.otherAttributes.BS }}</b-td>
+                <b-td>{{ char.otherAttributes.S }}</b-td>
+                <b-td>{{ char.otherAttributes.T }}</b-td>
+                <b-td>{{ char.otherAttributes.I }}</b-td>
+              </b-tr>
+              <b-tr>
                 <b-td>Advances</b-td>
                 <b-td>{{ char.attributeAdvances.WS }}</b-td>
                 <b-td>{{ char.attributeAdvances.BS }}</b-td>
@@ -241,6 +249,14 @@
                 <b-td>{{ char.baseAttributes.Int }}</b-td>
                 <b-td>{{ char.baseAttributes.WP }}</b-td>
                 <b-td>{{ char.baseAttributes.Fel }}</b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>Base</b-td>
+                <b-td>{{ char.otherAttributes.Ag }}</b-td>
+                <b-td>{{ char.otherAttributes.Dex }}</b-td>
+                <b-td>{{ char.otherAttributes.Int }}</b-td>
+                <b-td>{{ char.otherAttributes.WP }}</b-td>
+                <b-td>{{ char.otherAttributes.Fel }}</b-td>
               </b-tr>
               <b-tr>
                 <b-td>Advances</b-td>

@@ -2,7 +2,7 @@
   <div class="talent">
     <b-container>
       <validation-observer ref="observer" v-slot="{ handleSubmit }">
-        <b-form id="edit-talent" @submit.stop.prevent="handleSubmit(submitForm)">
+        <b-form id="edit-talent" @submit.stop.prevent="handleSubmit(validateAndSubmit)">
           <h1>{{ titlePrefix }} Talent</h1>
 
           <b-alert variant="success" :fade="true" :show="saveSuccessCountdown" @dismissed="saveSuccessCountdown = 0"
@@ -56,7 +56,6 @@
                 </b-form-group>
               </ValidationProvider>
             </b-col>
-
             <b-col md="6">
               <div v-if="element.isGroup === false">
                 <div>Max Rank</div>
@@ -139,7 +138,24 @@
             </b-col>
           </b-row>
 
-          <b-row>
+          <CharacterModifiers
+            :size.sync="element.modifiers.size"
+            :movement.sync="element.modifiers.movement"
+            :ws.sync="element.modifiers.attributes.WS"
+            :bs.sync="element.modifiers.attributes.BS"
+            :s.sync="element.modifiers.attributes.S"
+            :t.sync="element.modifiers.attributes.T"
+            :i.sync="element.modifiers.attributes.I"
+            :ag.sync="element.modifiers.attributes.Ag"
+            :dex.sync="element.modifiers.attributes.Dex"
+            :int.sync="element.modifiers.attributes.Int"
+            :wp.sync="element.modifiers.attributes.WP"
+            :fel.sync="element.modifiers.attributes.Fel"
+            @valid="validAtt = $event"
+            :disabled="!element.canEdit"
+          />
+
+          <b-row class="mt-4">
             <b-col md="6">
               <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Talent" />
 
@@ -173,11 +189,14 @@ import {
   talentAttributes,
 } from "../../services/wh/talent";
 import { authRequest } from "../../services/auth";
+import CharacterModifiers from "./CharacterModifiers.vue";
+import { generateEmptyModifiers } from "@/services/wh/characterModifiers";
 
 export default {
   name: "CreateTalent",
   mixins: [CreateElement2],
   components: {
+    CharacterModifiers,
     ValidationObserver,
     ValidationProvider,
     SelectTable,
@@ -194,6 +213,7 @@ export default {
       attributeOptions: Object.keys(talentAttributes).map((key) => {
         return { value: parseInt(key), text: talentAttributes[key] };
       }),
+      validAtt: true,
     };
   },
   created() {
@@ -207,6 +227,7 @@ export default {
         this.element.tests = "";
         this.element.maxRank = 0;
         this.element.maxRankAtt = 0;
+        this.element.modifiers = generateEmptyModifiers();
       }
     },
   },
@@ -221,16 +242,25 @@ export default {
       this.element = generateNewTalent(canEdit);
       this.elementOriginal = generateNewTalent(canEdit);
     },
+    validateAndSubmit(redirectElementType = null) {
+      if (this.validAtt) {
+        return this.submitForm(redirectElementType);
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-.container input {
-  min-width: 70px;
-}
-
 .container select {
   min-width: 95px;
+}
+
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.align-center {
+  align-self: center;
 }
 </style>

@@ -416,7 +416,7 @@ import {
   compareCareer,
   generateNewCareer,
 } from "../../../services/wh/career";
-import { attributes } from "../../../services/wh/character";
+import { attributes } from "../../../services/wh/attributes";
 import { species } from "../../../services/wh/character";
 import { authRequest } from "../../../services/auth";
 

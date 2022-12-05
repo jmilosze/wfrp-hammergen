@@ -4,9 +4,9 @@ import {
   getElementFunc,
   listElementsFunc,
   updateElementFunc,
-} from "../crudGenerator";
-import { compareArrayIgnoreOrder, compareStringNumber } from "../../../utils/arrayUtils";
-import { careerClasses, statusTiers } from "../career";
+} from "./crudGenerator";
+import { compareArrayIgnoreOrder, compareStringNumber } from "../../utils/arrayUtils";
+import { careerClasses, statusTiers } from "./career";
 import {
   getWoundsFormula,
   getMovementFormula,
@@ -18,32 +18,12 @@ import {
   getCareerLevelName,
   csvStr,
 } from "./utils";
+import { sumAndMultAttr, getAttributes } from "./attributes";
+import { generateEmptyModifiers, sumAndMultModifiers } from "./characterModifiers";
 
 const apiBasePath = "/api/character";
 const apiCharacterDisplayPath = "/api/character_resolved";
 const apiSkillPath = "/api/skill";
-
-const racialAttributes = {
-  none: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-  human: { WS: 20, BS: 20, S: 20, T: 20, I: 20, Ag: 20, Dex: 20, Int: 20, WP: 20, Fel: 20 },
-  halfling: { WS: 10, BS: 30, S: 10, T: 20, I: 20, Ag: 20, Dex: 30, Int: 20, WP: 30, Fel: 30 },
-  dwarf: { WS: 30, BS: 20, S: 20, T: 30, I: 20, Ag: 10, Dex: 30, Int: 20, WP: 40, Fel: 10 },
-  elf: { WS: 30, BS: 30, S: 20, T: 20, I: 40, Ag: 30, Dex: 30, Int: 30, WP: 30, Fel: 20 },
-  gnome: { WS: 20, BS: 10, S: 10, T: 15, I: 30, Ag: 30, Dex: 30, Int: 30, WP: 40, Fel: 15 },
-};
-
-const attributes = {
-  1: "WS",
-  2: "BS",
-  3: "S",
-  4: "T",
-  5: "I",
-  6: "Ag",
-  7: "Dex",
-  8: "Int",
-  9: "WP",
-  10: "Fel",
-};
 
 const species = {
   0: "Human",
@@ -54,21 +34,7 @@ const species = {
   5: "Gnome",
 };
 
-function speciesAtts(species) {
-  if (species === 0) {
-    return JSON.parse(JSON.stringify(racialAttributes.human));
-  } else if (species === 1) {
-    return JSON.parse(JSON.stringify(racialAttributes.halfling));
-  } else if (species === 2) {
-    return JSON.parse(JSON.stringify(racialAttributes.dwarf));
-  } else if (species === 3 || species === 4) {
-    return JSON.parse(JSON.stringify(racialAttributes.elf));
-  } else if (species === 5) {
-    return JSON.parse(JSON.stringify(racialAttributes.gnome));
-  } else {
-    return JSON.parse(JSON.stringify(racialAttributes.none));
-  }
-}
+const defaultSize = 3; // Average
 
 const generateEmptyCharacter = () => {
   return {
@@ -90,8 +56,8 @@ const generateEmptyCharacter = () => {
     notes: "",
     careerPath: [],
     career: {},
-    attributeRolls: JSON.parse(JSON.stringify(racialAttributes.none)),
-    attributeAdvances: JSON.parse(JSON.stringify(racialAttributes.none)),
+    attributeRolls: getAttributes(),
+    attributeAdvances: getAttributes(),
     skills: [],
     talents: [],
     equippedItems: [],
@@ -103,6 +69,8 @@ const generateEmptyCharacter = () => {
     mutations: [],
     canEdit: false,
     shared: false,
+
+    modifiers: generateEmptyModifiers(),
   };
 };
 
@@ -132,9 +100,10 @@ const generateEmptyCharacterForDisplay = () => {
     currentExp: 0,
     spentExp: 0,
     totalExp: 0,
-    attributes: JSON.parse(JSON.stringify(racialAttributes.none)),
-    baseAttributes: JSON.parse(JSON.stringify(racialAttributes.none)),
-    attributeAdvances: JSON.parse(JSON.stringify(racialAttributes.none)),
+    attributes: getAttributes(),
+    baseAttributes: getAttributes(),
+    otherAttributes: getAttributes(),
+    attributeAdvances: getAttributes(),
     basicSkills: [],
     advancedSkills: [],
     talents: [],
@@ -153,6 +122,8 @@ const generateEmptyCharacterForDisplay = () => {
     corruption: 0,
     mutations: [],
     canEdit: false,
+
+    modifiers: generateEmptyModifiers(),
   };
 };
 
@@ -240,6 +211,8 @@ const convertApiToModelData = (apiData) => {
     mutations: JSON.parse(JSON.stringify(apiData.mutations)),
     shared: apiData.shared,
     canEdit: apiData.can_edit,
+
+    modifiers: generateEmptyModifiers(),
   };
 
   newCharacter.careerPath = [];
@@ -249,7 +222,7 @@ const convertApiToModelData = (apiData) => {
 
   newCharacter.career = { id: apiData.career.id, number: apiData.career.level };
 
-  const attributeRacial = speciesAtts(newCharacter.species);
+  const attributeRacial = getAttributes(newCharacter.species);
   newCharacter.attributeRolls = {};
   for (let [key, value] of Object.entries(apiData.base_attributes)) {
     newCharacter.attributeRolls[key] = value - attributeRacial[key];
@@ -277,10 +250,20 @@ class CharacterApi {
     const rawSkills = (await skillsPromise).data.data;
     const rawCharacter = (await rawCharacterPromise).data.data;
 
-    const attributes = {};
-    for (let key of Object.keys(rawCharacter.base_attributes)) {
-      attributes[key] = rawCharacter.base_attributes[key] + rawCharacter.attribute_advances[key];
-    }
+    const totalModifiers = sumAndMultModifiers([
+      ...rawCharacter.mutations.map((t) => ({ multiplier: 1, modifiers: t.value.modifiers })),
+      ...rawCharacter.talents.map((t) => ({ multiplier: t.number, modifiers: t.value.modifiers })),
+    ]);
+
+    const otherAttributes = totalModifiers.attributes;
+    const sizeModifier = totalModifiers.size;
+    const movementModifier = totalModifiers.movement;
+
+    const attributes = sumAndMultAttr([
+      { multiplier: 1, attributes: otherAttributes },
+      { multiplier: 1, attributes: rawCharacter.base_attributes },
+      { multiplier: 1, attributes: rawCharacter.attribute_advances },
+    ]);
 
     const [basicSkills, advancedSkills] = formatSkills(rawCharacter.skills, rawSkills, attributes);
     const equippedArmor = rawCharacter.equipped_items.filter((x) => x.value.stats.type === 3);
@@ -315,13 +298,14 @@ class CharacterApi {
       pastCareers: rawCharacter.career_path.map((x) => `${getCareerName(x)}`),
 
       baseAttributes: rawCharacter.base_attributes,
+      otherAttributes: otherAttributes,
       attributeAdvances: rawCharacter.attribute_advances,
       attributes: attributes,
 
-      movement: getMovementFormula(rawCharacter.species),
-      walk: 2 * getMovementFormula(rawCharacter.species),
-      run: 4 * getMovementFormula(rawCharacter.species),
-      wounds: getWoundsFormula(rawCharacter.species, attributes.T, attributes.WP, attributes.S),
+      movement: getMovementFormula(rawCharacter.species) + movementModifier,
+      walk: 2 * (getMovementFormula(rawCharacter.species) + movementModifier),
+      run: 4 * (getMovementFormula(rawCharacter.species) + movementModifier),
+      wounds: getWoundsFormula(defaultSize + sizeModifier, attributes.T, attributes.WP, attributes.S),
 
       talents: rawCharacter.talents.map((x) => ({ name: x.value.name, rank: x.number })),
       basicSkills: basicSkills,
@@ -357,6 +341,7 @@ const compareCharacter = (character1, character2) => {
     "storedItems",
     "spells",
     "mutations",
+    "modifiers",
   ];
 
   for (let [key, value] of Object.entries(character1)) {
@@ -397,15 +382,20 @@ const compareCharacter = (character1, character2) => {
 
 function getWounds(character) {
   const attributeTotal = getTotalAttributes(character);
-  return getWoundsFormula(character.species, attributeTotal.T, attributeTotal.WP, attributeTotal.S);
+  return getWoundsFormula(
+    defaultSize + character.modifiers.size,
+    attributeTotal.T,
+    attributeTotal.WP,
+    attributeTotal.S
+  );
 }
 
 function getMovement(character) {
-  return getMovementFormula(character.species);
+  return getMovementFormula(character.species) + character.modifiers.movement;
 }
 
 function getBaseAttributes(character) {
-  const attributeRacial = speciesAtts(character.species);
+  const attributeRacial = getAttributes(character.species);
   const baseAttributes = {};
   for (let [key, value] of Object.entries(character.attributeRolls)) {
     baseAttributes[key] = value + attributeRacial[key];
@@ -414,14 +404,15 @@ function getBaseAttributes(character) {
 }
 
 function getRacialAttributes(character) {
-  return speciesAtts(character.species);
+  return getAttributes(character.species);
 }
 
 function getTotalAttributes(character) {
-  const attributeRacial = speciesAtts(character.species);
+  const attributeRacial = getAttributes(character.species);
   const totalAttributes = {};
   for (let [key, value] of Object.entries(character.attributeRolls)) {
-    totalAttributes[key] = value + attributeRacial[key] + character.attributeAdvances[key];
+    totalAttributes[key] =
+      value + attributeRacial[key] + character.attributeAdvances[key] + character.modifiers.attributes[key];
   }
   return totalAttributes;
 }
@@ -472,6 +463,12 @@ function characterForDisplayToCsv(charForDisplay) {
   csv += charForDisplay.baseAttributes.I + "," + charForDisplay.baseAttributes.Ag + ",";
   csv += charForDisplay.baseAttributes.Dex + "," + charForDisplay.baseAttributes.Int + ",";
   csv += charForDisplay.baseAttributes.WP + "," + charForDisplay.baseAttributes.Fel + "\n";
+
+  csv += "Other" + "," + charForDisplay.otherAttributes.WS + "," + charForDisplay.otherAttributes.BS + ",";
+  csv += charForDisplay.otherAttributes.S + "," + charForDisplay.otherAttributes.T + ",";
+  csv += charForDisplay.otherAttributes.I + "," + charForDisplay.otherAttributes.Ag + ",";
+  csv += charForDisplay.otherAttributes.Dex + "," + charForDisplay.otherAttributes.Int + ",";
+  csv += charForDisplay.otherAttributes.WP + "," + charForDisplay.otherAttributes.Fel + "\n";
 
   csv += "Advances" + "," + charForDisplay.attributeAdvances.WS + "," + charForDisplay.attributeAdvances.BS + ",";
   csv += charForDisplay.attributeAdvances.S + "," + charForDisplay.attributeAdvances.T + ",";
@@ -609,8 +606,6 @@ function characterForDisplayToCsv(charForDisplay) {
 }
 
 export {
-  racialAttributes,
-  attributes,
   species,
   generateEmptyCharacter,
   generateNewCharacter,

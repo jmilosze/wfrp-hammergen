@@ -113,6 +113,8 @@ import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { generateSpeciesTalents, resolveTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
+import { sumAndMultAttr } from "../../../services/wh/attributes";
+import { sumAndMultModifiers } from "@/services/wh/characterModifiers";
 
 const MAX_CHARS = 15;
 
@@ -160,6 +162,8 @@ export default {
       currentPage: 1,
       totalRows: 1,
       editLoading: false,
+
+      talentsWithModifiers: [],
     };
   },
   created() {
@@ -239,6 +243,8 @@ export default {
         }
       }
       this.$emit("stateChanged", this.isValid);
+      let newModifiers = this.calcModifiers();
+      this.$emit("modifiersChanged", newModifiers);
       this.sortListOfItems("select", true);
     },
     formatMaxRank(talent) {
@@ -263,9 +269,24 @@ export default {
         return talent.maxRank;
       }
     },
+    calcModifiers() {
+      return sumAndMultModifiers(
+        this.talentsWithModifiers.map((t) => ({ multiplier: t.number, modifiers: t.modifiers }))
+      );
+    },
     selectItem(talent) {
       talent.state = Number.isInteger(talent.number) && talent.number >= 0 && talent.number <= this.getMaxRank(talent);
-      this.$emit("selectedChanged", { id: talent.id, number: talent.number });
+
+      this.$emit("selectedChanged", {
+        id: talent.id,
+        number: talent.number,
+      });
+
+      if (talent.hasModifiers) {
+        let newModifiers = this.calcModifiers();
+        this.$emit("modifiersChanged", newModifiers);
+      }
+
       this.$emit("stateChanged", this.isValid);
     },
     addSpeciesTalents() {
@@ -298,6 +319,10 @@ export default {
         item.state = true;
         item.name = addSpaces(item.name, MAX_CHARS);
         item.description = addSpaces(item.description, MAX_CHARS);
+
+        if (item.hasModifiers === true) {
+          this.talentsWithModifiers.push(item);
+        }
       }
       this.listOfItems = listOfItems;
 

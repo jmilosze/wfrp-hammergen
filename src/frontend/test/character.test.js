@@ -7,6 +7,8 @@ import {
   getTotalAttributes,
   getRacialAttributes,
 } from "../src/services/wh/character";
+import { getAttributes } from "../src/services/wh/attributes";
+import { generateEmptyModifiers } from "../src/services/wh/characterModifiers";
 
 const character1ApiForm = {
   name: "char1",
@@ -96,6 +98,7 @@ const character1ModelForm = {
   sin: 1,
   corruption: 2,
   mutations: ["id13"],
+  modifiers: generateEmptyModifiers(),
   canEdit: true,
   shared: true,
 };
@@ -233,9 +236,42 @@ const characterDisplayApiForm = {
     { id: "id5", number: 5 },
   ],
   talents: [
-    { id: "id6", number: 6, value: { name: "talent_1" } },
-    { id: "id7", number: 6, value: { name: "talent_2" } },
-    { id: "id8", number: 2, value: { name: "talent_3" } },
+    {
+      id: "id6",
+      number: 6,
+      value: {
+        name: "talent_1",
+        modifiers: {
+          size: 0,
+          attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+          movement: 0,
+        },
+      },
+    },
+    {
+      id: "id7",
+      number: 6,
+      value: {
+        name: "talent_2",
+        modifiers: {
+          size: 0,
+          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 1 },
+          movement: 0,
+        },
+      },
+    },
+    {
+      id: "id8",
+      number: 1,
+      value: {
+        name: "talent_3",
+        modifiers: {
+          size: -1,
+          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+          movement: 1,
+        },
+      },
+    },
   ],
   equipped_items: [
     {
@@ -353,6 +389,11 @@ const characterDisplayApiForm = {
         name: "mut_1",
         type: 0,
         description: "mut_1_desc",
+        modifiers: {
+          size: -1,
+          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 2 },
+          movement: 1,
+        },
       },
     },
     {
@@ -361,6 +402,11 @@ const characterDisplayApiForm = {
         name: "mut_2",
         type: 1,
         description: "mut_2_desc",
+        modifiers: {
+          size: 1,
+          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+          movement: 0,
+        },
       },
     },
   ],
@@ -969,20 +1015,25 @@ test("test getWounds returns correct value", () => {
 
   // Human T 28, WP 31, S 30
   char.species = 0;
+  char.modifiers.size = 0;
   expect(getWounds(char)).toEqual(2 * 2 + 3 + 3);
 
   // Dwarf T 38, WP 51, S 30
   char.species = 2;
+  char.modifiers.size = 0;
   expect(getWounds(char)).toEqual(2 * 3 + 5 + 3);
 
   // Elf T 28, WP 41, S 30
   char.species = 3;
+  char.modifiers.size = 0;
   expect(getWounds(char)).toEqual(2 * 2 + 4 + 3);
   char.species = 4;
+  char.modifiers.size = 0;
   expect(getWounds(char)).toEqual(2 * 2 + 4 + 3);
 
   // Halfling T 28, WP 41, S 20
   char.species = 1;
+  char.modifiers.size = -1;
   expect(getWounds(char)).toEqual(2 * 2 + 4);
 });
 
@@ -1172,7 +1223,7 @@ test("test getTotalAttributes returns correct value", () => {
 
   // Human
   char.species = 0;
-  expect(getTotalAttributes(char)).toEqual({
+  expect(getTotalAttributes(char, getAttributes())).toEqual({
     WS: 15 + 20,
     BS: 5 + 20,
     S: 5 + 20,
@@ -1187,7 +1238,7 @@ test("test getTotalAttributes returns correct value", () => {
 
   // Dwarf
   char.species = 2;
-  expect(getTotalAttributes(char)).toEqual({
+  expect(getTotalAttributes(char, getAttributes())).toEqual({
     WS: 15 + 30,
     BS: 5 + 20,
     S: 5 + 20,
@@ -1202,7 +1253,7 @@ test("test getTotalAttributes returns correct value", () => {
 
   // Elf
   char.species = 3;
-  expect(getTotalAttributes(char)).toEqual({
+  expect(getTotalAttributes(char, getAttributes())).toEqual({
     WS: 15 + 30,
     BS: 5 + 30,
     S: 5 + 20,
@@ -1216,7 +1267,7 @@ test("test getTotalAttributes returns correct value", () => {
   });
 
   char.species = 4;
-  expect(getTotalAttributes(char)).toEqual({
+  expect(getTotalAttributes(char, getAttributes())).toEqual({
     WS: 15 + 30,
     BS: 5 + 30,
     S: 5 + 20,
@@ -1231,7 +1282,7 @@ test("test getTotalAttributes returns correct value", () => {
 
   // Halfling
   char.species = 1;
-  expect(getTotalAttributes(char)).toEqual({
+  expect(getTotalAttributes(char, getAttributes())).toEqual({
     WS: 15 + 10,
     BS: 5 + 30,
     S: 5 + 10,
@@ -1275,16 +1326,17 @@ test("test getElementDisplay return correct value", async () => {
     className: "Courtier",
     pastCareers: ["career_1 1", "career_2 2"],
     baseAttributes: { WS: 40, BS: 40, S: 30, T: 25, I: 50, Ag: 35, Dex: 50, Int: 35, WP: 35, Fel: 25 },
+    otherAttributes: { WS: 6, BS: 12, S: 18, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 8 },
     attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    attributes: { Ag: 35, BS: 42, Dex: 50, Fel: 25, I: 50, Int: 35, S: 33, T: 25, WP: 35, WS: 41 },
-    movement: 5,
-    walk: 10,
-    run: 20,
-    wounds: 10,
+    attributes: { Ag: 35, BS: 54, Dex: 50, Fel: 33, I: 50, Int: 37, S: 51, T: 25, WP: 37, WS: 47 },
+    movement: 7,
+    walk: 14,
+    run: 28,
+    wounds: 7,
     talents: [
       { name: "talent_1", rank: 6 },
       { name: "talent_2", rank: 6 },
-      { name: "talent_3", rank: 2 },
+      { name: "talent_3", rank: 1 },
     ],
     basicSkills: [
       {
@@ -1297,18 +1349,18 @@ test("test getElementDisplay return correct value", async () => {
       {
         name: "taken_basic_skill",
         attributeName: "WS",
-        attributeValue: 41,
+        attributeValue: 47,
         advances: 4,
-        skill: 45,
+        skill: 51,
       },
     ],
     advancedSkills: [
       {
         name: "taken_adv_skill",
         attributeName: "S",
-        attributeValue: 33,
+        attributeValue: 51,
         advances: 5,
-        skill: 38,
+        skill: 56,
       },
     ],
     equippedArmor: [
@@ -1332,7 +1384,7 @@ test("test getElementDisplay return correct value", async () => {
         desc: "item_1_desc",
         group: "Basic",
         rng: "Short",
-        dmg: 8,
+        dmg: 12,
       },
       {
         name: "item_2",
@@ -1341,8 +1393,8 @@ test("test getElementDisplay return correct value", async () => {
         number: 2,
         desc: "item_2_desc",
         group: "Bow",
-        rng: 14.5,
-        dmg: 5.6,
+        rng: 17.5,
+        dmg: 8,
       },
       {
         name: "item_3",

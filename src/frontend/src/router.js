@@ -4,6 +4,7 @@ import UserRegister from "./components/User/Register.vue";
 import UserLogin from "./components/User/Login.vue";
 import UserManage from "./components/User/Manage.vue";
 import HomePage from "./components/Home.vue";
+import UpdatesPage from "./components/Updates.vue";
 import UserForgotPassword from "./components/User/ForgotPassword.vue";
 import UserNewPassword from "./components/User/ResetPassword.vue";
 import CreateProperty from "./components/Warhammer/CreateProperty.vue";
@@ -130,6 +131,7 @@ export const router = new Router({
     },
 
     { path: "/", name: "home", component: HomePage },
+    { path: "/updates", name: "updates", component: UpdatesPage },
 
     { path: "*", redirect: "/" },
   ],
