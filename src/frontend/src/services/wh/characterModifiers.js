@@ -1,11 +1,11 @@
-import { getAttributes, sumAndMultAttr } from "./attributes";
+import { attributes, getAttributes, sumAndMultAttr } from "./attributes";
 
 const checkModifiers = (modifiers) => {
   if (modifiers.size !== 0 || modifiers.movement !== 0) {
     return true;
   } else {
-    for (let att of Object.values(modifiers.attributes)) {
-      if (att !== 0) {
+    for (let att of Object.values(attributes)) {
+      if (modifiers.attributes[att] !== 0) {
         return true;
       }
     }
@@ -21,16 +21,16 @@ const generateEmptyModifiers = () => {
 };
 
 const compareModifiers = (mod1, mod2) => {
-  for (let [key, value] of Object.entries(mod1)) {
+  for (let key of ["size", "movement"]) {
     if (key !== "attributes") {
-      if (mod2[key] !== value) {
+      if (mod1[key] !== mod2[key]) {
         return false;
       }
     }
   }
 
-  for (let [key, value] of Object.entries(mod1.attributes)) {
-    if (value !== mod2.attributes[key]) {
+  for (let key of Object.values(attributes)) {
+    if (mod1.attributes[key] !== mod2.attributes[key]) {
       return false;
     }
   }

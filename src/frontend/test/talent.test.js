@@ -38,85 +38,75 @@ const talent2 = {
 
 const mockAxios = {
   get: jest.fn(async (path) => {
+    let apiData;
     if (path === "/api/talent") {
-      return {
-        data: {
-          data: [talent1, talent2],
-        },
-      };
+      apiData = [JSON.parse(JSON.stringify(talent1)), JSON.parse(JSON.stringify(talent2))];
     } else if (path === "/api/talent/id1") {
-      return {
-        data: {
-          data: talent1,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(talent1));
     } else if (path === "/api/talent/id2") {
-      return {
-        data: {
-          data: talent2,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(talent2));
+    } else {
+      throw "invalid id";
     }
+    return { data: { data: apiData } };
   }),
   post: jest.fn(async () => {
-    return {
-      data: {
-        data: "inserted_id",
-      },
-    };
+    return { data: { data: "inserted_id" } };
   }),
   delete: jest.fn(),
 };
 
-test("test getElement returns expected talents, talent has modifiers", async () => {
-  const client = new TalentApi(mockAxios);
-  const result = await client.getElement("id1");
+describe("getElement returns expected talents", () => {
+  test("when talent has modifiers", async () => {
+    const client = new TalentApi(mockAxios);
+    const result = await client.getElement("id1");
 
-  expect(result).toMatchObject({
-    id: "id1",
-    name: "talent1",
-    description: "desc1",
-    tests: "qwe",
-    maxRank: 4,
-    maxRankAtt: 2,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      movement: 1,
-      attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
-    },
-    isGroup: true,
-    group: ["a", "b"],
-    canEdit: true,
-    shared: true,
+    expect(result).toMatchObject({
+      id: "id1",
+      name: "talent1",
+      description: "desc1",
+      tests: "qwe",
+      maxRank: 4,
+      maxRankAtt: 2,
+      hasModifiers: true,
+      modifiers: {
+        size: 0,
+        movement: 1,
+        attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+      },
+      isGroup: true,
+      group: ["a", "b"],
+      canEdit: true,
+      shared: true,
+    });
+  });
+
+  test("when talent does not have modifiers", async () => {
+    const client = new TalentApi(mockAxios);
+    const result = await client.getElement("id2");
+
+    expect(result).toMatchObject({
+      id: "id2",
+      name: "talent2",
+      description: "desc2",
+      tests: "asd",
+      maxRank: 2,
+      maxRankAtt: 1,
+      hasModifiers: false,
+      modifiers: {
+        size: 0,
+        movement: 0,
+        attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+      },
+      isGroup: false,
+      group: [],
+      canEdit: true,
+      shared: true,
+    });
   });
 });
 
-test("test getElement returns expected talents, talent does not have modifiers", async () => {
-  const client = new TalentApi(mockAxios);
-  const result = await client.getElement("id2");
-
-  expect(result).toMatchObject({
-    id: "id2",
-    name: "talent2",
-    description: "desc2",
-    tests: "asd",
-    maxRank: 2,
-    maxRankAtt: 1,
-    hasModifiers: false,
-    modifiers: {
-      size: 0,
-      movement: 0,
-      attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    isGroup: false,
-    group: [],
-    canEdit: true,
-    shared: true,
-  });
-});
-
-test("test listElements returns expected talents", async () => {
+test("listElements returns expected talents", async () => {
   const client = new TalentApi(mockAxios);
   const result = await client.listElements();
 
@@ -148,7 +138,7 @@ test("test listElements returns expected talents", async () => {
   ]);
 });
 
-test("test createElement calls axios with expected arguments", async () => {
+test("createElement calls axios with expected arguments", async () => {
   const client = new TalentApi(mockAxios);
   const result = await client.createElement({
     id: "id1",
@@ -177,7 +167,7 @@ test("test createElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test updateElement calls axios with expected arguments", async () => {
+test("updateElement calls axios with expected arguments", async () => {
   const client = new TalentApi(mockAxios);
   const result = await client.updateElement({
     id: "id1",
@@ -207,14 +197,14 @@ test("test updateElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test deleteElement calls axios with expected arguments", async () => {
+test("deleteElement calls axios with expected arguments", async () => {
   const client = new TalentApi(mockAxios);
   await client.deleteElement("id1");
 
   expect(mockAxios.delete).toHaveBeenCalledWith("/api/talent/id1");
 });
 
-test("test compareTalent returns true if objects are the same", () => {
+describe("compareTalent returns true", () => {
   const talent = {
     id: "id",
     name: "apiTalent",
@@ -234,48 +224,19 @@ test("test compareTalent returns true if objects are the same", () => {
     shared: true,
   };
 
-  const result1 = compareTalent(talent, {
-    id: "id",
-    name: "apiTalent",
-    description: "desc",
-    tests: "qwe",
-    maxRank: 4,
-    maxRankAtt: 2,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      movement: 1,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    isGroup: true,
-    group: ["a", "b"],
-    canEdit: true,
-    shared: true,
+  test("when other talent is exactly the same", () => {
+    let otherTalent = JSON.parse(JSON.stringify(talent));
+    expect(compareTalent(talent, otherTalent)).toBe(true);
   });
-  expect(result1).toBe(true);
 
-  const result2 = compareTalent(talent, {
-    id: "id",
-    name: "apiTalent",
-    description: "desc",
-    tests: "qwe",
-    maxRank: 4,
-    maxRankAtt: 2,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      movement: 1,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    isGroup: true,
-    group: ["b", "a"],
-    canEdit: true,
-    shared: true,
+  test("when other talent has group field with elements in different order", () => {
+    let otherTalent = JSON.parse(JSON.stringify(talent));
+    otherTalent.group = ["b", "a"];
+    expect(compareTalent(talent, otherTalent)).toBe(true);
   });
-  expect(result2).toBe(true);
 });
 
-test("test compareTalent returns false if objects are different", () => {
+describe("compareTalent returns false", () => {
   const talent = {
     id: "id",
     name: "apiTalent",
@@ -295,103 +256,58 @@ test("test compareTalent returns false if objects are different", () => {
     shared: true,
   };
 
-  const result1 = compareTalent(talent, {
-    id: "otherId",
-    name: "apiTalent",
-    description: "otherDesc",
-    tests: "qwe",
-    maxRank: 4,
-    maxRankAtt: 2,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      movement: 1,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    isGroup: true,
-    group: ["a", "b"],
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "id", value: "otherId" },
+    { field: "name", value: "otherName" },
+    { field: "description", value: "otherDescription" },
+    { field: "tests", value: "otherTests" },
+    { field: "maxRank", value: 1 },
+    { field: "maxRankAtt", value: 4 },
+    { field: "isGroup", value: false },
+    { field: "maxRank", value: 1 },
+    { field: "canEdit", value: false },
+    { field: "shared", value: false },
+  ])("when other talent has different value of $field", (t) => {
+    let otherTalent = JSON.parse(JSON.stringify(talent));
+    otherTalent[t.field] = t.value;
+    expect(compareTalent(talent, otherTalent)).toBe(false);
   });
-  expect(result1).toBe(false);
 
-  const result2 = compareTalent(talent, {
-    id: "id",
-    name: "apiTalent",
-    description: "desc",
-    tests: "qwe",
-    maxRank: 4,
-    maxRankAtt: 2,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      movement: 1,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    isGroup: true,
-    group: ["a"],
-    canEdit: true,
-    shared: true,
+  test("when other talent has group field that is a subset", () => {
+    let otherTalent = JSON.parse(JSON.stringify(talent));
+    otherTalent.group = ["a"];
+    expect(compareTalent(talent, otherTalent)).toBe(false);
   });
-  expect(result2).toBe(false);
 
-  const result3 = compareTalent(talent, {
-    id: "id",
-    name: "apiTalent",
-    description: "desc",
-    tests: "qwe",
-    maxRank: 4,
-    maxRankAtt: 2,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      movement: 1,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    isGroup: true,
-    group: ["c", "d"],
-    canEdit: true,
-    shared: true,
+  test("when other talent has group field of the same length but different values", () => {
+    let otherTalent = JSON.parse(JSON.stringify(talent));
+    otherTalent.group = ["c", "d"];
+    expect(compareTalent(talent, otherTalent)).toBe(false);
   });
-  expect(result3).toBe(false);
 
-  const result4 = compareTalent(talent, {
-    id: "id",
-    name: "apiTalent",
-    description: "desc",
-    tests: "qwe",
-    maxRank: 4,
-    maxRankAtt: 2,
-    hasModifiers: true,
-    modifiers: {
-      size: 1,
-      movement: 1,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    isGroup: true,
-    group: ["a", "b"],
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "WS", value: 10 },
+    { field: "BS", value: 10 },
+    { field: "S", value: 10 },
+    { field: "T", value: 10 },
+    { field: "I", value: 10 },
+    { field: "Ag", value: 10 },
+    { field: "Dex", value: 10 },
+    { field: "Int", value: 10 },
+    { field: "WP", value: 10 },
+    { field: "Fel", value: 10 },
+  ])("when other talent has different value of modifier $field", (t) => {
+    let otherTalent = JSON.parse(JSON.stringify(talent));
+    otherTalent.modifiers.attributes[t.field] = t.value;
+    expect(compareTalent(talent, otherTalent)).toBe(false);
   });
-  expect(result4).toBe(false);
 
-  const result5 = compareTalent(talent, {
-    id: "id",
-    name: "apiTalent",
-    description: "desc",
-    tests: "qwe",
-    maxRank: 4,
-    maxRankAtt: 2,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      movement: 4,
-      attributes: { WS: 1, BS: 2, S: 3, T: 4, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    isGroup: true,
-    group: ["a", "b"],
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "size", value: 1 },
+    { field: "movement", value: -1 },
+  ])("when other talent has different value of modifier attribute $field", (t) => {
+    let otherTalent = JSON.parse(JSON.stringify(talent));
+    otherTalent.modifiers[t.field] = t.value;
+    expect(compareTalent(talent, otherTalent)).toBe(false);
   });
-  expect(result5).toBe(false);
 });
