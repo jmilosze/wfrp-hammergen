@@ -251,7 +251,7 @@
                 <b-td>{{ char.baseAttributes.Fel }}</b-td>
               </b-tr>
               <b-tr>
-                <b-td>Base</b-td>
+                <b-td>Other</b-td>
                 <b-td>{{ char.otherAttributes.Ag }}</b-td>
                 <b-td>{{ char.otherAttributes.Dex }}</b-td>
                 <b-td>{{ char.otherAttributes.Int }}</b-td>
