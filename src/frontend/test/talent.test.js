@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from "vitest";
 import { TalentApi, compareTalent } from "../src/services/wh/talent";
 
 const talent1 = {
@@ -37,7 +38,7 @@ const talent2 = {
 };
 
 const mockAxios = {
-  get: jest.fn(async (path) => {
+  get: async (path) => {
     let apiData;
     if (path === "/api/talent") {
       apiData = [JSON.parse(JSON.stringify(talent1)), JSON.parse(JSON.stringify(talent2))];
@@ -49,14 +50,14 @@ const mockAxios = {
       throw "invalid id";
     }
     return { data: { data: apiData } };
-  }),
-  post: jest.fn(async () => {
+  },
+  post: async () => {
     return { data: { data: "inserted_id" } };
-  }),
-  delete: jest.fn(),
+  },
+  delete: async () => {},
 };
 
-describe("getElement returns expected talents", () => {
+describe("getElement returns expected talent", () => {
   test("when talent has modifiers", async () => {
     const client = new TalentApi(mockAxios);
     const result = await client.getElement("id1");
@@ -140,6 +141,7 @@ test("listElements returns expected talents", async () => {
 
 test("createElement calls axios with expected arguments", async () => {
   const client = new TalentApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.createElement({
     id: "id1",
     name: "talent1",
@@ -155,7 +157,7 @@ test("createElement calls axios with expected arguments", async () => {
 
   expect(result).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/talent", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/talent", {
     name: "talent1",
     description: "desc1",
     tests: "qwe",
@@ -169,6 +171,7 @@ test("createElement calls axios with expected arguments", async () => {
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new TalentApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.updateElement({
     id: "id1",
     name: "talent1",
@@ -184,7 +187,7 @@ test("updateElement calls axios with expected arguments", async () => {
 
   expect(result).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/talent/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/talent/update", {
     id: "id1",
     name: "talent1",
     description: "desc1",
@@ -199,9 +202,10 @@ test("updateElement calls axios with expected arguments", async () => {
 
 test("deleteElement calls axios with expected arguments", async () => {
   const client = new TalentApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(mockAxios.delete).toHaveBeenCalledWith("/api/talent/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/talent/id1");
 });
 
 describe("compareTalent returns true", () => {
@@ -264,7 +268,6 @@ describe("compareTalent returns false", () => {
     { field: "maxRank", value: 1 },
     { field: "maxRankAtt", value: 4 },
     { field: "isGroup", value: false },
-    { field: "maxRank", value: 1 },
     { field: "canEdit", value: false },
     { field: "shared", value: false },
   ])("when other talent has different value of $field", (t) => {

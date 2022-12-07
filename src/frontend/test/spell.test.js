@@ -1,6 +1,7 @@
+import { describe, expect, test, vi } from "vitest";
 import { SpellApi, compareSpell } from "../src/services/wh/spell";
 
-const spell1 = {
+const spell = {
   id: "id1",
   name: "spell1",
   cn: 1,
@@ -12,7 +13,7 @@ const spell1 = {
   shared: true,
 };
 
-const prayer2 = {
+const prayer = {
   id: "id2",
   name: "prayer2",
   cn: -1,
@@ -25,71 +26,62 @@ const prayer2 = {
 };
 
 const mockAxios = {
-  get: jest.fn(async (path) => {
+  get: async (path) => {
+    let apiData;
     if (path === "/api/spell") {
-      return {
-        data: {
-          data: [spell1, prayer2],
-        },
-      };
+      apiData = [JSON.parse(JSON.stringify(spell)), JSON.parse(JSON.stringify(prayer))];
     } else if (path === "/api/spell/id1") {
-      return {
-        data: {
-          data: spell1,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(spell));
     } else if (path === "/api/spell/id2") {
-      return {
-        data: {
-          data: prayer2,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(prayer));
+    } else {
+      throw "invalid id";
     }
-  }),
-  post: jest.fn(async () => {
-    return {
-      data: {
-        data: "inserted_id",
-      },
-    };
-  }),
-  delete: jest.fn(),
+    return { data: { data: apiData } };
+  },
+  post: async () => {
+    return { data: { data: "inserted_id" } };
+  },
+  delete: async () => {},
 };
 
-test("test getElement returns expected spell", async () => {
-  const client = new SpellApi(mockAxios);
-  const result1 = await client.getElement("id1");
-
-  expect(result1).toMatchObject({
-    id: "id1",
-    name: "spell1",
-    cn: 1,
-    range: "range1",
-    target: "target1",
-    duration: "duration1",
-    description: "desc1",
-    type: "spell",
-    canEdit: true,
-    shared: true,
+describe("getElement returns expected spell", () => {
+  test("when spell is an actual spell", async () => {
+    const client = new SpellApi(mockAxios);
+    const result = await client.getElement("id1");
+    expect(result).toMatchObject({
+      id: "id1",
+      name: "spell1",
+      cn: 1,
+      range: "range1",
+      target: "target1",
+      duration: "duration1",
+      description: "desc1",
+      type: "spell",
+      canEdit: true,
+      shared: true,
+    });
   });
 
-  const result2 = await client.getElement("id2");
-
-  expect(result2).toMatchObject({
-    id: "id2",
-    name: "prayer2",
-    cn: 0,
-    range: "range2",
-    target: "target2",
-    duration: "duration2",
-    description: "desc2",
-    type: "prayer",
-    canEdit: true,
-    shared: true,
+  test("when spell is a prayer", async () => {
+    const client = new SpellApi(mockAxios);
+    const result = await client.getElement("id2");
+    expect(result).toMatchObject({
+      id: "id2",
+      name: "prayer2",
+      cn: 0,
+      range: "range2",
+      target: "target2",
+      duration: "duration2",
+      description: "desc2",
+      type: "prayer",
+      canEdit: true,
+      shared: true,
+    });
   });
 });
 
-test("test listElements returns expected spells", async () => {
+test("listElements returns expected spells", async () => {
   const client = new SpellApi(mockAxios);
   const result = await client.listElements();
 
@@ -121,8 +113,9 @@ test("test listElements returns expected spells", async () => {
   ]);
 });
 
-test("test createElement calls axios with expected arguments", async () => {
+test("createElement calls axios with expected arguments", async () => {
   const client = new SpellApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result1 = await client.createElement({
     id: "id1",
     name: "spell1",
@@ -138,7 +131,7 @@ test("test createElement calls axios with expected arguments", async () => {
 
   expect(result1).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/spell", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/spell", {
     name: "spell1",
     cn: 1,
     range: "range1",
@@ -173,8 +166,9 @@ test("test createElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test updateElement calls axios with expected arguments", async () => {
+test("updateElement calls axios with expected arguments", async () => {
   const client = new SpellApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result1 = await client.updateElement({
     id: "id1",
     name: "spell1",
@@ -190,7 +184,7 @@ test("test updateElement calls axios with expected arguments", async () => {
 
   expect(result1).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/spell/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/spell/update", {
     id: "id1",
     name: "spell1",
     cn: 1,
@@ -227,14 +221,15 @@ test("test updateElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test deleteElement calls axios with expected arguments", async () => {
+test("deleteElement calls axios with expected arguments", async () => {
   const client = new SpellApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(mockAxios.delete).toHaveBeenCalledWith("/api/spell/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/spell/id1");
 });
 
-test("test compareSpell returns true if objects are the same", () => {
+describe("compareTalent returns true", () => {
   const spell = {
     id: "id",
     name: "spell",
@@ -248,51 +243,22 @@ test("test compareSpell returns true if objects are the same", () => {
     shared: true,
   };
 
-  const result = compareSpell(spell, {
-    id: "id",
-    name: "spell",
-    cn: 1,
-    range: "range",
-    target: "target",
-    duration: "duration",
-    description: "desc",
-    type: "spell",
-    canEdit: true,
-    shared: true,
+  test("when spells are the same", () => {
+    let otherSpell = JSON.parse(JSON.stringify(spell));
+    expect(compareSpell(spell, otherSpell)).toBe(true);
   });
-  expect(result).toBe(true);
+
+  test("when prayers are the same except for cn", () => {
+    let prayer = JSON.parse(JSON.stringify(spell));
+    prayer.type = "prayer";
+    prayer.cn = -1;
+    let otherPrayer = JSON.parse(JSON.stringify(prayer));
+    otherPrayer.cn = 5;
+    expect(compareSpell(prayer, otherPrayer)).toBe(true);
+  });
 });
 
-test("test compareSpell returns false if spells have different values", () => {
-  const spell = {
-    id: "id",
-    name: "spell",
-    cn: 1,
-    range: "range1",
-    target: "target1",
-    duration: "duration",
-    description: "desc",
-    type: "spell",
-    canEdit: true,
-    shared: true,
-  };
-
-  const result = compareSpell(spell, {
-    id: "id",
-    name: "spell",
-    cn: 0,
-    range: "range2",
-    target: "target2",
-    duration: "duration",
-    description: "desc",
-    type: "spell",
-    canEdit: true,
-    shared: true,
-  });
-  expect(result).toBe(false);
-});
-
-test("test compareSpell returns false if spells have different cn", () => {
+describe("compareSpell returns false", () => {
   const spell = {
     id: "id",
     name: "spell",
@@ -306,75 +272,20 @@ test("test compareSpell returns false if spells have different cn", () => {
     shared: true,
   };
 
-  const result = compareSpell(spell, {
-    id: "id",
-    name: "spell",
-    cn: 0,
-    range: "range",
-    target: "target",
-    duration: "duration",
-    description: "desc",
-    type: "spell",
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "id", value: "otherId" },
+    { field: "name", value: "otherName" },
+    { field: "cn", value: 3 },
+    { field: "range", value: "otherRange" },
+    { field: "target", value: "otherTarget" },
+    { field: "duration", value: "otherDuration" },
+    { field: "description", value: "otherDescription" },
+    { field: "type", value: "prayer" },
+    { field: "canEdit", value: false },
+    { field: "shared", value: false },
+  ])("when other spell has different value of $field", (t) => {
+    let otherSpell = JSON.parse(JSON.stringify(spell));
+    otherSpell[t.field] = t.value;
+    expect(compareSpell(spell, otherSpell)).toBe(false);
   });
-  expect(result).toBe(false);
-});
-
-test("test compareSpell ignores cn for prayers", () => {
-  const spell = {
-    id: "id",
-    name: "prayer",
-    cn: 0,
-    range: "range",
-    target: "target",
-    duration: "duration",
-    description: "desc",
-    type: "prayer",
-    canEdit: true,
-    shared: true,
-  };
-
-  const result = compareSpell(spell, {
-    id: "id",
-    name: "prayer",
-    cn: 10,
-    range: "range",
-    target: "target",
-    duration: "duration",
-    description: "desc",
-    type: "prayer",
-    canEdit: true,
-    shared: true,
-  });
-  expect(result).toBe(true);
-});
-
-test("test compareSpell spell vs prayer", () => {
-  const spell = {
-    id: "id",
-    name: "spell",
-    cn: 0,
-    range: "range",
-    target: "target",
-    duration: "duration",
-    description: "desc",
-    type: "prayer",
-    canEdit: true,
-    shared: true,
-  };
-
-  const result = compareSpell(spell, {
-    id: "id",
-    name: "prayer",
-    cn: 10,
-    range: "range",
-    target: "target",
-    duration: "duration",
-    description: "desc",
-    type: "prayer",
-    canEdit: true,
-    shared: true,
-  });
-  expect(result).toBe(false);
 });

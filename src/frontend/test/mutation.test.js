@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from "vitest";
 import { MutationApi, compareMutation } from "../src/services/wh/mutation";
 
 const mutation1 = {
@@ -29,78 +30,69 @@ const mutation2 = {
 };
 
 const mockAxios = {
-  get: jest.fn(async (path) => {
+  get: async (path) => {
+    let apiData;
     if (path === "/api/mutation") {
-      return {
-        data: {
-          data: [mutation1, mutation2],
-        },
-      };
+      apiData = [JSON.parse(JSON.stringify(mutation1)), JSON.parse(JSON.stringify(mutation2))];
     } else if (path === "/api/mutation/id1") {
-      return {
-        data: {
-          data: mutation1,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(mutation1));
     } else if (path === "/api/mutation/id2") {
-      return {
-        data: {
-          data: mutation2,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(mutation2));
+    } else {
+      throw "invalid id";
     }
-  }),
-  post: jest.fn(async () => {
-    return {
-      data: {
-        data: "inserted_id",
-      },
-    };
-  }),
-  delete: jest.fn(),
+
+    return { data: { data: apiData } };
+  },
+  post: async () => {
+    return { data: { data: "inserted_id" } };
+  },
+  delete: async () => {},
 };
 
-test("test getElement returns expected mutation, mutation has modifiers", async () => {
-  const client = new MutationApi(mockAxios);
-  const result = await client.getElement("id1");
+describe("getElement returns expected mutation", () => {
+  test("when mutation has modifiers", async () => {
+    const client = new MutationApi(mockAxios);
+    const result = await client.getElement("id1");
 
-  expect(result).toMatchObject({
-    id: "id1",
-    name: "mutation1",
-    description: "desc1",
-    type: 0,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      movement: 1,
-      attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
-    },
-    canEdit: true,
-    shared: true,
+    expect(result).toMatchObject({
+      id: "id1",
+      name: "mutation1",
+      description: "desc1",
+      type: 0,
+      hasModifiers: true,
+      modifiers: {
+        size: 0,
+        movement: 1,
+        attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+      },
+      canEdit: true,
+      shared: true,
+    });
+  });
+
+  test("when mutation does not have modifiers", async () => {
+    const client = new MutationApi(mockAxios);
+    const result = await client.getElement("id2");
+
+    expect(result).toMatchObject({
+      id: "id2",
+      name: "mutation2",
+      description: "desc2",
+      type: 1,
+      hasModifiers: false,
+      modifiers: {
+        size: 0,
+        movement: 0,
+        attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+      },
+      canEdit: false,
+      shared: false,
+    });
   });
 });
 
-test("test getElement returns expected mutation, mutation does not have modifiers", async () => {
-  const client = new MutationApi(mockAxios);
-  const result = await client.getElement("id2");
-
-  expect(result).toMatchObject({
-    id: "id2",
-    name: "mutation2",
-    description: "desc2",
-    type: 1,
-    hasModifiers: false,
-    modifiers: {
-      size: 0,
-      movement: 0,
-      attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    canEdit: false,
-    shared: false,
-  });
-});
-
-test("test listElements returns expected mutations", async () => {
+test("listElements returns expected mutations", async () => {
   const client = new MutationApi(mockAxios);
   const result = await client.listElements();
 
@@ -124,8 +116,9 @@ test("test listElements returns expected mutations", async () => {
   ]);
 });
 
-test("test createElement calls axios with expected arguments", async () => {
+test("createElement calls axios with expected arguments", async () => {
   const client = new MutationApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.createElement({
     id: "id1",
     name: "mutation1",
@@ -137,7 +130,7 @@ test("test createElement calls axios with expected arguments", async () => {
 
   expect(result).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/mutation", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/mutation", {
     name: "mutation1",
     description: "desc1",
     type: 0,
@@ -145,8 +138,9 @@ test("test createElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test updateItemProperty calls axios with expected arguments", async () => {
+test("updateElement calls axios with expected arguments", async () => {
   const client = new MutationApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.updateElement({
     id: "id1",
     name: "mutation1",
@@ -158,7 +152,7 @@ test("test updateItemProperty calls axios with expected arguments", async () => 
 
   expect(result).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/mutation/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/mutation/update", {
     id: "id1",
     name: "mutation1",
     description: "desc1",
@@ -167,14 +161,15 @@ test("test updateItemProperty calls axios with expected arguments", async () => 
   });
 });
 
-test("test deleteElement calls axios with expected arguments", async () => {
+test("deleteElement calls axios with expected arguments", async () => {
   const client = new MutationApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(mockAxios.delete).toHaveBeenCalledWith("/api/mutation/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/mutation/id1");
 });
 
-test("test compareMutation returns true if objects are the same", () => {
+test("compareMutation returns true if mutations are exactly the same", () => {
   const mutation = {
     id: "id",
     name: "mutation",
@@ -189,23 +184,11 @@ test("test compareMutation returns true if objects are the same", () => {
     shared: true,
   };
 
-  const result = compareMutation(mutation, {
-    id: "id",
-    name: "mutation",
-    description: "desc",
-    type: 0,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    canEdit: true,
-    shared: true,
-  });
-  expect(result).toBe(true);
+  let otherMutation = JSON.parse(JSON.stringify(mutation));
+  expect(compareMutation(mutation, otherMutation)).toBe(true);
 });
 
-test("test compareMutation returns false if objects are different", () => {
+describe("compareMutation returns false", () => {
   const mutation = {
     id: "id",
     name: "mutation",
@@ -220,48 +203,42 @@ test("test compareMutation returns false if objects are different", () => {
     shared: true,
   };
 
-  const result1 = compareMutation(mutation, {
-    id: "otherId",
-    name: "mutation",
-    description: "desc",
-    type: 0,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "id", value: "otherId" },
+    { field: "name", value: "otherName" },
+    { field: "description", value: "otherDescription" },
+    { field: "type", value: 1 },
+    { field: "canEdit", value: false },
+    { field: "shared", value: false },
+  ])("when other mutation has different value of $field", (t) => {
+    let otherMutation = JSON.parse(JSON.stringify(mutation));
+    otherMutation[t.field] = t.value;
+    expect(compareMutation(mutation, otherMutation)).toBe(false);
   });
-  expect(result1).toBe(false);
 
-  const result2 = compareMutation(mutation, {
-    id: "id",
-    name: "mutation",
-    description: "desc",
-    type: 0,
-    hasModifiers: true,
-    modifiers: {
-      size: 0,
-      attributes: { WS: 1, BS: 2, S: 3, T: 5, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "WS", value: 10 },
+    { field: "BS", value: 10 },
+    { field: "S", value: 10 },
+    { field: "T", value: 10 },
+    { field: "I", value: 10 },
+    { field: "Ag", value: 10 },
+    { field: "Dex", value: 10 },
+    { field: "Int", value: 10 },
+    { field: "WP", value: 10 },
+    { field: "Fel", value: 10 },
+  ])("when other mutation has different value of modifier $field", (t) => {
+    let otherMutation = JSON.parse(JSON.stringify(mutation));
+    otherMutation.modifiers.attributes[t.field] = t.value;
+    expect(compareMutation(mutation, otherMutation)).toBe(false);
   });
-  expect(result2).toBe(false);
 
-  const result3 = compareMutation(mutation, {
-    id: "id",
-    name: "mutation",
-    description: "desc",
-    type: 0,
-    hasModifiers: true,
-    modifiers: {
-      size: -1,
-      attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    },
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "size", value: 1 },
+    { field: "movement", value: -1 },
+  ])("when other mutation has different value of modifier attribute $field", (t) => {
+    let otherMutation = JSON.parse(JSON.stringify(mutation));
+    otherMutation.modifiers[t.field] = t.value;
+    expect(compareMutation(mutation, otherMutation)).toBe(false);
   });
-  expect(result3).toBe(false);
 });

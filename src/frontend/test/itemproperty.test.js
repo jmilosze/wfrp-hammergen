@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from "vitest";
 import { ItemPropertyApi, compareItemProperty } from "../src/services/wh/itemproperty";
 
 const itemProperty1 = {
@@ -21,38 +22,27 @@ const itemProperty2 = {
 };
 
 const mockAxios = {
-  get: jest.fn(async (path) => {
+  get: async (path) => {
+    let apiData;
     if (path === "/api/item_property") {
-      return {
-        data: {
-          data: [itemProperty1, itemProperty2],
-        },
-      };
+      apiData = [JSON.parse(JSON.stringify(itemProperty1)), JSON.parse(JSON.stringify(itemProperty2))];
     } else if (path === "/api/item_property/id1") {
-      return {
-        data: {
-          data: itemProperty1,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(itemProperty1));
     } else if (path === "/api/item_property/id2") {
-      return {
-        data: {
-          data: itemProperty2,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(itemProperty2));
+    } else {
+      throw "invalid id";
     }
-  }),
-  post: jest.fn(async () => {
-    return {
-      data: {
-        data: "inserted_id",
-      },
-    };
-  }),
-  delete: jest.fn(),
+
+    return { data: { data: apiData } };
+  },
+  post: async () => {
+    return { data: { data: "inserted_id" } };
+  },
+  delete: async () => {},
 };
 
-test("test getElement returns expected item property", async () => {
+test("getElement returns expected item property", async () => {
   const client = new ItemPropertyApi(mockAxios);
   const result = await client.getElement("id1");
 
@@ -67,7 +57,7 @@ test("test getElement returns expected item property", async () => {
   });
 });
 
-test("test listElements returns expected item properties", async () => {
+test("listElements returns expected item properties", async () => {
   const client = new ItemPropertyApi(mockAxios);
   const result = await client.listElements();
 
@@ -93,8 +83,9 @@ test("test listElements returns expected item properties", async () => {
   ]);
 });
 
-test("test createElement calls axios with expected arguments", async () => {
+test("createElement calls axios with expected arguments", async () => {
   const client = new ItemPropertyApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.createElement({
     id: "id1",
     name: "itemProperty1",
@@ -107,7 +98,7 @@ test("test createElement calls axios with expected arguments", async () => {
 
   expect(result).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/item_property", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/item_property", {
     name: "itemProperty1",
     description: "desc1",
     type: 0,
@@ -116,8 +107,9 @@ test("test createElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test updateElement calls axios with expected arguments", async () => {
+test("updateElement calls axios with expected arguments", async () => {
   const client = new ItemPropertyApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.updateElement({
     id: "id1",
     name: "itemProperty1",
@@ -130,7 +122,7 @@ test("test updateElement calls axios with expected arguments", async () => {
 
   expect(result).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/item_property/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/item_property/update", {
     id: "id1",
     name: "itemProperty1",
     description: "desc1",
@@ -140,14 +132,15 @@ test("test updateElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test deleteElement calls axios with expected arguments", async () => {
+test("deleteElement calls axios with expected arguments", async () => {
   const client = new ItemPropertyApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(mockAxios.delete).toHaveBeenCalledWith("/api/item_property/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/item_property/id1");
 });
 
-test("test compareItemProperty returns true if objects are the same", () => {
+describe("compareItemProperty returns true", () => {
   const itemProperty = {
     id: "id",
     name: "apiItemProperty",
@@ -158,30 +151,19 @@ test("test compareItemProperty returns true if objects are the same", () => {
     shared: true,
   };
 
-  const result1 = compareItemProperty(itemProperty, {
-    id: "id",
-    name: "apiItemProperty",
-    description: "desc",
-    type: 0,
-    applicableTo: [0, 1],
-    canEdit: true,
-    shared: true,
+  test("when other itemProperty is exactly the same", () => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(true);
   });
-  expect(result1).toBe(true);
 
-  const result2 = compareItemProperty(itemProperty, {
-    id: "id",
-    name: "apiItemProperty",
-    description: "desc",
-    type: 0,
-    applicableTo: [1, 0],
-    canEdit: true,
-    shared: true,
+  test("when other itemProperty has applicableTo field with elements in different order", () => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty.applicableTo = [1, 0];
+    expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(true);
   });
-  expect(result2).toBe(true);
 });
 
-test("test compareItemProperty returns false if objects are different", () => {
+describe("compareItemProperty returns false", () => {
   const itemProperty = {
     id: "id",
     name: "apiItemProperty",
@@ -192,36 +174,28 @@ test("test compareItemProperty returns false if objects are different", () => {
     shared: true,
   };
 
-  const result1 = compareItemProperty(itemProperty, {
-    id: "otherId",
-    name: "apiItemProperty",
-    description: "desc",
-    type: 0,
-    applicableTo: [0, 1],
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "id", value: "otherId" },
+    { field: "name", value: "otherName" },
+    { field: "description", value: "otherDescription" },
+    { field: "type", value: 1 },
+    { field: "canEdit", value: false },
+    { field: "shared", value: false },
+  ])("when other itemProperty has different value of $field", (t) => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty[t.field] = t.value;
+    expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(false);
   });
-  expect(result1).toBe(false);
 
-  const result2 = compareItemProperty(itemProperty, {
-    id: "id",
-    name: "apiItemProperty",
-    description: "desc",
-    type: 0,
-    applicableTo: [0],
-    canEdit: true,
-    shared: true,
+  test("when other itemProperty has applicableTo field that is a subset", () => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty.applicableTo = [1];
+    expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(false);
   });
-  expect(result2).toBe(false);
 
-  const result3 = compareItemProperty(itemProperty, {
-    id: "id",
-    name: "apiItemProperty",
-    description: "desc",
-    type: 0,
-    applicableTo: [3, 4],
-    canEdit: true,
-    shared: true,
+  test("when other itemProperty has applicableTo field of the same length but different values", () => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty.applicableTo = [1, 2];
+    expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(false);
   });
-  expect(result3).toBe(false);
 });

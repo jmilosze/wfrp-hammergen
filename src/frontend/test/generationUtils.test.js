@@ -1,3 +1,4 @@
+import { expect, test } from "vitest";
 import { getAllTalentsMaxRank, getTalentAtts } from "../src/services/wh/characterGeneration/talentGeneration";
 import { getAttributes } from "../src/services/wh/attributes";
 
