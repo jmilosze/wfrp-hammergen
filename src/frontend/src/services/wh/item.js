@@ -16,6 +16,7 @@ const itemTypes = {
   3: "Armor",
   4: "Container",
   5: "Other",
+  6: "Grimoire",
 };
 
 const meleeGroups = {
@@ -85,42 +86,13 @@ const itemAvailabilities = {
 
 const generateEmptyStats = () => {
   return [
-    {
-      hands: 1,
-      dmg: 0,
-      dmgSbMult: 0,
-      reach: 0,
-      group: 0,
-    },
-    {
-      hands: 1,
-      dmg: 0,
-      dmgSbMult: 0,
-      rng: 0,
-      rngSbMult: 0,
-      group: 0,
-    },
-    {
-      dmg: 0,
-      rng: 0,
-      rngMult: 0,
-      group: 0,
-    },
-    {
-      points: 0,
-      location: [],
-      group: 0,
-    },
-    {
-      capacity: 1,
-      wearable: false,
-    },
-    {
-      carryType: {
-        carriable: false,
-        wearable: false,
-      },
-    },
+    { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 },
+    { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 },
+    { dmg: 0, rng: 0, rngMult: 0, group: 0 },
+    { points: 0, location: [], group: 0 },
+    { capacity: 1, wearable: false },
+    { carryType: { carriable: false, wearable: false } },
+    { spells: [] },
   ];
 };
 
@@ -190,6 +162,8 @@ const convertApiToModelData = (apiData) => {
       capacity: apiData.stats.capacity,
       wearable: apiData.stats.wearable,
     };
+  } else if (apiData.stats.type === 6) {
+    item.stats[6] = { spells: JSON.parse(JSON.stringify(apiData.stats.spells)) };
   } else {
     item.stats[5] = {
       carryType: {
@@ -265,6 +239,8 @@ const convertModelToApiData = (item, includeId) => {
       capacity: item.stats[4].capacity,
       wearable: item.stats[4].wearable,
     };
+  } else if (item.type === 6) {
+    apiData.stats = { spells: JSON.parse(JSON.stringify(item.stats[6].spells)) };
   } else {
     apiData.stats = {
       type: 5,
@@ -292,11 +268,11 @@ const compareItem = (item1, item2) => {
   const itemType = item1.type;
 
   for (let [key, value] of Object.entries(item1.stats[itemType])) {
-    if (key !== "location" && key !== "carryType") {
+    if (key !== "location" && key !== "carryType" && key !== "spells") {
       if (item2.stats[itemType][key] !== value) {
         return false;
       }
-    } else if (key === "location") {
+    } else if (key === "location" || key === "spells") {
       if (!compareArrayIgnoreOrder(item2.stats[itemType][key], value)) {
         return false;
       }

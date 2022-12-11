@@ -133,6 +133,8 @@ function formatItems(characterItems, attributes) {
       item.group = armorGroups[charItem.value.stats.group];
       item.locations = charItem.value.stats.location.map((x) => armorLocations[x]);
       item.ap = charItem.value.stats.points;
+    } else if (charItem.value.stats.type === 6) {
+      item.spells = formatSpells(charItem.value.stats.spells);
     } else {
       item.desc =
         (charItem.value.stats.type === 4 ? `(Capacity ${charItem.value.stats.capacity}) ` : "") +
@@ -145,14 +147,14 @@ function formatItems(characterItems, attributes) {
 }
 
 function formatSpells(rawSpells) {
-  return rawSpells.map((x) => ({
-    name: x.value.name,
-    range: x.value.range,
-    target: x.value.target,
-    duration: x.value.duration,
-    description: x.value.description,
-    type: x.value.cn === -1 ? "Prayer" : "Spell",
-    cn: x.value.cn === -1 ? null : x.value.cn,
+  return rawSpells.map(x => ({
+    name: x.name,
+    range: x.range,
+    target: x.target,
+    duration: x.duration,
+    description: x.description,
+    type: x.cn === -1 ? "Prayer" : "Spell",
+    cn: x.cn === -1 ? null : x.cn,
   }));
 }
 
@@ -189,5 +191,4 @@ export {
   getCareerName,
   getCareerLevelName,
   csvStr,
-
 };

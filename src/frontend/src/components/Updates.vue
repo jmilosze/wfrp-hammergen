@@ -2,6 +2,11 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">17 Dec 2022</div>
+        <p>
+          New item type: Grimoire. You can add spells to Grimoire. When viewing character, Hammergen lists all spells in
+          carried and owned Grimoires.
+        </p>
         <div class="h3">5 Dec 2022</div>
         <p>
           Talents and Mutations that permanently alter <b>Attributes</b>, <b>Size</b>, or <b>Movement</b> are now

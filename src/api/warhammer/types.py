@@ -13,6 +13,7 @@ class Item(enum.IntEnum):
     ARMOR = 3
     CONTAINER = 4
     OTHER = 5
+    GRIMOIRE = 6
 
 
 class ItemAvailability(enum.IntEnum):
