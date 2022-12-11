@@ -395,12 +395,10 @@ function getMovement(character) {
 }
 
 function getBaseAttributes(character) {
-  const attributeRacial = getAttributes(character.species);
-  const baseAttributes = {};
-  for (let [key, value] of Object.entries(character.attributeRolls)) {
-    baseAttributes[key] = value + attributeRacial[key];
-  }
-  return baseAttributes;
+  return sumAndMultAttr([
+    { multiplier: 1, attributes: getAttributes(character.species) },
+    { multiplier: 1, attributes: character.attributeRolls },
+  ]);
 }
 
 function getRacialAttributes(character) {
@@ -408,13 +406,12 @@ function getRacialAttributes(character) {
 }
 
 function getTotalAttributes(character) {
-  const attributeRacial = getAttributes(character.species);
-  const totalAttributes = {};
-  for (let [key, value] of Object.entries(character.attributeRolls)) {
-    totalAttributes[key] =
-      value + attributeRacial[key] + character.attributeAdvances[key] + character.modifiers.attributes[key];
-  }
-  return totalAttributes;
+  return sumAndMultAttr([
+    { multiplier: 1, attributes: getAttributes(character.species) },
+    { multiplier: 1, attributes: character.attributeRolls },
+    { multiplier: 1, attributes: character.attributeAdvances },
+    { multiplier: 1, attributes: character.modifiers.attributes },
+  ]);
 }
 
 function characterForDisplayToCsv(charForDisplay) {
@@ -612,6 +609,7 @@ export {
   CharacterApi,
   compareCharacter,
   getWounds,
+  getWoundsFormula,
   getMovement,
   getBaseAttributes,
   getRacialAttributes,

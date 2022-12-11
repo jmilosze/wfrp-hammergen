@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from "vitest";
 import { SkillApi, compareSkill } from "../src/services/wh/skill";
 
 const skill1 = {
@@ -27,38 +28,27 @@ const skill2 = {
 };
 
 const mockAxios = {
-  get: jest.fn(async (path) => {
+  get: async (path) => {
+    let apiData;
     if (path === "/api/skill") {
-      return {
-        data: {
-          data: [skill1, skill2],
-        },
-      };
+      apiData = [JSON.parse(JSON.stringify(skill1)), JSON.parse(JSON.stringify(skill2))];
     } else if (path === "/api/skill/id1") {
-      return {
-        data: {
-          data: skill1,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(skill1));
     } else if (path === "/api/skill/id2") {
-      return {
-        data: {
-          data: skill2,
-        },
-      };
+      apiData = JSON.parse(JSON.stringify(skill2));
+    } else {
+      throw "invalid id";
     }
-  }),
-  post: jest.fn(async () => {
-    return {
-      data: {
-        data: "inserted_id",
-      },
-    };
-  }),
-  delete: jest.fn(),
+
+    return { data: { data: apiData } };
+  },
+  post: async () => {
+    return { data: { data: "inserted_id" } };
+  },
+  delete: async () => {},
 };
 
-test("test getElement returns expected skill", async () => {
+test("getElement returns expected skill", async () => {
   const client = new SkillApi(mockAxios);
   const result = await client.getElement("id1");
 
@@ -76,7 +66,7 @@ test("test getElement returns expected skill", async () => {
   });
 });
 
-test("test listElements returns expected skills", async () => {
+test("listElements returns expected skills", async () => {
   const client = new SkillApi(mockAxios);
   const result = await client.listElements();
 
@@ -108,8 +98,9 @@ test("test listElements returns expected skills", async () => {
   ]);
 });
 
-test("test createElement calls axios with expected arguments", async () => {
+test("createElement calls axios with expected arguments", async () => {
   const client = new SkillApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.createElement({
     id: "id1",
     name: "skill1",
@@ -125,7 +116,7 @@ test("test createElement calls axios with expected arguments", async () => {
 
   expect(result).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/skill", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/skill", {
     name: "skill1",
     description: "desc1",
     attribute: 1,
@@ -137,8 +128,9 @@ test("test createElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test updateElement calls axios with expected arguments", async () => {
+test("updateElement calls axios with expected arguments", async () => {
   const client = new SkillApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.updateElement({
     id: "id1",
     name: "skill1",
@@ -154,7 +146,7 @@ test("test updateElement calls axios with expected arguments", async () => {
 
   expect(result).toBe("inserted_id");
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/skill/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/skill/update", {
     id: "id1",
     name: "skill1",
     description: "desc1",
@@ -167,14 +159,15 @@ test("test updateElement calls axios with expected arguments", async () => {
   });
 });
 
-test("test deleteElement calls axios with expected arguments", async () => {
+test("deleteElement calls axios with expected arguments", async () => {
   const client = new SkillApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(mockAxios.delete).toHaveBeenCalledWith("/api/skill/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/skill/id1");
 });
 
-test("test compareSkill returns true if objects are the same", () => {
+describe("compareSkill returns true", () => {
   const skill = {
     id: "id",
     name: "apiSkill",
@@ -188,36 +181,19 @@ test("test compareSkill returns true if objects are the same", () => {
     shared: true,
   };
 
-  const result1 = compareSkill(skill, {
-    id: "id",
-    name: "apiSkill",
-    description: "desc",
-    attribute: 1,
-    type: 0,
-    displayZero: true,
-    isGroup: true,
-    group: ["a", "b"],
-    canEdit: true,
-    shared: true,
+  test("when skills are exactly the same", () => {
+    let otherSkill = JSON.parse(JSON.stringify(skill));
+    expect(compareSkill(skill, otherSkill)).toBe(true);
   });
-  expect(result1).toBe(true);
 
-  const result2 = compareSkill(skill, {
-    id: "id",
-    name: "apiSkill",
-    description: "desc",
-    attribute: 1,
-    type: 0,
-    displayZero: true,
-    isGroup: true,
-    group: ["b", "a"],
-    canEdit: true,
-    shared: true,
+  test("when other skill has group field with elements in different order", () => {
+    let otherSkill = JSON.parse(JSON.stringify(skill));
+    otherSkill.group = ["b", "a"];
+    expect(compareSkill(skill, otherSkill)).toBe(true);
   });
-  expect(result2).toBe(true);
 });
 
-test("test compareSkill returns false if objects are different", () => {
+describe("compareSkill returns false", () => {
   const skill = {
     id: "id",
     name: "apiSkill",
@@ -231,45 +207,31 @@ test("test compareSkill returns false if objects are different", () => {
     shared: true,
   };
 
-  const result1 = compareSkill(skill, {
-    id: "otherId",
-    name: "apiSkill",
-    description: "otherDesc",
-    attribute: 1,
-    type: 0,
-    displayZero: true,
-    isGroup: true,
-    group: ["a", "b"],
-    canEdit: true,
-    shared: true,
+  test.each([
+    { field: "id", value: "otherId" },
+    { field: "name", value: "otherName" },
+    { field: "description", value: "otherDescription" },
+    { field: "attribute", value: 2 },
+    { field: "type", value: 1 },
+    { field: "displayZero", value: false },
+    { field: "isGroup", value: false },
+    { field: "canEdit", value: false },
+    { field: "shared", value: false },
+  ])("when other skill has different value of $field", (t) => {
+    let otherSkill = JSON.parse(JSON.stringify(skill));
+    otherSkill[t.field] = t.value;
+    expect(compareSkill(skill, otherSkill)).toBe(false);
   });
-  expect(result1).toBe(false);
 
-  const result2 = compareSkill(skill, {
-    id: "id",
-    name: "apiSkill",
-    description: "desc",
-    attribute: 1,
-    type: 0,
-    displayZero: true,
-    isGroup: true,
-    group: ["a"],
-    canEdit: true,
-    shared: true,
+  test("when other skill has group field that is a subset", () => {
+    let otherSkill = JSON.parse(JSON.stringify(skill));
+    otherSkill.group = ["a"];
+    expect(compareSkill(skill, otherSkill)).toBe(false);
   });
-  expect(result2).toBe(false);
 
-  const result3 = compareSkill(skill, {
-    id: "id",
-    name: "apiSkill",
-    description: "desc",
-    attribute: 1,
-    type: 0,
-    displayZero: true,
-    isGroup: true,
-    group: ["c", "d"],
-    canEdit: true,
-    shared: true,
+  test("when other skill has group field of the same length but different values", () => {
+    let otherSkill = JSON.parse(JSON.stringify(skill));
+    otherSkill.group = ["c", "d"];
+    expect(compareSkill(skill, otherSkill)).toBe(false);
   });
-  expect(result3).toBe(false);
 });

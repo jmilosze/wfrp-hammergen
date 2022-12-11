@@ -1,3 +1,4 @@
+import { describe, expect, test, vi } from "vitest";
 import {
   CharacterApi,
   compareCharacter,
@@ -6,8 +7,9 @@ import {
   getBaseAttributes,
   getTotalAttributes,
   getRacialAttributes,
+  getWoundsFormula,
+  species,
 } from "../src/services/wh/character";
-import { getAttributes } from "../src/services/wh/attributes";
 import { generateEmptyModifiers } from "../src/services/wh/characterModifiers";
 
 const character1ApiForm = {
@@ -27,31 +29,37 @@ const character1ApiForm = {
   description: "character 1",
   notes: "",
   career_path: [
-    { id: "id1", level: 1 },
-    { id: "id2", level: 2 },
+    { id: "careerId1", level: 1 },
+    { id: "careerId2", level: 2 },
   ],
-  career: { id: "id3", level: 3 },
+  career: { id: "careerId3", level: 3 },
   base_attributes: { WS: 40, BS: 40, S: 30, T: 25, I: 50, Ag: 35, Dex: 50, Int: 35, WP: 35, Fel: 25 },
   attribute_advances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   skills: [
-    { id: "id4", number: 4 },
-    { id: "id5", number: 5 },
+    { id: "skillId1", number: 4 },
+    { id: "skillId2", number: 5 },
   ],
-  talents: [{ id: "id6", number: 6 }],
+  talents: [
+    { id: "talentId1", number: 1 },
+    { id: "talentId2", number: 2 },
+  ],
   equipped_items: [
-    { id: "id7", number: 7 },
-    { id: "id7", number: 7 },
+    { id: "eItemId1", number: 7 },
+    { id: "eItemId2", number: 7 },
   ],
   carried_items: [
-    { id: "id8", number: 8 },
-    { id: "id9", number: 9 },
-    { id: "id10", number: 10 },
+    { id: "cItemId1", number: 8 },
+    { id: "cItemId2", number: 9 },
+    { id: "cItemId3", number: 10 },
   ],
-  stored_items: [],
-  spells: ["id11", "id12"],
+  stored_items: [
+    { id: "sItemId1", number: 2 },
+    { id: "sItemId2", number: 3 },
+  ],
+  spells: ["spellId1", "spellId2"],
   sin: 1,
   corruption: 2,
-  mutations: ["id13"],
+  mutations: ["mutationId1", "mutationId2"],
   can_edit: true,
   shared: true,
 };
@@ -73,31 +81,37 @@ const character1ModelForm = {
   description: "character 1",
   notes: "",
   careerPath: [
-    { id: "id1", number: 1 },
-    { id: "id2", number: 2 },
+    { id: "careerId1", number: 1 },
+    { id: "careerId2", number: 2 },
   ],
-  career: { id: "id3", number: 3 },
+  career: { id: "careerId3", number: 3 },
   attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
   attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   skills: [
-    { id: "id4", number: 4 },
-    { id: "id5", number: 5 },
+    { id: "skillId1", number: 4 },
+    { id: "skillId2", number: 5 },
   ],
-  talents: [{ id: "id6", number: 6 }],
+  talents: [
+    { id: "talentId1", number: 1 },
+    { id: "talentId2", number: 2 },
+  ],
   equippedItems: [
-    { id: "id7", number: 7 },
-    { id: "id7", number: 7 },
+    { id: "eItemId1", number: 7 },
+    { id: "eItemId2", number: 7 },
   ],
   carriedItems: [
-    { id: "id8", number: 8 },
-    { id: "id9", number: 9 },
-    { id: "id10", number: 10 },
+    { id: "cItemId1", number: 8 },
+    { id: "cItemId2", number: 9 },
+    { id: "cItemId3", number: 10 },
   ],
-  storedItems: [],
-  spells: ["id11", "id12"],
+  storedItems: [
+    { id: "sItemId1", number: 2 },
+    { id: "sItemId2", number: 3 },
+  ],
+  spells: ["spellId1", "spellId2"],
   sin: 1,
   corruption: 2,
-  mutations: ["id13"],
+  mutations: ["mutationId1", "mutationId2"],
   modifiers: generateEmptyModifiers(),
   canEdit: true,
   shared: true,
@@ -474,65 +488,46 @@ const skillsApiForm = [
 ];
 
 const mockAxios = {
-  get: jest.fn(async (path) => {
+  get: async (path) => {
+    let apiData;
     if (path === "/api/character") {
-      return {
-        data: {
-          data: [character1ApiForm, character2ApiForm],
-        },
-      };
+      apiData = [character1ApiForm, character2ApiForm];
     } else if (path === "/api/character/id1") {
-      return {
-        data: {
-          data: character1ApiForm,
-        },
-      };
+      apiData = character1ApiForm;
     } else if (path === "/api/character/id2") {
-      return {
-        data: {
-          data: character2ApiForm,
-        },
-      };
+      apiData = character2ApiForm;
     } else if (path === "/api/character_resolved/id3") {
-      return {
-        data: {
-          data: characterDisplayApiForm,
-        },
-      };
+      apiData = characterDisplayApiForm;
     } else if (path === "/api/skill") {
-      return {
-        data: {
-          data: skillsApiForm,
-        },
-      };
+      apiData = skillsApiForm;
+    } else {
+      throw "invalid id";
     }
-  }),
-  post: jest.fn(async () => {
-    return {
-      data: {
-        data: "inserted_id",
-      },
-    };
-  }),
-  delete: jest.fn(),
+    return { data: { data: apiData } };
+  },
+  post: async () => {
+    return { data: { data: "inserted_id" } };
+  },
+  delete: async () => {},
 };
 
-test("test getElement returns expected character", async () => {
+test("getElement returns expected character", async () => {
   const client = new CharacterApi(mockAxios);
   const result = await client.getElement("id1");
 
   expect(result).toMatchObject(character1ModelForm);
 });
 
-test("test listElements returns expected characters", async () => {
+test("listElements returns expected characters", async () => {
   const client = new CharacterApi(mockAxios);
   const result = await client.listElements();
 
   expect(result).toMatchObject([character1ModelForm, character2ModelForm]);
 });
 
-test("test createElement calls axios with expected arguments", async () => {
+test("createElement calls axios with expected arguments", async () => {
   const client = new CharacterApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.createElement(character1ModelForm);
 
   expect(result).toEqual("inserted_id");
@@ -540,543 +535,366 @@ test("test createElement calls axios with expected arguments", async () => {
   const expectedCareerCall = JSON.parse(JSON.stringify(character1ApiForm));
   delete expectedCareerCall.id;
   delete expectedCareerCall.can_edit;
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/character", expectedCareerCall);
+  expect(axiosSpy).toHaveBeenCalledWith("/api/character", expectedCareerCall);
 });
 
-test("test updateElement calls axios with expected arguments", async () => {
+test("updateElement calls axios with expected arguments", async () => {
   const client = new CharacterApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.updateElement(character2ModelForm);
 
   expect(result).toEqual("inserted_id");
 
   const expectedCareerCall = JSON.parse(JSON.stringify(character2ApiForm));
   delete expectedCareerCall.can_edit;
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/character/update", expectedCareerCall);
+  expect(axiosSpy).toHaveBeenCalledWith("/api/character/update", expectedCareerCall);
 });
 
-test("test deleteElement calls axios with expected arguments", async () => {
+test("deleteElement calls axios with expected arguments", async () => {
   const client = new CharacterApi(mockAxios);
+  const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(mockAxios.delete).toHaveBeenCalledWith("/api/character/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/character/id1");
 });
 
-test("test compareCareers returns true if objects are the same", () => {
-  const char1 = {
-    name: "char1",
-    species: 4,
-    fate: 1,
-    fortune: 2,
-    resilience: 3,
-    resolve: 4,
-    brass: 12,
-    silver: 5,
-    gold: 1,
-    spentExp: 1000,
-    currentExp: 230,
-    status: 1,
-    standing: 2,
-    description: "character 1",
-    notes: "",
-    careerPath: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    career: { id: "id3", number: 3 },
-    attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    skills: [
-      { id: "id4", number: 4 },
-      { id: "id5", number: 5 },
-    ],
-    talents: [{ id: "id6", number: 6 }],
-    equippedItems: [
-      { id: "id7", number: 7 },
-      { id: "id7", number: 7 },
-    ],
-    carriedItems: [
-      { id: "id8", number: 8 },
-      { id: "id9", number: 9 },
-      { id: "id10", number: 10 },
-    ],
-    storedItems: [],
-    spells: ["id11", "id12"],
-    sin: 1,
-    corruption: 2,
-    mutations: ["id13"],
-    canEdit: true,
-    shared: true,
-  };
+describe("compareCharacters returns true", () => {
+  test("when characters are exactly the same", () => {
+    let otherCharacter = JSON.parse(JSON.stringify(character1ModelForm));
+    expect(compareCharacter(otherCharacter, character1ModelForm)).toBe(true);
+  });
 
-  const char2 = {
-    name: "char1",
-    species: 4,
-    fate: 1,
-    fortune: 2,
-    resilience: 3,
-    resolve: 4,
-    brass: 12,
-    silver: 5,
-    gold: 1,
-    spentExp: 1000,
-    currentExp: 230,
-    status: 1,
-    standing: 2,
-    description: "character 1",
-    notes: "",
-    careerPath: [
-      { id: "id2", number: 2 },
-      { id: "id1", number: 1 },
-    ],
-    career: { id: "id3", number: 3 },
-    attributeRolls: { WS: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5, BS: 10, S: 10 },
-    attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    attributes: { WS: 11, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5, BS: 12, S: 13 },
-    skills: [
-      { id: "id5", number: 5 },
-      { id: "id4", number: 4 },
-    ],
-    talents: [{ number: 6, id: "id6" }],
-    equippedItems: [
-      { id: "id7", number: 7 },
-      { id: "id7", number: 7 },
-    ],
-    carriedItems: [
-      { id: "id8", number: 8 },
-      { id: "id10", number: 10 },
-      { id: "id9", number: 9 },
-    ],
-    storedItems: [],
-    spells: ["id12", "id11"],
-    sin: 1,
-    corruption: 2,
-    mutations: ["id13"],
-    canEdit: true,
-    shared: true,
-  };
+  test("when characters have different modifiers", () => {
+    let otherCharacter = JSON.parse(JSON.stringify(character1ModelForm));
+    otherCharacter.modifiers.size = 1;
+    otherCharacter.modifiers.movement = 1;
+    otherCharacter.modifiers.attributes.WP = 10;
+    expect(compareCharacter(otherCharacter, character1ModelForm)).toBe(true);
+  });
 
-  const result = compareCharacter(char1, char2);
-  expect(result).toEqual(true);
+  test.each([
+    {
+      field: "careerPath",
+      value: [
+        { id: "careerId2", number: 2 },
+        { id: "careerId1", number: 1 },
+      ],
+    },
+    {
+      field: "skills",
+      value: [
+        { id: "skillId2", number: 5 },
+        { id: "skillId1", number: 4 },
+      ],
+    },
+    {
+      field: "talents",
+      value: [
+        { id: "talentId2", number: 2 },
+        { id: "talentId1", number: 1 },
+      ],
+    },
+    {
+      field: "equippedItems",
+      value: [
+        { id: "eItemId2", number: 7 },
+        { id: "eItemId1", number: 7 },
+      ],
+    },
+    {
+      field: "carriedItems",
+      value: [
+        { id: "cItemId3", number: 10 },
+        { id: "cItemId1", number: 8 },
+        { id: "cItemId2", number: 9 },
+      ],
+    },
+    {
+      field: "storedItems",
+      value: [
+        { id: "sItemId2", number: 3 },
+        { id: "sItemId1", number: 2 },
+      ],
+    },
+    {
+      field: "spells",
+      value: ["spellId2", "spellId1"],
+    },
+    {
+      field: "mutations",
+      value: ["mutationId2", "mutationId1"],
+    },
+  ])("when elements of $field are in different order", (t) => {
+    let otherCharacter = JSON.parse(JSON.stringify(character1ModelForm));
+    otherCharacter[t.field] = t.value;
+    expect(compareCharacter(character1ModelForm, otherCharacter)).toBe(true);
+  });
 });
 
-test("test compareCareers returns false if numString arrays are different", () => {
-  const char1 = {
-    name: "char1",
-    species: 4,
-    fate: 1,
-    fortune: 2,
-    resilience: 3,
-    resolve: 4,
-    brass: 12,
-    silver: 5,
-    gold: 1,
-    spentExp: 1000,
-    currentExp: 230,
-    status: 1,
-    standing: 2,
-    description: "character 1",
-    notes: "",
-    careerPath: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    career: { id: "id3", number: 3 },
-    attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    skills: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    talents: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    equippedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    carriedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    storedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    spells: ["id1", "id2"],
-    sin: 1,
-    corruption: 2,
-    mutations: ["id1", "id2"],
-    canEdit: true,
-    shared: true,
-  };
-  let char2;
+describe("compareCharacters returns false", () => {
+  test.each([
+    { name: "name", field: "name", value: "otherName" },
+    { name: "species", field: "species", value: 1 },
+    { name: "fate", field: "fate", value: 2 },
+    { name: "fortune", field: "fortune", value: 3 },
+    { name: "resilience", field: "resilience", value: 1 },
+    { name: "resolve", field: "resolve", value: 1 },
+    { name: "brass", field: "brass", value: 2 },
+    { name: "silver", field: "silver", value: 2 },
+    { name: "gold", field: "gold", value: 2 },
+    { name: "spentExp", field: "spentExp", value: 10 },
+    { name: "currentExp", field: "currentExp", value: 10 },
+    { name: "status", field: "status", value: 3 },
+    { name: "standing", field: "standing", value: 3 },
+    { name: "description", field: "description", value: "otherDesc" },
+    { name: "notes", field: "notes", value: "some notes" },
+    { name: "sin", field: "sin", value: 3 },
+    { name: "corruption", field: "corruption", value: 3 },
+    { name: "canEdit", field: "canEdit", value: false },
+    { name: "shared", field: "shared", value: false },
+    { name: "career (different id)", field: "career", value: { id: "otherId", number: 3 } },
+    { name: "career (different number)", field: "career", value: { id: "careerId3", number: 4 } },
+  ])("when other character has a different value of $name", (t) => {
+    let otherCharacter = JSON.parse(JSON.stringify(character1ModelForm));
+    otherCharacter[t.field] = t.value;
+    expect(compareCharacter(character1ModelForm, otherCharacter)).toBe(false);
+  });
 
-  for (let prop of ["careerPath", "skills", "talents", "equippedItems", "carriedItems", "storedItems"]) {
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = [
-      { id: "newid", number: 1 },
-      { id: "id2", number: 2 },
-    ];
-    expect(compareCharacter(char1, char2)).toEqual(false);
+  test.each([
+    {
+      name: "careerPath (different id)",
+      field: "careerPath",
+      value: [
+        { id: "careerId1", number: 1 },
+        { id: "otherId", number: 2 },
+      ],
+    },
+    {
+      name: "careerPath (different number)",
+      field: "careerPath",
+      value: [
+        { id: "careerId1", number: 3 },
+        { id: "careerId2", number: 2 },
+      ],
+    },
+    {
+      name: "careerPath (different number of elements)",
+      field: "careerPath",
+      value: [{ id: "careerId1", number: 1 }],
+    },
+    {
+      name: "skills (different id)",
+      field: "skills",
+      value: [
+        { id: "skillId1", number: 4 },
+        { id: "otherId", number: 5 },
+      ],
+    },
+    {
+      name: "skills (different number)",
+      field: "skills",
+      value: [
+        { id: "skillId1", number: 4 },
+        { id: "skillId2", number: 7 },
+      ],
+    },
+    {
+      name: "skills (different number of elements)",
+      field: "skills",
+      value: [{ id: "skillId1", number: 4 }],
+    },
+    {
+      name: "talents (different id)",
+      field: "talents",
+      value: [
+        { id: "talentId1", number: 1 },
+        { id: "otherId", number: 2 },
+      ],
+    },
+    {
+      name: "talents (different number)",
+      field: "talents",
+      value: [
+        { id: "talentId1", number: 3 },
+        { id: "talentId2", number: 2 },
+      ],
+    },
+    {
+      name: "talents (different number of elements)",
+      field: "talents",
+      value: [{ id: "talentId1", number: 1 }],
+    },
+    {
+      name: "equippedItems (different id)",
+      field: "equippedItems",
+      value: [
+        { id: "eItemId1", number: 7 },
+        { id: "otherID", number: 7 },
+      ],
+    },
+    {
+      name: "equippedItems (different number)",
+      field: "equippedItems",
+      value: [
+        { id: "eItemId1", number: 7 },
+        { id: "eItemId2", number: 8 },
+      ],
+    },
+    {
+      name: "equippedItems (different number of elements)",
+      field: "equippedItems",
+      value: [{ id: "eItemId1", number: 7 }],
+    },
+    {
+      name: "carriedItems (different id)",
+      field: "carriedItems",
+      value: [
+        { id: "cItemId1", number: 8 },
+        { id: "cItemId2", number: 9 },
+        { id: "otherId", number: 10 },
+      ],
+    },
+    {
+      name: "carriedItems (different number)",
+      field: "carriedItems",
+      value: [
+        { id: "cItemId1", number: 9 },
+        { id: "cItemId2", number: 9 },
+        { id: "cItemId3", number: 10 },
+      ],
+    },
+    {
+      name: "carriedItems (different number of elements)",
+      field: "carriedItems",
+      value: [
+        { id: "cItemId1", number: 8 },
+        { id: "cItemId2", number: 9 },
+      ],
+    },
+    {
+      name: "storedItems (different id)",
+      field: "storedItems",
+      value: [
+        { id: "sItemId1", number: 2 },
+        { id: "otherId", number: 3 },
+      ],
+    },
+    {
+      name: "storedItems (different number)",
+      field: "storedItems",
+      value: [
+        { id: "sItemId1", number: 5 },
+        { id: "sItemId2", number: 3 },
+      ],
+    },
+    {
+      name: "storedItems (different number of elements)",
+      field: "storedItems",
+      value: [{ id: "sItemId1", number: 2 }],
+    },
+    { name: "spells (different value)", field: "spells", value: ["spellId1", "otherId"] },
+    { name: "spells (different number of elements)", field: "spells", value: ["spellId1"] },
+    { name: "mutations (different value)", field: "mutations", value: ["mutationId1", "otherId"] },
+    { name: "mutations (different number of elements)", field: "mutations", value: ["mutationId1"] },
+  ])("when other character has a different value of $name", (t) => {
+    let otherCharacter = JSON.parse(JSON.stringify(character1ModelForm));
+    otherCharacter[t.field] = t.value;
+    expect(compareCharacter(character1ModelForm, otherCharacter)).toBe(false);
+  });
 
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 3 },
-    ];
-    expect(compareCharacter(char1, char2)).toEqual(false);
+  test.each([
+    { field: "WS", value: 11 },
+    { field: "BS", value: 11 },
+    { field: "S", value: 11 },
+    { field: "T", value: 11 },
+    { field: "I", value: 11 },
+    { field: "Ag", value: 11 },
+    { field: "Dex", value: 11 },
+    { field: "Int", value: 11 },
+    { field: "WP", value: 11 },
+    { field: "Fel", value: 11 },
+  ])("when character talent has different value of attributeRolls $field", (t) => {
+    let otherCharacter = JSON.parse(JSON.stringify(character1ModelForm));
+    otherCharacter.attributeRolls[t.field] = t.value;
+    expect(compareCharacter(character1ModelForm, otherCharacter)).toBe(false);
+  });
 
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = [{ id: "id1", number: 1 }];
-    expect(compareCharacter(char1, char2)).toEqual(false);
-
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-      { id: "id3", number: 3 },
-    ];
-    expect(compareCharacter(char1, char2)).toEqual(false);
-
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = [];
-    expect(compareCharacter(char1, char2)).toEqual(false);
-  }
+  test.each([
+    { field: "WS", value: 10 },
+    { field: "BS", value: 10 },
+    { field: "S", value: 10 },
+    { field: "T", value: 10 },
+    { field: "I", value: 10 },
+    { field: "Ag", value: 10 },
+    { field: "Dex", value: 10 },
+    { field: "Int", value: 10 },
+    { field: "WP", value: 10 },
+    { field: "Fel", value: 10 },
+  ])("when character talent has different value of attributeAdvances $field", (t) => {
+    let otherCharacter = JSON.parse(JSON.stringify(character1ModelForm));
+    otherCharacter.attributeAdvances[t.field] = t.value;
+    expect(compareCharacter(character1ModelForm, otherCharacter)).toBe(false);
+  });
 });
 
-test("test compareCareers returns false if string arrays are different", () => {
-  const char1 = {
-    name: "char1",
-    species: 4,
-    fate: 1,
-    fortune: 2,
-    resilience: 3,
-    resolve: 4,
-    brass: 12,
-    silver: 5,
-    gold: 1,
-    spentExp: 1000,
-    currentExp: 230,
-    status: 1,
-    standing: 2,
-    description: "character 1",
-    notes: "",
-    careerPath: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    career: { id: "id3", number: 3 },
-    attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-    skills: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    talents: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    equippedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    carriedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    storedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    spells: ["id1", "id2"],
-    sin: 1,
-    corruption: 2,
-    mutations: ["id1", "id2"],
-    canEdit: true,
-    shared: true,
-  };
-  let char2;
-
-  for (let prop of ["spells", "mutations"]) {
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = ["id2", "id3"];
-    expect(compareCharacter(char1, char2)).toEqual(false);
-
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = ["id1", "id2", "id3"];
-    expect(compareCharacter(char1, char2)).toEqual(false);
-
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = [];
-    expect(compareCharacter(char1, char2)).toEqual(false);
-  }
+describe("getWoundsFormula returns correct value", () => {
+  test.each([
+    { size: 3, T: 10, WP: 10, S: 10, expected: 4 }, // 1 + (2 * 1) + 1
+    { size: 3, T: 12, WP: 17, S: 20, expected: 5 }, // 2 + (2 * 1) + 1
+    { size: 3, T: 21, WP: 26, S: 10, expected: 7 }, // 1 + (2 * 2) + 2
+    { size: 2, T: 20, WP: 10, S: 10, expected: 5 }, // (2 * 2) + 1
+    { size: 1, T: 20, WP: 10, S: 10, expected: 2 }, // 2
+    { size: 0, T: 20, WP: 10, S: 10, expected: 1 }, // 1
+    { size: -1, T: 20, WP: 10, S: 10, expected: 1 }, // 1
+    { size: 4, T: 20, WP: 10, S: 10, expected: 12 }, // 2 * (1 + (2 * 2) + 1)
+    { size: 5, T: 20, WP: 10, S: 10, expected: 24 }, // 4 * (1 + (2 * 2) + 1)
+    { size: 6, T: 20, WP: 10, S: 10, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
+    { size: 7, T: 20, WP: 10, S: 10, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
+  ])("when size = $size, T = $T, WP = $WP, S = $S", (t) => {
+    expect(getWoundsFormula(t.size, t.T, t.WP, t.S)).toEqual(t.expected);
+  });
 });
-
-test("test compareCareers returns false if attributes are different", () => {
-  const char1 = {
-    name: "char1",
-    species: 4,
-    fate: 1,
-    fortune: 2,
-    resilience: 3,
-    resolve: 4,
-    brass: 12,
-    silver: 5,
-    gold: 1,
-    spentExp: 1000,
-    currentExp: 230,
-    status: 1,
-    standing: 2,
-    description: "character 1",
-    notes: "",
-    careerPath: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    career: { id: "id3", number: 3 },
-    attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    attributeAdvances: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    skills: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    talents: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    equippedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    carriedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    storedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    spells: ["id1", "id2"],
-    sin: 1,
-    corruption: 2,
-    mutations: ["id1", "id2"],
-    canEdit: true,
-    shared: true,
-  };
-  let char2;
-
-  for (let prop of ["attributeAdvances", "attributeRolls"]) {
-    char2 = JSON.parse(JSON.stringify(char1));
-    char2[prop] = { WS: 11, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 };
-    expect(compareCharacter(char1, char2)).toEqual(false);
-  }
-});
-
-test("test compareCareers returns false if careers are different", () => {
-  const char1 = {
-    name: "char1",
-    species: 4,
-    fate: 1,
-    fortune: 2,
-    resilience: 3,
-    resolve: 4,
-    brass: 12,
-    silver: 5,
-    gold: 1,
-    spentExp: 1000,
-    currentExp: 230,
-    status: 1,
-    standing: 2,
-    description: "character 1",
-    notes: "",
-    careerPath: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    career: { id: "id3", number: 3 },
-    attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    attributeAdvances: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    skills: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    talents: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    equippedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    carriedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    storedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    spells: ["id1", "id2"],
-    sin: 1,
-    corruption: 2,
-    mutations: ["id1", "id2"],
-    canEdit: true,
-    shared: true,
-  };
-  let char2;
-
-  char2 = JSON.parse(JSON.stringify(char1));
-  char2.career = { id: "id4", number: 3 };
-  expect(compareCharacter(char1, char2)).toEqual(false);
-
-  char2 = JSON.parse(JSON.stringify(char1));
-  char2.career = { id: "id3", number: 2 };
-  expect(compareCharacter(char1, char2)).toEqual(false);
-});
-
-test("test compareCareers returns false if single value props are different", () => {
-  const char1 = {
-    name: "char1",
-    species: 4,
-    fate: 1,
-    fortune: 2,
-    resilience: 3,
-    resolve: 4,
-    brass: 12,
-    silver: 5,
-    gold: 1,
-    spentExp: 1000,
-    currentExp: 230,
-    status: 1,
-    standing: 2,
-    description: "character 1",
-    notes: "",
-    careerPath: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    career: { id: "id3", number: 3 },
-    attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    attributeAdvances: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
-    skills: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    talents: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    equippedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    carriedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    storedItems: [
-      { id: "id1", number: 1 },
-      { id: "id2", number: 2 },
-    ],
-    spells: ["id1", "id2"],
-    sin: 1,
-    corruption: 2,
-    mutations: ["id1", "id2"],
-    canEdit: true,
-    shared: true,
-  };
-
-  let char2;
-  char2 = JSON.parse(JSON.stringify(char1));
-  char2.name = "new name";
-  expect(compareCharacter(char1, char2)).toEqual(false);
-
-  char2 = JSON.parse(JSON.stringify(char1));
-  char2.canEdit = false;
-  expect(compareCharacter(char1, char2)).toEqual(false);
-
-  char2 = JSON.parse(JSON.stringify(char1));
-  char2.brass = 100;
-  expect(compareCharacter(char1, char2)).toEqual(false);
-});
-
-test("test getWounds returns correct value", () => {
+test("getWounds returns correct value", () => {
   const char = JSON.parse(JSON.stringify(character1ModelForm));
 
   char.attributeRolls.T = 5;
   char.attributeAdvances.T = 3;
+  char.modifiers.attributes.T = 2;
 
   char.attributeRolls.WP = 6;
   char.attributeAdvances.WP = 5;
+  char.modifiers.attributes.WP = 2;
 
   char.attributeRolls.S = 10;
   char.attributeAdvances.S = 0;
+  char.modifiers.attributes.S = 2;
 
-  // Human T 28, WP 31, S 30
-  char.species = 0;
-  char.modifiers.size = 0;
-  expect(getWounds(char)).toEqual(2 * 2 + 3 + 3);
-
-  // Dwarf T 38, WP 51, S 30
-  char.species = 2;
-  char.modifiers.size = 0;
-  expect(getWounds(char)).toEqual(2 * 3 + 5 + 3);
-
-  // Elf T 28, WP 41, S 30
-  char.species = 3;
-  char.modifiers.size = 0;
-  expect(getWounds(char)).toEqual(2 * 2 + 4 + 3);
-  char.species = 4;
-  char.modifiers.size = 0;
-  expect(getWounds(char)).toEqual(2 * 2 + 4 + 3);
-
-  // Halfling T 28, WP 41, S 20
+  // Halfling T 30, WP 43, S 22
   char.species = 1;
   char.modifiers.size = -1;
-  expect(getWounds(char)).toEqual(2 * 2 + 4);
+  expect(getWounds(char)).toEqual(2 * 3 + 4);
 });
 
-test("test getMovement returns correct value", () => {
-  const char = JSON.parse(JSON.stringify(character1ModelForm));
-
-  // Human
-  char.species = 0;
-  expect(getMovement(char)).toEqual(4);
-
-  // Dwarf
-  char.species = 2;
-  expect(getMovement(char)).toEqual(3);
-
-  // Elf
-  char.species = 3;
-  expect(getMovement(char)).toEqual(5);
-  char.species = 4;
-  expect(getMovement(char)).toEqual(5);
-
-  // Halfling
-  char.species = 1;
-  expect(getMovement(char)).toEqual(3);
-});
-
-test("test getRacialAttributes returns correct value", () => {
-  const char = JSON.parse(JSON.stringify(character1ModelForm));
-
-  // Human
-  char.species = 0;
-  expect(getRacialAttributes(char)).toEqual({
-    WS: 20,
-    BS: 20,
-    S: 20,
-    T: 20,
-    I: 20,
-    Ag: 20,
-    Dex: 20,
-    Int: 20,
-    WP: 20,
-    Fel: 20,
+describe("getMovement returns correct value", () => {
+  test.each([
+    { name: species[0], species: 0, modifier: 0, expected: 4 },
+    { name: species[0], species: 0, modifier: -1, expected: 3 },
+    { name: species[0], species: 0, modifier: 1, expected: 5 },
+    { name: species[1], species: 1, modifier: 0, expected: 3 },
+    { name: species[2], species: 2, modifier: 0, expected: 3 },
+    { name: species[3], species: 3, modifier: 0, expected: 5 },
+    { name: species[4], species: 4, modifier: 0, expected: 5 },
+    { name: species[5], species: 5, modifier: 0, expected: 3 },
+  ])("when species is $name and modifier is $modifier", (t) => {
+    const char = JSON.parse(JSON.stringify(character1ModelForm));
+    char.species = t.species;
+    char.modifiers.movement = t.modifier;
+    expect(getMovement(char)).toEqual(t.expected);
   });
+});
 
+test("getRacialAttributes returns correct value", () => {
+  const char = JSON.parse(JSON.stringify(character1ModelForm));
   // Dwarf
   char.species = 2;
   expect(getRacialAttributes(char)).toEqual({
@@ -1091,212 +909,223 @@ test("test getRacialAttributes returns correct value", () => {
     WP: 40,
     Fel: 10,
   });
-
-  // Elf
-  char.species = 3;
-  expect(getRacialAttributes(char)).toEqual({
-    WS: 30,
-    BS: 30,
-    S: 20,
-    T: 20,
-    I: 40,
-    Ag: 30,
-    Dex: 30,
-    Int: 30,
-    WP: 30,
-    Fel: 20,
-  });
-
-  char.species = 4;
-  expect(getRacialAttributes(char)).toEqual({
-    WS: 30,
-    BS: 30,
-    S: 20,
-    T: 20,
-    I: 40,
-    Ag: 30,
-    Dex: 30,
-    Int: 30,
-    WP: 30,
-    Fel: 20,
-  });
-
-  // Halfling
-  char.species = 1;
-  expect(getRacialAttributes(char)).toEqual({
-    WS: 10,
-    BS: 30,
-    S: 10,
-    T: 20,
-    I: 20,
-    Ag: 20,
-    Dex: 30,
-    Int: 20,
-    WP: 30,
-    Fel: 30,
-  });
 });
 
-test("test getBaseAttributes returns correct value", () => {
+describe("getBaseAttributes returns correct value", () => {
   const char = JSON.parse(JSON.stringify(character1ModelForm));
   char.attributeRolls = { WS: 12, BS: 1, S: 2, T: 1, I: 2, Ag: 1, Dex: 2, Int: 1, WP: 2, Fel: 0 };
-
-  // Human
-  char.species = 0;
-  expect(getBaseAttributes(char)).toEqual({
-    WS: 12 + 20,
-    BS: 1 + 20,
-    S: 2 + 20,
-    T: 1 + 20,
-    I: 2 + 20,
-    Ag: 1 + 20,
-    Dex: 2 + 20,
-    Int: 1 + 20,
-    WP: 2 + 20,
-    Fel: 0 + 20,
-  });
-
-  // Dwarf
-  char.species = 2;
-  expect(getBaseAttributes(char)).toEqual({
-    WS: 12 + 30,
-    BS: 1 + 20,
-    S: 2 + 20,
-    T: 1 + 30,
-    I: 2 + 20,
-    Ag: 1 + 10,
-    Dex: 2 + 30,
-    Int: 1 + 20,
-    WP: 2 + 40,
-    Fel: 0 + 10,
-  });
-
-  // Elf
-  char.species = 3;
-  expect(getBaseAttributes(char)).toEqual({
-    WS: 12 + 30,
-    BS: 1 + 30,
-    S: 2 + 20,
-    T: 1 + 20,
-    I: 2 + 40,
-    Ag: 1 + 30,
-    Dex: 2 + 30,
-    Int: 1 + 30,
-    WP: 2 + 30,
-    Fel: 0 + 20,
-  });
-
-  char.species = 4;
-  expect(getBaseAttributes(char)).toEqual({
-    WS: 12 + 30,
-    BS: 1 + 30,
-    S: 2 + 20,
-    T: 1 + 20,
-    I: 2 + 40,
-    Ag: 1 + 30,
-    Dex: 2 + 30,
-    Int: 1 + 30,
-    WP: 2 + 30,
-    Fel: 0 + 20,
-  });
-
-  // Halfling
-  char.species = 1;
-  expect(getBaseAttributes(char)).toEqual({
-    WS: 12 + 10,
-    BS: 1 + 30,
-    S: 2 + 10,
-    T: 1 + 20,
-    I: 2 + 20,
-    Ag: 1 + 20,
-    Dex: 2 + 30,
-    Int: 1 + 20,
-    WP: 2 + 30,
-    Fel: 0 + 30,
+  test.each([
+    {
+      name: species[0],
+      species: 0,
+      expected: {
+        WS: 20 + 12,
+        BS: 20 + 1,
+        S: 20 + 2,
+        T: 20 + 1,
+        I: 20 + 2,
+        Ag: 20 + 1,
+        Dex: 20 + 2,
+        Int: 20 + 1,
+        WP: 20 + 2,
+        Fel: 20,
+      },
+    },
+    {
+      name: species[1],
+      species: 1,
+      expected: {
+        WS: 10 + 12,
+        BS: 30 + 1,
+        S: 10 + 2,
+        T: 20 + 1,
+        I: 20 + 2,
+        Ag: 20 + 1,
+        Dex: 30 + 2,
+        Int: 20 + 1,
+        WP: 30 + 2,
+        Fel: 30,
+      },
+    },
+    {
+      name: species[2],
+      species: 2,
+      expected: {
+        WS: 30 + 12,
+        BS: 20 + 1,
+        S: 20 + 2,
+        T: 30 + 1,
+        I: 20 + 2,
+        Ag: 10 + 1,
+        Dex: 30 + 2,
+        Int: 20 + 1,
+        WP: 40 + 2,
+        Fel: 10,
+      },
+    },
+    {
+      name: species[3],
+      species: 3,
+      expected: {
+        WS: 30 + 12,
+        BS: 30 + 1,
+        S: 20 + 2,
+        T: 20 + 1,
+        I: 40 + 2,
+        Ag: 30 + 1,
+        Dex: 30 + 2,
+        Int: 30 + 1,
+        WP: 30 + 2,
+        Fel: 20,
+      },
+    },
+    {
+      name: species[4],
+      species: 4,
+      expected: {
+        WS: 30 + 12,
+        BS: 30 + 1,
+        S: 20 + 2,
+        T: 20 + 1,
+        I: 40 + 2,
+        Ag: 30 + 1,
+        Dex: 30 + 2,
+        Int: 30 + 1,
+        WP: 30 + 2,
+        Fel: 20,
+      },
+    },
+    {
+      name: species[5],
+      species: 5,
+      expected: {
+        WS: 20 + 12,
+        BS: 10 + 1,
+        S: 10 + 2,
+        T: 15 + 1,
+        I: 30 + 2,
+        Ag: 30 + 1,
+        Dex: 30 + 2,
+        Int: 30 + 1,
+        WP: 40 + 2,
+        Fel: 15,
+      },
+    },
+  ])("for $name", (t) => {
+    char.species = t.species;
+    expect(getBaseAttributes(char)).toEqual(t.expected);
   });
 });
 
-test("test getTotalAttributes returns correct value", () => {
+describe("getTotalAttributes returns correct value", () => {
   const char = JSON.parse(JSON.stringify(character1ModelForm));
   char.attributeRolls = { WS: 12, BS: 1, S: 2, T: 1, I: 2, Ag: 1, Dex: 2, Int: 1, WP: 2, Fel: 0 };
-  char.attributeAdvances = { WS: 3, BS: 4, S: 3, T: 4, I: 3, Ag: 4, Dex: 3, Int: 4, WP: 3, Fel: 1 };
-
-  // Human
-  char.species = 0;
-  expect(getTotalAttributes(char, getAttributes())).toEqual({
-    WS: 15 + 20,
-    BS: 5 + 20,
-    S: 5 + 20,
-    T: 5 + 20,
-    I: 5 + 20,
-    Ag: 5 + 20,
-    Dex: 5 + 20,
-    Int: 5 + 20,
-    WP: 5 + 20,
-    Fel: 1 + 20,
-  });
-
-  // Dwarf
-  char.species = 2;
-  expect(getTotalAttributes(char, getAttributes())).toEqual({
-    WS: 15 + 30,
-    BS: 5 + 20,
-    S: 5 + 20,
-    T: 5 + 30,
-    I: 5 + 20,
-    Ag: 5 + 10,
-    Dex: 5 + 30,
-    Int: 5 + 20,
-    WP: 5 + 40,
-    Fel: 1 + 10,
-  });
-
-  // Elf
-  char.species = 3;
-  expect(getTotalAttributes(char, getAttributes())).toEqual({
-    WS: 15 + 30,
-    BS: 5 + 30,
-    S: 5 + 20,
-    T: 5 + 20,
-    I: 5 + 40,
-    Ag: 5 + 30,
-    Dex: 5 + 30,
-    Int: 5 + 30,
-    WP: 5 + 30,
-    Fel: 1 + 20,
-  });
-
-  char.species = 4;
-  expect(getTotalAttributes(char, getAttributes())).toEqual({
-    WS: 15 + 30,
-    BS: 5 + 30,
-    S: 5 + 20,
-    T: 5 + 20,
-    I: 5 + 40,
-    Ag: 5 + 30,
-    Dex: 5 + 30,
-    Int: 5 + 30,
-    WP: 5 + 30,
-    Fel: 1 + 20,
-  });
-
-  // Halfling
-  char.species = 1;
-  expect(getTotalAttributes(char, getAttributes())).toEqual({
-    WS: 15 + 10,
-    BS: 5 + 30,
-    S: 5 + 10,
-    T: 5 + 20,
-    I: 5 + 20,
-    Ag: 5 + 20,
-    Dex: 5 + 30,
-    Int: 5 + 20,
-    WP: 5 + 30,
-    Fel: 1 + 30,
+  char.modifiers.attributes = { WS: 3, BS: 4, S: 3, T: 4, I: 3, Ag: 4, Dex: 3, Int: 4, WP: 3, Fel: 1 };
+  char.attributeAdvances = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 10 };
+  test.each([
+    {
+      name: species[0],
+      species: 0,
+      expected: {
+        WS: 20 + 16,
+        BS: 20 + 7,
+        S: 20 + 8,
+        T: 20 + 9,
+        I: 20 + 10,
+        Ag: 20 + 11,
+        Dex: 20 + 12,
+        Int: 20 + 13,
+        WP: 20 + 14,
+        Fel: 20 + 11,
+      },
+    },
+    {
+      name: species[1],
+      species: 1,
+      expected: {
+        WS: 10 + 16,
+        BS: 30 + 7,
+        S: 10 + 8,
+        T: 20 + 9,
+        I: 20 + 10,
+        Ag: 20 + 11,
+        Dex: 30 + 12,
+        Int: 20 + 13,
+        WP: 30 + 14,
+        Fel: 30 + 11,
+      },
+    },
+    {
+      name: species[2],
+      species: 2,
+      expected: {
+        WS: 30 + 16,
+        BS: 20 + 7,
+        S: 20 + 8,
+        T: 30 + 9,
+        I: 20 + 10,
+        Ag: 10 + 11,
+        Dex: 30 + 12,
+        Int: 20 + 13,
+        WP: 40 + 14,
+        Fel: 10 + 11,
+      },
+    },
+    {
+      name: species[3],
+      species: 3,
+      expected: {
+        WS: 30 + 16,
+        BS: 30 + 7,
+        S: 20 + 8,
+        T: 20 + 9,
+        I: 40 + 10,
+        Ag: 30 + 11,
+        Dex: 30 + 12,
+        Int: 30 + 13,
+        WP: 30 + 14,
+        Fel: 20 + 11,
+      },
+    },
+    {
+      name: species[4],
+      species: 4,
+      expected: {
+        WS: 30 + 16,
+        BS: 30 + 7,
+        S: 20 + 8,
+        T: 20 + 9,
+        I: 40 + 10,
+        Ag: 30 + 11,
+        Dex: 30 + 12,
+        Int: 30 + 13,
+        WP: 30 + 14,
+        Fel: 20 + 11,
+      },
+    },
+    {
+      name: species[5],
+      species: 5,
+      expected: {
+        WS: 20 + 16,
+        BS: 10 + 7,
+        S: 10 + 8,
+        T: 15 + 9,
+        I: 30 + 10,
+        Ag: 30 + 11,
+        Dex: 30 + 12,
+        Int: 30 + 13,
+        WP: 40 + 14,
+        Fel: 15 + 11,
+      },
+    },
+  ])("for $name", (t) => {
+    char.species = t.species;
+    expect(getTotalAttributes(char)).toEqual(t.expected);
   });
 });
 
-test("test getElementDisplay return correct value", async () => {
+test("getElementDisplay return correct value", async () => {
   const client = new CharacterApi(mockAxios);
   const result = await client.getElementForDisplay("id3");
 

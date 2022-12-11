@@ -1,4 +1,6 @@
+import { expect, test } from "vitest";
 import { sumAndMultModifiers } from "../src/services/wh/characterModifiers";
+
 test("sumAndMultModifiers sums and multiplies modifiers correctly", () => {
   let mod1 = {
     size: 0,
