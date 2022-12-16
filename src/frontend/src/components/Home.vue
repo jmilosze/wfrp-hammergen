@@ -12,17 +12,13 @@
           <div class="h3">New Item type!</div>
           <p>
             Introducing a new item type: Grimoire. It allows you add spells to it so you can keep track of spells in
-            your books that you have not memorised yet.
+            your books that you have not memorised yet. You can read more about this and previous updates in
+            <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link> and on our
+            <b-link href="https://ko-fi.com/Q5Q12E0KB/posts" target="_blank">Ko-fi</b-link> blog.
           </p>
           <p>
-            You can read more about this and previous updates in the new section
-            <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link> in the <b>About</b> tab.
-          </p>
-          <p>
-            From now on, we will post (roughly once a month) updates on Hammergen
-            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link> page where you can add comments
-            and suggestions. As always, to keep Hammergen up-to-date and add-free please consider supporting us with a
-            small donation via <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link> :)
+            As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
+            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link> :)
           </p>
         </div>
 
