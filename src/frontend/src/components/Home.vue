@@ -8,7 +8,7 @@
       </div>
 
       <div class="text-sm-left">
-        <div class="alert alert-success" role="alert">
+        <div class="alert alert-info" role="alert">
           <div class="h3">New Item type!</div>
           <p>
             Introducing a new item type: Grimoire. It allows you add spells to it so you can keep track of spells in
