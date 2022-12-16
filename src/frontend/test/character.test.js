@@ -356,6 +356,37 @@ const characterDisplayApiForm = {
         description: "item_6_desc",
       },
     },
+    {
+      id: "id14a",
+      number: 1,
+      value: {
+        name: "spellbook",
+        enc: 1,
+        stats: {
+          type: 6,
+          spells: [
+            {
+              name: "spellbook_spell_1",
+              range: "spellbook_spell_1_range",
+              target: "spellbook_spell_1_target",
+              duration: "spellbook_spell_1_duration",
+              description: "spellbook_spell_1_desc",
+              cn: 1,
+            },
+            {
+              name: "spellbook_spell_2",
+              range: "spellbook_spell_2_range",
+              target: "spellbook_spell_2_target",
+              duration: "spellbook_spell_2_duration",
+              description: "spellbook_spell_2_desc",
+              cn: 2,
+            },
+          ],
+        },
+        properties: [],
+        description: "spellbook_desc",
+      },
+    },
   ],
   stored_items: [
     {
@@ -1252,16 +1283,35 @@ test("getElementDisplay return correct value", async () => {
         number: 2,
         desc: "item_6_desc",
       },
-    ],
-    stored: [
       {
-        name: "item_7",
-        enc: 7,
+        number: 1,
+        name: "spellbook",
+        enc: 1,
         qualities: [],
-        number: 5,
-        desc: "item_7_desc",
+        desc: "spellbook_desc",
+        spells: [
+          {
+            name: "spellbook_spell_1",
+            range: "spellbook_spell_1_range",
+            target: "spellbook_spell_1_target",
+            duration: "spellbook_spell_1_duration",
+            description: "spellbook_spell_1_desc",
+            type: "Spell",
+            cn: 1,
+          },
+          {
+            name: "spellbook_spell_2",
+            range: "spellbook_spell_2_range",
+            target: "spellbook_spell_2_target",
+            duration: "spellbook_spell_2_duration",
+            description: "spellbook_spell_2_desc",
+            type: "Spell",
+            cn: 2,
+          },
+        ],
       },
     ],
+    stored: [{ name: "item_7", enc: 7, qualities: [], number: 5, desc: "item_7_desc" }],
     spells: [
       {
         name: "spell_1",
@@ -1283,21 +1333,13 @@ test("getElementDisplay return correct value", async () => {
       },
     ],
     mutations: [
-      {
-        name: "mut_1",
-        type: "Physical",
-        description: "mut_1_desc",
-      },
-      {
-        name: "mut_2",
-        type: "Mental",
-        description: "mut_2_desc",
-      },
+      { name: "mut_1", type: "Physical", description: "mut_1_desc" },
+      { name: "mut_2", type: "Mental", description: "mut_2_desc" },
     ],
     encWeapon: 5,
     encArmor: 3,
     encOther: 0,
-    encCarried: 2,
+    encCarried: 3,
   };
 
   expect(result).toEqual(expected);

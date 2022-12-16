@@ -87,6 +87,19 @@
         </b-col>
       </b-row>
 
+      <b-row v-if="char.notes">
+        <b-col>
+          <div class="h6">Notes</div>
+          <b-table-simple bordered stacked="md">
+            <b-tbody>
+              <b-tr>
+                <b-td>{{ char.notes }}</b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
+        </b-col>
+      </b-row>
+
       <b-row>
         <b-col md="6">
           <b-row>
@@ -292,7 +305,10 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="skill in char.basicSkills.slice(0, Math.floor(char.basicSkills.length / 2))" :key="skill.id">
+              <b-tr
+                v-for="skill in char.basicSkills.slice(0, Math.floor(char.basicSkills.length / 2))"
+                :key="skill.name"
+              >
                 <b-td>{{ dispStr(skill.name) }}</b-td>
                 <b-td>{{ skill.attributeName }}</b-td>
                 <b-td>{{ skill.attributeValue }}</b-td>
@@ -314,7 +330,7 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="skill in char.basicSkills.slice(Math.floor(char.basicSkills.length / 2))" :key="skill.id">
+              <b-tr v-for="skill in char.basicSkills.slice(Math.floor(char.basicSkills.length / 2))" :key="skill.name">
                 <b-td>{{ dispStr(skill.name) }}</b-td>
                 <b-td>{{ skill.attributeName }}</b-td>
                 <b-td>{{ skill.attributeValue }}</b-td>
@@ -339,7 +355,7 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="skill in char.advancedSkills" :key="skill.id">
+              <b-tr v-for="skill in char.advancedSkills" :key="skill.name">
                 <b-td>{{ dispStr(skill.name) }}</b-td>
                 <b-td>{{ skill.attributeName }}</b-td>
                 <b-td>{{ skill.attributeValue }}</b-td>
@@ -359,7 +375,7 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="talent in char.talents" :key="talent.id">
+              <b-tr v-for="talent in char.talents" :key="talent.name">
                 <b-td>{{ talent.name }}</b-td>
                 <b-td>{{ talent.rank }}</b-td>
               </b-tr>
@@ -382,7 +398,7 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="armor in char.equippedArmor" :key="armor.id">
+              <b-tr v-for="armor in char.equippedArmor" :key="armor.name">
                 <b-td stacked-heading="Name">{{ dispItemName(armor) }}</b-td>
                 <b-td stacked-heading="Locations">{{ dispLst(armor.locations) }}</b-td>
                 <b-td stacked-heading="Encumbrance">{{ armor.enc }}</b-td>
@@ -409,7 +425,7 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="weapon in char.equippedWeapon" :key="weapon.id">
+              <b-tr v-for="weapon in char.equippedWeapon" :key="weapon.name">
                 <b-td stacked-heading="Name">{{ dispItemName(weapon) }}</b-td>
                 <b-td stacked-heading="Group">{{ weapon.group }}</b-td>
                 <b-td stacked-heading="Encumbrance">{{ weapon.enc }}</b-td>
@@ -434,7 +450,7 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="item in char.equippedOther" :key="item.id">
+              <b-tr v-for="item in char.equippedOther" :key="item.name">
                 <b-td stacked-heading="Name">{{ dispItemName(item) }}</b-td>
                 <b-td stacked-heading="Encumbrance">{{ item.enc }}</b-td>
                 <b-td stacked-heading="Description">{{ dispStr(item.desc) }}</b-td>
@@ -456,7 +472,7 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="item in char.carried" :key="item.id">
+              <b-tr v-for="item in char.carried" :key="item.name">
                 <b-td stacked-heading="Name">{{ dispItemName(item) }}</b-td>
                 <b-td stacked-heading="Encumbrance">{{ item.enc }}</b-td>
                 <b-td stacked-heading="Description">{{ item.desc }}</b-td>
@@ -499,32 +515,6 @@
         </b-col>
       </b-row>
 
-      <b-row v-if="char.spells.length">
-        <b-col>
-          <div class="h6">Spells/Prayers</div>
-          <b-table-simple bordered stacked="md">
-            <b-thead>
-              <b-tr>
-                <b-th>Name</b-th>
-                <b-th>CN</b-th>
-                <b-th>Range</b-th>
-                <b-th>Target</b-th>
-                <b-th>Duration</b-th>
-              </b-tr>
-            </b-thead>
-            <b-tbody>
-              <b-tr v-for="item in char.spells" :key="item.id">
-                <b-td stacked-heading="Name">{{ item.name }}</b-td>
-                <b-td stacked-heading="CN">{{ item.cn ? item.cn : "N/A" }}</b-td>
-                <b-td stacked-heading="Range">{{ item.range }}</b-td>
-                <b-td stacked-heading="Target">{{ item.target }}</b-td>
-                <b-td stacked-heading="Duration">{{ item.duration }}</b-td>
-              </b-tr>
-            </b-tbody>
-          </b-table-simple>
-        </b-col>
-      </b-row>
-
       <b-row v-if="char.mutations.length">
         <b-col>
           <div class="h6">Mutations</div>
@@ -537,28 +527,70 @@
               </b-tr>
             </b-thead>
             <b-tbody>
-              <b-tr v-for="item in char.mutations" :key="item.id">
-                <b-td stacked-heading="Name">{{ item.name }}</b-td>
-                <b-td stacked-heading="Type">{{ item.type }}</b-td>
-                <b-td stacked-heading="Description">{{ item.description }}</b-td>
+              <b-tr v-for="mutation in char.mutations" :key="mutation.name">
+                <b-td stacked-heading="Name">{{ mutation.name }}</b-td>
+                <b-td stacked-heading="Type">{{ mutation.type }}</b-td>
+                <b-td stacked-heading="Description">{{ mutation.description }}</b-td>
               </b-tr>
             </b-tbody>
           </b-table-simple>
         </b-col>
       </b-row>
 
-      <b-row v-if="char.notes">
+      <b-row v-if="char.spells.length">
         <b-col>
-          <div class="h6">Notes</div>
+          <div class="h6">Known Spells/Prayers</div>
           <b-table-simple bordered stacked="md">
-            <b-tbody>
+            <b-thead>
               <b-tr>
-                <b-td>{{ char.notes }}</b-td>
+                <b-th>Name</b-th>
+                <b-th>CN</b-th>
+                <b-th>Range</b-th>
+                <b-th>Target</b-th>
+                <b-th>Duration</b-th>
+              </b-tr>
+            </b-thead>
+            <b-tbody>
+              <b-tr v-for="spell in char.spells" :key="spell.name">
+                <b-td stacked-heading="Name">{{ spell.name }}</b-td>
+                <b-td stacked-heading="CN">{{ spell.cn ? spell.cn : "N/A" }}</b-td>
+                <b-td stacked-heading="Range">{{ spell.range }}</b-td>
+                <b-td stacked-heading="Target">{{ spell.target }}</b-td>
+                <b-td stacked-heading="Duration">{{ spell.duration }}</b-td>
               </b-tr>
             </b-tbody>
           </b-table-simple>
         </b-col>
       </b-row>
+
+      <div v-if="grimoires.length > 0">
+        <div class="h6 mb-4">Spells in Grimoires</div>
+        <b-row v-for="book in grimoires" :key="book.name">
+          <b-col>
+            <div class="h6">{{ dispStr(book.name) }}</div>
+            <b-table-simple bordered stacked="md">
+              <b-thead>
+                <b-tr>
+                  <b-th>Name</b-th>
+                  <b-th>CN</b-th>
+                  <b-th>Range</b-th>
+                  <b-th>Target</b-th>
+                  <b-th>Duration</b-th>
+                </b-tr>
+              </b-thead>
+              <b-tbody>
+                <b-tr v-for="spell in book.spells" :key="spell.name">
+                  <b-td stacked-heading="Name">{{ spell.name }}</b-td>
+                  <b-td stacked-heading="CN">{{ spell.cn }}</b-td>
+                  <b-td stacked-heading="Range">{{ spell.range }}</b-td>
+                  <b-td stacked-heading="Target">{{ spell.target }}</b-td>
+                  <b-td stacked-heading="Duration">{{ spell.duration }}</b-td>
+                </b-tr>
+              </b-tbody>
+            </b-table-simple>
+          </b-col>
+        </b-row>
+      </div>
     </b-container>
   </div>
 </template>
@@ -583,6 +615,7 @@ export default {
       elementApi: new CharacterApi(authRequest),
 
       char: generateEmptyCharacterForDisplay(),
+      grimoires: [],
 
       errors: [],
       loaded: false,
@@ -624,16 +657,20 @@ export default {
       this.$router.push({ name: "list_character" });
     },
 
-    loadData() {
-      logoutIfUnauthorized(this.elementApi.getElementForDisplay)(this.id)
-        .then((character) => {
-          this.char = character;
-          this.loaded = true;
-        })
-        .catch((error) => {
-          this.errors.push("Server Error.");
-          throw error;
-        });
+    async loadData() {
+      try {
+        this.char = await logoutIfUnauthorized(this.elementApi.getElementForDisplay)(this.id);
+      } catch (error) {
+        this.errors.push("Server Error.");
+        throw error;
+      }
+
+      this.loaded = true;
+      for (let item of [...this.char.carried, ...this.char.stored]) {
+        if (Object.hasOwn(item, "spells")) {
+          this.grimoires.push({ spells: item.spells, name: item.name });
+        }
+      }
     },
   },
 };

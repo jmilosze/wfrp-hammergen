@@ -144,6 +144,7 @@ def get_character_resolved(character_id, user):
             user["shared_acc"],
             COLLECTIONS["character"],
             COLLECTIONS["item_property"],
+            COLLECTIONS["spell"],
         )
         return r.api_response(r.SUCCESS_CODE, r.SUCCESS_MSG, r.SUCCESS_HTTP, character)
     except wh_service.ElementNotFoundError:

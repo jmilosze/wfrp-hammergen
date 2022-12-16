@@ -144,6 +144,10 @@ ITEM_COMPONENTS = {
                 {"carriable": False, "wearable": False},
             ),
         },
+        {
+            "type": Item.GRIMOIRE.value,
+            "spells": [ID_SCHEMA],
+        },
     ),
 }
 

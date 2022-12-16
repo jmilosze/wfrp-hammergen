@@ -480,11 +480,13 @@ export default {
       this.$emit("stateChanged", this.isValid);
     },
     isCarriable(item) {
-      return !(item.stats.type === 5 && !item.stats.carryType.carriable);
+      return !(item.type === 5 && !item.stats[5].carryType.carriable);
     },
     isWearable(item) {
       return (
-        !(item.stats.type === 5 && !item.stats.carryType.wearable) && !(item.stats.type === 4 && !item.stats.wearable)
+        !(item.type === 5 && !item.stats[5].carryType.wearable) &&
+        !(item.type === 4 && !item.stats[4].wearable) &&
+        !(item.type === 6)
       );
     },
     async loadData(reload = false) {

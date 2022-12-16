@@ -9,12 +9,10 @@
 
       <div class="text-sm-left">
         <div class="alert alert-success" role="alert">
-          <div class="h3">More updates!</div>
+          <div class="h3">New Item type!</div>
           <p>
-            Talents and Mutations that permanently alter <b>Attributes</b>, <b>Size</b>, or <b>Movement</b> are now
-            automatically taken into account when creating and viewing character. For example if you add Talent
-            Coolheaded (+5WP), it will be added to attributes and skills. As usual, you can also create your custom
-            Talents and Mutations that automatically modify those characteristics.
+            Introducing a new item type: Grimoire. It allows you add spells to it so you can keep track of spells in
+            your books that you have not memorised yet.
           </p>
           <p>
             You can read more about this and previous updates in the new section

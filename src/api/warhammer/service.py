@@ -107,9 +107,9 @@ def list_elements(user_id, is_master_admin, shared_acc, element_collection):
     return list_of_elements
 
 
-def get_character_resolved(character_id, user_id, is_master_admin, shared_acc, character_coll, item_prop_coll):
+def get_character_resolved(character_id, user_id, is_master_admin, shared_acc, character_coll, item_prop_coll, spell_coll):
     owners_query = all_allowed_owners_query(user_id, shared_acc)
-    character = query_character(character_id, owners_query, character_coll, item_prop_coll)
+    character = query_character(character_id, owners_query, character_coll, item_prop_coll, spell_coll)
 
     if not character:
         raise ElementNotFoundError

@@ -41,7 +41,6 @@ list_fields = [
     "skills",
     "talents",
     "career_path",
-    "spells",
     "mutations",
 ]
 
@@ -97,10 +96,8 @@ def resolve(field_name, collection, nested_name=None):
         ]
 
 
-def query_character(character_id, owners_query, char_collection, item_prop_collection):
-    match = {
-        "$match": {"$and": [{"_id": ObjectId(character_id)}, owners_query]}
-    }
+def query_character(character_id, owners_query, char_collection, item_prop_collection, spell_collection):
+    match = {"$match": {"$and": [{"_id": ObjectId(character_id)}, owners_query]}}
 
     character = char_collection.aggregate(
         [
@@ -111,7 +108,6 @@ def query_character(character_id, owners_query, char_collection, item_prop_colle
             *resolve("carried_items", "item", "number"),
             *resolve("stored_items", "item", "number"),
             *resolve("career_path", "career", "level"),
-            *resolve("spells", "spell"),
             *resolve("mutations", "mutation"),
             to_object_id("career"),
             lookup("career", "career.value", "career"),
@@ -165,5 +161,41 @@ def query_character(character_id, owners_query, char_collection, item_prop_colle
                     except KeyError:
                         pass
                 item["value"]["properties"] = item_props
+
+    distinct_spells = set()
+    for spell_id in character["spells"]:
+        distinct_spells.add(spell_id)
+    for item_location in ["equipped_items", "carried_items", "stored_items"]:
+        for item in character[item_location]:
+            if item["value"]["stats"]["type"] == 6:
+                for spell_id in item["value"]["stats"]["spells"]:
+                    distinct_spells.add(spell_id)
+
+    if distinct_spells:
+        query = {"$or": [{"_id": ObjectId(spell_id)} for spell_id in distinct_spells]}
+        spells = {}
+        for spell in spell_collection.find(query):
+            spell["id"] = str(spell["_id"])
+            del spell["_id"]
+            spells[spell["id"]] = spell
+
+        for item_location in ["equipped_items", "carried_items", "stored_items"]:
+            for item in character[item_location]:
+                if item["value"]["stats"]["type"] == 6:
+                    item_spells = []
+                    for spell_id in item["value"]["stats"]["spells"]:
+                        try:
+                            item_spells.append(deepcopy(spells[spell_id]))
+                        except KeyError:
+                            pass
+                    item["value"]["stats"]["spells"] = item_spells
+
+        character_spells = []
+        for spell_id in character["spells"]:
+            try:
+                character_spells.append({"id": spell_id, "value": deepcopy(spells[spell_id])})
+            except KeyError:
+                pass
+        character["spells"] = character_spells
 
     return character

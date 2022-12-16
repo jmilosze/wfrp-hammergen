@@ -50,10 +50,7 @@
 
               <ValidationProvider
                 v-slot="{ errors, valid }"
-                :rules="{
-                  required: true,
-                  between: { min: 0, max: 1000000000 },
-                }"
+                :rules="{ required: true, between: { min: 0, max: 1000000000 } }"
                 name="Price (in Brass Pennies)"
               >
                 <b-form-group label="Price (in Brass Pennies)" label-for="price-input">
@@ -147,11 +144,7 @@
                       <ValidationProvider
                         v-slot="{ errors, valid }"
                         name="Damage"
-                        :rules="{
-                          required: true,
-                          between: { min: 0, max: 1000 },
-                          integer: true,
-                        }"
+                        :rules="{ required: true, between: { min: 0, max: 1000 }, integer: true }"
                       >
                         <b-form-group>
                           <b-form-input
@@ -212,11 +205,7 @@
                       <ValidationProvider
                         v-slot="{ errors, valid }"
                         name="Damage Multiplier"
-                        :rules="{
-                          required: true,
-                          between: { min: 0, max: 1000 },
-                          integer: true,
-                        }"
+                        :rules="{ required: true, between: { min: 0, max: 1000 }, integer: true }"
                       >
                         <b-form-group>
                           <b-form-input
@@ -357,11 +346,7 @@
                       <ValidationProvider
                         v-slot="{ errors, valid }"
                         name="Damage"
-                        :rules="{
-                          required: true,
-                          between: { min: 0, max: 1000 },
-                          integer: true,
-                        }"
+                        :rules="{ required: true, between: { min: 0, max: 1000 }, integer: true }"
                       >
                         <b-form-group>
                           <b-form-input
@@ -476,11 +461,7 @@
 
                 <ValidationProvider
                   v-slot="{ errors, valid }"
-                  :rules="{
-                    required: true,
-                    between: { min: 0, max: 100 },
-                    integer: true,
-                  }"
+                  :rules="{ required: true, between: { min: 0, max: 100 }, integer: true }"
                   name="Armor Points"
                 >
                   <b-form-group label="Armor Points" label-for="armor-points-input">
@@ -502,11 +483,7 @@
               <div v-if="element.type === 4">
                 <ValidationProvider
                   v-slot="{ errors, valid }"
-                  :rules="{
-                    required: true,
-                    between: { min: 0, max: 100 },
-                    integer: true,
-                  }"
+                  :rules="{ required: true, between: { min: 0, max: 100 }, integer: true }"
                   name="Container Capacity"
                 >
                   <b-form-group label="Container Capacity" label-for="capacity-input">
@@ -566,6 +543,19 @@
                 </b-form-group>
               </div>
 
+              <div v-if="element.type === 6">
+                <div class="mb-2">Spells</div>
+                <SelectTable
+                  title="Add/remove Spell"
+                  :elementApi="spellApi"
+                  v-model="element.stats[6].spells"
+                  :disabled="!element.canEdit || failed"
+                  :filterFunction="spellFilter"
+                  @apiCallError="addError"
+                  @createNewElement="submitForm('spell')"
+                ></SelectTable>
+              </div>
+
               <div class="mb-2">Qualities and Flaws</div>
               <SelectTable
                 title="Add/Remove Qualities and Flaws"
@@ -623,6 +613,7 @@ import {
 } from "../../services/wh/item";
 import { authRequest } from "../../services/auth";
 import { ItemPropertyApi } from "../../services/wh/itemproperty";
+import { SpellApi } from "../../services/wh/spell";
 
 export default {
   name: "CreateItem",
@@ -638,6 +629,7 @@ export default {
     return {
       elementApi: new ItemApi(authRequest),
       propertyApi: new ItemPropertyApi(authRequest),
+      spellApi: new SpellApi(authRequest),
 
       element: generateEmptyItem(),
       elementOriginal: generateEmptyItem(),
@@ -691,6 +683,9 @@ export default {
   methods: {
     propertyFilter(property) {
       return property.applicableTo.includes(this.element.type);
+    },
+    spellFilter(spell) {
+      return spell.type == "spell";
     },
     formModified() {
       return !compareItem(this.element, this.elementOriginal);

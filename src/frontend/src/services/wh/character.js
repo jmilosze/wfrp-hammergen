@@ -269,7 +269,6 @@ class CharacterApi {
     const equippedArmor = rawCharacter.equipped_items.filter((x) => x.value.stats.type === 3);
     const equippedWeapon = rawCharacter.equipped_items.filter((x) => [0, 1, 2].includes(x.value.stats.type));
     const equippedOther = rawCharacter.equipped_items.filter((x) => [4, 5].includes(x.value.stats.type));
-
     return {
       id: id,
       name: rawCharacter.name,
@@ -317,7 +316,7 @@ class CharacterApi {
       carried: formatItems(rawCharacter.carried_items, attributes),
       stored: formatItems(rawCharacter.stored_items, attributes),
 
-      spells: formatSpells(rawCharacter.spells),
+      spells: formatSpells(rawCharacter.spells.map((x) => x.value)),
       mutations: formatMutations(rawCharacter.mutations),
 
       encWeapon: equippedWeapon.map((x) => x.value.enc * x.number).reduce((x, y) => x + y, 0),
@@ -429,6 +428,10 @@ function characterForDisplayToCsv(charForDisplay) {
   csv += "Description,";
   csv += csvStr(charForDisplay.description) + ",";
   csv += ",,,,,,,,\n";
+
+  csv += ",,,,,,,,,,\n";
+  csv += "Notes,,,,,,,,,,\n";
+  csv += csvStr(charForDisplay.notes) + ",,,,,,,,,,\n";
 
   csv += ",,,,,,,,,,\n";
   csv += "Movement,,,Wealth,,,Fate And Resilience,,,,\n";
@@ -579,15 +582,6 @@ function characterForDisplayToCsv(charForDisplay) {
   }
 
   csv += ",,,,,,,,,,\n";
-  csv += "Spells/Prayers,,,,,,,,,,\n";
-  csv += "Name,CN,Range,Target,Duration,,,,,,\n";
-
-  for (const item of charForDisplay.spells) {
-    csv += csvStr(item.name) + "," + (item.cn ? item.cn : "N/A") + "," + csvStr(item.range) + ",";
-    csv += csvStr(item.target) + "," + csvStr(item.duration) + ",,,,,,\n";
-  }
-
-  csv += ",,,,,,,,,,\n";
   csv += "Mutations,,,,,,,,,,\n";
   csv += "Name,Type,Description,,,,,,,,\n";
 
@@ -596,8 +590,26 @@ function characterForDisplayToCsv(charForDisplay) {
   }
 
   csv += ",,,,,,,,,,\n";
-  csv += "Notes,,,,,,,,,,\n";
-  csv += csvStr(charForDisplay.notes) + ",,,,,,,,,,\n";
+  csv += "Known Spells/Prayers,,,,,,,,,,\n";
+  csv += "Name,CN,Range,Target,Duration,,,,,,\n";
+
+  for (const item of charForDisplay.spells) {
+    csv += csvStr(item.name) + "," + (item.cn ? item.cn : "N/A") + "," + csvStr(item.range) + ",";
+    csv += csvStr(item.target) + "," + csvStr(item.duration) + ",,,,,,\n";
+  }
+
+  csv += ",,,,,,,,,,\n";
+  csv += "Spells in Grimoires,,,,,,,,,,\n";
+  for (let item of [...charForDisplay.carried, ...charForDisplay.stored]) {
+    if (item.spells) {
+      csv += item.name + ",,,,,,,,,\n";
+      csv += "Name,CN,Range,Target,Duration,,,,,,\n";
+      for (const spell of item.spells) {
+        csv += csvStr(spell.name) + "," + spell.cn + "," + csvStr(spell.range) + ",";
+        csv += csvStr(spell.target) + "," + csvStr(spell.duration) + ",,,,,,\n";
+      }
+    }
+  }
 
   return csv;
 }
