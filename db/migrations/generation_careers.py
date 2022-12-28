@@ -4,7 +4,6 @@ import sys
 
 from pymongo import MongoClient
 
-
 MONGO_URI = os.environ["MONGO_URI"]
 DB_NAME = os.environ["DB_NAME"]
 
@@ -105,424 +104,424 @@ for career_name in career_names:
 
 species_careers = {
     "human": [
-        (1, 10),
-        (11, 20),
-        (21, 30),
-        (31, 50),
-        (51, 60),
-        (61, 110),
-        (111, 130),
-        (131, 140),
-        (141, 150),
-        (151, 170),
-        (171, 190),
-        (191, 200),
-        (201, 210),
-        (211, 230),
-        (231, 260),
-        (261, 270),
-        (271, 280),
-        (281, 290),
-        (291, 300),
-        (301, 310),
-        (311, 320),
-        (321, 350),
-        (351, 360),
-        (361, 370),
-        (371, 380),
-        (381, 390),
-        (391, 400),
-        (401, 420),
-        (421, 430),
-        (431, 440),
-        (441, 450),
-        (451, 500),
-        (501, 510),
-        "-",
-        (511, 520),
-        (521, 540),
-        (541, 560),
-        (561, 570),
-        "-",
-        (571, 580),
-        (581, 590),
-        "-",
-        (591, 600),
-        (601, 620),
-        (621, 630),
-        (631, 650),
-        (651, 680),
-        (681, 700),
-        (701, 710),
-        (711, 730),
-        (731, 740),
-        (741, 760),
-        (761, 770),
-        (771, 780),
-        (781, 790),
-        (791, 830),
-        (831, 840),
-        (841, 870),
-        (871, 880),
-        (881, 900),
-        (901, 920),
-        (921, 930),
-        (931, 940),
-        (941, 950),
-        (951, 990),
-        "-",
-        "-",
-        (991, 1000),
+        (1, 10),  # Apothecary
+        (11, 20),  # Engineer
+        (21, 30),  # Lawyer
+        (31, 50),  # Nun
+        (51, 60),  # Physician
+        (61, 110),  # Priest
+        (111, 130),  # Scholar
+        (131, 140),  # Wizard
+        (141, 150),  # Agitator
+        (151, 170),  # Artisan"
+        (171, 190),  # Beggar
+        (191, 200),  # Investigator
+        (201, 210),  # Merchant
+        (211, 230),  # Rat Catcher
+        (231, 260),  # Townsman
+        (261, 270),  # Watchman
+        (271, 280),  # Advisor
+        (281, 290),  # Artist
+        (291, 300),  # Duellist
+        (301, 310),  # Envoy
+        (311, 320),  # Noble
+        (321, 350),  # Servant
+        (351, 360),  # Spy
+        (361, 370),  # Warden
+        (371, 380),  # Bailiff
+        (381, 390),  # Hedge Witch
+        (391, 400),  # Herbalist
+        (401, 420),  # Hunter
+        (421, 430),  # Miner
+        (431, 440),  # Mystic
+        (441, 450),  # Scout
+        (451, 500),  # Villager
+        (501, 510),  # Bounty Hunter
+        "-",  # Ghost Strider
+        (511, 520),  # Coachman
+        (521, 540),  # Entertainer
+        (541, 560),  # Flagellant
+        (561, 570),  # Messenger
+        "-",  # Karak Ranger
+        (571, 580),  # Pedlar
+        (581, 590),  # Road Warden
+        "-",  # Fieldwarden
+        (591, 600),  # Witch Hunter
+        (601, 620),  # Boatman
+        (621, 630),  # Huffer
+        (631, 650),  # Riverwarden
+        (651, 680),  # Riverwoman
+        (681, 700),  # Seaman
+        (701, 710),  # Smuggler
+        (711, 730),  # Stevedore
+        (731, 740),  # Wrecker
+        (741, 760),  # Bawd
+        (761, 770),  # Charlatan
+        (771, 780),  # Fence
+        (781, 790),  # Grave Robber
+        (791, 830),  # Outlaw
+        (831, 840),  # Racketeer
+        (841, 870),  # Thief
+        (871, 880),  # Witch
+        (881, 900),  # Cavalryman
+        (901, 920),  # Guard
+        (921, 930),  # Knight
+        (931, 940),  # Pit Fighter
+        (941, 950),  # Protagonist"
+        (951, 990),  # Soldier
+        "-",  # Badger Rider
+        "-",  # Slayer
+        (991, 1000),  # Warrior Priest
     ],
     "dwarf": [
-        (1, 10),
-        (11, 40),
-        (41, 60),
-        "-",
-        (61, 70),
-        "-",
-        (71, 90),
-        "-",
-        (91, 110),
-        (111, 170),
-        (171, 180),
-        (181, 200),
-        (201, 240),
-        (241, 250),
-        (251, 310),
-        (311, 340),
-        (341, 360),
-        (361, 370),
-        (371, 380),
-        (381, 400),
-        (401, 410),
-        (411, 420),
-        (421, 430),
-        (431, 450),
-        (451, 470),
-        "-",
-        "-",
-        (471, 490),
-        (491, 540),
-        "-",
-        (541, 550),
-        (551, 560),
-        (561, 600),
-        "-",
-        (601, 610),
-        (611, 630),
-        "-",
-        (631, 640),
-        (641, 650),
-        (651, 670),
-        "-",
-        "-",
-        "",
-        (671, 690),
-        (691, 700),
-        "-",
-        (701, 720),
-        (721, 730),
-        (731, 750),
-        (751, 770),
-        (771, 780),
-        "-",
-        "-",
-        (781, 790),
-        "-",
-        (791, 820),
-        (821, 830),
-        (831, 840),
-        "-",
-        "-",
-        (841, 870),
-        "-",
-        (871, 900),
-        (901, 930),
-        (931, 960),
-        "-",
-        (961, 1000),
-        "-",
+        (1, 10),  # Apothecary
+        (11, 40),  # Engineer
+        (41, 60),  # Lawyer
+        "-",  # Nun
+        (61, 70),  # Physician
+        "-",  # Priest
+        (71, 90),  # Scholar
+        "-",  # Wizard
+        (91, 110),  # Agitator
+        (111, 170),  # Artisan"
+        (171, 180),  # Beggar
+        (181, 200),  # Investigator
+        (201, 240),  # Merchant
+        (241, 250),  # Rat Catcher
+        (251, 310),  # Townsman
+        (311, 340),  # Watchman
+        (341, 360),  # Advisor
+        (361, 370),  # Artist
+        (371, 380),  # Duellist
+        (381, 400),  # Envoy
+        (401, 410),  # Noble
+        (411, 420),  # Servant
+        (421, 430),  # Spy
+        (431, 450),  # Warden
+        (451, 470),  # Bailiff
+        "-",  # Hedge Witch
+        "-",  # Herbalist
+        (471, 490),  # Hunter
+        (491, 540),  # Miner
+        "-",  # Mystic
+        (541, 550),  # Scout
+        (551, 560),  # Villager
+        (561, 600),  # Bounty Hunter
+        "-",  # Ghost Strider
+        (601, 610),  # Coachman
+        (611, 630),  # Entertainer
+        "-",  # Flagellant
+        (631, 640),  # Messenger
+        (641, 650),  # Karak Ranger
+        (651, 670),  # Pedlar
+        "-",  # Road Warden
+        "-",  # Fieldwarden
+        "",  # Witch Hunter
+        (671, 690),  # Boatman
+        (691, 700),  # Huffer
+        "-",  # Riverwarden
+        (701, 720),  # Riverwoman
+        (721, 730),  # Seaman
+        (731, 750),  # Smuggler
+        (751, 770),  # Stevedore
+        (771, 780),  # Wrecker
+        "-",  # Bawd
+        "-",  # Charlatan
+        (781, 790),  # Fence
+        "-",  # Grave Robber
+        (791, 820),  # Outlaw
+        (821, 830),  # Racketeer
+        (831, 840),  # Thief
+        "-",  # Witch
+        "-",  # Cavalryman
+        (841, 870),  # Guard
+        "-",  # Knight
+        (871, 900),  # Pit Fighter
+        (901, 930),  # Protagonist"
+        (931, 960),  # Soldier
+        "-",  # Badger Rider
+        (961, 1000),  # Slayer
+        "-",  # Warrior Priest
     ],
     "halfling": [
-        (1, 10),
-        (11, 20),
-        (21, 40),
-        "-",
-        (41, 60),
-        "-",
-        (61, 80),
-        "-",
-        (81, 100),
-        (101, 150),
-        (151, 190),
-        (191, 210),
-        (211, 250),
-        (251, 280),
-        (281, 310),
-        (311, 330),
-        (331, 340),
-        (341, 360),
-        "-",
-        (361, 370),
-        "-",
-        (371, 430),
-        (431, 440),
-        (441, 460),
-        (461, 470),
-        "-",
-        (471, 500),
-        (501, 520),
-        (521, 530),
-        "-",
-        (531, 540),
-        (541, 570),
-        (571, 580),
-        "-",
-        (581, 600),
-        (601, 630),
-        "-",
-        (631, 650),
-        "-",
-        (651, 670),
-        (671, 675),
-        (676, 680),
-        "-",
-        (681, 690),
-        (691, 700),
-        (701, 710),
-        (711, 740),
-        (741, 750),
-        (751, 790),
-        (791, 820),
-        "-",
-        (821, 850),
-        (851, 860),
-        (861, 870),
-        (871, 880),
-        (881, 890),
-        (891, 900),
-        (901, 940),
-        "-",
-        "-",
-        (941, 960),
-        "-",
-        (961, 970),
-        "-",
-        (971, 985),
-        (986, 1000),
-        "-",
-        "-",
+        (1, 10),  # Apothecary
+        (11, 20),  # Engineer
+        (21, 40),  # Lawyer
+        "-",  # Nun
+        (41, 60),  # Physician
+        "-",  # Priest
+        (61, 80),  # Scholar
+        "-",  # Wizard
+        (81, 100),  # Agitator
+        (101, 150),  # Artisan"
+        (151, 190),  # Beggar
+        (191, 210),  # Investigator
+        (211, 250),  # Merchant
+        (251, 280),  # Rat Catcher
+        (281, 310),  # Townsman
+        (311, 330),  # Watchman
+        (331, 340),  # Advisor
+        (341, 360),  # Artist
+        "-",  # Duellist
+        (361, 370),  # Envoy
+        "-",  # Noble
+        (371, 430),  # Servant
+        (431, 440),  # Spy
+        (441, 460),  # Warden
+        (461, 470),  # Bailiff
+        "-",  # Hedge Witch
+        (471, 500),  # Herbalist
+        (501, 520),  # Hunter
+        (521, 530),  # Miner
+        "-",  # Mystic
+        (531, 540),  # Scout
+        (541, 570),  # Villager
+        (571, 580),  # Bounty Hunter
+        "-",  # Ghost Strider
+        (581, 600),  # Coachman
+        (601, 630),  # Entertainer
+        "-",  # Flagellant
+        (631, 650),  # Messenger
+        "-",  # Karak Ranger
+        (651, 670),  # Pedlar
+        (671, 675),  # Road Warden
+        (676, 680),  # Fieldwarden
+        "-",  # Witch Hunter
+        (681, 690),  # Boatman
+        (691, 700),  # Huffer
+        (701, 710),  # Riverwarden
+        (711, 740),  # Riverwoman
+        (741, 750),  # Seaman
+        (751, 790),  # Smuggler
+        (791, 820),  # Stevedore
+        "-",  # Wrecker
+        (821, 850),  # Bawd
+        (851, 860),  # Charlatan
+        (861, 870),  # Fence
+        (871, 880),  # Grave Robber
+        (881, 890),  # Outlaw
+        (891, 900),  # Racketeer
+        (901, 940),  # Thief
+        "-",  # Witch
+        "-",  # Cavalryman
+        (941, 960),  # Guard
+        "-",  # Knight
+        (961, 970),  # Pit Fighter
+        "-",  # Protagonist"
+        (971, 985),  # Soldier
+        (986, 1000),  # Badger Rider
+        "-",  # Slayer
+        "-",  # Warrior Priest
     ],
     "high_elf": [
-        (1, 20),
-        "-",
-        (21, 60),
-        "-",
-        (61, 80),
-        "-",
-        (81, 120),
-        (121, 160),
-        "-",
-        (161, 190),
-        "-",
-        (191, 210),
-        (211, 260),
-        "-",
-        (261, 280),
-        (281, 290),
-        (291, 310),
-        (311, 320),
-        (321, 340),
-        (341, 370),
-        (371, 400),
-        "-",
-        (401, 430),
-        (431, 450),
-        "-",
-        "-",
-        (451, 470),
-        (471, 500),
-        "-",
-        "-",
-        (501, 560),
-        "-",
-        (561, 590),
-        "-",
-        "-",
-        (591, 620),
-        "-",
-        (621, 630),
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        (631, 640),
-        "-",
-        "-",
-        "-",
-        (641, 790),
-        (791, 800),
-        "-",
-        "-",
-        (801, 820),
-        (821, 850),
-        "-",
-        "-",
-        (851, 880),
-        "-",
-        "-",
-        "-",
-        (881, 920),
-        (921, 940),
-        (941, 950),
-        (951, 970),
-        (971, 980),
-        (981, 1000),
-        "-",
-        "-",
-        "-",
+        (1, 20),  # Apothecary
+        "-",  # Engineer
+        (21, 60),  # Lawyer
+        "-",  # Nun
+        (61, 80),  # Physician
+        "-",  # Priest
+        (81, 120),  # Scholar
+        (121, 160),  # Wizard
+        "-",  # Agitator
+        (161, 190),  # Artisan"
+        "-",  # Beggar
+        (191, 210),  # Investigator
+        (211, 260),  # Merchant
+        "-",  # Rat Catcher
+        (261, 280),  # Townsman
+        (281, 290),  # Watchman
+        (291, 310),  # Advisor
+        (311, 320),  # Artist
+        (321, 340),  # Duellist
+        (341, 370),  # Envoy
+        (371, 400),  # Noble
+        "-",  # Servant
+        (401, 430),  # Spy
+        (431, 450),  # Warden
+        "-",  # Bailiff
+        "-",  # Hedge Witch
+        (451, 470),  # Herbalist
+        (471, 500),  # Hunter
+        "-",  # Miner
+        "-",  # Mystic
+        (501, 560),  # Scout
+        "-",  # Villager
+        (561, 590),  # Bounty Hunter
+        "-",  # Ghost Strider
+        "-",  # Coachman
+        (591, 620),  # Entertainer
+        "-",  # Flagellant
+        (621, 630),  # Messenger
+        "-",  # Karak Ranger
+        "-",  # Pedlar
+        "-",  # Road Warden
+        "-",  # Fieldwarden
+        "-",  # Witch Hunter
+        (631, 640),  # Boatman
+        "-",  # Huffer
+        "-",  # Riverwarden
+        "-",  # Riverwoman
+        (641, 790),  # Seaman
+        (791, 800),  # Smuggler
+        "-",  # Stevedore
+        "-",  # Wrecker
+        (801, 820),  # Bawd
+        (821, 850),  # Charlatan
+        "-",  # Fence
+        "-",  # Grave Robber
+        (851, 880),  # Outlaw
+        "-",  # Racketeer
+        "-",  # Thief
+        "-",  # Witch
+        (881, 920),  # Cavalryman
+        (921, 940),  # Guard
+        (941, 950),  # Knight
+        (951, 970),  # Pit Fighter
+        (971, 980),  # Protagonist"
+        (981, 1000),  # Soldier
+        "-",  # Badger Rider
+        "-",  # Slayer
+        "-",  # Warrior Priest
     ],
     "wood_elf": [
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        (1, 10),
-        (11, 50),
-        "-",
-        (51, 100),
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        (101, 140),
-        (141, 180),
-        "-",
-        (181, 250),
-        (251, 310),
-        "-",
-        (311, 350),
-        "-",
-        "-",
-        "-",
-        (351, 420),
-        (421, 520),
-        "-",
-        (521, 570),
-        (571, 680),
-        "-",
-        (681, 690),
-        (691, 700),
-        "-",
-        (701, 750),
-        "-",
-        (751, 780),
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        "-",
-        (781, 790),
-        "-",
-        "-",
-        "-",
-        "-",
-        (791, 850),
-        "-",
-        "-",
-        "-",
-        (851, 900),
-        (901, 920),
-        (921, 940),
-        (941, 960),
-        "-",
-        (961, 1000),
-        "-",
-        "-",
-        "-",
+        "-",  # Apothecary
+        "-",  # Engineer
+        "-",  # Lawyer
+        "-",  # Nun
+        "-",  # Physician
+        "-",  # Priest
+        (1, 10),  # Scholar
+        (11, 50),  # Wizard
+        "-",  # Agitator
+        (51, 100),  # Artisan"
+        "-",  # Beggar
+        "-",  # Investigator
+        "-",  # Merchant
+        "-",  # Rat Catcher
+        "-",  # Townsman
+        "-",  # Watchman
+        (101, 140),  # Advisor
+        (141, 180),  # Artist
+        "-",  # Duellist
+        (181, 250),  # Envoy
+        (251, 310),  # Noble
+        "-",  # Servant
+        (311, 350),  # Spy
+        "-",  # Warden
+        "-",  # Bailiff
+        "-",  # Hedge Witch
+        (351, 420),  # Herbalist
+        (421, 520),  # Hunter
+        "-",  # Miner
+        (521, 570),  # Mystic
+        (571, 680),  # Scout
+        "-",  # Villager
+        (681, 690),  # Bounty Hunter
+        (691, 700),  # Ghost Strider
+        "-",  # Coachman
+        (701, 750),  # Entertainer
+        "-",  # Flagellant
+        (751, 780),  # Messenger
+        "-",  # Karak Ranger
+        "-",  # Pedlar
+        "-",  # Road Warden
+        "-",  # Fieldwarden
+        "-",  # Witch Hunter
+        "-",  # Boatman
+        "-",  # Huffer
+        "-",  # Riverwarden
+        "-",  # Riverwoman
+        "-",  # Seaman
+        "-",  # Smuggler
+        "-",  # Stevedore
+        (781, 790),  # Wrecker
+        "-",  # Bawd
+        "-",  # Charlatan
+        "-",  # Fence
+        "-",  # Grave Robber
+        (791, 850),  # Outlaw
+        "-",  # Racketeer
+        "-",  # Thief
+        "-",  # Witch
+        (851, 900),  # Cavalryman
+        (901, 920),  # Guard
+        (921, 940),  # Knight
+        (941, 960),  # Pit Fighter
+        "-",  # Protagonist"
+        (961, 1000),  # Soldier
+        "-",  # Badger Rider
+        "-",  # Slayer
+        "-",  # Warrior Priest
     ],
     "gnome": [
-        (1, 10),
-        "-",
-        (11, 20),
-        "-",
-        (21, 40),
-        (41, 50),
-        (51, 70),
-        (71, 140),
-        (141, 150),
-        (151, 170),
-        (171, 180),
-        (181, 190),
-        (191, 210),
-        (211, 220),
-        (221, 280),
-        (281, 290),
-        (291, 300),
-        (301, 310),
-        "-",
-        (311, 320),
-        (321, 330),
-        (331, 350),
-        (351, 400),
-        (401, 420),
-        (421, 430),
-        "-",
-        (431, 440),
-        (441, 460),
-        (461, 540),
-        "-",
-        (541, 580),
-        (581, 620),
-        (621, 630),
-        "-",
-        "-",
-        (631, 680),
-        "-",
-        (681, 690),
-        "-",
-        (691, 750),
-        "-",
-        "-",
-        "-",
-        (751, 760),
-        "-",
-        "-",
-        (761, 800),
-        "-",
-        (801, 830),
-        "-",
-        "-",
-        (831, 850),
-        (851, 900),
-        (901, 910),
-        "-",
-        (911, 920),
-        (921, 940),
-        (941, 970),
-        "-",
-        "-",
-        (971, 980),
-        "-",
-        "-",
-        "-",
-        (981, 990),
-        "-",
-        "-",
-        (991, 1000),
+        (1, 10),  # Apothecary
+        "-",  # Engineer
+        (11, 20),  # Lawyer
+        "-",  # Nun
+        (21, 40),  # Physician
+        (41, 50),  # Priest
+        (51, 70),  # Scholar
+        (71, 140),  # Wizard
+        (141, 150),  # Agitator
+        (151, 170),  # Artisan"
+        (171, 180),  # Beggar
+        (181, 190),  # Investigator
+        (191, 210),  # Merchant
+        (211, 220),  # Rat Catcher
+        (221, 280),  # Townsman
+        (281, 290),  # Watchman
+        (291, 300),  # Advisor
+        (301, 310),  # Artist
+        "-",  # Duellist
+        (311, 320),  # Envoy
+        (321, 330),  # Noble
+        (331, 350),  # Servant
+        (351, 400),  # Spy
+        (401, 420),  # Warden
+        (421, 430),  # Bailiff
+        "-",  # Hedge Witch
+        (431, 440),  # Herbalist
+        (441, 460),  # Hunter
+        (461, 540),  # Miner
+        "-",  # Mystic
+        (541, 580),  # Scout
+        (581, 620),  # Villager
+        (621, 630),  # Bounty Hunter
+        "-",  # Ghost Strider
+        "-",  # Coachman
+        (631, 680),  # Entertainer
+        "-",  # Flagellant
+        (681, 690),  # Messenger
+        "-",  # Karak Ranger
+        (691, 750),  # Pedlar
+        "-",  # Road Warden
+        "-",  # Fieldwarden
+        "-",  # Witch Hunter
+        (751, 760),  # Boatman
+        "-",  # Huffer
+        "-",  # Riverwarden
+        (761, 800),  # Riverwoman
+        "-",  # Seaman
+        (801, 830),  # Smuggler
+        "-",  # Stevedore
+        "-",  # Wrecker
+        (831, 850),  # Bawd
+        (851, 900),  # Charlatan
+        (901, 910),  # Fence
+        "-",  # Grave Robber
+        (911, 920),  # Outlaw
+        (921, 940),  # Racketeer
+        (941, 970),  # Thief
+        "-",  # Witch
+        "-",  # Cavalryman
+        (971, 980),  # Guard
+        "-",  # Knight
+        "-",  # Pit Fighter
+        "-",  # Protagonist"
+        (981, 990),  # Soldier
+        "-",  # Badger Rider
+        "-",  # Slayer
+        (991, 1000),  # Warrior Priest
     ],
 }
 

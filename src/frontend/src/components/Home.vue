@@ -2,8 +2,8 @@
   <div class="home">
     <div class="container">
       <div class="text-center">
-        <img class="img-fluid" src="/warhammer.png" alt="Warhammer logo" />
-        <div class="display-4">Welcome to Hammergen</div>
+        <div class="display-2 title">Hammergen</div>
+        <div class="title h1">A Warhammer Fantasy Roleplay character generator</div>
         <hr />
       </div>
 
@@ -26,7 +26,8 @@
         <p>
           Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th Edition character generator. It lets you create,
           store, and manage characters as well as custom skills, talents, etc. You can share everything you create with
-          other players! To use it, you will need a Warhammer Fantasy Roleplay Rulebook, which you can buy from
+          other players! To use it, you will need a Warhammer Fantasy Roleplay Rulebook and, optionally, other
+          supplementary books, which you can buy from
           <a href="https://www.cubicle7games.com/our-games/warhammer-fantasy-roleplay/">Cubicle 7 store</a>.
         </p>
         <p>
@@ -105,4 +106,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+@font-face {
+  font-family: hammergen;
+  font-display: auto;
+  src: url("/CaslonAntique-Bold.ttf");
+}
+
+.title {
+  font-family: hammergen, serif;
+}
+</style>
