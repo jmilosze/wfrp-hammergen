@@ -138,22 +138,24 @@
             </b-col>
           </b-row>
 
-          <CharacterModifiers
-            :size.sync="element.modifiers.size"
-            :movement.sync="element.modifiers.movement"
-            :ws.sync="element.modifiers.attributes.WS"
-            :bs.sync="element.modifiers.attributes.BS"
-            :s.sync="element.modifiers.attributes.S"
-            :t.sync="element.modifiers.attributes.T"
-            :i.sync="element.modifiers.attributes.I"
-            :ag.sync="element.modifiers.attributes.Ag"
-            :dex.sync="element.modifiers.attributes.Dex"
-            :int.sync="element.modifiers.attributes.Int"
-            :wp.sync="element.modifiers.attributes.WP"
-            :fel.sync="element.modifiers.attributes.Fel"
-            @valid="validAtt = $event"
-            :disabled="!element.canEdit"
-          />
+          <div v-if="element.isGroup === false">
+            <CharacterModifiers
+              :size.sync="element.modifiers.size"
+              :movement.sync="element.modifiers.movement"
+              :ws.sync="element.modifiers.attributes.WS"
+              :bs.sync="element.modifiers.attributes.BS"
+              :s.sync="element.modifiers.attributes.S"
+              :t.sync="element.modifiers.attributes.T"
+              :i.sync="element.modifiers.attributes.I"
+              :ag.sync="element.modifiers.attributes.Ag"
+              :dex.sync="element.modifiers.attributes.Dex"
+              :int.sync="element.modifiers.attributes.Int"
+              :wp.sync="element.modifiers.attributes.WP"
+              :fel.sync="element.modifiers.attributes.Fel"
+              @valid="validAtt = $event"
+              :disabled="!element.canEdit"
+            />
+          </div>
 
           <b-row class="mt-4">
             <b-col md="6">
