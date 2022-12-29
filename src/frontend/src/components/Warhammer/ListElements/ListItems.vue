@@ -63,7 +63,7 @@ export default {
       return {
         name: addSpaces(item.name, MAX_CHARS),
         description: addSpaces(item.description, MAX_CHARS),
-        itemType: itemTypes[item.stats.type],
+        itemType: itemTypes[item.type],
         canEdit: item.canEdit,
         id: item.id,
       };
