@@ -209,7 +209,7 @@ test("deleteElement calls axios with expected arguments", async () => {
 });
 
 describe("compareTalent returns true", () => {
-  const talent = {
+  const talentIndividual = {
     id: "id",
     name: "apiTalent",
     description: "desc",
@@ -222,26 +222,50 @@ describe("compareTalent returns true", () => {
       movement: 1,
       attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     },
-    isGroup: true,
+    isGroup: false,
     group: ["a", "b"],
     canEdit: true,
     shared: true,
   };
 
+  const talentGroup = JSON.parse(JSON.stringify(talentIndividual));
+  talentGroup.isGroup = true;
+
   test("when other talent is exactly the same", () => {
-    let otherTalent = JSON.parse(JSON.stringify(talent));
-    expect(compareTalent(talent, otherTalent)).toBe(true);
+    let otherTalent = JSON.parse(JSON.stringify(talentIndividual));
+    expect(compareTalent(talentIndividual, otherTalent)).toBe(true);
   });
 
   test("when other talent has group field with elements in different order", () => {
-    let otherTalent = JSON.parse(JSON.stringify(talent));
+    let otherTalent = JSON.parse(JSON.stringify(talentIndividual));
     otherTalent.group = ["b", "a"];
-    expect(compareTalent(talent, otherTalent)).toBe(true);
+    expect(compareTalent(talentIndividual, otherTalent)).toBe(true);
+  });
+
+  test.each([
+    { field: "tests", name: "tests", value: "asd" },
+    { field: "maxRank", name: "maxRank", value: 5 },
+    { field: "maxRankAtt", name: "maxRankAtt", value: 6 },
+    {
+      field: "modifiers",
+      name: "modifiers",
+      value: {
+        size: 1,
+        movement: 1,
+        attributes: { WS: 0, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+      },
+    },
+    { field: "group", name: "group (subset)", value: ["a"] },
+    { field: "group", name: "group (name length, different values)", value: ["c", "d"] },
+  ])("when group talent is has different values of $name", (t) => {
+    let otherTalent = JSON.parse(JSON.stringify(talentGroup));
+    otherTalent[t.field] = t.value;
+    expect(compareTalent(talentGroup, otherTalent)).toBe(true);
   });
 });
 
 describe("compareTalent returns false", () => {
-  const talent = {
+  const talentIndividual = {
     id: "id",
     name: "apiTalent",
     description: "desc",
@@ -254,11 +278,14 @@ describe("compareTalent returns false", () => {
       movement: 1,
       attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     },
-    isGroup: true,
+    isGroup: false,
     group: ["a", "b"],
     canEdit: true,
     shared: true,
   };
+
+  const talentGroup = JSON.parse(JSON.stringify(talentIndividual));
+  talentGroup.isGroup = true;
 
   test.each([
     { field: "id", value: "otherId" },
@@ -267,25 +294,38 @@ describe("compareTalent returns false", () => {
     { field: "tests", value: "otherTests" },
     { field: "maxRank", value: 1 },
     { field: "maxRankAtt", value: 4 },
+    { field: "isGroup", value: true },
+    { field: "canEdit", value: false },
+    { field: "shared", value: false },
+  ])("when talent is individual and other talent has different value of $field", (t) => {
+    let otherTalent = JSON.parse(JSON.stringify(talentIndividual));
+    otherTalent[t.field] = t.value;
+    expect(compareTalent(talentIndividual, otherTalent)).toBe(false);
+  });
+
+  test.each([
+    { field: "id", value: "otherId" },
+    { field: "name", value: "otherName" },
+    { field: "description", value: "otherDescription" },
     { field: "isGroup", value: false },
     { field: "canEdit", value: false },
     { field: "shared", value: false },
-  ])("when other talent has different value of $field", (t) => {
-    let otherTalent = JSON.parse(JSON.stringify(talent));
+  ])("when talent is group and other talent has different value of $field", (t) => {
+    let otherTalent = JSON.parse(JSON.stringify(talentGroup));
     otherTalent[t.field] = t.value;
-    expect(compareTalent(talent, otherTalent)).toBe(false);
+    expect(compareTalent(talentGroup, otherTalent)).toBe(false);
   });
 
-  test("when other talent has group field that is a subset", () => {
-    let otherTalent = JSON.parse(JSON.stringify(talent));
+  test("when talent is individual and other talent has group field that is a subset", () => {
+    let otherTalent = JSON.parse(JSON.stringify(talentIndividual));
     otherTalent.group = ["a"];
-    expect(compareTalent(talent, otherTalent)).toBe(false);
+    expect(compareTalent(talentIndividual, otherTalent)).toBe(false);
   });
 
-  test("when other talent has group field of the same length but different values", () => {
-    let otherTalent = JSON.parse(JSON.stringify(talent));
+  test("when talent is individual and other talent has group field of the same length but different values", () => {
+    let otherTalent = JSON.parse(JSON.stringify(talentIndividual));
     otherTalent.group = ["c", "d"];
-    expect(compareTalent(talent, otherTalent)).toBe(false);
+    expect(compareTalent(talentIndividual, otherTalent)).toBe(false);
   });
 
   test.each([
@@ -300,17 +340,17 @@ describe("compareTalent returns false", () => {
     { field: "WP", value: 10 },
     { field: "Fel", value: 10 },
   ])("when other talent has different value of modifier $field", (t) => {
-    let otherTalent = JSON.parse(JSON.stringify(talent));
+    let otherTalent = JSON.parse(JSON.stringify(talentIndividual));
     otherTalent.modifiers.attributes[t.field] = t.value;
-    expect(compareTalent(talent, otherTalent)).toBe(false);
+    expect(compareTalent(talentIndividual, otherTalent)).toBe(false);
   });
 
   test.each([
     { field: "size", value: 1 },
     { field: "movement", value: -1 },
-  ])("when other talent has different value of modifier attribute $field", (t) => {
-    let otherTalent = JSON.parse(JSON.stringify(talent));
+  ])("when talent is individual and other talent has different value of modifier attribute $field", (t) => {
+    let otherTalent = JSON.parse(JSON.stringify(talentIndividual));
     otherTalent.modifiers[t.field] = t.value;
-    expect(compareTalent(talent, otherTalent)).toBe(false);
+    expect(compareTalent(talentIndividual, otherTalent)).toBe(false);
   });
 });

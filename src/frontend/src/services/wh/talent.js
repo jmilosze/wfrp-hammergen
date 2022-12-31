@@ -58,11 +58,22 @@ class TalentApi {
 }
 
 const compareTalent = (talent1, talent2) => {
-  for (let [key, value] of Object.entries(talent1)) {
-    if (key !== "group" && key !== "modifiers") {
-      if (talent2[key] !== value) {
-        return false;
-      }
+  const checkAlways = ["name", "description", "isGroup", "shared", "id", "canEdit"];
+  const checkIfNotGroup = ["tests", "maxRank", "maxRankAtt"];
+
+  for (let k of checkAlways) {
+    if (talent1[k] !== talent2[k]) {
+      return false;
+    }
+  }
+
+  if (talent1.isGroup) {
+    return true;
+  }
+
+  for (let k of checkIfNotGroup) {
+    if (talent1[k] !== talent2[k]) {
+      return false;
     }
   }
 
