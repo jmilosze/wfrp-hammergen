@@ -119,7 +119,7 @@
                         name="Damage Multiplier"
                         :rules="{
                           required: true,
-                          between: { min: 0, max: 1000 },
+                          between: { min: 0, max: 10 },
                           integer: true,
                         }"
                       >
@@ -144,7 +144,7 @@
                       <ValidationProvider
                         v-slot="{ errors, valid }"
                         name="Damage"
-                        :rules="{ required: true, between: { min: 0, max: 1000 }, integer: true }"
+                        :rules="{ required: true, between: { min: -100, max: 100 }, integer: true }"
                       >
                         <b-form-group>
                           <b-form-input
@@ -205,7 +205,7 @@
                       <ValidationProvider
                         v-slot="{ errors, valid }"
                         name="Damage Multiplier"
-                        :rules="{ required: true, between: { min: 0, max: 1000 }, integer: true }"
+                        :rules="{ required: true, between: { min: 0, max: 10 }, integer: true }"
                       >
                         <b-form-group>
                           <b-form-input
@@ -230,7 +230,7 @@
                         name="Damage"
                         :rules="{
                           required: true,
-                          between: { min: 0, max: 1000 },
+                          between: { min: -100, max: 100 },
                           integer: true,
                         }"
                       >
@@ -263,7 +263,7 @@
                         name="Range Multiplier"
                         :rules="{
                           required: true,
-                          between: { min: 0, max: 1000 },
+                          between: { min: 0, max: 10 },
                           integer: true,
                         }"
                       >
@@ -290,7 +290,7 @@
                         name="Range"
                         :rules="{
                           required: true,
-                          between: { min: 0, max: 1000 },
+                          between: { min: -1000, max: 1000 },
                           integer: true,
                         }"
                       >
@@ -346,7 +346,7 @@
                       <ValidationProvider
                         v-slot="{ errors, valid }"
                         name="Damage"
-                        :rules="{ required: true, between: { min: 0, max: 1000 }, integer: true }"
+                        :rules="{ required: true, between: { min: -100, max: 100 }, integer: true }"
                       >
                         <b-form-group>
                           <b-form-input
@@ -380,7 +380,7 @@
                         name="Range Multiplier"
                         :rules="{
                           required: true,
-                          between: { min: 0, max: 1000 },
+                          between: { min: 0, max: 10 },
                         }"
                       >
                         <b-form-group>
@@ -406,7 +406,7 @@
                         name="Range"
                         :rules="{
                           required: true,
-                          between: { min: 0, max: 1000 },
+                          between: { min: -1000, max: 1000 },
                           integer: true,
                         }"
                       >

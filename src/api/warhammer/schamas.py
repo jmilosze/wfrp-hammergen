@@ -108,7 +108,7 @@ ITEM_COMPONENTS = {
         {
             "type": Item.MELEE.value,
             "hands": Or(1, 2),
-            "dmg": And(int, lambda x: 100 >= x >= 0),
+            "dmg": And(int, lambda x: 100 >= x >= -100),
             "dmg_sb_mult": And(int, lambda x: 10 >= x >= 0),
             "reach": Or(*list(MeleeReach)),
             "group": Or(*list(MeleeGroup)),
@@ -116,15 +116,15 @@ ITEM_COMPONENTS = {
         {
             "type": Item.RANGED.value,
             "hands": Or(1, 2),
-            "dmg": And(int, lambda x: 100 >= x >= 0),
+            "dmg": And(int, lambda x: 100 >= x >= -100),
             "dmg_sb_mult": And(int, lambda x: 10 >= x >= 0),
-            "rng": And(int, lambda x: 10000 >= x >= 0),
+            "rng": And(int, lambda x: 10000 >= x >= -10000),
             "rng_sb_mult": And(int, lambda x: 10 >= x >= 0),
             "group": Or(*list(RangedGroup)),
         },
         {
             "type": Item.AMMO.value,
-            "dmg": And(int, lambda x: 100 >= x >= 0),
+            "dmg": And(int, lambda x: 100 >= x >= -100),
             "rng": And(int, lambda x: 10000 >= x >= -10000),
             "rng_mult": lambda x: 10.0 >= float(x) >= 0.0,
             "group": Or(*list(AmmunitionGroup)),
