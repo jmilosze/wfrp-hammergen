@@ -113,8 +113,7 @@ import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { generateSpeciesTalents, resolveTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
-import { sumAndMultAttr } from "../../../services/wh/attributes";
-import { sumAndMultModifiers } from "@/services/wh/characterModifiers";
+import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 
 const MAX_CHARS = 15;
 
@@ -190,7 +189,9 @@ export default {
     },
     characterAtts() {
       this.listOfItems.forEach((x) => {
-        x.state = x.number !== "" && x.number >= 0 && x.number <= this.getMaxRank(x);
+        // temporary disable talent max rank enforcement, talents in Rulebook and Up in Arms have conflicting max ranks
+        // x.state = x.number !== "" && x.number >= 0 && x.number <= this.getMaxRank(x);
+        x.state = x.number !== "" && x.number >= 0 && x.number <= 1000;
       });
       this.$emit("stateChanged", this.isValid);
     },
@@ -231,8 +232,9 @@ export default {
       for (let newTalent of newTalents) {
         let talent = this.listOfItems.find((x) => x.id === newTalent.id);
         if (talent) {
-          let isValid =
-            Number.isInteger(newTalent.number) && newTalent.number >= 0 && newTalent.number <= this.getMaxRank(talent);
+          // temporary disable talent max rank enforcement, talents in Rulebook and Up in Arms have conflicting max ranks
+          // let isValid = Number.isInteger(newTalent.number) && newTalent.number >= 0 && newTalent.number <= this.getMaxRank(talent);
+          let isValid = Number.isInteger(newTalent.number) && newTalent.number >= 0 && newTalent.number <= 1000;
           if (isValid) {
             talent.number = newTalent.number;
           } else {
@@ -257,9 +259,9 @@ export default {
       }
 
       if (talent.maxRankAtt > 0) {
-        return parseInt(this.getMaxRank(talent)) + " (" + elems.join(" + ") + ")";
+        return this.getMaxRank(talent).toString() + " (" + elems.join(" + ") + ")";
       } else {
-        return parseInt(this.getMaxRank(talent));
+        return this.getMaxRank(talent).toString();
       }
     },
     getMaxRank(talent) {
@@ -275,7 +277,9 @@ export default {
       );
     },
     selectItem(talent) {
-      talent.state = Number.isInteger(talent.number) && talent.number >= 0 && talent.number <= this.getMaxRank(talent);
+      // temporary disable talent max rank enforcement, talents in Rulebook and Up in Arms have conflicting max ranks
+      // talent.state = Number.isInteger(talent.number) && talent.number >= 0 && talent.number <= this.getMaxRank(talent);
+      talent.state = Number.isInteger(talent.number) && talent.number >= 0 && talent.number <= 1000;
 
       this.$emit("selectedChanged", {
         id: talent.id,
