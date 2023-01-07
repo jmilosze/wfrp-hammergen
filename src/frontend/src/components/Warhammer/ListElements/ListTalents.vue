@@ -31,7 +31,7 @@ import ElementList from "./ListTemplate.vue";
 import ListCommon from "./ListCommon.vue";
 import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
-import { addSpaces } from "../../../utils/stringUtils";
+import { addAnyToGroup, addSpaces } from "../../../utils/stringUtils";
 
 const MAX_CHARS = 15;
 
@@ -77,7 +77,7 @@ export default {
   methods: {
     formatList(talent) {
       return {
-        name: addSpaces(talent.name, MAX_CHARS),
+        name: addSpaces(addAnyToGroup(talent.name, talent.isGroup), MAX_CHARS),
         description: addSpaces(talent.description, MAX_CHARS),
         maxRank: maxRankTalentDisplay(talent.isGroup, talent.maxRank, talent.maxRankAtt),
         canEdit: talent.canEdit,

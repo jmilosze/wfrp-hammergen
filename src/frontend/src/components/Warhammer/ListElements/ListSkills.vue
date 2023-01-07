@@ -31,7 +31,7 @@ import ElementList from "./ListTemplate.vue";
 import ListCommon from "./ListCommon.vue";
 import { SkillApi, skillAttributeTypesGroup, skillTypesGroup } from "../../../services/wh/skill";
 import { authRequest } from "../../../services/auth";
-import { addSpaces } from "../../../utils/stringUtils";
+import { addAnyToGroup, addSpaces } from "../../../utils/stringUtils";
 
 const MAX_CHARS = 15;
 
@@ -62,7 +62,7 @@ export default {
   methods: {
     formatList(skill) {
       return {
-        name: addSpaces(skill.name, MAX_CHARS),
+        name: addSpaces(addAnyToGroup(skill.name, skill.isGroup), MAX_CHARS),
         description: addSpaces(skill.description, MAX_CHARS),
         attr: skillAttributeTypesGroup[skill.attribute],
         skillType: skillTypesGroup[skill.type],

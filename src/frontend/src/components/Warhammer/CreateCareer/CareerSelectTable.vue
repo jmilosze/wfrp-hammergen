@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { addSpaces } from "../../../utils/stringUtils";
+import { addAnyToGroup, addSpaces } from "../../../utils/stringUtils";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 
 const MAX_CHARS = 15;
@@ -178,7 +178,7 @@ export default {
           x.selected3 = !!this.level3.includes(x.id);
           x.selected4 = !!this.level4.includes(x.id);
 
-          x.name = addSpaces(x.name, MAX_CHARS);
+          x.name = addSpaces(addAnyToGroup(x.name, x.isGroup), MAX_CHARS);
           x.description = addSpaces(x.description, MAX_CHARS);
         });
       } catch (error) {

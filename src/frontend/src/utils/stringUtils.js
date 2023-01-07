@@ -7,3 +7,11 @@ export function addSpaces(sentence, maxChars) {
   }
   return wordsWithSpaces.join(" ");
 }
+
+export function addAnyToGroup(name, isGroup) {
+  if (isGroup) {
+    return name + " - Any";
+  } else {
+    return name;
+  }
+}
