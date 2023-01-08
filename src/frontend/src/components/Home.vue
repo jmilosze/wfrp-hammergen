@@ -8,11 +8,12 @@
       </div>
 
       <div class="text-sm-left">
-        <div class="alert alert-info" role="alert">
-          <div class="h3">New Item type!</div>
+        <div class="alert alert-danger" role="alert">
+          <div class="h3">New Items and Careers from Up In Arms!</div>
           <p>
-            Introducing a new item type: Grimoire. It allows you add spells to it so you can keep track of spells in
-            your books that you have not memorised yet. You can read more about this and previous updates in
+            We are happy to announce that Hammergen has been updated with new Careers/Items/Skills/Talents from
+            <b-link href="https://cubicle7games.com/wfrp-up-in-arms" target="_blank">Up in Arms</b-link>. You can read
+            more about this and previous updates in
             <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link> and on our
             <b-link href="https://ko-fi.com/Q5Q12E0KB/posts" target="_blank">Ko-fi</b-link> blog.
           </p>
@@ -59,7 +60,11 @@
         <ul>
           <li><b>Warhammer Fantasy Roleplay Rulebook</b></li>
           <li><b>Rough Nights & Hard Days</b>: Gnomes</li>
-          <li><b>Archives of the Empire: Volume I</b>: 4 new careers, talents, and items</li>
+          <li><b>Archives of the Empire: Volume I</b>: 4 new Careers, Talents, and Items</li>
+          <li>
+            <b>Up in Arms</b>: new Items, Qualities/Flaws, Careers, new and updated Skills and Talents, and Miracles of
+            Myrmidia
+          </li>
         </ul>
 
         <div class="h3">How do I use it?</div>
@@ -73,7 +78,7 @@
           Create New button.
         </p>
         <p>
-          Now you can also share any element you made (character, skill, item, etc.) with other players! When an element
+          Now you can also share any element you made (Character, Skill, Item, etc.) with other players! When an element
           is marked as <b>Public</b> anyone you give your username to, can see that element in read-only mode. Sharing
           is explained in the Linked Users tab in
           <b-link :to="{ name: 'manage' }" target="_blank">Manage Account</b-link> section.
