@@ -192,7 +192,7 @@ import {
 } from "../../services/wh/talent";
 import { authRequest } from "../../services/auth";
 import CharacterModifiers from "./CharacterModifiers.vue";
-import { generateEmptyModifiers } from "@/services/wh/characterModifiers";
+import { generateEmptyModifiers } from "../../services/wh/characterModifiers";
 
 export default {
   name: "CreateTalent",
@@ -256,13 +256,5 @@ export default {
 <style scoped>
 .container select {
   min-width: 95px;
-}
-
-.flex-container {
-  display: flex;
-  flex-wrap: wrap;
-}
-.align-center {
-  align-self: center;
 }
 </style>
