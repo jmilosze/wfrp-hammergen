@@ -55,14 +55,6 @@ def get_element(user_id, element_id, is_master_admin, shared_acc, element_collec
     if not element:
         raise ElementNotFoundError
 
-    if element["owner_id"] != user_id and element["owner_id"] in shared_acc:
-        element["can_edit"] = False
-    else:
-        if is_master_admin:
-            element["can_edit"] = True
-        else:
-            element["can_edit"] = True if element["owner_id"] == user_id else False
-
     return set_edit_permissions(element, user_id, is_master_admin, shared_acc)
 
 
