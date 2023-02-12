@@ -73,6 +73,7 @@
             <b>Up in Arms</b>: new Items, Qualities/Flaws, Careers, new and updated Skills and Talents, and Miracles of
             Myrmidia
           </li>
+          <li><b>Winds of Magic</b>: new Spells, Careers, Items, Skills, and Talents</li>
         </ul>
 
         <div class="h3">How do I use it?</div>
