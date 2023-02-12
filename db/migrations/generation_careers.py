@@ -19,6 +19,8 @@ collection_item = db.item
 
 career_names = [
     "Apothecary",
+    "Mundane Alchemist (Human)",  # winds of magic
+    "Mundane Alchemist (Dwarf, Halfling)",  # winds of magic
     "Engineer",
     "Artillerist",  # up in arms
     "Lawyer",
@@ -28,6 +30,15 @@ career_names = [
     "Scholar",
     "Cartographer",  # up in arms
     "Wizard",
+    "Hierophant",  # winds of magic
+    "Alchemist",  # winds of magic
+    "Druid",  # winds of magic
+    "Astromancer",  # winds of magic
+    "Shadowmancer",  # winds of magic
+    "Spiriter",  # winds of magic
+    "Pyromancer",  # winds of magic
+    "Shaman",  # winds of magic
+    "Magister Vigilant",  # winds of magic
     "Agitator",
     "Artisan",
     "Beggar",
@@ -50,6 +61,7 @@ career_names = [
     "Hunter",
     "Miner",
     "Mystic",
+    "Scryer",  # winds of magic
     "Scout",
     "Villager",
     "Bounty Hunter",
@@ -83,6 +95,7 @@ career_names = [
     "Cavalryman",
     "Light Cavalry",  # up in arms
     "Guard",
+    "Beadle",  # winds of magic
     "Knight",
     "Freelance",  # up in arms
     "Knight of the Blazing Sun",  # up in arms
@@ -119,7 +132,9 @@ for career_name in career_names:
 
 species_careers = {
     "human": [
-        (1, 100),  # Apothecary
+        (1, 75),  # Apothecary
+        (76, 100),  # Mundane Alchemist (Human)
+        "-",  # Mundane Alchemist (Dwarf, Halfling)
         (101, 175),  # Engineer
         (176, 200),  # Artillerist
         (201, 300),  # Lawyer
@@ -128,7 +143,16 @@ species_careers = {
         (601, 1100),  # Priest
         (1101, 1270),  # Scholar
         (1271, 1300),  # Cartographer
-        (1301, 1400),  # Wizard
+        (1301, 1315),  # Wizard
+        (1316, 1325),  # Hierophant
+        (1326, 1335),  # Alchemist
+        (1336, 1345),  # Druid
+        (1346, 1355),  # Astromancer
+        (1356, 1365),  # Shadowmancer
+        (1366, 1375),  # Spiriter
+        (1376, 1385),  # Pyromancer
+        (1386, 1395),  # Shaman
+        (1396, 1400),  # Magister Vigilant
         (1401, 1500),  # Agitator
         (1501, 1700),  # Artisan
         (1701, 1900),  # Beggar
@@ -150,7 +174,8 @@ species_careers = {
         (3901, 4000),  # Herbalist
         (4001, 4200),  # Hunter
         (4201, 4300),  # Miner
-        (4301, 4400),  # Mystic
+        (4301, 4390),  # Mystic
+        (4391, 4400),  # Scryer
         (4401, 4500),  # Scout
         (4501, 5000),  # Villager
         (5001, 5100),  # Bounty Hunter
@@ -183,14 +208,15 @@ species_careers = {
         (8701, 8800),  # Witch
         (8801, 8950),  # Cavalryman
         (8951, 9000),  # Light Cavalry
-        (9001, 9200),  # Guard
+        (9001, 9150),  # Guard
+        (9151, 9200),  # Beadle
         (9201, 9255),  # Knight
         (9256, 9265),  # Freelance
         (9266, 9270),  # Knight of the Blazing Sun
         (9271, 9285),  # Knight of the White Wolf
         (9286, 9300),  # Knight Panther
         (9301, 9400),  # Pit Fighter
-        (9401, 9500),  # Protagonist"
+        (9401, 9500),  # Protagonist
         (9501, 9660),  # Soldier
         (9661, 9700),  # Archer
         (9701, 9800),  # Halberdier
@@ -204,7 +230,9 @@ species_careers = {
         (9986, 10000),  # Warrior Priest of Myrmidia
     ],
     "dwarf": [
-        (1, 100),  # Apothecary
+        (1, 75),  # Apothecary
+        "-",  # Mundane Alchemist (Human)
+        (76, 100),  # Mundane Alchemist (Dwarf, Halfling)
         (101, 325),  # Engineer
         (326, 400),  # Artillerist
         (401, 600),  # Lawyer
@@ -214,6 +242,15 @@ species_careers = {
         (701, 870),  # Scholar
         (871, 900),  # Cartographer
         "-",  # Wizard
+        "-",  # Hierophant
+        "-",  # Alchemist
+        "-",  # Druid
+        "-",  # Astromancer
+        "-",  # Shadowmancer
+        "-",  # Spiriter
+        "-",  # Pyromancer
+        "-",  # Shaman
+        "-",  # Magister Vigilant
         (901, 1100),  # Agitator
         (1101, 1700),  # Artisan
         (1701, 1800),  # Beggar
@@ -236,6 +273,7 @@ species_careers = {
         (4701, 4900),  # Hunter
         (4901, 5400),  # Miner
         "-",  # Mystic
+        "-",  # Scryer
         (5401, 5500),  # Scout
         (5501, 5600),  # Villager
         (5601, 6000),  # Bounty Hunter
@@ -268,14 +306,15 @@ species_careers = {
         "-",  # Witch
         "-",  # Cavalryman
         "-",  # Light Cavalry
-        (8401, 8700),  # Guard
+        (8401, 8625),  # Guard
+        (8626, 8700),  # Beadle
         "-",  # Knight
         "-",  # Freelance
         "-",  # Knight of the Blazing Sun
         "-",  # Knight of the White Wolf
         "-",  # Knight Panther
         (8701, 9000),  # Pit Fighter
-        (9001, 9300),  # Protagonist"
+        (9001, 9300),  # Protagonist
         (9301, 9450),  # Soldier
         "-",  # Archer
         (9451, 9543),  # Halberdier
@@ -289,7 +328,9 @@ species_careers = {
         "-",  # Warrior Priest of Myrmidia
     ],
     "halfling": [
-        (1, 100),  # Apothecary
+        (1, 75),  # Apothecary
+        "-",  # Mundane Alchemist (Human)
+        (76, 100),  # Mundane Alchemist (Dwarf, Halfling)
         (101, 175),  # Engineer
         (176, 200),  # Artillerist
         (201, 400),  # Lawyer
@@ -299,6 +340,15 @@ species_careers = {
         (601, 770),  # Scholar
         (771, 800),  # Cartographer
         "-",  # Wizard
+        "-",  # Hierophant
+        "-",  # Alchemist
+        "-",  # Druid
+        "-",  # Astromancer
+        "-",  # Shadowmancer
+        "-",  # Spiriter
+        "-",  # Pyromancer
+        "-",  # Shaman
+        "-",  # Magister Vigilant
         (801, 1000),  # Agitator
         (1001, 1500),  # Artisan
         (1501, 1900),  # Beggar
@@ -321,6 +371,7 @@ species_careers = {
         (5001, 5200),  # Hunter
         (5201, 5300),  # Miner
         "-",  # Mystic
+        "-",  # Scryer
         (5301, 5400),  # Scout
         (5401, 5700),  # Villager
         (5701, 5800),  # Bounty Hunter
@@ -353,7 +404,8 @@ species_careers = {
         "-",  # Witch
         "-",  # Cavalryman
         "-",  # Light Cavalry
-        (9401, 9600),  # Guard
+        (9401, 9550),  # Guard
+        (9551, 9600),  # Beadle
         "-",  # Knight
         "-",  # Freelance
         "-",  # Knight of the Blazing Sun
@@ -375,6 +427,8 @@ species_careers = {
     ],
     "high_elf": [
         (1, 200),  # Apothecary
+        "-",  # Mundane Alchemist (Human)
+        "-",  # Mundane Alchemist (Dwarf, Halfling)
         "-",  # Engineer
         "-",  # Artillerist
         (201, 600),  # Lawyer
@@ -384,6 +438,15 @@ species_careers = {
         (801, 1140),  # Scholar
         (1141, 1200),  # Cartographer
         (1201, 1600),  # Wizard
+        "-",  # Hierophant
+        "-",  # Alchemist
+        "-",  # Druid
+        "-",  # Astromancer
+        "-",  # Shadowmancer
+        "-",  # Spiriter
+        "-",  # Pyromancer
+        "-",  # Shaman
+        "-",  # Magister Vigilant
         "-",  # Agitator
         (1601, 1900),  # Artisan
         "-",  # Beggar
@@ -406,6 +469,7 @@ species_careers = {
         (4701, 5000),  # Hunter
         "-",  # Miner
         "-",  # Mystic
+        "-",  # Scryer
         (5001, 5600),  # Scout
         "-",  # Villager
         (5601, 5900),  # Bounty Hunter
@@ -439,6 +503,7 @@ species_careers = {
         (8801, 9100),  # Cavalryman
         (9101, 9200),  # Light Cavalry
         (9201, 9400),  # Guard
+        "-",  # Beadle
         (9401, 9500),  # Knight
         "-",  # Freelance
         "-",  # Knight of the Blazing Sun
@@ -460,6 +525,8 @@ species_careers = {
     ],
     "wood_elf": [
         "-",  # Apothecary
+        "-",  # Mundane Alchemist (Human)
+        "-",  # Mundane Alchemist (Dwarf, Halfling)
         "-",  # Engineer
         "-",  # Artillerist
         "-",  # Lawyer
@@ -469,6 +536,15 @@ species_careers = {
         (1, 85),  # Scholar
         (86, 100),  # Cartographer
         (101, 500),  # Wizard
+        "-",  # Hierophant
+        "-",  # Alchemist
+        "-",  # Druid
+        "-",  # Astromancer
+        "-",  # Shadowmancer
+        "-",  # Spiriter
+        "-",  # Pyromancer
+        "-",  # Shaman
+        "-",  # Magister Vigilant
         "-",  # Agitator
         (501, 1000),  # Artisan
         "-",  # Beggar
@@ -491,6 +567,7 @@ species_careers = {
         (4201, 5200),  # Hunter
         "-",  # Miner
         (5201, 5700),  # Mystic
+        "-",  # Scryer
         (5701, 6800),  # Scout
         "-",  # Villager
         (6801, 6900),  # Bounty Hunter
@@ -524,6 +601,7 @@ species_careers = {
         (8501, 9000),  # Cavalryman
         "-",  # Light Cavalry
         (9001, 9200),  # Guard
+        "-",  # Beadle
         (9201, 9400),  # Knight
         "-",  # Freelance
         "-",  # Knight of the Blazing Sun
@@ -545,6 +623,8 @@ species_careers = {
     ],
     "gnome": [
         (1, 100),  # Apothecary
+        "-",  # Mundane Alchemist (Human)
+        "-",  # Mundane Alchemist (Dwarf, Halfling)
         "-",  # Engineer
         "-",  # Artillerist
         (101, 200),  # Lawyer
@@ -554,6 +634,15 @@ species_careers = {
         (501, 700),  # Scholar
         "-",  # Cartographer
         (701, 1400),  # Wizard
+        "-",  # Hierophant
+        "-",  # Alchemist
+        "-",  # Druid
+        "-",  # Astromancer
+        "-",  # Shadowmancer
+        "-",  # Spiriter
+        "-",  # Pyromancer
+        "-",  # Shaman
+        "-",  # Magister Vigilant
         (1401, 1500),  # Agitator
         (1501, 1700),  # Artisan"
         (1701, 1800),  # Beggar
@@ -576,6 +665,7 @@ species_careers = {
         (4401, 4600),  # Hunter
         (4601, 5400),  # Miner
         "-",  # Mystic
+        "-",  # Scryer
         (5401, 5800),  # Scout
         (5801, 6200),  # Villager
         (6201, 6300),  # Bounty Hunter
@@ -609,13 +699,14 @@ species_careers = {
         "-",  # Cavalryman
         "-",  # Light Cavalry
         (9701, 9800),  # Guard
+        "-",  # Beadle
         "-",  # Knight
         "-",  # Freelance
         "-",  # Knight of the Blazing Sun
         "-",  # Knight of the White Wolf
         "-",  # Knight Panther
         "-",  # Pit Fighter
-        "-",  # Protagonist"
+        "-",  # Protagonist
         (9801, 9900),  # Soldier
         "-",  # Archer
         "-",  # Halberdier

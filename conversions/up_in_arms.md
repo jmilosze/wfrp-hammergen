@@ -5,8 +5,7 @@
 
 ## Engineer
 
-UINA: 
-Human: 01 - 75 Engineer, 76 - 00 Artillerist
+UINA Human: 01 - 75 Engineer, 76 - 00 Artillerist
 
 RB Engineer: 
 Human: 101 - 200
@@ -69,7 +68,7 @@ UINA:
 Human: 01 - 40 Soldier, 41 - 50 Archer, 51 - 75 Halberdier, 76 - 85 Handgunner,
 86 - 90 Greatsword, 91 - 95 Pikeman, 96 - 100 Siege Specialist
 
-Dwarf 01 - 40 Soldier, 41 - 50 xxx, 51 - 75 Halberdier, 76 - 85 Handgunner,
+Dwarf: 01 - 40 Soldier, 41 - 50 xxx, 51 - 75 Halberdier, 76 - 85 Handgunner,
 86 - 90 xxx, 91 - 95 xxx, 96 - 100 Siege Specialist
 -> mult by 100/80 Soldier: 50%, Halberdier 31%, Handgunner 13%, 
 Greatsword 0%, Pikeman 0%, Siege Specialist 6%
