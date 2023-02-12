@@ -8,18 +8,26 @@
       </div>
 
       <div class="text-sm-left">
-        <div class="alert alert-danger" role="alert">
-          <div class="h3">New Items and Careers from Up In Arms!</div>
+        <div class="alert alert-success" role="alert">
+          <div class="h3">Hammergen has now contents from Winds of Magic!</div>
           <p>
-            We are happy to announce that Hammergen has been updated with new Careers/Items/Skills/Talents from
-            <b-link href="https://cubicle7games.com/wfrp-up-in-arms" target="_blank">Up in Arms</b-link>. You can read
-            more about this and previous updates in
-            <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link> and on our
-            <b-link href="https://ko-fi.com/Q5Q12E0KB/posts" target="_blank">Ko-fi</b-link> blog.
+            We are pleased to announce that updated Hammergen with new Spells and Careers from
+            <b-link href="https://cubicle7games.com/the-winds-of-magic-wahammer-fantasy-roleplay" target="_blank"
+              >Winds of Magic.
+            </b-link>
+            You can read more about this and previous updates in
+            <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
+            and on our
+            <b-link
+              href="https://ko-fi.com/post/Winds-of-Magic-update-N4N5IOS3B?justpublished=true&alias=Winds-of-Magic-update-N4N5IOS3B"
+              target="_blank"
+              >Ko-fi blog.
+            </b-link>
           </p>
           <p>
             As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
-            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link> :)
+            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link>
+            :)
           </p>
         </div>
 
@@ -81,7 +89,8 @@
           Now you can also share any element you made (Character, Skill, Item, etc.) with other players! When an element
           is marked as <b>Public</b> anyone you give your username to, can see that element in read-only mode. Sharing
           is explained in the Linked Users tab in
-          <b-link :to="{ name: 'manage' }" target="_blank">Manage Account</b-link> section.
+          <b-link :to="{ name: 'manage' }" target="_blank">Manage Account</b-link>
+          section.
         </p>
         <p>
           If at any point you need to roll dices, you can head over to

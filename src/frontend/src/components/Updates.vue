@@ -2,13 +2,28 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">12 Feb 2023</div>
+        <p>
+          Added contents from
+          <b-link href="https://cubicle7games.com/the-winds-of-magic-wahammer-fantasy-roleplay" target="_blank"
+            >Winds of Magic:
+          </b-link>
+        </p>
+        <ul>
+          <li>New careers: 9 new Wizard specialisations, Mundane Alchemist, Scryer, and Beadle.</li>
+          <li>New spells from 8 colours of magic, new Arcane spells, and new Ritual Magic spells.</li>
+          <li>New skills: Augury, Psychometry, and Trade - Alchemy.</li>
+          <li>New talents: Suffuse With - Wind, Magical Assistant.</li>
+          <li>New items excluding Magic Potions and Cursed Items. Potions will be added later on as a new item type.</li>
+        </ul>
+
         <div class="h3">10 Jan 2023</div>
         <p>
-          Added contents from Up in
-          <b-link href="https://cubicle7games.com/wfrp-up-in-arms" target="_blank">Up in Arms</b-link>. This includes
-          all new Items, Qualities/Flaws, Careers, new and updated Skills and Talents, and Miracles of Myrmidia. Things
-          from Up in Arms that are currently not implemented in Hammergen: generation of Tilean characters and Siege
-          Weapons (Catapults, Ballistas).
+          Added contents from
+          <b-link href="https://cubicle7games.com/wfrp-up-in-arms" target="_blank">Up in Arms</b-link>
+          . This includes all new Items, Qualities/Flaws, Careers, new and updated Skills and Talents, and Miracles of
+          Myrmidia. Things from Up in Arms that are currently not implemented in Hammergen: generation of Tilean
+          characters and Siege Weapons (Catapults, Ballistas).
         </p>
         <div class="h3">17 Dec 2022</div>
         <p>
@@ -42,8 +57,9 @@
           </b-link>
           and new careers and items from
           <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire" target="_blank"
-            >Archives of the Empire: Volume I </b-link
-          >. We will be adding more resources soon.
+            >Archives of the Empire: Volume I
+          </b-link>
+          . We will be adding more resources soon.
         </p>
       </div>
     </div>
