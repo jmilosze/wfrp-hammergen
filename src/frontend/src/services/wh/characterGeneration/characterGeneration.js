@@ -160,8 +160,7 @@ export default function generateCharacter(
 
   let talentAndAttExpSpent;
   [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
-    species,
-    generationProps.species_talents,
+    generationProps.species_talents[species],
     generationProps.random_talents,
     [lvl1.talents, lvl2.talents, lvl3.talents, lvl4.talents],
     getBaseAttributes(species, character.attributeRolls),

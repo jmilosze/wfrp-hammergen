@@ -8,7 +8,6 @@ let LEVEL_1_ATTS = 5;
 let LEVEL_N_ATTS = 5;
 
 export function genTalentsAndAdvances(
-  species,
   speciesTalents,
   randomTalents,
   careerTalents,
@@ -26,7 +25,7 @@ export function genTalentsAndAdvances(
     [advances, expSpent] = generateAdv(careerAtts[0], LEVEL_1_ATTS, advances, expSpent);
   }
 
-  let talents = generateSpeciesTalents(speciesTalents[species], talentGroups, randomTalents, species);
+  let talents = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents);
 
   let talentsRank = getAllTalentsMaxRank(talents, dictOfTalents, baseAtts, advances);
   let availTalents = generateAvailableTalents(careerTalents[0], talentGroups, talentsRank);
@@ -76,33 +75,29 @@ export function getTalentGroups(listOfTalents) {
   return resolvedGroups;
 }
 
-export function generateSpeciesTalents(speciesTalents, resolvedTalentGroups, randomTalents, species) {
+export function generateSpeciesTalents(speciesTalents, talentGroups, randomTalents) {
   let generatedTalents = [];
+  let numberOfRandom = 0;
 
   for (let talent of speciesTalents) {
     if (typeof talent === "string") {
-      addOrIncrementIdNumberList(talent, generatedTalents);
+      if (talent === "random") {
+        numberOfRandom += 1;
+      } else {
+        addOrIncrementIdNumberList(talent, generatedTalents);
+      }
     } else {
       let newTalent = selectRandom(talent);
       addOrIncrementIdNumberList(newTalent, generatedTalents);
     }
   }
 
-  let numOfRandom;
-  if (species === 0) {
-    numOfRandom = 3;
-  } else if (species === 1) {
-    numOfRandom = 2;
-  } else {
-    numOfRandom = 0;
-  }
-
-  for (let i = 0; i < numOfRandom; ++i) {
+  for (let i = 0; i < numberOfRandom; ++i) {
     let validSelection = false;
     while (validSelection === false) {
       let newSelection = rollInTable(100, 1, randomTalents);
-      if (Object.hasOwn(resolvedTalentGroups, newSelection)) {
-        newSelection = selectRandom(resolvedTalentGroups[newSelection]);
+      if (Object.hasOwn(talentGroups, newSelection)) {
+        newSelection = selectRandom(talentGroups[newSelection]);
       }
 
       if (!generatedTalents.find((x) => x.id === newSelection)) {

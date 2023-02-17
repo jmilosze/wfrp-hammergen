@@ -7,7 +7,6 @@ from pymongo import MongoClient
 MONGO_URI = os.environ["MONGO_URI"]
 DB_NAME = os.environ["DB_NAME"]
 
-
 print(f"Are you sure you want to run this migration in {MONGO_URI}?")
 x = input()
 if x != "yes":
@@ -79,12 +78,13 @@ for r_talent in random_talents:
     random_talents_ids.append([find_id(r_talent[0], talents), r_talent[1], r_talent[2] + 1])
 
 species_talents = {
-    str(Species.HUMAN.value): ["Doomed", ["Savvy", "Suave"]],
+    str(Species.HUMAN.value): ["Doomed", ["Savvy", "Suave"], "random", "random", "random"],
     str(Species.HALFLING.value): [
         "Acute Sense - Taste",
         "Night Vision",
         "Resistance - Chaos",
         "Small",
+        "random",
     ],
     str(Species.DWARF.value): [
         "Magic Resistance",
@@ -203,7 +203,7 @@ species_skills = {
         "Track",
     ],
     str(Species.GNOME.value): [
-        "Channeling - Ulgu",
+        "Channelling - Ulgu",
         "Charm",
         "Consume Alcohol",
         "Dodge",

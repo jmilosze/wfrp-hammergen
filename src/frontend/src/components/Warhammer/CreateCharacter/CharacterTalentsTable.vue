@@ -295,12 +295,7 @@ export default {
     },
     addSpeciesTalents() {
       let resolvedTalentGroups = getTalentGroups(this.listOfItems);
-      let generatedTalents = generateSpeciesTalents(
-        this.speciesTalents,
-        resolvedTalentGroups,
-        this.randomTalents,
-        this.characterSpecies
-      );
+      let generatedTalents = generateSpeciesTalents(this.speciesTalents, resolvedTalentGroups, this.randomTalents);
 
       for (let generatedTalent of generatedTalents) {
         let talentToUpdate = this.listOfItems.find((x) => x.id === generatedTalent.id);
