@@ -25,7 +25,7 @@ export function resolveSkillGroups(listOfSkills) {
 
 export function generateSpeciesSkills(speciesSkills, resolvedSkillGroups) {
   let generatedSkills = {};
-  let skillList = JSON.parse(JSON.stringify(speciesSkills));
+  let skillList = [...new Set(speciesSkills)];
 
   for (let advances of [3, 5]) {
     for (let i = 0; i < 3; ++i) {
@@ -69,7 +69,6 @@ export function generateSkills(species, speciesSkills, careerSkills, listOfSkill
 
 function genAvailSkills(resolvedSkillGroups, careerSkills) {
   let skillGroups = JSON.parse(JSON.stringify(resolvedSkillGroups));
-
   let availSkills = [new Set(), new Set(), new Set(), new Set()];
 
   for (let lvl = 0; lvl < 4; ++lvl) {
@@ -97,7 +96,7 @@ function genAvailSkills(resolvedSkillGroups, careerSkills) {
 
 function fillUpLvlSkill(previousSkills, availSkills, fillUpTo, numSkills, currentCost) {
   let skills = JSON.parse(JSON.stringify(previousSkills));
-  let availSkillArray = Array.from(availSkills);
+  let availSkillArray = [...new Set(availSkills)];
   let cost = currentCost;
 
   for (let skillNo = 0; skillNo < numSkills; ++skillNo) {
@@ -128,7 +127,7 @@ function fillUpLvlSkill(previousSkills, availSkills, fillUpTo, numSkills, curren
 
 function genLvlSkill(previousSkills, availSkills, advNumber, maxAdvPerSkill, currentCost) {
   let skills = JSON.parse(JSON.stringify(previousSkills));
-  let availSkillArray = Array.from(availSkills);
+  let availSkillArray = [...new Set(availSkills)];
   let advCounter = {};
   let cost = currentCost;
 

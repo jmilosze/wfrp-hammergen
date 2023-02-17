@@ -112,7 +112,7 @@ import { addSpaces } from "../../../utils/stringUtils";
 import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
-import { generateSpeciesTalents, resolveTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
+import { generateSpeciesTalents, getTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
 import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 
 const MAX_CHARS = 15;
@@ -294,7 +294,7 @@ export default {
       this.$emit("stateChanged", this.isValid);
     },
     addSpeciesTalents() {
-      let resolvedTalentGroups = resolveTalentGroups(this.listOfItems);
+      let resolvedTalentGroups = getTalentGroups(this.listOfItems);
       let generatedTalents = generateSpeciesTalents(
         this.speciesTalents,
         resolvedTalentGroups,
