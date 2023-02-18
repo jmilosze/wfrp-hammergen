@@ -1,11 +1,12 @@
-import { rollInTable, selectRandom } from "../../../utils/randomUtils";
-import { generateAdv, fillUpAdv } from "./attGeneration";
-import { sumAndMultAttr, attributes, getAttributes } from "../attributes";
+import { selectRandom } from "../../../utils/randomUtils";
+import { fillUpAdv, generateAdv } from "./attGeneration";
+import { attributes, getAttributes, sumAndMultAttr } from "../attributes";
+import { generateSpeciesTalents } from "./generateSpeciesTalents";
 
-let LEVEL_1_TALENTS = 1;
-let LEVEL_N_TALENTS = 2;
-let LEVEL_1_ATTS = 5;
-let LEVEL_N_ATTS = 5;
+const LEVEL_1_TALENTS = 1;
+const LEVEL_N_TALENTS = 2;
+const LEVEL_1_ATTS = 5;
+const LEVEL_N_ATTS = 5;
 
 export function genTalentsAndAdvances(
   speciesTalents,
@@ -73,50 +74,6 @@ export function getTalentGroups(listOfTalents) {
   }
 
   return resolvedGroups;
-}
-
-export function generateSpeciesTalents(speciesTalents, talentGroups, randomTalents) {
-  let generatedTalents = [];
-  let numberOfRandom = 0;
-
-  for (let talent of speciesTalents) {
-    if (typeof talent === "string") {
-      if (talent === "random") {
-        numberOfRandom += 1;
-      } else {
-        addOrIncrementIdNumberList(talent, generatedTalents);
-      }
-    } else {
-      let newTalent = selectRandom(talent);
-      addOrIncrementIdNumberList(newTalent, generatedTalents);
-    }
-  }
-
-  for (let i = 0; i < numberOfRandom; ++i) {
-    let validSelection = false;
-    while (validSelection === false) {
-      let newSelection = rollInTable(100, 1, randomTalents);
-      if (Object.hasOwn(talentGroups, newSelection)) {
-        newSelection = selectRandom(talentGroups[newSelection]);
-      }
-
-      if (!generatedTalents.find((x) => x.id === newSelection)) {
-        generatedTalents.push({ id: newSelection, number: 1 });
-        validSelection = true;
-      }
-    }
-  }
-
-  return generatedTalents;
-}
-
-function addOrIncrementIdNumberList(newId, idNumberList) {
-  let idNumber = idNumberList.find((x) => x.id === newId);
-  if (idNumber) {
-    idNumber.number += 1;
-  } else {
-    idNumberList.push({ id: newId, number: 1 });
-  }
 }
 
 export function getAllTalentsMaxRank(talents, talentDict, baseAtts, advances) {

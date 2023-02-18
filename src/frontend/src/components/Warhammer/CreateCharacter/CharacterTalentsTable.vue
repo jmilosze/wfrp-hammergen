@@ -112,8 +112,9 @@ import { addSpaces } from "../../../utils/stringUtils";
 import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
-import { generateSpeciesTalents, getTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
+import { getTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
 import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
+import { generateSpeciesTalents } from "../../../services/wh/characterGeneration/generateSpeciesTalents";
 
 const MAX_CHARS = 15;
 
