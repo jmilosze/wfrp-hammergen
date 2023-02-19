@@ -1,10 +1,10 @@
 import { selectRandom } from "../../../utils/randomUtils";
 import { skillCost } from "./expCost";
 
-let SKILL_ADV = [40, 30, 20, 10];
-let LEVEL_1_MAX_ADV_PER_SKILL = 10;
-let SKILL_FILL_UP_SKILLS = 8;
-let SKILL_FILL_UP_PER_LVL = 5;
+const SKILL_ADV = [40, 30, 20, 10];
+const LEVEL_1_MAX_ADV_PER_SKILL = 10;
+const SKILL_FILL_UP_SKILLS = 8;
+const SKILL_FILL_UP_PER_LVL = 5;
 
 export function resolveSkillGroups(listOfSkills) {
   let resolvedGroups = {};

@@ -85,6 +85,7 @@ species_talents = {
         "Resistance - Chaos",
         "Small",
         "random",
+        "random",
     ],
     str(Species.DWARF.value): [
         "Magic Resistance",
