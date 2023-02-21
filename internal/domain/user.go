@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -16,38 +17,73 @@ const (
 	UserUnauthorizedError
 )
 
-type UserWrite struct {
-	SharedAccounts []string `json:"shared_accounts" validate:"omitempty,dive,email,required"`
-}
-
-type UserWriteCredentials struct {
-	Username string `json:"username" validate:"omitempty,email"`
-	Password string `json:"password" validate:"omitempty,gte=5"`
-}
-
-type UserWriteClaims struct {
-	Admin *bool `json:"admin" validate:"omitempty"`
-}
-
 type User struct {
-	Id             string
-	Username       string
-	Admin          bool
-	SharedAccounts []string
-	CreatedOn      time.Time
-	LastAuthOn     time.Time
+	Id                 string
+	Username           string
+	Admin              bool
+	SharedAccountNames []string
+	SharedAccountIds   []string
+	Password           string
+	PasswordHash       []byte
+	CreatedOn          time.Time
+	LastAuthOn         time.Time
+}
+
+func (u *User) Copy() *User {
+	if u == nil {
+		return nil
+	}
+	uCopy := User{}
+	uCopy.Id = strings.Clone(u.Id)
+	uCopy.Username = strings.Clone(u.Username)
+	uCopy.Admin = u.Admin
+
+	if u.SharedAccountNames != nil {
+		uCopy.SharedAccountNames = make([]string, len(u.SharedAccountNames))
+		copy(uCopy.SharedAccountNames, u.SharedAccountNames)
+	} else {
+		uCopy.SharedAccountNames = nil
+	}
+
+	if u.SharedAccountIds != nil {
+		uCopy.SharedAccountIds = make([]string, len(u.SharedAccountIds))
+		copy(uCopy.SharedAccountIds, u.SharedAccountIds)
+	} else {
+		uCopy.SharedAccountIds = nil
+	}
+
+	uCopy.Password = strings.Clone(u.Password)
+
+	if u.PasswordHash != nil {
+		uCopy.PasswordHash = make([]byte, len(u.PasswordHash))
+		copy(uCopy.PasswordHash, u.PasswordHash)
+	}
+
+	uCopy.LastAuthOn = u.LastAuthOn.UTC()
+	uCopy.CreatedOn = u.CreatedOn.UTC()
+
+	return &uCopy
+}
+
+func EmptyUser() *User {
+	u := &User{}
+	u.SharedAccountNames = make([]string, 0)
+	u.SharedAccountIds = make([]string, 0)
+	u.PasswordHash = make([]byte, 0)
+
+	return u
 }
 
 type UserService interface {
-	Get(ctx context.Context, userClaims *Claims, id string) (*User, *UserError)
+	Get(ctx context.Context, c *Claims, id string) (*User, *UserError)
 	Exists(ctx context.Context, username string) (bool, *UserError)
-	Create(ctx context.Context, cred *UserWriteCredentials, user *UserWrite) (*User, *UserError)
-	Update(ctx context.Context, userClaims *Claims, id string, user *UserWrite) (*User, *UserError)
-	UpdateCredentials(ctx context.Context, userClaims *Claims, id string, currentPasswd string, cred *UserWriteCredentials) (*User, *UserError)
-	UpdateClaims(ctx context.Context, userClaims *Claims, id string, claims *UserWriteClaims) (*User, *UserError)
-	Delete(ctx context.Context, userClaims *Claims, id string) *UserError
-	List(ctx context.Context, userClaims *Claims) ([]*User, *UserError)
-	Authenticate(ctx context.Context, username string, password string) (*User, *UserError)
+	Create(ctx context.Context, u *User) (*User, *UserError)
+	Update(ctx context.Context, c *Claims, u *User) (*User, *UserError)
+	UpdateCredentials(ctx context.Context, c *Claims, currentPasswd string, u *User) (*User, *UserError)
+	UpdateClaims(ctx context.Context, c *Claims, u *User) (*User, *UserError)
+	Delete(ctx context.Context, c *Claims, id string) *UserError
+	List(ctx context.Context, c *Claims) ([]*User, *UserError)
+	Authenticate(ctx context.Context, username string, password string) (u *User, ue *UserError)
 	SendResetPassword(ctx context.Context, username string) *UserError
 	ResetPassword(ctx context.Context, token string, newPassword string) *UserError
 }

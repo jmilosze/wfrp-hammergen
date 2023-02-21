@@ -3,7 +3,7 @@ package mailjet
 import (
 	"context"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
-	"github.com/mailjet/mailjet-apiv3-go/v3"
+	"github.com/mailjet/mailjet-apiv3-go/v4"
 )
 
 type EmailService struct {

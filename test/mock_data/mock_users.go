@@ -1,4 +1,4 @@
-package config
+package mock_data
 
 type UserSeed struct {
 	Id             string

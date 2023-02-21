@@ -11,6 +11,7 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mongodb"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/http"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
+	"github.com/jmilosze/wfrp-hammergen-go/test/mock_data"
 	"log"
 	"os"
 	"os/signal"
@@ -36,13 +37,13 @@ func run() error {
 	defer mongoDbService.Disconnect()
 	userDbService := mongodb.NewUserDbService(mongoDbService, cfg.MongoDb.UserCollection, cfg.MongoDb.CreateIndexes)
 
-	userService := services.NewUserService(cfg.UserService, userDbService, emailService, jwtService, val)
+	userService := services.NewUserService(&cfg.UserService, userDbService, emailService, jwtService, val)
 
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.RequestTimeout)
 	defer cancel()
 
 	if cfg.UserService.CreateMockUsers {
-		mockUsers := config.NewMockUsers()
+		mockUsers := mock_data.NewMockUsers()
 		userService.SeedUsers(ctx, mockUsers)
 	}
 
@@ -50,7 +51,7 @@ func run() error {
 	gin.RegisterUserRoutes(router, userService, jwtService, captchaService)
 	gin.RegisterAuthRoutes(router, userService, jwtService)
 
-	server := http.NewServer(cfg.Server, router)
+	server := http.NewServer(&cfg.Server, router)
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)

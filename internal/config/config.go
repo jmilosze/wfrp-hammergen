@@ -12,11 +12,12 @@ import (
 const appName = "Hammergen"
 
 type Config struct {
-	Server      *Server
-	UserService *UserService
-	Jwt         *Jwt
-	Email       *Email
-	MongoDb     *MongoDb
+	Server      Server
+	UserService UserService
+	WhService   WhService
+	Jwt         Jwt
+	Email       Email
+	MongoDb     MongoDb
 }
 
 type Server struct {
@@ -30,6 +31,10 @@ type UserService struct {
 	BcryptCost      int      `default:"12" split_words:"true"`
 	FrontEndUrl     *url.URL `default:"http://localhost:8080" split_words:"true"`
 	CreateMockUsers bool     `default:"true" split_words:"true"`
+}
+
+type WhService struct {
+	CreateMocks bool `default:"true" split_words:"true"`
 }
 
 type Jwt struct {

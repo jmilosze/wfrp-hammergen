@@ -13,96 +13,15 @@ import (
 	"time"
 )
 
-type UserMongoDb struct {
-	Id             primitive.ObjectID   `bson:"_id,omitempty"`
-	Username       string               `bson:"username,omitempty"`
-	PasswordHash   []byte               `bson:"passwordHash,omitempty"`
-	Admin          *bool                `bson:"admin,omitempty"`
-	SharedAccounts []primitive.ObjectID `bson:"sharedAccounts,omitempty"`
-	CreatedOn      time.Time            `bson:"createdOn,omitempty"`
-	LastAuthOn     time.Time            `bson:"lastAuthOn,omitempty"`
-}
-
-type UserDbAnnotated struct {
-	Id             string    `bson:"_id,omitempty"`
-	Username       string    `bson:"username,omitempty"`
-	PasswordHash   []byte    `bson:"passwordHash,omitempty"`
-	Admin          *bool     `bson:"admin,omitempty"`
-	SharedAccounts []string  `bson:"sharedAccounts,omitempty"`
-	CreatedOn      time.Time `bson:"createdOn,omitempty"`
-	LastAuthOn     time.Time `bson:"lastAuthOn,omitempty"`
-}
-
-func fromUserDb(u *domain.UserDb, linkedUsers []*UserMongoDb) (*UserMongoDb, error) {
-	id, err := primitive.ObjectIDFromHex(u.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	userMongoDb := UserMongoDb{
-		Id:             id,
-		Username:       u.Username,
-		PasswordHash:   u.PasswordHash,
-		Admin:          u.Admin,
-		SharedAccounts: usernamesToIds(u.SharedAccounts, linkedUsers),
-		CreatedOn:      u.CreatedOn,
-		LastAuthOn:     u.LastAuthOn,
-	}
-
-	return &userMongoDb, nil
-}
-
-func usernamesToIds(usernames []string, users []*UserMongoDb) []primitive.ObjectID {
-	userMap := map[string]primitive.ObjectID{}
-	for _, u := range users {
-		userMap[u.Username] = u.Id
-	}
-
-	ids := make([]primitive.ObjectID, 0)
-	for _, u := range usernames {
-		if id, ok := userMap[u]; ok {
-			ids = append(ids, id)
-		}
-	}
-	return ids
-}
-
-func toUserDb(u *UserMongoDb, linkedUsers []*UserMongoDb) *domain.UserDb {
-	var sharedAccounts []string
-	if u.SharedAccounts != nil {
-		sharedAccounts = make([]string, len(u.SharedAccounts))
-		for i, sa := range u.SharedAccounts {
-			sharedAccounts[i] = sa.Hex()
-		}
-	} else {
-		sharedAccounts = nil
-	}
-
-	userMongoDb := domain.UserDb{
-		Id:             u.Id.Hex(),
-		Username:       u.Username,
-		PasswordHash:   u.PasswordHash,
-		Admin:          u.Admin,
-		SharedAccounts: idsToUsernames(u.SharedAccounts, linkedUsers),
-		CreatedOn:      u.CreatedOn,
-		LastAuthOn:     u.LastAuthOn,
-	}
-	return &userMongoDb
-}
-
-func idsToUsernames(ids []primitive.ObjectID, users []*UserMongoDb) []string {
-	userMap := map[primitive.ObjectID]string{}
-	for _, u := range users {
-		userMap[u.Id] = u.Username
-	}
-
-	usernames := make([]string, 0)
-	for _, id := range ids {
-		if username, ok := userMap[id]; ok {
-			usernames = append(usernames, username)
-		}
-	}
-	return usernames
+type Mongo struct {
+	Id                 primitive.ObjectID   `bson:"_id"`
+	Username           string               `bson:"username"`
+	PasswordHash       []byte               `bson:"passwordHash"`
+	Admin              bool                 `bson:"admin"`
+	SharedAccountIds   []primitive.ObjectID `bson:"sharedAccountIds"`
+	SharedAccountNames []string             `bson:"sharedAccountNames,omitempty"`
+	CreatedOn          time.Time            `bson:"createdOn"`
+	LastAuthOn         time.Time            `bson:"lastAuthOn"`
 }
 
 type UserDbService struct {
@@ -125,7 +44,7 @@ func NewUserDbService(db *DbService, userCollection string, createIndex bool) *U
 	return &UserDbService{Db: db, Collection: coll}
 }
 
-func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*domain.UserDb, *domain.DbError) {
+func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*domain.User, *domain.DbError) {
 	if fieldName != "username" && fieldName != "id" {
 		return nil, &domain.DbError{Type: domain.DbInvalidUserFieldError, Err: fmt.Errorf("invalid field name %s", fieldName)}
 	}
@@ -141,18 +60,19 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		matchStage = bson.D{{"$match", bson.D{{"username", fieldValue}}}}
 	}
 	unwindStage := bson.D{{"$unwind", bson.D{
-		{"path", "$sharedAccounts"},
+		{"path", "$sharedAccountIds"},
 		{"preserveNullAndEmptyArrays", true},
 	}}}
 	lookupStage := bson.D{{"$lookup", bson.D{
 		{"from", s.Collection.Name()},
-		{"localField", "sharedAccounts"},
+		{"localField", "sharedAccountIds"},
 		{"foreignField", "_id"},
 		{"as", "sharedAcc"},
 	}}}
 	groupStage := bson.D{{"$group", bson.D{
-		{"_id", bson.D{{"$toString", "$_id"}}},
-		{"sharedAccounts", bson.D{{"$push", bson.D{{"$arrayElemAt", bson.A{"$sharedAcc.username", 0}}}}}},
+		{"_id", "$_id"},
+		{"sharedAccountIds", bson.D{{"$push", bson.D{{"$arrayElemAt", bson.A{"$sharedAcc._id", 0}}}}}},
+		{"sharedAccountNames", bson.D{{"$push", bson.D{{"$arrayElemAt", bson.A{"$sharedAcc.username", 0}}}}}},
 		{"username", bson.D{{"$first", "$username"}}},
 		{"passwordHash", bson.D{{"$first", "$passwordHash"}}},
 		{"admin", bson.D{{"$first", "$admin"}}},
@@ -165,12 +85,12 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err2}
 	}
 
-	var userDoc UserDbAnnotated
+	var userMongo Mongo
 	ok := cur.Next(ctx)
 	if !ok {
 		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
 	}
-	err3 := cur.Decode(&userDoc)
+	err3 := cur.Decode(&userMongo)
 	if err3 != nil {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err3}
 	}
@@ -179,16 +99,16 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err4}
 	}
 
-	return (*domain.UserDb)(&userDoc), nil
+	return newUserFromMongo(&userMongo, nil), nil
 }
 
-func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fieldValues []string) ([]*UserMongoDb, *domain.DbError) {
+func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fieldValues []string) ([]*Mongo, *domain.DbError) {
 	getAll := false
 	if fieldValues == nil {
 		getAll = true
 	} else {
 		if len(fieldValues) == 0 {
-			return []*UserMongoDb{}, nil
+			return []*Mongo{}, nil
 		}
 	}
 
@@ -216,9 +136,9 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err1}
 	}
 
-	users := make([]*UserMongoDb, 0)
+	users := make([]*Mongo, 0)
 	for cur.Next(ctx) {
-		var user UserMongoDb
+		var user Mongo
 		if err2 := cur.Decode(&user); err2 != nil {
 			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err2}
 		}
@@ -232,27 +152,27 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 	return users, nil
 }
 
-func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*domain.UserDb, *domain.DbError) {
-	users, err := getMany(ctx, s.Collection, "username", nil)
+func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*domain.User, *domain.DbError) {
+	mongoUsers, err := getMany(ctx, s.Collection, "username", nil)
 	if err != nil {
 		return nil, err
 	}
 
-	userDbs := make([]*domain.UserDb, len(users))
-	for i, u := range users {
-		userDbs[i] = toUserDb(u, users)
+	users := make([]*domain.User, len(mongoUsers))
+	for i, u := range mongoUsers {
+		users[i] = newUserFromMongo(u, mongoUsers)
 	}
 
-	return userDbs, nil
+	return users, nil
 }
 
-func (s *UserDbService) Create(ctx context.Context, user *domain.UserDb) (*domain.UserDb, *domain.DbError) {
-	linkedUsers, err1 := getLinkedUsers(ctx, s.Collection, user.SharedAccounts)
+func (s *UserDbService) Create(ctx context.Context, u *domain.User) (*domain.User, *domain.DbError) {
+	linkedUsers, err1 := getLinkedUsers(ctx, s.Collection, u.SharedAccountNames)
 	if err1 != nil {
 		return nil, err1
 	}
 
-	userMongoDb, err2 := fromUserDb(user, linkedUsers)
+	userMongoDb, err2 := newMongoFromUser(u, linkedUsers)
 	if err2 != nil {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err2}
 	}
@@ -263,11 +183,11 @@ func (s *UserDbService) Create(ctx context.Context, user *domain.UserDb) (*domai
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}
 
-	return toUserDb(userMongoDb, linkedUsers), nil
+	return newUserFromMongo(userMongoDb, linkedUsers), nil
 }
 
-func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts []string) ([]*UserMongoDb, *domain.DbError) {
-	linkedUsers := make([]*UserMongoDb, 0)
+func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts []string) ([]*Mongo, *domain.DbError) {
+	linkedUsers := make([]*Mongo, 0)
 	if sharedAccounts != nil {
 		var err *domain.DbError
 		linkedUsers, err = getMany(ctx, col, "username", sharedAccounts)
@@ -278,18 +198,97 @@ func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts [
 	return linkedUsers, nil
 }
 
-func (s *UserDbService) Update(ctx context.Context, user *domain.UserDb) (*domain.UserDb, *domain.DbError) {
-	linkedUsers, err1 := getLinkedUsers(ctx, s.Collection, user.SharedAccounts)
+func newMongoFromUser(u *domain.User, linkedUsers []*Mongo) (*Mongo, error) {
+	id, err := primitive.ObjectIDFromHex(u.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	userMongo := Mongo{
+		Id:               id,
+		Username:         u.Username,
+		PasswordHash:     u.PasswordHash,
+		Admin:            u.Admin,
+		SharedAccountIds: usernamesToIds(u.SharedAccountNames, linkedUsers),
+		CreatedOn:        u.CreatedOn,
+		LastAuthOn:       u.LastAuthOn,
+	}
+
+	return &userMongo, nil
+}
+
+func usernamesToIds(usernames []string, us []*Mongo) []primitive.ObjectID {
+	userMap := map[string]primitive.ObjectID{}
+	for _, u := range us {
+		userMap[u.Username] = u.Id
+	}
+
+	ids := make([]primitive.ObjectID, 0)
+	for _, u := range usernames {
+		if id, ok := userMap[u]; ok {
+			ids = append(ids, id)
+		}
+	}
+	return ids
+}
+
+func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *domain.User {
+	var sharedAccountIds []string
+	if u.SharedAccountIds != nil {
+		sharedAccountIds = make([]string, len(u.SharedAccountIds))
+		for i, sa := range u.SharedAccountIds {
+			sharedAccountIds[i] = sa.Hex()
+		}
+	} else {
+		sharedAccountIds = nil
+	}
+
+	user := domain.EmptyUser()
+	user.Id = u.Id.Hex()
+	user.Username = u.Username
+	user.Admin = u.Admin
+	user.SharedAccountIds = sharedAccountIds
+	if linkedUsers != nil {
+		user.SharedAccountNames = idsToUsernames(u.SharedAccountIds, linkedUsers)
+	} else {
+		user.SharedAccountNames = u.SharedAccountNames
+	}
+	if u.PasswordHash != nil {
+		user.PasswordHash = u.PasswordHash
+	}
+	user.CreatedOn = u.CreatedOn
+	user.LastAuthOn = u.LastAuthOn
+
+	return user
+}
+
+func idsToUsernames(ids []primitive.ObjectID, users []*Mongo) []string {
+	userMap := map[primitive.ObjectID]string{}
+	for _, u := range users {
+		userMap[u.Id] = u.Username
+	}
+
+	usernames := make([]string, 0)
+	for _, id := range ids {
+		if username, ok := userMap[id]; ok {
+			usernames = append(usernames, username)
+		}
+	}
+	return usernames
+}
+
+func (s *UserDbService) Update(ctx context.Context, user *domain.User) (*domain.User, *domain.DbError) {
+	linkedUsers, err1 := getLinkedUsers(ctx, s.Collection, user.SharedAccountNames)
 	if err1 != nil {
 		return nil, err1
 	}
 
-	userMongoDb, err2 := fromUserDb(user, linkedUsers)
+	userMongo, err2 := newMongoFromUser(user, linkedUsers)
 	if err2 != nil {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err2}
 	}
 
-	result, err4 := s.Collection.UpdateOne(ctx, bson.D{{"_id", userMongoDb.Id}}, bson.D{{"$set", userMongoDb}})
+	result, err4 := s.Collection.UpdateOne(ctx, bson.D{{"_id", userMongo.Id}}, bson.D{{"$set", userMongo}})
 	if err4 != nil {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err4}
 	}
@@ -298,7 +297,7 @@ func (s *UserDbService) Update(ctx context.Context, user *domain.UserDb) (*domai
 		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
 	}
 
-	return toUserDb(userMongoDb, linkedUsers), nil
+	return newUserFromMongo(userMongo, linkedUsers), nil
 }
 
 func (s *UserDbService) Delete(ctx context.Context, id string) *domain.DbError {
