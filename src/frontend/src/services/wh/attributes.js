@@ -5,6 +5,7 @@ const racialAttributes = {
   dwarf: { WS: 30, BS: 20, S: 20, T: 30, I: 20, Ag: 10, Dex: 30, Int: 20, WP: 40, Fel: 10 },
   elf: { WS: 30, BS: 30, S: 20, T: 20, I: 40, Ag: 30, Dex: 30, Int: 30, WP: 30, Fel: 20 },
   gnome: { WS: 20, BS: 10, S: 10, T: 15, I: 30, Ag: 30, Dex: 30, Int: 30, WP: 40, Fel: 15 },
+  ogre: { WS: 20, BS: 10, S: 35, T: 35, I: 0, Ag: 15, Dex: 10, Int: 10, WP: 20, Fel: 10 },
 };
 
 const attributes = {
@@ -31,6 +32,8 @@ const getAttributes = (species = -1) => {
     return JSON.parse(JSON.stringify(racialAttributes.elf));
   } else if (species === 5) {
     return JSON.parse(JSON.stringify(racialAttributes.gnome));
+  } else if (species === 6) {
+    return JSON.parse(JSON.stringify(racialAttributes.ogre));
   } else {
     return JSON.parse(JSON.stringify(racialAttributes.none));
   }

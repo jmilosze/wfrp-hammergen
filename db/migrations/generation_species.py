@@ -28,6 +28,7 @@ class Species(enum.IntEnum):
     HIGH_ELF = 3
     WOOD_ELF = 4
     GNOME = 5
+    OGRE = 6
 
 
 def find_id(name, list_of_elems):
@@ -109,12 +110,20 @@ species_talents = {
         "Rover",
     ],
     str(Species.GNOME.value): [
-        ["Beneath Notice", "Suffused with Ulgu"],
+        ["Beneath Notice", "Suffused With Ulgu"],
         ["Luck", "Mimic"],
         "Night Vision",
         ["Fisherman", "Read/Write"],
         ["Second Sight", "Sixth Sense"],
         "Small",
+    ],
+    str(Species.OGRE.value): [
+        "Dirty Fighting",
+        "Large",
+        "Night Vision",
+        "Resistance - Poison (Ingested)",
+        ["Very Resilient", "Very Strong"],
+        "Vice - Food",
     ],
 }
 
@@ -216,6 +225,20 @@ species_skills = {
         "Language - Wastelander",
         "Outdoor Survival",
         "Stealth",
+    ],
+    str(Species.OGRE.value): [
+        "Athletics",
+        "Consume Alcohol",
+        "Endurance",
+        "Entertain - Storytelling",
+        "Intimidate",
+        "Language - Grumbarth",
+        "Lore - Ogres",
+        "Melee - Basic",
+        "Melee - Brawling",
+        "Navigation",
+        "Outdoor Survival",
+        "Track"
     ],
 }
 

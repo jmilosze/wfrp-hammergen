@@ -8,18 +8,19 @@
       </div>
 
       <div class="text-sm-left">
-        <div class="alert alert-success" role="alert">
-          <div class="h3">Hammergen has now contents from Winds of Magic!</div>
+        <div class="alert alert-info" role="alert">
+          <div class="h3">Ogres are here!</div>
           <p>
-            We are pleased to announce that updated Hammergen with new Spells and Careers from
-            <b-link href="https://cubicle7games.com/the-winds-of-magic-wahammer-fantasy-roleplay" target="_blank"
-              >Winds of Magic.
+            We are happy to announce we added Ogres from
+            <b-link href="https://cubicle7games.com/wfrp-archives-of-the-empire-ii" target="_blank"
+              >Archives of the Empire: Volume II.
             </b-link>
+
             You can read more about this and previous updates in
             <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
             and on our
             <b-link
-              href="https://ko-fi.com/post/Winds-of-Magic-update-N4N5IOS3B?justpublished=true&alias=Winds-of-Magic-update-N4N5IOS3B"
+              href="https://ko-fi.com/post/Ogres-F1F7IYN1G?justpublished=true&alias=Ogres-F1F7IYN1G"
               target="_blank"
               >Ko-fi blog.
             </b-link>
@@ -74,6 +75,7 @@
             Myrmidia
           </li>
           <li><b>Winds of Magic</b>: new Spells, Careers, Items, Skills, and Talents</li>
+          <li><b>Archives of the Empire: Volume II</b>: Ogres, and Ogre Trappings, Careers, and Magic</li>
         </ul>
 
         <div class="h3">How do I use it?</div>

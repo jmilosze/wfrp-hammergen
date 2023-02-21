@@ -36,10 +36,16 @@ function getWoundsFormula(size, T, WP, S) {
 
 function getMovementFormula(speciesValue) {
   if (speciesValue === 1 || speciesValue === 2 || speciesValue === 5) {
+    // Halfling, Dwarf, Gnome
     return 3;
   } else if (speciesValue === 0) {
+    // Human
     return 4;
+  } else if (speciesValue === 6) {
+    // Ogre
+    return 6;
   } else {
+    // Elves
     return 5;
   }
 }
@@ -147,7 +153,7 @@ function formatItems(characterItems, attributes) {
 }
 
 function formatSpells(rawSpells) {
-  return rawSpells.map(x => ({
+  return rawSpells.map((x) => ({
     name: x.name,
     range: x.range,
     target: x.target,

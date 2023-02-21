@@ -2,6 +2,20 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">22 Feb 2023</div>
+        <p>
+          Added contents of
+          <b-link href="https://cubicle7games.com/wfrp-archives-of-the-empire-ii" target="_blank"
+            >Archives of the Empire: Volume II
+          </b-link>
+        </p>
+        <ul>
+          <li>New careers: 3 new Ogre specific Careers: Maneater, Ogre Butcher, and Rhinox Herder.</li>
+          <li>New magic: 7 new spells and a new Lore of Magic: The Lore of The Great Maw.</li>
+          <li>New talents: Large and Vice.</li>
+          <li>New Ogre specific weapons and armour.</li>
+          <li>Siege weapons and Astrology mechanics are currently <b>not supported</b>. We will add them later on.</li>
+        </ul>
         <div class="h3">12 Feb 2023</div>
         <p>
           Added contents from
@@ -14,7 +28,9 @@
           <li>New spells from 8 colours of magic, new Arcane spells, and new Ritual Magic spells.</li>
           <li>New skills: Augury, Psychometry, and Trade - Alchemy.</li>
           <li>New talents: Suffuse With - Wind, Magical Assistant.</li>
-          <li>New items excluding Magic Potions and Cursed Items. Potions will be added later on as a new item type.</li>
+          <li>
+            New items excluding Magic Potions and Cursed Items. Potions will be added later on as a new item type.
+          </li>
         </ul>
 
         <div class="h3">10 Jan 2023</div>
