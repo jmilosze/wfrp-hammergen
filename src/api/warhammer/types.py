@@ -132,6 +132,7 @@ class Species(enum.IntEnum):
     HIGH_ELF = 3
     WOOD_ELF = 4
     GNOME = 5
+    OGRE = 6
 
 
 class Mutation(enum.IntEnum):

@@ -32,6 +32,7 @@ const species = {
   3: "High Elf",
   4: "Wood Elf",
   5: "Gnome",
+  6: "Ogre",
 };
 
 const defaultSize = 3; // Average

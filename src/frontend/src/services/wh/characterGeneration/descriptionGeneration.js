@@ -78,6 +78,19 @@ const GNOME_EYE_ROLLS = [
   ["Violet", 20, 21],
 ];
 
+const OGRE_EYE_ROLLS = [
+  ["Grey", 2, 3],
+  ["Green", 3, 4],
+  ["Amber", 4, 5],
+  ["Hazel", 5, 8],
+  ["Brown", 8, 12],
+  ["Dark Brown", 12, 15],
+  ["Sienna", 15, 18],
+  ["Black", 18, 19],
+  ["Purple Black", 19, 20],
+  ["Blue Black", 20, 21],
+];
+
 const HUMAN_HAIR_ROLLS = [
   ["White Blond", 2, 3],
   ["Golden Blond", 3, 4],
@@ -156,6 +169,19 @@ const GNOME_HAIR_ROLLS = [
   ["White", 20, 21],
 ];
 
+const OGRE_HAIR_ROLLS = [
+  ["Brown", 2, 3],
+  ["Red Brown", 3, 4],
+  ["Terracotta", 4, 5],
+  ["Sienna", 5, 8],
+  ["Burgundy", 8, 12],
+  ["Dark Brown", 12, 15],
+  ["Black", 15, 18],
+  ["Charcoal", 18, 19],
+  ["Jet Black", 19, 20],
+  ["Blue Black", 20, 21],
+];
+
 function generateAge(species) {
   if (species === 0) {
     return 15 + diceRoll(10, 1);
@@ -165,6 +191,8 @@ function generateAge(species) {
     return 15 + diceRoll(10, 10);
   } else if (species === 5) {
     return 20 + diceRoll(10, 10);
+  } else if (species === 6) {
+    return 15 + diceRoll(10, 5);
   } else {
     return 30 + diceRoll(10, 10);
   }
@@ -180,6 +208,8 @@ function generateHeight(species) {
     heightInches = 51 + diceRoll(10, 1);
   } else if (species === 5) {
     heightInches = 40 + diceRoll(10, 1);
+  } else if (species === 6) {
+    heightInches = 91 + diceRoll(10, 1);
   } else {
     heightInches = 71 + diceRoll(10, 1);
   }
@@ -195,6 +225,8 @@ function generateEyes(species) {
     return rollInTable(10, 2, DWARF_EYE_ROLLS);
   } else if (species === 5) {
     return rollInTable(10, 2, GNOME_EYE_ROLLS);
+  } else if (species === 6) {
+    return rollInTable(10, 2, OGRE_EYE_ROLLS);
   } else {
     let table = species === 3 ? HIGH_ELF_EYE_ROLLS : WOOD_ELF_EYE_ROLLS;
     let color1 = rollInTable(10, 2, table);
@@ -219,6 +251,8 @@ function generateHair(species) {
     return rollInTable(10, 2, DWARF_HAIR_ROLLS);
   } else if (species === 5) {
     return rollInTable(10, 2, GNOME_HAIR_ROLLS);
+  } else if (species === 6) {
+    return rollInTable(10, 2, OGRE_HAIR_ROLLS);
   } else if (species === 3) {
     return rollInTable(10, 2, HIGH_ELF_HAIR_ROLLS);
   } else {

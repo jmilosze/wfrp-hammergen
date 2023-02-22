@@ -21,6 +21,7 @@ career_names = [
     "Apothecary",
     "Mundane Alchemist (Human)",  # winds of magic
     "Mundane Alchemist (Dwarf, Halfling)",  # winds of magic
+    "Ogre Butcher",  # archives of the empire vol 2
     "Engineer",
     "Artillerist",  # up in arms
     "Lawyer",
@@ -60,6 +61,7 @@ career_names = [
     "Herbalist",
     "Hunter",
     "Miner",
+    "Rhinox Herder",  # archives of the empire vol 2
     "Mystic",
     "Scryer",  # winds of magic
     "Scout",
@@ -103,6 +105,7 @@ career_names = [
     "Knight Panther",  # up in arms
     "Pit Fighter",
     "Protagonist",
+    "Maneater",  # archives of the empire vol 1
     "Soldier",
     "Archer",  # up in arms
     "Halberdier",  # up in arms
@@ -135,6 +138,7 @@ species_careers = {
         (1, 75),  # Apothecary
         (76, 100),  # Mundane Alchemist (Human)
         "-",  # Mundane Alchemist (Dwarf, Halfling)
+        "-",  # Ogre Butcher
         (101, 175),  # Engineer
         (176, 200),  # Artillerist
         (201, 300),  # Lawyer
@@ -174,6 +178,7 @@ species_careers = {
         (3901, 4000),  # Herbalist
         (4001, 4200),  # Hunter
         (4201, 4300),  # Miner
+        "-",  # Rhinox Herder
         (4301, 4390),  # Mystic
         (4391, 4400),  # Scryer
         (4401, 4500),  # Scout
@@ -217,6 +222,7 @@ species_careers = {
         (9286, 9300),  # Knight Panther
         (9301, 9400),  # Pit Fighter
         (9401, 9500),  # Protagonist
+        "-",  # Maneater
         (9501, 9660),  # Soldier
         (9661, 9700),  # Archer
         (9701, 9800),  # Halberdier
@@ -233,6 +239,7 @@ species_careers = {
         (1, 75),  # Apothecary
         "-",  # Mundane Alchemist (Human)
         (76, 100),  # Mundane Alchemist (Dwarf, Halfling)
+        "-",  # Ogre Butcher
         (101, 325),  # Engineer
         (326, 400),  # Artillerist
         (401, 600),  # Lawyer
@@ -272,6 +279,7 @@ species_careers = {
         "-",  # Herbalist
         (4701, 4900),  # Hunter
         (4901, 5400),  # Miner
+        "-",  # Rhinox Herder
         "-",  # Mystic
         "-",  # Scryer
         (5401, 5500),  # Scout
@@ -315,6 +323,7 @@ species_careers = {
         "-",  # Knight Panther
         (8701, 9000),  # Pit Fighter
         (9001, 9300),  # Protagonist
+        "-",  # Maneater
         (9301, 9450),  # Soldier
         "-",  # Archer
         (9451, 9543),  # Halberdier
@@ -331,6 +340,7 @@ species_careers = {
         (1, 75),  # Apothecary
         "-",  # Mundane Alchemist (Human)
         (76, 100),  # Mundane Alchemist (Dwarf, Halfling)
+        "-",  # Ogre Butcher
         (101, 175),  # Engineer
         (176, 200),  # Artillerist
         (201, 400),  # Lawyer
@@ -370,6 +380,7 @@ species_careers = {
         (4701, 5000),  # Herbalist
         (5001, 5200),  # Hunter
         (5201, 5300),  # Miner
+        "-",  # Rhinox Herder
         "-",  # Mystic
         "-",  # Scryer
         (5301, 5400),  # Scout
@@ -413,6 +424,7 @@ species_careers = {
         "-",  # Knight Panther
         (9601, 9700),  # Pit Fighter
         "-",  # Protagonist"
+        "-",  # Maneater
         (9701, 9820),  # Soldier
         (9821, 9850),  # Archer
         (9851, 9925),  # Halberdier
@@ -429,6 +441,7 @@ species_careers = {
         (1, 200),  # Apothecary
         "-",  # Mundane Alchemist (Human)
         "-",  # Mundane Alchemist (Dwarf, Halfling)
+        "-",  # Ogre Butcher
         "-",  # Engineer
         "-",  # Artillerist
         (201, 600),  # Lawyer
@@ -468,6 +481,7 @@ species_careers = {
         (4501, 4700),  # Herbalist
         (4701, 5000),  # Hunter
         "-",  # Miner
+        "-",  # Rhinox Herder
         "-",  # Mystic
         "-",  # Scryer
         (5001, 5600),  # Scout
@@ -511,6 +525,7 @@ species_careers = {
         "-",  # Knight Panther
         (9501, 9700),  # Pit Fighter
         (9701, 9800),  # Protagonist"
+        "-",  # Maneater
         (9801, 9946),  # Soldier
         (9947, 9982),  # Archer
         "-",  # Halberdier
@@ -527,6 +542,7 @@ species_careers = {
         "-",  # Apothecary
         "-",  # Mundane Alchemist (Human)
         "-",  # Mundane Alchemist (Dwarf, Halfling)
+        "-",  # Ogre Butcher
         "-",  # Engineer
         "-",  # Artillerist
         "-",  # Lawyer
@@ -566,6 +582,7 @@ species_careers = {
         (3501, 4200),  # Herbalist
         (4201, 5200),  # Hunter
         "-",  # Miner
+        "-",  # Rhinox Herder
         (5201, 5700),  # Mystic
         "-",  # Scryer
         (5701, 6800),  # Scout
@@ -609,6 +626,7 @@ species_careers = {
         "-",  # Knight Panther
         (9401, 9600),  # Pit Fighter
         "-",  # Protagonist"
+        "-",  # Maneater
         (9601, 9920),  # Soldier
         (9921, 10000),  # Archer
         "-",  # Halberdier
@@ -625,6 +643,7 @@ species_careers = {
         (1, 100),  # Apothecary
         "-",  # Mundane Alchemist (Human)
         "-",  # Mundane Alchemist (Dwarf, Halfling)
+        "-",  # Ogre Butcher
         "-",  # Engineer
         "-",  # Artillerist
         (101, 200),  # Lawyer
@@ -644,7 +663,7 @@ species_careers = {
         "-",  # Shaman
         "-",  # Magister Vigilant
         (1401, 1500),  # Agitator
-        (1501, 1700),  # Artisan"
+        (1501, 1700),  # Artisan
         (1701, 1800),  # Beggar
         (1801, 1900),  # Investigator
         (1901, 2100),  # Merchant
@@ -664,6 +683,7 @@ species_careers = {
         (4301, 4400),  # Herbalist
         (4401, 4600),  # Hunter
         (4601, 5400),  # Miner
+        "-",  # Rhinox Herder
         "-",  # Mystic
         "-",  # Scryer
         (5401, 5800),  # Scout
@@ -707,6 +727,7 @@ species_careers = {
         "-",  # Knight Panther
         "-",  # Pit Fighter
         "-",  # Protagonist
+        "-",  # Maneater
         (9801, 9900),  # Soldier
         "-",  # Archer
         "-",  # Halberdier
@@ -719,6 +740,107 @@ species_careers = {
         (9901, 10000),  # Warrior Priest
         "-",  # Warrior Priest of Myrmidia
     ],
+    "ogre": [
+        "-",  # Apothecary
+        "-",  # Mundane Alchemist (Human)
+        "-",  # Mundane Alchemist (Dwarf, Halfling)
+        (1, 100),  # Ogre Butcher
+        "-",  # Engineer
+        "-",  # Artillerist
+        "-",  # Lawyer
+        "-",  # Nun
+        "-",  # Physician
+        "-",  # Priest
+        "-",  # Scholar
+        "-",  # Cartographer
+        "-",  # Wizard
+        "-",  # Hierophant
+        "-",  # Alchemist
+        "-",  # Druid
+        "-",  # Astromancer
+        "-",  # Shadowmancer
+        "-",  # Spiriter
+        "-",  # Pyromancer
+        "-",  # Shaman
+        "-",  # Magister Vigilant
+        "-",  # Agitator
+        (101, 200),  # Artisan
+        (201, 500),  # Beggar
+        "-",  # Investigator
+        "-",  # Merchant
+        (501, 600),  # Rat Catcher
+        "-",  # Townsman
+        (601, 1200),  # Watchman
+        "-",  # Advisor
+        "-",  # Artist
+        "-",  # Duellist
+        "-",  # Envoy
+        "-",  # Noble
+        (1201, 1300),  # Servant
+        "-",  # Spy
+        "-",  # Warden
+        (1301, 1400),  # Bailiff
+        "-",  # Hedge Witch
+        "-",  # Herbalist
+        (1401, 2100),  # Hunter
+        (2101, 2300),  # Miner
+        (2301, 2600),  # Rhinox Herder
+        "-",  # Mystic
+        "-",  # Scryer
+        "-",  # Scout
+        "-",  # Villager
+        (2601, 2900),  # Bounty Hunter
+        "-",  # Ghost Strider
+        "-",  # Coachman
+        (2901, 3200),  # Entertainer
+        "-",  # Flagellant
+        "-",  # Messenger
+        "-",  # Karak Ranger
+        (3201, 3900),  # Pedlar
+        "-",  # Camp Follower
+        "-",  # Road Warden
+        "-",  # Fieldwarden
+        "-",  # Witch Hunter
+        "-",  # Boatman
+        "-",  # Huffer
+        "-",  # Riverwarden
+        "-",  # Riverwoman
+        (3901, 4000),  # Seaman
+        "-",  # Smuggler
+        (4001, 4300),  # Stevedore
+        "-",  # Wrecker
+        "-",  # Bawd
+        "-",  # Charlatan
+        "-",  # Fence
+        (4301, 4700),  # Grave Robber
+        (4701, 5600),  # Outlaw
+        (5601, 6100),  # Racketeer
+        "-",  # Thief
+        "-",  # Witch
+        "-",  # Cavalryman
+        "-",  # Light Cavalry
+        (6101, 6800),  # Guard
+        "-",  # Beadle
+        "-",  # Knight
+        "-",  # Freelance
+        "-",  # Knight of the Blazing Sun
+        "-",  # Knight of the White Wolf
+        "-",  # Knight Panther
+        (6801, 7900),  # Pit Fighter
+        (7901, 8400),  # Protagonist
+        (8401, 9100),  # Maneater
+        (9101, 10000),  # Soldier
+        "-",  # Archer
+        "-",  # Halberdier
+        "-",  # Handgunner
+        "-",  # Greatsword
+        "-",  # Pikeman
+        "-",  # Siege Specialist
+        "-",  # Badger Rider
+        "-",  # Slayer
+        "-",  # Warrior Priest
+        "-",  # Warrior Priest of Myrmidia
+    ],
 }
 
 species_num = {
@@ -728,6 +850,7 @@ species_num = {
     "high_elf": "3",
     "wood_elf": "4",
     "gnome": "5",
+    "ogre": "6",
 }
 
 career_gen_table = {}

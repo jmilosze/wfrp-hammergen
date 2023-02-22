@@ -6,7 +6,8 @@ import { generateSkills } from "./skillGeneration";
 import { genTalentsAndAdvances } from "./talentGeneration";
 
 const SPECIES_ROLLS = [
-  [0, 1, 90],
+  [0, 1, 89],
+  [6, 89, 90],
   [1, 90, 94],
   [2, 94, 98],
   [5, 98, 99],
@@ -39,6 +40,10 @@ function generateFateAndResilience(species) {
     fate = 2;
     resilience = 0;
     extra = 2;
+  } else if (species === 6) {
+    fate = 0;
+    resilience = 3;
+    extra = 1;
   } else {
     fate = 0;
     resilience = 0;
@@ -139,7 +144,7 @@ export default function generateCharacter(
   character.status = career[levelName].status;
   character.standing = career[levelName].standing;
   [character.brass, character.silver, character.gold] = generateCoins(character.status, character.standing);
-  character.attributeRolls = generateRolls(species);
+  character.attributeRolls = generateRolls();
   character.storedItems = [];
   character.equippedItems = items.equipped;
   character.carriedItems = items.carried;
