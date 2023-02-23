@@ -25,8 +25,18 @@ func NewWhDbService() *WhDbService {
 func createNewWhMemDb() (*memdb.MemDB, error) {
 	schema := &memdb.DBSchema{
 		Tables: map[string]*memdb.TableSchema{
-			"wh": {
-				Name: "wh",
+			domain.WhTypeMutation: {
+				Name: domain.WhTypeMutation,
+				Indexes: map[string]*memdb.IndexSchema{
+					"id": {
+						Name:    "id",
+						Unique:  true,
+						Indexer: &memdb.StringFieldIndex{Field: "Id"},
+					},
+				},
+			},
+			domain.WhTypeSpell: {
+				Name: domain.WhTypeSpell,
 				Indexes: map[string]*memdb.IndexSchema{
 					"id": {
 						Name:    "id",
@@ -40,11 +50,11 @@ func createNewWhMemDb() (*memdb.MemDB, error) {
 	return memdb.NewMemDB(schema)
 }
 
-func (s *WhDbService) Retrieve(ctx context.Context, whType int, whId string, users []string, sharedUsers []string) (*domain.Wh, *domain.DbError) {
+func (s *WhDbService) Retrieve(ctx context.Context, t domain.WhType, whId string, users []string, sharedUsers []string) (*domain.Wh, *domain.DbError) {
 	txn := s.Db.Txn(false)
-	whRaw, err1 := txn.First("wh", "id", whId)
-	if err1 != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err1}
+	whRaw, err := txn.First(string(t), "id", whId)
+	if err != nil {
+		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}
 
 	if whRaw == nil {
@@ -64,18 +74,18 @@ func (s *WhDbService) Retrieve(ctx context.Context, whType int, whId string, use
 
 }
 
-func (s *WhDbService) Create(ctx context.Context, whType int, w *domain.Wh) (*domain.Wh, *domain.DbError) {
-	return upsertWh(s.Db, w)
+func (s *WhDbService) Create(ctx context.Context, t domain.WhType, w *domain.Wh) (*domain.Wh, *domain.DbError) {
+	return upsertWh(s.Db, t, w)
 }
 
-func (s *WhDbService) Update(ctx context.Context, whType int, w *domain.Wh) (*domain.Wh, *domain.DbError) {
-	return upsertWh(s.Db, w)
+func (s *WhDbService) Update(ctx context.Context, t domain.WhType, w *domain.Wh) (*domain.Wh, *domain.DbError) {
+	return upsertWh(s.Db, t, w)
 }
 
-func upsertWh(db *memdb.MemDB, w *domain.Wh) (*domain.Wh, *domain.DbError) {
+func upsertWh(db *memdb.MemDB, t domain.WhType, w *domain.Wh) (*domain.Wh, *domain.DbError) {
 	txn := db.Txn(true)
 	defer txn.Abort()
-	if err := txn.Insert("wh", w); err != nil {
+	if err := txn.Insert(string(t), w); err != nil {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}
 	txn.Commit()
@@ -83,10 +93,10 @@ func upsertWh(db *memdb.MemDB, w *domain.Wh) (*domain.Wh, *domain.DbError) {
 	return w.Copy(), nil
 }
 
-func (s *WhDbService) Delete(ctx context.Context, whType int, whId string) *domain.DbError {
+func (s *WhDbService) Delete(ctx context.Context, t domain.WhType, whId string) *domain.DbError {
 	txn := s.Db.Txn(true)
 	defer txn.Abort()
-	if _, err := txn.DeleteAll("wh", "id", whId); err != nil {
+	if _, err := txn.DeleteAll(string(t), "id", whId); err != nil {
 		return &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}
 	txn.Commit()
@@ -94,9 +104,9 @@ func (s *WhDbService) Delete(ctx context.Context, whType int, whId string) *doma
 	return nil
 }
 
-func (s *WhDbService) RetrieveAll(ctx context.Context, whType int, users []string, sharedUsers []string) ([]*domain.Wh, *domain.DbError) {
+func (s *WhDbService) RetrieveAll(ctx context.Context, t domain.WhType, users []string, sharedUsers []string) ([]*domain.Wh, *domain.DbError) {
 	txn := s.Db.Txn(false)
-	it, err := txn.Get("wh", "id")
+	it, err := txn.Get(string(t), "id")
 	if err != nil {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}

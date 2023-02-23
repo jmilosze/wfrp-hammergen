@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	WhTypeMutation = 1
-	WhTypeSpell    = 2
+	WhTypeMutation = "mutation"
+	WhTypeSpell    = "spell"
 )
 
 const (
@@ -18,8 +18,10 @@ const (
 	WhUnauthorizedError
 )
 
+type WhType string
+
 type WhError struct {
-	WhType  int
+	WhType  WhType
 	ErrType int
 	Err     error
 }
@@ -39,16 +41,16 @@ type Wh struct {
 	Object  WhObject
 }
 
-func NewWh(whType int) (Wh, error) {
+func NewWh(t WhType) (Wh, error) {
 	var wh Wh
 
-	switch whType {
+	switch t {
 	case WhTypeMutation:
 		wh.Object = &WhMutation{}
 	case WhTypeSpell:
 		wh.Object = &WhSpell{}
 	default:
-		return wh, fmt.Errorf("invalid Wh type %d", whType)
+		return wh, fmt.Errorf("invalid Wh type %s", t)
 	}
 
 	return wh, nil
@@ -166,9 +168,9 @@ func (s WhSpell) Copy() WhObject {
 }
 
 type WhService interface {
-	Create(ctx context.Context, whType int, w *Wh, c *Claims) (*Wh, *WhError)
-	Get(ctx context.Context, whType int, whId string, c *Claims) (*Wh, *WhError)
-	Update(ctx context.Context, whType int, w *Wh, c *Claims) (*Wh, *WhError)
-	Delete(ctx context.Context, whType int, whId string, c *Claims) *WhError
-	List(ctx context.Context, whType int, c *Claims) ([]*Wh, *WhError)
+	Create(ctx context.Context, t WhType, w *Wh, c *Claims) (*Wh, *WhError)
+	Get(ctx context.Context, t WhType, whId string, c *Claims) (*Wh, *WhError)
+	Update(ctx context.Context, t WhType, w *Wh, c *Claims) (*Wh, *WhError)
+	Delete(ctx context.Context, t WhType, whId string, c *Claims) *WhError
+	List(ctx context.Context, t WhType, c *Claims) ([]*Wh, *WhError)
 }

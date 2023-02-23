@@ -50,14 +50,14 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		return nil, &domain.DbError{Type: domain.DbInvalidUserFieldError, Err: fmt.Errorf("invalid field name %s", fieldName)}
 	}
 
-	user, err1 := getOneUser(s.Db, fieldName, fieldValue)
-	if err1 != nil {
-		return nil, err1
+	user, dbErr := getOneUser(s.Db, fieldName, fieldValue)
+	if dbErr != nil {
+		return nil, dbErr
 	}
 
-	linkedUsers, err2 := getManyUsers(s.Db, "id", user.SharedAccountIds)
-	if err2 != nil {
-		return nil, err2
+	linkedUsers, dbErr := getManyUsers(s.Db, "id", user.SharedAccountIds)
+	if dbErr != nil {
+		return nil, dbErr
 	}
 
 	user.SharedAccountNames = idsToUsernames(user.SharedAccountIds, linkedUsers)
@@ -151,19 +151,19 @@ func (s *UserDbService) Update(ctx context.Context, u *domain.User) (*domain.Use
 }
 
 func upsertUser(s *UserDbService, user *domain.User, failIfUsernameExists bool) (*domain.User, *domain.DbError) {
-	_, err1 := getOneUser(s.Db, "username", user.Username)
-	if failIfUsernameExists && err1 == nil {
+	_, dbErr := getOneUser(s.Db, "username", user.Username)
+	if failIfUsernameExists && dbErr == nil {
 		return nil, &domain.DbError{Type: domain.DbAlreadyExistsError, Err: errors.New("user already exists")}
 	}
-	if err1 != nil && err1.Type != domain.DbNotFoundError {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err1.Unwrap()}
+	if dbErr != nil && dbErr.Type != domain.DbNotFoundError {
+		return nil, &domain.DbError{Type: domain.DbInternalError, Err: dbErr.Unwrap()}
 	}
 
 	userUpsert := user.Copy()
 
-	linkedUsers, err2 := getManyUsers(s.Db, "username", userUpsert.SharedAccountNames)
-	if err2 != nil {
-		return nil, err2
+	linkedUsers, dbErr := getManyUsers(s.Db, "username", userUpsert.SharedAccountNames)
+	if dbErr != nil {
+		return nil, dbErr
 	}
 	userUpsert.SharedAccountIds = usernamesToIds(userUpsert.SharedAccountNames, linkedUsers)
 	userUpsert.SharedAccountNames = idsToUsernames(userUpsert.SharedAccountIds, linkedUsers)

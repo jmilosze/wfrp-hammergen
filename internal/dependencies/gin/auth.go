@@ -17,10 +17,10 @@ func tokenHandler(us domain.UserService, js domain.JwtService) func(*gin.Context
 		username := c.PostForm("username")
 		password := c.PostForm("password")
 
-		user, err := us.Authenticate(c.Request.Context(), username, password)
+		user, uErr := us.Authenticate(c.Request.Context(), username, password)
 
-		if err != nil {
-			switch err.Type {
+		if uErr != nil {
+			switch uErr.Type {
 			case domain.UserNotFoundError:
 				c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "user not found"})
 			case domain.UserIncorrectPasswordError:
@@ -32,9 +32,9 @@ func tokenHandler(us domain.UserService, js domain.JwtService) func(*gin.Context
 		}
 
 		claims := domain.Claims{Id: user.Id, Admin: user.Admin, SharedAccounts: user.SharedAccountIds, ResetPassword: false}
-		token, tokenErr := js.GenerateAccessToken(&claims)
+		token, err := js.GenerateAccessToken(&claims)
 
-		if tokenErr != nil {
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "error generating token"})
 			return
 		}
