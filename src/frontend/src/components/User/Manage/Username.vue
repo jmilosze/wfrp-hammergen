@@ -12,7 +12,7 @@
           </b-form-group>
 
           <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">Current password</label>
             <div class="input-group">
               <input class="form-control valid" id="password" type="password" v-model="password" />
             </div>
