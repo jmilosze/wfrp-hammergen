@@ -6,10 +6,10 @@
         <div class="col-md-6">
           <div class="alert alert-success" v-if="submissionSuccessful">Username (email) updated successfully.</div>
 
-          <div class="form-group">
-            <label for="username">New username (email)</label>
-            <input class="form-control" type="text" id="username" v-model="email" />
-          </div>
+          <b-form-group label="New username (email)" label-for="email-input">
+            <b-form-input id="email-input" v-model="email" type="text"></b-form-input>
+            <b-form-invalid-feedback :state="validInputEmail[0]"> {{ validInputEmail[1] }}</b-form-invalid-feedback>
+          </b-form-group>
 
           <div class="form-group">
             <label for="password">Password</label>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { emailErrors } from "../../../utils/userValidators";
+import { validEmail } from "../../../utils/validation/user";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 
@@ -45,6 +45,7 @@ export default {
   name: "UserName",
   data() {
     return {
+      validatorOn: false,
       errors: [],
       submitting: false,
       submissionSuccessful: false,
@@ -52,10 +53,18 @@ export default {
       password: "",
     };
   },
+  computed: {
+    validInputEmail() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validEmail(this.email);
+    },
+  },
   methods: {
     onSubmissionFailed(response) {
       if (response.response) {
-        if (response.response.data.code === 102) {
+        if (response.response.data.code === 107) {
           this.errors.push("Incorrect password.");
         } else if (response.response.data.code === 101) {
           this.errors.push("User with this email already exists.");
@@ -67,22 +76,18 @@ export default {
       }
     },
     onSubmissionSuccessful() {
+      this.validatorOn = false;
       this.email = "";
       this.password = "";
       this.submissionSuccessful = true;
     },
     submit() {
+      this.validatorOn = true;
       this.submitting = false;
       this.submissionSuccessful = false;
-
       this.errors = [];
-      this.errors.push(...emailErrors(this.email));
 
-      if (!this.password) {
-        this.errors.push("Password is required");
-      }
-
-      if (this.errors.length) {
+      if (!this.validInputEmail[0]) {
         return;
       }
 

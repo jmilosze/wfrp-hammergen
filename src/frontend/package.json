@@ -33,12 +33,13 @@
     "@vue/eslint-config-prettier": "^7.0.0",
     "eslint": "^8.5.0",
     "eslint-plugin-vue": "^9.0.0",
-    "terser": "^5.14.2",
-    "vite": "^3.0.2",
-    "vitest": "^0.25.6",
     "prettier": "^2.7.1",
     "sass": "^1.56.1",
-    "sass-loader": "^10.2.0"
+    "sass-loader": "^10.2.0",
+    "terser": "^5.14.2",
+    "vite": "^3.0.2",
+    "vite-plugin-rewrite-all": "^1.0.1",
+    "vitest": "^0.25.6"
   },
   "prettier": {
     "printWidth": 120

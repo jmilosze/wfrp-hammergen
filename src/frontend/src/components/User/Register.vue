@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { validEmail, validPassword, validPasswordMatch, validUserName } from "../../utils/userValidators";
+import { validEmail, validPassword, validPasswordMatch, validUserName } from "../../utils/validation/user";
 import { anonRequest } from "../../services/auth";
 
 export default {
@@ -70,11 +70,11 @@ export default {
   },
   data() {
     return {
+      validatorOn: false,
       name: "",
       username: "",
       password: "",
       retypedPassword: "",
-      validatorOn: false,
 
       errors: [],
 

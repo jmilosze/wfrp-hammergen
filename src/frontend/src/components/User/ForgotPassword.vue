@@ -22,10 +22,10 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input v-model="username" type="text" id="email" class="form-control" />
-            </div>
+            <b-form-group label="Email" label-for="email-input">
+              <b-form-input id="email-input" v-model="username" type="text"></b-form-input>
+              <b-form-invalid-feedback :state="validInputEmail[0]"> {{ validInputEmail[1] }}</b-form-invalid-feedback>
+            </b-form-group>
 
             <div class="form-group">
               <button type="submit" form="login" value="Submit" class="btn btn-primary">
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { emailErrors } from "../../utils/userValidators";
+import { validEmail } from "../../utils/validation/user";
 import { anonRequest } from "../../services/auth";
 
 export default {
@@ -64,11 +64,20 @@ export default {
   },
   data() {
     return {
+      validatorOn: false,
       username: "",
       errors: [],
       submitting: false,
       submissionSuccessful: false,
     };
+  },
+  computed: {
+    validInputEmail() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validEmail(this.username);
+    },
   },
   methods: {
     onSubmissionFailed(error) {
@@ -79,17 +88,17 @@ export default {
       }
     },
     onSubmissionSuccessful() {
+      this.validatorOn = false;
       this.username = "";
       this.submissionSuccessful = true;
     },
     async submit() {
+      this.validatorOn = true;
       this.submitting = false;
       this.submissionSuccessful = false;
-
       this.errors = [];
-      this.errors.push(...emailErrors(this.username));
 
-      if (this.errors.length) {
+      if (!this.validInputEmail[0]) {
         return;
       }
 
