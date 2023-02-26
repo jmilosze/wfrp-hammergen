@@ -10,15 +10,19 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <div class="form-group">
-              <label for="password">New password</label>
-              <input v-model="password" type="password" id="password" class="form-control" />
-            </div>
+            <b-form-group label="New password" label-for="password-input">
+              <b-form-input id="password-input" v-model="password" type="password"></b-form-input>
+              <b-form-invalid-feedback :state="validInputPassword[0]">
+                {{ validInputPassword[1] }}</b-form-invalid-feedback
+              >
+            </b-form-group>
 
-            <div class="form-group">
-              <label for="retyped-password">Confirm password</label>
-              <input v-model="retypedPassword" type="password" id="retyped-password" class="form-control" />
-            </div>
+            <b-form-group label="Confirm new password" label-for="retyped-password-input">
+              <b-form-input id="retyped-password-input" v-model="retypedPassword" type="password"></b-form-input>
+              <b-form-invalid-feedback :state="validInputPasswordMatch[0]">
+                {{ validInputPasswordMatch[1] }}</b-form-invalid-feedback
+              >
+            </b-form-group>
 
             <div class="form-group">
               <button type="submit" form="reset-password" value="Submit" class="btn btn-primary">
@@ -41,7 +45,7 @@
 </template>
 
 <script>
-import { passwordErrors } from "../../utils/userValidators";
+import { validPassword, validPasswordMatch } from "../../utils/validation/user";
 import { anonRequest } from "../../services/auth";
 
 export default {
@@ -54,12 +58,27 @@ export default {
   },
   data() {
     return {
+      validatorOn: false,
       errors: [],
       submitting: false,
       submissionSuccessful: false,
       password: "",
       retypedPassword: "",
     };
+  },
+  computed: {
+    validInputPassword() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validPassword(this.password);
+    },
+    validInputPasswordMatch() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validPasswordMatch(this.password, this.retypedPassword);
+    },
   },
   methods: {
     onSubmissionFailed(response) {
@@ -74,6 +93,7 @@ export default {
       }
     },
     onSubmissionSuccessful() {
+      this.validatorOn = false;
       this.password = "";
       this.retypedPassword = "";
       this.submissionSuccessful = true;
@@ -83,13 +103,12 @@ export default {
       }, 1000);
     },
     submit() {
+      this.validatorOn = true;
       this.submitting = false;
       this.submissionSuccessful = false;
-
       this.errors = [];
-      this.errors.push(...passwordErrors(this.password, this.retypedPassword));
 
-      if (this.errors.length) {
+      if (!this.validInputPassword[0] || !this.validInputPasswordMatch[0]) {
         return;
       }
 

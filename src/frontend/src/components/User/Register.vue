@@ -10,25 +10,29 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <div class="form-group">
-              <label for="username">Name</label>
-              <input v-model="name" type="text" id="username" class="form-control" />
-            </div>
+            <b-form-group label="Name" label-for="name-input">
+              <b-form-input id="name-input" v-model="name" type="text"></b-form-input>
+              <b-form-invalid-feedback :state="validInputName[0]"> {{ validInputName[1] }}</b-form-invalid-feedback>
+            </b-form-group>
 
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input v-model="username" type="text" id="email" class="form-control" />
-            </div>
+            <b-form-group label="Email" label-for="email-input">
+              <b-form-input id="email-input" v-model="username" type="text"></b-form-input>
+              <b-form-invalid-feedback :state="validInputEmail[0]"> {{ validInputEmail[1] }}</b-form-invalid-feedback>
+            </b-form-group>
 
-            <div class="form-group">
-              <label for="password">Password</label>
-              <input v-model="password" type="password" id="password" class="form-control" />
-            </div>
+            <b-form-group label="Password" label-for="password-input">
+              <b-form-input id="password-input" v-model="password" type="password"></b-form-input>
+              <b-form-invalid-feedback :state="validInputPassword[0]">
+                {{ validInputPassword[1] }}</b-form-invalid-feedback
+              >
+            </b-form-group>
 
-            <div class="form-group">
-              <label for="retyped-password">Confirm password</label>
-              <input v-model="retypedPassword" type="password" id="retyped-password" class="form-control" />
-            </div>
+            <b-form-group label="Password" label-for="retyped-password-input">
+              <b-form-input id="retyped-password-input" v-model="retypedPassword" type="password"></b-form-input>
+              <b-form-invalid-feedback :state="validInputPasswordMatch[0]">
+                {{ validInputPasswordMatch[1] }}</b-form-invalid-feedback
+              >
+            </b-form-group>
 
             <div class="form-group">
               <button type="submit" form="register" value="Submit" class="btn btn-primary">
@@ -51,7 +55,7 @@
 </template>
 
 <script>
-import { emailErrors, passwordErrors, nameErrors } from "../../utils/userValidators";
+import { validEmail, validPassword, validPasswordMatch, validUserName } from "../../utils/validation/user";
 import { anonRequest } from "../../services/auth";
 
 export default {
@@ -66,6 +70,7 @@ export default {
   },
   data() {
     return {
+      validatorOn: false,
       name: "",
       username: "",
       password: "",
@@ -89,6 +94,7 @@ export default {
     },
 
     onRegistrationSuccessful() {
+      this.validatorOn = false;
       this.name = "";
       this.username = "";
       this.password = "";
@@ -101,15 +107,17 @@ export default {
     },
 
     async submit() {
+      this.validatorOn = true;
       this.registering = false;
       this.registrationSuccessful = false;
-
       this.errors = [];
-      this.errors.push(...emailErrors(this.username));
-      this.errors.push(...passwordErrors(this.password, this.retypedPassword));
-      this.errors.push(...nameErrors(this.name));
 
-      if (this.errors.length) {
+      if (
+        !this.validInputName[0] ||
+        !this.validInputEmail[0] ||
+        !this.validInputPassword[0] ||
+        !this.validInputPasswordMatch[0]
+      ) {
         return;
       }
 
@@ -132,6 +140,32 @@ export default {
       } finally {
         this.registering = false;
       }
+    },
+  },
+  computed: {
+    validInputName() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validUserName(this.name);
+    },
+    validInputEmail() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validEmail(this.username);
+    },
+    validInputPassword() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validPassword(this.password);
+    },
+    validInputPasswordMatch() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validPasswordMatch(this.password, this.retypedPassword);
     },
   },
 };

@@ -13,16 +13,19 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="new-password">New password</label>
-            <input v-model="newPassword" type="password" id="new-password" class="form-control" />
-          </div>
+          <b-form-group label="New password" label-for="new-password-input">
+            <b-form-input id="new-password-input" v-model="newPassword" type="password"></b-form-input>
+            <b-form-invalid-feedback :state="validInputPassword[0]">
+              {{ validInputPassword[1] }}</b-form-invalid-feedback
+            >
+          </b-form-group>
 
-          <div class="form-group">
-            <label for="retyped-password">Confirm new password</label>
-            <input v-model="retypedPassword" type="password" id="retyped-password" class="form-control" />
-          </div>
-
+          <b-form-group label="Confirm new password" label-for="retyped-password-input">
+            <b-form-input id="retyped-password-input" v-model="retypedPassword" type="password"></b-form-input>
+            <b-form-invalid-feedback :state="validInputPasswordMatch[0]">
+              {{ validInputPasswordMatch[1] }}</b-form-invalid-feedback
+            >
+          </b-form-group>
           <button id="update-password-button" type="submit" class="btn btn-primary">
             <span v-if="submitting" class="spinner-border spinner-border-sm" />
             Save
@@ -42,7 +45,7 @@
 </template>
 
 <script>
-import { passwordErrors } from "../../../utils/userValidators";
+import { validPassword, validPasswordMatch } from "../../../utils/validation/user";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 
@@ -50,6 +53,7 @@ export default {
   name: "UserPassword",
   data() {
     return {
+      validatorOn: false,
       errors: [],
       submissionSuccessful: false,
       submitting: false,
@@ -58,10 +62,24 @@ export default {
       retypedPassword: "",
     };
   },
+  computed: {
+    validInputPassword() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validPassword(this.newPassword);
+    },
+    validInputPasswordMatch() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validPasswordMatch(this.newPassword, this.retypedPassword);
+    },
+  },
   methods: {
     onSubmissionFailed(response) {
       if (response.response) {
-        if (response.response.data.code === 102) {
+        if (response.response.data.code === 107) {
           this.errors.push("Incorrect current password.");
         } else {
           this.errors.push("Server Error.");
@@ -71,23 +89,19 @@ export default {
       }
     },
     onSubmissionSuccessful() {
+      this.validatorOn = false;
       this.currentPassword = "";
       this.newPassword = "";
       this.retypedPassword = "";
       this.submissionSuccessful = true;
     },
     submit() {
+      this.validatorOn = true;
       this.submitting = false;
       this.submissionSuccessful = false;
-
       this.errors = [];
-      this.errors.push(...passwordErrors(this.newPassword, this.retypedPassword));
 
-      if (!this.currentPassword) {
-        this.errors.push("Current password is required");
-      }
-
-      if (this.errors.length) {
+      if (!this.validInputPassword[0] || !this.validInputPasswordMatch[0]) {
         return;
       }
 

@@ -11,12 +11,10 @@
             <input class="form-control" disabled="" type="text" id="username" v-model="user.username" />
           </div>
 
-          <div class="form-group">
-            <label for="name-of-user">Name</label>
-            <div class="input-group">
-              <input class="form-control valid" id="name-of-user" v-model="user.name" />
-            </div>
-          </div>
+          <b-form-group label="Name" label-for="name-input">
+            <b-form-input id="name-input" v-model="user.name" type="text"></b-form-input>
+            <b-form-invalid-feedback :state="validInputName[0]"> {{ validInputName[1] }}</b-form-invalid-feedback>
+          </b-form-group>
 
           <button id="update-profile-button" type="submit" class="btn btn-primary">
             <span v-if="submitting" class="spinner-border spinner-border-sm" />
@@ -37,7 +35,7 @@
 </template>
 
 <script>
-import { nameErrors } from "../../../utils/userValidators";
+import { validUserName } from "../../../utils/validation/user";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 
@@ -56,6 +54,7 @@ export default {
   },
   data() {
     return {
+      validatorOn: false,
       errors: [],
       submitting: false,
       submissionSuccessful: false,
@@ -65,22 +64,34 @@ export default {
       },
     };
   },
+  computed: {
+    validInputName() {
+      if (!this.validatorOn) {
+        return [true, null];
+      }
+      return validUserName(this.user.name);
+    },
+  },
   methods: {
+    onRegistrationSuccessful() {
+      this.validatorOn = false;
+      this.submissionSuccessful = true;
+    },
+
     submit() {
+      this.validatorOn = true;
       this.submitting = false;
       this.submissionSuccessful = false;
-
       this.errors = [];
-      this.errors.push(...nameErrors(this.user.name));
 
-      if (this.errors.length) {
+      if (!this.validInputName[0]) {
         return;
       }
 
       this.submitting = true;
 
       logoutIfUnauthorized(authRequest.post)("/api/user/update", { name: this.user.name })
-        .then(() => (this.submissionSuccessful = true))
+        .then(() => this.onRegistrationSuccessful())
         .catch(() => this.errors.push("Server Error."))
         .then(() => (this.submitting = false));
     },
