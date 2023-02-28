@@ -59,6 +59,8 @@ func whCreateOrUpdateHandler(isCreate bool, s domain.WhService, t domain.WhType)
 				c.JSON(BadRequestErrResp(whErr.Error()))
 			case domain.WhUnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
+			case domain.WhNotFoundError:
+				c.JSON(NotFoundErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
 			}

@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/go-playground/validator/v10"
@@ -134,7 +135,7 @@ func (s *UserService) Create(ctx context.Context, u *domain.User) (*domain.User,
 		return nil, &domain.UserError{Type: domain.UserInternalError, Err: err}
 	}
 	u.PasswordHash = passwordHash
-	u.Id = xid.New().String()
+	u.Id = hex.EncodeToString(xid.New().Bytes())
 	u.CreatedOn = time.Now()
 
 	createdUser, dbErr := s.UserDbService.Create(ctx, u)
@@ -286,7 +287,7 @@ func (s *UserService) UpdateClaims(ctx context.Context, c *domain.Claims, u *dom
 }
 
 func (s *UserService) Delete(ctx context.Context, c *domain.Claims, id string) *domain.UserError {
-	if c.Id == "anonymous" || id != c.Id {
+	if id != c.Id {
 		return &domain.UserError{Type: domain.UserUnauthorizedError, Err: errors.New("unauthorized")}
 	}
 

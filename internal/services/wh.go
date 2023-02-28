@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
@@ -41,7 +42,7 @@ func (s *WhService) Create(ctx context.Context, t domain.WhType, w *domain.Wh, c
 	} else {
 		w.OwnerId = c.Id
 	}
-	w.Id = xid.New().String()
+	w.Id = hex.EncodeToString(xid.New().Bytes())
 
 	createdWh, dbErr := s.WhDbService.Create(ctx, t, w)
 	if dbErr != nil {
@@ -86,16 +87,17 @@ func (s *WhService) Get(ctx context.Context, t domain.WhType, whId string, c *do
 }
 
 func (s *WhService) Update(ctx context.Context, t domain.WhType, w *domain.Wh, c *domain.Claims) (*domain.Wh, *domain.WhError) {
-	if c.Id == "anonymous" {
-		return nil, &domain.WhError{WhType: t, ErrType: domain.WhUnauthorizedError, Err: errors.New("unauthorized")}
-	}
-
 	if err := s.Validator.Struct(w); err != nil {
 		return nil, &domain.WhError{WhType: t, ErrType: domain.WhInvalidArgumentsError, Err: err}
 	}
 
-	users := []string{"admin", c.Id}
-	_, dbErr := s.WhDbService.Retrieve(ctx, t, w.Id, users, c.SharedAccounts)
+	if c.Admin {
+		w.OwnerId = "admin"
+	} else {
+		w.OwnerId = c.Id
+	}
+
+	updatedWh, dbErr := s.WhDbService.Update(ctx, t, w, c.Id)
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
@@ -105,32 +107,17 @@ func (s *WhService) Update(ctx context.Context, t domain.WhType, w *domain.Wh, c
 		}
 	}
 
-	if c.Admin {
-		w.OwnerId = "admin"
-	} else {
-		w.OwnerId = c.Id
-	}
-
-	updatedWh, dbErr := s.WhDbService.Update(ctx, t, w)
-	if dbErr != nil {
-		return nil, &domain.WhError{WhType: t, ErrType: domain.UserInternalError, Err: dbErr}
-	}
-
 	updatedWh.CanEdit = canEdit(updatedWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 	return updatedWh, nil
 }
 
 func (s *WhService) Delete(ctx context.Context, t domain.WhType, whId string, c *domain.Claims) *domain.WhError {
-	if c.Id == "anonymous" {
-		return &domain.WhError{WhType: t, ErrType: domain.WhUnauthorizedError, Err: errors.New("unauthorized")}
+	dbErr := s.WhDbService.Delete(ctx, t, whId, c.Id)
+	if dbErr != nil {
+		return &domain.WhError{ErrType: domain.WhInternalError, WhType: t, Err: dbErr}
 	}
 
-	if dbErr := s.WhDbService.Delete(ctx, t, whId); dbErr != nil {
-		return &domain.WhError{WhType: t, ErrType: domain.WhInternalError, Err: dbErr}
-
-	} else {
-		return nil
-	}
+	return nil
 }
 
 func (s *WhService) List(ctx context.Context, t domain.WhType, c *domain.Claims) ([]*domain.Wh, *domain.WhError) {
