@@ -13,7 +13,7 @@ const itemTypes = {
   0: "Melee",
   1: "Ranged",
   2: "Ammunition",
-  3: "Armor",
+  3: "Armour",
   4: "Container",
   5: "Other",
   6: "Grimoire",
