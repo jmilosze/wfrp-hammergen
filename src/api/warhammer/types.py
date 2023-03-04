@@ -60,6 +60,7 @@ class AmmunitionGroup(enum.IntEnum):
     BOW = 1
     CROSSBOW = 2
     SLING = 3
+    ENTANGLING = 4
 
 
 class ArmorLocation(enum.IntEnum):
@@ -74,6 +75,8 @@ class ArmorGroup(enum.IntEnum):
     BOILED_LEATHER = 1
     MAIL = 2
     PLATE = 3
+    SOFT_KIT = 4
+    BRIGANDINE = 5
 
 
 class Attribute(enum.IntEnum):

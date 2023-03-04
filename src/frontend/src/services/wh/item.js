@@ -46,6 +46,7 @@ const ammunitionGroups = {
   1: "Bow",
   2: "Crossbow",
   3: "Sling",
+  4: "Entagling",
 };
 
 const armorGroups = {
@@ -53,6 +54,8 @@ const armorGroups = {
   1: "Boiled Leather",
   2: "Mail",
   3: "Plate",
+  4: "Soft Kit",
+  5: "Brigandine",
 };
 
 const armorLocations = {
