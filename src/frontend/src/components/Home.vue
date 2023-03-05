@@ -9,21 +9,15 @@
 
       <div class="text-sm-left">
         <div class="alert alert-info" role="alert">
-          <div class="h3">Ogres are here!</div>
+          <div class="h3">Archives of the Empire: Volume III</div>
           <p>
-            We are happy to announce we added Ogres from
-            <b-link href="https://cubicle7games.com/wfrp-archives-of-the-empire-ii" target="_blank"
-              >Archives of the Empire: Volume II.
-            </b-link>
-
-            You can read more about this and previous updates in
+            We are happy to announce we contents from
+            <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3" target="_blank"
+              >Archives of the Empire: Volume III</b-link
+            >. You can read more about this and previous updates in
             <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
             and on our
-            <b-link
-              href="https://ko-fi.com/post/Ogres-F1F7IYN1G?justpublished=true&alias=Ogres-F1F7IYN1G"
-              target="_blank"
-              >Ko-fi blog.
-            </b-link>
+            <b-link href="https://ko-fi.com/post/Archives-of-the-Empire-Volume-III-Update-F2F5J8MI3?justpublished=true&alias=Archives-of-the-Empire-Volume-III-Update-F2F5J8MI3" target="_blank">Ko-fi blog. </b-link>
           </p>
           <p>
             As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via

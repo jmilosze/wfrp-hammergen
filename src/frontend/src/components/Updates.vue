@@ -2,6 +2,20 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">05 Mar 2023</div>
+        <p>
+          Added contents of
+          <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3" target="_blank"
+            >Archives of the Empire: Volume III
+          </b-link>
+        </p>
+        <ul>
+          <li>New careers: 3 specialisations of Priest: Handrich, Solkan, and Rhya.</li>
+          <li>New magic: Miracles of Handrich, Solkan, and Rhya. Spells from the Lore of Hedgecraft.</li>
+          <li>New talents: Animal Assistant.</li>
+          <li>New and updated Armour and Armour Qualities and Flaws.</li>
+          <li>Rules for creation of Altdorf characters are <b>not</b> implemented, but will be added later on.</li>
+        </ul>
         <div class="h3">22 Feb 2023</div>
         <p>
           Added contents of
@@ -20,7 +34,7 @@
         <p>
           Added contents from
           <b-link href="https://cubicle7games.com/the-winds-of-magic-wahammer-fantasy-roleplay" target="_blank"
-            >Winds of Magic:
+            >Winds of Magic
           </b-link>
         </p>
         <ul>

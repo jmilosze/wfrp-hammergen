@@ -10,7 +10,7 @@
       <b-container>
         <div class="text-center mt-2">
           <p>
-            &copy; 2019 - 2022 Hammergen - Contact:
+            Contact:
             <a href="mailto:admin@hammergen.net">admin@hammergen.net</a>
           </p>
         </div>

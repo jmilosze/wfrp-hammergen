@@ -36,7 +36,10 @@ species_careers = {
         ["Lawyer", 201, 300],
         ["Nun", 301, 500],
         ["Physician", 501, 600],
-        ["Priest", 601, 1100],
+        ["Priest of Handrich", 601, 650],
+        ["Priest of Solkan", 651, 700],
+        ["Priestesses of Rhya", 701, 750],
+        ["Priest", 751, 1100],
         ["Scholar", 1101, 1270],
         ["Cartographer", 1271, 1300],
         ["Wizard", 1301, 1315],
@@ -406,7 +409,6 @@ for career_name in career_names:
             break
     else:
         raise Exception(f"Career {career_name} not found!")
-
 
 # create table to upload
 career_gen_table = {}
