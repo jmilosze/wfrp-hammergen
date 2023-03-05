@@ -1,9 +1,4 @@
-function checkString(testValue, label, regex, msg) {
-  if (regex.test(testValue)) {
-    return [true, null];
-  }
-  return [false, msg];
-}
+import { checkString } from "./common";
 
 const nameRe = /^.{1,20}$/;
 export function validUserName(name) {

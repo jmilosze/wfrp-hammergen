@@ -17,7 +17,11 @@
             >. You can read more about this and previous updates in
             <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
             and on our
-            <b-link href="https://ko-fi.com/post/Archives-of-the-Empire-Volume-III-Update-F2F5J8MI3?justpublished=true&alias=Archives-of-the-Empire-Volume-III-Update-F2F5J8MI3" target="_blank">Ko-fi blog. </b-link>
+            <b-link
+              href="https://ko-fi.com/post/Archives-of-the-Empire-Volume-III-Update-F2F5J8MI3?justpublished=true&alias=Archives-of-the-Empire-Volume-III-Update-F2F5J8MI3"
+              target="_blank"
+              >Ko-fi blog.
+            </b-link>
           </p>
           <p>
             As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
@@ -61,15 +65,11 @@
         </p>
         <div class="h3" id="resources">Included resources</div>
         <ul>
-          <li><b>Warhammer Fantasy Roleplay Rulebook</b></li>
-          <li><b>Rough Nights & Hard Days</b>: Gnomes</li>
-          <li><b>Archives of the Empire: Volume I</b>: 4 new Careers, Talents, and Items</li>
-          <li>
-            <b>Up in Arms</b>: new Items, Qualities/Flaws, Careers, new and updated Skills and Talents, and Miracles of
-            Myrmidia
-          </li>
-          <li><b>Winds of Magic</b>: new Spells, Careers, Items, Skills, and Talents</li>
-          <li><b>Archives of the Empire: Volume II</b>: Ogres, and Ogre Trappings, Careers, and Magic</li>
+          <li>Warhammer Fantasy Roleplay Rulebook</li>
+          <li>Rough Nights & Hard Days</li>
+          <li>Archives of the Empire: Volume I, II, and III</li>
+          <li>Up in Arms</li>
+          <li>Winds of Magic</li>
         </ul>
 
         <div class="h3">How do I use it?</div>

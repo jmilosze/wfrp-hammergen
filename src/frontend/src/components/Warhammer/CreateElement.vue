@@ -95,9 +95,17 @@ export default {
         return (event.returnValue = "zxc");
       }
     },
+    // eslint-disable-next-line no-unused-vars
+    async submit(event) {
+      await this.submitForm();
+    },
     async submitForm(redirectElementType = null) {
       this.beforeSubmit();
 
+      if (!this.validate()) {
+        this.afterSubmit();
+        return;
+      }
       try {
         let serverResp = null;
         if (this.id === "create") {
@@ -106,6 +114,8 @@ export default {
           serverResp = await logoutIfUnauthorized(this.elementApi.updateElement)(this.element);
         }
         if (redirectElementType) {
+          console.log("Hello");
+          console.log(redirectElementType);
           this.redirectAfterSubmit(serverResp.id, redirectElementType);
         } else if (!this.addAnother) {
           this.goBack();
@@ -118,6 +128,9 @@ export default {
         this.addError();
       }
       this.afterSubmit();
+    },
+    validate() {
+      return true;
     },
     redirectAfterSubmit(elementId, redirectElementName) {
       // eslint-disable-next-line vue/no-mutating-props
