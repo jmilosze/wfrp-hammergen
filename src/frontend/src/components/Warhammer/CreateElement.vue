@@ -4,6 +4,7 @@
 
 <script>
 import { logoutIfUnauthorized } from "../../utils/navigation";
+import { validWhDesc, validWhShortDesc } from "../../utils/validation/wh";
 
 const leaveConfirmation = "Changes that you made may not be saved.";
 
@@ -161,6 +162,12 @@ export default {
     },
     showAddAnother: function () {
       return this.id === "create";
+    },
+    validName() {
+      return validWhShortDesc(this.element.name);
+    },
+    validDesc() {
+      return validWhDesc(this.element.description);
     },
   },
 };

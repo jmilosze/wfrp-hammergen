@@ -20,7 +20,7 @@ from ..warhammer.types import (
 )
 
 ID_SCHEMA = Regex("^[a-f0-9]{24}$")
-NAME_SCHEMA = Regex("^[^<>]{1,200}$")
+NAME_SCHEMA = Regex("^[^<>]{0,200}$")
 DESCRIPTION_SCHEMA = Regex("^[^<>]{0,100000}$")
 SHORT_DESCRIPTION_SCHEMA = Regex("^[^<>]{0,200}$")
 

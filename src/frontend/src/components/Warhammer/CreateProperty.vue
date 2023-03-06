@@ -17,8 +17,12 @@
         <b-row>
           <b-col md="6">
             <b-form-group label="Name" label-for="name-input">
-              <b-form-input id="name-input" :disabled="!element.canEdit" v-model="element.name" type="text">
-              </b-form-input>
+              <b-form-input
+                id="name-input"
+                :disabled="!element.canEdit"
+                v-model="element.name"
+                type="text"
+              ></b-form-input>
               <b-form-invalid-feedback :state="validName[0]">{{ validName[1] }}</b-form-invalid-feedback>
             </b-form-group>
 
@@ -28,8 +32,7 @@
                 :disabled="!element.canEdit"
                 :options="itemPropertyTypeOptions"
                 v-model="element.type"
-              >
-              </b-form-select>
+              ></b-form-select>
             </b-form-group>
 
             <b-form-group label="Applicable To" label-for="applicable-to-input">
@@ -83,7 +86,6 @@ import {
 } from "../../services/wh/itemproperty";
 import { itemTypes } from "../../services/wh/item";
 import { authRequest } from "../../services/auth";
-import { validWhDesc, validWhName } from "../../utils/validation/wh";
 
 export default {
   name: "CreateProperty",
@@ -121,14 +123,6 @@ export default {
     },
     validate() {
       return this.validName[0] && this.validDesc[0];
-    },
-  },
-  computed: {
-    validName() {
-      return validWhName(this.element.name);
-    },
-    validDesc() {
-      return validWhDesc(this.element.description);
     },
   },
 };
