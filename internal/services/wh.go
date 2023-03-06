@@ -87,6 +87,10 @@ func (s *WhService) Get(ctx context.Context, t domain.WhType, whId string, c *do
 }
 
 func (s *WhService) Update(ctx context.Context, t domain.WhType, w *domain.Wh, c *domain.Claims) (*domain.Wh, *domain.WhError) {
+	if c.Id == "anonymous" {
+		return nil, &domain.WhError{WhType: t, ErrType: domain.WhUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
 	if err := s.Validator.Struct(w); err != nil {
 		return nil, &domain.WhError{WhType: t, ErrType: domain.WhInvalidArgumentsError, Err: err}
 	}
@@ -112,6 +116,10 @@ func (s *WhService) Update(ctx context.Context, t domain.WhType, w *domain.Wh, c
 }
 
 func (s *WhService) Delete(ctx context.Context, t domain.WhType, whId string, c *domain.Claims) *domain.WhError {
+	if c.Id == "anonymous" {
+		return &domain.WhError{WhType: t, ErrType: domain.WhUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
 	dbErr := s.WhDbService.Delete(ctx, t, whId, c.Id)
 	if dbErr != nil {
 		return &domain.WhError{ErrType: domain.WhInternalError, WhType: t, Err: dbErr}
