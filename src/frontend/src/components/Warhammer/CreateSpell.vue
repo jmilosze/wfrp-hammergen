@@ -145,6 +145,16 @@ export default {
       this.element = generateNewSpell(canEdit);
       this.elementOriginal = generateNewSpell(canEdit);
     },
+    validate() {
+      return (
+        this.validName[0] &&
+        this.validDesc[0] &&
+        this.validRange[0] &&
+        this.validTarget[0] &&
+        this.validDuration[0] &&
+        this.validCn[0]
+      );
+    },
   },
   computed: {
     validRange() {

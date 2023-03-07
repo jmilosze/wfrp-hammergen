@@ -131,7 +131,7 @@ export default {
       this.afterSubmit();
     },
     validate() {
-      return true;
+      return this.validName[0] && this.validDesc[0];
     },
     redirectAfterSubmit(elementId, redirectElementName) {
       // eslint-disable-next-line vue/no-mutating-props

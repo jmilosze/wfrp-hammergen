@@ -121,9 +121,6 @@ export default {
       this.element = generateNewItemProperty(canEdit);
       this.elementOriginal = generateNewItemProperty(canEdit);
     },
-    validate() {
-      return this.validName[0] && this.validDesc[0];
-    },
   },
 };
 </script>
