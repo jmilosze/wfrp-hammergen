@@ -17,3 +17,9 @@ const invalidCastingNumber = "Casting Number is required and has to be between 0
 export function validWhCastingNumber(cn) {
   return checkString(cn, castingNumberRe, invalidCastingNumber);
 }
+
+const talentMaxRankRe = /^([1-9][0-9]|[0-9])$/;
+const invalidTalentMaxRank = "Talent max rank is required and has to be between 0 and 99.";
+export function validWhTalentMaxRank(rank) {
+  return checkString(rank, talentMaxRankRe, invalidTalentMaxRank);
+}

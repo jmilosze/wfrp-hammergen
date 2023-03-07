@@ -165,8 +165,8 @@ SKILL_COMPONENTS = {
 TALENT_COMPONENTS = {
     "name": NAME_SCHEMA,
     "description": DESCRIPTION_SCHEMA,
-    "tests": DESCRIPTION_SCHEMA,
-    "max_rank": And(int, lambda x: 1000 >= x >= 0),
+    "tests": SHORT_DESCRIPTION_SCHEMA,
+    "max_rank": And(int, lambda x: 99 >= x >= 0),
     "max_rank_att": Or(*list(Attribute)),
     "is_group": bool,
     "modifiers": MODIFIERS_SCHEMA,
