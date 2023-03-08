@@ -167,7 +167,7 @@ export default {
       return validWhShortDesc(this.element.duration);
     },
     validCn() {
-      return validWhCastingNumber(this.element.cn.toString());
+      return validWhCastingNumber(this.element.cn);
     },
   },
 };

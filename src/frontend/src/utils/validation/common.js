@@ -4,3 +4,10 @@ export function checkString(testValue, regex, msg) {
   }
   return [false, msg];
 }
+
+export function checkFloat(testValue, minValue, maxValue, msg) {
+  if (testValue >= minValue && testValue <= maxValue) {
+    return [true, null];
+  }
+  return [false, msg];
+}
