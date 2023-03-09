@@ -19,7 +19,6 @@
     "bootstrap-vue": "^2.23.1",
     "core-js": "^3.26.1",
     "file-saver": "^2.0.5",
-    "vee-validate": "^3.4.14",
     "vue": "2.7.14",
     "vue-gtag": "^1.16.1",
     "vue-kofi": "^1.1.1",

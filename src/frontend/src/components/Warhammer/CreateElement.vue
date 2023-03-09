@@ -26,9 +26,6 @@ export default {
       submitting: false,
       element: null,
       elementOriginal: null,
-      nameValid: { required: true, max: 200, regex: /^[^<>]+$/ },
-      descShortValid: { max: 200, regex: /^[^<>]+$/ },
-      descValid: { max: 100000, regex: /^[^<>]+$/ },
       saveSuccessCountdown: 0,
       addAnother: false,
       checkIfModified: true,
@@ -70,9 +67,6 @@ export default {
       }
     },
     resetTables() {},
-    invFeedState: function (errors, valid) {
-      return errors[0] ? false : valid ? true : null;
-    },
     addError() {
       this.errors.push("Server Error.");
     },

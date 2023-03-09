@@ -24,14 +24,14 @@ export function validWhTalentMaxRank(rank) {
   return checkString(rank.toString(), talentMaxRankRe, invalidTalentMaxRank);
 }
 
-const invalidPrice = "Price is required and has to be a decimal number between 0 and 1000000000";
+const invalidPrice = "Price is required and has to be a decimal number between 0 and 1,000,000,000";
 const minPrice = 0;
 const maxPrice = 1000000000;
 export function validWhItemPrice(price) {
   return checkFloat(price, minPrice, maxPrice, invalidPrice);
 }
 
-const invalidEnc = "Encumbrance is required and has to be a decimal number between 0 and 1000";
+const invalidEnc = "Encumbrance is required and has to be a decimal number between 0 and 1,000";
 const minEnc = 0;
 const maxEnc = 1000;
 export function validWhItemEnc(enc) {
@@ -56,8 +56,8 @@ export function validWhItemRngMult(rngMult) {
   return checkString(rngMult.toString(), rngMultRe, invalidRngMult);
 }
 
-const rngRe = /^-?([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|1000)$/;
-const invalidRng = "Range is required and has to be between -1000 and 1000.";
+const rngRe = /^-?(0|[1-9]\d{0,2}|1000)$/;
+const invalidRng = "Range is required and has to be between -1,000 and 1,000.";
 export function validWhItemRng(rng) {
   return checkString(rng.toString(), rngRe, invalidRng);
 }
@@ -72,4 +72,28 @@ const capRe = /^([0-9]|[1-9][0-9]|100)$/;
 const invalidCap = "Capacity is required and has to be between 0 and 100.";
 export function validWhItemCap(cap) {
   return checkString(cap.toString(), capRe, invalidCap);
+}
+
+const fateResilienceRe = /^(0|[1-9]\d{0,2}|1000)$/;
+const invalidFateResilience = "This field is required and has to be between 0 and 1,000.";
+export function validWhFateResilience(points) {
+  return checkString(points.toString(), fateResilienceRe, invalidFateResilience);
+}
+
+const charCoinRe = /^(0|[1-9]\d{0,5}|1000000)$/;
+const invalidCharCoin = "This field is required and has to be between 0 and 1,000,000.";
+export function validWhCharCoin(coin) {
+  return checkString(coin.toString(), charCoinRe, invalidCharCoin);
+}
+
+const charExpRe = /^(0|[1-9]\d{0,6}|10000000)$/;
+const invalidCharExp = "Experience is required and has to be between 0 and 10,000,000.";
+export function validWhCharExp(exp) {
+  return checkString(exp.toString(), charExpRe, invalidCharExp);
+}
+
+const charSinCorrRe = /^(0|[1-9]\d{0,2}|1000)$/;
+const invalidCharSinCorrRe = "This field is required and has to be between 0 and 1,000.";
+export function validWhCharSinCorr(points) {
+  return checkString(points.toString(), charSinCorrRe, invalidCharSinCorrRe);
 }
