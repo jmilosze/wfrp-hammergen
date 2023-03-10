@@ -20,7 +20,7 @@ from ..warhammer.types import (
 )
 
 ID_SCHEMA = Regex("^[a-f0-9]{24}$")
-NAME_SCHEMA = Regex("^[^<>]{1,200}$")
+NAME_SCHEMA = Regex("^[^<>]{0,200}$")
 DESCRIPTION_SCHEMA = Regex("^[^<>]{0,100000}$")
 SHORT_DESCRIPTION_SCHEMA = Regex("^[^<>]{0,200}$")
 
@@ -165,8 +165,8 @@ SKILL_COMPONENTS = {
 TALENT_COMPONENTS = {
     "name": NAME_SCHEMA,
     "description": DESCRIPTION_SCHEMA,
-    "tests": DESCRIPTION_SCHEMA,
-    "max_rank": And(int, lambda x: 1000 >= x >= 0),
+    "tests": SHORT_DESCRIPTION_SCHEMA,
+    "max_rank": And(int, lambda x: 99 >= x >= 0),
     "max_rank_att": Or(*list(Attribute)),
     "is_group": bool,
     "modifiers": MODIFIERS_SCHEMA,
@@ -208,8 +208,8 @@ CHARACTER_COMPONENTS = {
     "spent_exp": And(int, lambda x: 10000000 >= x >= 0),
     "status": Or(*list(StatusTier)),
     "standing": Or(*list(StatusStanding)),
-    "brass": And(int, lambda x: 10000000 >= x >= 0),
-    "silver": And(int, lambda x: 10000000 >= x >= 0),
+    "brass": And(int, lambda x: 1000000 >= x >= 0),
+    "silver": And(int, lambda x: 1000000 >= x >= 0),
     "gold": And(int, lambda x: 1000000 >= x >= 0),
     "spells": [ID_SCHEMA],
     "sin": And(int, lambda x: 1000 >= x >= 0),

@@ -62,7 +62,7 @@
                 </b-form-group>
               </b-col>
             </b-row>
-            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvl1 = false"> Hide </b-button>
+            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvl1 = false"> Hide</b-button>
             <b-button @click="genLvl1Details = !genLvl1Details" variant="primary" class="mr-2 mb-1" size="sm">
               {{ genLvl1Details ? "Hide" : "Show" }} Details
             </b-button>
@@ -119,7 +119,7 @@
                 </b-form-group>
               </b-col>
             </b-row>
-            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvln = false"> Hide </b-button>
+            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvln = false"> Hide</b-button>
             <b-button @click="genLvlnDetails = !genLvlnDetails" variant="primary" class="mr-2 mb-1" size="sm">
               {{ genLvlnDetails ? "Hide" : "Show" }} Details
             </b-button>
@@ -136,867 +136,731 @@
         </b-collapse>
       </div>
 
-      <validation-observer ref="observer" v-slot="{ handleSubmit, failed }">
-        <b-form id="edit-character" @submit.stop.prevent="handleSubmit(validateAndSubmit)">
-          <b-alert variant="success" :fade="true" :show="saveSuccessCountdown" @dismissed="saveSuccessCountdown = 0"
-            >Character saved successfully.
-          </b-alert>
+      <b-form id="edit-character" @submit.stop.prevent="submit">
+        <b-alert variant="success" :fade="true" :show="saveSuccessCountdown" @dismissed="saveSuccessCountdown = 0"
+          >Character saved successfully.
+        </b-alert>
 
-          <b-row>
-            <b-col md="6">
-              <ValidationProvider v-slot="{ errors, valid }" :rules="nameValid" name="Name">
-                <b-form-group label="Name" label-for="name-input">
-                  <b-input-group>
-                    <b-form-input id="name-input" :disabled="!element.canEdit" v-model="element.name" type="text">
-                    </b-form-input>
-                    <b-input-group-append>
-                      <b-button variant="primary" @click="genName" :disabled="!element.canEdit">Generate </b-button>
-                    </b-input-group-append>
-                  </b-input-group>
-                  <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                    {{ errors[0] }}
-                  </b-form-invalid-feedback>
-                </b-form-group>
-              </ValidationProvider>
+        <b-row>
+          <b-col md="6">
+            <b-form-group label="Name" label-for="name-input">
+              <b-input-group>
+                <b-form-input id="name-input" :disabled="!element.canEdit" v-model="element.name" type="text">
+                </b-form-input>
+                <b-input-group-append>
+                  <b-button variant="primary" @click="genName" :disabled="!element.canEdit">Generate</b-button>
+                </b-input-group-append>
+              </b-input-group>
+              <b-form-invalid-feedback :state="validName[0]">{{ validName[1] }}</b-form-invalid-feedback>
+            </b-form-group>
 
-              <b-form-group label="Species" label-for="species-input">
-                <b-form-select
-                  id="species-input"
-                  :disabled="!element.canEdit"
-                  :options="speciesOptions"
-                  v-model="element.species"
-                >
-                </b-form-select>
-              </b-form-group>
-
-              <b-row>
-                <b-col sm="6">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 1000 },
-                      integer: true,
-                    }"
-                    name="Fate"
-                  >
-                    <b-form-group label="Fate" label-for="fate-input">
-                      <b-form-input
-                        id="fate-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.fate"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-                <b-col sm="6">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 1000 },
-                      integer: true,
-                    }"
-                    name="Fortune"
-                  >
-                    <b-form-group label="Fortune" label-for="fortune-input">
-                      <b-form-input
-                        id="fortune-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.fortune"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col sm="6">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 1000 },
-                      integer: true,
-                    }"
-                    name="Resilience"
-                  >
-                    <b-form-group label="Resilience" label-for="resilience-input">
-                      <b-form-input
-                        id="resilience-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.resilience"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-                <b-col sm="6">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 1000 },
-                      integer: true,
-                    }"
-                    name="Resolve"
-                  >
-                    <b-form-group label="Resolve" label-for="resolve-input">
-                      <b-form-input
-                        id="resolve-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.resolve"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col sm="4">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 10000 },
-                      integer: true,
-                    }"
-                    name="Brass Pennies"
-                  >
-                    <b-form-group label="Brass Pennies" label-for="brass-input">
-                      <b-form-input
-                        id="brass-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.brass"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-                <b-col sm="4">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 10000 },
-                      integer: true,
-                    }"
-                    name="Silver Shillings"
-                  >
-                    <b-form-group label="Silver Shillings" label-for="silver-input">
-                      <b-form-input
-                        id="silver-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.silver"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-                <b-col sm="4">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 1000 },
-                      integer: true,
-                    }"
-                    name="Gold Crowns"
-                  >
-                    <b-form-group label="Gold Crowns" label-for="gold-input">
-                      <b-form-input
-                        id="gold-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.gold"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col sm="6">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 10000000 },
-                      integer: true,
-                    }"
-                    name="Spent Experience"
-                  >
-                    <b-form-group label="Spent Experience" label-for="spent-exp-input">
-                      <b-form-input
-                        id="spent-exp-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.spentExp"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-                <b-col sm="6">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 10000000 },
-                      integer: true,
-                    }"
-                    name="Unspent Experience"
-                  >
-                    <b-form-group label="Unspent Experience" label-for="unspent-exp-input">
-                      <b-form-input
-                        id="unspent-exp-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.currentExp"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col sm="6">
-                  <b-form-group label="Status" label-for="status-input">
-                    <b-form-select
-                      id="status-input"
-                      :disabled="!element.canEdit"
-                      :options="statusOptions"
-                      v-model="element.status"
-                    >
-                    </b-form-select>
-                  </b-form-group>
-                </b-col>
-                <b-col sm="6">
-                  <b-form-group label="Standing" label-for="standing-input">
-                    <b-form-select
-                      id="standing-input"
-                      :disabled="!element.canEdit"
-                      :options="standingOptions"
-                      v-model="element.standing"
-                    >
-                    </b-form-select>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col sm="6">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 1000 },
-                      integer: true,
-                    }"
-                    name="Sin Points"
-                  >
-                    <b-form-group label="Sin Points" label-for="sin-input">
-                      <b-form-input
-                        id="sin-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.sin"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-                <b-col sm="6">
-                  <ValidationProvider
-                    v-slot="{ errors, valid }"
-                    :rules="{
-                      required: true,
-                      between: { min: 0, max: 1000 },
-                      integer: true,
-                    }"
-                    name="Corruption Points"
-                  >
-                    <b-form-group label="Corruption Points" label-for="corruption-input">
-                      <b-form-input
-                        id="corruption-input"
-                        :disabled="!element.canEdit"
-                        :number="true"
-                        v-model="element.corruption"
-                        type="number"
-                      >
-                      </b-form-input>
-                      <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                        {{ errors[0] }}
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </ValidationProvider>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col sm="6">
-                  <b-form-group>
-                    <div>Movement</div>
-                    <div class="mt-2">{{ movement }}</div>
-                  </b-form-group>
-                </b-col>
-                <b-col sm="6">
-                  <b-form-group>
-                    <div>Wounds</div>
-                    <div class="mt-2">{{ wounds }}</div>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-            </b-col>
-
-            <b-col md="6">
-              <b-form-group label="Career">
-                <div class="border">
-                  <CharacterCareerTable
-                    :disabled="!element.canEdit"
-                    :pastCareers="initialPastCareers"
-                    :currentCareer.sync="element.career"
-                    @pastCareerChanged="updatePastCareer"
-                    class="ml-2 mr-2"
-                    @stateChanged="validCareer = $event"
-                    @listOfCareers="listOfCareers = $event"
-                  ></CharacterCareerTable>
-                </div>
-                <b-form-invalid-feedback :state="validCareer"> Current Career is required </b-form-invalid-feedback>
-              </b-form-group>
-              <ValidationProvider v-slot="{ errors, valid }" :rules="descValid" name="Description">
-                <b-form-group label="Description" label-for="description-input">
-                  <b-form-textarea
-                    id="description-input"
-                    :disabled="!element.canEdit"
-                    v-model="element.description"
-                    rows="3"
-                    max-rows="50"
-                  >
-                  </b-form-textarea>
-                  <b-button variant="primary" @click="genDesc" :disabled="!element.canEdit" size="sm" class="mt-2"
-                    >Generate
-                  </b-button>
-                  <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                    {{ errors[0] }}
-                  </b-form-invalid-feedback>
-                </b-form-group>
-              </ValidationProvider>
-
-              <ValidationProvider v-slot="{ errors, valid }" :rules="descValid" name="Notes">
-                <b-form-group label="Notes" label-for="notes-input">
-                  <b-form-textarea
-                    id="notes-input"
-                    :disabled="!element.canEdit"
-                    v-model="element.notes"
-                    rows="3"
-                    max-rows="50"
-                  >
-                  </b-form-textarea>
-                  <b-form-invalid-feedback :state="invFeedState(errors, valid)">
-                    {{ errors[0] }}
-                  </b-form-invalid-feedback>
-                </b-form-group>
-              </ValidationProvider>
-            </b-col>
-          </b-row>
-
-          <b-row>
-            <b-col>
-              <b-form-group label="Attributes">
-                <b-row>
-                  <b-col xl="4">
-                    <b-table-simple :responsive="true">
-                      <b-thead>
-                        <b-th></b-th>
-                        <b-th>WS</b-th>
-                        <b-th>BS</b-th>
-                      </b-thead>
-                      <b-tbody>
-                        <b-tr>
-                          <b-th>Rolls</b-th>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.WS"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.BS"
-                            >
-                            </b-form-input>
-                          </b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-th>Racial</b-th>
-                          <b-td>{{ racial.WS }}</b-td>
-                          <b-td>{{ racial.BS }}</b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-th>Other</b-th>
-                          <b-td>{{ element.modifiers.attributes.WS }}</b-td>
-                          <b-td>{{ element.modifiers.attributes.BS }}</b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-th>Adv</b-th>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.WS"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.BS"
-                            >
-                            </b-form-input>
-                          </b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-th>Total</b-th>
-                          <b-td>{{ total.WS }}</b-td>
-                          <b-td>{{ total.BS }}</b-td>
-                        </b-tr>
-                      </b-tbody>
-                    </b-table-simple>
-                  </b-col>
-                  <b-col xl="4">
-                    <b-table-simple :responsive="true">
-                      <b-thead>
-                        <b-th>S</b-th>
-                        <b-th>T</b-th>
-                        <b-th>I</b-th>
-                        <b-th>Ag</b-th>
-                      </b-thead>
-                      <b-tbody>
-                        <b-tr>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.S"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.T"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.I"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.Ag"
-                            >
-                            </b-form-input>
-                          </b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-td>{{ racial.S }}</b-td>
-                          <b-td>{{ racial.T }}</b-td>
-                          <b-td>{{ racial.I }}</b-td>
-                          <b-td>{{ racial.Ag }}</b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-td>{{ element.modifiers.attributes.S }}</b-td>
-                          <b-td>{{ element.modifiers.attributes.T }}</b-td>
-                          <b-td>{{ element.modifiers.attributes.I }}</b-td>
-                          <b-td>{{ element.modifiers.attributes.Ag }}</b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.S"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.T"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.I"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.Ag"
-                            >
-                            </b-form-input>
-                          </b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-td>{{ total.S }}</b-td>
-                          <b-td>{{ total.T }}</b-td>
-                          <b-td>{{ total.I }}</b-td>
-                          <b-td>{{ total.Ag }}</b-td>
-                        </b-tr>
-                      </b-tbody>
-                    </b-table-simple>
-                  </b-col>
-                  <b-col xl="4">
-                    <b-table-simple :responsive="true">
-                      <b-thead>
-                        <b-th>Dex</b-th>
-                        <b-th>Int</b-th>
-                        <b-th>WP</b-th>
-                        <b-th>Fel</b-th>
-                      </b-thead>
-                      <b-tbody>
-                        <b-tr>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.Dex"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.Int"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.WP"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeRolls.Fel"
-                            >
-                            </b-form-input>
-                          </b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-td>{{ racial.Dex }}</b-td>
-                          <b-td>{{ racial.Int }}</b-td>
-                          <b-td>{{ racial.WP }}</b-td>
-                          <b-td>{{ racial.Fel }}</b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-td>{{ element.modifiers.attributes.Dex }}</b-td>
-                          <b-td>{{ element.modifiers.attributes.Int }}</b-td>
-                          <b-td>{{ element.modifiers.attributes.WP }}</b-td>
-                          <b-td>{{ element.modifiers.attributes.Fel }}</b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.Dex"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.Int"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.WP"
-                            >
-                            </b-form-input>
-                          </b-td>
-                          <b-td>
-                            <b-form-input
-                              :disabled="!element.canEdit"
-                              :number="true"
-                              min="0"
-                              max="99"
-                              type="number"
-                              v-model="element.attributeAdvances.Fel"
-                            >
-                            </b-form-input>
-                          </b-td>
-                        </b-tr>
-                        <b-tr>
-                          <b-td>{{ total.Dex }}</b-td>
-                          <b-td>{{ total.Int }}</b-td>
-                          <b-td>{{ total.WP }}</b-td>
-                          <b-td>{{ total.Fel }}</b-td>
-                        </b-tr>
-                      </b-tbody>
-                    </b-table-simple>
-                  </b-col>
-                </b-row>
-                <b-button variant="primary" size="sm" @click="genRolls" :disabled="!element.canEdit">
-                  Generate Rolls
-                </b-button>
-                <b-form-invalid-feedback :state="validBase">
-                  Invalid value of one or more Base Attributes. Base Attributes have to be integers between 0 and 99.
-                </b-form-invalid-feedback>
-                <b-form-invalid-feedback :state="validAdv">
-                  Invalid value of one or more Attribute Advances. Attribute Advances have to be integers between 0 and
-                  99.
-                </b-form-invalid-feedback>
-              </b-form-group>
-            </b-col>
-          </b-row>
-
-          <b-row>
-            <b-col md="6">
-              <b-form-group label="Skills">
-                <CharacterSkillsTable
-                  :disabled="!element.canEdit"
-                  :characterSkills="initialSkills"
-                  :characterAtts="total"
-                  :canSave="validCustom && !failed"
-                  @listOfSkills="listOfSkills = $event"
-                  @selectedChanged="updateIdNumberList(element.skills, $event)"
-                  @stateChanged="validSkills = $event"
-                  @createNew="validateAndSubmit('skill')"
-                ></CharacterSkillsTable>
-                <b-form-invalid-feedback :state="validSkills">
-                  Invalid value of one or more Skills. Skills have to be integer numbers between 0 and 1000.
-                </b-form-invalid-feedback>
-              </b-form-group>
-            </b-col>
-            <b-col md="6">
-              <b-form-group label="Talents">
-                <CharacterTalentsTable
-                  :disabled="!element.canEdit"
-                  :characterTalents="initialTalents"
-                  :characterAtts="total"
-                  :speciesTalents="speciesTalents"
-                  :randomTalents="randomTalents"
-                  :characterSpecies="element.species"
-                  :canSave="validCustom && !failed"
-                  @listOfTalents="listOfTalents = $event"
-                  @selectedChanged="updateIdNumberList(element.talents, $event)"
-                  @stateChanged="validTalents = $event"
-                  @createNew="validateAndSubmit('talent')"
-                  @modifiersChanged="talentModifiers = $event"
-                ></CharacterTalentsTable>
-                <b-form-invalid-feedback :state="validTalents">
-                  Invalid value of one or more Talents.
-                </b-form-invalid-feedback>
-              </b-form-group>
-            </b-col>
-          </b-row>
-
-          <b-row>
-            <b-col md="12">
-              <b-form-group label="Trappings">
-                <CharacterItemsTable
-                  :disabled="!element.canEdit"
-                  :canSave="validCustom && !failed"
-                  :itemsEquipped="initialEquippedItems"
-                  :itemsCarried="initialCarriedItems"
-                  :itemsStored="initialStoredItems"
-                  :classItems="classItems"
-                  @equippedChanged="updateIdNumberList(element.equippedItems, $event)"
-                  @carriedChanged="updateIdNumberList(element.carriedItems, $event)"
-                  @storedChanged="updateIdNumberList(element.storedItems, $event)"
-                  @stateChanged="validItems = $event"
-                  @createNew="validateAndSubmit('item')"
-                ></CharacterItemsTable>
-                <b-form-invalid-feedback :state="validItems">
-                  Invalid number of one or more Items. Item quantity number has to be an integer between 0 and 1000.
-                </b-form-invalid-feedback>
-              </b-form-group>
-            </b-col>
-          </b-row>
-
-          <b-row>
-            <b-col md="6">
-              <b-form-group label="Spells/Prayers">
-                <CharacterSpellsTable
-                  :disabled="!element.canEdit"
-                  :canSave="validCustom && !failed"
-                  :selectedItems="initialSpells"
-                  @changed="updateIdList(element.spells, $event)"
-                  @createNew="validateAndSubmit('spell')"
-                ></CharacterSpellsTable>
-              </b-form-group>
-            </b-col>
-
-            <b-col md="6">
-              <b-form-group label="Mutations">
-                <CharacterMutationsTable
-                  :disabled="!element.canEdit"
-                  :canSave="validCustom && !failed"
-                  :selectedItems="initialMutations"
-                  @changed="updateIdList(element.mutations, $event)"
-                  @createNew="validateAndSubmit('mutation')"
-                  @modifiersChanged="mutationModifiers = $event"
-                ></CharacterMutationsTable>
-              </b-form-group>
-            </b-col>
-          </b-row>
-
-          <b-row>
-            <b-col>
-              <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Character" />
-
-              <CreateSubmit
-                :showAddAnother="showAddAnother"
+            <b-form-group label="Species" label-for="species-input">
+              <b-form-select
+                id="species-input"
                 :disabled="!element.canEdit"
-                :submitting="submitting"
-                @goBack="goBack"
-                v-model="addAnother"
-              ></CreateSubmit>
-            </b-col>
-          </b-row>
-        </b-form>
-      </validation-observer>
+                :options="speciesOptions"
+                v-model="element.species"
+              >
+              </b-form-select>
+            </b-form-group>
+
+            <b-row>
+              <b-col sm="6">
+                <b-form-group label="Fate" label-for="fate-input">
+                  <b-form-input
+                    id="fate-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.fate"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validFate[0]">{{ validFate[1] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group label="Fortune" label-for="fortune-input">
+                  <b-form-input
+                    id="fortune-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.fortune"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validFortune[0]">{{ validFortune[1] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6">
+                <b-form-group label="Resilience" label-for="resilience-input">
+                  <b-form-input
+                    id="resilience-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.resilience"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validResilience[0]"
+                    >{{ validResilience[1] }}
+                  </b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group label="Resolve" label-for="resolve-input">
+                  <b-form-input
+                    id="resolve-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.resolve"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validResolve[0]">{{ validResolve[1] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="4">
+                <b-form-group label="Brass Pennies" label-for="brass-input">
+                  <b-form-input
+                    id="brass-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.brass"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validBrass[0]">{{ validBrass[1] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+              <b-col sm="4">
+                <b-form-group label="Silver Shillings" label-for="silver-input">
+                  <b-form-input
+                    id="silver-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.silver"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validSilver[0]">{{ validSilver[1] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+              <b-col sm="4">
+                <b-form-group label="Gold Crowns" label-for="gold-input">
+                  <b-form-input
+                    id="gold-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.gold"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validGold[0]">{{ validGold[1] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6">
+                <b-form-group label="Spent Experience" label-for="spent-exp-input">
+                  <b-form-input
+                    id="spent-exp-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.spentExp"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validSpentExp[0]">{{ validSpentExp[1] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group label="Unspent Experience" label-for="unspent-exp-input">
+                  <b-form-input
+                    id="unspent-exp-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.currentExp"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validCurrentExp[0]"
+                    >{{ validCurrentExp[1] }}
+                  </b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6">
+                <b-form-group label="Status" label-for="status-input">
+                  <b-form-select
+                    id="status-input"
+                    :disabled="!element.canEdit"
+                    :options="statusOptions"
+                    v-model="element.status"
+                  >
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group label="Standing" label-for="standing-input">
+                  <b-form-select
+                    id="standing-input"
+                    :disabled="!element.canEdit"
+                    :options="standingOptions"
+                    v-model="element.standing"
+                  >
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6">
+                <b-form-group label="Sin Points" label-for="sin-input">
+                  <b-form-input
+                    id="sin-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.sin"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validSin[0]">{{ validSin[1] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group label="Corruption Points" label-for="corruption-input">
+                  <b-form-input
+                    id="corruption-input"
+                    :disabled="!element.canEdit"
+                    :number="true"
+                    v-model="element.corruption"
+                    type="number"
+                  >
+                  </b-form-input>
+                  <b-form-invalid-feedback :state="validCorruption[0]"
+                    >{{ validCorruption[1] }}
+                  </b-form-invalid-feedback>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6">
+                <b-form-group>
+                  <div>Movement</div>
+                  <div class="mt-2">{{ movement }}</div>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group>
+                  <div>Wounds</div>
+                  <div class="mt-2">{{ wounds }}</div>
+                </b-form-group>
+              </b-col>
+            </b-row>
+          </b-col>
+
+          <b-col md="6">
+            <b-form-group label="Career">
+              <div class="border">
+                <CharacterCareerTable
+                  :disabled="!element.canEdit"
+                  :pastCareers="initialPastCareers"
+                  :currentCareer.sync="element.career"
+                  @pastCareerChanged="updatePastCareer"
+                  class="ml-2 mr-2"
+                  @stateChanged="validCareer = $event"
+                  @listOfCareers="listOfCareers = $event"
+                ></CharacterCareerTable>
+              </div>
+              <b-form-invalid-feedback :state="validCareer"> Current Career is required</b-form-invalid-feedback>
+            </b-form-group>
+            <b-form-group label="Description" label-for="description-input">
+              <b-form-textarea
+                id="description-input"
+                :disabled="!element.canEdit"
+                v-model="element.description"
+                rows="3"
+                max-rows="50"
+              >
+              </b-form-textarea>
+              <b-button variant="primary" @click="genDesc" :disabled="!element.canEdit" size="sm" class="mt-2"
+                >Generate
+              </b-button>
+              <b-form-invalid-feedback :state="validDesc[0]">{{ validDesc[1] }}</b-form-invalid-feedback>
+            </b-form-group>
+
+            <b-form-group label="Notes" label-for="notes-input">
+              <b-form-textarea
+                id="notes-input"
+                :disabled="!element.canEdit"
+                v-model="element.notes"
+                rows="3"
+                max-rows="50"
+              >
+              </b-form-textarea>
+              <b-form-invalid-feedback :state="validNotes[0]">{{ validNotes[1] }} </b-form-invalid-feedback>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col>
+            <b-form-group label="Attributes">
+              <b-row>
+                <b-col xl="4">
+                  <b-table-simple :responsive="true">
+                    <b-thead>
+                      <b-th></b-th>
+                      <b-th>WS</b-th>
+                      <b-th>BS</b-th>
+                    </b-thead>
+                    <b-tbody>
+                      <b-tr>
+                        <b-th>Rolls</b-th>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.WS"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.BS"
+                          >
+                          </b-form-input>
+                        </b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-th>Racial</b-th>
+                        <b-td>{{ racial.WS }}</b-td>
+                        <b-td>{{ racial.BS }}</b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-th>Other</b-th>
+                        <b-td>{{ element.modifiers.attributes.WS }}</b-td>
+                        <b-td>{{ element.modifiers.attributes.BS }}</b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-th>Adv</b-th>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.WS"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.BS"
+                          >
+                          </b-form-input>
+                        </b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-th>Total</b-th>
+                        <b-td>{{ total.WS }}</b-td>
+                        <b-td>{{ total.BS }}</b-td>
+                      </b-tr>
+                    </b-tbody>
+                  </b-table-simple>
+                </b-col>
+                <b-col xl="4">
+                  <b-table-simple :responsive="true">
+                    <b-thead>
+                      <b-th>S</b-th>
+                      <b-th>T</b-th>
+                      <b-th>I</b-th>
+                      <b-th>Ag</b-th>
+                    </b-thead>
+                    <b-tbody>
+                      <b-tr>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.S"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.T"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.I"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.Ag"
+                          >
+                          </b-form-input>
+                        </b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-td>{{ racial.S }}</b-td>
+                        <b-td>{{ racial.T }}</b-td>
+                        <b-td>{{ racial.I }}</b-td>
+                        <b-td>{{ racial.Ag }}</b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-td>{{ element.modifiers.attributes.S }}</b-td>
+                        <b-td>{{ element.modifiers.attributes.T }}</b-td>
+                        <b-td>{{ element.modifiers.attributes.I }}</b-td>
+                        <b-td>{{ element.modifiers.attributes.Ag }}</b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.S"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.T"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.I"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.Ag"
+                          >
+                          </b-form-input>
+                        </b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-td>{{ total.S }}</b-td>
+                        <b-td>{{ total.T }}</b-td>
+                        <b-td>{{ total.I }}</b-td>
+                        <b-td>{{ total.Ag }}</b-td>
+                      </b-tr>
+                    </b-tbody>
+                  </b-table-simple>
+                </b-col>
+                <b-col xl="4">
+                  <b-table-simple :responsive="true">
+                    <b-thead>
+                      <b-th>Dex</b-th>
+                      <b-th>Int</b-th>
+                      <b-th>WP</b-th>
+                      <b-th>Fel</b-th>
+                    </b-thead>
+                    <b-tbody>
+                      <b-tr>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.Dex"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.Int"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.WP"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeRolls.Fel"
+                          >
+                          </b-form-input>
+                        </b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-td>{{ racial.Dex }}</b-td>
+                        <b-td>{{ racial.Int }}</b-td>
+                        <b-td>{{ racial.WP }}</b-td>
+                        <b-td>{{ racial.Fel }}</b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-td>{{ element.modifiers.attributes.Dex }}</b-td>
+                        <b-td>{{ element.modifiers.attributes.Int }}</b-td>
+                        <b-td>{{ element.modifiers.attributes.WP }}</b-td>
+                        <b-td>{{ element.modifiers.attributes.Fel }}</b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.Dex"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.Int"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.WP"
+                          >
+                          </b-form-input>
+                        </b-td>
+                        <b-td>
+                          <b-form-input
+                            :disabled="!element.canEdit"
+                            :number="true"
+                            min="0"
+                            max="99"
+                            type="number"
+                            v-model="element.attributeAdvances.Fel"
+                          >
+                          </b-form-input>
+                        </b-td>
+                      </b-tr>
+                      <b-tr>
+                        <b-td>{{ total.Dex }}</b-td>
+                        <b-td>{{ total.Int }}</b-td>
+                        <b-td>{{ total.WP }}</b-td>
+                        <b-td>{{ total.Fel }}</b-td>
+                      </b-tr>
+                    </b-tbody>
+                  </b-table-simple>
+                </b-col>
+              </b-row>
+              <b-button variant="primary" size="sm" @click="genRolls" :disabled="!element.canEdit">
+                Generate Rolls
+              </b-button>
+              <b-form-invalid-feedback :state="validBase">
+                Invalid value of one or more Base (Roll + Racial + Other) Attributes. Base Attributes have to be between
+                0 and 99.
+              </b-form-invalid-feedback>
+              <b-form-invalid-feedback :state="validAdv">
+                Invalid value of one or more Attribute Advances. Attribute Advances have to be integers between 0 and
+                99.
+              </b-form-invalid-feedback>
+              <b-form-invalid-feedback :state="validRoll">
+                Invalid value of one or more Roll Attributes. Base Attributes have to be integers.
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col md="6">
+            <b-form-group label="Skills">
+              <CharacterSkillsTable
+                :disabled="!element.canEdit"
+                :characterSkills="initialSkills"
+                :characterAtts="total"
+                :canSave="validAll"
+                @listOfSkills="listOfSkills = $event"
+                @selectedChanged="updateIdNumberList(element.skills, $event)"
+                @stateChanged="validSkills = $event"
+                @createNew="validateAndSubmit('skill')"
+              ></CharacterSkillsTable>
+              <b-form-invalid-feedback :state="validSkills">
+                Invalid value of one or more Skills. Skills have to be integer numbers between 0 and 1000.
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </b-col>
+          <b-col md="6">
+            <b-form-group label="Talents">
+              <CharacterTalentsTable
+                :disabled="!element.canEdit"
+                :characterTalents="initialTalents"
+                :characterAtts="total"
+                :speciesTalents="speciesTalents"
+                :randomTalents="randomTalents"
+                :characterSpecies="element.species"
+                :canSave="validAll"
+                @listOfTalents="listOfTalents = $event"
+                @selectedChanged="updateIdNumberList(element.talents, $event)"
+                @stateChanged="validTalents = $event"
+                @createNew="validateAndSubmit('talent')"
+                @modifiersChanged="talentModifiers = $event"
+              ></CharacterTalentsTable>
+              <b-form-invalid-feedback :state="validTalents">
+                Invalid value of one or more Talents.
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col md="12">
+            <b-form-group label="Trappings">
+              <CharacterItemsTable
+                :disabled="!element.canEdit"
+                :canSave="validAll"
+                :itemsEquipped="initialEquippedItems"
+                :itemsCarried="initialCarriedItems"
+                :itemsStored="initialStoredItems"
+                :classItems="classItems"
+                @equippedChanged="updateIdNumberList(element.equippedItems, $event)"
+                @carriedChanged="updateIdNumberList(element.carriedItems, $event)"
+                @storedChanged="updateIdNumberList(element.storedItems, $event)"
+                @stateChanged="validItems = $event"
+                @createNew="validateAndSubmit('item')"
+              ></CharacterItemsTable>
+              <b-form-invalid-feedback :state="validItems">
+                Invalid number of one or more Items. Item quantity number has to be an integer between 0 and 1000.
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col md="6">
+            <b-form-group label="Spells/Prayers">
+              <CharacterSpellsTable
+                :disabled="!element.canEdit"
+                :canSave="validAll"
+                :selectedItems="initialSpells"
+                @changed="updateIdList(element.spells, $event)"
+                @createNew="validateAndSubmit('spell')"
+              ></CharacterSpellsTable>
+            </b-form-group>
+          </b-col>
+
+          <b-col md="6">
+            <b-form-group label="Mutations">
+              <CharacterMutationsTable
+                :disabled="!element.canEdit"
+                :canSave="validAll"
+                :selectedItems="initialMutations"
+                @changed="updateIdList(element.mutations, $event)"
+                @createNew="validateAndSubmit('mutation')"
+                @modifiersChanged="mutationModifiers = $event"
+              ></CharacterMutationsTable>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col>
+            <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Character" />
+
+            <CreateSubmit
+              :showAddAnother="showAddAnother"
+              :disabled="!element.canEdit"
+              :submitting="submitting"
+              @goBack="goBack"
+              v-model="addAnother"
+            ></CreateSubmit>
+          </b-col>
+        </b-row>
+      </b-form>
     </b-container>
   </div>
 </template>
@@ -1011,7 +875,6 @@ import CharacterItemsTable from "./CharacterItemsTable.vue";
 import CharacterSpellsTable from "./CharacterSpellsTable.vue";
 import CharacterMutationsTable from "./CharacterMutationsTable.vue";
 import PublicElementBox from "../PublicElementBox.vue";
-import { ValidationObserver, ValidationProvider } from "vee-validate";
 import generateName from "../../../services/wh/characterGeneration/nameGeneration";
 import generateDescription from "../../../services/wh/characterGeneration/descriptionGeneration";
 import generateCharacter from "../../../services/wh/characterGeneration/characterGeneration";
@@ -1032,13 +895,18 @@ import {
 } from "../../../services/wh/character";
 import { statusStandings, statusTiers } from "../../../services/wh/career";
 import { generateEmptyModifiers, sumAndMultModifiers } from "../../../services/wh/characterModifiers";
+import {
+  validWhCharCoin,
+  validWhCharExp,
+  validWhCharSinCorr,
+  validWhDesc,
+  validWhFateResilience,
+} from "../../../utils/validation/wh";
 
 export default {
   name: "CreateCharacter",
   mixins: [CreateElement],
   components: {
-    ValidationObserver,
-    ValidationProvider,
     CreateSubmit,
     CharacterCareerTable,
     CharacterSkillsTable,
@@ -1187,10 +1055,52 @@ export default {
       }
       return true;
     },
-    validCustom() {
-      return (
-        this.validBase && this.validAdv && this.validSkills && this.validCareer && this.validItems && this.validTalents
-      );
+    validRoll() {
+      for (let value of Object.values(this.element.attributeRolls)) {
+        if (!Number.isInteger(value)) {
+          return false;
+        }
+      }
+      return true;
+    },
+    validFate() {
+      return validWhFateResilience(this.element.fate);
+    },
+    validFortune() {
+      return validWhFateResilience(this.element.fortune);
+    },
+    validResilience() {
+      return validWhFateResilience(this.element.resilience);
+    },
+    validResolve() {
+      return validWhFateResilience(this.element.resolve);
+    },
+    validBrass() {
+      return validWhCharCoin(this.element.brass);
+    },
+    validSilver() {
+      return validWhCharCoin(this.element.silver);
+    },
+    validGold() {
+      return validWhCharCoin(this.element.gold);
+    },
+    validCurrentExp() {
+      return validWhCharExp(this.element.currentExp);
+    },
+    validSpentExp() {
+      return validWhCharExp(this.element.spentExp);
+    },
+    validSin() {
+      return validWhCharSinCorr(this.element.sin);
+    },
+    validCorruption() {
+      return validWhCharSinCorr(this.element.corruption);
+    },
+    validNotes() {
+      return validWhDesc(this.element.notes);
+    },
+    validAll() {
+      return this.validate();
     },
   },
   methods: {
@@ -1315,6 +1225,31 @@ export default {
       this.initialStoredItems = JSON.parse(JSON.stringify(this.element.storedItems));
       this.initialSpells = JSON.parse(JSON.stringify(this.element.spells));
       this.initialMutations = JSON.parse(JSON.stringify(this.element.mutations));
+    },
+    validate() {
+      return (
+        this.validName[0] &&
+        this.validDesc[0] &&
+        this.validFate[0] &&
+        this.validFortune[0] &&
+        this.validResilience[0] &&
+        this.validResolve[0] &&
+        this.validBrass[0] &&
+        this.validSilver[0] &&
+        this.validGold[0] &&
+        this.validCurrentExp[0] &&
+        this.validSpentExp[0] &&
+        this.validSin[0] &&
+        this.validCorruption[0] &&
+        this.validNotes[0] &&
+        this.validBase &&
+        this.validAdv &&
+        this.validRoll &&
+        this.validSkills &&
+        this.validCareer &&
+        this.validItems &&
+        this.validTalents
+      );
     },
   },
   watch: {

@@ -4,6 +4,7 @@
 
 <script>
 import { logoutIfUnauthorized } from "../../utils/navigation";
+import { validWhDesc, validWhShortDesc } from "../../utils/validation/wh";
 
 const leaveConfirmation = "Changes that you made may not be saved.";
 
@@ -25,9 +26,6 @@ export default {
       submitting: false,
       element: null,
       elementOriginal: null,
-      nameValid: { required: true, max: 200, regex: /^[^<>]+$/ },
-      descShortValid: { max: 200, regex: /^[^<>]+$/ },
-      descValid: { max: 100000, regex: /^[^<>]+$/ },
       saveSuccessCountdown: 0,
       addAnother: false,
       checkIfModified: true,
@@ -69,9 +67,6 @@ export default {
       }
     },
     resetTables() {},
-    invFeedState: function (errors, valid) {
-      return errors[0] ? false : valid ? true : null;
-    },
     addError() {
       this.errors.push("Server Error.");
     },
@@ -95,9 +90,17 @@ export default {
         return (event.returnValue = "zxc");
       }
     },
+    // eslint-disable-next-line no-unused-vars
+    async submit(event) {
+      await this.submitForm();
+    },
     async submitForm(redirectElementType = null) {
       this.beforeSubmit();
 
+      if (!this.validate()) {
+        this.afterSubmit();
+        return;
+      }
       try {
         let serverResp = null;
         if (this.id === "create") {
@@ -106,6 +109,8 @@ export default {
           serverResp = await logoutIfUnauthorized(this.elementApi.updateElement)(this.element);
         }
         if (redirectElementType) {
+          console.log("Hello");
+          console.log(redirectElementType);
           this.redirectAfterSubmit(serverResp.id, redirectElementType);
         } else if (!this.addAnother) {
           this.goBack();
@@ -118,6 +123,9 @@ export default {
         this.addError();
       }
       this.afterSubmit();
+    },
+    validate() {
+      return this.validName[0] && this.validDesc[0];
     },
     redirectAfterSubmit(elementId, redirectElementName) {
       // eslint-disable-next-line vue/no-mutating-props
@@ -148,6 +156,12 @@ export default {
     },
     showAddAnother: function () {
       return this.id === "create";
+    },
+    validName() {
+      return validWhShortDesc(this.element.name);
+    },
+    validDesc() {
+      return validWhDesc(this.element.description);
     },
   },
 };

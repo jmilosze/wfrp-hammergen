@@ -310,6 +310,7 @@ export {
   itemAvailabilities,
   generateEmptyItem,
   generateNewItem,
+  generateEmptyStats,
   compareItem,
   ItemApi,
 };
