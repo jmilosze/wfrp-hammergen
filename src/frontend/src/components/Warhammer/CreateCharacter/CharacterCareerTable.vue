@@ -25,7 +25,7 @@
 
       <b-table
         hover
-        :items="listOfLevels"
+        :items="listOfItems"
         :fields="editFields"
         :responsive="true"
         :filter="editFilter"
@@ -115,7 +115,7 @@ export default {
     return {
       careerApi: new CareerApi(authRequest),
 
-      listOfLevels: [],
+      listOfItems: [],
       editFilter: null,
       editFields: [
         { key: "name", sortable: true },
@@ -132,24 +132,32 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
+    sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
-        this.listOfLevels.sort((a, b) => a[key].localeCompare(b[key]));
+        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
       } else {
-        this.listOfLevels.sort((a, b) => {
-          return a.current === b.current ? (a.past === b.past ? 0 : a.past ? 1 : -1) : a.current ? 1 : -1;
+        this.listOfItems.sort((a, b) => {
+          return a.current === b.current
+            ? a.past === b.past
+              ? a.name.localeCompare(b.name)
+              : a.past
+              ? -1
+              : 1
+            : a.current
+            ? -1
+            : 1;
         });
       }
       if (sortDesc) {
-        this.listOfLevels.reverse();
+        this.listOfItems.reverse();
       }
     },
     selectCurrent(selected, id, number) {
       // if there is already other current career selected, deselect it
       if (this.internalCurrentCareer.id) {
-        let oldSelected = this.listOfLevels.find(
+        let oldSelected = this.listOfItems.find(
           (x) => x.id === this.internalCurrentCareer.id && x.number === this.internalCurrentCareer.number
         );
         oldSelected.current = false;
@@ -157,9 +165,9 @@ export default {
 
       // if selected is being toggled on, mark a new career as current
       if (selected) {
-        let newSelected = this.listOfLevels.find((x) => x.id === id && x.number === number);
+        let newSelected = this.listOfItems.find((x) => x.id === id && x.number === number);
         if (!newSelected) {
-          newSelected = this.listOfLevels[0];
+          newSelected = this.listOfItems[0];
         }
         newSelected.current = true;
         this.internalCurrentCareer = { id: newSelected.id, number: newSelected.number };
@@ -172,7 +180,7 @@ export default {
       this.$emit("stateChanged", selected);
     },
     selectPast(selected, id, number) {
-      let changedItem = this.listOfLevels.find((x) => x.id === id && x.number === number);
+      let changedItem = this.listOfItems.find((x) => x.id === id && x.number === number);
       changedItem.past = selected;
       this.$emit("pastCareerChanged", {
         id: id,
@@ -181,9 +189,9 @@ export default {
       });
     },
     resetPast(newPastCareerLevels) {
-      this.listOfLevels.forEach((x) => (x.past = false));
+      this.listOfItems.forEach((x) => (x.past = false));
       for (let newPast of newPastCareerLevels) {
-        let careerLevel = this.listOfLevels.find((x) => x.id === newPast.id && x.number === newPast.number);
+        let careerLevel = this.listOfItems.find((x) => x.id === newPast.id && x.number === newPast.number);
         if (careerLevel) {
           careerLevel.past = true;
         } else {
@@ -194,7 +202,7 @@ export default {
     async loadData() {
       const listOfCareers = await logoutIfUnauthorized(this.careerApi.listElements)();
       this.$emit("listOfCareers", JSON.parse(JSON.stringify(listOfCareers)));
-      const listOfLevels = [];
+      const listOfItems = [];
       let idx = 0;
       for (let career of listOfCareers) {
         for (let i of [
@@ -207,7 +215,7 @@ export default {
           let lvlNumber = i[1];
 
           let allowedSpecies = career.species.map((x) => species[x]).join(", ");
-          listOfLevels.push({
+          listOfItems.push({
             id: career.id,
             number: lvlNumber,
             name: addSpaces(`${career.name}  ${lvlNumber}`, MAX_CHARS),
@@ -221,44 +229,44 @@ export default {
           ++idx;
         }
       }
-      this.listOfLevels = listOfLevels;
-      this.totalRows = listOfLevels.length;
+      this.listOfItems = listOfItems;
+      this.totalRows = listOfItems.length;
 
       this.resetPast(this.pastCareers);
       this.selectCurrent(true, this.currentCareer.id, this.currentCareer.number);
 
-      this.sortListOfItems("select", true);
+      this.sortListOfItems(true);
     },
   },
   computed: {
     displayPast() {
       try {
-        return this.listOfLevels.filter((x) => x.past);
+        return this.listOfItems.filter((x) => x.past);
       } catch {
         return [];
       }
     },
     displayCurrent() {
-      let item = this.listOfLevels.find((x) => x.current);
+      let item = this.listOfItems.find((x) => x.current);
       return item ? item.name : "";
     },
   },
   watch: {
     pastCareers(newVal) {
-      if (this.listOfLevels.length < 1) {
+      if (this.listOfItems.length < 1) {
         return;
       }
       this.resetPast(newVal);
     },
     currentCareer(newVal) {
-      if (this.listOfLevels.length < 1) {
+      if (this.listOfItems.length < 1) {
         return;
       }
       if (this.internalCurrentCareer.id !== newVal.id || this.internalCurrentCareer.number !== newVal.number) {
         if (newVal.id && newVal.number) {
           this.selectCurrent(true, newVal.id, newVal.number);
         } else {
-          this.selectCurrent(true, this.listOfLevels[0].id, this.listOfLevels[0].number);
+          this.selectCurrent(true, this.listOfItems[0].id, this.listOfItems[0].number);
         }
       }
     },

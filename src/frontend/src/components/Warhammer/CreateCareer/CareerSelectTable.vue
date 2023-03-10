@@ -9,7 +9,7 @@
     >
     </b-table>
 
-    <b-button size="sm" class="mb-2" @click="showEditElements" variant="primary" :disabled="disabled">
+    <b-button size="sm" class="mb-2" @click="showSelectionModal" variant="primary" :disabled="disabled">
       Add/Modify
     </b-button>
 
@@ -155,15 +155,18 @@ export default {
           const aAny = a.selected1 || a.selected2 || a.selected3 || a.selected4;
           const bAny = b.selected1 || b.selected2 || b.selected3 || b.selected4;
 
-          return aAny === bAny ? 0 : aAny ? 1 : -1;
+          return aAny === bAny ? a.name.localeCompare(b.name) : aAny ? -1 : 1;
         });
       }
       if (sortDesc) {
         this.listOfElements.reverse();
       }
     },
-    showEditElements() {
+    showSelectionModal() {
       this.editElementFilter = null;
+      this.totalRows = this.listOfElements.length;
+      this.currentPage = 1;
+      this.sortListOfItems("select", false);
       this.$bvModal.show(this.modalId);
     },
     async loadData() {
@@ -186,7 +189,7 @@ export default {
       }
       this.listOfElements = listOfElements;
       this.elementsLoading = false;
-      this.sortListOfItems("select", true);
+      this.sortListOfItems("select", false);
     },
     createNew() {
       this.$emit("createNewElement");

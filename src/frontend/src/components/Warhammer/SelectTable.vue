@@ -8,7 +8,7 @@
       :sort-by="dispElementFields[0].key"
     >
     </b-table>
-    <b-button size="sm" class="mb-2" @click="showEditElements" variant="primary" :disabled="disabled">
+    <b-button size="sm" class="mb-2" @click="showSelectionModal" variant="primary" :disabled="disabled">
       Add/Modify
     </b-button>
     <b-modal :id="modalId" :title="title" ok-only ok-title="Close" scrollable>
@@ -124,7 +124,7 @@ export default {
       });
     },
     editElements() {
-      this.totalRows = this.totalRows = this.editElements.length;
+      this.totalRows = this.editElements.length;
       this.currentPage = 1;
     },
   },
@@ -136,14 +136,19 @@ export default {
       if (key !== "select") {
         this.listOfElements.sort((a, b) => a[key].localeCompare(b[key]));
       } else {
-        this.listOfElements.sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? 1 : -1));
+        this.listOfElements.sort((a, b) =>
+          a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1
+        );
       }
       if (sortDesc) {
         this.listOfElements.reverse();
       }
     },
-    showEditElements() {
+    showSelectionModal() {
       this.editElementFilter = null;
+      this.totalRows = this.editElements.length;
+      this.currentPage = 1;
+      this.sortListOfItems("select", false);
       this.$bvModal.show(this.modalId);
     },
     loadData: async function () {

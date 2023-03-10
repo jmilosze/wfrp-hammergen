@@ -22,6 +22,9 @@ export default {
     },
     showEdit: function (id) {
       this.editFilter = null;
+      this.totalRows = this.listOfItems.length;
+      this.currentPage = 1;
+      this.sortListOfItems(false);
       this.$bvModal.show(id);
     },
   },

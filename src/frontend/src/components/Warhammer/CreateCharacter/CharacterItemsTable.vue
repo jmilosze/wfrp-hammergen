@@ -363,13 +363,17 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
+    sortListOfItems(sortDesc, key = "equipped") {
       if (key !== "equipped" && key !== "carried" && key !== "stored") {
         this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
       } else {
-        this.listOfItems.sort((a, b) => (a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0));
+        this.listOfItems.sort((a, b) => {
+          const aNonZero = a[key] !== 0;
+          const bNonZero = b[key] !== 0;
+          return aNonZero === bNonZero ? a.name.localeCompare(b.name) : aNonZero ? -1 : 1;
+        });
       }
       if (sortDesc) {
         this.listOfItems.reverse();
@@ -422,7 +426,7 @@ export default {
         }
       }
       this.$emit("stateChanged", this.isValid);
-      this.sortListOfItems("equipped", true);
+      this.sortListOfItems(true);
     },
     formatMeleeGroup(group) {
       return meleeGroups[group];

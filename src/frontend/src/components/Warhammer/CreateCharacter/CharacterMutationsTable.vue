@@ -66,7 +66,7 @@
           </b-button>
         </template>
 
-        <template v-slot:cell(selected)="row">
+        <template v-slot:cell(select)="row">
           <b-form-checkbox v-model="row.item.selected" @change="selectItem(row.item)"></b-form-checkbox>
         </template>
 
@@ -116,7 +116,7 @@ export default {
       editFields: [
         { key: "name", sortable: true },
         { key: "actions", sortable: false },
-        { key: "selected", sortable: true },
+        { key: "select", sortable: true },
       ],
       perPage: 50,
       currentPage: 1,
@@ -151,13 +151,15 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
-      if (key !== "selected") {
+    sortListOfItems(sortDesc, key = "select") {
+      if (key !== "select") {
         this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
       } else {
-        this.listOfItems.sort((a, b) => (a[key] === b[key] ? 0 : a[key] ? 1 : -1));
+        this.listOfItems.sort((a, b) =>
+          a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1
+        );
       }
       if (sortDesc) {
         this.listOfItems.reverse();
@@ -188,7 +190,7 @@ export default {
       }
       let newModifiers = this.calcModifiers();
       this.$emit("modifiersChanged", newModifiers);
-      this.sortListOfItems("selected", true);
+      this.sortListOfItems(false);
     },
     selectItem(item) {
       this.$emit("changed", { id: item.id, selected: item.selected });
@@ -199,7 +201,9 @@ export default {
       }
     },
     calcModifiers() {
-      return sumAndMultModifiers(this.mutationsWithModifiers.map((m) => ({ multiplier: m.selected ? 1: 0, modifiers: m.modifiers })));
+      return sumAndMultModifiers(
+        this.mutationsWithModifiers.map((m) => ({ multiplier: m.selected ? 1 : 0, modifiers: m.modifiers }))
+      );
     },
     async loadData(reload = false) {
       this.editLoading = true;

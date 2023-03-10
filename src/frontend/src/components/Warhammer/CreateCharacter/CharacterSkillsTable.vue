@@ -170,13 +170,18 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
+    sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
         this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
       } else {
-        this.listOfItems.sort((a, b) => (a.number < b.number ? -1 : a.number > b.number ? 1 : 0));
+        this.listOfItems.sort((a, b) => {
+          const aNonZero = a.number !== 0;
+          const bNonZero = b.number !== 0;
+
+          return aNonZero === bNonZero ? a.name.localeCompare(b.name) : aNonZero ? -1 : 1;
+        });
       }
       if (sortDesc) {
         this.listOfItems.reverse();
@@ -204,7 +209,7 @@ export default {
         }
       }
       this.$emit("stateChanged", this.isValid);
-      this.sortListOfItems("select", true);
+      this.sortListOfItems(false);
     },
     getAttValue(attNumber) {
       return this.characterAtts[skillAttributeTypesGroup[attNumber]];
