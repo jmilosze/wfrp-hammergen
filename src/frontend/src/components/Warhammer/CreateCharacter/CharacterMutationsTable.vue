@@ -94,6 +94,7 @@ import { MutationApi, mutationTypes } from "../../../services/wh/mutation";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
+import { compareBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 
@@ -155,11 +156,9 @@ export default {
     },
     sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
-        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
+        this.listOfItems.sort(compareStringFn(key));
       } else {
-        this.listOfItems.sort((a, b) =>
-          a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1
-        );
+        this.listOfItems.sort(compareBoolFn("selected", compareStringFn("name")));
       }
       if (sortDesc) {
         this.listOfItems.reverse();

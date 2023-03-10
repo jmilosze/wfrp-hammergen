@@ -115,6 +115,7 @@ import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { getTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
 import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 import { generateSpeciesTalents } from "../../../services/wh/characterGeneration/generateSpeciesTalents";
+import { compareNumberFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 
@@ -209,14 +210,9 @@ export default {
     },
     sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
-        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
+        this.listOfItems.sort(compareStringFn(key));
       } else {
-        this.listOfItems.sort((a, b) => {
-          const aNonZero = a.number !== 0;
-          const bNonZero = b.number !== 0;
-
-          return aNonZero === bNonZero ? a.name.localeCompare(b.name) : aNonZero ? -1 : 1;
-        });
+        this.listOfItems.sort(compareNumberFn("number", compareStringFn("name")));
       }
       if (sortDesc) {
         this.listOfItems.reverse();

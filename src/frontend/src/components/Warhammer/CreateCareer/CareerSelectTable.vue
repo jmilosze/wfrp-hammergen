@@ -71,6 +71,7 @@
 <script>
 import { addAnyToGroup, addSpaces } from "../../../utils/stringUtils";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
+import { compareAnyBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 let uuid = 0;
@@ -145,18 +146,15 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
+    sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
-        this.listOfElements.sort((a, b) => a[key].localeCompare(b[key]));
+        this.listOfElements.sort(compareStringFn(key));
       } else {
-        this.listOfElements.sort((a, b) => {
-          const aAny = a.selected1 || a.selected2 || a.selected3 || a.selected4;
-          const bAny = b.selected1 || b.selected2 || b.selected3 || b.selected4;
-
-          return aAny === bAny ? a.name.localeCompare(b.name) : aAny ? -1 : 1;
-        });
+        this.listOfElements.sort(
+          compareAnyBoolFn(["selected1", "selected2", "selected3", "selected4"], compareStringFn("name"))
+        );
       }
       if (sortDesc) {
         this.listOfElements.reverse();
@@ -166,7 +164,7 @@ export default {
       this.editElementFilter = null;
       this.totalRows = this.listOfElements.length;
       this.currentPage = 1;
-      this.sortListOfItems("select", false);
+      this.sortListOfItems(false);
       this.$bvModal.show(this.modalId);
     },
     async loadData() {
@@ -189,7 +187,7 @@ export default {
       }
       this.listOfElements = listOfElements;
       this.elementsLoading = false;
-      this.sortListOfItems("select", false);
+      this.sortListOfItems(false);
     },
     createNew() {
       this.$emit("createNewElement");

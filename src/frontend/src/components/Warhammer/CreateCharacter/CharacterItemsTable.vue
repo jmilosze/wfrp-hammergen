@@ -250,6 +250,7 @@ import {
   meleeReach,
   rangedGroups,
 } from "../../../services/wh/item";
+import { compareNumberFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 const itemTypes = ["equipped", "carried", "stored"];
@@ -366,14 +367,20 @@ export default {
       this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
     sortListOfItems(sortDesc, key = "equipped") {
-      if (key !== "equipped" && key !== "carried" && key !== "stored") {
-        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
+      if (key === "equipped") {
+        this.listOfItems.sort(
+          compareNumberFn("equipped", compareNumberFn("carried", compareNumberFn("stored", compareStringFn("name"))))
+        );
+      } else if (key === "carried") {
+        this.listOfItems.sort(
+          compareNumberFn("carried", compareNumberFn("equipped", compareNumberFn("stored", compareStringFn("name"))))
+        );
+      } else if (key === "stored") {
+        this.listOfItems.sort(
+          compareNumberFn("stored", compareNumberFn("equipped", compareNumberFn("carried", compareStringFn("name"))))
+        );
       } else {
-        this.listOfItems.sort((a, b) => {
-          const aNonZero = a[key] !== 0;
-          const bNonZero = b[key] !== 0;
-          return aNonZero === bNonZero ? a.name.localeCompare(b.name) : aNonZero ? -1 : 1;
-        });
+        this.listOfItems.sort(compareStringFn(key));
       }
       if (sortDesc) {
         this.listOfItems.reverse();

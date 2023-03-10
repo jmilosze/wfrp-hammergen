@@ -92,6 +92,7 @@ import { CareerApi, careerClasses } from "../../../services/wh/career";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { species } from "../../../services/wh/character";
+import { compareBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 
@@ -136,19 +137,9 @@ export default {
     },
     sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
-        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
+        this.listOfItems.sort(compareStringFn(key));
       } else {
-        this.listOfItems.sort((a, b) => {
-          return a.current === b.current
-            ? a.past === b.past
-              ? a.name.localeCompare(b.name)
-              : a.past
-              ? -1
-              : 1
-            : a.current
-            ? -1
-            : 1;
-        });
+        this.listOfItems.sort(compareBoolFn("current", compareBoolFn("past", compareStringFn("name"))));
       }
       if (sortDesc) {
         this.listOfItems.reverse();
