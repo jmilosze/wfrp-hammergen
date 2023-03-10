@@ -32,6 +32,7 @@
                 :disabled="!element.canEdit"
                 :options="spellTypeOptions"
                 v-model="element.type"
+                @change="resetCn"
               ></b-form-select>
             </b-form-group>
 
@@ -154,6 +155,9 @@ export default {
         this.validDuration[0] &&
         this.validCn[0]
       );
+    },
+    resetCn() {
+      this.element.cn = 0;
     },
   },
   computed: {

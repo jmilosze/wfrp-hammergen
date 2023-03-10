@@ -102,10 +102,10 @@
           next day but sometimes life gets in the way so please be patient.
         </p>
         <p>
-          If you enjoy using Hammergen, please consider supporting me on Ko-fi. Any donations will help to cover hosting
-          costs.
+          If you enjoy using Hammergen, please consider supporting me on
+          <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link>. Any donations will help to cover
+          hosting costs.
         </p>
-        <vue-kofi uid="Q5Q12E0KB" color="#353a40" text="Support Hammergen on Ko-fi" />
       </div>
     </div>
   </div>

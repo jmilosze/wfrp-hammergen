@@ -443,7 +443,7 @@
               @apiCallError="addError"
               @createNewElement="submitForm('property')"
             ></SelectTable>
-            <b-form-invalid-feedback :state="!failed">
+            <b-form-invalid-feedback :state="validAll">
               To modify Qualities And Flaws, correct invalid form fields.
             </b-form-invalid-feedback>
           </b-col>
