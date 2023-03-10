@@ -103,6 +103,7 @@ import { addSpaces } from "../../../utils/stringUtils";
 import { SkillApi, skillAttributeTypesGroup, skillTypesGroup } from "../../../services/wh/skill";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
+import { compareNumberFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 
@@ -170,13 +171,13 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
+    sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
-        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
+        this.listOfItems.sort(compareStringFn(key));
       } else {
-        this.listOfItems.sort((a, b) => (a.number < b.number ? -1 : a.number > b.number ? 1 : 0));
+        this.listOfItems.sort(compareNumberFn("number", compareStringFn("name")));
       }
       if (sortDesc) {
         this.listOfItems.reverse();
@@ -204,7 +205,7 @@ export default {
         }
       }
       this.$emit("stateChanged", this.isValid);
-      this.sortListOfItems("select", true);
+      this.sortListOfItems(false);
     },
     getAttValue(attNumber) {
       return this.characterAtts[skillAttributeTypesGroup[attNumber]];

@@ -115,6 +115,7 @@ import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { getTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
 import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 import { generateSpeciesTalents } from "../../../services/wh/characterGeneration/generateSpeciesTalents";
+import { compareNumberFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 
@@ -205,13 +206,13 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
+    sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
-        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
+        this.listOfItems.sort(compareStringFn(key));
       } else {
-        this.listOfItems.sort((a, b) => (a.number < b.number ? -1 : a.number > b.number ? 1 : 0));
+        this.listOfItems.sort(compareNumberFn("number", compareStringFn("name")));
       }
       if (sortDesc) {
         this.listOfItems.reverse();
@@ -248,7 +249,7 @@ export default {
       this.$emit("stateChanged", this.isValid);
       let newModifiers = this.calcModifiers();
       this.$emit("modifiersChanged", newModifiers);
-      this.sortListOfItems("select", true);
+      this.sortListOfItems(false);
     },
     formatMaxRank(talent) {
       const elems = [];

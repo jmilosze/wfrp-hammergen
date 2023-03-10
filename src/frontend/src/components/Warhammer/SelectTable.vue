@@ -8,7 +8,7 @@
       :sort-by="dispElementFields[0].key"
     >
     </b-table>
-    <b-button size="sm" class="mb-2" @click="showEditElements" variant="primary" :disabled="disabled">
+    <b-button size="sm" class="mb-2" @click="showSelectionModal" variant="primary" :disabled="disabled">
       Add/Modify
     </b-button>
     <b-modal :id="modalId" :title="title" ok-only ok-title="Close" scrollable>
@@ -57,6 +57,7 @@
 <script>
 import { addSpaces } from "../../utils/stringUtils";
 import { logoutIfUnauthorized } from "../../utils/navigation";
+import { compareBoolFn, compareStringFn } from "../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 let uuid = 0;
@@ -124,26 +125,29 @@ export default {
       });
     },
     editElements() {
-      this.totalRows = this.totalRows = this.editElements.length;
+      this.totalRows = this.editElements.length;
       this.currentPage = 1;
     },
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
+    sortListOfItems(sortDesc, key = "select") {
       if (key !== "select") {
-        this.listOfElements.sort((a, b) => a[key].localeCompare(b[key]));
+        this.listOfElements.sort(compareStringFn(key));
       } else {
-        this.listOfElements.sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? 1 : -1));
+        this.listOfElements.sort(compareBoolFn("selected", compareStringFn("name")));
       }
       if (sortDesc) {
         this.listOfElements.reverse();
       }
     },
-    showEditElements() {
+    showSelectionModal() {
       this.editElementFilter = null;
+      this.totalRows = this.editElements.length;
+      this.currentPage = 1;
+      this.sortListOfItems(false);
       this.$bvModal.show(this.modalId);
     },
     loadData: async function () {
@@ -163,7 +167,7 @@ export default {
       this.listOfElements = listOfElements;
       this.elementsLoading = false;
 
-      this.sortListOfItems("select", true);
+      this.sortListOfItems(false);
     },
     createNew() {
       this.$emit("createNewElement");

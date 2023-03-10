@@ -66,7 +66,7 @@
           </b-button>
         </template>
 
-        <template v-slot:cell(selected)="row">
+        <template v-slot:cell(select)="row">
           <b-form-checkbox v-model="row.item.selected" @change="selectItem(row.item.id, $event)"></b-form-checkbox>
         </template>
 
@@ -107,6 +107,7 @@ import { addSpaces } from "../../../utils/stringUtils";
 import { SpellApi } from "../../../services/wh/spell";
 import { authRequest } from "../../../services/auth";
 import { logoutIfUnauthorized } from "../../../utils/navigation";
+import { compareBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 
@@ -129,7 +130,7 @@ export default {
       editFields: [
         { key: "name", sortable: true },
         { key: "actions", sortable: false },
-        { key: "selected", sortable: true },
+        { key: "select", sortable: true },
       ],
       perPage: 50,
       currentPage: 1,
@@ -162,13 +163,13 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
-      if (key !== "selected") {
-        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
+    sortListOfItems(sortDesc, key = "select") {
+      if (key !== "select") {
+        this.listOfItems.sort(compareStringFn(key));
       } else {
-        this.listOfItems.sort((a, b) => (a[key] === b[key] ? 0 : a[key] ? 1 : -1));
+        this.listOfItems.sort(compareBoolFn("selected", compareStringFn("name")));
       }
       if (sortDesc) {
         this.listOfItems.reverse();
@@ -194,7 +195,7 @@ export default {
           // this.$emit("changed", { id: newItem, selected: false });
         }
       }
-      this.sortListOfItems("selected", true);
+      this.sortListOfItems(false);
     },
     selectItem(id, selected) {
       this.$emit("changed", { id, selected });
@@ -238,8 +239,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.rank {
-  min-width: 65px;
-}
-</style>
+<style scoped></style>

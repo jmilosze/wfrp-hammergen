@@ -250,6 +250,7 @@ import {
   meleeReach,
   rangedGroups,
 } from "../../../services/wh/item";
+import { compareNumberFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 const itemTypes = ["equipped", "carried", "stored"];
@@ -363,13 +364,23 @@ export default {
   },
   methods: {
     onSort(ctx) {
-      this.sortListOfItems(ctx.sortBy, ctx.sortDesc);
+      this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },
-    sortListOfItems(key, sortDesc) {
-      if (key !== "equipped" && key !== "carried" && key !== "stored") {
-        this.listOfItems.sort((a, b) => a[key].localeCompare(b[key]));
+    sortListOfItems(sortDesc, key = "equipped") {
+      if (key === "equipped") {
+        this.listOfItems.sort(
+          compareNumberFn("equipped", compareNumberFn("carried", compareNumberFn("stored", compareStringFn("name"))))
+        );
+      } else if (key === "carried") {
+        this.listOfItems.sort(
+          compareNumberFn("carried", compareNumberFn("equipped", compareNumberFn("stored", compareStringFn("name"))))
+        );
+      } else if (key === "stored") {
+        this.listOfItems.sort(
+          compareNumberFn("stored", compareNumberFn("equipped", compareNumberFn("carried", compareStringFn("name"))))
+        );
       } else {
-        this.listOfItems.sort((a, b) => (a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0));
+        this.listOfItems.sort(compareStringFn(key));
       }
       if (sortDesc) {
         this.listOfItems.reverse();
@@ -422,7 +433,7 @@ export default {
         }
       }
       this.$emit("stateChanged", this.isValid);
-      this.sortListOfItems("equipped", true);
+      this.sortListOfItems(true);
     },
     formatMeleeGroup(group) {
       return meleeGroups[group];
