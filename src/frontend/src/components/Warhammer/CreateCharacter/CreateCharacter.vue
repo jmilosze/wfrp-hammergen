@@ -866,6 +866,7 @@
 </template>
 
 <script>
+import NavHelpers from "../../NavHelpers.vue";
 import CreateElement from "../CreateElement.vue";
 import CreateSubmit from "../CreateSubmit.vue";
 import CharacterCareerTable from "./CharacterCareerTable.vue";
@@ -880,7 +881,6 @@ import generateDescription from "../../../services/wh/characterGeneration/descri
 import generateCharacter from "../../../services/wh/characterGeneration/characterGeneration";
 import { generateRolls } from "../../../services/wh/characterGeneration/attGeneration";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
 import {
   generateEmptyCharacter,
   CharacterApi,
@@ -905,7 +905,7 @@ import {
 
 export default {
   name: "CreateCharacter",
-  mixins: [CreateElement],
+  mixins: [CreateElement, NavHelpers],
   components: {
     CreateSubmit,
     CharacterCareerTable,
@@ -1135,7 +1135,7 @@ export default {
     async loadGenerationProps() {
       let serverResp = null;
       try {
-        serverResp = await logoutIfUnauthorized(authRequest.get)("/api/generation_props");
+        serverResp = await this.callAndLogoutIfUnauthorized(authRequest.get)("/api/generation_props");
         this.generationProps = serverResp.data.data;
       } catch (error) {
         this.addError();

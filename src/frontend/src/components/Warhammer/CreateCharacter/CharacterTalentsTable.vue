@@ -108,10 +108,10 @@
 
 <script>
 import TableCommon from "./TableCommon.vue";
+import NavHelpers from "../../NavHelpers.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { getTalentGroups } from "../../../services/wh/characterGeneration/talentGeneration";
 import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 import { generateSpeciesTalents } from "../../../services/wh/characterGeneration/generateSpeciesTalents";
@@ -121,7 +121,7 @@ const MAX_CHARS = 15;
 
 export default {
   name: "CharacterTalentsTable",
-  mixins: [TableCommon],
+  mixins: [TableCommon, NavHelpers],
   props: {
     characterTalents: {
       type: Array,
@@ -311,7 +311,7 @@ export default {
       this.editLoading = true;
       let currentTalents = this.getCurrentTalents();
 
-      let listOfItems = await logoutIfUnauthorized(this.talentApi.listElements)();
+      let listOfItems = await this.callAndLogoutIfUnauthorized(this.talentApi.listElements)();
       listOfItems = listOfItems.filter((x) => !x.isGroup);
       this.$emit("listOfTalents", JSON.parse(JSON.stringify(listOfItems)));
 

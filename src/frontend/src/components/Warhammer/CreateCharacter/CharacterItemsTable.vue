@@ -237,10 +237,10 @@
 
 <script>
 import TableCommon from "./TableCommon.vue";
+import NavHelpers from "../../NavHelpers.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { generateClassItems } from "../../../services/wh/characterGeneration/characterGeneration";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
 import {
   ammunitionGroups,
   armorGroups,
@@ -275,7 +275,7 @@ export default {
       required: true,
     },
   },
-  mixins: [TableCommon],
+  mixins: [TableCommon, NavHelpers],
   data() {
     return {
       itemApi: new ItemApi(authRequest),
@@ -506,7 +506,7 @@ export default {
       let currentCarried = this.getCurrentItems("carried");
       let currentStored = this.getCurrentItems("stored");
 
-      const listOfItems = await logoutIfUnauthorized(this.itemApi.listElements)();
+      const listOfItems = await this.callAndLogoutIfUnauthorized(this.itemApi.listElements)();
       for (let item of listOfItems) {
         item.equipped = 0;
         item.carried = 0;

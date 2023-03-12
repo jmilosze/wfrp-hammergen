@@ -37,12 +37,13 @@
 <script>
 import { validUserName } from "../../../utils/validation/user";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
+import NavHelpers from "../../NavHelpers.vue";
 
 export default {
   name: "UserProfile",
+  mixins: [NavHelpers],
   created() {
-    logoutIfUnauthorized(authRequest.get)("/api/user")
+    this.callAndLogoutIfUnauthorized(authRequest.get)("/api/user")
       .then(
         (resp) =>
           (this.user = {
@@ -90,7 +91,7 @@ export default {
 
       this.submitting = true;
 
-      logoutIfUnauthorized(authRequest.post)("/api/user/update", { name: this.user.name })
+      this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/update", { name: this.user.name })
         .then(() => this.onRegistrationSuccessful())
         .catch(() => this.errors.push("Server Error."))
         .then(() => (this.submitting = false));

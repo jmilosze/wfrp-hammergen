@@ -103,10 +103,10 @@
 
 <script>
 import TableCommon from "./TableCommon.vue";
+import NavHelpers from "../../NavHelpers.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { SpellApi } from "../../../services/wh/spell";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { compareBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
@@ -119,7 +119,7 @@ export default {
       required: true,
     },
   },
-  mixins: [TableCommon],
+  mixins: [TableCommon, NavHelpers],
   data() {
     return {
       spellApi: new SpellApi(authRequest),
@@ -204,7 +204,7 @@ export default {
       this.editLoading = true;
       let currentSpells = this.getCurrentSpells();
 
-      const listOfItems = await logoutIfUnauthorized(this.spellApi.listElements)();
+      const listOfItems = await this.callAndLogoutIfUnauthorized(this.spellApi.listElements)();
 
       for (let item of listOfItems) {
         item.selected = false;

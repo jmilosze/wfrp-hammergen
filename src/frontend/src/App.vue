@@ -21,22 +21,12 @@
 
 <script>
 import NavBar from "./components/NavBar.vue";
-import { authRequest } from "./services/auth";
-import { logoutIfUnauthorized } from "./utils/navigation";
+import NavHelpers from "./components/NavHelpers.vue";
 
 export default {
   name: "app",
   components: { NavBar },
-  methods: {
-    async logoutIfAuthExpired() {
-      if (this.$store.state.auth.isLoggedIn) {
-        try {
-          await logoutIfUnauthorized(authRequest.get, "home")("/api/user");
-          // eslint-disable-next-line no-empty
-        } catch (e) {}
-      }
-    },
-  },
+  mixins: [NavHelpers],
   created() {
     this.logoutIfAuthExpired();
     this.$recaptchaLoaded().then(() => {

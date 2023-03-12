@@ -3,13 +3,14 @@
 </template>
 
 <script>
-import { logoutIfUnauthorized } from "../../utils/navigation";
+import NavHelpers from "../NavHelpers.vue";
 import { validWhDesc, validWhShortDesc } from "../../utils/validation/wh";
 
 const leaveConfirmation = "Changes that you made may not be saved.";
 
 export default {
   name: "CreateElement2",
+  mixins: [NavHelpers],
   props: {
     id: {
       type: String,
@@ -55,7 +56,7 @@ export default {
         this.setElementToNew(this.$store.state.auth.isLoggedIn);
         this.resetTables();
       } else {
-        logoutIfUnauthorized(this.elementApi.getElement)(this.id)
+        this.callAndLogoutIfUnauthorized(this.elementApi.getElement)(this.id)
           .then((element) => {
             this.element = element;
             this.elementOriginal = JSON.parse(JSON.stringify(this.element));
@@ -104,9 +105,9 @@ export default {
       try {
         let serverResp = null;
         if (this.id === "create") {
-          serverResp = await logoutIfUnauthorized(this.elementApi.createElement)(this.element);
+          serverResp = await this.callAndLogoutIfUnauthorized(this.elementApi.createElement)(this.element);
         } else {
-          serverResp = await logoutIfUnauthorized(this.elementApi.updateElement)(this.element);
+          serverResp = await this.callAndLogoutIfUnauthorized(this.elementApi.updateElement)(this.element);
         }
         if (redirectElementType) {
           console.log("Hello");

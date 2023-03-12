@@ -69,8 +69,8 @@
 </template>
 
 <script>
+import NavHelpers from "../../NavHelpers.vue";
 import { addAnyToGroup, addSpaces } from "../../../utils/stringUtils";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { compareAnyBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
@@ -87,6 +87,7 @@ function formatLevels({ selected1, selected2, selected3, selected4 }) {
 
 export default {
   name: "CareerSelectTable",
+  mixins: [NavHelpers],
   props: {
     disabled: {
       type: Boolean,
@@ -172,7 +173,7 @@ export default {
 
       let listOfElements = [];
       try {
-        listOfElements = await logoutIfUnauthorized(this.elementApi.listElements)();
+        listOfElements = await this.callAndLogoutIfUnauthorized(this.elementApi.listElements)();
         listOfElements.forEach((x) => {
           x.selected1 = !!this.level1.includes(x.id);
           x.selected2 = !!this.level2.includes(x.id);

@@ -32,10 +32,11 @@
 
 <script>
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
+import NavHelpers from "../../NavHelpers.vue";
 
 export default {
   name: "UserDelete",
+  mixins: [NavHelpers],
   data() {
     return {
       errors: [],
@@ -73,7 +74,7 @@ export default {
 
       this.submitting = true;
 
-      logoutIfUnauthorized(authRequest.delete)("/api/user", { data: { password: this.password } })
+      this.callAndLogoutIfUnauthorized(authRequest.delete)("/api/user", { data: { password: this.password } })
         .then(this.onSubmissionSuccessful)
         .catch(this.onSubmissionFailed)
         .then(() => (this.submitting = false));

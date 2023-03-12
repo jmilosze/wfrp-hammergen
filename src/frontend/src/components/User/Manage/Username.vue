@@ -39,10 +39,11 @@
 <script>
 import { validEmail } from "../../../utils/validation/user";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
+import NavHelpers from "../../NavHelpers.vue";
 
 export default {
   name: "UserName",
+  mixins: [NavHelpers],
   data() {
     return {
       validatorOn: false,
@@ -93,7 +94,7 @@ export default {
 
       this.submitting = true;
 
-      logoutIfUnauthorized(authRequest.post)("/api/user/secure_update", {
+      this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/secure_update", {
         username: this.email.toLowerCase(),
         current_password: this.password,
       })
