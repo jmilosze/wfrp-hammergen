@@ -47,7 +47,7 @@ export default {
   methods: {
     onSubmissionFailed(response) {
       if (response.response) {
-        if (response.response.data.code === 102) {
+        if (response.response.data.code === 107) {
           this.errors.push("Incorrect password.");
         } else {
           this.errors.push("Server Error.");
@@ -55,10 +55,7 @@ export default {
       } else {
         this.errors.push("Server Error.");
       }
-    },
-    onSubmissionSuccessful() {
-      this.$store.dispatch("auth/logout");
-      this.$router.push({ name: "home" });
+      this.submitting = false;
     },
     submit() {
       this.submitting = false;
@@ -75,9 +72,8 @@ export default {
       this.submitting = true;
 
       this.callAndLogoutIfUnauthorized(authRequest.delete)("/api/user", { data: { password: this.password } })
-        .then(this.onSubmissionSuccessful)
-        .catch(this.onSubmissionFailed)
-        .then(() => (this.submitting = false));
+        .then(this.logout)
+        .catch(this.onSubmissionFailed);
     },
   },
 };

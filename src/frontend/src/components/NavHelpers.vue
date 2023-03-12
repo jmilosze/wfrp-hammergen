@@ -1,6 +1,5 @@
 <script>
 import { useAuthStore } from "../stores/auth";
-import { authRequest } from "../services/auth";
 import { mapStores } from "pinia";
 
 export default {
@@ -10,9 +9,9 @@ export default {
   },
   methods: {
     callAndLogoutIfUnauthorized(apiCall) {
-      return async (path) => {
+      return async (...args) => {
         try {
-          return await apiCall(path);
+          return await apiCall(...args);
         } catch (e) {
           if (e.response?.status === 401) {
             await this.authStore.logout();
