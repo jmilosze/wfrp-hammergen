@@ -9,26 +9,21 @@ export default {
     ...mapStores(useAuthStore),
   },
   methods: {
-    callAndLogoutIfUnauthorized(apiCall, redirectTo = "login") {
-      return async function () {
+    callAndLogoutIfUnauthorized(apiCall) {
+      return async (path) => {
         try {
-          return await apiCall.apply(this, arguments);
+          return await apiCall(path);
         } catch (e) {
           if (e.response?.status === 401) {
             await this.authStore.logout();
-            if (this.$router.currentRoute.name !== redirectTo) {
-              await this.$router.push({ name: redirectTo });
+            if (this.$router.currentRoute.name !== "login") {
+              await this.$router.push({ name: "login" });
             }
           } else {
             throw e;
           }
         }
       };
-    },
-    async logoutIfAuthExpired() {
-      if (this.authStore.loggedIn) {
-        await this.callAndLogoutIfUnauthorized(authRequest.get, "home")("/api/user");
-      }
     },
     async logout() {
       await this.authStore.logout();

@@ -28,7 +28,6 @@ export default {
   components: { NavBar },
   mixins: [NavHelpers],
   created() {
-    this.logoutIfAuthExpired();
     this.$recaptchaLoaded().then(() => {
       this.$recaptchaInstance.hideBadge();
     });

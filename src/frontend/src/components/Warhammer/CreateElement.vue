@@ -49,7 +49,7 @@ export default {
   methods: {
     async initializeElement() {
       if (this.id === "create") {
-        this.setElementToNew(this.$store.state.auth.isLoggedIn);
+        this.setElementToNew(this.authStore.loggedIn);
         this.resetTables();
       } else {
         this.callAndLogoutIfUnauthorized(this.elementApi.getElement)(this.id)
