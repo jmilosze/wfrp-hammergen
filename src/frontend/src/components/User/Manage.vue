@@ -87,6 +87,8 @@ import UserName from "./Manage/Username.vue";
 import UserPassword from "./Manage/Password.vue";
 import UserDelete from "./Manage/Delete.vue";
 import UserShared from "./Manage/Shared.vue";
+import { mapStores } from "pinia";
+import { useAuthStore } from "../../stores/auth";
 
 export default {
   name: "UserManage",
@@ -109,8 +111,11 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapStores(useAuthStore),
+  },
   created() {
-    if (!this.$store.state.auth.isLoggedIn) {
+    if (!this.authStore.loggedIn) {
       this.$router.push({ name: "home" });
     }
   },

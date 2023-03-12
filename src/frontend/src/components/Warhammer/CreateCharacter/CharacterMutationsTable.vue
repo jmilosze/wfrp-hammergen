@@ -89,10 +89,10 @@
 
 <script>
 import TableCommon from "./TableCommon.vue";
+import NavHelpers from "../../NavHelpers.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { MutationApi, mutationTypes } from "../../../services/wh/mutation";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 import { compareBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
@@ -106,7 +106,7 @@ export default {
       required: true,
     },
   },
-  mixins: [TableCommon],
+  mixins: [TableCommon, NavHelpers],
   data() {
     return {
       mutationApi: new MutationApi(authRequest),
@@ -208,7 +208,7 @@ export default {
       this.editLoading = true;
       let currentMutations = this.getCurrentMutations();
 
-      const listOfItems = await logoutIfUnauthorized(this.mutationApi.listElements)();
+      const listOfItems = await this.callAndLogoutIfUnauthorized(this.mutationApi.listElements)();
       for (let item of listOfItems) {
         item.selected = false;
         item.name = addSpaces(item.name, MAX_CHARS);

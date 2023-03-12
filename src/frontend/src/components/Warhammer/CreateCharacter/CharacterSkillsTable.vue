@@ -99,17 +99,17 @@
 
 <script>
 import TableCommon from "./TableCommon.vue";
+import NavHelpers from "../../NavHelpers.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { SkillApi, skillAttributeTypesGroup, skillTypesGroup } from "../../../services/wh/skill";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { compareNumberFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 
 export default {
   name: "CharacterSkillsTable",
-  mixins: [TableCommon],
+  mixins: [TableCommon, NavHelpers],
   props: {
     characterSkills: {
       type: Array,
@@ -219,7 +219,7 @@ export default {
       this.editLoading = true;
       let currentSkills = this.getCurrentSkills();
 
-      let listOfItems = await logoutIfUnauthorized(this.skillApi.listElements)();
+      let listOfItems = await this.callAndLogoutIfUnauthorized(this.skillApi.listElements)();
       listOfItems = listOfItems.filter((x) => !x.isGroup);
       this.$emit("listOfSkills", JSON.parse(JSON.stringify(listOfItems)));
 

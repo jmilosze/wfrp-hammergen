@@ -596,14 +596,15 @@
 </template>
 
 <script>
+import NavHelpers from "../NavHelpers.vue";
 import { addSpaces } from "../../utils/stringUtils";
-import { logoutIfUnauthorized } from "../../utils/navigation";
 import { authRequest } from "../../services/auth";
 import { saveAs } from "file-saver";
 import { CharacterApi, generateEmptyCharacterForDisplay, characterForDisplayToCsv } from "../../services/wh/character";
 
 export default {
   name: "ViewCharacter",
+  mixins: [NavHelpers],
   props: {
     id: {
       type: String,
@@ -659,7 +660,7 @@ export default {
 
     async loadData() {
       try {
-        this.char = await logoutIfUnauthorized(this.elementApi.getElementForDisplay)(this.id);
+        this.char = await this.callAndLogoutIfUnauthorized(this.elementApi.getElementForDisplay)(this.id);
       } catch (error) {
         this.errors.push("Server Error.");
         throw error;

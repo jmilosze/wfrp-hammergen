@@ -22,10 +22,10 @@
           <b-nav-item-dropdown text="About" right>
             <b-dropdown-item :to="{ name: 'updates' }">Updates</b-dropdown-item></b-nav-item-dropdown
           >
-          <b-nav-item v-if="!isLoggedIn" :to="{ name: 'register' }">Register</b-nav-item>
-          <b-nav-item v-if="!isLoggedIn" :to="{ name: 'login' }">Login</b-nav-item>
-          <b-nav-item v-if="isLoggedIn" :to="{ name: 'manage' }">Manage Account</b-nav-item>
-          <b-nav-form v-if="isLoggedIn">
+          <b-nav-item v-if="!authStore.loggedIn" :to="{ name: 'register' }">Register</b-nav-item>
+          <b-nav-item v-if="!authStore.loggedIn" :to="{ name: 'login' }">Login</b-nav-item>
+          <b-nav-item v-if="authStore.loggedIn" :to="{ name: 'manage' }">Manage Account</b-nav-item>
+          <b-nav-form v-if="authStore.loggedIn">
             <b-button variant="btn-link" v-on:click="logout" class="nav-link">Logout</b-button>
           </b-nav-form>
         </b-navbar-nav>
@@ -35,23 +35,11 @@
 </template>
 
 <script>
-import { router } from "../router";
+import NavHelpers from "./NavHelpers.vue";
 
 export default {
   name: "NavBar",
-  computed: {
-    isLoggedIn: function () {
-      return this.$store.state.auth.isLoggedIn;
-    },
-  },
-  methods: {
-    logout: async function () {
-      await this.$store.dispatch("auth/logout");
-      if (router.currentRoute.name !== "home") {
-        await this.$router.push({ name: "home" });
-      }
-    },
-  },
+  mixins: [NavHelpers],
 };
 </script>
 

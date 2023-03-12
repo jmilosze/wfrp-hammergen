@@ -4,7 +4,7 @@
       <b-col>
         <b-form-group>
           <b-button
-            v-if="isLoggedIn"
+            v-if="authStore.loggedIn"
             variant="primary"
             class="mr-2 mb-1"
             :to="{ name: elementType, params: { id: 'create' } }"
@@ -86,6 +86,9 @@
 </template>
 
 <script>
+import { mapStores } from "pinia";
+import { useAuthStore } from "../../../stores/auth";
+
 export default {
   name: "ElementList",
   props: {
@@ -116,13 +119,11 @@ export default {
     };
   },
   computed: {
+    ...mapStores(useAuthStore),
     resultRange: function () {
       const beginRange = Math.min(1 + (this.currentPage - 1) * this.perPage, this.totalRows);
       const endRange = Math.min(this.currentPage * this.perPage, this.totalRows);
       return `Results ${beginRange} - ${endRange} of ${this.totalRows}`;
-    },
-    isLoggedIn: function () {
-      return this.$store.state.auth.isLoggedIn;
     },
     totalRows: function () {
       return this.listOfElements.length < this.filteredItemsLength

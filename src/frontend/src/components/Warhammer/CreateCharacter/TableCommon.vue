@@ -1,7 +1,3 @@
-<template>
-  <div class="table-common"></div>
-</template>
-
 <script>
 export default {
   name: "TableCommon",
@@ -37,5 +33,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

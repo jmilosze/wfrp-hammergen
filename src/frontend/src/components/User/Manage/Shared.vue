@@ -78,10 +78,11 @@
 
 <script>
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
+import NavHelpers from "../../NavHelpers.vue";
 
 export default {
   name: "UserShared",
+  mixins: [NavHelpers],
   data() {
     return {
       updateSuccessful: false,
@@ -112,7 +113,7 @@ export default {
       this.updateSubmitting = true;
 
       try {
-        await logoutIfUnauthorized(authRequest.post)("/api/user/update", { shared_accounts: this.sharedAccounts });
+        await this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/update", { shared_accounts: this.sharedAccounts });
         this.updateSuccessful = true;
       } catch (error) {
         this.errors.push("Server Error.");
@@ -124,7 +125,7 @@ export default {
     },
     async loadData() {
       try {
-        const resp = await logoutIfUnauthorized(authRequest.get)("/api/user");
+        const resp = await this.callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
         this.sharedAccounts = resp.data.data.shared_accounts;
         this.username = resp.data.data.username;
       } catch (error) {
@@ -160,7 +161,7 @@ export default {
       }
 
       try {
-        const resp = await logoutIfUnauthorized(authRequest.get)(`/api/user/${newAcc}`);
+        const resp = await this.callAndLogoutIfUnauthorized(authRequest.get)(`/api/user/${newAcc}`);
         if (resp.data.data.exists) {
           this.sharedAccounts.push(newAcc);
           this.newConnectedAcc = "";

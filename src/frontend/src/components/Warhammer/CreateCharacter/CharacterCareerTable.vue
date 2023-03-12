@@ -87,10 +87,10 @@
 
 <script>
 import TableCommon from "./TableCommon.vue";
+import NavHelpers from "../../NavHelpers.vue";
 import { addSpaces } from "../../../utils/stringUtils";
 import { CareerApi, careerClasses } from "../../../services/wh/career";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
 import { species } from "../../../services/wh/character";
 import { compareBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
@@ -98,7 +98,7 @@ const MAX_CHARS = 15;
 
 export default {
   name: "CharacterCareerTable",
-  mixins: [TableCommon],
+  mixins: [TableCommon, NavHelpers],
   props: {
     pastCareers: {
       type: Array,
@@ -191,7 +191,7 @@ export default {
       }
     },
     async loadData() {
-      const listOfCareers = await logoutIfUnauthorized(this.careerApi.listElements)();
+      const listOfCareers = await this.callAndLogoutIfUnauthorized(this.careerApi.listElements)();
       this.$emit("listOfCareers", JSON.parse(JSON.stringify(listOfCareers)));
       const listOfItems = [];
       let idx = 0;

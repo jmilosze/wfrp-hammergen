@@ -47,10 +47,11 @@
 <script>
 import { validPassword, validPasswordMatch } from "../../../utils/validation/user";
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
+import NavHelpers from "../../NavHelpers.vue";
 
 export default {
   name: "UserPassword",
+  mixins: [NavHelpers],
   data() {
     return {
       validatorOn: false,
@@ -107,7 +108,7 @@ export default {
 
       this.submitting = true;
 
-      logoutIfUnauthorized(authRequest.post)("/api/user/secure_update", {
+      this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/secure_update", {
         current_password: this.currentPassword,
         password: this.newPassword,
       })

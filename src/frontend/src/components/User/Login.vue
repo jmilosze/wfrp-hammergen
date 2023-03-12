@@ -53,10 +53,11 @@
 </template>
 
 <script>
-import { router } from "../../router";
+import NavHelpers from "../NavHelpers.vue";
 
 export default {
   name: "UserLogin",
+  mixins: [NavHelpers],
   props: {
     sessionExpired: {
       type: Boolean,
@@ -73,6 +74,7 @@ export default {
   },
   methods: {
     onLoginFailed(e) {
+      this.loggingIn = false;
       if (e.response && e.response.data.code === 102) {
         this.errors.push("Invalid username or password.");
       } else {
@@ -96,11 +98,7 @@ export default {
       }
 
       this.loggingIn = true;
-      this.$store
-        .dispatch("auth/login", { username: this.username.toLowerCase(), password: this.password })
-        .then(() => router.push({ name: "home" }))
-        .catch((e) => this.onLoginFailed(e))
-        .then(() => (this.loggingIn = false));
+      this.login(this.username.toLowerCase(), this.password).catch((e) => this.onLoginFailed(e));
     },
   },
 };

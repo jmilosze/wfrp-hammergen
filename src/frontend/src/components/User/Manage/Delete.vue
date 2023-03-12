@@ -32,10 +32,11 @@
 
 <script>
 import { authRequest } from "../../../services/auth";
-import { logoutIfUnauthorized } from "../../../utils/navigation";
+import NavHelpers from "../../NavHelpers.vue";
 
 export default {
   name: "UserDelete",
+  mixins: [NavHelpers],
   data() {
     return {
       errors: [],
@@ -46,7 +47,7 @@ export default {
   methods: {
     onSubmissionFailed(response) {
       if (response.response) {
-        if (response.response.data.code === 102) {
+        if (response.response.data.code === 107) {
           this.errors.push("Incorrect password.");
         } else {
           this.errors.push("Server Error.");
@@ -54,10 +55,7 @@ export default {
       } else {
         this.errors.push("Server Error.");
       }
-    },
-    onSubmissionSuccessful() {
-      this.$store.dispatch("auth/logout");
-      this.$router.push({ name: "home" });
+      this.submitting = false;
     },
     submit() {
       this.submitting = false;
@@ -73,10 +71,9 @@ export default {
 
       this.submitting = true;
 
-      logoutIfUnauthorized(authRequest.delete)("/api/user", { data: { password: this.password } })
-        .then(this.onSubmissionSuccessful)
-        .catch(this.onSubmissionFailed)
-        .then(() => (this.submitting = false));
+      this.callAndLogoutIfUnauthorized(authRequest.delete)("/api/user", { data: { password: this.password } })
+        .then(this.logout)
+        .catch(this.onSubmissionFailed);
     },
   },
 };

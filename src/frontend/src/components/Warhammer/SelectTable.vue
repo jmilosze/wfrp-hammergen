@@ -55,8 +55,8 @@
 </template>
 
 <script>
+import NavHelpers from "../NavHelpers.vue";
 import { addSpaces } from "../../utils/stringUtils";
-import { logoutIfUnauthorized } from "../../utils/navigation";
 import { compareBoolFn, compareStringFn } from "../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
@@ -64,6 +64,7 @@ let uuid = 0;
 
 export default {
   name: "SelectTable",
+  mixins: [NavHelpers],
   props: {
     disabled: {
       type: Boolean,
@@ -155,7 +156,7 @@ export default {
 
       let listOfElements = [];
       try {
-        listOfElements = await logoutIfUnauthorized(this.elementApi.listElements)();
+        listOfElements = await this.callAndLogoutIfUnauthorized(this.elementApi.listElements)();
         listOfElements.forEach((x) => {
           x.selected = !!this.value.includes(x.id);
           x.name = addSpaces(x.name, MAX_CHARS);

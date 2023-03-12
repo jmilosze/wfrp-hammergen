@@ -130,7 +130,7 @@ def delete(request_data):
         user_service.delete_user(user_id, request_data, mongo.db.user)
         return r.api_response(r.SUCCESS_CODE, r.SUCCESS_MSG, r.SUCCESS_HTTP)
     except user_service.InvalidPasswordOrUserError:
-        return r.api_response(AUTH_FAIL_CODE, AUTH_FAIL_MSG, AUTH_FAIL_HTTP)
+        return r.api_response(PASSWORD_CONFIRM_FAIL_CODE, PASSWORD_CONFIRM_FAIL_MSG, PASSWORD_CONFIRM_FAIL_HTTP)
     except user_service.UsernameNotFoundError:
         return r.api_response(NO_USER_CODE, NO_USER_MSG, NO_USER_HTTP)
 
