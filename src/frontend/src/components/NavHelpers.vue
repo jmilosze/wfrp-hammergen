@@ -1,7 +1,3 @@
-<template>
-  <div class="nav-helpers"></div>
-</template>
-
 <script>
 import { useAuthStore } from "../stores/auth";
 import { authRequest } from "../services/auth";
@@ -49,5 +45,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

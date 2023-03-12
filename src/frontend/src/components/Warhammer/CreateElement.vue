@@ -1,7 +1,3 @@
-<template>
-  <div class="element"></div>
-</template>
-
 <script>
 import NavHelpers from "../NavHelpers.vue";
 import { validWhDesc, validWhShortDesc } from "../../utils/validation/wh";
@@ -167,5 +163,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>
