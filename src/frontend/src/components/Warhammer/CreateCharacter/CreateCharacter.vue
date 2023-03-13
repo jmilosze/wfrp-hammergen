@@ -767,7 +767,7 @@
                 @listOfSkills="listOfSkills = $event"
                 @selectedChanged="updateIdNumberList(element.skills, $event)"
                 @stateChanged="validSkills = $event"
-                @createNew="validateAndSubmit('skill')"
+                @createNew="submitForm('skill')"
               ></CharacterSkillsTable>
               <b-form-invalid-feedback :state="validSkills">
                 Invalid value of one or more Skills. Skills have to be integer numbers between 0 and 1000.
@@ -787,7 +787,7 @@
                 @listOfTalents="listOfTalents = $event"
                 @selectedChanged="updateIdNumberList(element.talents, $event)"
                 @stateChanged="validTalents = $event"
-                @createNew="validateAndSubmit('talent')"
+                @createNew="submitForm('talent')"
                 @modifiersChanged="talentModifiers = $event"
               ></CharacterTalentsTable>
               <b-form-invalid-feedback :state="validTalents">
@@ -811,7 +811,7 @@
                 @carriedChanged="updateIdNumberList(element.carriedItems, $event)"
                 @storedChanged="updateIdNumberList(element.storedItems, $event)"
                 @stateChanged="validItems = $event"
-                @createNew="validateAndSubmit('item')"
+                @createNew="submitForm('item')"
               ></CharacterItemsTable>
               <b-form-invalid-feedback :state="validItems">
                 Invalid number of one or more Items. Item quantity number has to be an integer between 0 and 1000.
@@ -828,7 +828,7 @@
                 :canSave="validAll"
                 :selectedItems="initialSpells"
                 @changed="updateIdList(element.spells, $event)"
-                @createNew="validateAndSubmit('spell')"
+                @createNew="submitForm('spell')"
               ></CharacterSpellsTable>
             </b-form-group>
           </b-col>
@@ -840,7 +840,7 @@
                 :canSave="validAll"
                 :selectedItems="initialMutations"
                 @changed="updateIdList(element.mutations, $event)"
-                @createNew="validateAndSubmit('mutation')"
+                @createNew="submitForm('mutation')"
                 @modifiersChanged="mutationModifiers = $event"
               ></CharacterMutationsTable>
             </b-form-group>
@@ -1203,11 +1203,6 @@ export default {
     },
     genRolls() {
       this.element.attributeRolls = generateRolls();
-    },
-    validateAndSubmit(redirectElementType = null) {
-      if (this.validCustom) {
-        return this.submitForm(redirectElementType);
-      }
     },
     formModified() {
       return !compareCharacter(this.element, this.elementOriginal);

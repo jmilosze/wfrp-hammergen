@@ -129,11 +129,6 @@ export default {
       this.element = generateNewMutation(canEdit);
       this.elementOriginal = generateNewMutation(canEdit);
     },
-    validateAndSubmit(redirectElementType = null) {
-      if (this.validAtt) {
-        return this.submitForm(redirectElementType);
-      }
-    },
     validate() {
       return this.validName[0] && this.validDesc[0] && this.validAtt;
     },
