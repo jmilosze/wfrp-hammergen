@@ -1,4 +1,5 @@
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
+import { compareObjects } from "../../utils/objectUtils";
 import {
   getElementFunc,
   listElementsFunc,
@@ -18,6 +19,7 @@ const convertApiToModelData = (apiData) => {
     applicableTo: apiData.applicable_to,
     canEdit: apiData.can_edit,
     shared: apiData.shared,
+    source: apiData.source,
   };
 };
 
@@ -28,6 +30,7 @@ const convertModelToApiData = (itemProperty, includeId) => {
     type: itemProperty.type,
     applicable_to: itemProperty.applicableTo,
     shared: itemProperty.shared,
+    source: itemProperty.source,
   };
 
   if (includeId) {
@@ -54,12 +57,18 @@ const itemPropertyTypes = {
 
 const compareItemProperty = (itemProperty1, itemProperty2) => {
   for (let [key, value] of Object.entries(itemProperty1)) {
-    if (key !== "applicableTo") {
+    if (key !== "applicableTo" && key !== "source") {
       if (itemProperty2[key] !== value) {
         return false;
       }
-    } else {
+    }
+    if (key === "applicableTo") {
       if (!compareArrayIgnoreOrder(itemProperty1.applicableTo, itemProperty2.applicableTo)) {
+        return false;
+      }
+    }
+    if (key === "source") {
+      if (!compareObjects(itemProperty1.source, itemProperty2.source)) {
         return false;
       }
     }

@@ -117,7 +117,7 @@ class StatusStanding(enum.IntEnum):
     SEVEN = 7
 
 
-class CareerCass(enum.IntEnum):
+class CareerClass(enum.IntEnum):
     ACADEMIC = 0
     BURGHERS = 1
     COURTIER = 2
@@ -141,3 +141,9 @@ class Species(enum.IntEnum):
 class Mutation(enum.IntEnum):
     PHYSICAL = 0
     MENTAL = 1
+
+
+class Source(enum.IntEnum):
+    CUSTOM = 0
+    CORE = 1
+    ROUGH_N_HARD = 2

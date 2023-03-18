@@ -9,6 +9,7 @@ const itemProperty1 = {
   applicable_to: [0, 1],
   can_edit: true,
   shared: true,
+  source: { 1: "page 2", 3: "page 5-10" },
 };
 
 const itemProperty2 = {
@@ -19,6 +20,7 @@ const itemProperty2 = {
   applicable_to: [2, 3],
   can_edit: false,
   shared: false,
+  source: {},
 };
 
 const mockAxios = {
@@ -39,7 +41,8 @@ const mockAxios = {
   post: async () => {
     return { data: { data: "inserted_id" } };
   },
-  delete: async () => {},
+  delete: async () => {
+  },
 };
 
 test("getElement returns expected item property", async () => {
@@ -54,6 +57,7 @@ test("getElement returns expected item property", async () => {
     applicableTo: [0, 1],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -70,6 +74,7 @@ test("listElements returns expected item properties", async () => {
       applicableTo: [0, 1],
       canEdit: true,
       shared: true,
+      source: { 1: "page 2", 3: "page 5-10" },
     },
     {
       id: "id2",
@@ -79,6 +84,7 @@ test("listElements returns expected item properties", async () => {
       applicableTo: [2, 3],
       canEdit: false,
       shared: false,
+      source: {},
     },
   ]);
 });
@@ -94,6 +100,7 @@ test("createElement calls axios with expected arguments", async () => {
     applicableTo: [0, 1],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result).toBe("inserted_id");
@@ -104,6 +111,7 @@ test("createElement calls axios with expected arguments", async () => {
     type: 0,
     applicable_to: [0, 1],
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -118,6 +126,7 @@ test("updateElement calls axios with expected arguments", async () => {
     applicableTo: [0, 1],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result).toBe("inserted_id");
@@ -129,6 +138,7 @@ test("updateElement calls axios with expected arguments", async () => {
     type: 0,
     applicable_to: [0, 1],
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -149,6 +159,7 @@ describe("compareItemProperty returns true", () => {
     applicableTo: [0, 1],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   test("when other itemProperty is exactly the same", () => {
@@ -197,5 +208,25 @@ describe("compareItemProperty returns false", () => {
     let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
     otherItemProperty.applicableTo = [1, 2];
     expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(false);
+  });
+
+  test("when other itemProperty has fewer sources", () => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty.source = { 1: "page 2" };
+  });
+
+  test("when other itemProperty has more sources", () => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty.source = { 1: "page 2", 3: "page 5-10", 0: "zxc" };
+  });
+
+  test("when other itemProperty has different source values", () => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty.source = { 1: "zxc", 3: "asd" };
+  });
+
+  test("when other itemProperty has different source keys", () => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty.source = { 2: "page 2", 3: "page 5-10" };
   });
 });

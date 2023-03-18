@@ -14,9 +14,10 @@ from ..warhammer.types import (
     Skill,
     StatusStanding,
     StatusTier,
-    CareerCass,
+    CareerClass,
     Species,
     Mutation,
+    Source,
 )
 
 ID_SCHEMA = Regex("^[a-f0-9]{24}$")
@@ -70,12 +71,15 @@ MODIFIERS_SCHEMA = Schema(
     },
 )
 
+SOURCE_SCHEMA = Schema({s: SHORT_DESCRIPTION_SCHEMA for s in Source})
+
 ITEM_PROPERTY_COMPONENTS = {
     "name": NAME_SCHEMA,
     "applicable_to": [*list(Item)],
     "type": Or(*list(ItemProperty)),
     "description": DESCRIPTION_SCHEMA,
     "shared": bool,
+    "source": SOURCE_SCHEMA,
 }
 
 SPELL_COMPONENTS = {
@@ -86,6 +90,7 @@ SPELL_COMPONENTS = {
     "duration": SHORT_DESCRIPTION_SCHEMA,
     "description": DESCRIPTION_SCHEMA,
     "shared": bool,
+    "source": SOURCE_SCHEMA,
 }
 
 MUTATION_COMPONENTS = {
@@ -94,6 +99,7 @@ MUTATION_COMPONENTS = {
     "description": DESCRIPTION_SCHEMA,
     "modifiers": MODIFIERS_SCHEMA,
     "shared": bool,
+    "source": SOURCE_SCHEMA,
 }
 
 ITEM_COMPONENTS = {
@@ -104,6 +110,7 @@ ITEM_COMPONENTS = {
     "description": DESCRIPTION_SCHEMA,
     "properties": [ID_SCHEMA],
     "shared": bool,
+    "source": SOURCE_SCHEMA,
     "stats": Or(
         {
             "type": Item.MELEE.value,
@@ -160,6 +167,7 @@ SKILL_COMPONENTS = {
     "display_zero": bool,
     "group": [ID_SCHEMA],
     "shared": bool,
+    "source": SOURCE_SCHEMA,
 }
 
 TALENT_COMPONENTS = {
@@ -172,18 +180,20 @@ TALENT_COMPONENTS = {
     "modifiers": MODIFIERS_SCHEMA,
     "group": [ID_SCHEMA],
     "shared": bool,
+    "source": SOURCE_SCHEMA,
 }
 
 CAREER_COMPONENTS = {
     "name": NAME_SCHEMA,
     "description": DESCRIPTION_SCHEMA,
-    "class": Or(*list(CareerCass)),
+    "class": Or(*list(CareerClass)),
     "species": [Or(*list(Species))],
     "level_1": CAREER_LEVEL_SCHEMA,
     "level_2": CAREER_LEVEL_SCHEMA,
     "level_3": CAREER_LEVEL_SCHEMA,
     "level_4": CAREER_LEVEL_SCHEMA,
     "shared": bool,
+    "source": SOURCE_SCHEMA,
 }
 
 CHARACTER_COMPONENTS = {
