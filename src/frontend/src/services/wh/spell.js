@@ -5,6 +5,7 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
+import { compareObjects } from "../../utils/objectUtils";
 
 const apiBasePath = "/api/spell";
 
@@ -20,6 +21,7 @@ const convertApiToModelData = (apiData) => {
     type: apiData.type,
     canEdit: apiData.can_edit,
     shared: apiData.shared,
+    source: apiData.source,
   };
 
   if (spell.cn === -1) {
@@ -41,6 +43,7 @@ const convertModelToApiData = (spell, includeId) => {
     duration: spell.duration,
     description: spell.description,
     shared: spell.shared,
+    source: spell.source,
   };
 
   if (spell.type === "prayer") {
@@ -69,21 +72,21 @@ const spellTypes = {
 };
 
 const compareSpell = (spell1, spell2) => {
-  if (spell1.type === "spell" || spell2.type === "spell") {
-    for (let [key, value] of Object.entries(spell1)) {
+  for (let [key, value] of Object.entries(spell1)) {
+    if (key !== "cn" && key !== "source") {
       if (spell2[key] !== value) {
         return false;
       }
     }
-    return true;
-  } else {
-    for (let [key, value] of Object.entries(spell1)) {
-      if (key !== "cn" && spell2[key] !== value) {
-        return false;
-      }
-    }
-    return true;
   }
+
+  if (spell1.type === "spell" || spell2.type === "spell") {
+    if (spell1.cn !== spell2.cn) {
+      return false;
+    }
+  }
+
+  return compareObjects(spell1.source, spell2.source);
 };
 
 const generateEmptySpell = () => {
@@ -98,6 +101,7 @@ const generateEmptySpell = () => {
     type: "prayer",
     canEdit: false,
     shared: false,
+    source: {},
   };
 };
 

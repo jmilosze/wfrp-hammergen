@@ -11,6 +11,7 @@ const spell = {
   description: "desc1",
   can_edit: true,
   shared: true,
+  source: { 1: "page 2", 3: "page 5-10" },
 };
 
 const prayer = {
@@ -23,6 +24,7 @@ const prayer = {
   description: "desc2",
   can_edit: true,
   shared: true,
+  source: {},
 };
 
 const mockAxios = {
@@ -60,6 +62,7 @@ describe("getElement returns expected spell", () => {
       type: "spell",
       canEdit: true,
       shared: true,
+      source: { 1: "page 2", 3: "page 5-10" },
     });
   });
 
@@ -77,6 +80,7 @@ describe("getElement returns expected spell", () => {
       type: "prayer",
       canEdit: true,
       shared: true,
+      source: {},
     });
   });
 });
@@ -97,6 +101,7 @@ test("listElements returns expected spells", async () => {
       type: "spell",
       canEdit: true,
       shared: true,
+      source: { 1: "page 2", 3: "page 5-10" },
     },
     {
       id: "id2",
@@ -109,6 +114,7 @@ test("listElements returns expected spells", async () => {
       type: "prayer",
       canEdit: true,
       shared: true,
+      source: {},
     },
   ]);
 });
@@ -127,6 +133,7 @@ test("createElement calls axios with expected arguments", async () => {
     type: "spell",
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result1).toBe("inserted_id");
@@ -139,6 +146,7 @@ test("createElement calls axios with expected arguments", async () => {
     duration: "duration1",
     description: "desc1",
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   mockAxios.post.mockClear();
@@ -153,6 +161,7 @@ test("createElement calls axios with expected arguments", async () => {
     type: "prayer",
     canEdit: true,
     shared: true,
+    source: {},
   });
 
   expect(mockAxios.post).toHaveBeenCalledWith("/api/spell", {
@@ -163,6 +172,7 @@ test("createElement calls axios with expected arguments", async () => {
     duration: "duration2",
     description: "desc2",
     shared: true,
+    source: {},
   });
 });
 
@@ -180,6 +190,7 @@ test("updateElement calls axios with expected arguments", async () => {
     type: "spell",
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result1).toBe("inserted_id");
@@ -193,6 +204,7 @@ test("updateElement calls axios with expected arguments", async () => {
     duration: "duration1",
     description: "desc1",
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   mockAxios.post.mockClear();
@@ -207,6 +219,7 @@ test("updateElement calls axios with expected arguments", async () => {
     type: "prayer",
     canEdit: true,
     shared: true,
+    source: {},
   });
 
   expect(mockAxios.post).toHaveBeenCalledWith("/api/spell/update", {
@@ -218,6 +231,7 @@ test("updateElement calls axios with expected arguments", async () => {
     duration: "duration2",
     description: "desc2",
     shared: true,
+    source: {},
   });
 });
 
@@ -229,7 +243,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   expect(axiosSpy).toHaveBeenCalledWith("/api/spell/id1");
 });
 
-describe("compareTalent returns true", () => {
+describe("compareSpell returns true", () => {
   const spell = {
     id: "id",
     name: "spell",
@@ -241,6 +255,7 @@ describe("compareTalent returns true", () => {
     type: "spell",
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   test("when spells are the same", () => {
@@ -270,6 +285,7 @@ describe("compareSpell returns false", () => {
     type: "spell",
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   test.each([
@@ -286,6 +302,17 @@ describe("compareSpell returns false", () => {
   ])("when other spell has different value of $field", (t) => {
     let otherSpell = JSON.parse(JSON.stringify(spell));
     otherSpell[t.field] = t.value;
+    expect(compareSpell(spell, otherSpell)).toBe(false);
+  });
+
+  test.each([
+    { diff: "has fewer sources", source: { 1: "page 2" } },
+    { diff: "has more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
+    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
+    { diff: "has different source keys", source: { 2: "page 2", 3: "page 5-10" } },
+  ])("when other spell has $diff", (t) => {
+    let otherSpell = JSON.parse(JSON.stringify(spell));
+    otherSpell.source = t.source;
     expect(compareSpell(spell, otherSpell)).toBe(false);
   });
 });

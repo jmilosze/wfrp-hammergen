@@ -13,6 +13,7 @@ const mutation1 = {
   },
   can_edit: true,
   shared: true,
+  source: { 1: "page 2", 3: "page 5-10" },
 };
 
 const mutation2 = {
@@ -27,6 +28,7 @@ const mutation2 = {
   },
   can_edit: false,
   shared: false,
+  source: {},
 };
 
 const mockAxios = {
@@ -68,6 +70,7 @@ describe("getElement returns expected mutation", () => {
       },
       canEdit: true,
       shared: true,
+      source: { 1: "page 2", 3: "page 5-10" },
     });
   });
 
@@ -88,6 +91,7 @@ describe("getElement returns expected mutation", () => {
       },
       canEdit: false,
       shared: false,
+      source: {},
     });
   });
 });
@@ -104,6 +108,7 @@ test("listElements returns expected mutations", async () => {
       type: 0,
       canEdit: true,
       shared: true,
+      source: { 1: "page 2", 3: "page 5-10" },
     },
     {
       id: "id2",
@@ -112,6 +117,7 @@ test("listElements returns expected mutations", async () => {
       type: 1,
       canEdit: false,
       shared: false,
+      source: {},
     },
   ]);
 });
@@ -126,6 +132,7 @@ test("createElement calls axios with expected arguments", async () => {
     type: 0,
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result).toBe("inserted_id");
@@ -135,6 +142,7 @@ test("createElement calls axios with expected arguments", async () => {
     description: "desc1",
     type: 0,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -148,6 +156,7 @@ test("updateElement calls axios with expected arguments", async () => {
     type: 0,
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result).toBe("inserted_id");
@@ -158,6 +167,7 @@ test("updateElement calls axios with expected arguments", async () => {
     description: "desc1",
     type: 0,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -182,6 +192,7 @@ test("compareMutation returns true if mutations are exactly the same", () => {
     },
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   let otherMutation = JSON.parse(JSON.stringify(mutation));
@@ -201,6 +212,7 @@ describe("compareMutation returns false", () => {
     },
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   test.each([
@@ -213,6 +225,17 @@ describe("compareMutation returns false", () => {
   ])("when other mutation has different value of $field", (t) => {
     let otherMutation = JSON.parse(JSON.stringify(mutation));
     otherMutation[t.field] = t.value;
+    expect(compareMutation(mutation, otherMutation)).toBe(false);
+  });
+
+  test.each([
+    { diff: "has fewer sources", source: { 1: "page 2" } },
+    { diff: "has more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
+    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
+    { diff: "has different source keys", source: { 2: "page 2", 3: "page 5-10" } },
+  ])("when other mutation has $diff", (t) => {
+    let otherMutation = JSON.parse(JSON.stringify(mutation));
+    otherMutation.source = t.source;
     expect(compareMutation(mutation, otherMutation)).toBe(false);
   });
 

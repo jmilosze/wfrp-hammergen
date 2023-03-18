@@ -1,6 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
 import { ItemPropertyApi, compareItemProperty } from "../src/services/wh/itemproperty";
-import { compareItem } from "@/services/wh/item";
 
 const itemProperty1 = {
   id: "id1",
@@ -207,7 +206,7 @@ describe("compareItemProperty returns false", () => {
   ])("when other itemProperty has $diff", (t) => {
     let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
     otherItemProperty.source = t.source;
-    expect(compareItem(itemProperty, otherItemProperty)).toBe(false);
+    expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(false);
   });
 
   test("when other itemProperty has applicableTo field that is a subset", () => {
