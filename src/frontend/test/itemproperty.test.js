@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 import { ItemPropertyApi, compareItemProperty } from "../src/services/wh/itemproperty";
+import { compareItem } from "@/services/wh/item";
 
 const itemProperty1 = {
   id: "id1",
@@ -41,8 +42,7 @@ const mockAxios = {
   post: async () => {
     return { data: { data: "inserted_id" } };
   },
-  delete: async () => {
-  },
+  delete: async () => {},
 };
 
 test("getElement returns expected item property", async () => {
@@ -183,6 +183,7 @@ describe("compareItemProperty returns false", () => {
     applicableTo: [0, 1],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   test.each([
@@ -198,6 +199,17 @@ describe("compareItemProperty returns false", () => {
     expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(false);
   });
 
+  test.each([
+    { diff: "has fewer sources", source: { 1: "page 2" } },
+    { diff: "has more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
+    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
+    { diff: "has different source keys", source: { 2: "page 2", 3: "page 5-10" } },
+  ])("when other itemProperty has $diff", (t) => {
+    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
+    otherItemProperty.source = t.source;
+    expect(compareItem(itemProperty, otherItemProperty)).toBe(false);
+  });
+
   test("when other itemProperty has applicableTo field that is a subset", () => {
     let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
     otherItemProperty.applicableTo = [1];
@@ -208,25 +220,5 @@ describe("compareItemProperty returns false", () => {
     let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
     otherItemProperty.applicableTo = [1, 2];
     expect(compareItemProperty(itemProperty, otherItemProperty)).toBe(false);
-  });
-
-  test("when other itemProperty has fewer sources", () => {
-    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
-    otherItemProperty.source = { 1: "page 2" };
-  });
-
-  test("when other itemProperty has more sources", () => {
-    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
-    otherItemProperty.source = { 1: "page 2", 3: "page 5-10", 0: "zxc" };
-  });
-
-  test("when other itemProperty has different source values", () => {
-    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
-    otherItemProperty.source = { 1: "zxc", 3: "asd" };
-  });
-
-  test("when other itemProperty has different source keys", () => {
-    let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
-    otherItemProperty.source = { 2: "page 2", 3: "page 5-10" };
   });
 });

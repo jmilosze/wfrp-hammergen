@@ -2,7 +2,7 @@ const invertObj = (obj) => Object.fromEntries(Object.entries(obj).map((a) => a.r
 
 function compareObjects(obj1, obj2) {
   let testVal;
-  if (obj1.size !== obj2.size) {
+  if (Object.keys(obj1).length !== Object.keys(obj2).length) {
     return false;
   }
   for (let [key, val] of Object.entries(obj1)) {

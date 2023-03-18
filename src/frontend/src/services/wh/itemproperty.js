@@ -62,18 +62,13 @@ const compareItemProperty = (itemProperty1, itemProperty2) => {
         return false;
       }
     }
-    if (key === "applicableTo") {
-      if (!compareArrayIgnoreOrder(itemProperty1.applicableTo, itemProperty2.applicableTo)) {
-        return false;
-      }
-    }
-    if (key === "source") {
-      if (!compareObjects(itemProperty1.source, itemProperty2.source)) {
-        return false;
-      }
-    }
   }
-  return true;
+
+  if (!compareObjects(itemProperty1.source, itemProperty2.source)) {
+    return false;
+  }
+
+  return compareArrayIgnoreOrder(itemProperty1.applicableTo, itemProperty2.applicableTo);
 };
 
 const generateEmptyItemProperty = () => {
@@ -85,6 +80,7 @@ const generateEmptyItemProperty = () => {
     applicableTo: [0],
     canEdit: false,
     shared: false,
+    source: {},
   };
 };
 
