@@ -7,6 +7,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator";
 import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
+import { compareObjects } from "@/utils/objectUtils";
 
 const apiBasePath = "/api/talent";
 
@@ -24,6 +25,7 @@ const convertApiToModelData = (apiData) => {
     modifiers: apiData.modifiers,
     canEdit: apiData.can_edit,
     shared: apiData.shared,
+    source: apiData.source,
   };
 };
 
@@ -38,6 +40,7 @@ const convertModelToApiData = (talent, includeId) => {
     is_group: talent.isGroup,
     group: talent.group,
     shared: talent.shared,
+    source: talent.source,
   };
 
   if (includeId) {
@@ -65,6 +68,10 @@ const compareTalent = (talent1, talent2) => {
     if (talent1[k] !== talent2[k]) {
       return false;
     }
+  }
+
+  if (!compareObjects(talent1.source, talent2.source)) {
+    return false;
   }
 
   if (talent1.isGroup) {
@@ -98,6 +105,7 @@ const generateEmptyTalent = () => {
     group: [],
     canEdit: false,
     shared: false,
+    source: {},
   };
 };
 

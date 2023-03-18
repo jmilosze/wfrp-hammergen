@@ -6,6 +6,7 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
+import { compareObjects } from "../../utils//objectUtils";
 
 const apiBasePath = "/api/skill";
 
@@ -21,6 +22,7 @@ const convertApiToModelData = (apiData) => {
     group: apiData.group,
     canEdit: apiData.can_edit,
     shared: apiData.shared,
+    source: apiData.source,
   };
 };
 
@@ -34,6 +36,7 @@ const convertModelToApiData = (skill, includeId) => {
     is_group: skill.isGroup,
     group: skill.group,
     shared: skill.shared,
+    source: skill.source,
   };
 
   if (includeId) {
@@ -55,17 +58,18 @@ class SkillApi {
 
 const compareSkill = (skill1, skill2) => {
   for (let [key, value] of Object.entries(skill1)) {
-    if (key !== "group") {
+    if (key !== "group" && key !== "source") {
       if (skill2[key] !== value) {
-        return false;
-      }
-    } else {
-      if (!compareArrayIgnoreOrder(skill1.group, skill2.group)) {
         return false;
       }
     }
   }
-  return true;
+
+  if (!compareArrayIgnoreOrder(skill1.group, skill2.group)) {
+    return false;
+  }
+
+  return compareObjects(skill1.source, skill2.source);
 };
 
 const generateEmptySkill = () => {
@@ -80,6 +84,7 @@ const generateEmptySkill = () => {
     group: [],
     canEdit: false,
     shared: false,
+    source: {},
   };
 };
 

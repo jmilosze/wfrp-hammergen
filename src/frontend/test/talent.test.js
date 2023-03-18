@@ -17,6 +17,7 @@ const talent1 = {
   group: ["a", "b"],
   can_edit: true,
   shared: true,
+  source: { 1: "page 2", 3: "page 5-10" },
 };
 
 const talent2 = {
@@ -35,6 +36,7 @@ const talent2 = {
   group: [],
   can_edit: true,
   shared: true,
+  source: {},
 };
 
 const mockAxios = {
@@ -79,6 +81,7 @@ describe("getElement returns expected talent", () => {
       group: ["a", "b"],
       canEdit: true,
       shared: true,
+      source: { 1: "page 2", 3: "page 5-10" },
     });
   });
 
@@ -103,6 +106,7 @@ describe("getElement returns expected talent", () => {
       group: [],
       canEdit: true,
       shared: true,
+      source: {},
     });
   });
 });
@@ -123,6 +127,7 @@ test("listElements returns expected talents", async () => {
       group: ["a", "b"],
       canEdit: true,
       shared: true,
+      source: { 1: "page 2", 3: "page 5-10" },
     },
     {
       id: "id2",
@@ -135,6 +140,7 @@ test("listElements returns expected talents", async () => {
       group: [],
       canEdit: true,
       shared: true,
+      source: {},
     },
   ]);
 });
@@ -153,6 +159,7 @@ test("createElement calls axios with expected arguments", async () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result).toBe("inserted_id");
@@ -166,6 +173,7 @@ test("createElement calls axios with expected arguments", async () => {
     is_group: true,
     group: ["a", "b"],
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -183,6 +191,7 @@ test("updateElement calls axios with expected arguments", async () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result).toBe("inserted_id");
@@ -197,6 +206,7 @@ test("updateElement calls axios with expected arguments", async () => {
     is_group: true,
     group: ["a", "b"],
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -226,6 +236,7 @@ describe("compareTalent returns true", () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   const talentGroup = JSON.parse(JSON.stringify(talentIndividual));
@@ -282,6 +293,7 @@ describe("compareTalent returns false", () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   const talentGroup = JSON.parse(JSON.stringify(talentIndividual));
@@ -304,12 +316,24 @@ describe("compareTalent returns false", () => {
   });
 
   test.each([
+    { diff: "fewer sources", source: { 1: "page 2" } },
+    { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
+    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
+    { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
+  ])("when talent is individual and other talent has $diff", (t) => {
+    let otherTalent = JSON.parse(JSON.stringify(talentIndividual));
+    otherTalent.source = t.source;
+    expect(compareTalent(talentIndividual, otherTalent)).toBe(false);
+  });
+
+  test.each([
     { field: "id", value: "otherId" },
     { field: "name", value: "otherName" },
     { field: "description", value: "otherDescription" },
     { field: "isGroup", value: false },
     { field: "canEdit", value: false },
     { field: "shared", value: false },
+    {field: "source", value: { 1: "zxc", 3: "asd" }}
   ])("when talent is group and other talent has different value of $field", (t) => {
     let otherTalent = JSON.parse(JSON.stringify(talentGroup));
     otherTalent[t.field] = t.value;

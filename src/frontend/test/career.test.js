@@ -9,6 +9,7 @@ const career1ApiForm = {
   class: 1,
   can_edit: true,
   shared: false,
+  source: { 1: "page 2", 3: "page 5-10" },
   level_1: {
     name: "c1",
     status: 1,
@@ -55,6 +56,7 @@ const career1ModelForm = {
   class: 1,
   canEdit: true,
   shared: false,
+  source: { 1: "page 2", 3: "page 5-10" },
   levelOne: {
     name: "c1",
     status: 1,
@@ -101,6 +103,7 @@ const career2ApiForm = {
   class: 3,
   can_edit: false,
   shared: true,
+  source: {},
   level_1: { name: "c2l1", status: 0, standing: 0, attributes: [], skills: [], talents: [], items: "" },
   level_2: { name: "c2l2", status: 0, standing: 0, attributes: [], skills: [], talents: [], items: "" },
   level_3: {
@@ -131,6 +134,7 @@ const career2ModelForm = {
   class: 3,
   canEdit: false,
   shared: true,
+  source: {},
   levelOne: { name: "c2l1", status: 0, standing: 0, attributes: [], skills: [], talents: [], items: "" },
   levelTwo: { name: "c2l2", status: 0, standing: 0, attributes: [], skills: [], talents: [], items: "" },
   levelThree: {
@@ -286,6 +290,17 @@ describe("compareItem returns false", () => {
   ])("when other career has different value of $name", (t) => {
     let otherCareer = JSON.parse(JSON.stringify(career1ModelForm));
     otherCareer[t.field] = t.value;
+    expect(compareCareer(career1ModelForm, otherCareer)).toBe(false);
+  });
+
+  test.each([
+    { diff: "fewer sources", source: { 1: "page 2" } },
+    { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
+    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
+    { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
+  ])("when other career has $diff", (t) => {
+    let otherCareer = JSON.parse(JSON.stringify(career1ModelForm));
+    otherCareer.source = t.source;
     expect(compareCareer(career1ModelForm, otherCareer)).toBe(false);
   });
 

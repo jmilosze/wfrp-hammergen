@@ -199,10 +199,10 @@ describe("compareItemProperty returns false", () => {
   });
 
   test.each([
-    { diff: "has fewer sources", source: { 1: "page 2" } },
-    { diff: "has more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
+    { diff: "fewer sources", source: { 1: "page 2" } },
+    { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
     { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
-    { diff: "has different source keys", source: { 2: "page 2", 3: "page 5-10" } },
+    { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
   ])("when other itemProperty has $diff", (t) => {
     let otherItemProperty = JSON.parse(JSON.stringify(itemProperty));
     otherItemProperty.source = t.source;
