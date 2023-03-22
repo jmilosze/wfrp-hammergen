@@ -45,6 +45,17 @@
               </b-form-checkbox-group>
             </b-form-group>
 
+            <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Quality/Flaw" />
+
+            <CreateSubmit
+              :showAddAnother="showAddAnother"
+              :disabled="!element.canEdit"
+              :submitting="submitting"
+              @goBack="goBack"
+              v-model="addAnother"
+            ></CreateSubmit>
+          </b-col>
+          <b-col md="6">
             <b-form-group label="Description" label-for="description-input">
               <b-form-textarea
                 id="description-input"
@@ -57,16 +68,8 @@
               <b-form-invalid-feedback :state="validDesc[0]">{{ validDesc[1] }}</b-form-invalid-feedback>
             </b-form-group>
 
-            <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Quality/Flaw" />
-
-            <CreateSubmit
-              :showAddAnother="showAddAnother"
-              :disabled="!element.canEdit"
-              :submitting="submitting"
-              @goBack="goBack"
-              v-model="addAnother"
-            ></CreateSubmit>
-          </b-col>
+            <SourceTable :initial-sources="element.source"> </SourceTable> </b-col
+          >
         </b-row>
       </b-form>
     </b-container>
@@ -77,6 +80,7 @@
 import CreateElement2 from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import PublicElementBox from "./PublicElementBox.vue";
+import SourceTable from "./SourceTable.vue";
 import {
   ItemPropertyApi,
   generateEmptyItemProperty,
@@ -93,6 +97,7 @@ export default {
   components: {
     CreateSubmit,
     PublicElementBox,
+    SourceTable,
   },
   data() {
     return {

@@ -1,21 +1,40 @@
 <template>
   <div>
-    <b-table :items="tableData" :fields="tableFields"></b-table>
+    <div class="mb-2">Source</div>
+    <b-table :items="sourcesTable" :fields="tableFields"></b-table>
+    <b-button size="sm" class="mb-2" variant="primary"> Modify </b-button>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-const tableData = ref([
-  { name: "John", age: 30, city: "New York" },
-  { name: "Jane", age: 25, city: "San Francisco" },
-  { name: "Bob", age: 40, city: "Chicago" },
-]);
+import { watch, ref } from "vue";
+import { displaySource } from "../../services/wh/utils";
+
+const props = defineProps({
+  initialSources: {
+    type: Object,
+    default() {
+      return {};
+    },
+  },
+});
+
+const emits = defineEmits(["update"]);
+
+const sourcesTable = ref([]);
+
+watch(
+  () => props.initialSources,
+  (newSources) => {
+    for (let [k, v] of Object.entries(newSources)) {
+      sourcesTable.value.push({ name: k, display: displaySource(k), notes: v });
+    }
+  }
+);
 
 const tableFields = ref([
-  { key: "name", label: "Name" },
-  { key: "age", label: "Age" },
-  { key: "city", label: "City" },
+  { key: "display", label: "Name" },
+  { key: "notes", label: "Notes" },
 ]);
 </script>
 

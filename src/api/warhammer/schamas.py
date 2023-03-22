@@ -71,7 +71,7 @@ MODIFIERS_SCHEMA = Schema(
     },
 )
 
-SOURCE_SCHEMA = Schema({s: SHORT_DESCRIPTION_SCHEMA for s in Source})
+SOURCE_SCHEMA = Schema({Optional(str(s)): SHORT_DESCRIPTION_SCHEMA for s in Source})
 
 ITEM_PROPERTY_COMPONENTS = {
     "name": NAME_SCHEMA,
