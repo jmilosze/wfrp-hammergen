@@ -13,7 +13,7 @@
         @sort-changed="onSort"
       >
         <template v-slot:cell(select)="row">
-          <b-form-checkbox v-model="row.item.select"> </b-form-checkbox>
+          <b-form-checkbox v-model="row.item.select" @change="selectItem($event, row.item)"> </b-form-checkbox>
         </template>
       </b-table>
     </b-modal>
@@ -93,6 +93,21 @@ watch(
 
 function onSort(ctx) {
   sortWithSelect(editTable.value, ctx.sortBy, ctx.sortDesc);
+}
+
+function selectItem(selected, editTableItem) {
+  if (selected === true) {
+    console.log("Emit select event");
+    displayTable.value.push({ source: editTableItem.source, name: editTableItem.name, notes: editTableItem.notes });
+  } else {
+    console.log("Emit de-select event");
+    for (let i = 0; i < displayTable.value.length; i++) {
+      if (displayTable.value[i].source === editTableItem.source) {
+        displayTable.value.splice(i, 1);
+        break;
+      }
+    }
+  }
 }
 </script>
 
