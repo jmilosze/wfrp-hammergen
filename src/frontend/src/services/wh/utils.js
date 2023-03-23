@@ -12,16 +12,6 @@ const sizes = {
   monstrous: 6,
 };
 
-const sources = {
-  0: "Custom",
-  1: "WFRP",
-  2: "Rough Nights & Hard Days",
-};
-
-function displaySource(s) {
-  return sources[s];
-}
-
 function getWoundsFormula(size, T, WP, S) {
   const TB = Math.floor(T / 10);
   const WPB = Math.floor(WP / 10);
@@ -207,5 +197,4 @@ export {
   getCareerName,
   getCareerLevelName,
   csvStr,
-  displaySource
 };
