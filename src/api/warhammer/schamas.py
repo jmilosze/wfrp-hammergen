@@ -24,6 +24,7 @@ ID_SCHEMA = Regex("^[a-f0-9]{24}$")
 NAME_SCHEMA = Regex("^[^<>]{0,200}$")
 DESCRIPTION_SCHEMA = Regex("^[^<>]{0,100000}$")
 SHORT_DESCRIPTION_SCHEMA = Regex("^[^<>]{0,200}$")
+VERY_SHORT_DESCRIPTION_SCHEMA = Regex("^[^<>]{0,15}$")
 
 CAREER_LEVEL_SCHEMA = Schema(
     {
@@ -71,7 +72,7 @@ MODIFIERS_SCHEMA = Schema(
     },
 )
 
-SOURCE_SCHEMA = Schema({Optional(str(s)): SHORT_DESCRIPTION_SCHEMA for s in Source})
+SOURCE_SCHEMA = Schema({Optional(str(s)): VERY_SHORT_DESCRIPTION_SCHEMA for s in Source})
 
 ITEM_PROPERTY_COMPONENTS = {
     "name": NAME_SCHEMA,

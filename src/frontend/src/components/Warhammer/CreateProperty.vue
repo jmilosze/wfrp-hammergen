@@ -68,8 +68,8 @@
               <b-form-invalid-feedback :state="validDesc[0]">{{ validDesc[1] }}</b-form-invalid-feedback>
             </b-form-group>
 
-            <SourceTable :initial-sources="element.source"> </SourceTable> </b-col
-          >
+            <SourceTable :input="element.source" @isValid="implementMe($event)" @value="implementMe2($event)"> </SourceTable>
+          </b-col>
         </b-row>
       </b-form>
     </b-container>
@@ -125,6 +125,12 @@ export default {
     setElementToNew(canEdit) {
       this.element = generateNewItemProperty(canEdit);
       this.elementOriginal = generateNewItemProperty(canEdit);
+    },
+    implementMe(valid) {
+      console.log("source is valid: ", valid);
+    },
+    implementMe2(sources) {
+      console.log("sources: ", sources);
     },
   },
 };

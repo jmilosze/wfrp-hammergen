@@ -12,6 +12,12 @@ export function validWhShortDesc(shortDesc) {
   return checkString(shortDesc, shortDescRe, invalidShortDesc);
 }
 
+const veryShortDescRe = /^[^<>]{0,200}$/;
+const invalidVeryShortDesc = "This field has to be shorter than 15 characters and cannot use <> symbols.";
+export function validWhVeryShortDesc(veryShortDesc) {
+  return checkString(veryShortDesc, veryShortDescRe, invalidVeryShortDesc);
+}
+
 const castingNumberRe = /^([1-9][0-9]|[0-9])$/;
 const invalidCastingNumber = "Casting Number is required and has to be between 0 and 99.";
 export function validWhCastingNumber(cn) {
