@@ -3,7 +3,9 @@
     <div class="mb-2">Source</div>
     <b-table :items="displayTable" :fields="displayTableFields"></b-table>
     <b-form-invalid-feedback :state="allValid">One or more selected sources are invalid.</b-form-invalid-feedback>
-    <b-button size="sm" class="mb-2 mt-2" variant="primary" @click="showModal">Modify</b-button>
+    <b-button size="sm" class="mb-2 mt-2" variant="primary" @click="showModal" :disabled="props.disabled"
+      >Modify</b-button
+    >
     <b-modal v-model="modal" title="Modify Sources" ok-only ok-title="Close" scrollable>
       <b-table
         hover
@@ -33,16 +35,21 @@ import { watch, ref } from "vue";
 import { getAllSources } from "../../services/wh/sources";
 import { compareBoolFn, compareStringFn } from "../../utils/comapreUtils";
 import { validWhVeryShortDesc } from "../../utils/validation/wh";
+import { compareObjects } from "../../utils/objectUtils";
 
 const props = defineProps({
-  input: {
+  value: {
     type: Object,
     default() {
       return {};
     },
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
-const emits = defineEmits(["value", "isValid"]);
+const emits = defineEmits(["input", "isValid"]);
 
 const modal = ref(false);
 const editTable = ref(
@@ -106,22 +113,37 @@ watch(
       }
 
       emits("isValid", allValid.value);
-      emits("value", updatedSources);
+      emits("input", updatedSources);
       displayTable.value.sort(compareStringFn("name"));
     }
   }
 );
 watch(
-  () => props.input,
-  (initialSources) => {
+  () => props.value,
+  (newSources, prevSources) => {
+    if (compareObjects(newSources, prevSources)) {
+      return;
+    }
+    displayTable.value = [];
+    allValid.value = true;
     for (let item of editTable.value) {
-      if (Object.hasOwn(initialSources, item.source)) {
+      if (Object.hasOwn(newSources, item.source)) {
         item.select = true;
-        item.notes = initialSources[item.source];
+        item.notes = newSources[item.source];
+        validNotes(item);
 
         displayTable.value.push({ name: item.name, notes: item.notes });
+      } else {
+        item.select = false;
+        item.notes = "";
+        item.valid = true;
+        item.validMsg = "";
       }
+
+      allValid.value = allValid.value && item.valid;
     }
+    emits("isValid", allValid.value);
+    displayTable.value.sort(compareStringFn("name"));
   }
 );
 </script>
