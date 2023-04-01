@@ -1,3 +1,6 @@
+import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
+import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
 import {
   getElementFunc,
   listElementsFunc,
@@ -5,8 +8,6 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
-import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
-import { compareObjects } from "../../utils/objectUtils";
 
 const apiBasePath = "/api/mutation";
 
@@ -91,6 +92,7 @@ const generateNewMutation = (canEdit) => {
   mutation.name = "New mutation";
   mutation.canEdit = canEdit;
   mutation.shared = true;
+  mutation.source = defaultSource();
   return mutation;
 };
 

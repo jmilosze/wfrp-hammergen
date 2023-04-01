@@ -1,3 +1,5 @@
+import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
 import {
   getElementFunc,
   listElementsFunc,
@@ -5,7 +7,6 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
-import { compareObjects } from "../../utils/objectUtils";
 
 const apiBasePath = "/api/spell";
 
@@ -110,6 +111,7 @@ const generateNewSpell = (canEdit) => {
   spell.name = "New prayer/spell";
   spell.canEdit = canEdit;
   spell.shared = true;
+  spell.source = defaultSource();
   return spell;
 };
 

@@ -1,3 +1,6 @@
+import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
+import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -5,8 +8,6 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator";
-import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
-import { compareObjects } from "@/utils/objectUtils";
 
 const apiBasePath = "/api/career";
 
@@ -59,6 +60,7 @@ const generateEmptyCareer = () => {
     class: 0,
     canEdit: false,
     shared: false,
+    source: {},
     levelOne: generateEmptyLevel(),
     levelTwo: generateEmptyLevel(),
     levelThree: generateEmptyLevel(),
@@ -75,7 +77,7 @@ const generateNewCareer = (canEdit) => {
   newCareer.levelFour.name = "New level 4";
   newCareer.canEdit = canEdit;
   newCareer.shared = true;
-  newCareer.source = {};
+  newCareer.source = defaultSource();
 
   return newCareer;
 };

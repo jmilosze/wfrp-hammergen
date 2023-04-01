@@ -140,6 +140,13 @@
             >
             </CreateSubmit>
           </b-col>
+          <b-col md="6">
+            <SourceTable
+              v-model="element.source"
+              @isValid="validSources = $event"
+              :disabled="!element.canEdit"
+            ></SourceTable>
+          </b-col>
         </b-row>
       </b-form>
     </b-container>
@@ -151,6 +158,7 @@ import CreateElement2 from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import PublicElementBox from "./PublicElementBox.vue";
 import SelectTable from "./SelectTable.vue";
+import SourceTable from "./SourceTable.vue";
 import {
   compareTalent,
   generateEmptyTalent,
@@ -167,6 +175,7 @@ export default {
   name: "CreateTalent",
   mixins: [CreateElement2],
   components: {
+    SourceTable,
     CharacterModifiers,
     SelectTable,
     CreateSubmit,
@@ -183,6 +192,7 @@ export default {
         return { value: parseInt(key), text: talentAttributes[key] };
       }),
       validAtt: true,
+      validSources: true,
     };
   },
   created() {
@@ -212,7 +222,14 @@ export default {
       this.elementOriginal = generateNewTalent(canEdit);
     },
     validate() {
-      return this.validName[0] && this.validDesc[0] && this.validTests[0] && this.validMaxRank[0] && this.validAtt;
+      return (
+        this.validName[0] &&
+        this.validDesc[0] &&
+        this.validTests[0] &&
+        this.validMaxRank[0] &&
+        this.validAtt &&
+        this.validSources
+      );
     },
   },
   computed: {

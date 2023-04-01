@@ -8,7 +8,7 @@ COLLECTIONS = ["property", "item", "spell", "mutation", "skill", "talent", "care
 
 db = MongoClient(MONGO_URI, 27017).get_database(name=DB_NAME)
 
-FIELDS = {"admin": {"source": {}}, "user": {"source": {}}}
+FIELDS = {"admin": {"source": {}}, "user": {"source": {"0": ""}}}
 
 
 def add_field(collection, fields):

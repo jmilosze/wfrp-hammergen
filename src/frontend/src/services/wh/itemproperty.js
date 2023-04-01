@@ -1,5 +1,6 @@
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
 import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
 import {
   getElementFunc,
   listElementsFunc,
@@ -89,6 +90,7 @@ const generateNewItemProperty = (canEdit) => {
   itemProperty.name = "New item property";
   itemProperty.canEdit = canEdit;
   itemProperty.shared = true;
+  itemProperty.source = defaultSource();
   return itemProperty;
 };
 

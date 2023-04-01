@@ -460,6 +460,13 @@
               v-model="addAnother"
             ></CreateSubmit>
           </b-col>
+          <b-col md="6">
+            <SourceTable
+              v-model="element.source"
+              @isValid="validSources = $event"
+              :disabled="!element.canEdit"
+            ></SourceTable>
+          </b-col>
         </b-row>
       </b-form>
     </b-container>
@@ -471,6 +478,7 @@ import CreateElement from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import SelectTable from "./SelectTable.vue";
 import PublicElementBox from "./PublicElementBox.vue";
+import SourceTable from "./SourceTable.vue";
 import {
   itemTypes,
   meleeGroups,
@@ -505,6 +513,7 @@ export default {
   name: "CreateItem",
   mixins: [CreateElement],
   components: {
+    SourceTable,
     SelectTable,
     CreateSubmit,
     PublicElementBox,
@@ -517,6 +526,8 @@ export default {
 
       element: generateEmptyItem(),
       elementOriginal: generateEmptyItem(),
+
+      validSources: true,
 
       availabilityOptions: Object.keys(itemAvailabilities).map((key) => {
         return { value: parseInt(key), text: itemAvailabilities[key] };
@@ -639,7 +650,8 @@ export default {
         this.validAmmoRng[0] &&
         this.validAmmoDmg[0] &&
         this.validAp[0] &&
-        this.validCap[0]
+        this.validCap[0] &&
+        this.validSources
       );
     },
   },

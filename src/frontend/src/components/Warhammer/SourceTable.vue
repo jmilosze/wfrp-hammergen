@@ -2,11 +2,11 @@
   <div>
     <div class="mb-2">Source</div>
     <b-table :items="displayTable" :fields="displayTableFields"></b-table>
-    <b-form-invalid-feedback :state="allValid">One or more selected sources are invalid.</b-form-invalid-feedback>
+    <b-form-invalid-feedback :state="allValid">One or more selected source are invalid.</b-form-invalid-feedback>
     <b-button size="sm" class="mb-2 mt-2" variant="primary" @click="showModal" :disabled="props.disabled"
       >Modify</b-button
     >
-    <b-modal v-model="modal" title="Modify Sources" ok-only ok-title="Close" scrollable>
+    <b-modal v-model="modal" title="Modify Source" ok-only ok-title="Close" scrollable>
       <b-table
         hover
         :items="editTable"
@@ -32,7 +32,7 @@
 
 <script setup>
 import { watch, ref } from "vue";
-import { getAllSources } from "../../services/wh/sources";
+import { getAllSources } from "../../services/wh/source";
 import { compareBoolFn, compareStringFn } from "../../utils/comapreUtils";
 import { validWhVeryShortDesc } from "../../utils/validation/wh";
 import { compareObjects } from "../../utils/objectUtils";
@@ -121,7 +121,7 @@ watch(
 watch(
   () => props.value,
   (newSources, prevSources) => {
-    if (compareObjects(newSources, prevSources)) {
+    if (typeof prevSources !== "undefined" && compareObjects(newSources, prevSources)) {
       return;
     }
     displayTable.value = [];
@@ -144,7 +144,8 @@ watch(
     }
     emits("isValid", allValid.value);
     displayTable.value.sort(compareStringFn("name"));
-  }
+  },
+  { immediate: true }
 );
 </script>
 

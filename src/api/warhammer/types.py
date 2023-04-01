@@ -147,3 +147,8 @@ class Source(enum.IntEnum):
     CUSTOM = 0
     CORE = 1
     ROUGH_N_HARD = 2
+    ARCHIVES_1 = 3
+    ARCHIVES_2 = 4
+    ARCHIVES_3 = 5
+    UP_IN_ARMS = 6
+    WINDS_OF_MAGIC = 7

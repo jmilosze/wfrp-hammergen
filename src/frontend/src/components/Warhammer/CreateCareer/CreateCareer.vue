@@ -340,7 +340,7 @@
         </b-row>
 
         <b-row>
-          <b-col>
+          <b-col md="6">
             <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Career" />
 
             <CreateSubmit
@@ -350,6 +350,13 @@
               @goBack="goBack"
               v-model="addAnother"
             ></CreateSubmit>
+          </b-col>
+          <b-col md="6">
+            <SourceTable
+              v-model="element.source"
+              @isValid="validSources = $event"
+              :disabled="!element.canEdit"
+            ></SourceTable>
           </b-col>
         </b-row>
       </b-form>
@@ -362,6 +369,7 @@ import CreateElement from "../CreateElement.vue";
 import CreateSubmit from "../CreateSubmit.vue";
 import CareerSelectTable from "./CareerSelectTable.vue";
 import PublicElementBox from "../PublicElementBox.vue";
+import SourceTable from "../SourceTable.vue";
 import { SkillApi } from "../../../services/wh/skill";
 import { TalentApi } from "../../../services/wh/talent";
 import {
@@ -378,10 +386,12 @@ import { species } from "../../../services/wh/character";
 import { authRequest } from "../../../services/auth";
 import { validWhDesc, validWhShortDesc } from "../../../utils/validation/wh";
 
+
 export default {
   name: "CreateCareer",
   mixins: [CreateElement],
   components: {
+    SourceTable,
     CreateSubmit,
     CareerSelectTable,
     PublicElementBox,
@@ -394,6 +404,8 @@ export default {
 
       element: generateEmptyCareer(),
       elementOriginal: generateEmptyCareer(),
+
+      validSources: true,
 
       speciesOptions: Object.keys(species).map((key) => {
         return { value: parseInt(key), text: species[key] };
@@ -439,7 +451,8 @@ export default {
         this.validLvl3Name[0] &&
         this.validLvl3Items[0] &&
         this.validLvl4Name[0] &&
-        this.validLvl4Items[0]
+        this.validLvl4Items[0] &&
+        this.validSources
       );
     },
   },

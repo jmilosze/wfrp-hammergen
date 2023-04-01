@@ -76,6 +76,13 @@
               v-model="addAnother"
             ></CreateSubmit>
           </b-col>
+          <b-col md="6">
+            <SourceTable
+              v-model="element.source"
+              @isValid="validSources = $event"
+              :disabled="!element.canEdit"
+            ></SourceTable>
+          </b-col>
         </b-row>
       </b-form>
     </b-container>
@@ -87,6 +94,7 @@ import CreateElement2 from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import PublicElementBox from "./PublicElementBox.vue";
 import CharacterModifiers from "./CharacterModifiers.vue";
+import SourceTable from "./SourceTable.vue";
 import {
   MutationApi,
   generateEmptyMutation,
@@ -100,6 +108,7 @@ export default {
   name: "CreateMutation",
   mixins: [CreateElement2],
   components: {
+    SourceTable,
     CharacterModifiers,
     CreateSubmit,
     PublicElementBox,
@@ -115,6 +124,7 @@ export default {
         return { value: parseInt(key), text: mutationTypes[key] };
       }),
       validAtt: true,
+      validSources: true,
     };
   },
   created() {
@@ -130,7 +140,7 @@ export default {
       this.elementOriginal = generateNewMutation(canEdit);
     },
     validate() {
-      return this.validName[0] && this.validDesc[0] && this.validAtt;
+      return this.validName[0] && this.validDesc[0] && this.validAtt && this.validSources;
     },
   },
 };

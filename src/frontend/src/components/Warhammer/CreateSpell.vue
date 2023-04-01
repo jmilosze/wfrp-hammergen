@@ -100,6 +100,12 @@
               ></b-form-input>
               <b-form-invalid-feedback :state="validDuration[0]">{{ validDuration[1] }}</b-form-invalid-feedback>
             </b-form-group>
+
+            <SourceTable
+              v-model="element.source"
+              @isValid="validSources = $event"
+              :disabled="!element.canEdit"
+            ></SourceTable>
           </b-col>
         </b-row>
       </b-form>
@@ -111,6 +117,7 @@
 import CreateElement2 from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import PublicElementBox from "./PublicElementBox.vue";
+import SourceTable from "./SourceTable.vue";
 import { SpellApi, generateEmptySpell, generateNewSpell, spellTypes, compareSpell } from "../../services/wh/spell";
 import { authRequest } from "../../services/auth";
 import { validWhCastingNumber, validWhShortDesc } from "../../utils/validation/wh";
@@ -119,6 +126,7 @@ export default {
   name: "CreateSpell",
   mixins: [CreateElement2],
   components: {
+    SourceTable,
     CreateSubmit,
     PublicElementBox,
   },
@@ -132,6 +140,8 @@ export default {
       spellTypeOptions: Object.keys(spellTypes).map((key) => {
         return { value: key, text: spellTypes[key] };
       }),
+
+      validSources: true,
     };
   },
   created() {
@@ -153,7 +163,8 @@ export default {
         this.validRange[0] &&
         this.validTarget[0] &&
         this.validDuration[0] &&
-        this.validCn[0]
+        this.validCn[0] &&
+        this.validSources
       );
     },
     resetCn() {

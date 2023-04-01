@@ -1,4 +1,6 @@
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
+import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
 import {
   getElementFunc,
   listElementsFunc,
@@ -6,7 +8,6 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
-import { compareObjects } from "../../utils//objectUtils";
 
 const apiBasePath = "/api/skill";
 
@@ -93,6 +94,7 @@ const generateNewSkill = (canEdit) => {
   skill.name = "New skill";
   skill.canEdit = canEdit;
   skill.shared = true;
+  skill.source = defaultSource();
   return skill;
 };
 

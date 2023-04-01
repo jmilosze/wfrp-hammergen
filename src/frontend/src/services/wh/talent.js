@@ -1,4 +1,7 @@
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
+import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
+import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -6,8 +9,6 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator";
-import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
-import { compareObjects } from "@/utils/objectUtils";
 
 const apiBasePath = "/api/talent";
 
@@ -114,6 +115,7 @@ const generateNewTalent = (canEdit) => {
   talent.name = "New talent";
   talent.canEdit = canEdit;
   talent.shared = true;
+  talent.source = defaultSource();
   return talent;
 };
 

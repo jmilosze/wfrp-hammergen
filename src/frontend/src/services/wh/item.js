@@ -1,5 +1,6 @@
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
 import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
 import {
   getElementFunc,
   listElementsFunc,
@@ -187,6 +188,7 @@ const generateNewItem = (canEdit) => {
   item.name = "New item";
   item.canEdit = canEdit;
   item.shared = true;
+  item.source = defaultSource();
   return item;
 };
 
