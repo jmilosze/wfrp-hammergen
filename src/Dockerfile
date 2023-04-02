@@ -1,4 +1,4 @@
-FROM python:3.8.2-slim-buster
+FROM python:3.11.2-slim-buster
 
 RUN addgroup --system appusergroup && adduser --system appuser && usermod -G appusergroup appuser
 
