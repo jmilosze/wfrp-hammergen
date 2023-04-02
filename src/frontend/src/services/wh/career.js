@@ -1,3 +1,6 @@
+import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
+import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -5,7 +8,6 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator";
-import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
 
 const apiBasePath = "/api/career";
 
@@ -58,6 +60,7 @@ const generateEmptyCareer = () => {
     class: 0,
     canEdit: false,
     shared: false,
+    source: {},
     levelOne: generateEmptyLevel(),
     levelTwo: generateEmptyLevel(),
     levelThree: generateEmptyLevel(),
@@ -74,6 +77,7 @@ const generateNewCareer = (canEdit) => {
   newCareer.levelFour.name = "New level 4";
   newCareer.canEdit = canEdit;
   newCareer.shared = true;
+  newCareer.source = defaultSource();
 
   return newCareer;
 };
@@ -85,6 +89,7 @@ const convertModelToApiData = (career, includeId) => {
     species: JSON.parse(JSON.stringify(career.species)),
     class: career.class,
     shared: career.shared,
+    source: career.source,
     level_1: JSON.parse(JSON.stringify(career.levelOne)),
     level_2: JSON.parse(JSON.stringify(career.levelTwo)),
     level_3: JSON.parse(JSON.stringify(career.levelThree)),
@@ -111,6 +116,7 @@ const convertApiToModelData = (apiData) => {
     levelFour: JSON.parse(JSON.stringify(apiData.level_4)),
     canEdit: apiData.can_edit,
     shared: apiData.shared,
+    source: apiData.source,
   };
 };
 
@@ -126,41 +132,42 @@ class CareerApi {
 
 const compareCareer = (career1, career2) => {
   for (let [key, value] of Object.entries(career1)) {
-    if (key !== "species" && !key.startsWith("level")) {
+    if (key !== "species" && !key.startsWith("level") && key !== "source") {
       if (career2[key] !== value) {
         return false;
       }
-    } else if (key === "species") {
-      if (!compareArrayIgnoreOrder(career1.species, career2.species)) {
-        return false;
-      }
-    } else {
-      for (let lvl of ["levelOne", "levelTwo", "levelThree", "levelFour"]) {
-        let career1Level = career1[lvl];
-        let career2Level = career2[lvl];
-        for (let [key, value] of Object.entries(career1Level)) {
-          if (key !== "attributes" && key !== "skills" && key !== "talents") {
-            if (career2Level[key] !== value) {
-              return false;
-            }
-          }
-        }
+    }
+  }
 
-        if (!compareArrayIgnoreOrder(career1Level.attributes, career2Level.attributes)) {
-          return false;
-        }
-
-        if (!compareArrayIgnoreOrder(career1Level.skills, career2Level.skills)) {
-          return false;
-        }
-
-        if (!compareArrayIgnoreOrder(career1Level.talents, career2Level.talents)) {
+  for (let lvl of ["levelOne", "levelTwo", "levelThree", "levelFour"]) {
+    let career1Level = career1[lvl];
+    let career2Level = career2[lvl];
+    for (let [key, value] of Object.entries(career1Level)) {
+      if (key !== "attributes" && key !== "skills" && key !== "talents") {
+        if (career2Level[key] !== value) {
           return false;
         }
       }
     }
+
+    if (!compareArrayIgnoreOrder(career1Level.attributes, career2Level.attributes)) {
+      return false;
+    }
+
+    if (!compareArrayIgnoreOrder(career1Level.skills, career2Level.skills)) {
+      return false;
+    }
+
+    if (!compareArrayIgnoreOrder(career1Level.talents, career2Level.talents)) {
+      return false;
+    }
   }
-  return true;
+
+  if (!compareArrayIgnoreOrder(career1.species, career2.species)) {
+    return false;
+  }
+
+  return compareObjects(career1.source, career2.source);
 };
 
 export {

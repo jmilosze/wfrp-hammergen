@@ -93,6 +93,12 @@
                 @apiCallError="addError"
               ></SelectTable>
             </div>
+
+            <SourceTable
+              v-model="element.source"
+              @isValid="validSources = $event"
+              :disabled="!element.canEdit"
+            ></SourceTable>
           </b-col>
         </b-row>
 
@@ -119,6 +125,7 @@ import CreateElement from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import SelectTable from "./SelectTable.vue";
 import PublicElementBox from "./PublicElementBox.vue";
+import SourceTable from "./SourceTable.vue";
 import {
   generateEmptySkill,
   SkillApi,
@@ -152,6 +159,7 @@ export default {
   name: "CreateSkill",
   mixins: [CreateElement],
   components: {
+    SourceTable,
     SelectTable,
     CreateSubmit,
     PublicElementBox,
@@ -165,6 +173,8 @@ export default {
 
       attributeOptions: attributeOptionsIndividual,
       skillTypeOptions: skillOptionsIndividual,
+
+      validSources: true,
     };
   },
   created() {
@@ -201,6 +211,9 @@ export default {
     setElementToNew(canEdit) {
       this.element = generateNewSkill(canEdit);
       this.elementOriginal = generateNewSkill(canEdit);
+    },
+    validate() {
+      return this.validName[0] && this.validDesc[0] && this.validSources;
     },
   },
 };

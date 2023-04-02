@@ -1,4 +1,6 @@
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
+import { compareObjects } from "../../utils/objectUtils";
+import { defaultSource } from "./source";
 import {
   getElementFunc,
   listElementsFunc,
@@ -112,6 +114,7 @@ const generateEmptyItem = () => {
     stats: generateEmptyStats(),
     canEdit: false,
     shared: false,
+    source: {},
   };
 };
 
@@ -128,6 +131,7 @@ const convertApiToModelData = (apiData) => {
     stats: generateEmptyStats(),
     canEdit: apiData.can_edit,
     shared: apiData.shared,
+    source: apiData.source,
   };
 
   if (apiData.stats.type === 0) {
@@ -184,6 +188,7 @@ const generateNewItem = (canEdit) => {
   item.name = "New item";
   item.canEdit = canEdit;
   item.shared = true;
+  item.source = defaultSource();
   return item;
 };
 
@@ -196,6 +201,7 @@ const convertModelToApiData = (item, includeId) => {
     availability: item.availability,
     properties: item.properties,
     shared: item.shared,
+    source: item.source,
   };
 
   if (includeId) {
@@ -261,7 +267,7 @@ const convertModelToApiData = (item, includeId) => {
 
 const compareItem = (item1, item2) => {
   for (let [key, value] of Object.entries(item1)) {
-    if (key !== "stats" && key !== "properties") {
+    if (key !== "stats" && key !== "properties" && key !== "source") {
       if (item2[key] !== value) {
         return false;
       }
@@ -285,6 +291,11 @@ const compareItem = (item1, item2) => {
       }
     }
   }
+
+  if (!compareObjects(item1.source, item2.source)) {
+    return false;
+  }
+
   return compareArrayIgnoreOrder(item1.properties, item2.properties);
 };
 

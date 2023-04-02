@@ -12,6 +12,7 @@ const skill1 = {
   group: ["a", "b"],
   can_edit: true,
   shared: true,
+  source: { 1: "page 2", 3: "page 5-10" },
 };
 
 const skill2 = {
@@ -25,6 +26,7 @@ const skill2 = {
   group: [],
   can_edit: true,
   shared: true,
+  source: {},
 };
 
 const mockAxios = {
@@ -63,6 +65,7 @@ test("getElement returns expected skill", async () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -82,6 +85,7 @@ test("listElements returns expected skills", async () => {
       group: ["a", "b"],
       canEdit: true,
       shared: true,
+      source: { 1: "page 2", 3: "page 5-10" },
     },
     {
       id: "id2",
@@ -94,6 +98,7 @@ test("listElements returns expected skills", async () => {
       group: [],
       canEdit: true,
       shared: true,
+      source: {},
     },
   ]);
 });
@@ -112,6 +117,7 @@ test("createElement calls axios with expected arguments", async () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result).toBe("inserted_id");
@@ -125,6 +131,7 @@ test("createElement calls axios with expected arguments", async () => {
     is_group: true,
     group: ["a", "b"],
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -142,6 +149,7 @@ test("updateElement calls axios with expected arguments", async () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 
   expect(result).toBe("inserted_id");
@@ -156,6 +164,7 @@ test("updateElement calls axios with expected arguments", async () => {
     is_group: true,
     group: ["a", "b"],
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   });
 });
 
@@ -179,6 +188,7 @@ describe("compareSkill returns true", () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   test("when skills are exactly the same", () => {
@@ -205,6 +215,7 @@ describe("compareSkill returns false", () => {
     group: ["a", "b"],
     canEdit: true,
     shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   };
 
   test.each([
@@ -220,6 +231,17 @@ describe("compareSkill returns false", () => {
   ])("when other skill has different value of $field", (t) => {
     let otherSkill = JSON.parse(JSON.stringify(skill));
     otherSkill[t.field] = t.value;
+    expect(compareSkill(skill, otherSkill)).toBe(false);
+  });
+
+  test.each([
+    { diff: "fewer sources", source: { 1: "page 2" } },
+    { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
+    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
+    { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
+  ])("when other skill has $diff", (t) => {
+    let otherSkill = JSON.parse(JSON.stringify(skill));
+    otherSkill.source = t.source;
     expect(compareSkill(skill, otherSkill)).toBe(false);
   });
 

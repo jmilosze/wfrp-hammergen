@@ -12,6 +12,7 @@ const meleeItemApiForm = {
   stats: { type: 0, hands: 1, dmg: 2, dmg_sb_mult: 1, reach: 1, group: 1 },
   can_edit: true,
   shared: false,
+  source: { 1: "page 2", 3: "page 5-10" },
 };
 
 const meleeItemModelForm = {
@@ -34,6 +35,7 @@ const meleeItemModelForm = {
   ],
   canEdit: true,
   shared: false,
+  source: { 1: "page 2", 3: "page 5-10" },
 };
 
 const otherItemApiForm = {
@@ -47,6 +49,7 @@ const otherItemApiForm = {
   stats: { type: 5, carry_type: { carriable: true, wearable: false } },
   can_edit: false,
   shared: true,
+  source: {},
 };
 
 const otherItemModelForm = {
@@ -69,6 +72,7 @@ const otherItemModelForm = {
   ],
   canEdit: false,
   shared: true,
+  source: {},
 };
 
 const rangedItemApiForm = {
@@ -82,6 +86,7 @@ const rangedItemApiForm = {
   stats: { type: 1, hands: 2, dmg: 2, dmg_sb_mult: 1, rng: 10, rng_sb_mult: 1, group: 1 },
   can_edit: true,
   shared: false,
+  source: {},
 };
 
 const rangedItemModelForm = {
@@ -104,6 +109,7 @@ const rangedItemModelForm = {
   ],
   canEdit: true,
   shared: false,
+  source: {},
 };
 
 const ammoItemApiForm = {
@@ -117,6 +123,7 @@ const ammoItemApiForm = {
   stats: { type: 2, dmg: 1, rng: 1, rng_mult: 1, group: 1 },
   can_edit: true,
   shared: false,
+  source: {},
 };
 
 const ammoItemModelForm = {
@@ -139,6 +146,7 @@ const ammoItemModelForm = {
   ],
   canEdit: true,
   shared: false,
+  source: {},
 };
 
 const armorItemApiForm = {
@@ -152,6 +160,7 @@ const armorItemApiForm = {
   stats: { type: 3, points: 2, location: [1, 3], group: 1 },
   can_edit: true,
   shared: false,
+  source: {},
 };
 
 const armorItemModelForm = {
@@ -174,6 +183,7 @@ const armorItemModelForm = {
   ],
   canEdit: true,
   shared: false,
+  source: {},
 };
 
 const containerItemApiForm = {
@@ -187,6 +197,7 @@ const containerItemApiForm = {
   stats: { type: 4, capacity: 2, wearable: true },
   can_edit: true,
   shared: false,
+  source: {},
 };
 
 const containerItemModelForm = {
@@ -209,6 +220,7 @@ const containerItemModelForm = {
   ],
   canEdit: true,
   shared: false,
+  source: {},
 };
 
 const grimoireItemApiForm = {
@@ -222,6 +234,7 @@ const grimoireItemApiForm = {
   stats: { type: 6, spells: ["spellId1", "spellId2"] },
   can_edit: true,
   shared: false,
+  source: {},
 };
 
 const grimoireItemModelForm = {
@@ -244,6 +257,7 @@ const grimoireItemModelForm = {
   ],
   canEdit: true,
   shared: false,
+  source: {},
 };
 
 const mockAxios = {
@@ -403,6 +417,17 @@ describe("compareItem returns false", () => {
   ])("when other item has different value of $field", (t) => {
     let otherItem = JSON.parse(JSON.stringify(meleeItemModelForm));
     otherItem[t.field] = t.value;
+    expect(compareItem(meleeItemModelForm, otherItem)).toBe(false);
+  });
+
+  test.each([
+    { diff: "fewer sources", source: { 1: "page 2" } },
+    { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
+    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
+    { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
+  ])("when other item has $diff", (t) => {
+    let otherItem = JSON.parse(JSON.stringify(meleeItemModelForm));
+    otherItem.source = t.source;
     expect(compareItem(meleeItemModelForm, otherItem)).toBe(false);
   });
 
