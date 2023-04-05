@@ -44,10 +44,11 @@ export function validWhItemEnc(enc) {
   return checkFloat(enc, minEnc, maxEnc, invalidEnc);
 }
 
-const dmgMultRe = /^(10|[0-9])$/;
 const invalidDmgMult = "Damage Multiplier is required and has to be between 0 and 10.";
+const minDmgMult = 0;
+const maxDmgMult = 10;
 export function validWhItemDmgMult(dmgMult) {
-  return checkString(dmgMult.toString(), dmgMultRe, invalidDmgMult);
+  return checkFloat(dmgMult, minDmgMult, maxDmgMult, invalidDmgMult);
 }
 
 const dmgRe = /^-?([0-9]|[1-9][0-9]|100)$/;
@@ -56,10 +57,11 @@ export function validWhItemDmg(dmg) {
   return checkString(dmg.toString(), dmgRe, invalidDmg);
 }
 
-const rngMultRe = /^(10|[0-9])$/;
 const invalidRngMult = "Range Multiplier is required and has to be between 0 and 10.";
+const minRngMult = 0;
+const maxRngMult = 10;
 export function validWhItemRngMult(rngMult) {
-  return checkString(rngMult.toString(), rngMultRe, invalidRngMult);
+  return checkFloat(rngMult, minRngMult, maxRngMult, invalidRngMult);
 }
 
 const rngRe = /^-?(0|[1-9]\d{0,2}|1000)$/;
