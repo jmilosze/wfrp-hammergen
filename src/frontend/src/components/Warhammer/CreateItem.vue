@@ -93,7 +93,7 @@
                         :disabled="!element.canEdit"
                         :number="true"
                         v-model="element.stats[0].dmgSbMult"
-                        type="number"
+                        type="text"
                       >
                       </b-form-input>
                       <b-form-invalid-feedback :state="validMeleeDmgMult[0]"
@@ -165,7 +165,7 @@
                         :disabled="!element.canEdit"
                         :number="true"
                         v-model="element.stats[1].dmgSbMult"
-                        type="number"
+                        type="text"
                       >
                       </b-form-input>
                       <b-form-invalid-feedback :state="validRangedDmgMult[0]"
@@ -205,7 +205,7 @@
                         :disabled="!element.canEdit"
                         :number="true"
                         v-model="element.stats[1].rngSbMult"
-                        type="number"
+                        type="text"
                       >
                       </b-form-input>
                       <b-form-invalid-feedback :state="validRangedRngMult[0]"
