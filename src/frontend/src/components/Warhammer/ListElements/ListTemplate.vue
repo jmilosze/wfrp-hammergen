@@ -154,7 +154,7 @@ export default {
       this.$bvModal.show("deleteModal");
     },
     deleteItem() {
-      this.$emit("elementDeleted", this.deleteData.id, this.deleteData.index);
+      this.$emit("elementDeleted", this.deleteData.index);
     },
   },
 };

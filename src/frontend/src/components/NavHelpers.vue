@@ -9,32 +9,13 @@ export default {
   },
   methods: {
     callAndLogoutIfUnauthorized(apiCall) {
-      return async (...args) => {
-        try {
-          return await apiCall(...args);
-        } catch (e) {
-          if (e.response?.status === 401) {
-            await this.authStore.logout();
-            if (this.$router.currentRoute.name !== "login") {
-              await this.$router.push({ name: "login" });
-            }
-          } else {
-            throw e;
-          }
-        }
-      };
+      return this.authStore.callAndLogoutIfUnauthorized(apiCall);
     },
     async logout() {
-      await this.authStore.logout();
-      if (this.$router.currentRoute.name !== "home") {
-        await this.$router.push({ name: "home" });
-      }
+      return this.authStore.logout();
     },
     async login(username, password) {
-      await this.authStore.login(username, password);
-      if (this.$router.currentRoute.name !== "home") {
-        await this.$router.push({ name: "home" });
-      }
+      return this.authStore.login(username, password);
     },
   },
 };

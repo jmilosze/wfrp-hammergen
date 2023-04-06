@@ -9,8 +9,9 @@ export default {
   name: "ListCommon",
   mixins: [NavHelpers],
   methods: {
-    async deleteElement(elementId, elementIndex) {
+    async deleteElement(elementIndex) {
       try {
+        const elementId = this.listOfElements[elementIndex]["id"];
         await this.callAndLogoutIfUnauthorized(this.elementApi.deleteElement)(elementId);
         this.listOfElements.splice(elementIndex, 1);
       } catch (error) {
