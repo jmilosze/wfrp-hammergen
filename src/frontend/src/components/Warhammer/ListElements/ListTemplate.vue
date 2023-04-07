@@ -1,30 +1,22 @@
 <template>
   <div class="list-template">
-    <b-row>
-      <b-col>
-        <b-form-group>
-          <b-button
-            v-if="authStore.loggedIn"
-            variant="primary"
-            class="mr-2 mb-1"
-            :to="{ name: elementType, params: { id: 'create' } }"
-          >
-            Create New
-          </b-button>
-        </b-form-group>
-      </b-col>
-    </b-row>
+    <div class="d-flex align-items-center mb-3">
+      <b-button
+        v-if="authStore.loggedIn"
+        variant="primary"
+        class="mr-2 text-nowrap"
+        :to="{ name: elementType, params: { id: 'create' } }"
+      >
+        Create New
+      </b-button>
 
-    <b-row>
-      <b-col>
-        <b-form-group>
-          <b-input-group>
-            <b-form-input v-model="filter" type="search" id="filterInput" placeholder="Type to Search"> </b-form-input>
-          </b-input-group>
-        </b-form-group>
-        <p>{{ resultRange }}</p>
-      </b-col>
-    </b-row>
+      <label class="sr-only" for="filterInput">Search</label>
+      <b-input-group>
+        <b-form-input v-model="filter" type="search" id="filterInput" placeholder="Type to Search"></b-form-input>
+      </b-input-group>
+    </div>
+
+    <p>{{ resultRange }}</p>
 
     <b-row>
       <b-col>

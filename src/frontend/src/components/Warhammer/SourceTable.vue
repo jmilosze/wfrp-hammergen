@@ -32,7 +32,7 @@
 
 <script setup>
 import { watch, ref } from "vue";
-import { getAllSources } from "../../services/wh/source";
+import { sourceOptions } from "../../services/wh/source";
 import { compareBoolFn, compareStringFn } from "../../utils/comapreUtils";
 import { validWhVeryShortDesc } from "../../utils/validation/wh";
 import { compareObjects } from "../../utils/objectUtils";
@@ -53,10 +53,10 @@ const emits = defineEmits(["input", "isValid"]);
 
 const modal = ref(false);
 const editTable = ref(
-  getAllSources().map((x) => {
+  sourceOptions().map((x) => {
     return {
-      name: x.name,
-      source: x.source,
+      name: x.text,
+      source: x.value,
       notes: "",
       select: false,
       valid: true,

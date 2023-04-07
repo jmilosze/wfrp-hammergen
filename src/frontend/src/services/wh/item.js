@@ -8,6 +8,7 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
+import { itemPropertyTypes } from "@/services/wh/itemproperty";
 
 const apiBasePath = "/api/item";
 
@@ -87,6 +88,14 @@ const itemAvailabilities = {
   1: "Scarce",
   2: "Rare",
   3: "Exotic",
+};
+
+const itemTypeOptions = () => {
+  const options = [];
+  for (let [k, v] of Object.entries(itemTypes)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
 };
 
 const generateEmptyStats = () => {
@@ -324,4 +333,5 @@ export {
   generateEmptyStats,
   compareItem,
   ItemApi,
+  itemTypeOptions,
 };

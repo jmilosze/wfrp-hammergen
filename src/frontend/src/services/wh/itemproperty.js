@@ -56,6 +56,14 @@ const itemPropertyTypes = {
   1: "Flaw",
 };
 
+const itemPropertyOptions = () => {
+  const options = [];
+  for (let [k, v] of Object.entries(itemPropertyTypes)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
+};
+
 const compareItemProperty = (itemProperty1, itemProperty2) => {
   for (let [key, value] of Object.entries(itemProperty1)) {
     if (key !== "applicableTo" && key !== "source") {
@@ -94,4 +102,11 @@ const generateNewItemProperty = (canEdit) => {
   return itemProperty;
 };
 
-export { ItemPropertyApi, generateEmptyItemProperty, generateNewItemProperty, itemPropertyTypes, compareItemProperty };
+export {
+  ItemPropertyApi,
+  generateEmptyItemProperty,
+  generateNewItemProperty,
+  itemPropertyTypes,
+  compareItemProperty,
+  itemPropertyOptions,
+};
