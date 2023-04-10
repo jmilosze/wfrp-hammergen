@@ -20,7 +20,7 @@ import ListCharacters from "./components/Warhammer/ListElements/ListCharacters.v
 import ListItems from "./components/Warhammer/ListElements/ListItems.vue";
 import ListSkills from "./components/Warhammer/ListElements/ListSkills.vue";
 import ListTalents from "./components/Warhammer/ListElements/ListTalents.vue";
-import ListItemProperties from "./components/Warhammer/ListElements/ListItemProperties2.vue";
+import ListItemProperties from "./components/Warhammer/ListElements/ListItemProperties.vue";
 import ListSpells from "./components/Warhammer/ListElements/ListSpells.vue";
 import ListMutations from "./components/Warhammer/ListElements/ListMutations.vue";
 import ListCareers from "./components/Warhammer/ListElements/ListCareers.vue";

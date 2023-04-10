@@ -3,12 +3,42 @@
     <b-container>
       <h1>Available Item Qualities and Flaws</h1>
 
+      <b-row>
+        <b-col>
+          <b-form-group label="Source" label-for="source-options">
+            <b-form-select
+              v-model="selectedFilter.source"
+              :options="filterOptions.source"
+              id="source-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label="Type" label-for="type-options">
+            <b-form-select
+              v-model="selectedFilter.type"
+              :options="filterOptions.type"
+              id="type-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label="Applicable to" label-for="applicable-to-options">
+            <b-form-select
+              v-model="selectedFilter.applicableTo"
+              :options="filterOptions.applicableTo"
+              id="applicable-to-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
       <ElementList
         v-if="loaded"
         :displayFields="displayFields"
-        :listOfElements="listOfElements"
+        :listOfElements="filteredListOfWh"
         elementType="property"
-        @elementDeleted="deleteElement"
+        @elementDeleted="deleteWh"
       />
 
       <div v-else class="text-center">
@@ -26,59 +56,94 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ElementList from "./ListTemplate.vue";
-import ListCommon from "./ListCommon.vue";
-import { ItemPropertyApi, itemPropertyTypes } from "../../../services/wh/itemproperty";
+import { ItemPropertyApi, itemPropertyTypes, itemPropertyOptions } from "../../../services/wh/itemproperty";
 import { authRequest } from "../../../services/auth";
+import { onBeforeMount, ref, computed, reactive, watch } from "vue";
+import { useListWh } from "../../../composables/listWh";
+import { itemTypes, itemTypeOptions } from "../../../services/wh/item";
 import { addSpaces } from "../../../utils/stringUtils";
-import { itemTypes } from "../../../services/wh/item";
+import { sourceOptions, source } from "../../../services/wh/source";
+import { useRoute, useRouter } from "vue-router/composables";
 
 const MAX_CHARS = 15;
+const itemPropertyApi = new ItemPropertyApi(authRequest);
 
-export default {
-  name: "ListItemProperties",
-  mixins: [ListCommon],
-  components: { ElementList },
+const displayFields = ref([
+  { key: "name", sortable: true },
+  { key: "propertyType", sortable: true },
+  { key: "applicableTo", sortable: false },
+  { key: "source", sortable: false },
+  { key: "actions", sortable: false },
+]);
 
-  data() {
-    return {
-      elementApi: new ItemPropertyApi(authRequest),
+const { deleteWh, loadWhList, loaded, errors, listOfWh } = useListWh(itemPropertyApi);
+const route = useRoute();
+const router = useRouter();
 
-      displayFields: [
-        { key: "name", sortable: true },
-        { key: "propertyType", sortable: true },
-        { key: "applicableTo", sortable: false },
-        { key: "description", sortable: false },
-        { key: "actions", sortable: false },
-      ],
-      listOfElements: [],
-      errors: [],
-      loaded: false,
-    };
-  },
-  created() {
-    this.loadData();
-  },
-  methods: {
-    formatList(itemProperty) {
-      let applicableTo;
-      if (itemProperty.applicableTo.length === Object.keys(itemTypes).length) {
-        applicableTo = "All";
-      } else {
-        applicableTo = itemProperty.applicableTo.map((itemValue) => itemTypes[itemValue]).join(", ");
+const filterOptions = reactive({
+  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
+  type: [{ value: -1, text: "Any" }].concat(itemPropertyOptions()),
+  applicableTo: [{ value: -1, text: "Any" }].concat(itemTypeOptions()),
+});
+
+const selectedFilter = reactive({
+  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
+  type: route.query.selectedType ? Number(route.query.selectedType) : -1,
+  applicableTo: route.query.selectedApplicableTo ? Number(route.query.selectedApplicableTo) : -1,
+});
+
+function formatListOfWh(wh) {
+  let applicableTo;
+  if (wh.applicableTo.length === Object.keys(itemTypes).length) {
+    applicableTo = "All";
+  } else {
+    applicableTo = wh.applicableTo.map((itemValue) => itemTypes[itemValue]).join(", ");
+  }
+  return {
+    applicableTo: applicableTo,
+    source: Object.entries(wh.source)
+      .map((x) => source[x[0]])
+      .join(", "),
+    name: addSpaces(wh.name, MAX_CHARS),
+    propertyType: itemPropertyTypes[wh.type],
+    canEdit: wh.canEdit,
+    id: wh.id,
+  };
+}
+
+const filteredListOfWh = computed(() => {
+  const filteredListOfWh = [];
+  for (const wh of listOfWh.value) {
+    if (selectedFilter.source === -1 || Object.hasOwn(wh.source, selectedFilter.source)) {
+      if (selectedFilter.type === -1 || wh.type === selectedFilter.type) {
+        if (selectedFilter.applicableTo === -1 || wh.applicableTo.includes(selectedFilter.applicableTo)) {
+          filteredListOfWh.push(formatListOfWh(wh));
+        }
       }
-      return {
-        applicableTo: applicableTo,
-        description: addSpaces(itemProperty.description, MAX_CHARS),
-        name: addSpaces(itemProperty.name, MAX_CHARS),
-        propertyType: itemPropertyTypes[itemProperty.type],
-        canEdit: itemProperty.canEdit,
-        id: itemProperty.id,
-      };
-    },
+    }
+  }
+  return filteredListOfWh;
+});
+
+watch(
+  () => selectedFilter,
+  (newValue) => {
+    // console.log("filter changed");
+    const query = {
+      selectedSource: newValue.source,
+      selectedType: newValue.type,
+      selectedApplicableTo: newValue.applicableTo,
+    };
+    router.replace({ query });
   },
-};
+  { deep: true }
+);
+
+onBeforeMount(() => {
+  loadWhList();
+});
 </script>
 
 <style scoped></style>
