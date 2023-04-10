@@ -65,7 +65,7 @@ import { useListWh } from "../../../composables/listWh";
 import { itemTypes, itemTypeOptions } from "../../../services/wh/item";
 import { addSpaces } from "../../../utils/stringUtils";
 import { sourceOptions, source } from "../../../services/wh/source";
-import { useRoute, useRouter } from "vue-router/composables";
+import { useRoute } from "vue-router/composables";
 
 const MAX_CHARS = 15;
 const itemPropertyApi = new ItemPropertyApi(authRequest);
@@ -78,9 +78,8 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { deleteWh, loadWhList, loaded, errors, listOfWh } = useListWh(itemPropertyApi);
+const { deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(itemPropertyApi);
 const route = useRoute();
-const router = useRouter();
 
 const filterOptions = reactive({
   source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
@@ -130,13 +129,12 @@ const filteredListOfWh = computed(() => {
 watch(
   () => selectedFilter,
   (newValue) => {
-    // console.log("filter changed");
     const query = {
       selectedSource: newValue.source,
       selectedType: newValue.type,
       selectedApplicableTo: newValue.applicableTo,
     };
-    router.replace({ query });
+    addParamsToLocation(route.path, query);
   },
   { deep: true }
 );

@@ -30,5 +30,19 @@ export function useListWh(elementApi) {
     }
   }
 
-  return { deleteWh, loadWhList, loaded, errors, listOfWh };
+  function addParamsToLocation(path, params) {
+    history.pushState(
+      {},
+      null,
+      path +
+        "?" +
+        Object.keys(params)
+          .map((key) => {
+            return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
+          })
+          .join("&")
+    );
+  }
+
+  return { deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation };
 }
