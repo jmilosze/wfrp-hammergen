@@ -1,6 +1,6 @@
 import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
 import { compareObjects } from "../../utils/objectUtils";
-import { defaultSource } from "./source";
+import { defaultSource, source } from "./source";
 import {
   getElementFunc,
   listElementsFunc,
@@ -57,6 +57,14 @@ const mutationTypes = {
   1: "Mental",
 };
 
+function mutationTypeOptions() {
+  const options = [];
+  for (let [k, v] of Object.entries(mutationTypes)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
+}
+
 const compareMutation = (mutation1, mutation2) => {
   for (let [key, value] of Object.entries(mutation1)) {
     if (key !== "modifiers" && key !== "source") {
@@ -96,4 +104,4 @@ const generateNewMutation = (canEdit) => {
   return mutation;
 };
 
-export { MutationApi, generateEmptyMutation, generateNewMutation, mutationTypes, compareMutation };
+export { MutationApi, generateEmptyMutation, generateNewMutation, mutationTypes, compareMutation, mutationTypeOptions };
