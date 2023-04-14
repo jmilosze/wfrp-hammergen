@@ -10,7 +10,7 @@ export function useListWh(elementApi) {
 
   async function deleteWh(whIndex) {
     try {
-      const whId = listOfWh[whIndex]["id"];
+      const whId = listOfWh.value[whIndex]["id"];
       await authStore.callAndLogoutIfUnauthorized(elementApi.deleteElement)(whId);
       listOfWh.value.splice(whIndex, 1);
     } catch (error) {
