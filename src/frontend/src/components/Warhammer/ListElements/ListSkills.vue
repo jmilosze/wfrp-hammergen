@@ -3,12 +3,42 @@
     <b-container>
       <h1>Available Skills</h1>
 
+      <b-row>
+        <b-col>
+          <b-form-group label="Source" label-for="source-options">
+            <b-form-select
+              v-model="selectedFilter.source"
+              :options="filterOptions.source"
+              id="source-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label="Attr" label-for="attr-options">
+            <b-form-select
+              v-model="selectedFilter.attr"
+              :options="filterOptions.attr"
+              id="attr-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label="Type" label-for="type-options">
+            <b-form-select
+              v-model="selectedFilter.type"
+              :options="filterOptions.type"
+              id="type-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
       <ElementList
         v-if="loaded"
         :displayFields="displayFields"
-        :listOfElements="listOfElements"
+        :listOfElements="filteredListOfWh"
         elementType="skill"
-        @elementDeleted="deleteElement"
+        @elementDeleted="deleteWh"
       />
 
       <div v-else class="text-center">
@@ -26,52 +56,91 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ElementList from "./ListTemplate.vue";
-import ListCommon from "./ListCommon.vue";
-import { SkillApi, skillAttributeTypesGroup, skillTypesGroup } from "../../../services/wh/skill";
 import { authRequest } from "../../../services/auth";
-import { addAnyToGroup, addSpaces } from "../../../utils/stringUtils";
+import { onBeforeMount, ref, computed, reactive, watch } from "vue";
+import { useListWh } from "../../../composables/listWh";
+import {
+  SkillApi,
+  skillTypesGroup,
+  skillTypeGroupOptions,
+  skillAttributeTypesGroup,
+  skillAttributeTypeGroupOptions,
+} from "../../../services/wh/skill";
+import { addSpaces } from "../../../utils/stringUtils";
+import { sourceOptions, source } from "../../../services/wh/source";
+import { useRoute } from "vue-router/composables";
 
 const MAX_CHARS = 15;
+const skillApi = new SkillApi(authRequest);
 
-export default {
-  name: "ListSkills",
-  mixins: [ListCommon],
-  components: { ElementList },
+const displayFields = ref([
+  { key: "name", sortable: true },
+  { key: "attr", sortable: true },
+  { key: "skillType", sortable: true },
+  { key: "source", sortable: false },
+  { key: "actions", sortable: false },
+]);
 
-  data() {
-    return {
-      elementApi: new SkillApi(authRequest),
+const { deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(skillApi);
+const route = useRoute();
 
-      displayFields: [
-        { key: "name", sortable: true },
-        { key: "attr", sortable: true },
-        { key: "skillType", sortable: true },
-        { key: "description", sortable: false },
-        { key: "actions", sortable: false },
-      ],
-      listOfElements: [],
-      errors: [],
-      loaded: false,
+const filterOptions = reactive({
+  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
+  attr: [{ value: -1, text: "Any" }].concat(skillAttributeTypeGroupOptions()),
+  type: [{ value: -1, text: "Any" }].concat(skillTypeGroupOptions()),
+});
+
+const selectedFilter = reactive({
+  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
+  attr: route.query.selectedAttr ? Number(route.query.selectedAttr) : -1,
+  type: route.query.selectedType ? Number(route.query.selectedType) : -1,
+});
+
+function formatListOfWh(wh) {
+  return {
+    name: addSpaces(wh.name, MAX_CHARS),
+    source: Object.entries(wh.source)
+      .map((x) => source[x[0]])
+      .join(", "),
+    attr: skillAttributeTypesGroup[wh.attribute],
+    skillType: skillTypesGroup[wh.type],
+    canEdit: wh.canEdit,
+    id: wh.id,
+  };
+}
+
+const filteredListOfWh = computed(() => {
+  const filteredListOfWh = [];
+  for (const wh of listOfWh.value) {
+    if (selectedFilter.source === -1 || Object.hasOwn(wh.source, selectedFilter.source)) {
+      if (selectedFilter.type === -1 || wh.type === selectedFilter.type) {
+        if (selectedFilter.attr === -1 || wh.attribute === selectedFilter.attr) {
+          filteredListOfWh.push(formatListOfWh(wh));
+        }
+      }
+    }
+  }
+  return filteredListOfWh;
+});
+
+watch(
+  () => selectedFilter,
+  (newValue) => {
+    const query = {
+      selectedSource: newValue.source,
+      selectedType: newValue.type,
+      selectedAttr: newValue.attr,
     };
+    addParamsToLocation(route.path, query);
   },
-  created() {
-    this.loadData();
-  },
-  methods: {
-    formatList(skill) {
-      return {
-        name: addSpaces(addAnyToGroup(skill.name, skill.isGroup), MAX_CHARS),
-        description: addSpaces(skill.description, MAX_CHARS),
-        attr: skillAttributeTypesGroup[skill.attribute],
-        skillType: skillTypesGroup[skill.type],
-        canEdit: skill.canEdit,
-        id: skill.id,
-      };
-    },
-  },
-};
+  { deep: true }
+);
+
+onBeforeMount(() => {
+  loadWhList();
+});
 </script>
 
 <style scoped></style>
