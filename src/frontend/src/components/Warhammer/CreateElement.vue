@@ -67,9 +67,13 @@ export default {
     addError() {
       this.errors.push("Server Error.");
     },
-    goBack() {
+    goBack(toList = false) {
       if (this.goBackChain.length === 0) {
-        this.$router.back();
+        if (toList) {
+          this.$router.push({ name: `list_${this.elementType}` }).catch(() => {});
+        } else {
+          this.$router.back();
+        }
       } else {
         // eslint-disable-next-line vue/no-mutating-props
         const goTo = this.goBackChain.pop();
