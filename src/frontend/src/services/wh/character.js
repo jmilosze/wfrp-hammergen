@@ -35,6 +35,14 @@ const species = {
   6: "Ogre",
 };
 
+function speciesOptions() {
+  const options = [];
+  for (let [k, v] of Object.entries(species)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
+}
+
 const defaultSize = 3; // Average
 
 const generateEmptyCharacter = () => {
@@ -629,4 +637,5 @@ export {
   getTotalAttributes,
   generateEmptyCharacterForDisplay,
   characterForDisplayToCsv,
+  speciesOptions,
 };

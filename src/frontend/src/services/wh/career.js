@@ -8,6 +8,7 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator";
+import { skillAttributeTypesGroup } from "@/services/wh/skill";
 
 const apiBasePath = "/api/career";
 
@@ -21,6 +22,14 @@ const careerClasses = {
   6: "Rougue",
   7: "Warrior",
 };
+
+function careerClassOptions() {
+  const options = [];
+  for (let [k, v] of Object.entries(careerClasses)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
+}
 
 const statusTiers = {
   0: "Brass",
@@ -178,4 +187,5 @@ export {
   generateNewCareer,
   CareerApi,
   compareCareer,
+  careerClassOptions,
 };

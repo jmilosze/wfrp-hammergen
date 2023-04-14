@@ -2,6 +2,17 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">16 Apr 2023</div>
+        <p>
+          We are pleased to announce addition of source property to following elements: Talents, Skills, Items,
+          Qualities and Flaws, Prayers and Spells, Mutations, and Careers. It indicates which source book (for example
+          "Winds of Magic") contains that particular element. Each element can have multiple sources.
+        </p>
+        <p>
+          List of Skills, Talents, etc., can now be filtered by source and other properties (depending on the element).
+          This allows to use the lists as indexes for browsing multiple source books. For example, one can look up Ogre
+          Careers from Archives of the Empire Vol. II, or all Melee weapons mentioned in Up in Arms.
+        </p>
         <div class="h3">05 Mar 2023</div>
         <p>
           Added contents of

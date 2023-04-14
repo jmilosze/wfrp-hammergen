@@ -3,12 +3,33 @@
     <b-container>
       <h1>Available Prayers and Spells</h1>
 
+      <b-row>
+        <b-col>
+          <b-form-group label="Source" label-for="source-options">
+            <b-form-select
+              v-model="selectedFilter.source"
+              :options="filterOptions.source"
+              id="source-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label="Type" label-for="type-options">
+            <b-form-select
+              v-model="selectedFilter.type"
+              :options="filterOptions.type"
+              id="type-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
       <ElementList
         v-if="loaded"
         :displayFields="displayFields"
-        :listOfElements="listOfElements"
+        :listOfElements="filteredListOfWh"
         elementType="spell"
-        @elementDeleted="deleteElement"
+        @elementDeleted="deleteWh"
       />
 
       <div v-else class="text-center">
@@ -26,50 +47,78 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ElementList from "./ListTemplate.vue";
-import ListCommon from "./ListCommon.vue";
-import { SpellApi, spellTypes } from "../../../services/wh/spell";
 import { authRequest } from "../../../services/auth";
+import { onBeforeMount, ref, computed, reactive, watch } from "vue";
+import { useListWh } from "../../../composables/listWh";
+import { SpellApi, spellTypes, spellTypeOptions } from "../../../services/wh/spell";
 import { addSpaces } from "../../../utils/stringUtils";
+import { sourceOptions, source } from "../../../services/wh/source";
+import { useRoute } from "vue-router/composables";
 
 const MAX_CHARS = 15;
+const spellApi = new SpellApi(authRequest);
 
-export default {
-  name: "ListSpells",
-  mixins: [ListCommon],
-  components: { ElementList },
+const displayFields = ref([
+  { key: "name", sortable: true },
+  { key: "spellType", sortable: true },
+  { key: "source", sortable: false },
+  { key: "actions", sortable: false },
+]);
 
-  data() {
-    return {
-      elementApi: new SpellApi(authRequest),
+const { deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(spellApi);
+const route = useRoute();
 
-      displayFields: [
-        { key: "name", sortable: true },
-        { key: "type", sortable: true },
-        { key: "description", sortable: false },
-        { key: "actions", sortable: false },
-      ],
-      listOfElements: [],
-      errors: [],
-      loaded: false,
+const filterOptions = reactive({
+  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
+  type: [{ value: "any", text: "Any" }].concat(spellTypeOptions()),
+});
+
+const selectedFilter = reactive({
+  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
+  type: route.query.selectedType ? route.query.selectedType : "any",
+});
+
+function formatListOfWh(wh) {
+  return {
+    name: addSpaces(wh.name, MAX_CHARS),
+    source: Object.entries(wh.source)
+      .map((x) => source[x[0]])
+      .join(", "),
+    spellType: spellTypes[wh.type],
+    canEdit: wh.canEdit,
+    id: wh.id,
+  };
+}
+
+const filteredListOfWh = computed(() => {
+  const filteredListOfWh = [];
+  for (const wh of listOfWh.value) {
+    if (selectedFilter.source === -1 || Object.hasOwn(wh.source, selectedFilter.source)) {
+      if (selectedFilter.type === "any" || wh.type === selectedFilter.type) {
+        filteredListOfWh.push(formatListOfWh(wh));
+      }
+    }
+  }
+  return filteredListOfWh;
+});
+
+watch(
+  () => selectedFilter,
+  (newValue) => {
+    const query = {
+      selectedSource: newValue.source,
+      selectedType: newValue.type,
     };
+    addParamsToLocation(route.path, query);
   },
-  created() {
-    this.loadData();
-  },
-  methods: {
-    formatList(spell) {
-      return {
-        name: addSpaces(spell.name, MAX_CHARS),
-        description: addSpaces(spell.description, MAX_CHARS),
-        type: spellTypes[spell.type],
-        canEdit: spell.canEdit,
-        id: spell.id,
-      };
-    },
-  },
-};
+  { deep: true }
+);
+
+onBeforeMount(() => {
+  loadWhList();
+});
 </script>
 
 <style scoped></style>

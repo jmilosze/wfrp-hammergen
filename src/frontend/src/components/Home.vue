@@ -9,19 +9,14 @@
 
       <div class="text-sm-left">
         <div class="alert alert-info" role="alert">
-          <div class="h3">Archives of the Empire: Volume III</div>
+          <div class="h3">New Filters</div>
           <p>
-            We are happy to announce we contents from
-            <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3" target="_blank"
-              >Archives of the Empire: Volume III</b-link
-            >. You can read more about this and previous updates in
+            We are happy to announce that list of Skills, Talents, etc., can now be filtered by source book (for example
+            "Winds of Magic") and other properties (depending on the list). You can read more about this and previous
+            updates in
             <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
             and on our
-            <b-link
-              href="https://ko-fi.com/post/Archives-of-the-Empire-Volume-III-Update-F2F5J8MI3?justpublished=true&alias=Archives-of-the-Empire-Volume-III-Update-F2F5J8MI3"
-              target="_blank"
-              >Ko-fi blog.
-            </b-link>
+            <b-link href="https://ko-fi.com/post/New-source-property-and-filters-F1F2KERC7" target="_blank">Ko-fi blog. </b-link>
           </p>
           <p>
             As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via

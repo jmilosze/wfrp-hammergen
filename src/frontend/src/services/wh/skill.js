@@ -8,6 +8,7 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
+import { mutationTypes } from "@/services/wh/mutation";
 
 const apiBasePath = "/api/skill";
 
@@ -109,6 +110,14 @@ const skillTypesIndividual = {
   1: "Advanced",
 };
 
+function skillTypeGroupOptions() {
+  const options = [];
+  for (let [k, v] of Object.entries(skillTypesGroup)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
+}
+
 const skillAttributeTypesIndividual = {
   1: "WS",
   2: "BS",
@@ -136,6 +145,14 @@ const skillAttributeTypesGroup = {
   11: "Various",
 };
 
+function skillAttributeTypeGroupOptions() {
+  const options = [];
+  for (let [k, v] of Object.entries(skillAttributeTypesGroup)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
+}
+
 export {
   SkillApi,
   generateEmptySkill,
@@ -145,4 +162,6 @@ export {
   skillTypesIndividual,
   skillAttributeTypesIndividual,
   skillAttributeTypesGroup,
+  skillTypeGroupOptions,
+  skillAttributeTypeGroupOptions,
 };

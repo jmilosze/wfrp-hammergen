@@ -3,12 +3,24 @@
     <b-container>
       <h1>Available Talents</h1>
 
+      <b-row>
+        <b-col>
+          <b-form-group label="Source" label-for="source-options">
+            <b-form-select
+              v-model="selectedFilter.source"
+              :options="filterOptions.source"
+              id="source-options"
+            ></b-form-select>
+          </b-form-group>
+        </b-col>
+      </b-row>
+
       <ElementList
         v-if="loaded"
         :displayFields="displayFields"
-        :listOfElements="listOfElements"
+        :listOfElements="filteredListOfWh"
         elementType="talent"
-        @elementDeleted="deleteElement"
+        @elementDeleted="deleteWh"
       />
 
       <div v-else class="text-center">
@@ -26,66 +38,74 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ElementList from "./ListTemplate.vue";
-import ListCommon from "./ListCommon.vue";
-import { TalentApi, talentAttributes } from "../../../services/wh/talent";
 import { authRequest } from "../../../services/auth";
-import { addAnyToGroup, addSpaces } from "../../../utils/stringUtils";
+import { onBeforeMount, ref, computed, reactive, watch } from "vue";
+import { useListWh } from "../../../composables/listWh";
+import { TalentApi, maxRankTalentDisplay } from "../../../services/wh/talent";
+import { addSpaces } from "../../../utils/stringUtils";
+import { sourceOptions, source } from "../../../services/wh/source";
+import { useRoute } from "vue-router/composables";
 
 const MAX_CHARS = 15;
+const talentApi = new TalentApi(authRequest);
 
-function maxRankTalentDisplay(isGroup, maxRankValue, maxRankAttValue) {
-  if (isGroup) {
-    return "";
-  }
+const displayFields = ref([
+  { key: "name", sortable: true },
+  { key: "maxRank", sortable: true },
+  { key: "source", sortable: false },
+  { key: "actions", sortable: false },
+]);
 
-  const constPart = maxRankValue > 0 ? maxRankValue.toString() : "";
-  const attName = talentAttributes[maxRankAttValue];
-  const bonusPart = attName !== "None" ? attName + " Bonus" : "";
+const { deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(talentApi);
+const route = useRoute();
 
-  if (constPart !== "" && bonusPart !== "") {
-    return constPart + " + " + bonusPart;
-  } else {
-    return constPart + bonusPart;
-  }
+const filterOptions = reactive({
+  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
+});
+
+const selectedFilter = reactive({
+  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
+});
+
+function formatListOfWh(wh) {
+  return {
+    name: addSpaces(wh.name, MAX_CHARS),
+    source: Object.entries(wh.source)
+      .map((x) => source[x[0]])
+      .join(", "),
+    maxRank: maxRankTalentDisplay(wh.isGroup, wh.maxRank, wh.maxRankAtt),
+    canEdit: wh.canEdit,
+    id: wh.id,
+  };
 }
 
-export default {
-  name: "ListTalents",
-  mixins: [ListCommon],
-  components: { ElementList },
+const filteredListOfWh = computed(() => {
+  const filteredListOfWh = [];
+  for (const wh of listOfWh.value) {
+    if (selectedFilter.source === -1 || Object.hasOwn(wh.source, selectedFilter.source)) {
+      filteredListOfWh.push(formatListOfWh(wh));
+    }
+  }
+  return filteredListOfWh;
+});
 
-  data() {
-    return {
-      elementApi: new TalentApi(authRequest),
-
-      displayFields: [
-        { key: "name", sortable: true },
-        { key: "maxRank", sortable: false },
-        { key: "description", sortable: false },
-        { key: "actions", sortable: false },
-      ],
-      listOfElements: [],
-      errors: [],
-      loaded: false,
+watch(
+  () => selectedFilter,
+  (newValue) => {
+    const query = {
+      selectedSource: newValue.source,
+      selectedType: newValue.type,
     };
+    addParamsToLocation(route.path, query);
   },
-  created() {
-    this.loadData();
-  },
-  methods: {
-    formatList(talent) {
-      return {
-        name: addSpaces(addAnyToGroup(talent.name, talent.isGroup), MAX_CHARS),
-        description: addSpaces(talent.description, MAX_CHARS),
-        maxRank: maxRankTalentDisplay(talent.isGroup, talent.maxRank, talent.maxRankAtt),
-        canEdit: talent.canEdit,
-        id: talent.id,
-      };
-    },
-  },
-};
+  { deep: true }
+);
+
+onBeforeMount(() => {
+  loadWhList();
+});
 </script>
 
 <style scoped></style>

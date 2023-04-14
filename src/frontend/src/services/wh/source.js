@@ -1,4 +1,4 @@
-const source = {
+export const source = {
   0: "Custom",
   1: "WFRP",
   2: "Rough Nights & Hard Days",
@@ -9,12 +9,12 @@ const source = {
   7: "Winds of Magic",
 };
 
-export function getAllSources() {
-  const allSources = [];
+export function sourceOptions() {
+  const options = [];
   for (let [k, v] of Object.entries(source)) {
-    allSources.push({ source: k, name: v });
+    options.push({ value: Number(k), text: v });
   }
-  return allSources;
+  return options;
 }
 
 export function defaultSource() {

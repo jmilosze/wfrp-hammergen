@@ -7,6 +7,7 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
+import { mutationTypes } from "@/services/wh/mutation";
 
 const apiBasePath = "/api/spell";
 
@@ -72,6 +73,14 @@ const spellTypes = {
   spell: "Spell",
 };
 
+function spellTypeOptions() {
+  const options = [];
+  for (let [k, v] of Object.entries(spellTypes)) {
+    options.push({ value: k, text: v });
+  }
+  return options;
+}
+
 const compareSpell = (spell1, spell2) => {
   for (let [key, value] of Object.entries(spell1)) {
     if (key !== "cn" && key !== "source") {
@@ -115,4 +124,4 @@ const generateNewSpell = (canEdit) => {
   return spell;
 };
 
-export { SpellApi, generateEmptySpell, generateNewSpell, spellTypes, compareSpell };
+export { SpellApi, generateEmptySpell, generateNewSpell, spellTypes, compareSpell, spellTypeOptions };
