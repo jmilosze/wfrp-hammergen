@@ -134,4 +134,20 @@ const talentAttributes = {
   11: "Various",
 };
 
-export { TalentApi, generateEmptyTalent, generateNewTalent, compareTalent, talentAttributes };
+function maxRankTalentDisplay(isGroup, maxRankValue, maxRankAttValue) {
+  if (isGroup) {
+    return "";
+  }
+
+  const constPart = maxRankValue > 0 ? maxRankValue.toString() : "";
+  const attName = talentAttributes[maxRankAttValue];
+  const bonusPart = attName !== "None" ? attName + " Bonus" : "";
+
+  if (constPart !== "" && bonusPart !== "") {
+    return constPart + " + " + bonusPart;
+  } else {
+    return constPart + bonusPart;
+  }
+}
+
+export { TalentApi, generateEmptyTalent, generateNewTalent, compareTalent, talentAttributes, maxRankTalentDisplay };
