@@ -6,9 +6,9 @@
       <ElementList
         v-if="loaded"
         :displayFields="displayFields"
-        :listOfElements="listOfElements"
+        :listOfElements="filteredListOfWh"
         elementType="character"
-        @elementDeleted="deleteElement"
+        @elementDeleted="deleteWh"
       />
 
       <div v-else class="text-center">
@@ -26,50 +26,48 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ElementList from "./ListTemplate.vue";
-import ListCommon from "./ListCommon.vue";
-import { CharacterApi, species } from "../../../services/wh/character";
 import { authRequest } from "../../../services/auth";
-import { addSpaces } from "../../../utils/stringUtils";
+import { computed, onBeforeMount, ref } from "vue";
+import { CharacterApi, species } from "../../../services/wh/character";
+import { useListWh } from "../../../composables/listWh";
+import { addSpaces } from "@/utils/stringUtils";
+
 
 const MAX_CHARS = 15;
+const characterApi = new CharacterApi(authRequest);
 
-export default {
-  name: "ListCharacters",
-  mixins: [ListCommon],
-  components: { ElementList },
+const displayFields = ref([
+  { key: "name", sortable: true },
+  { key: "species", sortable: true },
+  { key: "description", sortable: false },
+  { key: "actions", sortable: false },
+]);
 
-  data() {
-    return {
-      elementApi: new CharacterApi(authRequest),
+const { deleteWh, loadWhList, loaded, errors, listOfWh } = useListWh(characterApi);
 
-      displayFields: [
-        { key: "name", sortable: true },
-        { key: "species", sortable: true },
-        { key: "description", sortable: false },
-        { key: "actions", sortable: false },
-      ],
-      listOfElements: [],
-      errors: [],
-      loaded: false,
-    };
-  },
-  created() {
-    this.loadData();
-  },
-  methods: {
-    formatList(character) {
-      return {
-        name: addSpaces(character.name, MAX_CHARS),
-        species: species[character.species],
-        description: addSpaces(character.description, MAX_CHARS),
-        canEdit: character.canEdit,
-        id: character.id,
-      };
-    },
-  },
-};
+function formatListOfWh(wh) {
+  return {
+    name: addSpaces(wh.name, MAX_CHARS),
+    species: species[wh.species],
+    description: addSpaces(wh.description, MAX_CHARS),
+    canEdit: wh.canEdit,
+    id: wh.id,
+  };
+}
+
+const filteredListOfWh = computed(() => {
+  const filteredListOfWh = [];
+  for (const wh of listOfWh.value) {
+    filteredListOfWh.push(formatListOfWh(wh));
+  }
+  return filteredListOfWh;
+});
+
+onBeforeMount(() => {
+  loadWhList();
+});
 </script>
 
 <style scoped></style>
