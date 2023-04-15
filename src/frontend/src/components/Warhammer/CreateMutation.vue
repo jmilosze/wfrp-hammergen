@@ -64,10 +64,20 @@
           :disabled="!element.canEdit"
         />
 
-        <b-row class="mt-4">
+        <b-row>
+          <b-col md="6">
+            <SourceTable
+              v-model="element.source"
+              @isValid="validSources = $event"
+              :disabled="!element.canEdit"
+            ></SourceTable>
+          </b-col>
           <b-col md="6">
             <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Mutation" />
-
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="6">
             <CreateSubmit
               :showAddAnother="showAddAnother"
               :disabled="!element.canEdit"
@@ -75,13 +85,6 @@
               @goBack="goBack"
               v-model="addAnother"
             ></CreateSubmit>
-          </b-col>
-          <b-col md="6">
-            <SourceTable
-              v-model="element.source"
-              @isValid="validSources = $event"
-              :disabled="!element.canEdit"
-            ></SourceTable>
           </b-col>
         </b-row>
       </b-form>

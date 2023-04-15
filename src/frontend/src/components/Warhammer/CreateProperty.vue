@@ -44,16 +44,6 @@
               >
               </b-form-checkbox-group>
             </b-form-group>
-
-            <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Quality/Flaw" />
-
-            <CreateSubmit
-              :showAddAnother="showAddAnother"
-              :disabled="!element.canEdit"
-              :submitting="submitting"
-              @goBack="goBack"
-              v-model="addAnother"
-            ></CreateSubmit>
           </b-col>
           <b-col md="6">
             <b-form-group label="Description" label-for="description-input">
@@ -67,9 +57,29 @@
               </b-form-textarea>
               <b-form-invalid-feedback :state="validDesc[0]">{{ validDesc[1] }}</b-form-invalid-feedback>
             </b-form-group>
-
-            <SourceTable v-model="element.source" @isValid="validSources = $event" :disabled="!element.canEdit">
-            </SourceTable>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="6">
+            <SourceTable
+              v-model="element.source"
+              @isValid="validSources = $event"
+              :disabled="!element.canEdit"
+            ></SourceTable>
+          </b-col>
+          <b-col md="6">
+            <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Quality/Flaw" />
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="6">
+            <CreateSubmit
+              :showAddAnother="showAddAnother"
+              :disabled="!element.canEdit"
+              :submitting="submitting"
+              @goBack="goBack"
+              v-model="addAnother"
+            ></CreateSubmit>
           </b-col>
         </b-row>
       </b-form>

@@ -93,19 +93,23 @@
                 @apiCallError="addError"
               ></SelectTable>
             </div>
+          </b-col>
+        </b-row>
 
+        <b-row>
+          <b-col md="6">
             <SourceTable
               v-model="element.source"
               @isValid="validSources = $event"
               :disabled="!element.canEdit"
             ></SourceTable>
           </b-col>
-        </b-row>
-
-        <b-row>
           <b-col md="6">
             <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Skill" />
-
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="6">
             <CreateSubmit
               :showAddAnother="showAddAnother"
               :disabled="!element.canEdit"
