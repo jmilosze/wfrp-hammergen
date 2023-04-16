@@ -21,6 +21,7 @@
         :listOfElements="filteredListOfWh"
         elementType="talent"
         @elementDeleted="deleteWh"
+        @elementCopied="copyWh"
       />
 
       <div v-else class="text-center">
@@ -58,7 +59,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(talentApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(talentApi);
 const route = useRoute();
 
 const filterOptions = reactive({

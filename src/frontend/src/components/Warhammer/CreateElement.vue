@@ -110,8 +110,6 @@ export default {
           serverResp = await this.callAndLogoutIfUnauthorized(this.elementApi.updateElement)(this.element);
         }
         if (redirectElementType) {
-          console.log("Hello");
-          console.log(redirectElementType);
           this.redirectAfterSubmit(serverResp.id, redirectElementType);
         } else if (!this.addAnother) {
           this.goBack();

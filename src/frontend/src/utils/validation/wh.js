@@ -1,5 +1,7 @@
 import { checkFloat, checkString } from "./common";
 
+export const shortDescMaxChars = 200;
+
 const descRe = /^[^<>]{0,10000}$/;
 const invalidDesc = "This field has to be shorter than 10,000 characters and cannot use <> symbols.";
 export function validWhDesc(desc) {
@@ -12,7 +14,7 @@ export function validWhShortDesc(shortDesc) {
   return checkString(shortDesc, shortDescRe, invalidShortDesc);
 }
 
-const veryShortDescRe = /^[^<>]{0,200}$/;
+const veryShortDescRe = new RegExp(`^[^<>]{0,${shortDescMaxChars}}$`);
 const invalidVeryShortDesc = "This field has to be shorter than 15 characters and cannot use <> symbols.";
 export function validWhVeryShortDesc(veryShortDesc) {
   return checkString(veryShortDesc, veryShortDescRe, invalidVeryShortDesc);

@@ -9,6 +9,7 @@
         :listOfElements="filteredListOfWh"
         elementType="character"
         @elementDeleted="deleteWh"
+        @elementCopied="copyWh"
       />
 
       <div v-else class="text-center">
@@ -34,7 +35,6 @@ import { CharacterApi, species } from "../../../services/wh/character";
 import { useListWh } from "../../../composables/listWh";
 import { addSpaces } from "@/utils/stringUtils";
 
-
 const MAX_CHARS = 15;
 const characterApi = new CharacterApi(authRequest);
 
@@ -45,7 +45,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { deleteWh, loadWhList, loaded, errors, listOfWh } = useListWh(characterApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh } = useListWh(characterApi);
 
 function formatListOfWh(wh) {
   return {
@@ -68,6 +68,10 @@ const filteredListOfWh = computed(() => {
 onBeforeMount(() => {
   loadWhList();
 });
+
+function log(stuff) {
+  console.log(stuff);
+}
 </script>
 
 <style scoped></style>

@@ -54,6 +54,8 @@
                 View
               </b-button>
 
+              <b-button variant="info" size="sm" class="mr-2 mb-1" @click="copyItem(row.item.id)"> Copy </b-button>
+
               <b-button
                 v-if="row.item.canEdit"
                 variant="danger"
@@ -147,6 +149,18 @@ export default {
     },
     deleteItem() {
       this.$emit("elementDeleted", this.deleteData.index);
+    },
+    copyItem(id) {
+      let index = -1;
+
+      for (let i = 0; i < this.listOfElements.length; i++) {
+        if (this.listOfElements[i].id === id) {
+          index = i;
+          break;
+        }
+      }
+
+      this.$emit("elementCopied", index);
     },
   },
 };
