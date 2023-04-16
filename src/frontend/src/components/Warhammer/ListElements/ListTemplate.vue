@@ -54,7 +54,15 @@
                 View
               </b-button>
 
-              <b-button variant="info" size="sm" class="mr-2 mb-1" @click="copyItem(row.item.id)"> Copy </b-button>
+              <b-button
+                v-if="authStore.loggedIn"
+                variant="info"
+                size="sm"
+                class="mr-2 mb-1"
+                @click="copyItem(row.item.id)"
+              >
+                Copy
+              </b-button>
 
               <b-button
                 v-if="row.item.canEdit"

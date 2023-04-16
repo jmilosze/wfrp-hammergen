@@ -68,10 +68,6 @@ const filteredListOfWh = computed(() => {
 onBeforeMount(() => {
   loadWhList();
 });
-
-function log(stuff) {
-  console.log(stuff);
-}
 </script>
 
 <style scoped></style>
