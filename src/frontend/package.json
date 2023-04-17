@@ -35,7 +35,9 @@
     "terser": "^5.16.6",
     "vite": "^4.1.4",
     "vite-plugin-rewrite-all": "^1.0.1",
-    "vitest": "^0.29.2"
+    "vitest": "^0.29.2",
+    "sass": "^1.62.0",
+    "sass-loader": "^13.2.2"
   },
   "prettier": {
     "printWidth": 120

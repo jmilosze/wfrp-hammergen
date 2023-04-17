@@ -33,7 +33,7 @@
           stacked="md"
         >
           <template v-slot:cell(actions)="row">
-            <span class="text-nowrap">
+            <div class="actions">
               <b-button
                 v-if="elementType !== 'character' || (elementType === 'character' && row.item.canEdit)"
                 variant="primary"
@@ -73,7 +73,7 @@
               >
                 Delete
               </b-button>
-            </span>
+            </div>
           </template>
         </b-table>
         <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage"></b-pagination>
@@ -174,4 +174,15 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss">
+@import "bootstrap/scss/bootstrap";
+
+.actions {
+  min-width: 0;
+}
+@include media-breakpoint-up(md) {
+  .actions {
+    min-width: 250px;
+  }
+}
+</style>
