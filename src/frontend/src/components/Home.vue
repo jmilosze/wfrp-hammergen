@@ -3,7 +3,7 @@
     <div class="container">
       <div class="text-center">
         <div class="display-2 title">Hammergen</div>
-        <div class="title h1">A Warhammer Fantasy Roleplay character generator</div>
+        <div class="title h1">Warhammer Fantasy Roleplay character generator</div>
         <hr />
       </div>
 
