@@ -441,6 +441,8 @@ item_names = [
     "Hood",
     "Mask",
     "Hand Weapon",
+    "Rope - 10 yards",
+    "Flask of Spirits",
 ]
 
 iids = {}
@@ -466,6 +468,7 @@ class CareerCass(enum.IntEnum):
     RIVERFOLK = 5
     ROGUE = 6
     WARRIOR = 7
+    SEAFARER = 8
 
 
 class_items = {
@@ -560,6 +563,19 @@ class_items = {
             {"id": iids["Pouch"], "number": 1},
         ],
         "carried": [],
+    },
+    str(CareerCass.SEAFARER.value): {
+        "equipped": [
+            {"id": iids["Cloak"], "number": 1},
+            {"id": iids["Clothing"], "number": 1},
+            {"id": iids["Dagger"], "number": 1},
+            {"id": iids["Pouch"], "number": 1},
+            {"id": iids["Sling Bag"], "number": 1},
+        ],
+        "carried": [
+            {"id": iids["Rope - 10 yards"], "number": 1},
+            {"id": iids["Flask of Spirits"], "number": 1},
+        ],
     },
 }
 

@@ -126,6 +126,7 @@ class CareerClass(enum.IntEnum):
     RIVERFOLK = 5
     ROGUE = 6
     WARRIOR = 7
+    SEAFARER = 8
 
 
 class Species(enum.IntEnum):
