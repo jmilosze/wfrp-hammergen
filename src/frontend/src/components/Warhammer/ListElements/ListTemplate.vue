@@ -156,19 +156,10 @@ export default {
       this.$bvModal.show("deleteModal");
     },
     deleteItem() {
-      this.$emit("elementDeleted", this.deleteData.index);
+      this.$emit("elementDeleted", this.deleteData.id);
     },
     copyItem(id) {
-      let index = -1;
-
-      for (let i = 0; i < this.listOfElements.length; i++) {
-        if (this.listOfElements[i].id === id) {
-          index = i;
-          break;
-        }
-      }
-
-      this.$emit("elementCopied", index);
+      this.$emit("elementCopied", id);
     },
   },
 };

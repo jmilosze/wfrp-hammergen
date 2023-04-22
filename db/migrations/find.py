@@ -33,5 +33,16 @@ def find_in_items(id):
     print(f"characters with stored: {stored}")
 
 
+def find_in_skills(id):
+    used = []
+    chars = DB["character"].find()
+    for char in chars:
+        for skill in char["skills"]:
+            if skill["id"] == id:
+                used.append(char["name"])
+                break
+    print(f"characters with skill: {used}")
+
+
 if __name__ == "__main__":
-    find_in_items("5f628c29bec9ed3804581756")
+    find_in_skills("644432b8299189654234bd1a")

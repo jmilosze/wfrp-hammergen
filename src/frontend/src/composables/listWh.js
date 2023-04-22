@@ -9,20 +9,23 @@ export function useListWh(elementApi) {
   const errors = ref([]);
   const listOfWh = ref([]);
 
-  async function deleteWh(whIndex) {
+  async function deleteWh(whId) {
     try {
-      const whId = listOfWh.value[whIndex]["id"];
       await authStore.callAndLogoutIfUnauthorized(elementApi.deleteElement)(whId);
-      listOfWh.value.splice(whIndex, 1);
+      for (let i = 0; i < listOfWh.value.length; i++) {
+        if (listOfWh.value[i]["id"] === whId) {
+          listOfWh.value.splice(i, 1);
+          break;
+        }
+      }
     } catch (error) {
       errors.value.push("Server Error.");
       throw error;
     }
   }
 
-  async function copyWh(whIndex) {
+  async function copyWh(whId) {
     try {
-      const whId = listOfWh.value[whIndex]["id"];
       const whCopy = await authStore.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
       whCopy.name = whCopy.name + " - copy";
       if (!validWhShortDesc(whCopy.name)) {
@@ -30,7 +33,14 @@ export function useListWh(elementApi) {
       }
       const createdId = await authStore.callAndLogoutIfUnauthorized(elementApi.createElement)(whCopy);
 
-      const newListEntry = JSON.parse(JSON.stringify(listOfWh.value[whIndex]));
+      let newListEntry;
+      for (let i = 0; i < listOfWh.value.length; i++) {
+        if (listOfWh.value[i]["id"] === whId) {
+          newListEntry = JSON.parse(JSON.stringify(listOfWh.value[i]));
+          break;
+        }
+      }
+
       newListEntry.name = whCopy.name;
       newListEntry.id = createdId.id;
       newListEntry.canEdit = true;
