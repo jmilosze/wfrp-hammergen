@@ -21,6 +21,7 @@ const careerClasses = {
   5: "Riverfolk",
   6: "Rougue",
   7: "Warrior",
+  8: "Seafarer",
 };
 
 function careerClassOptions() {
