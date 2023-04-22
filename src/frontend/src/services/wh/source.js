@@ -7,6 +7,10 @@ export const source = {
   5: "Archives Volume III",
   6: "Up in Arms",
   7: "Winds of Magic",
+  8: "Middenheim",
+  9: "Salzenmund",
+  10: "Sea of Claws",
+  11: "Lustria",
 };
 
 export function sourceOptions() {

@@ -152,3 +152,7 @@ class Source(enum.IntEnum):
     ARCHIVES_3 = 5
     UP_IN_ARMS = 6
     WINDS_OF_MAGIC = 7
+    MIDDENHEIM = 8
+    SALZENMUND = 9
+    SEA_OF_CLAWS = 10
+    LUSTRIA = 11
