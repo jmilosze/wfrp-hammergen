@@ -64,6 +64,7 @@ const spellApi = new SpellApi(authRequest);
 const displayFields = ref([
   { key: "name", sortable: true },
   { key: "spellType", sortable: true },
+  { key: "description", sortable: true },
   { key: "source", sortable: false },
   { key: "actions", sortable: false },
 ]);
@@ -88,6 +89,7 @@ function formatListOfWh(wh) {
       .map((x) => source[x[0]])
       .join(", "),
     spellType: spellTypes[wh.type],
+    description: wh.description,
     canEdit: wh.canEdit,
     id: wh.id,
   };
