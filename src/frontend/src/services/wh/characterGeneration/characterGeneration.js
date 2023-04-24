@@ -107,25 +107,12 @@ export default function generateCharacter(
   const levelName = careerLevels[level];
   let character = {};
 
-  let exp = 50;
+  let exp = 50; // From random characteristics
   let species;
   let career;
 
-  if (genSpecies === -1) {
-    species = generateSpecies();
-    exp += 20;
-  } else {
-    species = genSpecies;
-  }
-
-  if (genCareer === -1) {
-    let careerTable = generationProps.career_gen_table[species];
-    let careerId = rollInTable(10000, 1, careerTable);
-    career = listOfCareers.find((x) => x.id === careerId);
-    exp += 50;
-  } else {
-    career = listOfCareers[genCareer];
-  }
+  species = genSpecies;
+  career = listOfCareers[genCareer];
 
   let items = generateClassItems(generationProps.class_items[career.class]);
 

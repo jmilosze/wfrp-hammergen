@@ -2,6 +2,26 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">24 Apr 2023</div>
+        <p>
+          Added careers from
+          <b-link href="https://cubicle7games.com/wfrp-middenheim-city-of-the-white-wolf" target="_blank"
+            >Middenheim City of the White Wolf,
+          </b-link>
+
+          <b-link href="https://cubicle7games.com/wfrp-salzenmund-city-of-salt-and-silver" target="_blank"
+            >Salzenmund, City of Salt and Silver,
+          </b-link>
+          and
+          <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-sea-of-claws" target="_blank"
+            >Sea of Claws.
+          </b-link>
+        </p>
+        <p>
+          Because of extra complexity from adding multiple careers and random career tables, we have temporarily
+          disabled generation of characters with random species/career. You can still auto-generate level 1 characters
+          but you have to select species and career.
+        </p>
         <div class="h3">16 Apr 2023</div>
         <p>
           We are pleased to announce addition of source property to following elements: Talents, Skills, Items,

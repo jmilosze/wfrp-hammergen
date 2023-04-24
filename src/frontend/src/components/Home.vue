@@ -65,6 +65,9 @@
           <li>Archives of the Empire: Volume I, II, and III</li>
           <li>Up in Arms</li>
           <li>Winds of Magic</li>
+          <li>Middenheim City of the White Wolf</li>
+          <li>Salzenmund, City of Salt and Silver</li>
+          <li>Sea of Claws</li>
         </ul>
 
         <div class="h3">How do I use it?</div>
