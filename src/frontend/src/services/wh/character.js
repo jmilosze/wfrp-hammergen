@@ -43,6 +43,41 @@ function speciesOptions() {
   return options;
 }
 
+const speciesWithRegion = {
+  "0000": "Human",
+  "0001": "Human (Reikland)",
+  "0002": "Human (Altdorf South Bank)",
+  "0003": "Human (Altdorf Eastend)",
+  "0004": "Human (Altdorf Hexxerbezrik)",
+  "0005": "Human (Altdorf Docklands)",
+  "0006": "Human (Middenheim)",
+  "0007": "Human (Middenland)",
+  "0008": "Human (Nordland)",
+  "0009": "Human (Salzenmund)",
+  "0010": "Human (Tilea)",
+  "0011": "Human (Norse Bjornling)",
+  "0012": "Human (Norse Sarl)",
+  "0013": "Human (Norse Skaeling)",
+  "0100": "Halfling",
+  "0200": "Dwarf",
+  "0201": "Dwarf (Atldorf)",
+  "0202": "Dwarf (Cragforge Clan)",
+  "0203": "Dwarf (Grumsson Clan)",
+  "0204": "Dwarf (Norse)",
+  "0300": "High Elf",
+  "0400": "Wood Elf",
+  "0500": "Gnome",
+  "0600": "Ogre",
+};
+
+function speciesWithRegionOptions() {
+  const options = [];
+  for (let [k, v] of Object.entries(speciesWithRegion)) {
+    options.push({ value: k, text: v });
+  }
+  return options;
+}
+
 const defaultSize = 3; // Average
 
 const generateEmptyCharacter = () => {
@@ -281,7 +316,7 @@ class CharacterApi {
     return {
       id: id,
       name: rawCharacter.name,
-      species: species[rawCharacter.species],
+      species: speciesWithRegion[rawCharacter.species],
       fate: rawCharacter.fate,
       fortune: rawCharacter.fortune,
       resilience: rawCharacter.resilience,
@@ -638,4 +673,6 @@ export {
   generateEmptyCharacterForDisplay,
   characterForDisplayToCsv,
   speciesOptions,
+  speciesWithRegion,
+  speciesWithRegionOptions,
 };

@@ -139,10 +139,6 @@ export default {
       type: Array,
       required: true,
     },
-    characterSpecies: {
-      type: Number,
-      required: true,
-    },
   },
   data() {
     return {

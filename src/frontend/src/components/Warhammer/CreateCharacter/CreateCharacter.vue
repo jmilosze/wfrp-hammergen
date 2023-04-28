@@ -113,7 +113,7 @@
               <b-form-select
                 id="species-input"
                 :disabled="!element.canEdit"
-                :options="speciesOptions"
+                :options="speciesWithRegionsOptions"
                 v-model="element.species"
               >
               </b-form-select>
@@ -363,7 +363,7 @@
                 max-rows="50"
               >
               </b-form-textarea>
-              <b-form-invalid-feedback :state="validNotes[0]">{{ validNotes[1] }} </b-form-invalid-feedback>
+              <b-form-invalid-feedback :state="validNotes[0]">{{ validNotes[1] }}</b-form-invalid-feedback>
             </b-form-group>
           </b-col>
         </b-row>
@@ -737,7 +737,6 @@
                 :characterAtts="total"
                 :speciesTalents="speciesTalents"
                 :randomTalents="randomTalents"
-                :characterSpecies="element.species"
                 :canSave="validAll"
                 @listOfTalents="listOfTalents = $event"
                 @selectedChanged="updateIdNumberList(element.talents, $event)"
@@ -839,7 +838,6 @@ import { authRequest } from "../../../services/auth";
 import {
   generateEmptyCharacter,
   CharacterApi,
-  species,
   getWounds,
   getMovement,
   getRacialAttributes,
@@ -847,6 +845,7 @@ import {
   getBaseAttributes,
   compareCharacter,
   generateNewCharacter,
+  speciesWithRegionOptions, speciesOptions
 } from "../../../services/wh/character";
 import { statusStandings, statusTiers } from "../../../services/wh/career";
 import { generateEmptyModifiers, sumAndMultModifiers } from "../../../services/wh/characterModifiers";
@@ -878,9 +877,9 @@ export default {
       element: generateEmptyCharacter(),
       elementOriginal: generateEmptyCharacter(),
 
-      speciesOptions: Object.keys(species).map((key) => {
-        return { value: parseInt(key), text: species[key] };
-      }),
+      speciesOptions: speciesOptions(),
+      speciesWithRegionsOptions: speciesWithRegionOptions(),
+
       statusOptions: Object.keys(statusTiers).map((key) => {
         return { value: parseInt(key), text: statusTiers[key] };
       }),

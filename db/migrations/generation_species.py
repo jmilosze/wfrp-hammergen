@@ -21,14 +21,31 @@ talents = list(collection_talent.find({"owner_id": "admin"}))
 skills = list(collection_skill.find({"owner_id": "admin"}))
 
 
-class Species(enum.IntEnum):
-    HUMAN = 0
-    HALFLING = 1
-    DWARF = 2
-    HIGH_ELF = 3
-    WOOD_ELF = 4
-    GNOME = 5
-    OGRE = 6
+class Species(enum.Enum):
+    HUMAN = "0000"
+    HUMAN_REIKLAND = "0001"  # WFRP p. 25
+    HUMAN_ALTDORF_SOUTH_BANK = "0002"  # Archives III p. 83
+    HUMAN_ALTDORF_EASTEND = "0003"  # Archives III p. 83
+    HUMAN_ALTDORF_HEXXERBEZRIK = "0004"  # Archives III p. 84
+    HUMAN_ALTDORF_DOCKLANDS = "0005"  # Archives III p. 84
+    HUMAN_MIDDENHEIM = "0006"  # Middenheim p. 151
+    HUMAN_MIDDENLAND = "0007"  # Middenheim p. 152, Salzenmund p. 142
+    HUMAN_NORDLAND = "0008"  # Middenheim p. 153
+    HUMAN_SALZENMUND = "0009"  # Salzenmund p. 142
+    HUMAN_TILEA = "0010"  # Up in Arms p. 55
+    HUMAN_NORSE_BJORNLING = "0011"  # Sea of Claws p. 56
+    HUMAN_NORSE_SARL = "0012"  # Sea of Claws p. 56
+    HUMAN_NORSE_SKAELING = "0013"  # Sea of Claws p. 56
+    HALFLING_DEFAULT = "0100"  # WFRP p. 26
+    DWARF_DEFAULT = "0200"  # WFRP p. 25
+    DWARF_ALTDORF = "0201"  # Archives III p. 83
+    DWARF_CRAGFORGE_CLAN = "0202"  # Salzenmund p. 142
+    DWARF_GRUMSSON_CLAN = "0203"  # Salzenmund p. 142
+    DWARF_NORSE = "0204"  # Sea of Claws p. 41
+    HIGH_ELF_DEFAULT = "0300"  # WFRP p. 27
+    WOOD_ELF_DEFAULT = "0400"  # WFRP p. 28
+    GNOME_DEFAULT = "0500"  # Rough Nights and Hard Days p. 86
+    OGRE_DEFAULT = "0600"  # Archives II p. 18
 
 
 def find_id(name, list_of_elems):
@@ -80,6 +97,35 @@ for r_talent in random_talents:
 
 species_talents = {
     str(Species.HUMAN.value): ["Doomed", ["Savvy", "Suave"], "random", "random", "random"],
+    str(Species.HUMAN_REIKLAND.value): ["Doomed", ["Savvy", "Suave"], "random", "random", "random"],
+    str(Species.HUMAN_ALTDORF_SOUTH_BANK.value): [
+        "Doomed",
+        "Etiquette",
+        ["Noble Blood", "Pure Soul"],
+        ["Read/Write", "Supportive"],
+        ["Savvy", "Suave"],
+    ],
+    str(Species.HUMAN_ALTDORF_EASTEND.value): [
+        ["Argumentative", "Flee!"],
+        ["Criminal", "random"],
+        "Doomed",
+        ["Nimble Fingered", "Read/Write"],
+        ["Savvy", "Suave"],
+    ],
+    str(Species.HUMAN_ALTDORF_HEXXERBEZRIK.value): [
+        "Doomed",
+        ["Beneath Notice", "Read/Write"],
+        ["Savvy", "Suave"],
+        ["Second Sight", "Sixth Sense"],
+        "random",
+    ],
+    str(Species.HUMAN_ALTDORF_DOCKLANDS.value): [
+        ["Criminal", "Etiquette - Guilder - Merchant"],
+        ["Dealmaker", "Menacing"],
+        "Doomed",
+        ["Savvy", "Suave"],
+        "random",
+    ],
     str(Species.HALFLING.value): [
         "Acute Sense - Taste",
         "Night Vision",
@@ -238,7 +284,7 @@ species_skills = {
         "Melee - Brawling",
         "Navigation",
         "Outdoor Survival",
-        "Track"
+        "Track",
     ],
 }
 
