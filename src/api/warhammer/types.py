@@ -130,7 +130,7 @@ class CareerClass(enum.IntEnum):
 
 
 class Species(enum.Enum):
-    HUMAN = "0000"
+    HUMAN_DEFAULT = "0000"
     HUMAN_REIKLAND = "0001"  # WFRP p. 25
     HUMAN_ALTDORF_SOUTH_BANK = "0002"  # Archives III p. 83
     HUMAN_ALTDORF_EASTEND = "0003"  # Archives III p. 83
