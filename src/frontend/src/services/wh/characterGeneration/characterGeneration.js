@@ -5,36 +5,41 @@ import { generateRolls } from "./attGeneration";
 import { generateSkills } from "./skillGeneration";
 import { genTalentsAndAdvances } from "./talentGeneration";
 import { getAttributes, sumAndMultAttr } from "@/services/wh/attributes";
+import * as c from "../characterConstants";
 
-function generateFateAndResilience(species) {
+function generateFateAndResilience(speciesWithRegion) {
   let fate;
   let resilience;
   let extra;
 
-  if (species === 0) {
+  if (c.HUMAN_LIST.includes(speciesWithRegion)) {
     fate = 2;
     resilience = 1;
     extra = 3;
-  } else if (species === 1) {
+  } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
     fate = 0;
     resilience = 2;
     extra = 3;
-  } else if (species === 2) {
+  } else if (c.DWARF_LIST.includes(speciesWithRegion)) {
     fate = 0;
     resilience = 2;
     extra = 2;
-  } else if (species === 5) {
+  } else if (c.GNOME_LIST.includes(speciesWithRegion)) {
     fate = 2;
     resilience = 0;
     extra = 2;
-  } else if (species === 6) {
+  } else if (c.OGRE_LIST.includes(speciesWithRegion)) {
     fate = 0;
     resilience = 3;
     extra = 1;
-  } else {
+  } else if (c.HIGH_ELF_LIST.includes(speciesWithRegion) || c.WOOD_ELF_LIST.includes(speciesWithRegion)) {
     fate = 0;
     resilience = 0;
     extra = 2;
+  } else {
+    fate = 0;
+    resilience = 0;
+    extra = 0;
   }
 
   for (let pt = 0; pt < extra; pt++) {
