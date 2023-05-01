@@ -88,7 +88,7 @@ const generateEmptyCharacter = () => {
   return {
     id: "",
     name: "",
-    species: "0001",
+    speciesWithRegion: "0001",
     fate: 0,
     fortune: 0,
     resilience: 0,
@@ -126,7 +126,7 @@ const generateEmptyCharacterForDisplay = () => {
   return {
     id: "",
     name: "",
-    species: "",
+    speciesWithRegion: "",
     description: "",
     careerName: "",
     className: "",
@@ -186,7 +186,7 @@ const generateNewCharacter = (canEdit) => {
 const convertModelToApiData = (character, includeId) => {
   const apiData = {
     name: character.name,
-    species: character.species,
+    species: character.speciesWithRegion,
     fate: character.fate,
     fortune: character.fortune,
     resilience: character.resilience,
@@ -233,7 +233,7 @@ const convertApiToModelData = (apiData) => {
   const newCharacter = {
     id: apiData.id,
     name: apiData.name,
-    species: apiData.species,
+    speciesWithRegion: apiData.species,
     fate: apiData.fate,
     fortune: apiData.fortune,
     resilience: apiData.resilience,
@@ -270,7 +270,7 @@ const convertApiToModelData = (apiData) => {
 
   newCharacter.career = { id: apiData.career.id, number: apiData.career.level };
 
-  const attributeRacial = getAttributes(newCharacter.species);
+  const attributeRacial = getAttributes(newCharacter.speciesWithRegion);
   newCharacter.attributeRolls = {};
   for (let [key, value] of Object.entries(apiData.base_attributes)) {
     newCharacter.attributeRolls[key] = value - attributeRacial[key];
@@ -320,7 +320,7 @@ class CharacterApi {
     return {
       id: id,
       name: rawCharacter.name,
-      species: speciesWithRegion[rawCharacter.species],
+      speciesWithRegion: speciesWithRegion[rawCharacter.species],
       fate: rawCharacter.fate,
       fortune: rawCharacter.fortune,
       resilience: rawCharacter.resilience,
@@ -349,9 +349,9 @@ class CharacterApi {
       attributeAdvances: rawCharacter.attribute_advances,
       attributes: attributes,
 
-      movement: getMovementFormula(rawCharacter.species) + movementModifier,
-      walk: 2 * (getMovementFormula(rawCharacter.species) + movementModifier),
-      run: 4 * (getMovementFormula(rawCharacter.species) + movementModifier),
+      movement: getMovementFormula(rawCharacter.speciesWithRegion) + movementModifier,
+      walk: 2 * (getMovementFormula(rawCharacter.speciesWithRegion) + movementModifier),
+      run: 4 * (getMovementFormula(rawCharacter.speciesWithRegion) + movementModifier),
       wounds: getWoundsFormula(defaultSize + sizeModifier, attributes.T, attributes.WP, attributes.S),
 
       talents: rawCharacter.talents.map((x) => ({ name: x.value.name, rank: x.number })),
@@ -438,23 +438,23 @@ function getWounds(character) {
 }
 
 function getMovement(character) {
-  return getMovementFormula(character.species) + character.modifiers.movement;
+  return getMovementFormula(character.speciesWithRegion) + character.modifiers.movement;
 }
 
 function getBaseAttributes(character) {
   return sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(character.species) },
+    { multiplier: 1, attributes: getAttributes(character.speciesWithRegion) },
     { multiplier: 1, attributes: character.attributeRolls },
   ]);
 }
 
 function getRacialAttributes(character) {
-  return getAttributes(character.species);
+  return getAttributes(character.speciesWithRegion);
 }
 
 function getTotalAttributes(character) {
   return sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(character.species) },
+    { multiplier: 1, attributes: getAttributes(character.speciesWithRegion) },
     { multiplier: 1, attributes: character.attributeRolls },
     { multiplier: 1, attributes: character.attributeAdvances },
     { multiplier: 1, attributes: character.modifiers.attributes },
@@ -464,7 +464,7 @@ function getTotalAttributes(character) {
 function characterForDisplayToCsv(charForDisplay) {
   let csv = "Name,Species,Career,Class,Status,,,,,,\n";
   csv += csvStr(charForDisplay.name) + ",";
-  csv += csvStr(charForDisplay.species) + ",";
+  csv += csvStr(charForDisplay.speciesWithRegion) + ",";
   csv += csvStr(`${charForDisplay.careerName} (${charForDisplay.careerLevelName})`) + ",";
   csv += csvStr(charForDisplay.className) + ",";
   csv += csvStr(charForDisplay.status + " " + charForDisplay.standing) + ",";

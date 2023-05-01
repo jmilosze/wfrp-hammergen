@@ -1,3 +1,5 @@
+import * as c from "@/services/wh/characterConstants";
+
 const racialAttributes = {
   none: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   human: { WS: 20, BS: 20, S: 20, T: 20, I: 20, Ag: 20, Dex: 20, Int: 20, WP: 20, Fel: 20 },
@@ -21,18 +23,20 @@ const attributes = {
   10: "Fel",
 };
 
-const getAttributes = (species = -1) => {
-  if (species === 0) {
+const getAttributes = (speciesWithRegion = "") => {
+  if (c.HUMAN_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.human));
-  } else if (species === 1) {
+  } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.halfling));
-  } else if (species === 2) {
+  } else if (c.DWARF_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.dwarf));
-  } else if (species === 3 || species === 4) {
+  } else if (c.HIGH_ELF_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.elf));
-  } else if (species === 5) {
+  } else if (c.WOOD_ELF_LIST.includes(speciesWithRegion)) {
+    return JSON.parse(JSON.stringify(racialAttributes.elf));
+  } else if (c.GNOME_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.gnome));
-  } else if (species === 6) {
+  } else if (c.OGRE_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.ogre));
   } else {
     return JSON.parse(JSON.stringify(racialAttributes.none));

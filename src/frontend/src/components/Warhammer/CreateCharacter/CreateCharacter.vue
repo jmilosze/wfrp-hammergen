@@ -115,7 +115,7 @@
                 id="species-input"
                 :disabled="!element.canEdit"
                 :options="speciesWithRegionsOptions"
-                v-model="element.species"
+                v-model="element.speciesWithRegion"
               >
               </b-form-select>
             </b-form-group>
@@ -847,7 +847,7 @@ import {
   compareCharacter,
   generateNewCharacter,
   speciesWithRegionOptions,
-  speciesOptions, speciesWithRegionToSpecies
+  speciesOptions, speciesWithRegionToSpecies, speciesWithRegion
 } from "../../../services/wh/character";
 import * as c from "../../../services/wh/characterConstants";
 import { statusStandings, statusTiers } from "../../../services/wh/career";
@@ -949,7 +949,7 @@ export default {
     },
     speciesTalents() {
       if (this.generationProps && Object.hasOwn(this.generationProps, "species_talents")) {
-        return this.generationProps.species_talents[this.element.species];
+        return this.generationProps.species_talents[this.element.speciesWithRegion];
       } else {
         return [];
       }
@@ -1099,10 +1099,10 @@ export default {
       this.resetTables();
     },
     genName() {
-      this.element.name = generateName(this.element.species, 2);
+      this.element.name = generateName(this.element.speciesWithRegion, 2);
     },
     genDesc() {
-      this.element.description = generateDescription(this.element.species);
+      this.element.description = generateDescription(this.element.speciesWithRegion);
     },
     updateIdNumberList(idNumberList, newValue) {
       let item = idNumberList.find((x) => x.id === newValue.id);

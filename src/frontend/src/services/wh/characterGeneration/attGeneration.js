@@ -1,27 +1,6 @@
 import { diceRoll } from "../../../utils/randomUtils";
 import { attCost } from "./expCost";
 import { racialAttributes, attributes } from "../attributes";
-import * as c from "../characterConstants";
-
-export function speciesAtts(speciesWithRegion) {
-  if (c.HUMAN_LIST.includes(speciesWithRegion)) {
-    return JSON.parse(JSON.stringify(racialAttributes.human));
-  } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
-    return JSON.parse(JSON.stringify(racialAttributes.halfling));
-  } else if (c.DWARF_LIST.includes(speciesWithRegion)) {
-    return JSON.parse(JSON.stringify(racialAttributes.dwarf));
-  } else if (c.HIGH_ELF_LIST.includes(speciesWithRegion)) {
-    return JSON.parse(JSON.stringify(racialAttributes.elf));
-  } else if (c.WOOD_ELF_LIST.includes(speciesWithRegion)) {
-    return JSON.parse(JSON.stringify(racialAttributes.elf));
-  } else if (c.GNOME_LIST.includes(speciesWithRegion)) {
-    return JSON.parse(JSON.stringify(racialAttributes.gnome));
-  } else if (c.OGRE_LIST.includes(speciesWithRegion)) {
-    return JSON.parse(JSON.stringify(racialAttributes.ogre));
-  } else {
-    return JSON.parse(JSON.stringify(racialAttributes.none));
-  }
-}
 
 export function generateRolls() {
   let rolls = JSON.parse(JSON.stringify(racialAttributes.none));

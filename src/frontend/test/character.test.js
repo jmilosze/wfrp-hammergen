@@ -8,13 +8,13 @@ import {
   getTotalAttributes,
   getRacialAttributes,
   getWoundsFormula,
-  species,
+  species, speciesWithRegion
 } from "../src/services/wh/character";
 import { generateEmptyModifiers } from "../src/services/wh/characterModifiers";
 
 const character1ApiForm = {
   name: "char1",
-  species: 4,
+  species: "0400",
   fate: 1,
   fortune: 2,
   resilience: 3,
@@ -66,7 +66,7 @@ const character1ApiForm = {
 
 const character1ModelForm = {
   name: "char1",
-  species: 4,
+  speciesWithRegion: "0400",
   fate: 1,
   fortune: 2,
   resilience: 3,
@@ -119,7 +119,7 @@ const character1ModelForm = {
 
 const character2ApiForm = {
   name: "char2",
-  species: 0,
+  species: "0008",
   fate: 2,
   fortune: 3,
   resilience: 1,
@@ -155,7 +155,7 @@ const character2ApiForm = {
 
 const character2ModelForm = {
   name: "char2",
-  species: 0,
+  speciesWithRegion: "0008",
   fate: 2,
   fortune: 3,
   resilience: 1,
@@ -191,7 +191,7 @@ const character2ModelForm = {
 
 const characterDisplayApiForm = {
   name: "charDisplay",
-  species: 4,
+  speciesWithRegion: "0400",
   fate: 1,
   fortune: 2,
   resilience: 3,
