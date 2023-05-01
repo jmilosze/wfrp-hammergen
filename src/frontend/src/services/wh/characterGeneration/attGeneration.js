@@ -1,20 +1,23 @@
 import { diceRoll } from "../../../utils/randomUtils";
 import { attCost } from "./expCost";
 import { racialAttributes, attributes } from "../attributes";
+import * as c from "../characterConstants";
 
-export function speciesAtts(species) {
-  if (species === 0) {
+export function speciesAtts(speciesWithRegion) {
+  if (c.HUMAN_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.human));
-  } else if (species === 1) {
+  } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.halfling));
-  } else if (species === 2) {
+  } else if (c.DWARF_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.dwarf));
-  } else if (species === 5) {
-    return JSON.parse(JSON.stringify(racialAttributes.gnome));
-  } else if (species === 6) {
-    return JSON.parse(JSON.stringify(racialAttributes.ogre));
-  } else if (species === 3 || species === 4) {
+  } else if (c.HIGH_ELF_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.elf));
+  } else if (c.WOOD_ELF_LIST.includes(speciesWithRegion)) {
+    return JSON.parse(JSON.stringify(racialAttributes.elf));
+  } else if (c.GNOME_LIST.includes(speciesWithRegion)) {
+    return JSON.parse(JSON.stringify(racialAttributes.gnome));
+  } else if (c.OGRE_LIST.includes(speciesWithRegion)) {
+    return JSON.parse(JSON.stringify(racialAttributes.ogre));
   } else {
     return JSON.parse(JSON.stringify(racialAttributes.none));
   }
@@ -28,9 +31,9 @@ export function generateRolls() {
   return rolls;
 }
 
-export function getBaseAttributes(species, rolls) {
+export function getBaseAttributes(speciesWithRegion, rolls) {
   const base = JSON.parse(JSON.stringify(rolls));
-  let racial = speciesAtts(species);
+  let racial = speciesAtts(speciesWithRegion);
   for (let [key, value] of Object.entries(base)) {
     base[key] = value + racial[key];
   }

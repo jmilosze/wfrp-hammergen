@@ -254,7 +254,10 @@ for species, s_talents in species_talents.items():
         elif isinstance(s_talent, list):
             talent_id = []
             for sub_talent in s_talent:
-                talent_id.append(find_id(sub_talent, talents))
+                if sub_talent == "random":
+                    talent_id.append("random")
+                else:
+                    talent_id.append(find_id(sub_talent, talents))
             species_talents_ids[species].append(talent_id)
         else:
             species_talents_ids[species].append(find_id(s_talent, talents))

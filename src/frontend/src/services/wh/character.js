@@ -5,6 +5,7 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator";
+import * as c from "./characterConstants";
 import { compareArrayIgnoreOrder, compareStringNumber } from "../../utils/arrayUtils";
 import { careerClasses, statusTiers } from "./career";
 import {
@@ -44,30 +45,29 @@ function speciesOptions() {
 }
 
 const speciesWithRegion = {
-  "0000": "Human",
-  "0001": "Human (Reikland)",
-  "0002": "Human (Altdorf South Bank)",
-  "0003": "Human (Altdorf Eastend)",
-  "0004": "Human (Altdorf Hexxerbezrik)",
-  "0005": "Human (Altdorf Docklands)",
-  "0006": "Human (Middenheim)",
-  "0007": "Human (Middenland)",
-  "0008": "Human (Nordland)",
-  "0009": "Human (Salzenmund)",
-  "0010": "Human (Tilea)",
-  "0011": "Human (Norse Bjornling)",
-  "0012": "Human (Norse Sarl)",
-  "0013": "Human (Norse Skaeling)",
-  "0100": "Halfling",
-  "0200": "Dwarf",
-  "0201": "Dwarf (Atldorf)",
-  "0202": "Dwarf (Cragforge Clan)",
-  "0203": "Dwarf (Grumsson Clan)",
-  "0204": "Dwarf (Norse)",
-  "0300": "High Elf",
-  "0400": "Wood Elf",
-  "0500": "Gnome",
-  "0600": "Ogre",
+  [c.HUMAN_REIKLAND]: "Human (Reikland)",
+  [c.HUMAN_ALTDORF_SOUTH_BANK]: "Human (Altdorf South Bank)",
+  [c.HUMAN_ALTDORF_EASTEND]: "Human (Altdorf Eastend)",
+  [c.HUMAN_ALTDORF_HEXXERBEZRIK]: "Human (Altdorf Hexxerbezrik)",
+  [c.HUMAN_ALTDORF_DOCKLANDS]: "Human (Altdorf Docklands)",
+  [c.HUMAN_MIDDENHEIM]: "Human (Middenheim)",
+  [c.HUMAN_MIDDENLAND]: "Human (Middenland)",
+  [c.HUMAN_NORDLAND]: "Human (Nordland)",
+  [c.HUMAN_SALZENMUND]: "Human (Salzenmund)",
+  [c.HUMAN_TILEA]: "Human (Tilea)",
+  [c.HUMAN_NORSE_BJORNLING]: "Human (Norse Bjornling)",
+  [c.HUMAN_NORSE_SARL]: "Human (Norse Sarl)",
+  [c.HUMAN_NORSE_SKAELING]: "Human (Norse Skaeling)",
+  [c.HALFLING_DEFAULT]: "Halfling",
+  [c.DWARF_DEFAULT]: "Dwarf",
+  [c.DWARF_ALTDORF]: "Dwarf (Atldorf)",
+  [c.DWARF_CRAGFORGE_CLAN]: "Dwarf (Cragforge Clan)",
+  [c.DWARF_GRUMSSON_CLAN]: "Dwarf (Grumsson Clan)",
+  [c.DWARF_NORSE]: "Dwarf (Norse)",
+  [c.HIGH_ELF_DEFAULT]: "High Elf",
+  [c.WOOD_ELF_DEFAULT]: "Wood Elf",
+  [c.GNOME_DEFAULT]: "Gnome",
+  [c.OGRE_DEFAULT]: "Ogre",
 };
 
 function speciesWithRegionOptions() {
@@ -78,13 +78,17 @@ function speciesWithRegionOptions() {
   return options;
 }
 
+function speciesWithRegionToSpecies(speciesWithRegion) {
+  return parseInt(speciesWithRegion.substring(0, 2));
+}
+
 const defaultSize = 3; // Average
 
 const generateEmptyCharacter = () => {
   return {
     id: "",
     name: "",
-    species: 0,
+    species: "0001",
     fate: 0,
     fortune: 0,
     resilience: 0,
@@ -439,18 +443,18 @@ function getMovement(character) {
 
 function getBaseAttributes(character) {
   return sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(character.species) },
+    { multiplier: 1, attributes: getAttributes(speciesWithRegionToSpecies(character.species)) },
     { multiplier: 1, attributes: character.attributeRolls },
   ]);
 }
 
 function getRacialAttributes(character) {
-  return getAttributes(character.species);
+  return getAttributes(speciesWithRegionToSpecies(character.species));
 }
 
 function getTotalAttributes(character) {
   return sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(character.species) },
+    { multiplier: 1, attributes: getAttributes(speciesWithRegionToSpecies(character.species)) },
     { multiplier: 1, attributes: character.attributeRolls },
     { multiplier: 1, attributes: character.attributeAdvances },
     { multiplier: 1, attributes: character.modifiers.attributes },
@@ -675,4 +679,5 @@ export {
   speciesOptions,
   speciesWithRegion,
   speciesWithRegionOptions,
+  speciesWithRegionToSpecies,
 };

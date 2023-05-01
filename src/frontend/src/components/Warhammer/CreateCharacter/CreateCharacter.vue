@@ -15,14 +15,12 @@
         </p>
 
         <div>
-          <b-button class="mr-2 mb-2" variant="primary" size="sm" @click="genLvln = !genLvln">
-            Generate Random
-          </b-button>
+          <b-button class="mr-2 mb-2" variant="primary" size="sm" @click="genLvl = !genLvl"> Generate Random</b-button>
         </div>
-        <b-collapse id="generation-1" class="mt-2" :visible="genLvln">
+        <b-collapse id="generation-1" class="mt-2" :visible="genLvl">
           <b-card title="Generate Advanced Character">
             <p>Fill out character sheet automatically by randomly generating character (level 1-4).</p>
-            <b-collapse id="generation-n-details" class="mt-2" :visible="genLvlnDetails">
+            <b-collapse id="generation-n-details" class="mt-2" :visible="genDetails">
               <p>
                 The generation process of a level 1 character follows all steps from character chapter of the rulebook
                 with the exception that species and career cannot be chosen as random at this moment.
@@ -50,13 +48,16 @@
             <b-row>
               <b-col md="6">
                 <b-form-group label="Species">
-                  <b-form-select :options="speciesOptions" v-model="selectedGenLvlnSpecies"></b-form-select>
+                  <b-form-select
+                    :options="speciesWithRegionsOptions"
+                    v-model="selectedGenSpeciesWithRegion"
+                  ></b-form-select>
                 </b-form-group>
               </b-col>
 
               <b-col md="6">
                 <b-form-group label="Career">
-                  <b-form-select :options="genCareers" v-model="selectedGenLvlnCareer"></b-form-select>
+                  <b-form-select :options="genCareers" v-model="selectedGenCareer"></b-form-select>
                 </b-form-group>
               </b-col>
 
@@ -74,16 +75,16 @@
                 </b-form-group>
               </b-col>
             </b-row>
-            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvln = false"> Hide</b-button>
-            <b-button @click="genLvlnDetails = !genLvlnDetails" variant="primary" class="mr-2 mb-1" size="sm">
-              {{ genLvlnDetails ? "Hide" : "Show" }} Details
+            <b-button class="mr-2 mb-1" variant="primary" size="sm" @click="genLvl = false"> Hide</b-button>
+            <b-button @click="genDetails = !genDetails" variant="primary" class="mr-2 mb-1" size="sm">
+              {{ genDetails ? "Hide" : "Show" }} Details
             </b-button>
             <b-button
               variant="primary"
               class="mr-2 mb-1"
               size="sm"
-              :disabled="!generateEnable || !element.canEdit || !allDataLoaded || selectedGenLvlnCareer === -1"
-              @click="genCharacter(generationLevel, selectedGenLvlnSpecies, selectedGenLvlnCareer)"
+              :disabled="!generateEnable || !element.canEdit || !allDataLoaded || selectedGenCareer === -1"
+              @click="genCharacter(generationLevel, selectedGenSpeciesWithRegion, selectedGenCareer)"
             >
               Generate
             </b-button>
@@ -845,8 +846,11 @@ import {
   getBaseAttributes,
   compareCharacter,
   generateNewCharacter,
-  speciesWithRegionOptions, speciesOptions
+  speciesWithRegionOptions,
+  speciesOptions,
+  speciesWithRegionToSpecies,
 } from "../../../services/wh/character";
+import * as c from "../../../services/wh/characterConstants";
 import { statusStandings, statusTiers } from "../../../services/wh/career";
 import { generateEmptyModifiers, sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 import {
@@ -902,14 +906,10 @@ export default {
       initialSpells: [],
       initialMutations: [],
 
-      selectedGenLvl1Species: 0,
-      selectedGenLvlnSpecies: 0,
-      selectedGenLvl1Career: -1,
-      selectedGenLvlnCareer: -1,
-      genLvl1: false,
-      genLvl1Details: false,
-      genLvln: false,
-      genLvlnDetails: false,
+      selectedGenSpeciesWithRegion: c.HUMAN_REIKLAND,
+      selectedGenCareer: -1,
+      genLvl: false,
+      genDetails: false,
       listOfCareers: [],
       listOfSkills: [],
       listOfTalents: [],
@@ -927,6 +927,9 @@ export default {
     this.loadGenerationProps();
   },
   computed: {
+    selectedSpecies() {
+      return speciesWithRegionToSpecies(this.element.species);
+    },
     allDataLoaded() {
       return (
         !!this.generationProps &&
@@ -962,11 +965,8 @@ export default {
         return [];
       }
     },
-    genLvl1Careers() {
-      return this.generateCareers(false, this.selectedGenLvlnSpecies);
-    },
     genCareers() {
-      return this.generateCareers(false, this.selectedGenLvlnSpecies);
+      return this.generateCareers(false, this.selectedGenSpeciesWithRegion);
     },
     generateEnable() {
       return this.listOfCareers.length > 0;
@@ -1051,7 +1051,8 @@ export default {
     },
   },
   methods: {
-    generateCareers(includeRandom, species) {
+    generateCareers(includeRandom, speciesWithRegion) {
+      let species = speciesWithRegionToSpecies(speciesWithRegion);
       let careers = this.listOfCareers
         .map((x, idx) => {
           let disabled = !x.species.includes(species);
@@ -1195,20 +1196,10 @@ export default {
     },
   },
   watch: {
-    selectedGenLvl1Species(newVal) {
-      if (
-        newVal !== -1 &&
-        this.selectedGenLvl1Career !== -1 &&
-        !this.listOfCareers[this.selectedGenLvl1Career].species.includes(newVal)
-      ) {
-        this.selectedGenLvl1Career = -1;
-      } else if (newVal === -1) {
-        this.selectedGenLvl1Career = -1;
-      }
-    },
-    selectedGenLvlnSpecies(newVal) {
-      if (this.selectedGenLvlnCareer > -1 && !this.listOfCareers[this.selectedGenLvlnCareer].species.includes(newVal)) {
-        this.selectedGenLvlnCareer = -1;
+    selectedGenSpeciesWithRegion(newVal) {
+      let species = speciesWithRegionToSpecies(newVal);
+      if (this.selectedGenCareer > -1 && !this.listOfCareers[this.selectedGenCareer].species.includes(species)) {
+        this.selectedGenCareer = -1;
       }
     },
     "element.career"(newVal, oldVal) {

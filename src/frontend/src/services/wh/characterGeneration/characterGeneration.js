@@ -1,23 +1,9 @@
 import generateName from "./nameGeneration";
 import generateDescription from "./descriptionGeneration";
-import { selectRandom, rollInTable, diceRoll } from "../../../utils/randomUtils";
+import { selectRandom, diceRoll } from "../../../utils/randomUtils";
 import { generateRolls, getBaseAttributes } from "./attGeneration";
 import { generateSkills } from "./skillGeneration";
 import { genTalentsAndAdvances } from "./talentGeneration";
-
-const SPECIES_ROLLS = [
-  [0, 1, 89],
-  [6, 89, 90],
-  [1, 90, 94],
-  [2, 94, 98],
-  [5, 98, 99],
-  [3, 99, 100],
-  [4, 100, 101],
-];
-
-function generateSpecies() {
-  return rollInTable(100, 1, SPECIES_ROLLS);
-}
 
 function generateFateAndResilience(species) {
   let fate;
@@ -95,7 +81,7 @@ export function generateClassItems(classItems) {
 }
 
 export default function generateCharacter(
-  genSpecies,
+  genSpeciesWithRegion,
   genCareer,
   listOfCareers,
   listOfSkills,
@@ -108,24 +94,21 @@ export default function generateCharacter(
   let character = {};
 
   let exp = 50; // From random characteristics
-  let species;
-  let career;
-
-  species = genSpecies;
-  career = listOfCareers[genCareer];
+  let career = listOfCareers[genCareer];
+  let speciesWithRegion = genSpeciesWithRegion;
 
   let items = generateClassItems(generationProps.class_items[career.class]);
 
-  character.name = generateName(species, 2);
-  character.species = species;
+  character.name = generateName(speciesWithRegion, 2);
+  character.species = speciesWithRegion;
   character.career = { id: career.id, number: level };
   character.careerPath = [];
   for (let i = 1; i < level; ++i) {
     character.careerPath.push({ id: career.id, number: i });
   }
-  character.description = generateDescription(species);
+  character.description = generateDescription(speciesWithRegion);
   character.notes = "";
-  [character.fate, character.resilience] = generateFateAndResilience(species);
+  [character.fate, character.resilience] = generateFateAndResilience(speciesWithRegion);
   character.fortune = character.fate;
   character.resolve = character.resilience;
   character.status = career[levelName].status;
@@ -143,7 +126,7 @@ export default function generateCharacter(
 
   let skillExpSpent;
   [character.skills, skillExpSpent] = generateSkills(
-    species,
+    speciesWithRegion,
     generationProps.species_skills,
     [lvl1.skills, lvl2.skills, lvl3.skills, lvl4.skills],
     listOfSkills,
@@ -152,10 +135,10 @@ export default function generateCharacter(
 
   let talentAndAttExpSpent;
   [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
-    generationProps.species_talents[species],
+    generationProps.species_talents[speciesWithRegion],
     generationProps.random_talents,
     [lvl1.talents, lvl2.talents, lvl3.talents, lvl4.talents],
-    getBaseAttributes(species, character.attributeRolls),
+    getBaseAttributes(speciesWithRegion, character.attributeRolls),
     listOfTalents,
     [lvl1.attributes, lvl2.attributes, lvl3.attributes, lvl4.attributes],
     level
