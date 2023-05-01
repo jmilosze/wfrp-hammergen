@@ -1182,21 +1182,6 @@ function generateOgreName() {
   }
 }
 
-const HUMAN_EMPIRE_LIST = [
-  c.HUMAN_DEFAULT,
-  c.HUMAN_REIKLAND,
-  c.HUMAN_ALTDORF_SOUTH_BANK,
-  c.HUMAN_ALTDORF_EASTEND,
-  c.HUMAN_ALTDORF_HEXXERBEZRIK,
-  c.HUMAN_ALTDORF_DOCKLANDS,
-  c.HUMAN_MIDDENHEIM,
-  c.HUMAN_MIDDENLAND,
-  c.HUMAN_NORDLAND,
-  c.HUMAN_SALZENMUND,
-];
-
-const HUMAN_NORSCA_LIST = [c.HUMAN_NORSE_BJORNLING, c.HUMAN_NORSE_SARL, c.HUMAN_NORSE_SKAELING];
-
 export default function generateName(speciesWithRegion, gender) {
   let selectedGender = gender;
   if (gender === 2) {
@@ -1204,15 +1189,11 @@ export default function generateName(speciesWithRegion, gender) {
   }
 
   if (c.HUMAN_LIST.includes(speciesWithRegion)) {
-    if (HUMAN_EMPIRE_LIST.includes(speciesWithRegion)) {
-      return generateHumanEmpireName(selectedGender);
-    }
-
     if (speciesWithRegion === c.HUMAN_TILEA) {
       return generateHumanTileaName(selectedGender);
     }
 
-    if (HUMAN_NORSCA_LIST.includes(speciesWithRegion)) {
+    if ([c.HUMAN_NORSE_BJORNLING, c.HUMAN_NORSE_SARL, c.HUMAN_NORSE_SKAELING].includes(speciesWithRegion)) {
       return generateHumanNorscaName(selectedGender);
     }
 

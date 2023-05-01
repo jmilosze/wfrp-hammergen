@@ -129,7 +129,17 @@ class CareerClass(enum.IntEnum):
     SEAFARER = 8
 
 
-class Species(enum.Enum):
+class Species(enum.IntEnum):
+    HUMAN = 0
+    HALFLING = 1
+    DWARF = 2
+    HIGH_ELF = 3
+    WOOD_ELF = 4
+    GNOME = 5
+    OGRE = 6
+
+
+class SpeciesWithRegion(enum.Enum):
     HUMAN_DEFAULT = "0000"
     HUMAN_REIKLAND = "0001"  # WFRP p. 25
     HUMAN_ALTDORF_SOUTH_BANK = "0002"  # Archives III p. 83

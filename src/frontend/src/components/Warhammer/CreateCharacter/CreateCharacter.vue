@@ -318,7 +318,7 @@
               </b-col>
               <b-col sm="6">
                 <b-form-group>
-                  <div>Wounds</div>
+                  <div>Wounds (unmodified by Hardy)</div>
                   <div class="mt-2">{{ wounds }}</div>
                 </b-form-group>
               </b-col>

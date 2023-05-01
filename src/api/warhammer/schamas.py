@@ -16,6 +16,7 @@ from ..warhammer.types import (
     StatusTier,
     CareerClass,
     Species,
+    SpeciesWithRegion,
     Mutation,
     Source,
 )
@@ -206,7 +207,7 @@ CHARACTER_COMPONENTS = {
     "stored_items": [{"id": ID_SCHEMA, "number": And(int, lambda x: 1000 >= x >= 1)}],
     "skills": [{"id": ID_SCHEMA, "number": And(int, lambda x: 1000 >= x >= 1)}],
     "talents": [{"id": ID_SCHEMA, "number": And(int, lambda x: 1000 >= x >= 1)}],
-    "species": Or(*list(Species)),
+    "species": Or(*list(SpeciesWithRegion)),
     "base_attributes": ATTRIBUTES_SCHEMA,
     "attribute_advances": ATTRIBUTES_SCHEMA,
     "career_path": [{"id": ID_SCHEMA, "level": And(int, lambda x: 5 >= x >= 1)}],
