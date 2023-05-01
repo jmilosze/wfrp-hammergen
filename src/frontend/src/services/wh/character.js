@@ -349,9 +349,9 @@ class CharacterApi {
       attributeAdvances: rawCharacter.attribute_advances,
       attributes: attributes,
 
-      movement: getMovementFormula(rawCharacter.speciesWithRegion) + movementModifier,
-      walk: 2 * (getMovementFormula(rawCharacter.speciesWithRegion) + movementModifier),
-      run: 4 * (getMovementFormula(rawCharacter.speciesWithRegion) + movementModifier),
+      movement: getMovementFormula(rawCharacter.species) + movementModifier,
+      walk: 2 * (getMovementFormula(rawCharacter.species) + movementModifier),
+      run: 4 * (getMovementFormula(rawCharacter.species) + movementModifier),
       wounds: getWoundsFormula(defaultSize + sizeModifier, attributes.T, attributes.WP, attributes.S),
 
       talents: rawCharacter.talents.map((x) => ({ name: x.value.name, rank: x.number })),

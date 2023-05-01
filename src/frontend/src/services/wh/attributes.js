@@ -1,4 +1,4 @@
-import * as c from "@/services/wh/characterConstants";
+import * as c from "./characterConstants";
 
 const racialAttributes = {
   none: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
