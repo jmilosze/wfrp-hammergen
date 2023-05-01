@@ -31,15 +31,6 @@ export function generateRolls() {
   return rolls;
 }
 
-export function getBaseAttributes(speciesWithRegion, rolls) {
-  const base = JSON.parse(JSON.stringify(rolls));
-  let racial = speciesAtts(speciesWithRegion);
-  for (let [key, value] of Object.entries(base)) {
-    base[key] = value + racial[key];
-  }
-  return base;
-}
-
 export function generateAdv(careerAtts, attPoints, currentAdv) {
   let adv = JSON.parse(JSON.stringify(currentAdv));
   let cost = 0;

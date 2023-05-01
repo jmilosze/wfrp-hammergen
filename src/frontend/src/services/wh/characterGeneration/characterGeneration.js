@@ -1,9 +1,10 @@
 import generateName from "./nameGeneration";
 import generateDescription from "./descriptionGeneration";
 import { selectRandom, diceRoll } from "../../../utils/randomUtils";
-import { generateRolls, getBaseAttributes } from "./attGeneration";
+import { generateRolls } from "./attGeneration";
 import { generateSkills } from "./skillGeneration";
 import { genTalentsAndAdvances } from "./talentGeneration";
+import { getAttributes, sumAndMultAttr } from "@/services/wh/attributes";
 
 function generateFateAndResilience(species) {
   let fate;
@@ -133,12 +134,17 @@ export default function generateCharacter(
     level
   );
 
+  let baseAttributes = sumAndMultAttr([
+    { multiplier: 1, attributes: getAttributes(speciesWithRegion) },
+    { multiplier: 1, attributes: character.attributeRolls },
+  ]);
+
   let talentAndAttExpSpent;
   [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
     generationProps.species_talents[speciesWithRegion],
     generationProps.random_talents,
     [lvl1.talents, lvl2.talents, lvl3.talents, lvl4.talents],
-    getBaseAttributes(speciesWithRegion, character.attributeRolls),
+    baseAttributes,
     listOfTalents,
     [lvl1.attributes, lvl2.attributes, lvl3.attributes, lvl4.attributes],
     level

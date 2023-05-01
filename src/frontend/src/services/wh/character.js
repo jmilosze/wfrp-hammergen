@@ -443,18 +443,18 @@ function getMovement(character) {
 
 function getBaseAttributes(character) {
   return sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(speciesWithRegionToSpecies(character.species)) },
+    { multiplier: 1, attributes: getAttributes(character.species) },
     { multiplier: 1, attributes: character.attributeRolls },
   ]);
 }
 
 function getRacialAttributes(character) {
-  return getAttributes(speciesWithRegionToSpecies(character.species));
+  return getAttributes(character.species);
 }
 
 function getTotalAttributes(character) {
   return sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(speciesWithRegionToSpecies(character.species)) },
+    { multiplier: 1, attributes: getAttributes(character.species) },
     { multiplier: 1, attributes: character.attributeRolls },
     { multiplier: 1, attributes: character.attributeAdvances },
     { multiplier: 1, attributes: character.modifiers.attributes },
