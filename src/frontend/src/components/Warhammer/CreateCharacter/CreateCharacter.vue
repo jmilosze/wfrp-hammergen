@@ -847,7 +847,7 @@ import {
   compareCharacter,
   generateNewCharacter,
   speciesWithRegionOptions,
-  speciesOptions, speciesWithRegionToSpecies, speciesWithRegion
+  speciesWithRegionToSpecies,
 } from "../../../services/wh/character";
 import * as c from "../../../services/wh/characterConstants";
 import { statusStandings, statusTiers } from "../../../services/wh/career";
@@ -880,7 +880,6 @@ export default {
       element: generateEmptyCharacter(),
       elementOriginal: generateEmptyCharacter(),
 
-      speciesOptions: speciesOptions(),
       speciesWithRegionsOptions: speciesWithRegionOptions(),
 
       statusOptions: Object.keys(statusTiers).map((key) => {

@@ -62,11 +62,10 @@ import ElementList from "./ListTemplate.vue";
 import { authRequest } from "../../../services/auth";
 import { onBeforeMount, ref, computed, reactive, watch } from "vue";
 import { useListWh } from "../../../composables/listWh";
-import { CareerApi, careerClasses, careerClassOptions } from "../../../services/wh/career";
+import { CareerApi, careerClasses, careerClassOptions, species, speciesOptions } from "../../../services/wh/career";
 import { addSpaces } from "../../../utils/stringUtils";
 import { sourceOptions, source } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
-import { species, speciesOptions } from "../../../services/wh/character";
 
 const MAX_CHARS = 15;
 const careerApi = new CareerApi(authRequest);

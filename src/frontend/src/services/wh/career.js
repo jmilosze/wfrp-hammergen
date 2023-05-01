@@ -8,7 +8,6 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator";
-import { skillAttributeTypesGroup } from "@/services/wh/skill";
 
 const apiBasePath = "/api/career";
 
@@ -140,6 +139,24 @@ class CareerApi {
   }
 }
 
+const species = {
+  0: "Human",
+  1: "Halfling",
+  2: "Dwarf",
+  3: "High Elf",
+  4: "Wood Elf",
+  5: "Gnome",
+  6: "Ogre",
+};
+
+function speciesOptions() {
+  const options = [];
+  for (let [k, v] of Object.entries(species)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
+}
+
 const compareCareer = (career1, career2) => {
   for (let [key, value] of Object.entries(career1)) {
     if (key !== "species" && !key.startsWith("level") && key !== "source") {
@@ -189,4 +206,6 @@ export {
   CareerApi,
   compareCareer,
   careerClassOptions,
+  species,
+  speciesOptions,
 };

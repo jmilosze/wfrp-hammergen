@@ -106,7 +106,7 @@ export default function generateCharacter(
   let items = generateClassItems(generationProps.class_items[career.class]);
 
   character.name = generateName(speciesWithRegion, 2);
-  character.species = speciesWithRegion;
+  character.speciesWithRegion = speciesWithRegion;
   character.career = { id: career.id, number: level };
   character.careerPath = [];
   for (let i = 1; i < level; ++i) {

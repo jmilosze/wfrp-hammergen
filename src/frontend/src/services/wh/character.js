@@ -9,40 +9,22 @@ import * as c from "./characterConstants";
 import { compareArrayIgnoreOrder, compareStringNumber } from "../../utils/arrayUtils";
 import { careerClasses, statusTiers } from "./career";
 import {
-  getWoundsFormula,
-  getMovementFormula,
-  formatSkills,
-  formatItems,
-  formatSpells,
-  formatMutations,
-  getCareerName,
-  getCareerLevelName,
   csvStr,
+  formatItems,
+  formatMutations,
+  formatSkills,
+  formatSpells,
+  getCareerLevelName,
+  getCareerName,
+  getMovementFormula,
+  getWoundsFormula,
 } from "./utils";
-import { sumAndMultAttr, getAttributes } from "./attributes";
+import { getAttributes, sumAndMultAttr } from "./attributes";
 import { generateEmptyModifiers, sumAndMultModifiers } from "./characterModifiers";
 
 const apiBasePath = "/api/character";
 const apiCharacterDisplayPath = "/api/character_resolved";
 const apiSkillPath = "/api/skill";
-
-const species = {
-  0: "Human",
-  1: "Halfling",
-  2: "Dwarf",
-  3: "High Elf",
-  4: "Wood Elf",
-  5: "Gnome",
-  6: "Ogre",
-};
-
-function speciesOptions() {
-  const options = [];
-  for (let [k, v] of Object.entries(species)) {
-    options.push({ value: Number(k), text: v });
-  }
-  return options;
-}
 
 const speciesWithRegion = {
   [c.HUMAN_REIKLAND]: "Human (Reikland)",
@@ -663,7 +645,6 @@ function characterForDisplayToCsv(charForDisplay) {
 }
 
 export {
-  species,
   generateEmptyCharacter,
   generateNewCharacter,
   CharacterApi,
@@ -676,7 +657,6 @@ export {
   getTotalAttributes,
   generateEmptyCharacterForDisplay,
   characterForDisplayToCsv,
-  speciesOptions,
   speciesWithRegion,
   speciesWithRegionOptions,
   speciesWithRegionToSpecies,
