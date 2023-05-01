@@ -9,14 +9,15 @@
 
       <div class="text-sm-left">
         <div class="alert alert-info" role="alert">
-          <div class="h3">New Filters</div>
+          <div class="h3">Added character regions</div>
           <p>
-            We are happy to announce that list of Skills, Talents, etc., can now be filtered by source book (for example
-            "Winds of Magic") and other properties (depending on the list). You can read more about this and previous
-            updates in
+            When generating a new character, you can now specify region/clan for Humans and Dwarfs. For example Human
+            (Norse Bjornling), or Dwarf (Grumsson Clan). This will change species starting Skills, Talents, and in cases
+            like humans from Norsca it will also generate region matching name. You can read more about this and
+            previous
             <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
             and on our
-            <b-link href="https://ko-fi.com/post/New-source-property-and-filters-F1F2KERC7" target="_blank">Ko-fi blog. </b-link>
+            <b-link href="" target="_blank">Ko-fi blog.</b-link>
           </p>
           <p>
             As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
@@ -101,8 +102,8 @@
         </p>
         <p>
           If you enjoy using Hammergen, please consider supporting me on
-          <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link>. Any donations will help to cover
-          hosting costs.
+          <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link>
+          . Any donations will help to cover hosting costs.
         </p>
       </div>
     </div>
