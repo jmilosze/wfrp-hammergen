@@ -1219,7 +1219,7 @@ export default function generateName(speciesWithRegion, gender) {
     return generateHumanEmpireName(selectedGender);
   }
 
-  if (speciesWithRegion === c.HALFLING_DEFAULT) {
+  if (c.HALFLING_LIST.includes(speciesWithRegion)) {
     return generateHalflingName(selectedGender);
   }
 
@@ -1242,4 +1242,6 @@ export default function generateName(speciesWithRegion, gender) {
   if (c.OGRE_LIST.includes(speciesWithRegion)) {
     return generateOgreName();
   }
+
+  return "";
 }
