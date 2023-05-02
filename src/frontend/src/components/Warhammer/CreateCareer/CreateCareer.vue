@@ -383,9 +383,9 @@ import {
   careerClasses,
   compareCareer,
   generateNewCareer,
+  species,
 } from "../../../services/wh/career";
 import { attributes } from "../../../services/wh/attributes";
-import { species } from "../../../services/wh/character";
 import { authRequest } from "../../../services/auth";
 import { validWhDesc, validWhShortDesc } from "../../../utils/validation/wh";
 

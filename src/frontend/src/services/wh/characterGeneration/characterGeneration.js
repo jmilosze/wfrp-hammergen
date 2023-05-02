@@ -1,53 +1,45 @@
 import generateName from "./nameGeneration";
 import generateDescription from "./descriptionGeneration";
-import { selectRandom, rollInTable, diceRoll } from "../../../utils/randomUtils";
-import { generateRolls, getBaseAttributes } from "./attGeneration";
+import { selectRandom, diceRoll } from "../../../utils/randomUtils";
+import { generateRolls } from "./attGeneration";
 import { generateSkills } from "./skillGeneration";
 import { genTalentsAndAdvances } from "./talentGeneration";
+import { getAttributes, sumAndMultAttr } from "@/services/wh/attributes";
+import * as c from "../characterConstants";
 
-const SPECIES_ROLLS = [
-  [0, 1, 89],
-  [6, 89, 90],
-  [1, 90, 94],
-  [2, 94, 98],
-  [5, 98, 99],
-  [3, 99, 100],
-  [4, 100, 101],
-];
-
-function generateSpecies() {
-  return rollInTable(100, 1, SPECIES_ROLLS);
-}
-
-function generateFateAndResilience(species) {
+function generateFateAndResilience(speciesWithRegion) {
   let fate;
   let resilience;
   let extra;
 
-  if (species === 0) {
+  if (c.HUMAN_LIST.includes(speciesWithRegion)) {
     fate = 2;
     resilience = 1;
     extra = 3;
-  } else if (species === 1) {
+  } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
     fate = 0;
     resilience = 2;
     extra = 3;
-  } else if (species === 2) {
+  } else if (c.DWARF_LIST.includes(speciesWithRegion)) {
     fate = 0;
     resilience = 2;
     extra = 2;
-  } else if (species === 5) {
+  } else if (c.GNOME_LIST.includes(speciesWithRegion)) {
     fate = 2;
     resilience = 0;
     extra = 2;
-  } else if (species === 6) {
+  } else if (c.OGRE_LIST.includes(speciesWithRegion)) {
     fate = 0;
     resilience = 3;
     extra = 1;
-  } else {
+  } else if (c.HIGH_ELF_LIST.includes(speciesWithRegion) || c.WOOD_ELF_LIST.includes(speciesWithRegion)) {
     fate = 0;
     resilience = 0;
     extra = 2;
+  } else {
+    fate = 0;
+    resilience = 0;
+    extra = 0;
   }
 
   for (let pt = 0; pt < extra; pt++) {
@@ -95,7 +87,7 @@ export function generateClassItems(classItems) {
 }
 
 export default function generateCharacter(
-  genSpecies,
+  genSpeciesWithRegion,
   genCareer,
   listOfCareers,
   listOfSkills,
@@ -108,24 +100,21 @@ export default function generateCharacter(
   let character = {};
 
   let exp = 50; // From random characteristics
-  let species;
-  let career;
-
-  species = genSpecies;
-  career = listOfCareers[genCareer];
+  let career = listOfCareers[genCareer];
+  let speciesWithRegion = genSpeciesWithRegion;
 
   let items = generateClassItems(generationProps.class_items[career.class]);
 
-  character.name = generateName(species, 2);
-  character.species = species;
+  character.name = generateName(speciesWithRegion, 2);
+  character.speciesWithRegion = speciesWithRegion;
   character.career = { id: career.id, number: level };
   character.careerPath = [];
   for (let i = 1; i < level; ++i) {
     character.careerPath.push({ id: career.id, number: i });
   }
-  character.description = generateDescription(species);
+  character.description = generateDescription(speciesWithRegion);
   character.notes = "";
-  [character.fate, character.resilience] = generateFateAndResilience(species);
+  [character.fate, character.resilience] = generateFateAndResilience(speciesWithRegion);
   character.fortune = character.fate;
   character.resolve = character.resilience;
   character.status = career[levelName].status;
@@ -143,19 +132,24 @@ export default function generateCharacter(
 
   let skillExpSpent;
   [character.skills, skillExpSpent] = generateSkills(
-    species,
+    speciesWithRegion,
     generationProps.species_skills,
     [lvl1.skills, lvl2.skills, lvl3.skills, lvl4.skills],
     listOfSkills,
     level
   );
 
+  let baseAttributes = sumAndMultAttr([
+    { multiplier: 1, attributes: getAttributes(speciesWithRegion) },
+    { multiplier: 1, attributes: character.attributeRolls },
+  ]);
+
   let talentAndAttExpSpent;
   [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
-    generationProps.species_talents[species],
+    generationProps.species_talents[speciesWithRegion],
     generationProps.random_talents,
     [lvl1.talents, lvl2.talents, lvl3.talents, lvl4.talents],
-    getBaseAttributes(species, character.attributeRolls),
+    baseAttributes,
     listOfTalents,
     [lvl1.attributes, lvl2.attributes, lvl3.attributes, lvl4.attributes],
     level

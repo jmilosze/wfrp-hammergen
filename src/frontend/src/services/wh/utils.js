@@ -1,6 +1,7 @@
 import { skillAttributeTypesGroup } from "./skill";
 import { ammunitionGroups, armorGroups, armorLocations, meleeGroups, meleeReach, rangedGroups } from "./item";
 import { mutationTypes } from "./mutation";
+import * as c from "./characterConstants";
 
 const sizes = {
   tiny: 0,
@@ -34,19 +35,25 @@ function getWoundsFormula(size, T, WP, S) {
   }
 }
 
-function getMovementFormula(speciesValue) {
-  if (speciesValue === 1 || speciesValue === 2 || speciesValue === 5) {
+function getMovementFormula(speciesWithRegion) {
+  if (
+    c.HALFLING_LIST.includes(speciesWithRegion) ||
+    c.DWARF_LIST.includes(speciesWithRegion) ||
+    c.GNOME_LIST.includes(speciesWithRegion)
+  ) {
     // Halfling, Dwarf, Gnome
     return 3;
-  } else if (speciesValue === 0) {
+  } else if (c.HUMAN_LIST.includes(speciesWithRegion)) {
     // Human
     return 4;
-  } else if (speciesValue === 6) {
+  } else if (c.OGRE_LIST.includes(speciesWithRegion)) {
     // Ogre
     return 6;
-  } else {
+  } else if (c.HIGH_ELF_LIST.includes(speciesWithRegion) || c.WOOD_ELF_LIST.includes(speciesWithRegion)) {
     // Elves
     return 5;
+  } else {
+    return 0;
   }
 }
 

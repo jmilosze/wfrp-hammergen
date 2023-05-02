@@ -1,6 +1,7 @@
 import { selectRandom } from "../../../utils/randomUtils";
+import * as c from "../characterConstants";
 
-const HUMAN_MALE_FORENAMES = [
+const HUMAN_EMPIRE_MALE_FORENAMES = [
   "Adhemar",
   "Andres",
   "Artur",
@@ -32,7 +33,8 @@ const HUMAN_MALE_FORENAMES = [
   "Oswald",
   "Reinhard",
 ];
-const HUMAN_FEMALE_FORENAMES = [
+
+const HUMAN_EMPIRE_FEMALE_FORENAMES = [
   "Beatrijs",
   "Clementia",
   "Erika",
@@ -64,7 +66,8 @@ const HUMAN_FEMALE_FORENAMES = [
   "Sigunda",
   "Ursula",
 ];
-const HUMAN_SURNAMES = [
+
+const HUMAN_EMPIRE_SURNAMES = [
   "Bauer",
   "Fleischer",
   "Schmidt",
@@ -97,6 +100,253 @@ const HUMAN_SURNAMES = [
   "Shaumer",
   "Trachsel",
   "Widmann",
+];
+
+const HUMAN_TILEA_MALE_FORENAMES = [
+  "Ambrogio",
+  "Antonius",
+  "Balsamo",
+  "Bartolommeo",
+  "Bonanno",
+  "Brancaleone",
+  "Ettore",
+  "Franchino",
+  "Galasso",
+  "Grifo",
+  "Guglielmo",
+  "Jacobello",
+  "Lenuzo",
+  "Luchinus",
+  "Marino",
+  "Melmoth",
+  "Mercuzio",
+  "Montoni",
+  "Oliverotto",
+  "Paganinus",
+  "Pantaleo",
+  "Pintaldi",
+  "Ravaglioli",
+  "Rinaldo",
+  "Saraceno",
+  "Scarletto",
+  "Schedoni",
+  "Smarra",
+  "Torchitorio",
+  "Vatheck",
+  "Ysidro",
+  "Zenobio",
+  "Zschokke",
+];
+
+const HUMAN_TILEA_FEMALE_FORENAMES = [
+  "Agnese",
+  "Agnola",
+  "Altapasqua",
+  "Amellina",
+  "Antonia",
+  "Belcolore",
+  "Bianca",
+  "Cherubina",
+  "Cicilia",
+  "Corelia",
+  "Ermellina",
+  "Flaminea",
+  "Flora",
+  "Foscarina",
+  "Francesca",
+  "Ghisolabella",
+  "Julietta",
+  "Junipera",
+  "Liona",
+  "Lucretia",
+  "Mathilda",
+  "Mira",
+  "Olympia",
+  "Pantasilea",
+  "Pia",
+  "Pomellina",
+  "Rigarda",
+  "Smeralda",
+  "Sofia",
+  "Vannozza",
+  "Vermilia",
+  "Veronica",
+  "Zebaina",
+];
+
+const HUMAN_TILEA_SURNAMES = [
+  "Acciaioli",
+  "Acerbi",
+  "Albano",
+  "Alberti",
+  "d’Amoto",
+  "Barbacia",
+  "Barbigia",
+  "Barbolini",
+  "Bellegno",
+  "Bianco",
+  "Boccole",
+  "Calbo",
+  "Calcagnini",
+  "Calvis",
+  "Capello",
+  "Corbo",
+  "Fabbro",
+  "Figino",
+  "Filago",
+  "Filiarchi",
+  "Fiolo",
+  "Firavanti",
+  "Foscari",
+  "Fulci",
+  "Guerra",
+  "Malatesta",
+  "Marsillach",
+  "Molino",
+  "Pentangeli",
+  "Rosso",
+  "Udolpho",
+  "Vitelli",
+  "Zeluco",
+];
+
+const HUMAN_NORSCA_MALE_FORENAMES = [
+  "Aeson",
+  "Alfkaell",
+  "Asbjorn",
+  "Arbaal",
+  "Björn",
+  "Braese",
+  "Cormac",
+  "Dargo",
+  "Dreng",
+  "Egill",
+  "Einarr",
+  "Ekil",
+  "Engra",
+  "Eogric",
+  "Erik",
+  "Fálki",
+  "Friðrik",
+  "Garmr",
+  "Gnupa",
+  "Gotric",
+  "Grettir",
+  "Hafdan",
+  "Hákon",
+  "Halfdane",
+  "Hallbjörn",
+  "Halldór",
+  "Hargir",
+  "Hinrik",
+  "Hjörtur",
+  "Hrafn",
+  "Hreðric",
+  "Hroðgar",
+  "Ingvar",
+  "Ivar",
+  "Kar",
+  "Ketil",
+  "Kettri",
+  "Kharan",
+  "Knut",
+  "Kueldulf",
+  "Lief",
+  "Lud",
+  "Morkar",
+  "Oflati",
+  "Orgrim",
+  "Óskar",
+  "Rafn",
+  "Ragnar",
+  "Ranulf",
+  "Raskulf",
+  "Rasmus",
+  "Redwald",
+  "Scyla",
+  "Sigdun",
+  "Sigvald",
+  "Sindri",
+  "Sitric",
+  "Skuld",
+  "Sorkvir",
+  "Spjall",
+  "Storulf",
+  "Sven",
+  "Torgald",
+  "Trygve",
+  "Tulkir",
+  "Ulf",
+  "Urlf",
+  "Valnir",
+  "Viglundr",
+];
+
+const HUMAN_NORSCA_FEMALE_FORENAMES = [
+  "Anna",
+  "Aðalbjörg",
+  "Ásdís",
+  "Asta",
+  "Ástrid",
+  "Auðr",
+  "Bera",
+  "Birna",
+  "Bodil",
+  "Brynja",
+  "Dagny",
+  "Drífa",
+  "Emla",
+  "Eríka",
+  "Eydís",
+  "Finna",
+  "Friðr",
+  "Gierdriful",
+  "Göndul",
+  "Gro",
+  "Gunhild",
+  "Gunnr",
+  "Guðlaug",
+  "Guðrún",
+  "Halga",
+  "Hela",
+  "Herja",
+  "Hildr",
+  "Hilga",
+  "Hjördis",
+  "Hygd",
+  "Inga",
+  "Kára",
+  "Kindra",
+  "Lilja",
+  "Liv",
+  "Mist",
+  "Neigla",
+  "Pála",
+  "Prima",
+  "Ragnhildur",
+  "Randgrid",
+  "Randi",
+  "Reginleif",
+  "Revna",
+  "Róta",
+  "Shaarna",
+  "Sif",
+  "Signe",
+  "Sigrid",
+  "Sigrdrífa",
+  "Sigrún",
+  "Skögul",
+  "Solveig",
+  "Svanhildur",
+  "Svipul",
+  "Tora",
+  "Tove",
+  "Valdís",
+  "Valkia",
+  "Vigdís",
+  "Tuula",
+  "Urda",
+  "Ulfhild",
 ];
 
 const HALFLING_MALE_FORENAMES = [
@@ -822,17 +1072,75 @@ const OGRE_BIG_NAMES = [
 const OGRE_BIG_NAME_PROB = 0.5;
 
 const ELF_ELEMENT_1 = ["Aes", "Ath", "Dor", "Far", "Gal", "Im", "Lin", "Mal", "Mor", "Ullia"];
-const ElF_ELEMENT_2 = ["a", "ath", "dia", "en", "for", "lor", "mar", "ol", "sor", "than"];
+const ELF_ELEMENT_2 = ["a", "ath", "dia", "en", "for", "lor", "mar", "ol", "sor", "than"];
 const HIGH_ELF_ENDINGS = ["andril", "anel", "ellion", "fin", "il", "irian", "mor", "nil", "ric", "wing"];
 const WOOD_ELF_ENDINGS = ["arha", "anhu", "dda", "han", "loc", "noc", "oth", "ryn", "stra", "wyth"];
 
-// gender: 0 male, 1 female, 2 any
+function generateHumanEmpireName(gender) {
+  let forename;
+  if (gender === c.MALE) {
+    forename = selectRandom(HUMAN_EMPIRE_MALE_FORENAMES);
+  } else {
+    forename = selectRandom(HUMAN_EMPIRE_FEMALE_FORENAMES);
+  }
+  let surname = selectRandom(HUMAN_EMPIRE_SURNAMES);
 
-function generateElfName(species) {
-  let endingsTable = species === 3 ? HIGH_ELF_ENDINGS : WOOD_ELF_ENDINGS;
-  let surnameTable = species === 3 ? HIGH_ELF_SURNAMES : WOOD_ELF_SURNAMES;
-  let forename = selectRandom(ELF_ELEMENT_1) + selectRandom(ElF_ELEMENT_2) + selectRandom(endingsTable);
-  return forename + " " + selectRandom(surnameTable);
+  return forename + " " + surname;
+}
+
+function generateHumanTileaName(gender) {
+  let forename;
+  if (gender === c.MALE) {
+    forename = selectRandom(HUMAN_TILEA_MALE_FORENAMES);
+  } else {
+    forename = selectRandom(HUMAN_TILEA_FEMALE_FORENAMES);
+  }
+  let surname = selectRandom(HUMAN_TILEA_SURNAMES);
+
+  return forename + " " + surname;
+}
+
+function generateHumanNorscaName(gender) {
+  let forename;
+  if (gender === c.MALE) {
+    forename = selectRandom(HUMAN_NORSCA_MALE_FORENAMES);
+  } else {
+    forename = selectRandom(HUMAN_NORSCA_FEMALE_FORENAMES);
+  }
+
+  let surname;
+  let ancestorGender = selectRandom([c.MALE, c.FEMALE]);
+  if (ancestorGender === c.MALE) {
+    let ancestorForename = selectRandom(HUMAN_NORSCA_MALE_FORENAMES);
+    surname = ancestorForename + selectRandom(["sson", "snev"]);
+  } else {
+    let ancestorForename = selectRandom(HUMAN_NORSCA_FEMALE_FORENAMES);
+    surname = ancestorForename + selectRandom(["sdottir", "sniz"]);
+  }
+
+  return forename + " " + surname;
+}
+
+function generateHalflingName(gender) {
+  let forename;
+  if (gender === c.MALE) {
+    forename = selectRandom(HALFLING_MALE_FORENAMES);
+  } else {
+    forename = selectRandom(HALFLING_FEMALE_FORENAMES);
+  }
+  let surname = selectRandom(HALFLING_SURNAMES);
+
+  return forename + " " + surname;
+}
+
+function generateHighElfName() {
+  let forename = selectRandom(ELF_ELEMENT_1) + selectRandom(ELF_ELEMENT_2) + selectRandom(HIGH_ELF_ENDINGS);
+  return forename + " " + selectRandom(HIGH_ELF_SURNAMES);
+}
+
+function generateWoodElfName() {
+  let forename = selectRandom(ELF_ELEMENT_1) + selectRandom(ELF_ELEMENT_2) + selectRandom(WOOD_ELF_ENDINGS);
+  return forename + " " + selectRandom(WOOD_ELF_SURNAMES);
 }
 
 function generateDwarfName(gender) {
@@ -843,25 +1151,11 @@ function generateDwarfName(gender) {
   if (Math.random() < DWARF_NICKNAME_PROB) {
     surname = selectRandom(DWARF_NICKNAMES);
   } else {
-    let ancestor_gender = selectRandom([0, 1]);
-    let ancForename = selectRandom(DWARF_ELEMENT_1) + selectRandom(elementTables[ancestor_gender]);
+    let ancestorGender = selectRandom([0, 1]);
+    let ancForename = selectRandom(DWARF_ELEMENT_1) + selectRandom(elementTables[ancestorGender]);
     let suffix = gender === 0 ? selectRandom(["sson", "snev"]) : selectRandom(["sdottir", "sniz"]);
     surname = ancForename + suffix;
   }
-  return forename + " " + surname;
-}
-
-function generateHumanHalflingName(species, gender) {
-  let forenameTables = [HUMAN_MALE_FORENAMES, HUMAN_FEMALE_FORENAMES];
-  let surnameTable = HUMAN_SURNAMES;
-
-  if (species === 1) {
-    forenameTables = [HALFLING_MALE_FORENAMES, HALFLING_FEMALE_FORENAMES];
-    surnameTable = HALFLING_SURNAMES;
-  }
-
-  let surname = selectRandom(surnameTable);
-  let forename = selectRandom(forenameTables[gender]);
   return forename + " " + surname;
 }
 
@@ -877,7 +1171,7 @@ function generateGnomeName(gender) {
   }
 }
 
-function generateOgreName(selected_gender) {
+function generateOgreName() {
   const forename = selectRandom(OGRE_ELEMENT_1) + selectRandom(OGRE_ELEMENT_2);
   const clan = selectRandom(OGRE_CLANS);
 
@@ -888,21 +1182,47 @@ function generateOgreName(selected_gender) {
   }
 }
 
-export default function generateName(species, gender) {
-  let selected_gender = gender;
+export default function generateName(speciesWithRegion, gender) {
+  let selectedGender = gender;
   if (gender === 2) {
-    selected_gender = Math.floor(Math.random() * 2);
+    selectedGender = Math.floor(Math.random() * 2);
   }
 
-  if (species === 0 || species === 1) {
-    return generateHumanHalflingName(species, selected_gender);
-  } else if (species === 2) {
-    return generateDwarfName(selected_gender);
-  } else if (species === 5) {
-    return generateGnomeName(selected_gender);
-  } else if (species === 6) {
-    return generateOgreName(selected_gender);
-  } else {
-    return generateElfName(species);
+  if (c.HUMAN_LIST.includes(speciesWithRegion)) {
+    if (speciesWithRegion === c.HUMAN_TILEA) {
+      return generateHumanTileaName(selectedGender);
+    }
+
+    if ([c.HUMAN_NORSE_BJORNLING, c.HUMAN_NORSE_SARL, c.HUMAN_NORSE_SKAELING].includes(speciesWithRegion)) {
+      return generateHumanNorscaName(selectedGender);
+    }
+
+    return generateHumanEmpireName(selectedGender);
   }
+
+  if (c.HALFLING_LIST.includes(speciesWithRegion)) {
+    return generateHalflingName(selectedGender);
+  }
+
+  if (c.DWARF_LIST.includes(speciesWithRegion)) {
+    return generateDwarfName(selectedGender);
+  }
+
+  if (c.HIGH_ELF_LIST.includes(speciesWithRegion)) {
+    return generateHighElfName();
+  }
+
+  if (c.WOOD_ELF_LIST.includes(speciesWithRegion)) {
+    return generateWoodElfName();
+  }
+
+  if (c.GNOME_DEFAULT.includes(speciesWithRegion)) {
+    return generateGnomeName(selectedGender);
+  }
+
+  if (c.OGRE_LIST.includes(speciesWithRegion)) {
+    return generateOgreName();
+  }
+
+  return "";
 }

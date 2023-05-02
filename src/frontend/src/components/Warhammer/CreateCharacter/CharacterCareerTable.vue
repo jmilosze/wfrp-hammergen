@@ -89,9 +89,8 @@
 import TableCommon from "./TableCommon.vue";
 import NavHelpers from "../../NavHelpers.vue";
 import { addSpaces } from "../../../utils/stringUtils";
-import { CareerApi, careerClasses } from "../../../services/wh/career";
+import { CareerApi, careerClasses, species } from "../../../services/wh/career";
 import { authRequest } from "../../../services/auth";
-import { species } from "../../../services/wh/character";
 import { compareBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;

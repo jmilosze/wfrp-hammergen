@@ -47,7 +47,7 @@
                 </b-td>
                 <b-td>
                   <span class="h6 mr-3">Species</span>
-                  <span>{{ dispStr(char.species) }}</span>
+                  <span>{{ dispStr(char.speciesWithRegion) }}</span>
                 </b-td>
               </b-tr>
               <b-tr>
@@ -600,10 +600,20 @@ import NavHelpers from "../NavHelpers.vue";
 import { addSpaces } from "../../utils/stringUtils";
 import { authRequest } from "../../services/auth";
 import { saveAs } from "file-saver";
-import { CharacterApi, generateEmptyCharacterForDisplay, characterForDisplayToCsv } from "../../services/wh/character";
+import {
+  CharacterApi,
+  generateEmptyCharacterForDisplay,
+  characterForDisplayToCsv,
+  speciesWithRegion
+} from "../../services/wh/character";
 
 export default {
   name: "ViewCharacter",
+  computed: {
+    speciesWithRegion() {
+      return speciesWithRegion
+    }
+  },
   mixins: [NavHelpers],
   props: {
     id: {

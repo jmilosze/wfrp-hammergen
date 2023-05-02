@@ -31,7 +31,7 @@
 import ElementList from "./ListTemplate.vue";
 import { authRequest } from "../../../services/auth";
 import { computed, onBeforeMount, ref } from "vue";
-import { CharacterApi, species } from "../../../services/wh/character";
+import { CharacterApi, speciesWithRegion } from "../../../services/wh/character";
 import { useListWh } from "../../../composables/listWh";
 import { addSpaces } from "@/utils/stringUtils";
 
@@ -50,7 +50,7 @@ const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh } = useListWh(cha
 function formatListOfWh(wh) {
   return {
     name: addSpaces(wh.name, MAX_CHARS),
-    species: species[wh.species],
+    species: speciesWithRegion[wh.species],
     description: addSpaces(wh.description, MAX_CHARS),
     canEdit: wh.canEdit,
     id: wh.id,

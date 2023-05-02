@@ -8,13 +8,14 @@ import {
   getTotalAttributes,
   getRacialAttributes,
   getWoundsFormula,
-  species,
+  speciesWithRegion,
 } from "../src/services/wh/character";
 import { generateEmptyModifiers } from "../src/services/wh/characterModifiers";
+import * as c from "../src/services/wh/characterConstants";
 
 const character1ApiForm = {
   name: "char1",
-  species: 4,
+  species: c.WOOD_ELF_DEFAULT,
   fate: 1,
   fortune: 2,
   resilience: 3,
@@ -66,7 +67,7 @@ const character1ApiForm = {
 
 const character1ModelForm = {
   name: "char1",
-  species: 4,
+  speciesWithRegion: c.WOOD_ELF_DEFAULT,
   fate: 1,
   fortune: 2,
   resilience: 3,
@@ -119,7 +120,7 @@ const character1ModelForm = {
 
 const character2ApiForm = {
   name: "char2",
-  species: 0,
+  species: c.HUMAN_NORDLAND,
   fate: 2,
   fortune: 3,
   resilience: 1,
@@ -155,7 +156,7 @@ const character2ApiForm = {
 
 const character2ModelForm = {
   name: "char2",
-  species: 0,
+  speciesWithRegion: c.HUMAN_NORDLAND,
   fate: 2,
   fortune: 3,
   resilience: 1,
@@ -191,7 +192,7 @@ const character2ModelForm = {
 
 const characterDisplayApiForm = {
   name: "charDisplay",
-  species: 4,
+  species: c.WOOD_ELF_DEFAULT,
   fate: 1,
   fortune: 2,
   resilience: 3,
@@ -665,7 +666,7 @@ describe("compareCharacters returns true", () => {
 describe("compareCharacters returns false", () => {
   test.each([
     { name: "name", field: "name", value: "otherName" },
-    { name: "species", field: "species", value: 1 },
+    { name: "speciesWithRegion", field: "speciesWithRegion", value: 1 },
     { name: "fate", field: "fate", value: 2 },
     { name: "fortune", field: "fortune", value: 3 },
     { name: "resilience", field: "resilience", value: 1 },
@@ -908,17 +909,18 @@ test("getWounds returns correct value", () => {
 
 describe("getMovement returns correct value", () => {
   test.each([
-    { name: species[0], species: 0, modifier: 0, expected: 4 },
-    { name: species[0], species: 0, modifier: -1, expected: 3 },
-    { name: species[0], species: 0, modifier: 1, expected: 5 },
-    { name: species[1], species: 1, modifier: 0, expected: 3 },
-    { name: species[2], species: 2, modifier: 0, expected: 3 },
-    { name: species[3], species: 3, modifier: 0, expected: 5 },
-    { name: species[4], species: 4, modifier: 0, expected: 5 },
-    { name: species[5], species: 5, modifier: 0, expected: 3 },
-  ])("when species is $name and modifier is $modifier", (t) => {
+    { name: speciesWithRegion[c.HUMAN_REIKLAND], speciesWithRegion: c.HUMAN_REIKLAND, modifier: 0, expected: 4 },
+    { name: speciesWithRegion[c.HUMAN_REIKLAND], speciesWithRegion: c.HUMAN_REIKLAND, modifier: -1, expected: 3 },
+    { name: speciesWithRegion[c.HUMAN_REIKLAND], speciesWithRegion: c.HUMAN_REIKLAND, modifier: 1, expected: 5 },
+    { name: speciesWithRegion[c.HALFLING_DEFAULT], speciesWithRegion: c.HALFLING_DEFAULT, modifier: 0, expected: 3 },
+    { name: speciesWithRegion[c.DWARF_DEFAULT], speciesWithRegion: c.DWARF_DEFAULT, modifier: 0, expected: 3 },
+    { name: speciesWithRegion[c.HIGH_ELF_DEFAULT], speciesWithRegion: c.HIGH_ELF_DEFAULT, modifier: 0, expected: 5 },
+    { name: speciesWithRegion[c.WOOD_ELF_DEFAULT], speciesWithRegion: c.WOOD_ELF_DEFAULT, modifier: 0, expected: 5 },
+    { name: speciesWithRegion[c.GNOME_DEFAULT], speciesWithRegion: c.GNOME_DEFAULT, modifier: 0, expected: 3 },
+    { name: speciesWithRegion[c.OGRE_DEFAULT], speciesWithRegion: c.OGRE_DEFAULT, modifier: 0, expected: 6 },
+  ])("when speciesWithRegion is $name and modifier is $modifier", (t) => {
     const char = JSON.parse(JSON.stringify(character1ModelForm));
-    char.species = t.species;
+    char.speciesWithRegion = t.speciesWithRegion;
     char.modifiers.movement = t.modifier;
     expect(getMovement(char)).toEqual(t.expected);
   });
@@ -927,7 +929,7 @@ describe("getMovement returns correct value", () => {
 test("getRacialAttributes returns correct value", () => {
   const char = JSON.parse(JSON.stringify(character1ModelForm));
   // Dwarf
-  char.species = 2;
+  char.speciesWithRegion = "0200";
   expect(getRacialAttributes(char)).toEqual({
     WS: 30,
     BS: 20,
@@ -947,8 +949,8 @@ describe("getBaseAttributes returns correct value", () => {
   char.attributeRolls = { WS: 12, BS: 1, S: 2, T: 1, I: 2, Ag: 1, Dex: 2, Int: 1, WP: 2, Fel: 0 };
   test.each([
     {
-      name: species[0],
-      species: 0,
+      name: speciesWithRegion[c.HUMAN_REIKLAND],
+      speciesWithRegion: c.HUMAN_REIKLAND,
       expected: {
         WS: 20 + 12,
         BS: 20 + 1,
@@ -963,8 +965,8 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: species[1],
-      species: 1,
+      name: speciesWithRegion[c.HALFLING_DEFAULT],
+      speciesWithRegion: c.HALFLING_DEFAULT,
       expected: {
         WS: 10 + 12,
         BS: 30 + 1,
@@ -979,8 +981,8 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: species[2],
-      species: 2,
+      name: speciesWithRegion[c.DWARF_DEFAULT],
+      speciesWithRegion: c.DWARF_DEFAULT,
       expected: {
         WS: 30 + 12,
         BS: 20 + 1,
@@ -995,8 +997,8 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: species[3],
-      species: 3,
+      name: speciesWithRegion[c.HIGH_ELF_DEFAULT],
+      speciesWithRegion: c.HIGH_ELF_DEFAULT,
       expected: {
         WS: 30 + 12,
         BS: 30 + 1,
@@ -1011,8 +1013,8 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: species[4],
-      species: 4,
+      name: speciesWithRegion[c.WOOD_ELF_DEFAULT],
+      speciesWithRegion: c.WOOD_ELF_DEFAULT,
       expected: {
         WS: 30 + 12,
         BS: 30 + 1,
@@ -1027,8 +1029,8 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: species[5],
-      species: 5,
+      name: speciesWithRegion[c.GNOME_DEFAULT],
+      speciesWithRegion: c.GNOME_DEFAULT,
       expected: {
         WS: 20 + 12,
         BS: 10 + 1,
@@ -1042,8 +1044,24 @@ describe("getBaseAttributes returns correct value", () => {
         Fel: 15,
       },
     },
+    {
+      name: speciesWithRegion[c.OGRE_DEFAULT],
+      speciesWithRegion: c.OGRE_DEFAULT,
+      expected: {
+        WS: 20 + 12,
+        BS: 10 + 1,
+        S: 35 + 2,
+        T: 35 + 1,
+        I: 0 + 2,
+        Ag: 15 + 1,
+        Dex: 10 + 2,
+        Int: 10 + 1,
+        WP: 20 + 2,
+        Fel: 10,
+      },
+    },
   ])("for $name", (t) => {
-    char.species = t.species;
+    char.speciesWithRegion = t.speciesWithRegion;
     expect(getBaseAttributes(char)).toEqual(t.expected);
   });
 });
@@ -1055,8 +1073,8 @@ describe("getTotalAttributes returns correct value", () => {
   char.attributeAdvances = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 10 };
   test.each([
     {
-      name: species[0],
-      species: 0,
+      name: speciesWithRegion[c.HUMAN_REIKLAND],
+      speciesWithRegion: c.HUMAN_REIKLAND,
       expected: {
         WS: 20 + 16,
         BS: 20 + 7,
@@ -1071,8 +1089,8 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: species[1],
-      species: 1,
+      name: speciesWithRegion[c.HALFLING_DEFAULT],
+      speciesWithRegion: c.HALFLING_DEFAULT,
       expected: {
         WS: 10 + 16,
         BS: 30 + 7,
@@ -1087,8 +1105,8 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: species[2],
-      species: 2,
+      name: speciesWithRegion[c.DWARF_DEFAULT],
+      speciesWithRegion: c.DWARF_DEFAULT,
       expected: {
         WS: 30 + 16,
         BS: 20 + 7,
@@ -1103,8 +1121,8 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: species[3],
-      species: 3,
+      name: speciesWithRegion[c.HIGH_ELF_DEFAULT],
+      speciesWithRegion: c.HIGH_ELF_DEFAULT,
       expected: {
         WS: 30 + 16,
         BS: 30 + 7,
@@ -1119,8 +1137,8 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: species[4],
-      species: 4,
+      name: speciesWithRegion[c.WOOD_ELF_DEFAULT],
+      speciesWithRegion: c.WOOD_ELF_DEFAULT,
       expected: {
         WS: 30 + 16,
         BS: 30 + 7,
@@ -1135,8 +1153,8 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: species[5],
-      species: 5,
+      name: speciesWithRegion[c.GNOME_DEFAULT],
+      speciesWithRegion: c.GNOME_DEFAULT,
       expected: {
         WS: 20 + 16,
         BS: 10 + 7,
@@ -1150,8 +1168,24 @@ describe("getTotalAttributes returns correct value", () => {
         Fel: 15 + 11,
       },
     },
+    {
+      name: speciesWithRegion[c.OGRE_DEFAULT],
+      speciesWithRegion: c.OGRE_DEFAULT,
+      expected: {
+        WS: 20 + 16,
+        BS: 10 + 7,
+        S: 35 + 8,
+        T: 35 + 9,
+        I: 0 + 10,
+        Ag: 15 + 11,
+        Dex: 10 + 12,
+        Int: 10 + 13,
+        WP: 20 + 14,
+        Fel: 10 + 11,
+      },
+    },
   ])("for $name", (t) => {
-    char.species = t.species;
+    char.speciesWithRegion = t.speciesWithRegion;
     expect(getTotalAttributes(char)).toEqual(t.expected);
   });
 });
@@ -1163,7 +1197,7 @@ test("getElementDisplay return correct value", async () => {
   const expected = {
     id: "id3",
     name: "charDisplay",
-    species: "Wood Elf",
+    speciesWithRegion: "Wood Elf",
     fate: 1,
     fortune: 2,
     resilience: 3,

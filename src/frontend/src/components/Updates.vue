@@ -2,6 +2,42 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">02 May 2023</div>
+        <p>
+          Added generation rules (Talents, Skills, and names) for the following regional variations from the following
+          books:
+        </p>
+        <ul>
+          <li>
+            <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3" target="_blank"
+              >Archives of the Empire: Volume III
+            </b-link>
+            Human (Altdorf South Bank), Human (Altdorf Eastend), Human (Altdorf Hexxerbezrik), Human (Altdorf
+            Docklands), Dwarf (Atldorf)
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/wfrp-middenheim-city-of-the-white-wolf" target="_blank"
+              >Middenheim City of the White Wolf,
+            </b-link>
+            Human (Middenheim), Human (Middenland), Human (Nordland)
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/wfrp-salzenmund-city-of-salt-and-silver" target="_blank"
+              >Salzenmund, City of Salt and Silver,
+            </b-link>
+            Human (Salzenmund), Dwarf (Cragforge Clan), Dwarf (Grumsson Clan)
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-sea-of-claws" target="_blank"
+              >Sea of Claws.
+            </b-link>
+            Human (Nors Bjornling), Human (Norse Sarl), Human (Norse Skaeling), Dwarf (Norse)
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/wfrp-up-in-arms" target="_blank">Up in Arms</b-link>
+            Human (Tilea)
+          </li>
+        </ul>
         <div class="h3">24 Apr 2023</div>
         <p>
           Added careers from

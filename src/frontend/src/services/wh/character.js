@@ -5,42 +5,63 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator";
+import * as c from "./characterConstants";
 import { compareArrayIgnoreOrder, compareStringNumber } from "../../utils/arrayUtils";
 import { careerClasses, statusTiers } from "./career";
 import {
-  getWoundsFormula,
-  getMovementFormula,
-  formatSkills,
-  formatItems,
-  formatSpells,
-  formatMutations,
-  getCareerName,
-  getCareerLevelName,
   csvStr,
+  formatItems,
+  formatMutations,
+  formatSkills,
+  formatSpells,
+  getCareerLevelName,
+  getCareerName,
+  getMovementFormula,
+  getWoundsFormula,
 } from "./utils";
-import { sumAndMultAttr, getAttributes } from "./attributes";
+import { getAttributes, sumAndMultAttr } from "./attributes";
 import { generateEmptyModifiers, sumAndMultModifiers } from "./characterModifiers";
 
 const apiBasePath = "/api/character";
 const apiCharacterDisplayPath = "/api/character_resolved";
 const apiSkillPath = "/api/skill";
 
-const species = {
-  0: "Human",
-  1: "Halfling",
-  2: "Dwarf",
-  3: "High Elf",
-  4: "Wood Elf",
-  5: "Gnome",
-  6: "Ogre",
+const speciesWithRegion = {
+  [c.HUMAN_REIKLAND]: "Human (Reikland)",
+  [c.HUMAN_ALTDORF_SOUTH_BANK]: "Human (Altdorf South Bank)",
+  [c.HUMAN_ALTDORF_EASTEND]: "Human (Altdorf Eastend)",
+  [c.HUMAN_ALTDORF_HEXXERBEZRIK]: "Human (Altdorf Hexxerbezrik)",
+  [c.HUMAN_ALTDORF_DOCKLANDS]: "Human (Altdorf Docklands)",
+  [c.HUMAN_MIDDENHEIM]: "Human (Middenheim)",
+  [c.HUMAN_MIDDENLAND]: "Human (Middenland)",
+  [c.HUMAN_NORDLAND]: "Human (Nordland)",
+  [c.HUMAN_SALZENMUND]: "Human (Salzenmund)",
+  [c.HUMAN_TILEA]: "Human (Tilea)",
+  [c.HUMAN_NORSE_BJORNLING]: "Human (Norse Bjornling)",
+  [c.HUMAN_NORSE_SARL]: "Human (Norse Sarl)",
+  [c.HUMAN_NORSE_SKAELING]: "Human (Norse Skaeling)",
+  [c.HALFLING_DEFAULT]: "Halfling",
+  [c.DWARF_DEFAULT]: "Dwarf",
+  [c.DWARF_ALTDORF]: "Dwarf (Atldorf)",
+  [c.DWARF_CRAGFORGE_CLAN]: "Dwarf (Cragforge Clan)",
+  [c.DWARF_GRUMSSON_CLAN]: "Dwarf (Grumsson Clan)",
+  [c.DWARF_NORSE]: "Dwarf (Norse)",
+  [c.HIGH_ELF_DEFAULT]: "High Elf",
+  [c.WOOD_ELF_DEFAULT]: "Wood Elf",
+  [c.GNOME_DEFAULT]: "Gnome",
+  [c.OGRE_DEFAULT]: "Ogre",
 };
 
-function speciesOptions() {
+function speciesWithRegionOptions() {
   const options = [];
-  for (let [k, v] of Object.entries(species)) {
-    options.push({ value: Number(k), text: v });
+  for (let [k, v] of Object.entries(speciesWithRegion)) {
+    options.push({ value: k, text: v });
   }
   return options;
+}
+
+function speciesWithRegionToSpecies(speciesWithRegion) {
+  return parseInt(speciesWithRegion.substring(0, 2));
 }
 
 const defaultSize = 3; // Average
@@ -49,7 +70,7 @@ const generateEmptyCharacter = () => {
   return {
     id: "",
     name: "",
-    species: 0,
+    speciesWithRegion: "0001",
     fate: 0,
     fortune: 0,
     resilience: 0,
@@ -87,7 +108,7 @@ const generateEmptyCharacterForDisplay = () => {
   return {
     id: "",
     name: "",
-    species: "",
+    speciesWithRegion: "",
     description: "",
     careerName: "",
     className: "",
@@ -147,7 +168,7 @@ const generateNewCharacter = (canEdit) => {
 const convertModelToApiData = (character, includeId) => {
   const apiData = {
     name: character.name,
-    species: character.species,
+    species: character.speciesWithRegion,
     fate: character.fate,
     fortune: character.fortune,
     resilience: character.resilience,
@@ -194,7 +215,7 @@ const convertApiToModelData = (apiData) => {
   const newCharacter = {
     id: apiData.id,
     name: apiData.name,
-    species: apiData.species,
+    speciesWithRegion: apiData.species,
     fate: apiData.fate,
     fortune: apiData.fortune,
     resilience: apiData.resilience,
@@ -231,7 +252,7 @@ const convertApiToModelData = (apiData) => {
 
   newCharacter.career = { id: apiData.career.id, number: apiData.career.level };
 
-  const attributeRacial = getAttributes(newCharacter.species);
+  const attributeRacial = getAttributes(newCharacter.speciesWithRegion);
   newCharacter.attributeRolls = {};
   for (let [key, value] of Object.entries(apiData.base_attributes)) {
     newCharacter.attributeRolls[key] = value - attributeRacial[key];
@@ -281,7 +302,7 @@ class CharacterApi {
     return {
       id: id,
       name: rawCharacter.name,
-      species: species[rawCharacter.species],
+      speciesWithRegion: speciesWithRegion[rawCharacter.species],
       fate: rawCharacter.fate,
       fortune: rawCharacter.fortune,
       resilience: rawCharacter.resilience,
@@ -399,23 +420,23 @@ function getWounds(character) {
 }
 
 function getMovement(character) {
-  return getMovementFormula(character.species) + character.modifiers.movement;
+  return getMovementFormula(character.speciesWithRegion) + character.modifiers.movement;
 }
 
 function getBaseAttributes(character) {
   return sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(character.species) },
+    { multiplier: 1, attributes: getAttributes(character.speciesWithRegion) },
     { multiplier: 1, attributes: character.attributeRolls },
   ]);
 }
 
 function getRacialAttributes(character) {
-  return getAttributes(character.species);
+  return getAttributes(character.speciesWithRegion);
 }
 
 function getTotalAttributes(character) {
   return sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(character.species) },
+    { multiplier: 1, attributes: getAttributes(character.speciesWithRegion) },
     { multiplier: 1, attributes: character.attributeRolls },
     { multiplier: 1, attributes: character.attributeAdvances },
     { multiplier: 1, attributes: character.modifiers.attributes },
@@ -425,7 +446,7 @@ function getTotalAttributes(character) {
 function characterForDisplayToCsv(charForDisplay) {
   let csv = "Name,Species,Career,Class,Status,,,,,,\n";
   csv += csvStr(charForDisplay.name) + ",";
-  csv += csvStr(charForDisplay.species) + ",";
+  csv += csvStr(charForDisplay.speciesWithRegion) + ",";
   csv += csvStr(`${charForDisplay.careerName} (${charForDisplay.careerLevelName})`) + ",";
   csv += csvStr(charForDisplay.className) + ",";
   csv += csvStr(charForDisplay.status + " " + charForDisplay.standing) + ",";
@@ -624,7 +645,6 @@ function characterForDisplayToCsv(charForDisplay) {
 }
 
 export {
-  species,
   generateEmptyCharacter,
   generateNewCharacter,
   CharacterApi,
@@ -637,5 +657,7 @@ export {
   getTotalAttributes,
   generateEmptyCharacterForDisplay,
   characterForDisplayToCsv,
-  speciesOptions,
+  speciesWithRegion,
+  speciesWithRegionOptions,
+  speciesWithRegionToSpecies,
 };
