@@ -17,7 +17,7 @@
             previous
             <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
             and on our
-            <b-link href="" target="_blank">Ko-fi blog.</b-link>
+            <b-link href="https://ko-fi.com/post/Region-specific-character-generation-T6T3KXU3N" target="_blank">Ko-fi blog.</b-link>
           </p>
           <p>
             As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
