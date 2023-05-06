@@ -1,6 +1,5 @@
 import os
 from pymongo import MongoClient
-import re
 
 MONGO_URI = os.environ["MONGO_URI"]
 DB_NAME = os.environ["DB_NAME"]
@@ -44,5 +43,15 @@ def find_in_skills(id):
     print(f"characters with skill: {used}")
 
 
+def check_characters():
+    not_converted = []
+    chars = DB["character"].find()
+    for char in chars:
+        if not isinstance(char["species"], str):
+            not_converted.append(char["name"])
+
+    print(f"not converted characters: {not_converted}")
+
+
 if __name__ == "__main__":
-    find_in_skills("63eea8f4af86ce22afb0f5b4")
+    check_characters()

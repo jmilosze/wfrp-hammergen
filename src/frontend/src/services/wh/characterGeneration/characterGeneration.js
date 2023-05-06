@@ -7,7 +7,7 @@ import { genTalentsAndAdvances } from "./talentGeneration";
 import { getAttributes, sumAndMultAttr } from "@/services/wh/attributes";
 import * as c from "../characterConstants";
 
-function generateFateAndResilience(speciesWithRegion) {
+export function generateFateAndResilience(speciesWithRegion) {
   let fate;
   let resilience;
   let extra;
@@ -86,7 +86,7 @@ export function generateClassItems(classItems) {
   return items;
 }
 
-export default function generateCharacter(
+export function generateCharacter(
   genSpeciesWithRegion,
   genCareer,
   listOfCareers,

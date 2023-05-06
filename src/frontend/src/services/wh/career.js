@@ -197,6 +197,26 @@ const compareCareer = (career1, career2) => {
   return compareObjects(career1.source, career2.source);
 };
 
+function getCareerLevel(career, number) {
+  if (number === 1) {
+    return career.levelOne;
+  }
+
+  if (number === 2) {
+    return career.levelTwo;
+  }
+
+  if (number === 3) {
+    return career.levelThree;
+  }
+
+  if (number === 4) {
+    return career.levelFour;
+  }
+
+  return generateEmptyLevel();
+}
+
 export {
   careerClasses,
   statusTiers,
@@ -208,4 +228,5 @@ export {
   careerClassOptions,
   species,
   speciesOptions,
+  getCareerLevel,
 };

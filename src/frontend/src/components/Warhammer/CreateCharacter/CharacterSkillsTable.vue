@@ -13,7 +13,17 @@
       Add/Modify
     </b-button>
 
-    <b-button size="sm" class="mb-2 mr-2" @click="clearAll" variant="danger" :disabled="disabled"> Clear All </b-button>
+    <b-button
+      size="sm"
+      class="mb-2 mr-2"
+      @click="addSpeciesSkills"
+      variant="primary"
+      :disabled="disabled || !canGenerateSkills"
+    >
+      Add Species Skills
+    </b-button>
+
+    <b-button size="sm" class="mb-2 mr-2" @click="clearAll" variant="danger" :disabled="disabled"> Clear All</b-button>
 
     <b-modal id="edit-skills" title="Add/Remove Skills" ok-only ok-title="Close" scrollable>
       <b-form-group>
@@ -104,6 +114,7 @@ import { addSpaces } from "../../../utils/stringUtils";
 import { SkillApi, skillAttributeTypesGroup, skillTypesGroup } from "../../../services/wh/skill";
 import { authRequest } from "../../../services/auth";
 import { compareNumberFn, compareStringFn } from "../../../utils/comapreUtils";
+import { generateSpeciesSkills, resolveSkillGroups } from "../../../services/wh/characterGeneration/skillGeneration";
 
 const MAX_CHARS = 15;
 
@@ -117,6 +128,10 @@ export default {
     },
     characterAtts: {
       type: Object,
+      required: true,
+    },
+    speciesSkills: {
+      type: Array,
       required: true,
     },
   },
@@ -147,6 +162,9 @@ export default {
     this.loadData();
   },
   computed: {
+    canGenerateSkills() {
+      return !!this.speciesSkills.length;
+    },
     displayItems() {
       try {
         return this.listOfItems.filter((x) => x.number !== 0);
@@ -170,6 +188,18 @@ export default {
     },
   },
   methods: {
+    addSpeciesSkills() {
+      const resolvedSkillGroups = resolveSkillGroups(this.listOfItems);
+      const generatedSkills = generateSpeciesSkills(this.speciesSkills, resolvedSkillGroups);
+
+      for (let [genSkillId, genSkillNum] of Object.entries(generatedSkills)) {
+        let skillToUpdate = this.listOfItems.find((x) => x.id === genSkillId);
+        if (skillToUpdate && skillToUpdate.number < genSkillNum) {
+          skillToUpdate.number = genSkillNum;
+          this.selectItem(skillToUpdate);
+        }
+      }
+    },
     onSort(ctx) {
       this.sortListOfItems(ctx.sortDesc, ctx.sortBy);
     },

@@ -181,6 +181,52 @@
             </b-row>
 
             <b-row>
+              <b-col sm="6">
+                <b-button
+                  size="sm"
+                  variant="primary"
+                  class="mb-2"
+                  @click="setFateResilience"
+                  :disabled="!element.canEdit"
+                >
+                  Set Fate/Resilience
+                </b-button>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6">
+                <b-form-group label="Status" label-for="status-input">
+                  <b-form-select
+                    id="status-input"
+                    :disabled="!element.canEdit"
+                    :options="statusOptions"
+                    v-model="element.status"
+                  >
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6">
+                <b-form-group label="Standing" label-for="standing-input">
+                  <b-form-select
+                    id="standing-input"
+                    :disabled="!element.canEdit"
+                    :options="standingOptions"
+                    v-model="element.standing"
+                  >
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col sm="6">
+                <b-button size="sm" variant="primary" class="mb-2" @click="setStatus" :disabled="!element.canEdit">
+                  Set Career Status
+                </b-button>
+              </b-col>
+            </b-row>
+
+            <b-row>
               <b-col sm="4">
                 <b-form-group label="Brass Pennies" label-for="brass-input">
                   <b-form-input
@@ -249,31 +295,6 @@
                   <b-form-invalid-feedback :state="validCurrentExp[0]"
                     >{{ validCurrentExp[1] }}
                   </b-form-invalid-feedback>
-                </b-form-group>
-              </b-col>
-            </b-row>
-
-            <b-row>
-              <b-col sm="6">
-                <b-form-group label="Status" label-for="status-input">
-                  <b-form-select
-                    id="status-input"
-                    :disabled="!element.canEdit"
-                    :options="statusOptions"
-                    v-model="element.status"
-                  >
-                  </b-form-select>
-                </b-form-group>
-              </b-col>
-              <b-col sm="6">
-                <b-form-group label="Standing" label-for="standing-input">
-                  <b-form-select
-                    id="standing-input"
-                    :disabled="!element.canEdit"
-                    :options="standingOptions"
-                    v-model="element.standing"
-                  >
-                  </b-form-select>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -719,6 +740,7 @@
                 :disabled="!element.canEdit"
                 :characterSkills="initialSkills"
                 :characterAtts="total"
+                :speciesSkills="speciesSkills"
                 :canSave="validAll"
                 @listOfSkills="listOfSkills = $event"
                 @selectedChanged="updateIdNumberList(element.skills, $event)"
@@ -833,7 +855,10 @@ import CharacterMutationsTable from "./CharacterMutationsTable.vue";
 import PublicElementBox from "../PublicElementBox.vue";
 import generateName from "../../../services/wh/characterGeneration/nameGeneration";
 import generateDescription from "../../../services/wh/characterGeneration/descriptionGeneration";
-import generateCharacter from "../../../services/wh/characterGeneration/characterGeneration";
+import {
+  generateCharacter,
+  generateFateAndResilience,
+} from "../../../services/wh/characterGeneration/characterGeneration";
 import { generateRolls } from "../../../services/wh/characterGeneration/attGeneration";
 import { authRequest } from "../../../services/auth";
 import {
@@ -850,7 +875,7 @@ import {
   speciesWithRegionToSpecies,
 } from "../../../services/wh/character";
 import * as c from "../../../services/wh/characterConstants";
-import { statusStandings, statusTiers } from "../../../services/wh/career";
+import { getCareerLevel, statusStandings, statusTiers } from "../../../services/wh/career";
 import { generateEmptyModifiers, sumAndMultModifiers } from "../../../services/wh/characterModifiers";
 import {
   validWhCharCoin,
@@ -953,6 +978,13 @@ export default {
         return [];
       }
     },
+    speciesSkills() {
+      if (this.generationProps && Object.hasOwn(this.generationProps, "species_skills")) {
+        return this.generationProps.species_skills[this.element.speciesWithRegion];
+      } else {
+        return [];
+      }
+    },
     randomTalents() {
       if (this.generationProps && Object.hasOwn(this.generationProps, "random_talents")) {
         return this.generationProps.random_talents;
@@ -1046,6 +1078,18 @@ export default {
     },
   },
   methods: {
+    setStatus() {
+      let career = this.listOfCareers.find((x) => x.id === this.element.career.id);
+      const lvl = this.element.career.number;
+      const careerWithLevel = getCareerLevel(career, lvl);
+      this.element.status = careerWithLevel.status;
+      this.element.standing = careerWithLevel.standing;
+    },
+    setFateResilience() {
+      [this.element.fate, this.element.resilience] = generateFateAndResilience(this.element.speciesWithRegion);
+      this.element.fortune = this.element.fate;
+      this.element.resolve = this.element.resilience;
+    },
     generateCareers(includeRandom, speciesWithRegion) {
       let species = speciesWithRegionToSpecies(speciesWithRegion);
       let careers = this.listOfCareers
