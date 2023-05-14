@@ -21,6 +21,19 @@ import {
 } from "./utils";
 import { getAttributes, sumAndMultAttr } from "./attributes";
 import { generateEmptyModifiers, sumAndMultModifiers } from "./characterModifiers";
+import {
+  HALFLING_ASHFIELD,
+  HALFLING_BRAMBLEDOWN,
+  HALFLING_BRANDYSNAP,
+  HALFLING_HAYFOOT,
+  HALFLING_HAYFOOT_HOLLYFOOT,
+  HALFLING_HOLLYFOOT,
+  HALFLING_LOSTPOCKETS,
+  HALFLING_LOWHAVEN,
+  HALFLING_RUMSTER,
+  HALFLING_SKELFSIDER,
+  HALFLING_THORNCOBBLE, HALFLING_TUMBLEBERRY
+} from "./characterConstants";
 
 const apiBasePath = "/api/character";
 const apiCharacterDisplayPath = "/api/character_resolved";
@@ -41,6 +54,18 @@ const speciesWithRegion = {
   [c.HUMAN_NORSE_SARL]: "Human (Norse Sarl)",
   [c.HUMAN_NORSE_SKAELING]: "Human (Norse Skaeling)",
   [c.HALFLING_DEFAULT]: "Halfling",
+  [c.HALFLING_ASHFIELD]: "Halfling (Ashfield)",
+  [c.HALFLING_BRAMBLEDOWN]: "Halfling (Brambledown)",
+  [c.HALFLING_BRANDYSNAP]: "Halfling (Brandysnap)",
+  [c.HALFLING_HAYFOOT]: "Halfling (Hayfoot)",
+  [c.HALFLING_HOLLYFOOT]: "Halfling (Hollyfoot)",
+  [c.HALFLING_HAYFOOT_HOLLYFOOT]: "Halfling (Hayfoot-Hollyfoot)",
+  [c.HALFLING_LOSTPOCKETS]: "Halfling (Lostpockets)",
+  [c.HALFLING_LOWHAVEN]: "Halfling (Lowhaven)",
+  [c.HALFLING_RUMSTER]: "Halfling (Rumster)",
+  [c.HALFLING_SKELFSIDER]: "Halfling (Skelfsider)",
+  [c.HALFLING_THORNCOBBLE]: "Halfling (Thorncobble)",
+  [c.HALFLING_TUMBLEBERRY]: "Halfling (Tumbleberry)",
   [c.DWARF_DEFAULT]: "Dwarf",
   [c.DWARF_ALTDORF]: "Dwarf (Atldorf)",
   [c.DWARF_CRAGFORGE_CLAN]: "Dwarf (Cragforge Clan)",

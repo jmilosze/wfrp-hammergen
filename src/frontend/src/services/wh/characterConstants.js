@@ -13,6 +13,18 @@ export const HUMAN_NORSE_BJORNLING = "0011"; // Sea of Claws p. 56
 export const HUMAN_NORSE_SARL = "0012"; // Sea of Claws p. 56
 export const HUMAN_NORSE_SKAELING = "0013"; // Sea of Claws p. 56
 export const HALFLING_DEFAULT = "0100"; // WFRP p. 26
+export const HALFLING_ASHFIELD = "0101"; // Archives I p. 32
+export const HALFLING_BRAMBLEDOWN = "0102"; // Archives I p. 32
+export const HALFLING_BRANDYSNAP = "0103"; // Archives I p. 32
+export const HALFLING_HAYFOOT = "0104"; // Archives I p. 32
+export const HALFLING_HOLLYFOOT = "0105"; // Archives I p. 32
+export const HALFLING_HAYFOOT_HOLLYFOOT = "0106"; // Archives I p. 32
+export const HALFLING_LOSTPOCKETS = "0107"; // Archives I p. 32
+export const HALFLING_LOWHAVEN = "0108"; // Archives I p. 32
+export const HALFLING_RUMSTER = "0109"; // Archives I p. 32
+export const HALFLING_SKELFSIDER = "0110"; // Archives I p. 32
+export const HALFLING_THORNCOBBLE = "0111"; // Archives I p. 32
+export const HALFLING_TUMBLEBERRY = "0112"; // Archives I p. 32
 export const DWARF_DEFAULT = "0200"; // WFRP p. 25
 export const DWARF_ALTDORF = "0201"; // Archives III p. 83
 export const DWARF_CRAGFORGE_CLAN = "0202"; // Salzenmund p. 142
@@ -40,7 +52,21 @@ export const HUMAN_LIST = [
   HUMAN_NORSE_SKAELING,
 ];
 
-export const HALFLING_LIST = [HALFLING_DEFAULT];
+export const HALFLING_LIST = [
+  HALFLING_DEFAULT,
+  HALFLING_ASHFIELD,
+  HALFLING_BRAMBLEDOWN,
+  HALFLING_BRANDYSNAP,
+  HALFLING_HAYFOOT,
+  HALFLING_HOLLYFOOT,
+  HALFLING_HAYFOOT_HOLLYFOOT,
+  HALFLING_LOSTPOCKETS,
+  HALFLING_LOWHAVEN,
+  HALFLING_RUMSTER,
+  HALFLING_SKELFSIDER,
+  HALFLING_THORNCOBBLE,
+  HALFLING_TUMBLEBERRY,
+];
 
 export const DWARF_LIST = [DWARF_DEFAULT, DWARF_ALTDORF, DWARF_CRAGFORGE_CLAN, DWARF_GRUMSSON_CLAN, DWARF_NORSE];
 
