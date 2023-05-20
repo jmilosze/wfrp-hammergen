@@ -23,7 +23,9 @@ func NewWhService(v *validator.Validate, db domain.WhDbService) *WhService {
 func (s *WhService) SeedWh(ctx context.Context, t domain.WhType, whs []*domain.Wh) {
 	for _, wh := range whs {
 		if _, dbErr := s.WhDbService.Create(ctx, t, wh); dbErr != nil {
-			log.Fatal(dbErr)
+			if dbErr.Type != domain.DbAlreadyExistsError {
+				log.Fatal(dbErr)
+			}
 		}
 	}
 }

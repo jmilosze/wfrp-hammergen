@@ -78,15 +78,15 @@ func whCreateOrUpdateHandler(isCreate bool, s domain.WhService, t domain.WhType)
 }
 
 func whToMap(w *domain.Wh) (map[string]any, error) {
-	WhMap, err := structToMap(w.Object)
+	whMap, err := structToMap(w.Object)
 	if err != nil {
 		return map[string]any{}, fmt.Errorf("error while mapping wh structure %s", err)
 	}
-	WhMap["id"] = w.Id
-	WhMap["ownerId"] = w.OwnerId
-	WhMap["canEdit"] = w.CanEdit
+	whMap["id"] = w.Id
+	whMap["ownerId"] = w.OwnerId
+	whMap["canEdit"] = w.CanEdit
 
-	return WhMap, nil
+	return whMap, nil
 }
 
 func structToMap(m any) (map[string]any, error) {
@@ -99,6 +99,11 @@ func structToMap(m any) (map[string]any, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if res == nil {
+		res = map[string]any{}
+	}
+
 	return res, nil
 }
 
@@ -114,7 +119,7 @@ func whGetHandler(s domain.WhService, t domain.WhType) func(*gin.Context) {
 			case domain.WhNotFoundError:
 				c.JSON(NotFoundErrResp(""))
 			default:
-
+				c.JSON(ServerErrResp(""))
 			}
 			return
 		}

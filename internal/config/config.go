@@ -51,10 +51,9 @@ type Email struct {
 }
 
 type MongoDb struct {
-	Uri            string `default:"mongodb://admin:admin@localhost:27017" split_words:"true"`
-	DbName         string `default:"hammergenGo" split_words:"true"`
-	UserCollection string `default:"user" split_words:"true"`
-	CreateIndexes  bool   `default:"true" split_words:"true"`
+	Uri               string `default:"mongodb://admin:admin@localhost:27017" split_words:"true"`
+	DbName            string `default:"hammergenGo" split_words:"true"`
+	CreateUserIndexes bool   `default:"true" split_words:"true"`
 }
 
 func NewConfig() Config {

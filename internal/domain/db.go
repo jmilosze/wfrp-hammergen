@@ -7,6 +7,8 @@ const (
 	DbAlreadyExistsError
 	DbInternalError
 	DbInvalidUserFieldError
+	DbNotImplementedError
+	DbWriteToDbError
 )
 
 type DbError struct {
@@ -20,4 +22,11 @@ func (e *DbError) Unwrap() error {
 
 func (e *DbError) Error() string {
 	return fmt.Sprintf("db error, %s", e.Err)
+}
+
+func CreateDbError(t int, e error) *DbError {
+	return &DbError{
+		Type: t,
+		Err:  e,
+	}
 }
