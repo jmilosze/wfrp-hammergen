@@ -119,12 +119,15 @@ func (a WHAttributes) Copy() WHAttributes {
 	}
 }
 
+type WhSource map[string]string
+
 type WhMutation struct {
-	Name        string      `json:"name" validate:"min=0,max=200,excludesall=<>"`
-	Description string      `json:"description" validate:"min=0,max=100000,excludesall=<>"`
+	Name        string      `json:"name" validate:"name_valid"`
+	Description string      `json:"description" validate:"desc_valid"`
 	Type        int         `json:"type" validate:"oneof=0 1"`
 	Modifiers   WhModifiers `json:"modifiers"`
-	Shared      bool        `json:"shared" validate:"boolean"`
+	Shared      bool        `json:"shared" validate:"shared_valid"`
+	Source      WhSource    `json:"source" validate:"source_valid"`
 }
 
 func (m WhMutation) IsShared() bool {
@@ -142,13 +145,14 @@ func (m WhMutation) Copy() WhObject {
 }
 
 type WhSpell struct {
-	Name        string `json:"name" validate:"min=0,max=200,excludesall=<>"`
-	Description string `json:"description" validate:"min=0,max=100000,excludesall=<>"`
-	Cn          int    `json:"cn" validate:"min=-1,max=99"`
-	Range       string `json:"range" validate:"min=0,max=200,excludesall=<>"`
-	Target      string `json:"target" validate:"min=0,max=200,excludesall=<>"`
-	Duration    string `json:"duration" validate:"min=0,max=200,excludesall=<>"`
-	Shared      bool   `json:"shared" validate:"boolean"`
+	Name        string   `json:"name" validate:"name_valid"`
+	Description string   `json:"description" validate:"desc_valid"`
+	Cn          int      `json:"cn" validate:"min=-1,max=99"`
+	Range       string   `json:"range" validate:"medium_string_valid"`
+	Target      string   `json:"target" validate:"medium_string_valid"`
+	Duration    string   `json:"duration" validate:"medium_string_valid"`
+	Shared      bool     `json:"shared" validate:"shared_valid"`
+	Source      WhSource `json:"source" validate:"source_valid"`
 }
 
 func (s WhSpell) IsShared() bool {

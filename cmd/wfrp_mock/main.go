@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/golangjwt"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/memdb"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockcaptcha"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockemail"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/validator"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/http"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
@@ -28,7 +28,7 @@ func main() {
 func run() error {
 	cfg := config.NewConfig()
 
-	val := validator.New()
+	val := validator.NewValidator()
 
 	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, cfg.Jwt.AccessExpiry, cfg.Jwt.ResetExpiry)
 	emailService := mockemail.NewEmailService(cfg.Email.FromAddress)
