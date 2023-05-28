@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	d "github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,19 +12,19 @@ import (
 
 type WhDbService struct {
 	Db          *DbService
-	Collections map[d.WhType]*mongo.Collection
+	Collections map[warhammer.WhType]*mongo.Collection
 }
 
 func NewWhDbService(db *DbService) *WhDbService {
-	collections := map[d.WhType]*mongo.Collection{
-		d.WhTypeMutation: db.Client.Database(db.DbName).Collection(d.WhTypeMutation),
-		d.WhTypeSpell:    db.Client.Database(db.DbName).Collection(d.WhTypeSpell),
-	}
+	collections := map[warhammer.WhType]*mongo.Collection{}
 
+	for _, whType := range warhammer.WhTypes {
+		collections[whType] = db.Client.Database(db.DbName).Collection(string(whType))
+	}
 	return &WhDbService{Db: db, Collections: collections}
 }
 
-func (s *WhDbService) Retrieve(ctx context.Context, t d.WhType, whId string, userIds []string, sharedUserIds []string) (*d.Wh, *d.DbError) {
+func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, whId string, userIds []string, sharedUserIds []string) (*warhammer.Wh, *d.DbError) {
 	id, err := primitive.ObjectIDFromHex(whId)
 	if err != nil {
 		return nil, d.CreateDbError(d.DbInternalError, err)
@@ -65,7 +66,7 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 	return bson.M{"$or": owners}
 }
 
-func bsonMToWh(whMap bson.M, t d.WhType) (*d.Wh, error) {
+func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 	id, ok := whMap["_id"].(primitive.ObjectID)
 	if !ok {
 		return nil, errors.New("invalid object id")
@@ -76,20 +77,14 @@ func bsonMToWh(whMap bson.M, t d.WhType) (*d.Wh, error) {
 		return nil, errors.New("invalid owner id")
 	}
 
-	wh := d.Wh{
-		Id:      id.Hex(),
-		OwnerId: ownerId,
-		CanEdit: false,
+	wh, err := warhammer.NewWh(t)
+	if err != nil {
+		return nil, err
 	}
 
-	switch t {
-	case d.WhTypeMutation:
-		wh.Object = &d.WhMutation{}
-	case d.WhTypeSpell:
-		wh.Object = &d.WhSpell{}
-	default:
-		return nil, errors.New("unknown wh type")
-	}
+	wh.Id = id.Hex()
+	wh.OwnerId = ownerId
+	wh.CanEdit = false
 
 	bsonRaw, err := bson.Marshal(whMap["object"])
 	if err != nil {
@@ -103,7 +98,7 @@ func bsonMToWh(whMap bson.M, t d.WhType) (*d.Wh, error) {
 	return &wh, nil
 }
 
-func (s *WhDbService) Create(ctx context.Context, t d.WhType, w *d.Wh) (*d.Wh, *d.DbError) {
+func (s *WhDbService) Create(ctx context.Context, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, *d.DbError) {
 	whBsonM, err := whToBsonM(w)
 	if err != nil {
 		return nil, d.CreateDbError(d.DbWriteToDbError, err)
@@ -120,7 +115,7 @@ func (s *WhDbService) Create(ctx context.Context, t d.WhType, w *d.Wh) (*d.Wh, *
 	return w, nil
 }
 
-func whToBsonM(w *d.Wh) (bson.M, error) {
+func whToBsonM(w *warhammer.Wh) (bson.M, error) {
 	wBson, err := bson.Marshal(w)
 	if err != nil {
 		return nil, err
@@ -144,7 +139,7 @@ func whToBsonM(w *d.Wh) (bson.M, error) {
 	return whMap, err
 }
 
-func (s *WhDbService) Update(ctx context.Context, t d.WhType, w *d.Wh, userId string) (*d.Wh, *d.DbError) {
+func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhammer.Wh, userId string) (*warhammer.Wh, *d.DbError) {
 	id, err := primitive.ObjectIDFromHex(w.Id)
 	if err != nil {
 		return nil, d.CreateDbError(d.DbInternalError, err)
@@ -169,7 +164,7 @@ func (s *WhDbService) Update(ctx context.Context, t d.WhType, w *d.Wh, userId st
 	return w, nil
 }
 
-func (s *WhDbService) Delete(ctx context.Context, t d.WhType, whId string, userId string) *d.DbError {
+func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId string, userId string) *d.DbError {
 	id, err := primitive.ObjectIDFromHex(whId)
 	if err != nil {
 		return d.CreateDbError(d.DbInternalError, err)
@@ -183,7 +178,7 @@ func (s *WhDbService) Delete(ctx context.Context, t d.WhType, whId string, userI
 	return nil
 }
 
-func (s *WhDbService) RetrieveAll(ctx context.Context, t d.WhType, userIds []string, sharedUserIds []string) ([]*d.Wh, *d.DbError) {
+func (s *WhDbService) RetrieveAll(ctx context.Context, t warhammer.WhType, userIds []string, sharedUserIds []string) ([]*warhammer.Wh, *d.DbError) {
 	filter := allAllowedOwnersQuery(userIds, sharedUserIds)
 
 	cur, err := s.Collections[t].Find(ctx, filter)
@@ -193,7 +188,7 @@ func (s *WhDbService) RetrieveAll(ctx context.Context, t d.WhType, userIds []str
 		return nil, d.CreateDbError(d.DbInternalError, err)
 	}
 
-	var whList []*d.Wh
+	var whList []*warhammer.Wh
 
 	for cur.Next(context.Background()) {
 		var whMap bson.M

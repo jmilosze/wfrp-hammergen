@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -46,7 +47,7 @@ func NewUserDbService(db *DbService, createIndex bool) *UserDbService {
 	return &UserDbService{Db: db, Collection: coll}
 }
 
-func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*domain.User, *domain.DbError) {
+func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*user.User, *domain.DbError) {
 	if fieldName != "username" && fieldName != "id" {
 		return nil, &domain.DbError{Type: domain.DbInvalidUserFieldError, Err: fmt.Errorf("invalid field name %s", fieldName)}
 	}
@@ -151,13 +152,13 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 	return users, nil
 }
 
-func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*domain.User, *domain.DbError) {
+func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, *domain.DbError) {
 	mongoUsers, err := getMany(ctx, s.Collection, "username", nil)
 	if err != nil {
 		return nil, err
 	}
 
-	users := make([]*domain.User, len(mongoUsers))
+	users := make([]*user.User, len(mongoUsers))
 	for i, u := range mongoUsers {
 		users[i] = newUserFromMongo(u, mongoUsers)
 	}
@@ -165,7 +166,7 @@ func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*domain.User, *domai
 	return users, nil
 }
 
-func (s *UserDbService) Create(ctx context.Context, u *domain.User) (*domain.User, *domain.DbError) {
+func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
 	linkedUsers, dbErr := getLinkedUsers(ctx, s.Collection, u.SharedAccountNames)
 	if dbErr != nil {
 		return nil, dbErr
@@ -197,7 +198,7 @@ func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts [
 	return linkedUsers, nil
 }
 
-func newMongoFromUser(u *domain.User, linkedUsers []*Mongo) (*Mongo, error) {
+func newMongoFromUser(u *user.User, linkedUsers []*Mongo) (*Mongo, error) {
 	id, err := primitive.ObjectIDFromHex(u.Id)
 	if err != nil {
 		return nil, err
@@ -231,7 +232,7 @@ func usernamesToIds(usernames []string, us []*Mongo) []primitive.ObjectID {
 	return ids
 }
 
-func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *domain.User {
+func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *user.User {
 	var sharedAccountIds []string
 	if u.SharedAccountIds != nil {
 		sharedAccountIds = make([]string, len(u.SharedAccountIds))
@@ -242,7 +243,7 @@ func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *domain.User {
 		sharedAccountIds = nil
 	}
 
-	user := domain.EmptyUser()
+	user := user.EmptyUser()
 	user.Id = u.Id.Hex()
 	user.Username = u.Username
 	user.Admin = u.Admin
@@ -276,7 +277,7 @@ func idsToUsernames(ids []primitive.ObjectID, users []*Mongo) []string {
 	return usernames
 }
 
-func (s *UserDbService) Update(ctx context.Context, user *domain.User) (*domain.User, *domain.DbError) {
+func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User, *domain.DbError) {
 	linkedUsers, dbErr := getLinkedUsers(ctx, s.Collection, user.SharedAccountNames)
 	if dbErr != nil {
 		return nil, dbErr

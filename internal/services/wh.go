@@ -6,6 +6,8 @@ import (
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/rs/xid"
 	"golang.org/x/exp/slices"
 	"log"
@@ -13,14 +15,14 @@ import (
 
 type WhService struct {
 	Validator   *validator.Validate
-	WhDbService domain.WhDbService
+	WhDbService warhammer.WhDbService
 }
 
-func NewWhService(v *validator.Validate, db domain.WhDbService) *WhService {
+func NewWhService(v *validator.Validate, db warhammer.WhDbService) *WhService {
 	return &WhService{Validator: v, WhDbService: db}
 }
 
-func (s *WhService) SeedWh(ctx context.Context, t domain.WhType, whs []*domain.Wh) {
+func (s *WhService) SeedWh(ctx context.Context, t warhammer.WhType, whs []*warhammer.Wh) {
 	for _, wh := range whs {
 		if _, dbErr := s.WhDbService.Create(ctx, t, wh); dbErr != nil {
 			if dbErr.Type != domain.DbAlreadyExistsError {
@@ -30,25 +32,27 @@ func (s *WhService) SeedWh(ctx context.Context, t domain.WhType, whs []*domain.W
 	}
 }
 
-func (s *WhService) Create(ctx context.Context, t domain.WhType, w *domain.Wh, c *domain.Claims) (*domain.Wh, *domain.WhError) {
+func (s *WhService) Create(ctx context.Context, t warhammer.WhType, w *warhammer.Wh, c *domain.Claims) (*warhammer.Wh, *warhammer.WhError) {
 	if c.Id == "anonymous" {
-		return nil, &domain.WhError{WhType: t, ErrType: domain.WhUnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &warhammer.WhError{WhType: t, ErrType: warhammer.WhUnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
-	if err := s.Validator.Struct(w); err != nil {
-		return nil, &domain.WhError{WhType: t, ErrType: domain.WhInvalidArgumentsError, Err: err}
+	newWh := w.InitAndCopy()
+
+	if err := s.Validator.Struct(newWh); err != nil {
+		return nil, &warhammer.WhError{WhType: t, ErrType: warhammer.WhInvalidArgumentsError, Err: err}
 	}
 
 	if c.Admin {
-		w.OwnerId = "admin"
+		newWh.OwnerId = "admin"
 	} else {
-		w.OwnerId = c.Id
+		newWh.OwnerId = c.Id
 	}
-	w.Id = hex.EncodeToString(xid.New().Bytes())
+	newWh.Id = hex.EncodeToString(xid.New().Bytes())
 
-	createdWh, dbErr := s.WhDbService.Create(ctx, t, w)
+	createdWh, dbErr := s.WhDbService.Create(ctx, t, newWh)
 	if dbErr != nil {
-		return nil, &domain.WhError{WhType: t, ErrType: domain.UserInternalError, Err: dbErr}
+		return nil, &warhammer.WhError{WhType: t, ErrType: user.UserInternalError, Err: dbErr}
 	}
 
 	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
@@ -71,16 +75,16 @@ func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []strin
 	return false
 }
 
-func (s *WhService) Get(ctx context.Context, t domain.WhType, whId string, c *domain.Claims) (*domain.Wh, *domain.WhError) {
+func (s *WhService) Get(ctx context.Context, t warhammer.WhType, whId string, c *domain.Claims) (*warhammer.Wh, *warhammer.WhError) {
 	users := []string{"admin", c.Id}
 	wh, dbErr := s.WhDbService.Retrieve(ctx, t, whId, users, c.SharedAccounts)
 
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
-			return nil, &domain.WhError{ErrType: domain.WhNotFoundError, WhType: t, Err: dbErr}
+			return nil, &warhammer.WhError{ErrType: warhammer.WhNotFoundError, WhType: t, Err: dbErr}
 		default:
-			return nil, &domain.WhError{ErrType: domain.WhInternalError, WhType: t, Err: dbErr}
+			return nil, &warhammer.WhError{ErrType: warhammer.WhInternalError, WhType: t, Err: dbErr}
 		}
 	}
 
@@ -88,28 +92,30 @@ func (s *WhService) Get(ctx context.Context, t domain.WhType, whId string, c *do
 	return wh, nil
 }
 
-func (s *WhService) Update(ctx context.Context, t domain.WhType, w *domain.Wh, c *domain.Claims) (*domain.Wh, *domain.WhError) {
+func (s *WhService) Update(ctx context.Context, t warhammer.WhType, w *warhammer.Wh, c *domain.Claims) (*warhammer.Wh, *warhammer.WhError) {
 	if c.Id == "anonymous" {
-		return nil, &domain.WhError{WhType: t, ErrType: domain.WhUnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &warhammer.WhError{WhType: t, ErrType: warhammer.WhUnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
-	if err := s.Validator.Struct(w); err != nil {
-		return nil, &domain.WhError{WhType: t, ErrType: domain.WhInvalidArgumentsError, Err: err}
+	newWh := w.InitAndCopy()
+
+	if err := s.Validator.Struct(newWh); err != nil {
+		return nil, &warhammer.WhError{WhType: t, ErrType: warhammer.WhInvalidArgumentsError, Err: err}
 	}
 
 	if c.Admin {
-		w.OwnerId = "admin"
+		newWh.OwnerId = "admin"
 	} else {
-		w.OwnerId = c.Id
+		newWh.OwnerId = c.Id
 	}
 
-	updatedWh, dbErr := s.WhDbService.Update(ctx, t, w, c.Id)
+	updatedWh, dbErr := s.WhDbService.Update(ctx, t, newWh, c.Id)
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
-			return nil, &domain.WhError{ErrType: domain.WhNotFoundError, WhType: t, Err: dbErr}
+			return nil, &warhammer.WhError{ErrType: warhammer.WhNotFoundError, WhType: t, Err: dbErr}
 		default:
-			return nil, &domain.WhError{ErrType: domain.WhInternalError, WhType: t, Err: dbErr}
+			return nil, &warhammer.WhError{ErrType: warhammer.WhInternalError, WhType: t, Err: dbErr}
 		}
 	}
 
@@ -117,29 +123,29 @@ func (s *WhService) Update(ctx context.Context, t domain.WhType, w *domain.Wh, c
 	return updatedWh, nil
 }
 
-func (s *WhService) Delete(ctx context.Context, t domain.WhType, whId string, c *domain.Claims) *domain.WhError {
+func (s *WhService) Delete(ctx context.Context, t warhammer.WhType, whId string, c *domain.Claims) *warhammer.WhError {
 	if c.Id == "anonymous" {
-		return &domain.WhError{WhType: t, ErrType: domain.WhUnauthorizedError, Err: errors.New("unauthorized")}
+		return &warhammer.WhError{WhType: t, ErrType: warhammer.WhUnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
 	dbErr := s.WhDbService.Delete(ctx, t, whId, c.Id)
 	if dbErr != nil {
-		return &domain.WhError{ErrType: domain.WhInternalError, WhType: t, Err: dbErr}
+		return &warhammer.WhError{ErrType: warhammer.WhInternalError, WhType: t, Err: dbErr}
 	}
 
 	return nil
 }
 
-func (s *WhService) List(ctx context.Context, t domain.WhType, c *domain.Claims) ([]*domain.Wh, *domain.WhError) {
+func (s *WhService) List(ctx context.Context, t warhammer.WhType, c *domain.Claims) ([]*warhammer.Wh, *warhammer.WhError) {
 	users := []string{"admin", c.Id}
 	whs, dbErr := s.WhDbService.RetrieveAll(ctx, t, users, c.SharedAccounts)
 
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
-			return nil, &domain.WhError{ErrType: domain.WhNotFoundError, WhType: t, Err: dbErr}
+			return nil, &warhammer.WhError{ErrType: warhammer.WhNotFoundError, WhType: t, Err: dbErr}
 		default:
-			return nil, &domain.WhError{ErrType: domain.WhInternalError, WhType: t, Err: dbErr}
+			return nil, &warhammer.WhError{ErrType: warhammer.WhInternalError, WhType: t, Err: dbErr}
 		}
 	}
 

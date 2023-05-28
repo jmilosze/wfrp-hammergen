@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/go-memdb"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"golang.org/x/exp/slices"
 )
 
@@ -45,7 +46,7 @@ func createNewUserMemDb() (*memdb.MemDB, error) {
 	return memdb.NewMemDB(schema)
 }
 
-func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*domain.User, *domain.DbError) {
+func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*user.User, *domain.DbError) {
 	if fieldName != "username" && fieldName != "id" {
 		return nil, &domain.DbError{Type: domain.DbInvalidUserFieldError, Err: fmt.Errorf("invalid field name %s", fieldName)}
 	}
@@ -65,7 +66,7 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	return user, nil
 }
 
-func getOneUser(db *memdb.MemDB, fieldName string, fieldValue string) (*domain.User, *domain.DbError) {
+func getOneUser(db *memdb.MemDB, fieldName string, fieldValue string) (*user.User, *domain.DbError) {
 	txn := db.Txn(false)
 	userRaw, err := txn.First("user", fieldName, fieldValue)
 	if err != nil {
@@ -75,18 +76,18 @@ func getOneUser(db *memdb.MemDB, fieldName string, fieldValue string) (*domain.U
 	if userRaw == nil {
 		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
 	}
-	user := userRaw.(*domain.User)
+	user := userRaw.(*user.User)
 
 	return user.Copy(), nil
 }
 
-func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*domain.User, *domain.DbError) {
+func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*user.User, *domain.DbError) {
 	getAll := false
 	if fieldValues == nil {
 		getAll = true
 	} else {
 		if len(fieldValues) == 0 {
-			return []*domain.User{}, nil
+			return []*user.User{}, nil
 		}
 	}
 
@@ -97,9 +98,9 @@ func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*d
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}
 
-	var users []*domain.User
+	var users []*user.User
 	for obj := it.Next(); obj != nil; obj = it.Next() {
-		u := obj.(*domain.User)
+		u := obj.(*user.User)
 		if getAll {
 			users = append(users, u.Copy())
 		} else {
@@ -114,7 +115,7 @@ func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*d
 	return users, nil
 }
 
-func idsToUsernames(ids []string, us []*domain.User) []string {
+func idsToUsernames(ids []string, us []*user.User) []string {
 	userDbMap := map[string]string{}
 	for _, u := range us {
 		userDbMap[u.Id] = u.Username
@@ -129,7 +130,7 @@ func idsToUsernames(ids []string, us []*domain.User) []string {
 	return usernames
 }
 
-func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*domain.User, *domain.DbError) {
+func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, *domain.DbError) {
 	users, err := getManyUsers(s.Db, "username", nil)
 	if err != nil {
 		return nil, err
@@ -142,15 +143,15 @@ func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*domain.User, *domai
 	return users, nil
 }
 
-func (s *UserDbService) Create(ctx context.Context, u *domain.User) (*domain.User, *domain.DbError) {
+func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
 	return upsertUser(s, u, true)
 }
 
-func (s *UserDbService) Update(ctx context.Context, u *domain.User) (*domain.User, *domain.DbError) {
+func (s *UserDbService) Update(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
 	return upsertUser(s, u, false)
 }
 
-func upsertUser(s *UserDbService, user *domain.User, failIfUsernameExists bool) (*domain.User, *domain.DbError) {
+func upsertUser(s *UserDbService, user *user.User, failIfUsernameExists bool) (*user.User, *domain.DbError) {
 	_, dbErr := getOneUser(s.Db, "username", user.Username)
 	if failIfUsernameExists && dbErr == nil {
 		return nil, &domain.DbError{Type: domain.DbAlreadyExistsError, Err: errors.New("user already exists")}
@@ -178,7 +179,7 @@ func upsertUser(s *UserDbService, user *domain.User, failIfUsernameExists bool) 
 	return userUpsert.Copy(), nil
 }
 
-func usernamesToIds(usernames []string, us []*domain.User) []string {
+func usernamesToIds(usernames []string, us []*user.User) []string {
 	userDbMap := map[string]string{}
 	for _, u := range us {
 		userDbMap[u.Username] = u.Id

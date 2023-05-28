@@ -1,20 +1,8 @@
-package domain
+package user
 
 import (
-	"context"
-	"fmt"
 	"strings"
 	"time"
-)
-
-const (
-	UserNotFoundError = iota
-	UserAlreadyExistsError
-	UserInternalError
-	UserIncorrectPasswordError
-	UserInvalidArgumentsError
-	UserSendEmailError
-	UserUnauthorizedError
 )
 
 type User struct {
@@ -72,31 +60,4 @@ func EmptyUser() *User {
 	u.PasswordHash = make([]byte, 0)
 
 	return u
-}
-
-type UserService interface {
-	Get(ctx context.Context, c *Claims, id string) (*User, *UserError)
-	Exists(ctx context.Context, username string) (bool, *UserError)
-	Create(ctx context.Context, u *User) (*User, *UserError)
-	Update(ctx context.Context, c *Claims, u *User) (*User, *UserError)
-	UpdateCredentials(ctx context.Context, c *Claims, currentPasswd string, u *User) (*User, *UserError)
-	UpdateClaims(ctx context.Context, c *Claims, u *User) (*User, *UserError)
-	Delete(ctx context.Context, c *Claims, id string) *UserError
-	List(ctx context.Context, c *Claims) ([]*User, *UserError)
-	Authenticate(ctx context.Context, username string, password string) (u *User, ue *UserError)
-	SendResetPassword(ctx context.Context, username string) *UserError
-	ResetPassword(ctx context.Context, token string, newPassword string) *UserError
-}
-
-type UserError struct {
-	Type int
-	Err  error
-}
-
-func (e *UserError) Unwrap() error {
-	return e.Err
-}
-
-func (e *UserError) Error() string {
-	return fmt.Sprintf("user error, %s", e.Err)
 }
