@@ -9,7 +9,6 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
-	mock "github.com/jmilosze/wfrp-hammergen-go/test/mock_data"
 	"github.com/rs/xid"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -39,16 +38,10 @@ func NewUserService(cfg *config.UserService, db user.UserDbService, email domain
 
 }
 
-func (s *UserService) SeedUsers(ctx context.Context, us []*mock.UserSeed) {
+func (s *UserService) SeedUsers(ctx context.Context, us []*user.User) {
 	for _, u := range us {
-		newUser := user.EmptyUser()
-
-		newUser.Id = u.Id
-		newUser.Username = u.Username
+		newUser := u.Copy()
 		newUser.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(u.Password), s.BcryptCost)
-		newUser.SharedAccountNames = u.SharedAccounts
-		newUser.Admin = u.Admin
-
 		if _, dbErr := s.UserDbService.Create(ctx, newUser); dbErr != nil {
 			log.Fatal(dbErr)
 		}

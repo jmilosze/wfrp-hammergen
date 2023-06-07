@@ -15,7 +15,7 @@ var mutation0 = warhammer.Wh{
 		Modifiers: warhammer.WhModifiers{
 			Size:     1,
 			Movement: 1,
-			Attributes: warhammer.WHAttributes{
+			Attributes: warhammer.WhAttributes{
 				WS:  1,
 				BS:  2,
 				S:   3,

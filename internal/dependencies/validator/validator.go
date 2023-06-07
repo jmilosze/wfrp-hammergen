@@ -15,6 +15,12 @@ func configure(v *v.Validate) {
 	for k, r := range warhammer.GetWhCommonValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
+	for k, r := range warhammer.GetWhSourceValidationAliases() {
+		v.RegisterAlias(k, r)
+	}
+	for k, r := range warhammer.GetWhAttributeValidationAliases() {
+		v.RegisterAlias(k, r)
+	}
 	for k, r := range warhammer.GetWhMutationValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
@@ -22,6 +28,9 @@ func configure(v *v.Validate) {
 		v.RegisterAlias(k, r)
 	}
 	for k, r := range warhammer.GetWhItemValidationAliases() {
+		v.RegisterAlias(k, r)
+	}
+	for k, r := range warhammer.GetWhSkillValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
 }

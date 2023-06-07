@@ -232,20 +232,6 @@ func (input WhItemCarryType) InitAndCopy() WhItemCarryType {
 	return input
 }
 
-func GetWhItemValidationAliases() map[string]string {
-	return map[string]string{
-		"item_type_valid":             fmt.Sprintf("oneof=%s", itemTypeValues()),
-		"item_hands_valid":            fmt.Sprintf("oneof=%s", itemHandsValues()),
-		"item_melee_reach_valid":      fmt.Sprintf("oneof=%s", itemMeleeReachValues()),
-		"item_melee_group_valid":      fmt.Sprintf("oneof=%s", itemMeleeGroupValues()),
-		"item_ranged_group_valid":     fmt.Sprintf("oneof=%s", ItemRangedGroupValues()),
-		"item_ammunition_group_valid": fmt.Sprintf("oneof=%s", itemAmmunitionGroupValues()),
-		"item_armour_group_valid":     fmt.Sprintf("oneof=%s", itemArmourGroupValues()),
-		"item_armour_location_valid":  fmt.Sprintf("oneof=%s", itemArmourLocationValues()),
-		"item_carry_type_valid":       fmt.Sprintf("oneof=%s", itemCarryTypeValues()),
-	}
-}
-
 type WhItemMelee struct {
 	Hands     WhItemHands      `json:"hands" validate:"item_hands_valid"`
 	Dmg       int              `json:"dmg" validate:"gte=-100,lte=100"`
@@ -387,5 +373,19 @@ func (i WhItem) InitAndCopy() WhObject {
 		Container:  i.Container.InitAndCopy(),
 		Grimoire:   i.Grimoire.InitAndCopy(),
 		Other:      i.Other.InitAndCopy(),
+	}
+}
+
+func GetWhItemValidationAliases() map[string]string {
+	return map[string]string{
+		"item_type_valid":             fmt.Sprintf("oneof=%s", itemTypeValues()),
+		"item_hands_valid":            fmt.Sprintf("oneof=%s", itemHandsValues()),
+		"item_melee_reach_valid":      fmt.Sprintf("oneof=%s", itemMeleeReachValues()),
+		"item_melee_group_valid":      fmt.Sprintf("oneof=%s", itemMeleeGroupValues()),
+		"item_ranged_group_valid":     fmt.Sprintf("oneof=%s", ItemRangedGroupValues()),
+		"item_ammunition_group_valid": fmt.Sprintf("oneof=%s", itemAmmunitionGroupValues()),
+		"item_armour_group_valid":     fmt.Sprintf("oneof=%s", itemArmourGroupValues()),
+		"item_armour_location_valid":  fmt.Sprintf("oneof=%s", itemArmourLocationValues()),
+		"item_carry_type_valid":       fmt.Sprintf("oneof=%s", itemCarryTypeValues()),
 	}
 }

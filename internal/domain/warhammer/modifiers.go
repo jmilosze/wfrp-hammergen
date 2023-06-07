@@ -1,20 +1,6 @@
 package warhammer
 
-type WhModifiers struct {
-	Size       int `json:"size" validate:"min=-3,max=3"`
-	Movement   int `json:"movement" validate:"min=-3,max=3"`
-	Attributes WHAttributes
-}
-
-func (m WhModifiers) InitAndCopy() WhModifiers {
-	return WhModifiers{
-		Size:       m.Size,
-		Movement:   m.Movement,
-		Attributes: m.Attributes.InitAndCopy(),
-	}
-}
-
-type WHAttributes struct {
+type WhAttributes struct {
 	WS  int `json:"WS" validate:"min=-99,max=99"`
 	BS  int `json:"BS" validate:"min=-99,max=99"`
 	S   int `json:"S" validate:"min=-99,max=99"`
@@ -27,8 +13,8 @@ type WHAttributes struct {
 	Fel int `json:"Fel" validate:"min=-99,max=99"`
 }
 
-func (a WHAttributes) InitAndCopy() WHAttributes {
-	return WHAttributes{
+func (a WhAttributes) InitAndCopy() WhAttributes {
+	return WhAttributes{
 		WS:  a.WS,
 		BS:  a.BS,
 		S:   a.S,
@@ -39,5 +25,19 @@ func (a WHAttributes) InitAndCopy() WHAttributes {
 		Int: a.Int,
 		WP:  a.WP,
 		Fel: a.Fel,
+	}
+}
+
+type WhModifiers struct {
+	Size       int `json:"size" validate:"min=-3,max=3"`
+	Movement   int `json:"movement" validate:"min=-3,max=3"`
+	Attributes WhAttributes
+}
+
+func (m WhModifiers) InitAndCopy() WhModifiers {
+	return WhModifiers{
+		Size:       m.Size,
+		Movement:   m.Movement,
+		Attributes: m.Attributes.InitAndCopy(),
 	}
 }

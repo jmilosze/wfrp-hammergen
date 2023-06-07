@@ -9,7 +9,6 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockcaptcha"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockemail"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/validator"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/http"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
 	mock "github.com/jmilosze/wfrp-hammergen-go/test/mock_data"
@@ -43,19 +42,11 @@ func run() error {
 	defer cancel()
 
 	if cfg.UserService.CreateMockUsers {
-		mockUsers := mock.NewMockUsers()
-		userService.SeedUsers(ctx, mockUsers)
+		mock.InitUser(ctx, userService)
 	}
 
 	if cfg.WhService.CreateMocks {
-		mockMutations := mock.NewMockMutations()
-		mockSpells := mock.NewMockSpells()
-		mockProperties := mock.NewMockProperties()
-		mockItems := mock.NewMockItems()
-		whService.SeedWh(ctx, warhammer.WhTypeMutation, mockMutations)
-		whService.SeedWh(ctx, warhammer.WhTypeSpell, mockSpells)
-		whService.SeedWh(ctx, warhammer.WhTypeProperty, mockProperties)
-		whService.SeedWh(ctx, warhammer.WhTypeItem, mockItems)
+		mock.InitWh(ctx, whService)
 	}
 
 	router := gin.NewRouter(cfg.Server.RequestTimeout)

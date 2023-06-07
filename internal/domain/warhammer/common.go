@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -12,7 +11,6 @@ func GetWhCommonValidationAliases() map[string]string {
 		"desc_valid":          "min=0,max=100000,excludesall=<>",
 		"shared_valid":        "boolean",
 		"medium_string_valid": "min=0,max=200,excludesall=<>",
-		"source_valid":        fmt.Sprintf("dive,keys,oneof=%s,endkeys,min=0,max=15,excludesall=<>", sourceValues()),
 		"id_valid":            "hexadecimal,len=24",
 	}
 }

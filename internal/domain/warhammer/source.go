@@ -1,5 +1,10 @@
 package warhammer
 
+import (
+	"fmt"
+	"strings"
+)
+
 type WhSource string
 
 const (
@@ -39,7 +44,13 @@ type WhSourceMap map[WhSource]string
 func (input WhSourceMap) InitAndCopy() WhSourceMap {
 	output := make(WhSourceMap, len(input))
 	for key, value := range input {
-		output[key] = value
+		output[key] = strings.Clone(value)
 	}
 	return output
+}
+
+func GetWhSourceValidationAliases() map[string]string {
+	return map[string]string{
+		"source_valid": fmt.Sprintf("dive,keys,oneof=%s,endkeys,min=0,max=15,excludesall=<>", sourceValues()),
+	}
 }
