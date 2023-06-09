@@ -37,21 +37,21 @@ type WhSkill struct {
 	Source      WhSourceMap `json:"source" validate:"source_valid"`
 }
 
-func (t WhSkill) IsShared() bool {
-	return t.Shared
+func (s WhSkill) IsShared() bool {
+	return s.Shared
 }
 
-func (t WhSkill) InitAndCopy() WhObject {
+func (s WhSkill) InitAndCopy() WhObject {
 	return WhSkill{
-		Name:        strings.Clone(t.Name),
-		Description: strings.Clone(t.Description),
-		Attribute:   t.Attribute.InitAndCopy(),
-		Type:        t.Type.InitAndCopy(),
-		IsGroup:     t.IsGroup,
-		DisplayZero: t.DisplayZero,
-		Group:       copyStringArray(t.Group),
-		Shared:      t.Shared,
-		Source:      t.Source.InitAndCopy(),
+		Name:        strings.Clone(s.Name),
+		Description: strings.Clone(s.Description),
+		Attribute:   s.Attribute.InitAndCopy(),
+		Type:        s.Type.InitAndCopy(),
+		IsGroup:     s.IsGroup,
+		DisplayZero: s.DisplayZero,
+		Group:       copyStringArray(s.Group),
+		Shared:      s.Shared,
+		Source:      s.Source.InitAndCopy(),
 	}
 }
 

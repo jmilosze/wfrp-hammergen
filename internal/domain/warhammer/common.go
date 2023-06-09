@@ -39,10 +39,18 @@ func formatStringValues[T ~string](list []T) string {
 	return strings.Join(values, " ")
 }
 
-func copyStringArray(input []string) []string {
-	output := make([]string, len(input))
+func copyStringArray[T ~string](input []T) []T {
+	output := make([]T, len(input))
 	for i, v := range input {
-		output[i] = strings.Clone(v)
+		output[i] = T(strings.Clone(string(v)))
+	}
+	return output
+}
+
+func copyIntArray[T ~int](input []T) []T {
+	output := make([]T, len(input))
+	for i, v := range input {
+		output[i] = v
 	}
 	return output
 }

@@ -33,4 +33,7 @@ func configure(v *v.Validate) {
 	for k, r := range warhammer.GetWhSkillValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
+	for k, r := range warhammer.GetWhCareerValidationAliases() {
+		v.RegisterAlias(k, r)
+	}
 }

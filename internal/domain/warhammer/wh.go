@@ -19,11 +19,12 @@ const (
 	WhTypeItem     = "item"
 	WhTypeTalent   = "talent"
 	WhTypeSkill    = "skill"
+	WhTypeCareer   = "career"
 )
 
 type WhType string
 
-var WhTypes = []WhType{WhTypeMutation, WhTypeSpell, WhTypeProperty, WhTypeItem, WhTypeTalent, WhTypeSkill}
+var WhTypes = []WhType{WhTypeMutation, WhTypeSpell, WhTypeProperty, WhTypeItem, WhTypeTalent, WhTypeSkill, WhTypeCareer}
 
 func NewWh(t WhType) (Wh, error) {
 	var wh Wh
@@ -41,6 +42,8 @@ func NewWh(t WhType) (Wh, error) {
 		wh.Object = &WhTalent{}
 	case WhTypeSkill:
 		wh.Object = &WhSkill{}
+	case WhTypeCareer:
+		wh.Object = &WhCareer{}
 	default:
 		return wh, fmt.Errorf("invalid Wh type %s", t)
 	}
