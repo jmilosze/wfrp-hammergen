@@ -54,3 +54,11 @@ func copyIntArray[T ~int](input []T) []T {
 	}
 	return output
 }
+
+func copyWhArray(input []Wh) []Wh {
+	output := make([]Wh, len(input))
+	for i, v := range input {
+		output[i] = v.InitAndCopy()
+	}
+	return output
+}

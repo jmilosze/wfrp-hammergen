@@ -51,19 +51,19 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		return nil, &domain.DbError{Type: domain.DbInvalidUserFieldError, Err: fmt.Errorf("invalid field name %s", fieldName)}
 	}
 
-	user, dbErr := getOneUser(s.Db, fieldName, fieldValue)
+	u, dbErr := getOneUser(s.Db, fieldName, fieldValue)
 	if dbErr != nil {
 		return nil, dbErr
 	}
 
-	linkedUsers, dbErr := getManyUsers(s.Db, "id", user.SharedAccountIds)
+	linkedUsers, dbErr := getManyUsers(s.Db, "id", u.SharedAccountIds)
 	if dbErr != nil {
 		return nil, dbErr
 	}
 
-	user.SharedAccountNames = idsToUsernames(user.SharedAccountIds, linkedUsers)
+	u.SharedAccountNames = idsToUsernames(u.SharedAccountIds, linkedUsers)
 
-	return user, nil
+	return u, nil
 }
 
 func getOneUser(db *memdb.MemDB, fieldName string, fieldValue string) (*user.User, *domain.DbError) {
@@ -76,9 +76,9 @@ func getOneUser(db *memdb.MemDB, fieldName string, fieldValue string) (*user.Use
 	if userRaw == nil {
 		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
 	}
-	user := userRaw.(*user.User)
+	u := userRaw.(*user.User)
 
-	return user.Copy(), nil
+	return u.PointToCopy(), nil
 }
 
 func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*user.User, *domain.DbError) {
@@ -102,13 +102,13 @@ func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*u
 	for obj := it.Next(); obj != nil; obj = it.Next() {
 		u := obj.(*user.User)
 		if getAll {
-			users = append(users, u.Copy())
+			users = append(users, u.PointToCopy())
 		} else {
 			if fieldName == "username" && slices.Contains(fieldValues, u.Username) {
-				users = append(users, u.Copy())
+				users = append(users, u.PointToCopy())
 			}
 			if fieldName == "id" && slices.Contains(fieldValues, u.Id) {
-				users = append(users, u.Copy())
+				users = append(users, u.PointToCopy())
 			}
 		}
 	}
@@ -151,8 +151,8 @@ func (s *UserDbService) Update(ctx context.Context, u *user.User) (*user.User, *
 	return upsertUser(s, u, false)
 }
 
-func upsertUser(s *UserDbService, user *user.User, failIfUsernameExists bool) (*user.User, *domain.DbError) {
-	_, dbErr := getOneUser(s.Db, "username", user.Username)
+func upsertUser(s *UserDbService, u *user.User, failIfUsernameExists bool) (*user.User, *domain.DbError) {
+	_, dbErr := getOneUser(s.Db, "username", u.Username)
 	if failIfUsernameExists && dbErr == nil {
 		return nil, &domain.DbError{Type: domain.DbAlreadyExistsError, Err: errors.New("user already exists")}
 	}
@@ -160,7 +160,7 @@ func upsertUser(s *UserDbService, user *user.User, failIfUsernameExists bool) (*
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: dbErr.Unwrap()}
 	}
 
-	userUpsert := user.Copy()
+	userUpsert := u.PointToCopy()
 
 	linkedUsers, dbErr := getManyUsers(s.Db, "username", userUpsert.SharedAccountNames)
 	if dbErr != nil {
@@ -176,7 +176,7 @@ func upsertUser(s *UserDbService, user *user.User, failIfUsernameExists bool) (*
 	}
 	txn.Commit()
 
-	return userUpsert.Copy(), nil
+	return userUpsert.PointToCopy(), nil
 }
 
 func usernamesToIds(usernames []string, us []*user.User) []string {

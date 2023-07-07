@@ -49,7 +49,7 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 		u.CreatedOn = time.Time{}
 		u.LastAuthOn = time.Time{}
 
-		userRead, uErr := us.Create(c.Request.Context(), u)
+		userRead, uErr := us.Create(c.Request.Context(), &u)
 		if uErr != nil {
 			switch uErr.Type {
 			case user.UserAlreadyExistsError:
@@ -183,7 +183,7 @@ func userUpdateHandler(users user.UserService) func(*gin.Context) {
 		u.Id = userId
 		u.SharedAccountNames = userData.SharedAccounts
 
-		userRead, uErr := users.Update(c.Request.Context(), claims, u)
+		userRead, uErr := users.Update(c.Request.Context(), claims, &u)
 		if uErr != nil {
 			switch uErr.Type {
 			case user.UserNotFoundError:
@@ -224,7 +224,7 @@ func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 		u.Username = userData.Username
 		u.Password = userData.Password
 
-		userRead, uErr := us.UpdateCredentials(c.Request.Context(), claims, userData.CurrentPassword, u)
+		userRead, uErr := us.UpdateCredentials(c.Request.Context(), claims, userData.CurrentPassword, &u)
 		if uErr != nil {
 			switch uErr.Type {
 			case user.UserNotFoundError:
@@ -264,7 +264,7 @@ func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 		u.Id = userId
 		u.Admin = userData.Admin
 
-		userRead, uErr := us.UpdateClaims(c.Request.Context(), claims, u)
+		userRead, uErr := us.UpdateClaims(c.Request.Context(), claims, &u)
 		if uErr != nil {
 			switch uErr.Type {
 			case user.UserNotFoundError:

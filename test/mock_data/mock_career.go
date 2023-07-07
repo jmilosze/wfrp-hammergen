@@ -15,8 +15,8 @@ var career0 = warhammer.Wh{
 		Species:     warhammer.WhCareerSpeciesDwarf,
 		Level1: warhammer.WhCareerLevel{
 			Name:       "career 0 level 1",
-			Status:     warhammer.WhCareerStatusGold,
-			Standing:   warhammer.WhCareerStandingTwo,
+			Status:     warhammer.WhStatusGold,
+			Standing:   warhammer.WhStandingTwo,
 			Attributes: []warhammer.WhAttribute{warhammer.WhAttBS, warhammer.WhAttWS, warhammer.WhAttDex},
 			Skills:     []string{skill0.Id, skill1.Id},
 			Talents:    []string{talent0.Id, talent1.Id},
@@ -24,8 +24,8 @@ var career0 = warhammer.Wh{
 		},
 		Level2: warhammer.WhCareerLevel{
 			Name:       "career 0 level 2",
-			Status:     warhammer.WhCareerStatusGold,
-			Standing:   warhammer.WhCareerStandingFive,
+			Status:     warhammer.WhStatusGold,
+			Standing:   warhammer.WhStandingFive,
 			Attributes: []warhammer.WhAttribute{warhammer.WhAttInt},
 			Skills:     []string{skill0.Id},
 			Talents:    []string{talent0.Id},
@@ -33,8 +33,8 @@ var career0 = warhammer.Wh{
 		},
 		Level3: warhammer.WhCareerLevel{
 			Name:       "career 0 level 3",
-			Status:     warhammer.WhCareerStatusGold,
-			Standing:   warhammer.WhCareerStandingFive,
+			Status:     warhammer.WhStatusGold,
+			Standing:   warhammer.WhStandingFive,
 			Attributes: []warhammer.WhAttribute{warhammer.WhAttS},
 			Skills:     []string{skill0.Id},
 			Talents:    []string{talent0.Id},
@@ -42,8 +42,8 @@ var career0 = warhammer.Wh{
 		},
 		Level4: warhammer.WhCareerLevel{
 			Name:       "career 0 level 4",
-			Status:     warhammer.WhCareerStatusGold,
-			Standing:   warhammer.WhCareerStandingFive,
+			Status:     warhammer.WhStatusGold,
+			Standing:   warhammer.WhStandingFive,
 			Attributes: []warhammer.WhAttribute{},
 			Skills:     []string{},
 			Talents:    []string{},
@@ -60,7 +60,7 @@ var career0 = warhammer.Wh{
 var career1 = warhammer.Wh{
 	Id:      "700000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.WhTalent{
+	Object: warhammer.WhCareer{
 		Name:        "career 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 	},

@@ -1,7 +1,6 @@
 package gin
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/vearne/gin-timeout"
 	"net/http"
@@ -16,7 +15,7 @@ func NewRouter(requestTimeout time.Duration) *gin.Engine {
 	router.Use(timeout.Timeout(
 		timeout.WithTimeout(requestTimeout),
 		timeout.WithErrorHttpCode(http.StatusServiceUnavailable),
-		timeout.WithDefaultMsg(fmt.Sprintf(`{"code": %d,"message":"timeout"}`, http.StatusServiceUnavailable)),
+		timeout.WithDefaultMsg(`{"message":"internal server timeout", "details": ""}`),
 	))
 
 	return router

@@ -45,11 +45,11 @@ func run() error {
 	defer cancel()
 
 	if cfg.UserService.CreateMockUsers {
-		mock.InitUser(ctx, userService)
+		mock.InitUser(ctx, userDbService, userService.BcryptCost)
 	}
 
 	if cfg.WhService.CreateMocks {
-		mock.InitWh(ctx, whService)
+		mock.InitWh(ctx, whDbService)
 	}
 
 	router := gin.NewRouter(cfg.Server.RequestTimeout)

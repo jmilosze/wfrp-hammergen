@@ -28,7 +28,7 @@ func createNewWhMemDb() (*memdb.MemDB, error) {
 		Tables: map[string]*memdb.TableSchema{},
 	}
 
-	for _, whType := range warhammer.WhTypes {
+	for _, whType := range warhammer.WhApiTypes {
 		schema.Tables[string(whType)] = &memdb.TableSchema{
 			Name: string(whType),
 			Indexes: map[string]*memdb.IndexSchema{
@@ -39,22 +39,21 @@ func createNewWhMemDb() (*memdb.MemDB, error) {
 				},
 			},
 		}
+
+	}
+
+	schema.Tables[warhammer.WhTypeOther] = &memdb.TableSchema{
+		Name: warhammer.WhTypeOther,
+		Indexes: map[string]*memdb.IndexSchema{
+			"id": {
+				Name:    "id",
+				Unique:  true,
+				Indexer: &memdb.StringFieldIndex{Field: "Name"},
+			},
+		},
 	}
 
 	return memdb.NewMemDB(schema)
-}
-
-func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, whId string, userIds []string, sharedUserIds []string) (*warhammer.Wh, *domain.DbError) {
-	wh, dbErr := getOne(s.Db, t, whId)
-	if dbErr != nil {
-		return nil, dbErr
-	}
-
-	if slices.Contains(userIds, wh.OwnerId) || slices.Contains(sharedUserIds, wh.OwnerId) && wh.IsShared() {
-		return wh, nil
-	} else {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("wh not found")}
-	}
 }
 
 func getOne(db *memdb.MemDB, t warhammer.WhType, whId string) (*warhammer.Wh, *domain.DbError) {
@@ -72,7 +71,8 @@ func getOne(db *memdb.MemDB, t warhammer.WhType, whId string) (*warhammer.Wh, *d
 	if !ok {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate wh from raw %v", whRaw)}
 	}
-	return wh.InitAndCopy(), nil
+
+	return wh.PointToCopy(), nil
 }
 
 func (s *WhDbService) Create(ctx context.Context, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, *domain.DbError) {
@@ -100,7 +100,7 @@ func upsertWh(db *memdb.MemDB, t warhammer.WhType, w *warhammer.Wh) (*warhammer.
 	}
 	txn.Commit()
 
-	return w.InitAndCopy(), nil
+	return w.PointToCopy(), nil
 }
 
 func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId string, userId string) *domain.DbError {
@@ -128,7 +128,7 @@ func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId strin
 	return nil
 }
 
-func (s *WhDbService) RetrieveAll(ctx context.Context, t warhammer.WhType, users []string, sharedUsers []string) ([]*warhammer.Wh, *domain.DbError) {
+func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, users []string, sharedUsers []string, whIds []string) ([]*warhammer.Wh, *domain.DbError) {
 	txn := s.Db.Txn(false)
 	it, err := txn.Get(string(t), "id")
 	if err != nil {
@@ -141,10 +141,46 @@ func (s *WhDbService) RetrieveAll(ctx context.Context, t warhammer.WhType, users
 		if !ok {
 			return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate wh from raw %v", obj)}
 		}
-		if slices.Contains(users, wh.OwnerId) || slices.Contains(sharedUsers, wh.OwnerId) && wh.IsShared() {
-			whs = append(whs, wh.InitAndCopy())
+		if slices.Contains(whIds, wh.Id) || len(whIds) == 0 {
+			if slices.Contains(users, wh.OwnerId) || slices.Contains(sharedUsers, wh.OwnerId) && wh.IsShared() {
+				whs = append(whs, wh.PointToCopy())
+			}
 		}
 	}
 
+	if len(whIds) != 0 && len(whs) != len(whIds) {
+		return nil, domain.CreateDbError(domain.DbNotFoundError, errors.New("some of the ids not found"))
+	}
+
 	return whs, nil
+}
+
+func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.WhGenerationProps, *domain.DbError) {
+	txn := s.Db.Txn(false)
+	raw, err := txn.First(warhammer.WhTypeOther, "id", "generationProps")
+	if err != nil {
+		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+	}
+
+	if raw == nil {
+		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("generationProps not found")}
+	}
+
+	genProp, ok := raw.(*warhammer.WhGenerationProps)
+	if !ok {
+		return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate generationProp from raw %v", raw)}
+	}
+
+	return genProp.PointToCopy(), nil
+}
+
+func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.WhGenerationProps) (*warhammer.WhGenerationProps, *domain.DbError) {
+	txn := s.Db.Txn(true)
+	defer txn.Abort()
+	if err := txn.Insert(warhammer.WhTypeOther, gp); err != nil {
+		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+	}
+	txn.Commit()
+
+	return gp.PointToCopy(), nil
 }

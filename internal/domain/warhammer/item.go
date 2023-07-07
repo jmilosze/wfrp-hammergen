@@ -2,6 +2,7 @@ package warhammer
 
 import (
 	"fmt"
+	"golang.org/x/exp/slices"
 	"strings"
 )
 
@@ -387,5 +388,96 @@ func GetWhItemValidationAliases() map[string]string {
 		"item_armour_group_valid":     fmt.Sprintf("oneof=%s", itemArmourGroupValues()),
 		"item_armour_location_valid":  fmt.Sprintf("oneof=%s", itemArmourLocationValues()),
 		"item_carry_type_valid":       fmt.Sprintf("oneof=%s", itemCarryTypeValues()),
+	}
+}
+
+func (i WhItem) ToFull(allProperties []*Wh, allSpells []*Wh) WhItemFull {
+
+	itemProperties := idListToFull(i.Properties, allProperties)
+
+	var grimoire WhItemGrimoireFull
+	grimoire.Spells = idListToFull(i.Grimoire.Spells, allSpells)
+
+	return WhItemFull{
+		Name:        strings.Clone(i.Name),
+		Description: strings.Clone(i.Description),
+		Price:       i.Price,
+		Enc:         i.Enc,
+		Properties:  itemProperties,
+		Type:        i.Type.InitAndCopy(),
+		Shared:      i.Shared,
+		Source:      i.Source.InitAndCopy(),
+
+		Melee:      i.Melee.InitAndCopy(),
+		Ranged:     i.Ranged.InitAndCopy(),
+		Ammunition: i.Ammunition.InitAndCopy(),
+		Armour:     i.Armour.InitAndCopy(),
+		Container:  i.Container.InitAndCopy(),
+		Grimoire:   grimoire,
+		Other:      i.Other.InitAndCopy(),
+	}
+}
+
+func idListToFull(idList []string, allWh []*Wh) []Wh {
+	whList := make([]Wh, 0)
+	for _, v := range allWh {
+		if slices.Contains(idList, v.Id) {
+			whList = append(whList, v.InitAndCopy())
+		}
+	}
+	return whList
+}
+
+type WhItemGrimoireFull struct {
+	Spells []Wh `json:"spells"`
+}
+
+func (input WhItemGrimoireFull) InitAndCopy() WhItemGrimoireFull {
+	return WhItemGrimoireFull{
+		Spells: copyWhArray(input.Spells),
+	}
+}
+
+type WhItemFull struct {
+	Name        string      `json:"name"`
+	Description string      `json:"description" `
+	Price       float64     `json:"price"`
+	Enc         float64     `json:"enc"`
+	Properties  []Wh        `json:"properties"`
+	Type        WhItemType  `json:"type"`
+	Shared      bool        `json:"shared"`
+	Source      WhSourceMap `json:"source"`
+
+	Melee      WhItemMelee        `json:"melee"`
+	Ranged     WhItemRanged       `json:"ranged"`
+	Ammunition WhItemAmmunition   `json:"ammunition"`
+	Armour     WhItemArmour       `json:"armour"`
+	Container  WhItemContainer    `json:"container"`
+	Grimoire   WhItemGrimoireFull `json:"grimoire"`
+	Other      WhItemOther        `json:"other"`
+}
+
+func (i WhItemFull) IsShared() bool {
+	return i.Shared
+}
+
+func (i WhItemFull) InitAndCopy() WhObject {
+	return WhItemFull{
+		Name:        strings.Clone(i.Name),
+		Description: strings.Clone(i.Description),
+		Price:       i.Price,
+		Enc:         i.Enc,
+		Properties:  copyWhArray(i.Properties),
+		Type:        i.Type.InitAndCopy(),
+		Shared:      i.Shared,
+		Source:      i.Source.InitAndCopy(),
+
+		Melee:      i.Melee.InitAndCopy(),
+		Ranged:     i.Ranged.InitAndCopy(),
+		Ammunition: i.Ammunition.InitAndCopy(),
+		Armour:     i.Armour.InitAndCopy(),
+		Container:  i.Container.InitAndCopy(),
+		Grimoire:   i.Grimoire.InitAndCopy(),
+		Other:      i.Other.InitAndCopy(),
 	}
 }

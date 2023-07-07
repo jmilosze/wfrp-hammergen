@@ -5,60 +5,60 @@ import (
 	"strings"
 )
 
-type WhCareerStatus int
+type WhStatus int
 
 const (
-	WhCareerStatusBrass  = 0
-	WhCareerStatusSilver = 1
-	WhCareerStatusGold   = 2
+	WhStatusBrass  = 0
+	WhStatusSilver = 1
+	WhStatusGold   = 2
 )
 
 func statusValues() string {
-	return formatIntegerValues([]WhCareerStatus{WhCareerStatusBrass, WhCareerStatusSilver, WhCareerStatusGold})
+	return formatIntegerValues([]WhStatus{WhStatusBrass, WhStatusSilver, WhStatusGold})
 }
 
-func (input WhCareerStatus) InitAndCopy() WhCareerStatus {
+func (input WhStatus) InitAndCopy() WhStatus {
 	return input
 }
 
-type WhCareerStanding int
+type WhStanding int
 
 const (
-	WhCareerStandingZero  = 0
-	WhCareerStandingOne   = 1
-	WhCareerStandingTwo   = 2
-	WhCareerStandingThree = 3
-	WhCareerStandingFour  = 4
-	WhCareerStandingFive  = 5
-	WhCareerStandingSix   = 6
-	WhCareerStandingSeven = 7
+	WhStandingZero  = 0
+	WhStandingOne   = 1
+	WhStandingTwo   = 2
+	WhStandingThree = 3
+	WhStandingFour  = 4
+	WhStandingFive  = 5
+	WhStandingSix   = 6
+	WhStandingSeven = 7
 )
 
 func standingValues() string {
-	return formatIntegerValues([]WhCareerStanding{
-		WhCareerStandingZero,
-		WhCareerStandingOne,
-		WhCareerStandingTwo,
-		WhCareerStandingThree,
-		WhCareerStandingFour,
-		WhCareerStandingFive,
-		WhCareerStandingSix,
-		WhCareerStandingSeven,
+	return formatIntegerValues([]WhStanding{
+		WhStandingZero,
+		WhStandingOne,
+		WhStandingTwo,
+		WhStandingThree,
+		WhStandingFour,
+		WhStandingFive,
+		WhStandingSix,
+		WhStandingSeven,
 	})
 }
 
-func (input WhCareerStanding) InitAndCopy() WhCareerStanding {
+func (input WhStanding) InitAndCopy() WhStanding {
 	return input
 }
 
 type WhCareerLevel struct {
-	Name       string           `json:"name" validate:"name_valid"`
-	Status     WhCareerStatus   `json:"status" validate:"status_valid"`
-	Standing   WhCareerStanding `json:"standing" validate:"standing_valid"`
-	Attributes []WhAttribute    `json:"attributes" validate:"dive,att_type_valid"`
-	Skills     []string         `json:"skills" validate:"dive,id_valid"`
-	Talents    []string         `json:"talents" validate:"dive,id_valid"`
-	Items      string           `json:"items" validate:"desc_valid"`
+	Name       string        `json:"name" validate:"name_valid"`
+	Status     WhStatus      `json:"status" validate:"status_valid"`
+	Standing   WhStanding    `json:"standing" validate:"standing_valid"`
+	Attributes []WhAttribute `json:"attributes" validate:"dive,att_type_valid"`
+	Skills     []string      `json:"skills" validate:"dive,id_valid"`
+	Talents    []string      `json:"talents" validate:"dive,id_valid"`
+	Items      string        `json:"items" validate:"desc_valid"`
 }
 
 func (input WhCareerLevel) InitAndCopy() WhCareerLevel {
@@ -117,7 +117,7 @@ const (
 	WhCareerSpeciesOgre     = 6
 )
 
-func speciesValues() string {
+func careerSpeciesValues() string {
 	return formatIntegerValues([]WhCareerSpecies{
 		WhCareerSpeciesHuman,
 		WhCareerSpeciesHalfling,
@@ -138,7 +138,7 @@ type WhCareer struct {
 	Name        string          `json:"name" validate:"name_valid"`
 	Description string          `json:"description" validate:"desc_valid"`
 	Class       WhCareerClass   `json:"class" validate:"class_valid"`
-	Species     WhCareerSpecies `json:"species" validate:"species_valid"`
+	Species     WhCareerSpecies `json:"species" validate:"career_species_valid"`
 	Level1      WhCareerLevel   `json:"level1"`
 	Level2      WhCareerLevel   `json:"level2"`
 	Level3      WhCareerLevel   `json:"level3"`
@@ -168,9 +168,9 @@ func (c WhCareer) InitAndCopy() WhObject {
 
 func GetWhCareerValidationAliases() map[string]string {
 	return map[string]string{
-		"status_valid":   fmt.Sprintf("oneof=%s", statusValues()),
-		"standing_valid": fmt.Sprintf("oneof=%s", standingValues()),
-		"class_valid":    fmt.Sprintf("oneof=%s", classValues()),
-		"species_valid":  fmt.Sprintf("oneof=%s", speciesValues()),
+		"status_valid":         fmt.Sprintf("oneof=%s", statusValues()),
+		"standing_valid":       fmt.Sprintf("oneof=%s", standingValues()),
+		"class_valid":          fmt.Sprintf("oneof=%s", classValues()),
+		"career_species_valid": fmt.Sprintf("oneof=%s", careerSpeciesValues()),
 	}
 }

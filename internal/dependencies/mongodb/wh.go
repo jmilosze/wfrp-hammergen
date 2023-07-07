@@ -18,36 +18,12 @@ type WhDbService struct {
 func NewWhDbService(db *DbService) *WhDbService {
 	collections := map[warhammer.WhType]*mongo.Collection{}
 
-	for _, whType := range warhammer.WhTypes {
+	for _, whType := range warhammer.WhApiTypes {
 		collections[whType] = db.Client.Database(db.DbName).Collection(string(whType))
 	}
+	collections[warhammer.WhTypeOther] = db.Client.Database(db.DbName).Collection(warhammer.WhTypeOther)
+
 	return &WhDbService{Db: db, Collections: collections}
-}
-
-func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, whId string, userIds []string, sharedUserIds []string) (*warhammer.Wh, *d.DbError) {
-	id, err := primitive.ObjectIDFromHex(whId)
-	if err != nil {
-		return nil, d.CreateDbError(d.DbInternalError, err)
-	}
-
-	filter := bson.M{"$and": bson.A{bson.M{"_id": id}, allAllowedOwnersQuery(userIds, sharedUserIds)}}
-	var whMap bson.M
-
-	err = s.Collections[t].FindOne(ctx, filter).Decode(&whMap)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, d.CreateDbError(d.DbNotFoundError, err)
-		} else {
-			return nil, d.CreateDbError(d.DbInternalError, err)
-		}
-	}
-
-	wh, err := bsonMToWh(whMap, t)
-	if err != nil {
-		return nil, d.CreateDbError(d.DbInternalError, err)
-	}
-
-	return wh, nil
 }
 
 func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
@@ -66,6 +42,18 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 	return bson.M{"$or": owners}
 }
 
+func idsQuery(whIds []string) (bson.M, error) {
+	ids := bson.A{}
+	for _, v := range whIds {
+		id, err := primitive.ObjectIDFromHex(v)
+		if err != nil {
+			return nil, errors.New("invalid id")
+		}
+		ids = append(ids, bson.M{"_id": id})
+	}
+	return bson.M{"$or": ids}, nil
+}
+
 func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 	id, ok := whMap["_id"].(primitive.ObjectID)
 	if !ok {
@@ -77,7 +65,7 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 		return nil, errors.New("invalid owner id")
 	}
 
-	wh, err := warhammer.NewWh(t)
+	wh, err := warhammer.NewApiWh(t)
 	if err != nil {
 		return nil, err
 	}
@@ -178,8 +166,18 @@ func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId strin
 	return nil
 }
 
-func (s *WhDbService) RetrieveAll(ctx context.Context, t warhammer.WhType, userIds []string, sharedUserIds []string) ([]*warhammer.Wh, *d.DbError) {
-	filter := allAllowedOwnersQuery(userIds, sharedUserIds)
+func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds []string, sharedUserIds []string, whIds []string) ([]*warhammer.Wh, *d.DbError) {
+	var filter bson.M
+
+	if len(whIds) != 0 {
+		ids, err := idsQuery(whIds)
+		if err != nil {
+			return nil, d.CreateDbError(d.DbInternalError, err)
+		}
+		filter = bson.M{"$and": bson.A{ids, allAllowedOwnersQuery(userIds, sharedUserIds)}}
+	} else {
+		filter = allAllowedOwnersQuery(userIds, sharedUserIds)
+	}
 
 	cur, err := s.Collections[t].Find(ctx, filter)
 	defer cur.Close(ctx)
@@ -205,5 +203,37 @@ func (s *WhDbService) RetrieveAll(ctx context.Context, t warhammer.WhType, userI
 		whList = append(whList, wh)
 	}
 
+	if len(whIds) != 0 && len(whList) != len(whIds) {
+		return nil, d.CreateDbError(d.DbNotFoundError, errors.New("some of the ids not found"))
+	}
+
 	return whList, nil
+}
+
+func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.WhGenerationProps, *d.DbError) {
+	filter := bson.M{"name": "generationProps"}
+	var genProps warhammer.WhGenerationProps
+
+	err := s.Collections[warhammer.WhTypeOther].FindOne(ctx, filter).Decode(&genProps)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, d.CreateDbError(d.DbNotFoundError, err)
+		} else {
+			return nil, d.CreateDbError(d.DbInternalError, err)
+		}
+	}
+
+	return &genProps, nil
+}
+
+func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.WhGenerationProps) (*warhammer.WhGenerationProps, *d.DbError) {
+	_, err := s.Collections[warhammer.WhTypeOther].InsertOne(ctx, gp)
+	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, d.CreateDbError(d.DbAlreadyExistsError, err)
+		}
+		return nil, d.CreateDbError(d.DbWriteToDbError, err)
+	}
+
+	return gp, nil
 }

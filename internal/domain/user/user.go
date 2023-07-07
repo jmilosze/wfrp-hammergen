@@ -17,10 +17,7 @@ type User struct {
 	LastAuthOn         time.Time
 }
 
-func (u *User) Copy() *User {
-	if u == nil {
-		return nil
-	}
+func (u User) Copy() User {
 	uCopy := User{}
 	uCopy.Id = strings.Clone(u.Id)
 	uCopy.Username = strings.Clone(u.Username)
@@ -50,14 +47,18 @@ func (u *User) Copy() *User {
 	uCopy.LastAuthOn = u.LastAuthOn.UTC()
 	uCopy.CreatedOn = u.CreatedOn.UTC()
 
-	return &uCopy
+	return uCopy
 }
 
-func EmptyUser() *User {
-	u := &User{}
-	u.SharedAccountNames = make([]string, 0)
-	u.SharedAccountIds = make([]string, 0)
-	u.PasswordHash = make([]byte, 0)
+func (u User) PointToCopy() *User {
+	newUser := u.Copy()
+	return &newUser
+}
 
-	return u
+func EmptyUser() User {
+	return User{
+		SharedAccountNames: make([]string, 0),
+		SharedAccountIds:   make([]string, 0),
+		PasswordHash:       make([]byte, 0),
+	}
 }

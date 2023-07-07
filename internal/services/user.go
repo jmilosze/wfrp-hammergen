@@ -11,7 +11,6 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"github.com/rs/xid"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/url"
 	"path"
 	"time"
@@ -36,16 +35,6 @@ func NewUserService(cfg *config.UserService, db user.UserDbService, email domain
 		FrontEndUrl:   cfg.FrontEndUrl,
 	}
 
-}
-
-func (s *UserService) SeedUsers(ctx context.Context, us []*user.User) {
-	for _, u := range us {
-		newUser := u.Copy()
-		newUser.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(u.Password), s.BcryptCost)
-		if _, dbErr := s.UserDbService.Create(ctx, newUser); dbErr != nil {
-			log.Fatal(dbErr)
-		}
-	}
 }
 
 func (s *UserService) Get(ctx context.Context, c *domain.Claims, id string) (*user.User, *user.UserError) {
