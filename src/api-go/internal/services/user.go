@@ -269,9 +269,23 @@ func (s *UserService) UpdateClaims(ctx context.Context, c *domain.Claims, u *use
 	return updatedUser, nil
 }
 
-func (s *UserService) Delete(ctx context.Context, c *domain.Claims, id string) *user.UserError {
-	if id != c.Id {
+func (s *UserService) Delete(ctx context.Context, c *domain.Claims, password string, id string) *user.UserError {
+	if c.Id == "anonymous" || id != c.Id {
 		return &user.UserError{Type: user.UserUnauthorizedError, Err: errors.New("unauthorized")}
+	}
+
+	u, dbErr := s.UserDbService.Retrieve(ctx, "id", id)
+	if dbErr != nil {
+		switch dbErr.Type {
+		case domain.DbNotFoundError:
+			return &user.UserError{Type: user.UserNotFoundError, Err: dbErr}
+		default:
+			return &user.UserError{Type: user.UserInternalError, Err: dbErr}
+		}
+	}
+
+	if !authenticate(u, password) {
+		return &user.UserError{Type: user.UserIncorrectPasswordError, Err: errors.New("incorrect password")}
 	}
 
 	if dbErr := s.UserDbService.Delete(ctx, id); dbErr != nil {

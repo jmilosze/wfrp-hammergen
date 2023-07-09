@@ -12,7 +12,7 @@ type UserService interface {
 	Update(ctx context.Context, c *domain.Claims, u *User) (*User, *UserError)
 	UpdateCredentials(ctx context.Context, c *domain.Claims, currentPasswd string, u *User) (*User, *UserError)
 	UpdateClaims(ctx context.Context, c *domain.Claims, u *User) (*User, *UserError)
-	Delete(ctx context.Context, c *domain.Claims, id string) *UserError
+	Delete(ctx context.Context, c *domain.Claims, currentPasswd string, id string) *UserError
 	List(ctx context.Context, c *domain.Claims) ([]*User, *UserError)
 	Authenticate(ctx context.Context, username string, password string) (u *User, ue *UserError)
 	SendResetPassword(ctx context.Context, username string) *UserError

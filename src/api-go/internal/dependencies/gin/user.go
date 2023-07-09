@@ -17,6 +17,7 @@ func RegisterUserRoutes(router *gin.Engine, us user.UserService, js domain.JwtSe
 	router.PUT("api/user/credentials/:userId", RequireJwt(js), userUpdateCredentialsHandler(us))
 	router.PUT("api/user/claims/:userId", RequireJwt(js), userUpdateClaimsHandler(us))
 	router.DELETE("api/user/:userId", RequireJwt(js), userDeleteHandler(us))
+	router.DELETE("api/user", RequireJwt(js), userDeleteHandler(us))
 	router.POST("api/user/send_reset_password", resetSendPasswordHandler(us, cs))
 	router.POST("api/user/reset_password", resetPasswordHandler(us))
 }
@@ -283,15 +284,33 @@ func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 	}
 }
 
+type UserDelete struct {
+	Password string `json:"password"`
+}
+
 func userDeleteHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		userId := c.Param("userId")
 		claims := getUserClaims(c)
 
-		if uErr := us.Delete(c.Request.Context(), claims, userId); uErr != nil {
+		if userId == "" {
+			userId = claims.Id
+		}
+
+		var userData UserDelete
+		if err := c.ShouldBindJSON(&userData); err != nil {
+			c.JSON(BadRequestErrResp(err.Error()))
+			return
+		}
+
+		if uErr := us.Delete(c.Request.Context(), claims, userData.Password, userId); uErr != nil {
 			switch uErr.Type {
+			case user.UserNotFoundError:
+				c.JSON(NotFoundErrResp("user not found"))
 			case user.UserUnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
+			case user.UserIncorrectPasswordError:
+				c.JSON(UnauthorizedErrResp("incorrect password"))
 			default:
 				c.JSON(ServerErrResp(""))
 			}
