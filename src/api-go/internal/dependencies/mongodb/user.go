@@ -177,10 +177,14 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}
 
-	filter := bson.D{{"_id", userMongoDb.Id}}
-	opts := options.Replace().SetUpsert(true)
-	if _, err := s.Collection.ReplaceOne(ctx, filter, userMongoDb, opts); err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+	_, err = s.Collection.InsertOne(ctx, userMongoDb)
+	if err != nil {
+		fmt.Println("Error inserting record:", err)
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, &domain.DbError{Type: domain.DbAlreadyExistsError, Err: err}
+		} else {
+			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		}
 	}
 
 	return newUserFromMongo(userMongoDb, linkedUsers), nil

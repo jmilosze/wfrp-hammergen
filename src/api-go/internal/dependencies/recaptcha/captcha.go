@@ -3,7 +3,6 @@ package recaptcha
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -43,7 +42,6 @@ func (e *CaptchaService) Verify(ctx context.Context, captcha string, remoteAddr 
 
 	req, err := http.NewRequestWithContext(ctx, "POST", e.Url, strings.NewReader(data.Encode()))
 	if err != nil {
-		fmt.Println("error creating request:", err)
 		return true
 	}
 
@@ -51,7 +49,6 @@ func (e *CaptchaService) Verify(ctx context.Context, captcha string, remoteAddr 
 
 	resp, err := e.HttpClient.Do(req)
 	if err != nil {
-		fmt.Println("error making POST request:", err)
 		return true
 	}
 	defer resp.Body.Close()
@@ -59,28 +56,38 @@ func (e *CaptchaService) Verify(ctx context.Context, captcha string, remoteAddr 
 	// Read the response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("error reading response body:", err)
 		return true
 	}
 
 	var response map[string]any
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		fmt.Println("error parsing response JSON:", err)
 		return true
 	}
 
-	score, ok := response["score"]
+	successStr, ok := response["success"]
 	if !ok {
-		fmt.Println("no score in response body", response)
 		return true
 	}
 
-	scoreFloat, ok := score.(float64)
+	success, ok := successStr.(bool)
 	if !ok {
-		fmt.Println("error converting socre to float", score)
 		return true
 	}
 
-	return scoreFloat >= e.MinScore
+	if !success {
+		return false
+	}
+
+	scoreStr, ok := response["score"]
+	if !ok {
+		return true
+	}
+
+	score, ok := scoreStr.(float64)
+	if !ok {
+		return true
+	}
+
+	return score >= e.MinScore
 }

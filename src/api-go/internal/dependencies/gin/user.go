@@ -53,7 +53,7 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 		if uErr != nil {
 			switch uErr.Type {
 			case user.UserAlreadyExistsError:
-				c.JSON(BadRequestErrResp("user already exists"))
+				c.JSON(ConflictErrResp("user already exists"))
 			case user.UserInvalidArgumentsError:
 				c.JSON(BadRequestErrResp(uErr.Error()))
 			default:

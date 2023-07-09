@@ -16,8 +16,12 @@ func NotFoundErrResp(details string) (int, *map[string]any) {
 	return http.StatusNotFound, &map[string]any{"message": "not found", "details": details}
 }
 
+func ConflictErrResp(details string) (int, *map[string]any) {
+	return http.StatusConflict, &map[string]any{"message": "bad request", "details": details}
+}
+
 func BadRequestErrResp(details string) (int, *map[string]any) {
-	return http.StatusNotFound, &map[string]any{"message": "bad request", "details": details}
+	return http.StatusBadRequest, &map[string]any{"message": "bad request", "details": details}
 }
 
 func OkResp[M map[string]any | []map[string]any | string](data M) (int, *map[string]any) {

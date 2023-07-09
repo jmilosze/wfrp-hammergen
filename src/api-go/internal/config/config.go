@@ -59,7 +59,7 @@ type MongoDb struct {
 
 type Captcha struct {
 	Secret   string        `default:"some secret" split_words:"true"`
-	Url      string        `default:"some secret" split_words:"true"`
+	Url      string        `default:"https://www.google.com/recaptcha/api/siteverify" split_words:"true"`
 	Timeout  time.Duration `default:"10s" split_words:"true"`
 	MinScore float64       `default:"0.5"`
 	Bypass   string        `default:"success"`
