@@ -37,7 +37,7 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 		}
 
 		remoteAddr := c.Request.RemoteAddr
-		if !cs.Verify(userData.Captcha, remoteAddr) {
+		if !cs.Verify(c.Request.Context(), userData.Captcha, remoteAddr) {
 			c.JSON(BadRequestErrResp("captcha verification error"))
 			return
 		}
@@ -316,7 +316,7 @@ func resetSendPasswordHandler(us user.UserService, cs domain.CaptchaService) fun
 		}
 
 		remoteAddr := c.Request.RemoteAddr
-		if !cs.Verify(userData.Captcha, remoteAddr) {
+		if !cs.Verify(c.Request.Context(), userData.Captcha, remoteAddr) {
 			c.JSON(BadRequestErrResp("captcha verification error"))
 			return
 		}

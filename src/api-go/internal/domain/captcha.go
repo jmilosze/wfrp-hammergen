@@ -1,5 +1,7 @@
 package domain
 
+import "context"
+
 type CaptchaService interface {
-	Verify(captcha string, remoteAddr string) bool
+	Verify(ctx context.Context, captcha string, remoteAddr string) bool
 }

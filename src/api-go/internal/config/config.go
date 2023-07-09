@@ -18,6 +18,7 @@ type Config struct {
 	Jwt         Jwt
 	Email       Email
 	MongoDb     MongoDb
+	Captcha     Captcha
 }
 
 type Server struct {
@@ -54,6 +55,14 @@ type MongoDb struct {
 	Uri               string `default:"mongodb://admin:admin@localhost:27017" split_words:"true"`
 	Name              string `default:"hammergenGo" split_words:"true"`
 	CreateUserIndexes bool   `default:"true" split_words:"true"`
+}
+
+type Captcha struct {
+	Secret   string        `default:"some secret" split_words:"true"`
+	Url      string        `default:"some secret" split_words:"true"`
+	Timeout  time.Duration `default:"10s" split_words:"true"`
+	MinScore float64       `default:"0.5"`
+	Bypass   string        `default:"success"`
 }
 
 func NewConfig() Config {
