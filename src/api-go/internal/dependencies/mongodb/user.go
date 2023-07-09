@@ -259,7 +259,7 @@ func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *user.User {
 	user.CreatedOn = u.CreatedOn
 	user.LastAuthOn = u.LastAuthOn
 
-	return user
+	return &user
 }
 
 func idsToUsernames(ids []primitive.ObjectID, users []*Mongo) []string {
