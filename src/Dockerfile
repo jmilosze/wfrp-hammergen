@@ -4,7 +4,7 @@ RUN addgroup --system appusergroup && adduser --system appuser && usermod -G app
 
 WORKDIR /app
 COPY api ./api
-COPY requirements_docker_build.txt ./requirements.txt
+COPY requirements.txt ./requirements.txt
 
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt

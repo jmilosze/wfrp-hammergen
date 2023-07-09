@@ -1,4 +1,0 @@
-azure-identity==1.7.1
-azure-storage-blob==12.9.0
-msrestazure==0.6.4
-requests==2.26.0
