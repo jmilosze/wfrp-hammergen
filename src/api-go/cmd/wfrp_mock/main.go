@@ -41,7 +41,7 @@ func run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.RequestTimeout)
 	defer cancel()
 
-	if cfg.UserService.CreateMockUsers {
+	if cfg.UserService.CreateMocks {
 		mock.InitUser(ctx, userDbService, userService.BcryptCost)
 	}
 

@@ -32,7 +32,7 @@ func run() error {
 	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, cfg.Jwt.AccessExpiry, cfg.Jwt.ResetExpiry)
 	emailService := mailjet.NewEmailService(cfg.Email.FromAddress, cfg.Email.PublicApiKey, cfg.Email.PrivateApiKey)
 	captchaService := mockcaptcha.NewCaptchaService()
-	mongoDbService := mongodb.NewDbService(cfg.MongoDb.Uri, cfg.MongoDb.DbName)
+	mongoDbService := mongodb.NewDbService(cfg.MongoDb.Uri, cfg.MongoDb.Name)
 	defer mongoDbService.Disconnect()
 
 	userDbService := mongodb.NewUserDbService(mongoDbService, cfg.MongoDb.CreateUserIndexes)
@@ -44,7 +44,7 @@ func run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.RequestTimeout)
 	defer cancel()
 
-	if cfg.UserService.CreateMockUsers {
+	if cfg.UserService.CreateMocks {
 		mock.InitUser(ctx, userDbService, userService.BcryptCost)
 	}
 

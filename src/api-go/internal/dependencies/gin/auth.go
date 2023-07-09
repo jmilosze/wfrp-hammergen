@@ -40,7 +40,7 @@ func tokenHandler(us user.UserService, js domain.JwtService) func(*gin.Context) 
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "access_token": token, "token_type": "bearer"})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "accessToken": token, "tokenType": "bearer"})
 	}
 }
 

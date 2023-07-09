@@ -28,9 +28,9 @@ type Server struct {
 }
 
 type UserService struct {
-	BcryptCost      int      `default:"12" split_words:"true"`
-	FrontEndUrl     *url.URL `default:"http://localhost:8080" split_words:"true"`
-	CreateMockUsers bool     `default:"true" split_words:"true"`
+	BcryptCost  int      `default:"12" split_words:"true"`
+	FrontEndUrl *url.URL `default:"http://localhost:8080" split_words:"true"`
+	CreateMocks bool     `default:"true" split_words:"true"`
 }
 
 type WhService struct {
@@ -52,7 +52,7 @@ type Email struct {
 
 type MongoDb struct {
 	Uri               string `default:"mongodb://admin:admin@localhost:27017" split_words:"true"`
-	DbName            string `default:"hammergenGo" split_words:"true"`
+	Name              string `default:"hammergenGo" split_words:"true"`
 	CreateUserIndexes bool   `default:"true" split_words:"true"`
 }
 
