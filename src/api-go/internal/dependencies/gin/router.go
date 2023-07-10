@@ -1,6 +1,7 @@
 package gin
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/vearne/gin-timeout"
 	"net/http"
@@ -17,6 +18,8 @@ func NewRouter(requestTimeout time.Duration) *gin.Engine {
 		timeout.WithErrorHttpCode(http.StatusServiceUnavailable),
 		timeout.WithDefaultMsg(`{"message":"internal server timeout", "details": ""}`),
 	))
+
+	router.Use(cors.Default())
 
 	return router
 }
