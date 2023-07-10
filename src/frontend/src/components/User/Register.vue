@@ -10,11 +10,6 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <b-form-group label="Name" label-for="name-input">
-              <b-form-input id="name-input" v-model="name" type="text"></b-form-input>
-              <b-form-invalid-feedback :state="validInputName[0]"> {{ validInputName[1] }}</b-form-invalid-feedback>
-            </b-form-group>
-
             <b-form-group label="Email" label-for="email-input">
               <b-form-input id="email-input" v-model="username" type="text"></b-form-input>
               <b-form-invalid-feedback :state="validInputEmail[0]"> {{ validInputEmail[1] }}</b-form-invalid-feedback>
@@ -71,7 +66,6 @@ export default {
   data() {
     return {
       validatorOn: false,
-      name: "",
       username: "",
       password: "",
       retypedPassword: "",
@@ -95,7 +89,6 @@ export default {
 
     onRegistrationSuccessful() {
       this.validatorOn = false;
-      this.name = "";
       this.username = "";
       this.password = "";
       this.retypedPassword = "";
@@ -113,7 +106,6 @@ export default {
       this.errors = [];
 
       if (
-        !this.validInputName[0] ||
         !this.validInputEmail[0] ||
         !this.validInputPassword[0] ||
         !this.validInputPasswordMatch[0]
@@ -128,11 +120,9 @@ export default {
 
       try {
         await anonRequest.post("/api/user", {
-          name: this.name,
           username: this.username.toLowerCase(),
           password: this.password,
-          shared_accounts: [],
-          recaptcha: token,
+          captcha: token,
         });
         this.onRegistrationSuccessful();
       } catch (error) {
@@ -143,12 +133,6 @@ export default {
     },
   },
   computed: {
-    validInputName() {
-      if (!this.validatorOn) {
-        return [true, null];
-      }
-      return validUserName(this.name);
-    },
     validInputEmail() {
       if (!this.validatorOn) {
         return [true, null];
