@@ -1,7 +1,7 @@
 <template>
   <div class="password">
     <form @submit.prevent="submit" id="update-username">
-      <h4>Change password.</h4>
+      <h4>Change password</h4>
       <div class="row">
         <div class="col-md-6">
           <div class="alert alert-success" v-if="submissionSuccessful">Password updated successfully.</div>

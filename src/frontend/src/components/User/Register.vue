@@ -27,7 +27,7 @@
               >
             </b-form-group>
 
-            <b-form-group label="Password" label-for="retyped-password-input">
+            <b-form-group label="Confirm password" label-for="retyped-password-input">
               <b-form-input id="retyped-password-input" v-model="retypedPassword" type="password"></b-form-input>
               <b-form-invalid-feedback :state="validInputPasswordMatch[0]">
                 {{ validInputPasswordMatch[1] }}</b-form-invalid-feedback

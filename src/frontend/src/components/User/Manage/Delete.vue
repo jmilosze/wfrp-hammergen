@@ -1,7 +1,7 @@
 <template>
   <div class="delete">
     <form @submit.prevent="submit" id="delete">
-      <h4>Delete account.</h4>
+      <h4>Delete account</h4>
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">

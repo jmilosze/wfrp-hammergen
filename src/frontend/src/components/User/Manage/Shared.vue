@@ -1,6 +1,6 @@
 <template>
   <div class="shared">
-    <h4>Update linked users.</h4>
+    <h4>Update linked users</h4>
     <div>
       <b-alert :show="updateSuccessful" variant="success" dismissible>
         <h6>Linked user list updated successfully!</h6>

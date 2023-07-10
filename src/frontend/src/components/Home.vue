@@ -8,24 +8,6 @@
       </div>
 
       <div class="text-sm-left">
-        <div class="alert alert-info" role="alert">
-          <div class="h3">Added character regions</div>
-          <p>
-            When generating a new character, you can now specify region/clan for Humans and Dwarfs. For example Human
-            (Norse Bjornling), or Dwarf (Grumsson Clan). This will change species starting Skills, Talents, and in cases
-            like humans from Norsca it will also generate region matching name. You can read more about this and
-            previous
-            <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
-            and on our
-            <b-link href="https://ko-fi.com/post/Region-specific-character-generation-T6T3KXU3N" target="_blank">Ko-fi blog.</b-link>
-          </p>
-          <p>
-            As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
-            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link>
-            :)
-          </p>
-        </div>
-
         <div class="h3">What is Hammergen?</div>
         <p>
           Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th Edition character generator. It lets you create,

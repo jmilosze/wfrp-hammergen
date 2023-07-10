@@ -1,7 +1,7 @@
 <template>
   <div class="profile">
     <form @submit.prevent="submit" id="profile">
-      <h4>Update profile.</h4>
+      <h4>Update profile</h4>
       <div class="row">
         <div class="col-md-6">
           <div class="alert alert-success" v-if="submissionSuccessful">User data updated successfully.</div>
