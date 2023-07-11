@@ -124,8 +124,8 @@ func (s *UserService) Create(ctx context.Context, u *user.User) (*user.User, *us
 	createdUser, dbErr := s.UserDbService.Create(ctx, u)
 	if dbErr != nil {
 		switch dbErr.Type {
-		case domain.DbAlreadyExistsError:
-			return nil, &user.UserError{Type: user.UserAlreadyExistsError, Err: dbErr}
+		case domain.DbConflictError:
+			return nil, &user.UserError{Type: user.UserConflictError, Err: dbErr}
 		default:
 			return nil, &user.UserError{Type: user.UserInternalError, Err: dbErr}
 		}
@@ -219,6 +219,8 @@ func (s *UserService) UpdateCredentials(ctx context.Context, c *domain.Claims, c
 	updatedUser, dbErr := s.UserDbService.Update(ctx, currentUser)
 	if dbErr != nil {
 		switch dbErr.Type {
+		case domain.DbConflictError:
+			return nil, &user.UserError{Type: user.UserConflictError, Err: dbErr}
 		case domain.DbNotFoundError:
 			return nil, &user.UserError{Type: user.UserNotFoundError, Err: dbErr}
 		default:

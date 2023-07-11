@@ -4,7 +4,7 @@ import "fmt"
 
 const (
 	UserNotFoundError = iota
-	UserAlreadyExistsError
+	UserConflictError
 	UserInternalError
 	UserIncorrectPasswordError
 	UserInvalidArgumentsError

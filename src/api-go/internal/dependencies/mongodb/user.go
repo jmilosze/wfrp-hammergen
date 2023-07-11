@@ -181,7 +181,7 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *
 	if err != nil {
 		fmt.Println("Error inserting record:", err)
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, &domain.DbError{Type: domain.DbAlreadyExistsError, Err: err}
+			return nil, &domain.DbError{Type: domain.DbConflictError, Err: err}
 		} else {
 			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 		}

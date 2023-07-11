@@ -51,10 +51,17 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		return nil, &domain.DbError{Type: domain.DbInvalidUserFieldError, Err: fmt.Errorf("invalid field name %s", fieldName)}
 	}
 
-	u, dbErr := getOneUser(s.Db, fieldName, fieldValue)
-	if dbErr != nil {
-		return nil, dbErr
+	txn := s.Db.Txn(false)
+	userRaw, err := txn.First("user", fieldName, fieldValue)
+	if err != nil {
+		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}
+
+	if userRaw == nil {
+		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
+	}
+	udb := userRaw.(*user.User)
+	u := udb.PointToCopy()
 
 	linkedUsers, dbErr := getManyUsers(s.Db, "id", u.SharedAccountIds)
 	if dbErr != nil {
@@ -64,21 +71,6 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	u.SharedAccountNames = idsToUsernames(u.SharedAccountIds, linkedUsers)
 
 	return u, nil
-}
-
-func getOneUser(db *memdb.MemDB, fieldName string, fieldValue string) (*user.User, *domain.DbError) {
-	txn := db.Txn(false)
-	userRaw, err := txn.First("user", fieldName, fieldValue)
-	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
-	}
-
-	if userRaw == nil {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
-	}
-	u := userRaw.(*user.User)
-
-	return u.PointToCopy(), nil
 }
 
 func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*user.User, *domain.DbError) {
@@ -144,22 +136,14 @@ func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, *domain.
 }
 
 func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
-	return upsertUser(s, u, true)
-}
-
-func (s *UserDbService) Update(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
 	return upsertUser(s, u, false)
 }
 
-func upsertUser(s *UserDbService, u *user.User, failIfUsernameExists bool) (*user.User, *domain.DbError) {
-	_, dbErr := getOneUser(s.Db, "username", u.Username)
-	if failIfUsernameExists && dbErr == nil {
-		return nil, &domain.DbError{Type: domain.DbAlreadyExistsError, Err: errors.New("user already exists")}
-	}
-	if dbErr != nil && dbErr.Type != domain.DbNotFoundError {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: dbErr.Unwrap()}
-	}
+func (s *UserDbService) Update(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
+	return upsertUser(s, u, true)
+}
 
+func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, *domain.DbError) {
 	userUpsert := u.PointToCopy()
 
 	linkedUsers, dbErr := getManyUsers(s.Db, "username", userUpsert.SharedAccountNames)
@@ -171,6 +155,35 @@ func upsertUser(s *UserDbService, u *user.User, failIfUsernameExists bool) (*use
 
 	txn := s.Db.Txn(true)
 	defer txn.Abort()
+
+	it, err := txn.Get("user", "id")
+	if err != nil {
+		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+	}
+
+	var currentUsers []*user.User
+	for obj := it.Next(); obj != nil; obj = it.Next() {
+		currentUsers = append(currentUsers, obj.(*user.User))
+	}
+
+	indexFound := false
+	for _, currentUser := range currentUsers {
+		if currentUser.Id == userUpsert.Id {
+			indexFound = true
+		}
+		if currentUser.Id != userUpsert.Id && currentUser.Username == userUpsert.Username {
+			return nil, &domain.DbError{Type: domain.DbConflictError, Err: errors.New("user with this username already exists")}
+		}
+	}
+
+	if !indexFound && isUpdate {
+		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
+	}
+
+	if indexFound && !isUpdate {
+		return nil, &domain.DbError{Type: domain.DbConflictError, Err: errors.New("user with this id already exists")}
+	}
+
 	if err := txn.Insert("user", userUpsert); err != nil {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}

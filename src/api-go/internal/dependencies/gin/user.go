@@ -55,8 +55,8 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 		userRead, uErr := us.Create(c.Request.Context(), &u)
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserAlreadyExistsError:
-				c.JSON(ConflictErrResp("user already exists"))
+			case user.UserConflictError:
+				c.JSON(ConflictErrResp("user with this id or username already exists"))
 			case user.UserInvalidArgumentsError:
 				c.JSON(BadRequestErrResp(uErr.Error()))
 			default:
@@ -230,6 +230,8 @@ func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 		userRead, uErr := us.UpdateCredentials(c.Request.Context(), claims, userData.CurrentPassword, &u)
 		if uErr != nil {
 			switch uErr.Type {
+			case user.UserConflictError:
+				c.JSON(ConflictErrResp("user with this username already exists"))
 			case user.UserNotFoundError:
 				c.JSON(NotFoundErrResp(""))
 			case user.UserInvalidArgumentsError:
