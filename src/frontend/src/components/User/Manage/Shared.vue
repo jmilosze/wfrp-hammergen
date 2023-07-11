@@ -49,7 +49,7 @@
         <div>
           <b-form-group label="New username" label-for="username-input">
             <b-input-group>
-              <b-form-input id="username-input" v-model="newConnectedAcc" type="text"> </b-form-input>
+              <b-form-input id="username-input" v-model="newConnectedAcc" type="text"></b-form-input>
               <b-input-group-append>
                 <b-button variant="primary" @click="addUsername">
                   <span v-if="nameCheckSubmitting" class="spinner-border spinner-border-sm" />
@@ -113,7 +113,9 @@ export default {
       this.updateSubmitting = true;
 
       try {
-        await this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/update", { shared_accounts: this.sharedAccounts });
+        await this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/update", {
+          shared_accounts: this.sharedAccounts,
+        });
         this.updateSuccessful = true;
       } catch (error) {
         this.errors.push("Server Error.");
@@ -182,6 +184,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
+
 .username {
   flex-grow: 10;
 }

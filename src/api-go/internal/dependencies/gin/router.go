@@ -19,7 +19,10 @@ func NewRouter(requestTimeout time.Duration) *gin.Engine {
 		timeout.WithDefaultMsg(`{"message":"internal server timeout", "details": ""}`),
 	))
 
-	router.Use(cors.Default())
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowHeaders = append(corsConfig.AllowHeaders, "Authorization")
+	router.Use(cors.New(corsConfig))
 
 	return router
 }

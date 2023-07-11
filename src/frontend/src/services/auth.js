@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const ACCESS_TOKEN = "access_token";
-const REFRESH_TOKEN = "refresh_token";
+const ACCESS_TOKEN = "accessToken";
 const USERNAME = "username";
+const TOKEN_PATH = "/api/token";
 
-const anonRequest = axios.create({
+export const anonRequest = axios.create({
   baseURL: import.meta.env.VITE_ROOT_API,
   timeout: import.meta.env.VITE_API_TIMEOUT,
   headers: {
@@ -12,7 +12,7 @@ const anonRequest = axios.create({
   },
 });
 
-const authRequest = axios.create({
+export const authRequest = axios.create({
   baseURL: import.meta.env.VITE_ROOT_API,
   timeout: import.meta.env.VITE_API_TIMEOUT,
   skipIntercept: false,
@@ -21,38 +21,21 @@ const authRequest = axios.create({
   },
 });
 
-const loginUser = async (username, password) => {
-  const response = await anonRequest.post("/api/user/auth", { username, password });
-  localStorage.setItem(ACCESS_TOKEN, response.data.data.access_token);
-  localStorage.setItem(REFRESH_TOKEN, response.data.data.refresh_token);
+export const loginUser = async (username, password) => {
+  const response = await anonRequest.post(
+    TOKEN_PATH,
+    { username, password },
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
+  localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
   localStorage.setItem(USERNAME, username);
 };
 
-const refreshToken = async () => {
-  const headers = { Authorization: `Bearer ${localStorage.getItem(REFRESH_TOKEN)}` };
-  const response = await anonRequest.get("/api/user/refresh", { headers });
-  localStorage.setItem(ACCESS_TOKEN, response.data.data.access_token);
-};
-
-const logoutUser = () => {
+export const logoutUser = () => {
   localStorage.removeItem(ACCESS_TOKEN);
-  localStorage.removeItem(REFRESH_TOKEN);
   localStorage.removeItem(USERNAME);
-};
-
-const errorInterceptor = async (error) => {
-  const originalConfig = error.config;
-  const status = error.response?.status;
-  if (isUserLoggedIn() && status === 401 && !originalConfig.skipIntercept) {
-    try {
-      await refreshToken();
-      originalConfig.skipIntercept = true;
-      return authRequest(originalConfig);
-    } catch (refreshTokenError) {
-      throw refreshTokenError;
-    }
-  }
-  throw error;
 };
 
 const authHeaderInterceptor = (requestConfig) => {
@@ -64,19 +47,12 @@ const authHeaderInterceptor = (requestConfig) => {
 
 authRequest.interceptors.request.use(authHeaderInterceptor);
 
-authRequest.interceptors.response.use(
-  (response) => response,
-  (error) => errorInterceptor(error)
-);
-
-const userInfo = () => {
+export const userInfo = () => {
   return {
     username: localStorage.getItem(USERNAME),
   };
 };
 
-const isUserLoggedIn = () => {
+export const isUserLoggedIn = () => {
   return userInfo().username != null;
 };
-
-export { loginUser, logoutUser, userInfo, isUserLoggedIn, authRequest, anonRequest };
