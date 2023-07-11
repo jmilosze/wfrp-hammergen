@@ -179,7 +179,6 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *
 
 	_, err = s.Collection.InsertOne(ctx, userMongoDb)
 	if err != nil {
-		fmt.Println("Error inserting record:", err)
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, &domain.DbError{Type: domain.DbConflictError, Err: err}
 		} else {
@@ -294,7 +293,11 @@ func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User
 
 	result, err := s.Collection.UpdateOne(ctx, bson.D{{"_id", userMongo.Id}}, bson.D{{"$set", userMongo}})
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, &domain.DbError{Type: domain.DbConflictError, Err: err}
+		} else {
+			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		}
 	}
 
 	if result.MatchedCount == 0 {
