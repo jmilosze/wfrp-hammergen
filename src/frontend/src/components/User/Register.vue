@@ -18,15 +18,15 @@
             <b-form-group label="Password" label-for="password-input">
               <b-form-input id="password-input" v-model="password" type="password"></b-form-input>
               <b-form-invalid-feedback :state="validInputPassword[0]">
-                {{ validInputPassword[1] }}</b-form-invalid-feedback
-              >
+                {{ validInputPassword[1] }}
+              </b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group label="Confirm password" label-for="retyped-password-input">
               <b-form-input id="retyped-password-input" v-model="retypedPassword" type="password"></b-form-input>
               <b-form-invalid-feedback :state="validInputPasswordMatch[0]">
-                {{ validInputPasswordMatch[1] }}</b-form-invalid-feedback
-              >
+                {{ validInputPasswordMatch[1] }}
+              </b-form-invalid-feedback>
             </b-form-group>
 
             <div class="form-group">
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { validEmail, validPassword, validPasswordMatch, validUserName } from "../../utils/validation/user";
+import { validEmail, validPassword, validPasswordMatch } from "../../utils/validation/user";
 import { anonRequest } from "../../services/auth";
 
 export default {
@@ -78,9 +78,13 @@ export default {
   },
   methods: {
     onRegistrationFailed(error) {
-      if (error.response && error.response.data.code === 101) {
+      if (error.response && error.response.status === 409) {
         this.errors.push("User with this email already exists.");
-      } else if (error.response && error.response.data.code === 106) {
+      } else if (
+        error.response &&
+        error.response.status === 400 &&
+        error.response.data.details === "captcha verification error"
+      ) {
         this.errors.push("We suspect you might be a robot. Please try again.");
       } else {
         this.errors.push("Server error.");
@@ -105,11 +109,7 @@ export default {
       this.registrationSuccessful = false;
       this.errors = [];
 
-      if (
-        !this.validInputEmail[0] ||
-        !this.validInputPassword[0] ||
-        !this.validInputPasswordMatch[0]
-      ) {
+      if (!this.validInputEmail[0] || !this.validInputPassword[0] || !this.validInputPasswordMatch[0]) {
         return;
       }
 

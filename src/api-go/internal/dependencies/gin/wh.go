@@ -53,11 +53,11 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 
 		if whErr != nil {
 			switch whErr.ErrType {
-			case warhammer.WhInvalidArgumentsError:
+			case warhammer.InvalidArgumentsError:
 				c.JSON(BadRequestErrResp(whErr.Error()))
-			case warhammer.WhUnauthorizedError:
+			case warhammer.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
-			case warhammer.WhNotFoundError:
+			case warhammer.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -89,7 +89,7 @@ func whGetHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) 
 
 		if whErr != nil {
 			switch whErr.ErrType {
-			case warhammer.WhNotFoundError:
+			case warhammer.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -130,7 +130,7 @@ func whDeleteHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Contex
 
 		if whErr != nil {
 			switch whErr.ErrType {
-			case warhammer.WhUnauthorizedError:
+			case warhammer.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -156,7 +156,7 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 
 		if whErr != nil {
 			switch whErr.ErrType {
-			case warhammer.WhNotFoundError:
+			case warhammer.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -180,7 +180,7 @@ func whGenerationPropsHandler(s warhammer.WhService) func(*gin.Context) {
 
 		if whErr != nil {
 			switch whErr.ErrType {
-			case warhammer.WhNotFoundError:
+			case warhammer.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))

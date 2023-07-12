@@ -22,9 +22,9 @@ func tokenHandler(us user.UserService, js domain.JwtService) func(*gin.Context) 
 
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserNotFoundError:
+			case user.NotFoundError:
 				c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "user not found"})
-			case user.UserIncorrectPasswordError:
+			case user.IncorrectPasswordError:
 				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "invalid password"})
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})

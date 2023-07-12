@@ -12,6 +12,10 @@ func UnauthorizedErrResp(details string) (int, *map[string]any) {
 	return http.StatusUnauthorized, &map[string]any{"message": "unauthorized", "details": details}
 }
 
+func ForbiddenErrResp(details string) (int, *map[string]any) {
+	return http.StatusForbidden, &map[string]any{"message": "forbidden", "details": details}
+}
+
 func NotFoundErrResp(details string) (int, *map[string]any) {
 	return http.StatusNotFound, &map[string]any{"message": "not found", "details": details}
 }

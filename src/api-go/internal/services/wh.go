@@ -24,13 +24,13 @@ func NewWhService(v *validator.Validate, db wh.WhDbService) *WhService {
 
 func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *domain.Claims) (*wh.Wh, *wh.WhError) {
 	if c.Id == "anonymous" {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.WhUnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
 	newWh := w.InitAndCopy()
 
 	if err := s.Validator.Struct(newWh); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.WhInvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
 	}
 
 	if c.Admin {
@@ -42,7 +42,7 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *domain
 
 	createdWh, dbErr := s.WhDbService.Create(ctx, t, &newWh)
 	if dbErr != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: user.UserInternalError, Err: dbErr}
+		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: dbErr}
 	}
 
 	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
@@ -67,13 +67,13 @@ func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []strin
 
 func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *domain.Claims) (*wh.Wh, *wh.WhError) {
 	if c.Id == "anonymous" {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.WhUnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
 	newWh := w.InitAndCopy()
 
 	if err := s.Validator.Struct(newWh); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.WhInvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
 	}
 
 	if c.Admin {
@@ -86,9 +86,9 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *domain
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.WhNotFoundError, WhType: t, Err: dbErr}
+			return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: dbErr}
 		default:
-			return nil, &wh.WhError{ErrType: wh.WhInternalError, WhType: t, Err: dbErr}
+			return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
 		}
 	}
 
@@ -98,12 +98,12 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *domain
 
 func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *domain.Claims) *wh.WhError {
 	if c.Id == "anonymous" {
-		return &wh.WhError{WhType: t, ErrType: wh.WhUnauthorizedError, Err: errors.New("unauthorized")}
+		return &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
 	dbErr := s.WhDbService.Delete(ctx, t, whId, c.Id)
 	if dbErr != nil {
-		return &wh.WhError{ErrType: wh.WhInternalError, WhType: t, Err: dbErr}
+		return &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
 	}
 
 	return nil
@@ -117,9 +117,9 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *domain.Claims, full
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.WhNotFoundError, WhType: t, Err: dbErr}
+			return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: dbErr}
 		default:
-			return nil, &wh.WhError{ErrType: wh.WhInternalError, WhType: t, Err: dbErr}
+			return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
 		}
 	}
 
@@ -148,7 +148,7 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *domain
 	for _, v := range items {
 		item, ok := v.Object.(wh.WhItem)
 		if !ok {
-			return nil, &wh.WhError{WhType: wh.WhTypeItem, ErrType: wh.WhInternalError, Err: errors.New("non-item stored as item")}
+			return nil, &wh.WhError{WhType: wh.WhTypeItem, ErrType: wh.InternalError, Err: errors.New("non-item stored as item")}
 		}
 		allPropertyIds = mergeStrAndRemoveDuplicates(allPropertyIds, item.Properties)
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, item.Grimoire.Spells)
@@ -173,11 +173,11 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *domain
 
 	wg.Wait()
 
-	if propertyWhErr != nil && propertyWhErr.ErrType != wh.WhNotFoundError {
+	if propertyWhErr != nil && propertyWhErr.ErrType != wh.NotFoundError {
 		return nil, propertyWhErr
 	}
 
-	if spellWhErr != nil && spellWhErr.ErrType != wh.WhNotFoundError {
+	if spellWhErr != nil && spellWhErr.ErrType != wh.NotFoundError {
 		return nil, spellWhErr
 	}
 
@@ -220,7 +220,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *d
 	for _, v := range characters {
 		character, ok := v.Object.(wh.WhCharacter)
 		if !ok {
-			return nil, &wh.WhError{WhType: wh.WhTypeCharacter, ErrType: wh.WhInternalError, Err: errors.New("non-character stored as character")}
+			return nil, &wh.WhError{WhType: wh.WhTypeCharacter, ErrType: wh.InternalError, Err: errors.New("non-character stored as character")}
 		}
 		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.EquippedItems)
 		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.CarriedItems)
@@ -264,7 +264,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *d
 	//wg.Wait()
 
 	for _, v := range components {
-		if v.err != nil && v.err.ErrType != wh.WhNotFoundError {
+		if v.err != nil && v.err.ErrType != wh.NotFoundError {
 			return nil, v.err
 		}
 	}
@@ -314,9 +314,9 @@ func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.WhGenerationPro
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.WhNotFoundError, Err: dbErr}
+			return nil, &wh.WhError{ErrType: wh.NotFoundError, Err: dbErr}
 		default:
-			return nil, &wh.WhError{ErrType: wh.WhInternalError, Err: dbErr}
+			return nil, &wh.WhError{ErrType: wh.InternalError, Err: dbErr}
 		}
 	}
 

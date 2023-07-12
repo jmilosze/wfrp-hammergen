@@ -38,7 +38,6 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
-
 		remoteAddr := c.Request.RemoteAddr
 		if !cs.Verify(c.Request.Context(), userData.Captcha, remoteAddr) {
 			c.JSON(BadRequestErrResp("captcha verification error"))
@@ -55,9 +54,9 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 		userRead, uErr := us.Create(c.Request.Context(), &u)
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserConflictError:
+			case user.ConflictError:
 				c.JSON(ConflictErrResp("user with this id or username already exists"))
-			case user.UserInvalidArgumentsError:
+			case user.InvalidArgumentsError:
 				c.JSON(BadRequestErrResp(uErr.Error()))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -93,9 +92,9 @@ func userGetHandler(us user.UserService) func(*gin.Context) {
 
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserNotFoundError:
+			case user.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
-			case user.UserUnauthorizedError:
+			case user.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -138,7 +137,7 @@ func userListHandler(us user.UserService) func(*gin.Context) {
 		allUsers, uErr := us.List(c.Request.Context(), claims)
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserUnauthorizedError:
+			case user.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -176,6 +175,10 @@ func userUpdateHandler(users user.UserService) func(*gin.Context) {
 		userId := c.Param("userId")
 		claims := getUserClaims(c)
 
+		if userId == "" {
+			userId = claims.Id
+		}
+
 		var userData UserUpdate
 		if err := c.ShouldBindJSON(&userData); err != nil {
 			c.JSON(BadRequestErrResp(err.Error()))
@@ -189,11 +192,11 @@ func userUpdateHandler(users user.UserService) func(*gin.Context) {
 		userRead, uErr := users.Update(c.Request.Context(), claims, &u)
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserNotFoundError:
+			case user.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
-			case user.UserInvalidArgumentsError:
+			case user.InvalidArgumentsError:
 				c.JSON(BadRequestErrResp(uErr.Error()))
-			case user.UserUnauthorizedError:
+			case user.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -216,6 +219,10 @@ func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 		userId := c.Param("userId")
 		claims := getUserClaims(c)
 
+		if userId == "" {
+			userId = claims.Id
+		}
+
 		var userData UserCredentials
 		if err := c.ShouldBindJSON(&userData); err != nil {
 			c.JSON(BadRequestErrResp(err.Error()))
@@ -230,15 +237,15 @@ func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 		userRead, uErr := us.UpdateCredentials(c.Request.Context(), claims, userData.CurrentPassword, &u)
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserConflictError:
+			case user.ConflictError:
 				c.JSON(ConflictErrResp("user with this username already exists"))
-			case user.UserNotFoundError:
+			case user.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
-			case user.UserInvalidArgumentsError:
+			case user.InvalidArgumentsError:
 				c.JSON(BadRequestErrResp(uErr.Error()))
-			case user.UserIncorrectPasswordError:
-				c.JSON(BadRequestErrResp("incorrect password"))
-			case user.UserUnauthorizedError:
+			case user.IncorrectPasswordError:
+				c.JSON(ForbiddenErrResp("incorrect password"))
+			case user.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -272,11 +279,11 @@ func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 		userRead, uErr := us.UpdateClaims(c.Request.Context(), claims, &u)
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserNotFoundError:
+			case user.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
-			case user.UserInvalidArgumentsError:
+			case user.InvalidArgumentsError:
 				c.JSON(BadRequestErrResp(uErr.Error()))
-			case user.UserUnauthorizedError:
+			case user.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -309,12 +316,12 @@ func userDeleteHandler(us user.UserService) func(*gin.Context) {
 
 		if uErr := us.Delete(c.Request.Context(), claims, userData.Password, userId); uErr != nil {
 			switch uErr.Type {
-			case user.UserNotFoundError:
+			case user.NotFoundError:
 				c.JSON(NotFoundErrResp("user not found"))
-			case user.UserUnauthorizedError:
+			case user.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
-			case user.UserIncorrectPasswordError:
-				c.JSON(UnauthorizedErrResp("incorrect password"))
+			case user.IncorrectPasswordError:
+				c.JSON(ForbiddenErrResp("incorrect password"))
 			default:
 				c.JSON(ServerErrResp(""))
 			}
@@ -348,11 +355,11 @@ func resetSendPasswordHandler(us user.UserService, cs domain.CaptchaService) fun
 
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserInvalidArgumentsError:
+			case user.InvalidArgumentsError:
 				c.JSON(BadRequestErrResp(uErr.Error()))
-			case user.UserNotFoundError:
+			case user.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
-			case user.UserSendEmailError:
+			case user.SendEmailError:
 				c.JSON(ServerErrResp(""))
 			default:
 				c.JSON(ServerErrResp(""))
@@ -379,7 +386,7 @@ func resetPasswordHandler(us user.UserService) func(*gin.Context) {
 
 		if uErr := us.ResetPassword(c.Request.Context(), userData.Token, userData.Password); uErr != nil {
 			switch uErr.Type {
-			case user.UserInternalError:
+			case user.InternalError:
 				c.JSON(ServerErrResp(""))
 			default:
 				c.JSON(BadRequestErrResp(uErr.Error()))
