@@ -53,11 +53,11 @@ func (jwtService *HmacService) ParseToken(tokenString string) (*domain.Claims, e
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, &domain.InvalidTokenError{Inner: err, Text: "parsing token"}
 	}
 
 	if !token.Valid {
-		return nil, err
+		return nil, &domain.InvalidTokenError{Text: "token is invalid"}
 	}
 
 	jwtClaims, ok := token.Claims.(jwt.MapClaims)
@@ -67,9 +67,9 @@ func (jwtService *HmacService) ParseToken(tokenString string) (*domain.Claims, e
 
 	if err := jwtClaims.Valid(); err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) {
-			return nil, domain.ErrJwtExpired
+			return nil, &domain.InvalidTokenError{Inner: err, Errors: domain.TokenExpiredError, Text: "token expired"}
 		}
-		return nil, err
+		return nil, &domain.InvalidTokenError{Inner: err, Text: "validating claims"}
 	}
 
 	var claims domain.Claims
