@@ -366,7 +366,10 @@ func (s *UserService) ResetPassword(ctx context.Context, token string, newPasswo
 
 	claims, err := s.JwtService.ParseToken(token)
 	if err != nil {
-		return &user.UserError{Type: user.InvalidArgumentsError, Err: errors.New("invalid token")}
+		if errors.Is(err, domain.ErrJwtExpired) {
+			return &user.UserError{Type: user.TokenExpiredError, Err: err}
+		}
+		return &user.UserError{Type: user.InvalidArgumentsError, Err: err}
 	}
 
 	if !claims.ResetPassword {

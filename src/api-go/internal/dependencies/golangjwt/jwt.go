@@ -1,6 +1,7 @@
 package golangjwt
 
 import (
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
@@ -52,20 +53,23 @@ func (jwtService *HmacService) ParseToken(tokenString string) (*domain.Claims, e
 	})
 
 	if err != nil {
-		return nil, &domain.InvalidTokenError{Err: err}
+		return nil, err
 	}
 
 	if !token.Valid {
-		return nil, &domain.InvalidTokenError{Err: fmt.Errorf("invalid token")}
+		return nil, err
 	}
 
 	jwtClaims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, &domain.InvalidTokenError{Err: fmt.Errorf("error performin type Claims type assertion")}
+		return nil, err
 	}
 
-	if validErr := jwtClaims.Valid(); validErr != nil {
-		return nil, &domain.InvalidTokenError{Err: fmt.Errorf("invalid token")}
+	if err := jwtClaims.Valid(); err != nil {
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return nil, domain.ErrJwtExpired
+		}
+		return nil, err
 	}
 
 	var claims domain.Claims

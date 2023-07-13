@@ -20,8 +20,8 @@ func RegisterUserRoutes(router *gin.Engine, us user.UserService, js domain.JwtSe
 	router.PUT("api/user/claims/:userId", RequireJwt(js), userUpdateClaimsHandler(us))
 	router.DELETE("api/user/:userId", RequireJwt(js), userDeleteHandler(us))
 	router.DELETE("api/user", RequireJwt(js), userDeleteHandler(us))
-	router.POST("api/user/send_reset_password", resetSendPasswordHandler(us, cs))
-	router.POST("api/user/reset_password", resetPasswordHandler(us))
+	router.POST("api/user/sendResetPassword", resetSendPasswordHandler(us, cs))
+	router.POST("api/user/resetPassword", resetPasswordHandler(us))
 }
 
 type UserCreate struct {
@@ -388,6 +388,8 @@ func resetPasswordHandler(us user.UserService) func(*gin.Context) {
 			switch uErr.Type {
 			case user.InternalError:
 				c.JSON(ServerErrResp(""))
+			case user.TokenExpiredError:
+				c.JSON(ForbiddenErrResp(""))
 			default:
 				c.JSON(BadRequestErrResp(uErr.Error()))
 			}

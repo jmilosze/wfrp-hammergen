@@ -10,6 +10,7 @@ const (
 	InvalidArgumentsError
 	SendEmailError
 	UnauthorizedError
+	TokenExpiredError
 )
 
 type UserError struct {
