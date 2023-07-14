@@ -30,7 +30,7 @@ type Server struct {
 
 type UserService struct {
 	BcryptCost  int      `default:"12" split_words:"true"`
-	FrontEndUrl *url.URL `default:"http://localhost:8080" split_words:"true"`
+	FrontEndUrl *url.URL `default:"http://localhost:5173" split_words:"true"`
 	CreateMocks bool     `default:"true" split_words:"true"`
 }
 

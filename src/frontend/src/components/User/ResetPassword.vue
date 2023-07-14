@@ -83,7 +83,7 @@ export default {
   methods: {
     onSubmissionFailed(response) {
       if (response.response) {
-        if (response.response.data.code === 105) {
+        if (response.response.status === 403) {
           this.errors.push("Reset link has expired. Send another reset password link.");
         } else {
           this.errors.push("Server Error.");
@@ -115,9 +115,9 @@ export default {
       this.submitting = true;
 
       anonRequest
-        .post("/api/user/reset_password", {
+        .post("/api/user/resetPassword", {
           password: this.password,
-          reset_token: this.token,
+          token: this.token,
         })
         .then(this.onSubmissionSuccessful)
         .catch(this.onSubmissionFailed)
