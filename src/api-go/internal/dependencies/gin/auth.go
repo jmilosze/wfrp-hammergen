@@ -3,17 +3,17 @@ package gin
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"net/http"
 	"strings"
 )
 
-func RegisterAuthRoutes(router *gin.Engine, us user.UserService, js domain.JwtService) {
+func RegisterAuthRoutes(router *gin.Engine, us user.UserService, js auth.JwtService) {
 	router.POST("api/token", tokenHandler(us, js))
 }
 
-func tokenHandler(us user.UserService, js domain.JwtService) func(*gin.Context) {
+func tokenHandler(us user.UserService, js auth.JwtService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		username := c.PostForm("username")
 		password := c.PostForm("password")
@@ -32,7 +32,7 @@ func tokenHandler(us user.UserService, js domain.JwtService) func(*gin.Context) 
 			return
 		}
 
-		claims := domain.Claims{Id: u.Id, Admin: u.Admin, SharedAccounts: u.SharedAccountIds, ResetPassword: false}
+		claims := auth.Claims{Id: u.Id, Admin: u.Admin, SharedAccounts: u.SharedAccountIds, ResetPassword: false}
 		token, err := js.GenerateAccessToken(&claims)
 
 		if err != nil {
@@ -44,7 +44,7 @@ func tokenHandler(us user.UserService, js domain.JwtService) func(*gin.Context) 
 	}
 }
 
-func RequireJwt(js domain.JwtService) gin.HandlerFunc {
+func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
 
@@ -54,8 +54,8 @@ func RequireJwt(js domain.JwtService) gin.HandlerFunc {
 			return
 		}
 
-		claims, err := js.ParseToken(token)
-		if err != nil {
+		claims, authErr := js.ParseToken(token)
+		if authErr != nil {
 			setAnonymous(c)
 			return
 		}

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/rs/xid"
@@ -22,7 +23,7 @@ func NewWhService(v *validator.Validate, db wh.WhDbService) *WhService {
 	return &WhService{Validator: v, WhDbService: db}
 }
 
-func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *domain.Claims) (*wh.Wh, *wh.WhError) {
+func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, *wh.WhError) {
 	if c.Id == "anonymous" {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -65,7 +66,7 @@ func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []strin
 	return false
 }
 
-func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *domain.Claims) (*wh.Wh, *wh.WhError) {
+func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, *wh.WhError) {
 	if c.Id == "anonymous" {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -96,7 +97,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *domain
 	return updatedWh, nil
 }
 
-func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *domain.Claims) *wh.WhError {
+func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) *wh.WhError {
 	if c.Id == "anonymous" {
 		return &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -109,7 +110,7 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *dom
 	return nil
 }
 
-func (s *WhService) Get(ctx context.Context, t wh.WhType, c *domain.Claims, full bool, whIds []string) ([]*wh.Wh, *wh.WhError) {
+func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, whIds []string) ([]*wh.Wh, *wh.WhError) {
 	users := []string{"admin", c.Id}
 
 	whs, dbErr := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, whIds)
@@ -142,7 +143,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *domain.Claims, full
 	return whs, nil
 }
 
-func retrieveFullItems(ctx context.Context, whService *WhService, claims *domain.Claims, items []*wh.Wh) ([]*wh.Wh, *wh.WhError) {
+func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.Claims, items []*wh.Wh) ([]*wh.Wh, *wh.WhError) {
 	allPropertyIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range items {
@@ -210,7 +211,7 @@ func mergeStrAndRemoveDuplicates(slice1 []string, slice2 []string) []string {
 	return mergedUnique
 }
 
-func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *domain.Claims, characters []*wh.Wh) ([]*wh.Wh, *wh.WhError) {
+func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, *wh.WhError) {
 	allItemIds := make([]string, 0)
 	allSkillIds := make([]string, 0)
 	allTalentIds := make([]string, 0)

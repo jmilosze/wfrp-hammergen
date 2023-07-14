@@ -8,6 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"github.com/rs/xid"
 	"golang.org/x/crypto/bcrypt"
@@ -21,11 +22,11 @@ type UserService struct {
 	Validator     *validator.Validate
 	UserDbService user.UserDbService
 	EmailService  domain.EmailService
-	JwtService    domain.JwtService
+	JwtService    auth.JwtService
 	FrontEndUrl   *url.URL
 }
 
-func NewUserService(cfg *config.UserService, db user.UserDbService, email domain.EmailService, jwt domain.JwtService, v *validator.Validate) *UserService {
+func NewUserService(cfg *config.UserService, db user.UserDbService, email domain.EmailService, jwt auth.JwtService, v *validator.Validate) *UserService {
 	return &UserService{
 		BcryptCost:    cfg.BcryptCost,
 		UserDbService: db,
@@ -37,7 +38,7 @@ func NewUserService(cfg *config.UserService, db user.UserDbService, email domain
 
 }
 
-func (s *UserService) Get(ctx context.Context, c *domain.Claims, id string) (*user.User, *user.UserError) {
+func (s *UserService) Get(ctx context.Context, c *auth.Claims, id string) (*user.User, *user.UserError) {
 	if c.Id == "anonymous" || !(id == c.Id || c.Admin) {
 		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -147,7 +148,7 @@ func validateCreateUser(v *validator.Validate, u *user.User) error {
 	return nil
 }
 
-func (s *UserService) Update(ctx context.Context, c *domain.Claims, u *user.User) (*user.User, *user.UserError) {
+func (s *UserService) Update(ctx context.Context, c *auth.Claims, u *user.User) (*user.User, *user.UserError) {
 	if c.Id == "anonymous" || u.Id != c.Id {
 		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -190,7 +191,7 @@ func validateUpdateUser(v *validator.Validate, u *user.User) error {
 	return nil
 }
 
-func (s *UserService) UpdateCredentials(ctx context.Context, c *domain.Claims, currentPasswd string, u *user.User) (*user.User, *user.UserError) {
+func (s *UserService) UpdateCredentials(ctx context.Context, c *auth.Claims, currentPasswd string, u *user.User) (*user.User, *user.UserError) {
 	if c.Id == "anonymous" || u.Id != c.Id {
 		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -241,7 +242,7 @@ func validateUpdateCredentials(v *validator.Validate, u *user.User) error {
 	return nil
 }
 
-func (s *UserService) UpdateClaims(ctx context.Context, c *domain.Claims, u *user.User) (*user.User, *user.UserError) {
+func (s *UserService) UpdateClaims(ctx context.Context, c *auth.Claims, u *user.User) (*user.User, *user.UserError) {
 	if !c.Admin {
 		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -271,7 +272,7 @@ func (s *UserService) UpdateClaims(ctx context.Context, c *domain.Claims, u *use
 	return updatedUser, nil
 }
 
-func (s *UserService) Delete(ctx context.Context, c *domain.Claims, password string, id string) *user.UserError {
+func (s *UserService) Delete(ctx context.Context, c *auth.Claims, password string, id string) *user.UserError {
 	if c.Id == "anonymous" || id != c.Id {
 		return &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -298,7 +299,7 @@ func (s *UserService) Delete(ctx context.Context, c *domain.Claims, password str
 	}
 }
 
-func (s *UserService) List(ctx context.Context, c *domain.Claims) ([]*user.User, *user.UserError) {
+func (s *UserService) List(ctx context.Context, c *auth.Claims) ([]*user.User, *user.UserError) {
 	if !c.Admin {
 		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
@@ -330,11 +331,11 @@ func (s *UserService) SendResetPassword(ctx context.Context, username string) *u
 		return &user.UserError{Type: user.NotFoundError, Err: errors.New("user not found")}
 	}
 
-	claims := domain.Claims{Id: u.Id, Admin: false, SharedAccounts: []string{}, ResetPassword: true}
-	resetToken, err := s.JwtService.GenerateResetPasswordToken(&claims)
+	claims := auth.Claims{Id: u.Id, Admin: false, SharedAccounts: []string{}, ResetPassword: true}
+	resetToken, authErr := s.JwtService.GenerateResetPasswordToken(&claims)
 
-	if err != nil {
-		return &user.UserError{Type: user.InternalError, Err: err}
+	if authErr != nil {
+		return &user.UserError{Type: user.InternalError, Err: authErr}
 	}
 
 	clickUrl, err := url.ParseRequestURI(s.FrontEndUrl.String())
@@ -364,12 +365,12 @@ func (s *UserService) ResetPassword(ctx context.Context, token string, newPasswo
 		return &user.UserError{Type: user.InvalidArgumentsError, Err: errors.New("missing token or username")}
 	}
 
-	claims, err := s.JwtService.ParseToken(token)
-	if err != nil {
-		if errors.Is(err, domain.ErrTokenExpired) {
-			return &user.UserError{Type: user.TokenExpiredError, Err: err}
+	claims, authErr := s.JwtService.ParseToken(token)
+	if authErr != nil {
+		if authErr.Type == auth.ErrorExpiredToken {
+			return &user.UserError{Type: user.TokenExpiredError, Err: authErr}
 		}
-		return &user.UserError{Type: user.InvalidArgumentsError, Err: err}
+		return &user.UserError{Type: user.InvalidArgumentsError, Err: authErr}
 	}
 
 	if !claims.ResetPassword {
@@ -386,6 +387,7 @@ func (s *UserService) ResetPassword(ctx context.Context, token string, newPasswo
 		}
 	}
 
+	var err error
 	currentUser.PasswordHash, err = bcrypt.GenerateFromPassword([]byte(newPassword), s.BcryptCost)
 	if err != nil {
 		return &user.UserError{Type: user.InternalError, Err: err}

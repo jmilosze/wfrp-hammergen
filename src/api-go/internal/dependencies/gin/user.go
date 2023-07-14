@@ -3,11 +3,12 @@ package gin
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"time"
 )
 
-func RegisterUserRoutes(router *gin.Engine, us user.UserService, js domain.JwtService, cs domain.CaptchaService) {
+func RegisterUserRoutes(router *gin.Engine, us user.UserService, js auth.JwtService, cs domain.CaptchaService) {
 	router.POST("api/user", userCreateHandler(us, cs))
 	router.GET("api/user/:userId", RequireJwt(js), userGetHandler(us))
 	router.GET("api/user", RequireJwt(js), userGetHandler(us))
@@ -106,8 +107,8 @@ func userGetHandler(us user.UserService) func(*gin.Context) {
 	}
 }
 
-func getUserClaims(c *gin.Context) *domain.Claims {
-	var claims domain.Claims
+func getUserClaims(c *gin.Context) *auth.Claims {
+	var claims auth.Claims
 
 	claims.Id = c.GetString("ClaimsId")
 	claims.Admin = c.GetBool("ClaimsAdmin")
@@ -391,7 +392,7 @@ func resetPasswordHandler(us user.UserService) func(*gin.Context) {
 			case user.TokenExpiredError:
 				c.JSON(ForbiddenErrResp(""))
 			default:
-				c.JSON(BadRequestErrResp(uErr.Error()))
+				c.JSON(BadRequestErrResp(""))
 			}
 			return
 		}
