@@ -26,7 +26,7 @@ func InitUser(ctx context.Context, db user.UserDbService, bcryptCost int) {
 func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, whs []*warhammer.Wh) {
 	for _, wh := range whs {
 		if _, dbErr := db.Create(ctx, t, wh); dbErr != nil {
-			if dbErr.Type != domain.DbAlreadyExistsError {
+			if dbErr.Type != domain.DbConflictError {
 				log.Fatal(dbErr)
 			}
 		}
@@ -35,7 +35,7 @@ func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, w
 
 func seedGenProps(ctx context.Context, db warhammer.WhDbService, genProps *warhammer.WhGenerationProps) {
 	if _, dbErr := db.CreateGenerationProps(ctx, genProps); dbErr != nil {
-		if dbErr.Type != domain.DbAlreadyExistsError {
+		if dbErr.Type != domain.DbConflictError {
 			log.Fatal(dbErr)
 		}
 	}

@@ -95,7 +95,7 @@ func (s *WhDbService) Create(ctx context.Context, t warhammer.WhType, w *warhamm
 	_, err = s.Collections[t].InsertOne(ctx, whBsonM)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, d.CreateDbError(d.DbAlreadyExistsError, err)
+			return nil, d.CreateDbError(d.DbConflictError, err)
 		}
 		return nil, d.CreateDbError(d.DbWriteToDbError, err)
 	}
@@ -230,7 +230,7 @@ func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.W
 	_, err := s.Collections[warhammer.WhTypeOther].InsertOne(ctx, gp)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, d.CreateDbError(d.DbAlreadyExistsError, err)
+			return nil, d.CreateDbError(d.DbConflictError, err)
 		}
 		return nil, d.CreateDbError(d.DbWriteToDbError, err)
 	}

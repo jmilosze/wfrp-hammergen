@@ -3,10 +3,10 @@ package warhammer
 import "fmt"
 
 const (
-	WhInvalidArgumentsError = iota
-	WhNotFoundError
-	WhInternalError
-	WhUnauthorizedError
+	InvalidArgumentsError = iota
+	NotFoundError
+	InternalError
+	UnauthorizedError
 )
 
 type WhError struct {

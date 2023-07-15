@@ -3,17 +3,17 @@ package gin
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"net/http"
 	"strings"
 )
 
-func RegisterAuthRoutes(router *gin.Engine, us user.UserService, js domain.JwtService) {
+func RegisterAuthRoutes(router *gin.Engine, us user.UserService, js auth.JwtService) {
 	router.POST("api/token", tokenHandler(us, js))
 }
 
-func tokenHandler(us user.UserService, js domain.JwtService) func(*gin.Context) {
+func tokenHandler(us user.UserService, js auth.JwtService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		username := c.PostForm("username")
 		password := c.PostForm("password")
@@ -22,17 +22,17 @@ func tokenHandler(us user.UserService, js domain.JwtService) func(*gin.Context) 
 
 		if uErr != nil {
 			switch uErr.Type {
-			case user.UserNotFoundError:
-				c.JSON(http.StatusNotFound, gin.H{"code": http.StatusNotFound, "message": "user not found"})
-			case user.UserIncorrectPasswordError:
-				c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": "invalid password"})
+			case user.NotFoundError:
+				c.JSON(NotFoundErrResp("user not found"))
+			case user.IncorrectPasswordError:
+				c.JSON(ForbiddenErrResp("invalid password"))
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
 			}
 			return
 		}
 
-		claims := domain.Claims{Id: u.Id, Admin: u.Admin, SharedAccounts: u.SharedAccountIds, ResetPassword: false}
+		claims := auth.Claims{Id: u.Id, Admin: u.Admin, SharedAccounts: u.SharedAccountIds, ResetPassword: false}
 		token, err := js.GenerateAccessToken(&claims)
 
 		if err != nil {
@@ -40,11 +40,11 @@ func tokenHandler(us user.UserService, js domain.JwtService) func(*gin.Context) 
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "access_token": token, "token_type": "bearer"})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "accessToken": token, "tokenType": "bearer"})
 	}
 }
 
-func RequireJwt(js domain.JwtService) gin.HandlerFunc {
+func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
 
@@ -54,8 +54,8 @@ func RequireJwt(js domain.JwtService) gin.HandlerFunc {
 			return
 		}
 
-		claims, err := js.ParseToken(token)
-		if err != nil {
+		claims, authErr := js.ParseToken(token)
+		if authErr != nil {
 			setAnonymous(c)
 			return
 		}

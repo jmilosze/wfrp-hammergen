@@ -16,15 +16,15 @@
           <b-form-group label="New password" label-for="new-password-input">
             <b-form-input id="new-password-input" v-model="newPassword" type="password"></b-form-input>
             <b-form-invalid-feedback :state="validInputPassword[0]">
-              {{ validInputPassword[1] }}</b-form-invalid-feedback
-            >
+              {{ validInputPassword[1] }}
+            </b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Confirm new password" label-for="retyped-password-input">
             <b-form-input id="retyped-password-input" v-model="retypedPassword" type="password"></b-form-input>
             <b-form-invalid-feedback :state="validInputPasswordMatch[0]">
-              {{ validInputPasswordMatch[1] }}</b-form-invalid-feedback
-            >
+              {{ validInputPasswordMatch[1] }}
+            </b-form-invalid-feedback>
           </b-form-group>
           <button id="update-password-button" type="submit" class="btn btn-primary">
             <span v-if="submitting" class="spinner-border spinner-border-sm" />
@@ -80,7 +80,7 @@ export default {
   methods: {
     onSubmissionFailed(response) {
       if (response.response) {
-        if (response.response.data.code === 107) {
+        if (response.response.status === 403) {
           this.errors.push("Incorrect current password.");
         } else {
           this.errors.push("Server Error.");
@@ -108,9 +108,10 @@ export default {
 
       this.submitting = true;
 
-      this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/secure_update", {
-        current_password: this.currentPassword,
+      this.callAndLogoutIfUnauthorized(authRequest.put)("/api/user/credentials", {
+        currentPassword: this.currentPassword,
         password: this.newPassword,
+        username: this.loggedUserInfo().username,
       })
         .then(this.onSubmissionSuccessful)
         .catch(this.onSubmissionFailed)

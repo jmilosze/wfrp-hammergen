@@ -177,10 +177,13 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 	}
 
-	filter := bson.D{{"_id", userMongoDb.Id}}
-	opts := options.Replace().SetUpsert(true)
-	if _, err := s.Collection.ReplaceOne(ctx, filter, userMongoDb, opts); err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+	_, err = s.Collection.InsertOne(ctx, userMongoDb)
+	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, &domain.DbError{Type: domain.DbConflictError, Err: err}
+		} else {
+			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		}
 	}
 
 	return newUserFromMongo(userMongoDb, linkedUsers), nil
@@ -259,7 +262,7 @@ func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *user.User {
 	user.CreatedOn = u.CreatedOn
 	user.LastAuthOn = u.LastAuthOn
 
-	return user
+	return &user
 }
 
 func idsToUsernames(ids []primitive.ObjectID, users []*Mongo) []string {
@@ -290,7 +293,11 @@ func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User
 
 	result, err := s.Collection.UpdateOne(ctx, bson.D{{"_id", userMongo.Id}}, bson.D{{"$set", userMongo}})
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, &domain.DbError{Type: domain.DbConflictError, Err: err}
+		} else {
+			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		}
 	}
 
 	if result.MatchedCount == 0 {

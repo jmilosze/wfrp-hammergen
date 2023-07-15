@@ -49,7 +49,7 @@
         <div>
           <b-form-group label="New username" label-for="username-input">
             <b-input-group>
-              <b-form-input id="username-input" v-model="newConnectedAcc" type="text"> </b-form-input>
+              <b-form-input id="username-input" v-model="newConnectedAcc" type="text"></b-form-input>
               <b-input-group-append>
                 <b-button variant="primary" @click="addUsername">
                   <span v-if="nameCheckSubmitting" class="spinner-border spinner-border-sm" />
@@ -113,7 +113,9 @@ export default {
       this.updateSubmitting = true;
 
       try {
-        await this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/update", { shared_accounts: this.sharedAccounts });
+        await this.callAndLogoutIfUnauthorized(authRequest.put)("/api/user", {
+          sharedAccounts: this.sharedAccounts,
+        });
         this.updateSuccessful = true;
       } catch (error) {
         this.errors.push("Server Error.");
@@ -126,7 +128,7 @@ export default {
     async loadData() {
       try {
         const resp = await this.callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
-        this.sharedAccounts = resp.data.data.shared_accounts;
+        this.sharedAccounts = resp.data.data.sharedAccounts;
         this.username = resp.data.data.username;
       } catch (error) {
         this.errors.push("Server Error.");
@@ -161,7 +163,7 @@ export default {
       }
 
       try {
-        const resp = await this.callAndLogoutIfUnauthorized(authRequest.get)(`/api/user/${newAcc}`);
+        const resp = await this.callAndLogoutIfUnauthorized(authRequest.get)(`/api/user/exists/${newAcc}`);
         if (resp.data.data.exists) {
           this.sharedAccounts.push(newAcc);
           this.newConnectedAcc = "";
@@ -182,6 +184,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
+
 .username {
   flex-grow: 10;
 }
