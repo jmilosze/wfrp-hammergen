@@ -65,9 +65,9 @@ export default {
   methods: {
     onSubmissionFailed(response) {
       if (response.response) {
-        if (response.response.data.code === 107) {
+        if (response.response.status === 403) {
           this.errors.push("Incorrect password.");
-        } else if (response.response.data.code === 101) {
+        } else if (response.response.status === 409) {
           this.errors.push("User with this email already exists.");
         } else {
           this.errors.push("Server Error.");
@@ -94,9 +94,10 @@ export default {
 
       this.submitting = true;
 
-      this.callAndLogoutIfUnauthorized(authRequest.post)("/api/user/secure_update", {
+      this.callAndLogoutIfUnauthorized(authRequest.put)("/api/user/credentials", {
         username: this.email.toLowerCase(),
-        current_password: this.password,
+        password: this.password,
+        currentPassword: this.password,
       })
         .then(this.onSubmissionSuccessful)
         .catch(this.onSubmissionFailed)

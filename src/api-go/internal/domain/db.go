@@ -4,7 +4,7 @@ import "fmt"
 
 const (
 	DbNotFoundError = iota
-	DbAlreadyExistsError
+	DbConflictError
 	DbInternalError
 	DbInvalidUserFieldError
 	DbNotImplementedError

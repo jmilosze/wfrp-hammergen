@@ -47,7 +47,7 @@ export default {
   methods: {
     onSubmissionFailed(response) {
       if (response.response) {
-        if (response.response.data.code === 107) {
+        if (response.response.status === 403) {
           this.errors.push("Incorrect password.");
         } else {
           this.errors.push("Server Error.");

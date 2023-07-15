@@ -81,7 +81,11 @@ export default {
   },
   methods: {
     onSubmissionFailed(error) {
-      if (error.response && error.response.data.code === 106) {
+      if (
+        error.response &&
+        error.response.status === 400 &&
+        error.response.data.details === "captcha verification error"
+      ) {
         this.errors.push("We suspect you might be a robot. Please try again.");
       } else {
         this.errors.push("Server Error.");
@@ -108,9 +112,9 @@ export default {
       const token = await this.$recaptcha("resetpassword");
 
       try {
-        await anonRequest.post("/api/user/send_reset_password", {
+        await anonRequest.post("/api/user/sendResetPassword", {
           username: this.username.toLowerCase(),
-          recaptcha: token,
+          captcha: token,
         });
         this.onSubmissionSuccessful();
       } catch (error) {

@@ -18,20 +18,20 @@
             </li>
             <li class="nav-item">
               <button
-                v-on:click="clickTab('shared')"
-                class="nav-link btn btn-block text-left"
-                v-bind:class="{ active: selectedTab.shared }"
-              >
-                Linked Users
-              </button>
-            </li>
-            <li class="nav-item">
-              <button
                 v-on:click="clickTab('username')"
                 class="nav-link btn btn-block text-left"
                 v-bind:class="{ active: selectedTab.username }"
               >
                 Username
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                v-on:click="clickTab('shared')"
+                class="nav-link btn btn-block text-left"
+                v-bind:class="{ active: selectedTab.shared }"
+              >
+                Linked Users
               </button>
             </li>
             <li class="nav-item">

@@ -75,7 +75,7 @@ export default {
   methods: {
     onLoginFailed(e) {
       this.loggingIn = false;
-      if (e.response && e.response.data.code === 102) {
+      if (e.response && (e.response.status === 404 || e.response.status === 403)) {
         this.errors.push("Invalid username or password.");
       } else {
         this.errors.push("Server error.");

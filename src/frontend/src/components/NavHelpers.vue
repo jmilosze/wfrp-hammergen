@@ -17,6 +17,9 @@ export default {
     async login(username, password) {
       return this.authStore.login(username, password);
     },
+    loggedUserInfo() {
+      return this.authStore.loggedUserInfo();
+    },
   },
 };
 </script>

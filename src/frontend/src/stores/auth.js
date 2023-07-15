@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useRouter } from "vue-router/composables";
 import { ref } from "vue";
-import { loginUser, logoutUser, isUserLoggedIn } from "../services/auth";
+import { isUserLoggedIn, loginUser, logoutUser, userInfo } from "../services/auth";
 
 export const useAuthStore = defineStore("auth", () => {
   const loggedIn = ref(isUserLoggedIn());
@@ -44,5 +44,9 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  return { loggedIn, login, logout, callAndLogoutIfUnauthorized };
+  function loggedUserInfo() {
+    return userInfo();
+  }
+
+  return { loggedIn, login, logout, callAndLogoutIfUnauthorized, loggedUserInfo };
 });

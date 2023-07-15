@@ -10,11 +10,6 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <b-form-group label="Name" label-for="name-input">
-              <b-form-input id="name-input" v-model="name" type="text"></b-form-input>
-              <b-form-invalid-feedback :state="validInputName[0]"> {{ validInputName[1] }}</b-form-invalid-feedback>
-            </b-form-group>
-
             <b-form-group label="Email" label-for="email-input">
               <b-form-input id="email-input" v-model="username" type="text"></b-form-input>
               <b-form-invalid-feedback :state="validInputEmail[0]"> {{ validInputEmail[1] }}</b-form-invalid-feedback>
@@ -23,15 +18,15 @@
             <b-form-group label="Password" label-for="password-input">
               <b-form-input id="password-input" v-model="password" type="password"></b-form-input>
               <b-form-invalid-feedback :state="validInputPassword[0]">
-                {{ validInputPassword[1] }}</b-form-invalid-feedback
-              >
+                {{ validInputPassword[1] }}
+              </b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group label="Confirm password" label-for="retyped-password-input">
               <b-form-input id="retyped-password-input" v-model="retypedPassword" type="password"></b-form-input>
               <b-form-invalid-feedback :state="validInputPasswordMatch[0]">
-                {{ validInputPasswordMatch[1] }}</b-form-invalid-feedback
-              >
+                {{ validInputPasswordMatch[1] }}
+              </b-form-invalid-feedback>
             </b-form-group>
 
             <div class="form-group">
@@ -55,7 +50,7 @@
 </template>
 
 <script>
-import { validEmail, validPassword, validPasswordMatch, validUserName } from "../../utils/validation/user";
+import { validEmail, validPassword, validPasswordMatch } from "../../utils/validation/user";
 import { anonRequest } from "../../services/auth";
 
 export default {
@@ -71,7 +66,6 @@ export default {
   data() {
     return {
       validatorOn: false,
-      name: "",
       username: "",
       password: "",
       retypedPassword: "",
@@ -84,9 +78,13 @@ export default {
   },
   methods: {
     onRegistrationFailed(error) {
-      if (error.response && error.response.data.code === 101) {
+      if (error.response && error.response.status === 409) {
         this.errors.push("User with this email already exists.");
-      } else if (error.response && error.response.data.code === 106) {
+      } else if (
+        error.response &&
+        error.response.status === 400 &&
+        error.response.data.details === "captcha verification error"
+      ) {
         this.errors.push("We suspect you might be a robot. Please try again.");
       } else {
         this.errors.push("Server error.");
@@ -95,7 +93,6 @@ export default {
 
     onRegistrationSuccessful() {
       this.validatorOn = false;
-      this.name = "";
       this.username = "";
       this.password = "";
       this.retypedPassword = "";
@@ -112,12 +109,7 @@ export default {
       this.registrationSuccessful = false;
       this.errors = [];
 
-      if (
-        !this.validInputName[0] ||
-        !this.validInputEmail[0] ||
-        !this.validInputPassword[0] ||
-        !this.validInputPasswordMatch[0]
-      ) {
+      if (!this.validInputEmail[0] || !this.validInputPassword[0] || !this.validInputPasswordMatch[0]) {
         return;
       }
 
@@ -128,11 +120,9 @@ export default {
 
       try {
         await anonRequest.post("/api/user", {
-          name: this.name,
           username: this.username.toLowerCase(),
           password: this.password,
-          shared_accounts: [],
-          recaptcha: token,
+          captcha: token,
         });
         this.onRegistrationSuccessful();
       } catch (error) {
@@ -143,12 +133,6 @@ export default {
     },
   },
   computed: {
-    validInputName() {
-      if (!this.validatorOn) {
-        return [true, null];
-      }
-      return validUserName(this.name);
-    },
     validInputEmail() {
       if (!this.validatorOn) {
         return [true, null];
