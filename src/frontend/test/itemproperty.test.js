@@ -1,37 +1,41 @@
 import { describe, expect, test, vi } from "vitest";
-import { ItemPropertyApi, compareItemProperty } from "../src/services/wh/itemproperty";
+import { compareItemProperty, ItemPropertyApi } from "../src/services/wh/itemproperty";
 
-const itemProperty1 = {
+const itemProperty1ApiForm = {
   id: "id1",
-  name: "itemProperty1",
-  description: "desc1",
-  type: 0,
-  applicable_to: [0, 1],
-  can_edit: true,
-  shared: true,
-  source: { 1: "page 2", 3: "page 5-10" },
+  canEdit: true,
+  object: {
+    name: "itemProperty1",
+    description: "desc1",
+    type: 0,
+    applicableTo: [0, 1],
+    shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
+  },
 };
 
-const itemProperty2 = {
+const itemProperty2ApiForm = {
   id: "id2",
-  name: "itemProperty2",
-  description: "desc2",
-  type: 1,
-  applicable_to: [2, 3],
-  can_edit: false,
-  shared: false,
-  source: {},
+  canEdit: false,
+  object: {
+    name: "itemProperty2",
+    description: "desc2",
+    type: 1,
+    applicableTo: [2, 3],
+    shared: false,
+    source: {},
+  },
 };
 
 const mockAxios = {
   get: async (path) => {
     let apiData;
-    if (path === "/api/item_property") {
-      apiData = [JSON.parse(JSON.stringify(itemProperty1)), JSON.parse(JSON.stringify(itemProperty2))];
-    } else if (path === "/api/item_property/id1") {
-      apiData = JSON.parse(JSON.stringify(itemProperty1));
-    } else if (path === "/api/item_property/id2") {
-      apiData = JSON.parse(JSON.stringify(itemProperty2));
+    if (path === "/api/wh/property") {
+      apiData = [JSON.parse(JSON.stringify(itemProperty1ApiForm)), JSON.parse(JSON.stringify(itemProperty2ApiForm))];
+    } else if (path === "/api/wh/property/id1") {
+      apiData = JSON.parse(JSON.stringify(itemProperty1ApiForm));
+    } else if (path === "/api/wh/property/id2") {
+      apiData = JSON.parse(JSON.stringify(itemProperty2ApiForm));
     } else {
       throw "invalid id";
     }
@@ -39,7 +43,10 @@ const mockAxios = {
     return { data: { data: apiData } };
   },
   post: async () => {
-    return { data: { data: "inserted_id" } };
+    return { data: { data: { id: "id1" } } };
+  },
+  put: async () => {
+    return { data: { data: { id: "id1" } } };
   },
   delete: async () => {},
 };
@@ -102,13 +109,13 @@ test("createElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/item_property", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/property", {
     name: "itemProperty1",
     description: "desc1",
     type: 0,
-    applicable_to: [0, 1],
+    applicableTo: [0, 1],
     shared: true,
     source: { 1: "page 2", 3: "page 5-10" },
   });
@@ -116,7 +123,7 @@ test("createElement calls axios with expected arguments", async () => {
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new ItemPropertyApi(mockAxios);
-  const axiosSpy = vi.spyOn(mockAxios, "post");
+  const axiosSpy = vi.spyOn(mockAxios, "put");
   const result = await client.updateElement({
     id: "id1",
     name: "itemProperty1",
@@ -128,14 +135,14 @@ test("updateElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/item_property/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/property/id1", {
     id: "id1",
     name: "itemProperty1",
     description: "desc1",
     type: 0,
-    applicable_to: [0, 1],
+    applicableTo: [0, 1],
     shared: true,
     source: { 1: "page 2", 3: "page 5-10" },
   });
@@ -146,7 +153,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/item_property/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/property/id1");
 });
 
 describe("compareItemProperty returns true", () => {

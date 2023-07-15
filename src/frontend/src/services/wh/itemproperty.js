@@ -14,11 +14,11 @@ const apiBasePath = "/api/wh/property";
 const convertApiToModelData = (apiData) => {
   return {
     id: apiData["id"],
+    canEdit: apiData["canEdit"],
     name: apiData["object"]["name"],
     description: apiData["object"]["description"],
     type: apiData["object"]["type"],
     applicableTo: apiData["object"]["applicableTo"],
-    canEdit: apiData["canEdit"],
     shared: apiData["object"]["shared"],
     source: apiData["object"]["source"],
   };
@@ -26,12 +26,12 @@ const convertApiToModelData = (apiData) => {
 
 const convertModelToApiData = (itemProperty, includeId) => {
   let apiData = {
-    name: itemProperty.name,
-    description: itemProperty.description,
-    type: itemProperty.type,
-    applicable_to: itemProperty.applicableTo,
-    shared: itemProperty.shared,
-    source: itemProperty.source,
+    name: itemProperty["name"],
+    description: itemProperty["description"],
+    type: itemProperty["type"],
+    applicableTo: itemProperty["applicableTo"],
+    shared: itemProperty["shared"],
+    source: itemProperty["source"],
   };
 
   if (includeId) {
