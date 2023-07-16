@@ -43,7 +43,6 @@ for mutation in source_collection.find():
                     "wp": mutation["modifiers"]["attributes"]["WP"],
                     "ws": mutation["modifiers"]["attributes"]["WS"],
                 }
-
             },
             "shared": mutation["shared"],
             "source": mutation["source"],

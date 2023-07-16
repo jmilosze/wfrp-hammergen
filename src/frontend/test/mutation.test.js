@@ -1,45 +1,49 @@
 import { describe, expect, test, vi } from "vitest";
-import { MutationApi, compareMutation } from "../src/services/wh/mutation";
+import { compareMutation, MutationApi } from "../src/services/wh/mutation";
 
-const mutation1 = {
+const mutation1ApiForm = {
   id: "id1",
-  name: "mutation1",
-  description: "desc1",
-  type: 0,
-  modifiers: {
-    size: 0,
-    movement: 1,
-    attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+  canEdit: true,
+  object: {
+    name: "mutation1",
+    description: "desc1",
+    type: 0,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+    },
+    shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   },
-  can_edit: true,
-  shared: true,
-  source: { 1: "page 2", 3: "page 5-10" },
 };
 
-const mutation2 = {
+const mutation2ApiForm = {
   id: "id2",
-  name: "mutation2",
-  description: "desc2",
-  type: 1,
-  modifiers: {
-    size: 0,
-    movement: 0,
-    attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+  canEdit: false,
+  object: {
+    name: "mutation2",
+    description: "desc2",
+    type: 1,
+    modifiers: {
+      size: 0,
+      movement: 0,
+      attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
+    shared: false,
+    source: {},
   },
-  can_edit: false,
-  shared: false,
-  source: {},
 };
 
 const mockAxios = {
   get: async (path) => {
     let apiData;
-    if (path === "/api/mutation") {
-      apiData = [JSON.parse(JSON.stringify(mutation1)), JSON.parse(JSON.stringify(mutation2))];
-    } else if (path === "/api/mutation/id1") {
-      apiData = JSON.parse(JSON.stringify(mutation1));
-    } else if (path === "/api/mutation/id2") {
-      apiData = JSON.parse(JSON.stringify(mutation2));
+    if (path === "/api/wh/mutation") {
+      apiData = [JSON.parse(JSON.stringify(mutation1ApiForm)), JSON.parse(JSON.stringify(mutation2ApiForm))];
+    } else if (path === "/api/wh/mutation/id1") {
+      apiData = JSON.parse(JSON.stringify(mutation1ApiForm));
+    } else if (path === "/api/wh/mutation/id2") {
+      apiData = JSON.parse(JSON.stringify(mutation2ApiForm));
     } else {
       throw "invalid id";
     }
@@ -47,7 +51,10 @@ const mockAxios = {
     return { data: { data: apiData } };
   },
   post: async () => {
-    return { data: { data: "inserted_id" } };
+    return { data: { data: { id: "id1" } } };
+  },
+  put: async () => {
+    return { data: { data: { id: "id1" } } };
   },
   delete: async () => {},
 };
@@ -135,9 +142,9 @@ test("createElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/mutation", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/mutation", {
     name: "mutation1",
     description: "desc1",
     type: 0,
@@ -148,7 +155,7 @@ test("createElement calls axios with expected arguments", async () => {
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new MutationApi(mockAxios);
-  const axiosSpy = vi.spyOn(mockAxios, "post");
+  const axiosSpy = vi.spyOn(mockAxios, "put");
   const result = await client.updateElement({
     id: "id1",
     name: "mutation1",
@@ -159,9 +166,9 @@ test("updateElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/mutation/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/mutation/id1", {
     id: "id1",
     name: "mutation1",
     description: "desc1",
@@ -176,7 +183,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/mutation/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/mutation/id1");
 });
 
 test("compareMutation returns true if mutations are exactly the same", () => {
