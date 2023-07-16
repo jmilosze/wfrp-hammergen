@@ -9,29 +9,29 @@ import {
   deleteElementFunc,
 } from "./crudGenerator";
 
-const apiBasePath = "/api/item_property";
+const apiBasePath = "/api/wh/property";
 
 const convertApiToModelData = (apiData) => {
   return {
-    id: apiData.id,
-    name: apiData.name,
-    description: apiData.description,
-    type: apiData.type,
-    applicableTo: apiData.applicable_to,
-    canEdit: apiData.can_edit,
-    shared: apiData.shared,
-    source: apiData.source,
+    id: apiData["id"],
+    canEdit: apiData["canEdit"],
+    name: apiData["object"]["name"],
+    description: apiData["object"]["description"],
+    type: apiData["object"]["type"],
+    applicableTo: apiData["object"]["applicableTo"],
+    shared: apiData["object"]["shared"],
+    source: apiData["object"]["source"],
   };
 };
 
 const convertModelToApiData = (itemProperty, includeId) => {
   let apiData = {
-    name: itemProperty.name,
-    description: itemProperty.description,
-    type: itemProperty.type,
-    applicable_to: itemProperty.applicableTo,
-    shared: itemProperty.shared,
-    source: itemProperty.source,
+    name: itemProperty["name"],
+    description: itemProperty["description"],
+    type: itemProperty["type"],
+    applicableTo: itemProperty["applicableTo"],
+    shared: itemProperty["shared"],
+    source: itemProperty["source"],
   };
 
   if (includeId) {
