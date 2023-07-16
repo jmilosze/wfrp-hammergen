@@ -125,7 +125,7 @@ import CreateElement2 from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import PublicElementBox from "./PublicElementBox.vue";
 import SourceTable from "./SourceTable.vue";
-import { SpellApi, generateEmptySpell, generateNewSpell, spellTypes, compareSpell } from "../../services/wh/spell";
+import { compareSpell, generateEmptySpell, generateNewSpell, SpellApi, spellTypes } from "../../services/wh/spell";
 import { authRequest } from "../../services/auth";
 import { validWhCastingNumber, validWhShortDesc } from "../../utils/validation/wh";
 
