@@ -7,10 +7,10 @@ import (
 )
 
 type Wh struct {
-	Id      string
-	OwnerId string
-	CanEdit bool
-	Object  WhObject
+	Id      string   `json:"id"`
+	OwnerId string   `json:"ownerId"`
+	CanEdit bool     `json:"canEdit"`
+	Object  WhObject `json:"object"`
 }
 
 const (

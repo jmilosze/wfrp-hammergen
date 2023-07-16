@@ -42,7 +42,7 @@
         @elementCopied="copyWh"
       />
 
-      <div v-else class="text-center">
+      <div v-if="!loaded && errors.length === 0" class="text-center">
         <div class="spinner-border" style="width: 3rem; height: 3rem" role="status">
           <span class="sr-only">Loading...</span>
         </div>
@@ -59,13 +59,13 @@
 
 <script setup>
 import ElementList from "./ListTemplate.vue";
-import { ItemPropertyApi, itemPropertyTypes, itemPropertyOptions } from "../../../services/wh/itemproperty";
+import { ItemPropertyApi, itemPropertyOptions, itemPropertyTypes } from "../../../services/wh/itemproperty";
 import { authRequest } from "../../../services/auth";
-import { onBeforeMount, ref, computed, reactive, watch } from "vue";
+import { computed, onBeforeMount, reactive, ref, watch } from "vue";
 import { useListWh } from "../../../composables/listWh";
-import { itemTypes, itemTypeOptions } from "../../../services/wh/item";
+import { itemTypeOptions, itemTypes } from "../../../services/wh/item";
 import { addSpaces } from "../../../utils/stringUtils";
-import { sourceOptions, source } from "../../../services/wh/source";
+import { source, sourceOptions } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
 
 const MAX_CHARS = 15;

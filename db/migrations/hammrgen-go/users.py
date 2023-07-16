@@ -21,7 +21,6 @@ target_collection = target_db["user"]
 
 new_users = []
 for user in source_collection.find():
-    a = 1
     new_users.append({
         "_id": user["_id"],
         "username": user["username"],
