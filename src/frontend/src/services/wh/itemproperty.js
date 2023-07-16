@@ -2,36 +2,36 @@ import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
 import { compareObjects } from "../../utils/objectUtils";
 import { defaultSource } from "./source";
 import {
+  createElementFunc,
+  deleteElementFunc,
   getElementFunc,
   listElementsFunc,
-  createElementFunc,
   updateElementFunc,
-  deleteElementFunc,
 } from "./crudGenerator";
 
 const apiBasePath = "/api/wh/property";
 
 const convertApiToModelData = (apiData) => {
   return {
-    id: apiData["id"],
-    canEdit: apiData["canEdit"],
-    name: apiData["object"]["name"],
-    description: apiData["object"]["description"],
-    type: apiData["object"]["type"],
-    applicableTo: apiData["object"]["applicableTo"],
-    shared: apiData["object"]["shared"],
-    source: apiData["object"]["source"],
+    id: apiData.id,
+    canEdit: apiData.canEdit,
+    name: apiData.object.name,
+    description: apiData.object.description,
+    type: apiData.object.type,
+    applicableTo: apiData.object.applicableTo,
+    shared: apiData.object.shared,
+    source: apiData.object.source,
   };
 };
 
 const convertModelToApiData = (itemProperty, includeId) => {
   let apiData = {
-    name: itemProperty["name"],
-    description: itemProperty["description"],
-    type: itemProperty["type"],
-    applicableTo: itemProperty["applicableTo"],
-    shared: itemProperty["shared"],
-    source: itemProperty["source"],
+    name: itemProperty.name,
+    description: itemProperty.description,
+    type: itemProperty.type,
+    applicableTo: itemProperty.applicableTo,
+    shared: itemProperty.shared,
+    source: itemProperty.source,
   };
 
   if (includeId) {

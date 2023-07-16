@@ -13,15 +13,15 @@ const apiBasePath = "/api/wh/mutation";
 
 const convertApiToModelData = (apiData) => {
   return {
-    id: apiData["id"],
-    canEdit: apiData["canEdit"],
-    name: apiData["object"]["name"],
-    description: apiData["object"]["description"],
-    type: apiData["object"]["type"],
-    hasModifiers: checkModifiers(apiData["object"]["modifiers"]),
-    modifiers: apiData["object"]["modifiers"],
-    shared: apiData["object"]["shared"],
-    source: apiData["object"]["source"],
+    id: apiData.id,
+    canEdit: apiData.canEdit,
+    name: apiData.object.name,
+    description: apiData.object.description,
+    type: apiData.object.type,
+    hasModifiers: checkModifiers(apiData.object.modifiers),
+    modifiers: apiData.object.modifiers,
+    shared: apiData.object.shared,
+    source: apiData.object.source,
   };
 };
 
