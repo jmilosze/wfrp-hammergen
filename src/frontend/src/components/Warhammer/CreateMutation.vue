@@ -99,11 +99,11 @@ import PublicElementBox from "./PublicElementBox.vue";
 import CharacterModifiers from "./CharacterModifiers.vue";
 import SourceTable from "./SourceTable.vue";
 import {
-  MutationApi,
+  compareMutation,
   generateEmptyMutation,
   generateNewMutation,
+  MutationApi,
   mutationTypes,
-  compareMutation,
 } from "../../services/wh/mutation";
 import { authRequest } from "../../services/auth";
 
