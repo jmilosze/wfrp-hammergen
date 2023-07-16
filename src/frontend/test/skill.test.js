@@ -1,43 +1,47 @@
 import { describe, expect, test, vi } from "vitest";
-import { SkillApi, compareSkill } from "../src/services/wh/skill";
+import { compareSkill, SkillApi } from "../src/services/wh/skill";
 
-const skill1 = {
+const skill1ApiForm = {
   id: "id1",
-  name: "skill1",
-  description: "desc1",
-  attribute: 1,
-  type: 0,
-  display_zero: true,
-  is_group: true,
-  group: ["a", "b"],
-  can_edit: true,
-  shared: true,
-  source: { 1: "page 2", 3: "page 5-10" },
+  canEdit: true,
+  object: {
+    name: "skill1",
+    description: "desc1",
+    attribute: 1,
+    type: 0,
+    displayZero: true,
+    isGroup: true,
+    group: ["a", "b"],
+    shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
+  },
 };
 
-const skill2 = {
+const skill2ApiForm = {
   id: "id2",
-  name: "skill2",
-  description: "desc2",
-  attribute: 2,
-  type: 1,
-  display_zero: false,
-  is_group: false,
-  group: [],
-  can_edit: true,
-  shared: true,
-  source: {},
+  canEdit: true,
+  object: {
+    name: "skill2",
+    description: "desc2",
+    attribute: 2,
+    type: 1,
+    displayZero: false,
+    isGroup: false,
+    group: [],
+    shared: true,
+    source: {},
+  },
 };
 
 const mockAxios = {
   get: async (path) => {
     let apiData;
-    if (path === "/api/skill") {
-      apiData = [JSON.parse(JSON.stringify(skill1)), JSON.parse(JSON.stringify(skill2))];
-    } else if (path === "/api/skill/id1") {
-      apiData = JSON.parse(JSON.stringify(skill1));
-    } else if (path === "/api/skill/id2") {
-      apiData = JSON.parse(JSON.stringify(skill2));
+    if (path === "/api/wh/skill") {
+      apiData = [JSON.parse(JSON.stringify(skill1ApiForm)), JSON.parse(JSON.stringify(skill2ApiForm))];
+    } else if (path === "/api/wh/skill/id1") {
+      apiData = JSON.parse(JSON.stringify(skill1ApiForm));
+    } else if (path === "/api/wh/skill/id2") {
+      apiData = JSON.parse(JSON.stringify(skill2ApiForm));
     } else {
       throw "invalid id";
     }
@@ -45,7 +49,10 @@ const mockAxios = {
     return { data: { data: apiData } };
   },
   post: async () => {
-    return { data: { data: "inserted_id" } };
+    return { data: { data: { id: "id1" } } };
+  },
+  put: async () => {
+    return { data: { data: { id: "id1" } } };
   },
   delete: async () => {},
 };
@@ -120,9 +127,9 @@ test("createElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/skill", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/skill", {
     name: "skill1",
     description: "desc1",
     attribute: 1,
@@ -137,7 +144,7 @@ test("createElement calls axios with expected arguments", async () => {
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new SkillApi(mockAxios);
-  const axiosSpy = vi.spyOn(mockAxios, "post");
+  const axiosSpy = vi.spyOn(mockAxios, "put");
   const result = await client.updateElement({
     id: "id1",
     name: "skill1",
@@ -152,9 +159,9 @@ test("updateElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/skill/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/skill/id1", {
     id: "id1",
     name: "skill1",
     description: "desc1",
@@ -173,7 +180,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/skill/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/skill/id1");
 });
 
 describe("compareSkill returns true", () => {

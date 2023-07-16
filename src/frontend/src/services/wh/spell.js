@@ -12,17 +12,17 @@ const apiBasePath = "/api/wh/spell";
 
 const convertApiToModelData = (apiData) => {
   const spell = {
-    id: apiData["id"],
-    canEdit: apiData["canEdit"],
-    name: apiData["object"]["name"],
-    cn: apiData["object"]["cn"],
-    range: apiData["object"]["range"],
-    target: apiData["object"]["target"],
-    duration: apiData["object"]["duration"],
-    description: apiData["object"]["description"],
-    type: apiData["object"]["type"],
-    shared: apiData["object"]["shared"],
-    source: apiData["object"]["source"],
+    id: apiData.id,
+    canEdit: apiData.canEdit,
+    name: apiData.object.name,
+    cn: apiData.object.cn,
+    range: apiData.object.range,
+    target: apiData.object.target,
+    duration: apiData.object.duration,
+    description: apiData.object.description,
+    type: apiData.object.type,
+    shared: apiData.object.shared,
+    source: apiData.object.source,
   };
 
   if (spell.cn === -1) {
