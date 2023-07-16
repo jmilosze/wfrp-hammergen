@@ -10,23 +10,23 @@ import {
   updateElementFunc,
 } from "./crudGenerator";
 
-const apiBasePath = "/api/talent";
+const apiBasePath = "/api/wh/talent";
 
 const convertApiToModelData = (apiData) => {
   return {
     id: apiData.id,
-    name: apiData.name,
-    description: apiData.description,
-    tests: apiData.tests,
-    maxRank: apiData.max_rank,
-    maxRankAtt: apiData.max_rank_att,
-    isGroup: apiData.is_group,
-    group: apiData.group,
-    hasModifiers: checkModifiers(apiData.modifiers),
-    modifiers: apiData.modifiers,
-    canEdit: apiData.can_edit,
-    shared: apiData.shared,
-    source: apiData.source,
+    canEdit: apiData.canEdit,
+    name: apiData.object.name,
+    description: apiData.object.description,
+    tests: apiData.object.tests,
+    maxRank: apiData.object.maxRank,
+    maxRankAtt: apiData.object.attribute,
+    isGroup: apiData.object.isGroup,
+    group: apiData.object.group,
+    hasModifiers: checkModifiers(apiData.object.modifiers),
+    modifiers: apiData.object.modifiers,
+    shared: apiData.object.shared,
+    source: apiData.object.source,
   };
 };
 

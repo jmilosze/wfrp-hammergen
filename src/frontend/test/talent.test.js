@@ -1,52 +1,56 @@
 import { describe, expect, test, vi } from "vitest";
-import { TalentApi, compareTalent } from "../src/services/wh/talent";
+import { compareTalent, TalentApi } from "../src/services/wh/talent";
 
 const talent1 = {
   id: "id1",
-  name: "talent1",
-  description: "desc1",
-  tests: "qwe",
-  max_rank: 4,
-  max_rank_att: 2,
-  modifiers: {
-    size: 0,
-    movement: 1,
-    attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+  canEdit: true,
+  object: {
+    name: "talent1",
+    description: "desc1",
+    tests: "qwe",
+    maxRank: 4,
+    attribute: 2,
+    modifiers: {
+      size: 0,
+      movement: 1,
+      attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+    },
+    isGroup: true,
+    group: ["a", "b"],
+    shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
   },
-  is_group: true,
-  group: ["a", "b"],
-  can_edit: true,
-  shared: true,
-  source: { 1: "page 2", 3: "page 5-10" },
 };
 
 const talent2 = {
   id: "id2",
-  name: "talent2",
-  description: "desc2",
-  tests: "asd",
-  max_rank: 2,
-  max_rank_att: 1,
-  modifiers: {
-    size: 0,
-    movement: 0,
-    attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+  canEdit: true,
+  object: {
+    name: "talent2",
+    description: "desc2",
+    tests: "asd",
+    maxRank: 2,
+    attribute: 1,
+    modifiers: {
+      size: 0,
+      movement: 0,
+      attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    },
+    isGroup: false,
+    group: [],
+    shared: true,
+    source: {},
   },
-  is_group: false,
-  group: [],
-  can_edit: true,
-  shared: true,
-  source: {},
 };
 
 const mockAxios = {
   get: async (path) => {
     let apiData;
-    if (path === "/api/talent") {
+    if (path === "/api/wh/talent") {
       apiData = [JSON.parse(JSON.stringify(talent1)), JSON.parse(JSON.stringify(talent2))];
-    } else if (path === "/api/talent/id1") {
+    } else if (path === "/api/wh/talent/id1") {
       apiData = JSON.parse(JSON.stringify(talent1));
-    } else if (path === "/api/talent/id2") {
+    } else if (path === "/api/wh/talent/id2") {
       apiData = JSON.parse(JSON.stringify(talent2));
     } else {
       throw "invalid id";
@@ -54,7 +58,10 @@ const mockAxios = {
     return { data: { data: apiData } };
   },
   post: async () => {
-    return { data: { data: "inserted_id" } };
+    return { data: { data: { id: "id1" } } };
+  },
+  put: async () => {
+    return { data: { data: { id: "id1" } } };
   },
   delete: async () => {},
 };
@@ -162,9 +169,9 @@ test("createElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/talent", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/talent", {
     name: "talent1",
     description: "desc1",
     tests: "qwe",
@@ -179,7 +186,7 @@ test("createElement calls axios with expected arguments", async () => {
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new TalentApi(mockAxios);
-  const axiosSpy = vi.spyOn(mockAxios, "post");
+  const axiosSpy = vi.spyOn(mockAxios, "put");
   const result = await client.updateElement({
     id: "id1",
     name: "talent1",
@@ -194,9 +201,9 @@ test("updateElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/talent/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/talent/id1", {
     id: "id1",
     name: "talent1",
     description: "desc1",
@@ -215,7 +222,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/talent/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/talent/id1");
 });
 
 describe("compareTalent returns true", () => {
@@ -333,7 +340,7 @@ describe("compareTalent returns false", () => {
     { field: "isGroup", value: false },
     { field: "canEdit", value: false },
     { field: "shared", value: false },
-    {field: "source", value: { 1: "zxc", 3: "asd" }}
+    { field: "source", value: { 1: "zxc", 3: "asd" } },
   ])("when talent is group and other talent has different value of $field", (t) => {
     let otherTalent = JSON.parse(JSON.stringify(talentGroup));
     otherTalent[t.field] = t.value;
