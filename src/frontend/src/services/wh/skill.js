@@ -2,29 +2,28 @@ import { compareArrayIgnoreOrder } from "../../utils/arrayUtils";
 import { compareObjects } from "../../utils/objectUtils";
 import { defaultSource } from "./source";
 import {
+  createElementFunc,
+  deleteElementFunc,
   getElementFunc,
   listElementsFunc,
-  createElementFunc,
   updateElementFunc,
-  deleteElementFunc,
 } from "./crudGenerator";
-import { mutationTypes } from "@/services/wh/mutation";
 
-const apiBasePath = "/api/skill";
+const apiBasePath = "/api/wh/skill";
 
 const convertApiToModelData = (apiData) => {
   return {
     id: apiData.id,
-    name: apiData.name,
-    description: apiData.description,
-    attribute: apiData.attribute,
-    type: apiData.type,
-    displayZero: apiData.display_zero,
-    isGroup: apiData.is_group,
-    group: apiData.group,
-    canEdit: apiData.can_edit,
-    shared: apiData.shared,
-    source: apiData.source,
+    canEdit: apiData.canEdit,
+    name: apiData.object.name,
+    description: apiData.object.description,
+    attribute: apiData.object.attribute,
+    type: apiData.object.type,
+    displayZero: apiData.object.displayZero,
+    isGroup: apiData.object.isGroup,
+    group: apiData.object.group,
+    shared: apiData.object.shared,
+    source: apiData.object.source,
   };
 };
 

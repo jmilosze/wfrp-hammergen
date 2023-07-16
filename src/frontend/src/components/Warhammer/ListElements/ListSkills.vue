@@ -60,17 +60,17 @@
 <script setup>
 import ElementList from "./ListTemplate.vue";
 import { authRequest } from "../../../services/auth";
-import { onBeforeMount, ref, computed, reactive, watch } from "vue";
+import { computed, onBeforeMount, reactive, ref, watch } from "vue";
 import { useListWh } from "../../../composables/listWh";
 import {
   SkillApi,
-  skillTypesGroup,
-  skillTypeGroupOptions,
-  skillAttributeTypesGroup,
   skillAttributeTypeGroupOptions,
+  skillAttributeTypesGroup,
+  skillTypeGroupOptions,
+  skillTypesGroup,
 } from "../../../services/wh/skill";
 import { addSpaces } from "../../../utils/stringUtils";
-import { sourceOptions, source } from "../../../services/wh/source";
+import { source, sourceOptions } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
 
 const MAX_CHARS = 15;

@@ -131,14 +131,14 @@ import SelectTable from "./SelectTable.vue";
 import PublicElementBox from "./PublicElementBox.vue";
 import SourceTable from "./SourceTable.vue";
 import {
+  compareSkill,
   generateEmptySkill,
+  generateNewSkill,
   SkillApi,
+  skillAttributeTypesGroup,
+  skillAttributeTypesIndividual,
   skillTypesGroup,
   skillTypesIndividual,
-  skillAttributeTypesIndividual,
-  skillAttributeTypesGroup,
-  compareSkill,
-  generateNewSkill,
 } from "../../services/wh/skill";
 import { authRequest } from "../../services/auth";
 import { invertObj } from "../../utils/objectUtils";
