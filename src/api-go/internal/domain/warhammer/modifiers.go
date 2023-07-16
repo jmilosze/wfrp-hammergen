@@ -29,9 +29,9 @@ func (a WhAttributes) InitAndCopy() WhAttributes {
 }
 
 type WhModifiers struct {
-	Size       int `json:"size" validate:"min=-3,max=3"`
-	Movement   int `json:"movement" validate:"min=-3,max=3"`
-	Attributes WhAttributes
+	Size       int          `json:"size" validate:"min=-3,max=3"`
+	Movement   int          `json:"movement" validate:"min=-3,max=3"`
+	Attributes WhAttributes `json:"attributes"`
 }
 
 func (m WhModifiers) InitAndCopy() WhModifiers {

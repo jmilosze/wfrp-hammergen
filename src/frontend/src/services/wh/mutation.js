@@ -1,6 +1,6 @@
 import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./characterModifiers";
 import { compareObjects } from "../../utils/objectUtils";
-import { defaultSource, source } from "./source";
+import { defaultSource } from "./source";
 import {
   getElementFunc,
   listElementsFunc,
@@ -9,19 +9,19 @@ import {
   deleteElementFunc,
 } from "./crudGenerator";
 
-const apiBasePath = "/api/mutation";
+const apiBasePath = "/api/wh/mutation";
 
 const convertApiToModelData = (apiData) => {
   return {
-    id: apiData.id,
-    name: apiData.name,
-    description: apiData.description,
-    type: apiData.type,
-    hasModifiers: checkModifiers(apiData.modifiers),
-    modifiers: apiData.modifiers,
-    canEdit: apiData.can_edit,
-    shared: apiData.shared,
-    source: apiData.source,
+    id: apiData["id"],
+    canEdit: apiData["canEdit"],
+    name: apiData["object"]["name"],
+    description: apiData["object"]["description"],
+    type: apiData["object"]["type"],
+    hasModifiers: checkModifiers(apiData["object"]["modifiers"]),
+    modifiers: apiData["object"]["modifiers"],
+    shared: apiData["object"]["shared"],
+    source: apiData["object"]["source"],
   };
 };
 

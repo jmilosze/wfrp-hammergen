@@ -47,7 +47,7 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
-	return createdWh, nil
+	return createdWh.PointToCopy(), nil
 }
 
 func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []string) bool {
@@ -94,7 +94,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	updatedWh.CanEdit = canEdit(updatedWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
-	return updatedWh, nil
+	return updatedWh.PointToCopy(), nil
 }
 
 func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) *wh.WhError {
@@ -136,11 +136,14 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		}
 	}
 
-	for _, v := range whs {
-		v.CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
+	whsRet := make([]*wh.Wh, len(whs))
+
+	for k, v := range whs {
+		whsRet[k] = v.PointToCopy()
+		whsRet[k].CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 	}
 
-	return whs, nil
+	return whsRet, nil
 }
 
 func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.Claims, items []*wh.Wh) ([]*wh.Wh, *wh.WhError) {
