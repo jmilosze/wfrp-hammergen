@@ -1,48 +1,55 @@
 import { describe, expect, test, vi } from "vitest";
-import { SpellApi, compareSpell } from "../src/services/wh/spell";
+import { compareSpell, SpellApi } from "../src/services/wh/spell";
 
-const spell = {
+const spellApiForm = {
   id: "id1",
-  name: "spell1",
-  cn: 1,
-  range: "range1",
-  target: "target1",
-  duration: "duration1",
-  description: "desc1",
-  can_edit: true,
-  shared: true,
-  source: { 1: "page 2", 3: "page 5-10" },
+  canEdit: true,
+  object: {
+    name: "spell1",
+    cn: 1,
+    range: "range1",
+    target: "target1",
+    duration: "duration1",
+    description: "desc1",
+    shared: true,
+    source: { 1: "page 2", 3: "page 5-10" },
+  },
 };
 
-const prayer = {
+const prayerApiForm = {
   id: "id2",
-  name: "prayer2",
-  cn: -1,
-  range: "range2",
-  target: "target2",
-  duration: "duration2",
-  description: "desc2",
-  can_edit: true,
-  shared: true,
-  source: {},
+  canEdit: true,
+  object: {
+    name: "prayer2",
+    cn: -1,
+    range: "range2",
+    target: "target2",
+    duration: "duration2",
+    description: "desc2",
+    shared: true,
+    source: {},
+  },
 };
 
 const mockAxios = {
   get: async (path) => {
     let apiData;
-    if (path === "/api/spell") {
-      apiData = [JSON.parse(JSON.stringify(spell)), JSON.parse(JSON.stringify(prayer))];
-    } else if (path === "/api/spell/id1") {
-      apiData = JSON.parse(JSON.stringify(spell));
-    } else if (path === "/api/spell/id2") {
-      apiData = JSON.parse(JSON.stringify(prayer));
+    if (path === "/api/wh/spell") {
+      apiData = [JSON.parse(JSON.stringify(spellApiForm)), JSON.parse(JSON.stringify(prayerApiForm))];
+    } else if (path === "/api/wh/spell/id1") {
+      apiData = JSON.parse(JSON.stringify(spellApiForm));
+    } else if (path === "/api/wh/spell/id2") {
+      apiData = JSON.parse(JSON.stringify(prayerApiForm));
     } else {
       throw "invalid id";
     }
     return { data: { data: apiData } };
   },
   post: async () => {
-    return { data: { data: "inserted_id" } };
+    return { data: { data: { id: "id1" } } };
+  },
+  put: async () => {
+    return { data: { data: { id: "id1" } } };
   },
   delete: async () => {},
 };
@@ -136,9 +143,9 @@ test("createElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result1).toBe("inserted_id");
+  expect(result1.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/spell", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/spell", {
     name: "spell1",
     cn: 1,
     range: "range1",
@@ -164,7 +171,7 @@ test("createElement calls axios with expected arguments", async () => {
     source: {},
   });
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/spell", {
+  expect(mockAxios.post).toHaveBeenCalledWith("/api/wh/spell", {
     name: "prayer2",
     cn: -1,
     range: "range2",
@@ -178,7 +185,7 @@ test("createElement calls axios with expected arguments", async () => {
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new SpellApi(mockAxios);
-  const axiosSpy = vi.spyOn(mockAxios, "post");
+  const axiosSpy = vi.spyOn(mockAxios, "put");
   const result1 = await client.updateElement({
     id: "id1",
     name: "spell1",
@@ -193,9 +200,9 @@ test("updateElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  expect(result1).toBe("inserted_id");
+  expect(result1.id).toBe("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/spell/update", {
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/spell/id1", {
     id: "id1",
     name: "spell1",
     cn: 1,
@@ -207,7 +214,7 @@ test("updateElement calls axios with expected arguments", async () => {
     source: { 1: "page 2", 3: "page 5-10" },
   });
 
-  mockAxios.post.mockClear();
+  mockAxios.put.mockClear();
   await client.updateElement({
     id: "id2",
     name: "prayer2",
@@ -222,7 +229,7 @@ test("updateElement calls axios with expected arguments", async () => {
     source: {},
   });
 
-  expect(mockAxios.post).toHaveBeenCalledWith("/api/spell/update", {
+  expect(mockAxios.put).toHaveBeenCalledWith("/api/wh/spell/id2", {
     id: "id2",
     name: "prayer2",
     cn: -1,
@@ -240,7 +247,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/spell/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/spell/id1");
 });
 
 describe("compareSpell returns true", () => {
