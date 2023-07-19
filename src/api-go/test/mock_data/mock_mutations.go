@@ -8,14 +8,14 @@ import (
 var mutation0 = warhammer.Wh{
 	Id:      "100000000000000000000000",
 	OwnerId: "admin",
-	Object: warhammer.WhMutation{
+	Object: warhammer.Mutation{
 		Name:        "mutation 0",
 		Description: "owned by admin",
-		Type:        warhammer.WhMutationTypeMental,
-		Modifiers: warhammer.WhModifiers{
+		Type:        warhammer.MutationTypeMental,
+		Modifiers: warhammer.Modifiers{
 			Size:     1,
 			Movement: 1,
-			Attributes: warhammer.WhAttributes{
+			Attributes: warhammer.Attributes{
 				WS:  1,
 				BS:  2,
 				S:   3,
@@ -29,9 +29,9 @@ var mutation0 = warhammer.Wh{
 			},
 		},
 		Shared: false,
-		Source: map[warhammer.WhSource]string{
-			warhammer.WhSourceCustom: "a",
-			warhammer.WhSourceWFRP:   "b",
+		Source: map[warhammer.Source]string{
+			warhammer.SourceCustom: "a",
+			warhammer.SourceWFRP:   "b",
 		},
 	},
 }
@@ -39,7 +39,7 @@ var mutation0 = warhammer.Wh{
 var mutation1 = warhammer.Wh{
 	Id:      "100000000000000000000001",
 	OwnerId: "admin",
-	Object: warhammer.WhMutation{
+	Object: warhammer.Mutation{
 		Name:        "mutation 1",
 		Description: "owned by admin shared",
 		Shared:      true,
@@ -49,7 +49,7 @@ var mutation1 = warhammer.Wh{
 var mutation2 = warhammer.Wh{
 	Id:      "100000000000000000000002",
 	OwnerId: user1.Id,
-	Object: warhammer.WhMutation{
+	Object: warhammer.Mutation{
 		Name:        "mutation 2",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Shared:      false,
@@ -59,7 +59,7 @@ var mutation2 = warhammer.Wh{
 var mutation3 = warhammer.Wh{
 	Id:      "100000000000000000000003",
 	OwnerId: user1.Id,
-	Object: warhammer.WhMutation{
+	Object: warhammer.Mutation{
 		Name:        "mutation 3",
 		Description: fmt.Sprintf("owned by %s shared", user1.Username),
 		Shared:      true,
@@ -69,7 +69,7 @@ var mutation3 = warhammer.Wh{
 var mutation4 = warhammer.Wh{
 	Id:      "100000000000000000000004",
 	OwnerId: user2.Id,
-	Object: warhammer.WhMutation{
+	Object: warhammer.Mutation{
 		Name:        "mutation 4",
 		Description: fmt.Sprintf("owned by %s", user2.Username),
 		Shared:      false,
@@ -79,7 +79,7 @@ var mutation4 = warhammer.Wh{
 var mutation5 = warhammer.Wh{
 	Id:      "100000000000000000000005",
 	OwnerId: user2.Id,
-	Object: warhammer.WhMutation{
+	Object: warhammer.Mutation{
 		Name:        "mutation 5",
 		Description: fmt.Sprintf("owned by %s shared", user2.Username),
 		Shared:      true,
@@ -89,7 +89,7 @@ var mutation5 = warhammer.Wh{
 var mutation6 = warhammer.Wh{
 	Id:      "100000000000000000000006",
 	OwnerId: user3.Id,
-	Object: warhammer.WhMutation{
+	Object: warhammer.Mutation{
 		Name:        "mutation 6",
 		Description: fmt.Sprintf("owned by %s", user3.Username),
 		Shared:      false,
@@ -99,7 +99,7 @@ var mutation6 = warhammer.Wh{
 var mutation7 = warhammer.Wh{
 	Id:      "100000000000000000000007",
 	OwnerId: user4.Id,
-	Object: warhammer.WhMutation{
+	Object: warhammer.Mutation{
 		Name:        "mutation 7",
 		Description: fmt.Sprintf("owned by %s shared", user4.Username),
 		Shared:      true,

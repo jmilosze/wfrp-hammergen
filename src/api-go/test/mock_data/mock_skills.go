@@ -11,15 +11,15 @@ var skill0 = warhammer.Wh{
 	Object: warhammer.WhSkill{
 		Name:        "skill 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Attribute:   warhammer.WhAttWS,
-		Type:        warhammer.WhSkillTypeAdvanced,
+		Attribute:   warhammer.AttWS,
+		Type:        warhammer.SkillTypeAdvanced,
 		IsGroup:     false,
 		DisplayZero: true,
 		Group:       []string{skill1.Id},
 		Shared:      false,
-		Source: map[warhammer.WhSource]string{
-			warhammer.WhSourceArchivesOfTheEmpireVolI: "d",
-			warhammer.WhSourceSeaOfClaws:              "e",
+		Source: map[warhammer.Source]string{
+			warhammer.SourceArchivesOfTheEmpireVolI: "d",
+			warhammer.SourceSeaOfClaws:              "e",
 		},
 	},
 }

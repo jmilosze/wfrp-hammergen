@@ -35,7 +35,7 @@ func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, w
 	}
 }
 
-func seedGenProps(ctx context.Context, db warhammer.WhDbService, genProps *warhammer.WhGenerationProps) {
+func seedGenProps(ctx context.Context, db warhammer.WhDbService, genProps *warhammer.GenProps) {
 	if _, dbErr := db.CreateGenerationProps(ctx, genProps); dbErr != nil {
 		if dbErr.Type != domain.DbConflictError {
 			log.Fatal(dbErr)

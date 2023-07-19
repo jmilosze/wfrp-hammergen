@@ -8,15 +8,15 @@ import (
 var property0 = warhammer.Wh{
 	Id:      "300000000000000000000000",
 	OwnerId: "admin",
-	Object: warhammer.WhProperty{
+	Object: warhammer.Property{
 		Name:         "property 0",
 		Description:  "owned by admin",
 		Type:         0,
-		ApplicableTo: []warhammer.WhItemType{0, 1, 2},
+		ApplicableTo: []warhammer.ItemType{0, 1, 2},
 		Shared:       false,
-		Source: map[warhammer.WhSource]string{
-			warhammer.WhSourceArchivesOfTheEmpireVolI: "d",
-			warhammer.WhSourceSeaOfClaws:              "e",
+		Source: map[warhammer.Source]string{
+			warhammer.SourceArchivesOfTheEmpireVolI: "d",
+			warhammer.SourceSeaOfClaws:              "e",
 		},
 	},
 }
@@ -24,7 +24,7 @@ var property0 = warhammer.Wh{
 var property1 = warhammer.Wh{
 	Id:      "300000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.WhProperty{
+	Object: warhammer.Property{
 		Name:        "property 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Shared:      false,

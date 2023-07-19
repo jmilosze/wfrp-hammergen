@@ -43,21 +43,21 @@ func NewApiWh(t WhType) (Wh, error) {
 
 	switch t {
 	case WhTypeMutation:
-		wh.Object = &WhMutation{}
+		wh.Object = &Mutation{}
 	case WhTypeSpell:
-		wh.Object = &WhSpell{}
+		wh.Object = &Spell{}
 	case WhTypeProperty:
-		wh.Object = &WhProperty{}
+		wh.Object = &Property{}
 	case WhTypeItem:
-		wh.Object = &WhItem{}
+		wh.Object = &Item{}
 	case WhTypeTalent:
-		wh.Object = &WhTalent{}
+		wh.Object = &Talent{}
 	case WhTypeSkill:
 		wh.Object = &WhSkill{}
 	case WhTypeCareer:
 		wh.Object = &WhCareer{}
 	case WhTypeCharacter:
-		wh.Object = &WhCharacter{}
+		wh.Object = &Character{}
 	default:
 		return wh, fmt.Errorf("invalid Wh type %s", t)
 	}

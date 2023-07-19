@@ -1,6 +1,6 @@
 package warhammer
 
-type WhAttributes struct {
+type Attributes struct {
 	WS  int `json:"WS" validate:"min=-99,max=99"`
 	BS  int `json:"BS" validate:"min=-99,max=99"`
 	S   int `json:"S" validate:"min=-99,max=99"`
@@ -13,8 +13,8 @@ type WhAttributes struct {
 	Fel int `json:"Fel" validate:"min=-99,max=99"`
 }
 
-func (a WhAttributes) InitAndCopy() WhAttributes {
-	return WhAttributes{
+func (a Attributes) InitAndCopy() Attributes {
+	return Attributes{
 		WS:  a.WS,
 		BS:  a.BS,
 		S:   a.S,
@@ -28,14 +28,14 @@ func (a WhAttributes) InitAndCopy() WhAttributes {
 	}
 }
 
-type WhModifiers struct {
-	Size       int          `json:"size" validate:"min=-3,max=3"`
-	Movement   int          `json:"movement" validate:"min=-3,max=3"`
-	Attributes WhAttributes `json:"attributes"`
+type Modifiers struct {
+	Size       int        `json:"size" validate:"min=-3,max=3"`
+	Movement   int        `json:"movement" validate:"min=-3,max=3"`
+	Attributes Attributes `json:"attributes"`
 }
 
-func (m WhModifiers) InitAndCopy() WhModifiers {
-	return WhModifiers{
+func (m Modifiers) InitAndCopy() Modifiers {
+	return Modifiers{
 		Size:       m.Size,
 		Movement:   m.Movement,
 		Attributes: m.Attributes.InitAndCopy(),

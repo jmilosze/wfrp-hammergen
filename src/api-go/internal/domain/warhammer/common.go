@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func GetWhCommonValidationAliases() map[string]string {
+func GetCommonValidationAliases() map[string]string {
 	return map[string]string{
 		"name_valid":          "min=0,max=200,excludesall=<>",
 		"desc_valid":          "min=0,max=100000,excludesall=<>",

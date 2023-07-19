@@ -210,9 +210,9 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 	return whList, nil
 }
 
-func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.WhGenerationProps, *d.DbError) {
+func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.GenProps, *d.DbError) {
 	filter := bson.M{"name": "generationProps"}
-	var genProps warhammer.WhGenerationProps
+	var genProps warhammer.GenProps
 
 	err := s.Collections[warhammer.WhTypeOther].FindOne(ctx, filter).Decode(&genProps)
 	if err != nil {
@@ -226,7 +226,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.W
 	return &genProps, nil
 }
 
-func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.WhGenerationProps) (*warhammer.WhGenerationProps, *d.DbError) {
+func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, *d.DbError) {
 	_, err := s.Collections[warhammer.WhTypeOther].InsertOne(ctx, gp)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {

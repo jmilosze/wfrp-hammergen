@@ -8,7 +8,6 @@ import {
   updateElementFunc,
   deleteElementFunc,
 } from "./crudGenerator";
-import { itemPropertyTypes } from "@/services/wh/itemproperty";
 
 const apiBasePath = "/api/item";
 
@@ -38,7 +37,7 @@ const rangedGroups = {
   1: "Bow",
   2: "Crossbow",
   3: "Engineering",
-  4: "Entagling",
+  4: "Entangling",
   5: "Explosives",
   6: "Sling",
   7: "Throwing",
@@ -49,7 +48,7 @@ const ammunitionGroups = {
   1: "Bow",
   2: "Crossbow",
   3: "Sling",
-  4: "Entagling",
+  4: "Entangling",
 };
 
 const armorGroups = {

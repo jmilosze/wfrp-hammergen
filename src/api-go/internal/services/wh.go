@@ -150,7 +150,7 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	allPropertyIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range items {
-		item, ok := v.Object.(wh.WhItem)
+		item, ok := v.Object.(wh.Item)
 		if !ok {
 			return nil, &wh.WhError{WhType: wh.WhTypeItem, ErrType: wh.InternalError, Err: errors.New("non-item stored as item")}
 		}
@@ -187,7 +187,7 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 
 	fullItems := make([]*wh.Wh, len(items))
 	for k, v := range items {
-		item := v.Object.(wh.WhItem)
+		item := v.Object.(wh.Item)
 		fullItem := v.CopyHeaders()
 		fullItem.Object = item.ToFull(allProperties, allSpells)
 		fullItems[k] = &fullItem
@@ -222,7 +222,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	allMutationIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range characters {
-		character, ok := v.Object.(wh.WhCharacter)
+		character, ok := v.Object.(wh.Character)
 		if !ok {
 			return nil, &wh.WhError{WhType: wh.WhTypeCharacter, ErrType: wh.InternalError, Err: errors.New("non-character stored as character")}
 		}
@@ -275,7 +275,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 
 	fullCharacters := make([]*wh.Wh, len(characters))
 	for k, v := range characters {
-		character := v.Object.(wh.WhCharacter)
+		character := v.Object.(wh.Character)
 		fullCharacter := v.CopyHeaders()
 		fullCharacter.Object = character.ToFull(
 			components[wh.WhTypeItem].wh,
@@ -313,7 +313,7 @@ func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []wh.IdNum
 	return result
 }
 
-func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.WhGenerationProps, *wh.WhError) {
+func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, *wh.WhError) {
 	generationPropsMap, dbErr := s.WhDbService.RetrieveGenerationProps(ctx)
 	if dbErr != nil {
 		switch dbErr.Type {

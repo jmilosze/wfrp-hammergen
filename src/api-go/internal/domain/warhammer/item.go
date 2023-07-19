@@ -6,243 +6,265 @@ import (
 	"strings"
 )
 
-type WhItemType int
+type ItemType int
 
 const (
-	WhItemTypeMelee      = 0
-	WhItemTypeRanged     = 1
-	WhItemTypeAmmunition = 2
-	WhItemTypeArmour     = 3
-	WhItemTypeContainer  = 4
-	WhItemTypeGrimoire   = 6
-	WhItemTypeOther      = 5
+	ItemTypeMelee      = 0
+	ItemTypeRanged     = 1
+	ItemTypeAmmunition = 2
+	ItemTypeArmour     = 3
+	ItemTypeContainer  = 4
+	ItemTypeGrimoire   = 6
+	ItemTypeOther      = 5
 )
 
 func itemTypeValues() string {
-	return formatIntegerValues([]WhItemType{
-		WhItemTypeMelee,
-		WhItemTypeRanged,
-		WhItemTypeAmmunition,
-		WhItemTypeArmour,
-		WhItemTypeContainer,
-		WhItemTypeGrimoire,
-		WhItemTypeOther,
+	return formatIntegerValues([]ItemType{
+		ItemTypeMelee,
+		ItemTypeRanged,
+		ItemTypeAmmunition,
+		ItemTypeArmour,
+		ItemTypeContainer,
+		ItemTypeGrimoire,
+		ItemTypeOther,
 	})
 }
-func (input WhItemType) InitAndCopy() WhItemType {
+func (input ItemType) InitAndCopy() ItemType {
 	return input
 }
 
-type WhItemHands int
+type ItemHands int
 
 const (
-	WhItemHandsAny = 0
-	WhItemHandsOne = 1
-	WhItemHandsTwo = 2
+	ItemHandsAny = 0
+	ItemHandsOne = 1
+	ItemHandsTwo = 2
 )
 
 func itemHandsValues() string {
-	return formatIntegerValues([]WhItemHands{
-		WhItemHandsAny,
-		WhItemHandsOne,
-		WhItemHandsTwo,
+	return formatIntegerValues([]ItemHands{
+		ItemHandsAny,
+		ItemHandsOne,
+		ItemHandsTwo,
 	})
 }
 
-func (input WhItemHands) InitAndCopy() WhItemHands {
+func (input ItemHands) InitAndCopy() ItemHands {
 	return input
 }
 
-type WhItemMeleeReach int
+type ItemMeleeReach int
 
 const (
-	WhItemMeleeReachPersonal  = 0
-	WhItemMeleeReachVeryShort = 1
-	WhItemMeleeReachShort     = 2
-	WhItemMeleeReachAverage   = 3
-	WhItemMeleeReachLong      = 4
-	WhItemMeleeReachVeryLong  = 5
-	WhItemMeleeReachMassive   = 6
+	ItemMeleeReachPersonal  = 0
+	ItemMeleeReachVeryShort = 1
+	ItemMeleeReachShort     = 2
+	ItemMeleeReachAverage   = 3
+	ItemMeleeReachLong      = 4
+	ItemMeleeReachVeryLong  = 5
+	ItemMeleeReachMassive   = 6
 )
 
 func itemMeleeReachValues() string {
-	return formatIntegerValues([]WhItemMeleeReach{
-		WhItemMeleeReachPersonal,
-		WhItemMeleeReachVeryShort,
-		WhItemMeleeReachShort,
-		WhItemMeleeReachAverage,
-		WhItemMeleeReachLong,
-		WhItemMeleeReachVeryLong,
-		WhItemMeleeReachMassive,
+	return formatIntegerValues([]ItemMeleeReach{
+		ItemMeleeReachPersonal,
+		ItemMeleeReachVeryShort,
+		ItemMeleeReachShort,
+		ItemMeleeReachAverage,
+		ItemMeleeReachLong,
+		ItemMeleeReachVeryLong,
+		ItemMeleeReachMassive,
 	})
 }
 
-func (input WhItemMeleeReach) InitAndCopy() WhItemMeleeReach {
+func (input ItemMeleeReach) InitAndCopy() ItemMeleeReach {
 	return input
 }
 
-type WhItemMeleeGroup int
+type ItemMeleeGroup int
 
 const (
-	WhItemMeleeGroupBasic     = 0
-	WhItemMeleeGroupCavalry   = 1
-	WhItemMeleeGroupFencing   = 2
-	WhItemMeleeGroupBrawling  = 3
-	WhItemMeleeGroupFlail     = 4
-	WhItemMeleeGroupParry     = 5
-	WhItemMeleeGroupPolearm   = 6
-	WhItemMeleeGroupTwoHanded = 7
+	ItemMeleeGroupBasic     = 0
+	ItemMeleeGroupCavalry   = 1
+	ItemMeleeGroupFencing   = 2
+	ItemMeleeGroupBrawling  = 3
+	ItemMeleeGroupFlail     = 4
+	ItemMeleeGroupParry     = 5
+	ItemMeleeGroupPolearm   = 6
+	ItemMeleeGroupTwoHanded = 7
 )
 
 func itemMeleeGroupValues() string {
-	return formatIntegerValues([]WhItemMeleeGroup{
-		WhItemMeleeGroupBasic,
-		WhItemMeleeGroupCavalry,
-		WhItemMeleeGroupFencing,
-		WhItemMeleeGroupBrawling,
-		WhItemMeleeGroupFlail,
-		WhItemMeleeGroupParry,
-		WhItemMeleeGroupPolearm,
-		WhItemMeleeGroupTwoHanded,
+	return formatIntegerValues([]ItemMeleeGroup{
+		ItemMeleeGroupBasic,
+		ItemMeleeGroupCavalry,
+		ItemMeleeGroupFencing,
+		ItemMeleeGroupBrawling,
+		ItemMeleeGroupFlail,
+		ItemMeleeGroupParry,
+		ItemMeleeGroupPolearm,
+		ItemMeleeGroupTwoHanded,
 	})
 }
 
-func (input WhItemMeleeGroup) InitAndCopy() WhItemMeleeGroup {
+func (input ItemMeleeGroup) InitAndCopy() ItemMeleeGroup {
 	return input
 }
 
-type WhItemRangedGroup int
+type ItemRangedGroup int
 
 const (
-	WhItemRangedGroupBlackpowder = 0
-	WhItemRangedGroupBow         = 1
-	WhItemRangedGroupCrossbow    = 2
-	WhItemRangedGroupEngineering = 3
-	WhItemRangedGroupEntangling  = 4
-	WhItemRangedGroupExplosives  = 5
-	WhItemRangedGroupSling       = 6
-	WhItemRangedGroupThrowing    = 7
+	RangedGroupBlackpowder = 0
+	RangedGroupBow         = 1
+	RangedGroupCrossbow    = 2
+	RangedGroupEngineering = 3
+	RangedGroupEntangling  = 4
+	RangedGroupExplosives  = 5
+	RangedGroupSling       = 6
+	RangedGroupThrowing    = 7
 )
 
 func ItemRangedGroupValues() string {
-	return formatIntegerValues([]WhItemRangedGroup{
-		WhItemRangedGroupBlackpowder,
-		WhItemRangedGroupBow,
-		WhItemRangedGroupCrossbow,
-		WhItemRangedGroupEngineering,
-		WhItemRangedGroupEntangling,
-		WhItemRangedGroupExplosives,
-		WhItemRangedGroupSling,
-		WhItemRangedGroupThrowing,
+	return formatIntegerValues([]ItemRangedGroup{
+		RangedGroupBlackpowder,
+		RangedGroupBow,
+		RangedGroupCrossbow,
+		RangedGroupEngineering,
+		RangedGroupEntangling,
+		RangedGroupExplosives,
+		RangedGroupSling,
+		RangedGroupThrowing,
 	})
 }
 
-func (input WhItemRangedGroup) InitAndCopy() WhItemRangedGroup {
+func (input ItemRangedGroup) InitAndCopy() ItemRangedGroup {
 	return input
 }
 
-type WhItemAmmunitionGroup int
+type ItemAmmunitionGroup int
 
 const (
-	WhItemAmmunitionGroupBlackpowderAndEngineering = 0
-	WhItemAmmunitionGroupBow                       = 1
-	WhItemAmmunitionGroupCrossbow                  = 2
-	WhItemAmmunitionGroupSling                     = 3
-	WhItemAmmunitionGroupEntangling                = 4
+	ItemAmmunitionGroupBlackpowderAndEngineering = 0
+	ItemAmmunitionGroupBow                       = 1
+	ItemAmmunitionGroupCrossbow                  = 2
+	ItemAmmunitionGroupSling                     = 3
+	ItemAmmunitionGroupEntangling                = 4
 )
 
 func itemAmmunitionGroupValues() string {
-	return formatIntegerValues([]WhItemAmmunitionGroup{
-		WhItemAmmunitionGroupBlackpowderAndEngineering,
-		WhItemAmmunitionGroupBow,
-		WhItemAmmunitionGroupCrossbow,
-		WhItemAmmunitionGroupSling,
-		WhItemAmmunitionGroupEntangling,
+	return formatIntegerValues([]ItemAmmunitionGroup{
+		ItemAmmunitionGroupBlackpowderAndEngineering,
+		ItemAmmunitionGroupBow,
+		ItemAmmunitionGroupCrossbow,
+		ItemAmmunitionGroupSling,
+		ItemAmmunitionGroupEntangling,
 	})
 }
 
-func (input WhItemAmmunitionGroup) InitAndCopy() WhItemAmmunitionGroup {
+func (input ItemAmmunitionGroup) InitAndCopy() ItemAmmunitionGroup {
 	return input
 }
 
-type WhItemArmourGroup int
+type ItemArmourGroup int
 
 const (
-	WhItemArmourGroupSoftLeather   = 0
-	WhItemArmourGroupBoiledLeather = 1
-	WhItemArmourGroupMail          = 2
-	WhItemArmourGroupPlate         = 3
-	WhItemArmourGroupSoftKit       = 4
-	WhItemArmourGroupBrigandine    = 5
+	ItemArmourGroupSoftLeather   = 0
+	ItemArmourGroupBoiledLeather = 1
+	ItemArmourGroupMail          = 2
+	ItemArmourGroupPlate         = 3
+	ItemArmourGroupSoftKit       = 4
+	ItemArmourGroupBrigandine    = 5
 )
 
 func itemArmourGroupValues() string {
-	return formatIntegerValues([]WhItemArmourGroup{
-		WhItemArmourGroupSoftLeather,
-		WhItemArmourGroupBoiledLeather,
-		WhItemArmourGroupMail,
-		WhItemArmourGroupPlate,
-		WhItemArmourGroupSoftKit,
-		WhItemArmourGroupBrigandine,
+	return formatIntegerValues([]ItemArmourGroup{
+		ItemArmourGroupSoftLeather,
+		ItemArmourGroupBoiledLeather,
+		ItemArmourGroupMail,
+		ItemArmourGroupPlate,
+		ItemArmourGroupSoftKit,
+		ItemArmourGroupBrigandine,
 	})
 }
 
-func (input WhItemArmourGroup) InitAndCopy() WhItemArmourGroup {
+func (input ItemArmourGroup) InitAndCopy() ItemArmourGroup {
 	return input
 }
 
-type WhItemArmourLocation int
+type ItemArmourLocation int
 
 const (
-	WhItemArmourLocationArms = 0
-	WhItemArmourLocationBody = 1
-	WhItemArmourLocationLegs = 2
-	WhItemArmourLocationHead = 3
+	ItemArmourLocationArms = 0
+	ItemArmourLocationBody = 1
+	ItemArmourLocationLegs = 2
+	ItemArmourLocationHead = 3
 )
 
 func itemArmourLocationValues() string {
-	return formatIntegerValues([]WhItemArmourLocation{
-		WhItemArmourLocationArms,
-		WhItemArmourLocationBody,
-		WhItemArmourLocationLegs,
-		WhItemArmourLocationHead,
+	return formatIntegerValues([]ItemArmourLocation{
+		ItemArmourLocationArms,
+		ItemArmourLocationBody,
+		ItemArmourLocationLegs,
+		ItemArmourLocationHead,
 	})
 }
 
-func (input WhItemArmourLocation) InitAndCopy() WhItemArmourLocation {
+func (input ItemArmourLocation) InitAndCopy() ItemArmourLocation {
 	return input
 }
 
-type WhItemCarryType int
+type ItemCarryType int
 
 const (
-	WhItemCarryTypeCarriableAndWearable       = 0
-	WhItemCarryTypeCarriableAndNotWearable    = 1
-	WhItemCarryTypeNotCarriableAndNotWearable = 2
+	ItemCarryTypeCarriableAndWearable       = 0
+	ItemCarryTypeCarriableAndNotWearable    = 1
+	ItemCarryTypeNotCarriableAndNotWearable = 2
 )
 
 func itemCarryTypeValues() string {
-	return formatIntegerValues([]WhItemCarryType{
-		WhItemCarryTypeCarriableAndWearable,
-		WhItemCarryTypeCarriableAndNotWearable,
-		WhItemCarryTypeNotCarriableAndNotWearable,
+	return formatIntegerValues([]ItemCarryType{
+		ItemCarryTypeCarriableAndWearable,
+		ItemCarryTypeCarriableAndNotWearable,
+		ItemCarryTypeNotCarriableAndNotWearable,
 	})
 }
 
-func (input WhItemCarryType) InitAndCopy() WhItemCarryType {
+func (input ItemCarryType) InitAndCopy() ItemCarryType {
 	return input
 }
 
-type WhItemMelee struct {
-	Hands     WhItemHands      `json:"hands" validate:"item_hands_valid"`
-	Dmg       int              `json:"dmg" validate:"gte=-100,lte=100"`
-	DmgSbMult float64          `json:"dmgSbMult" validate:"gte=0,lte=10"`
-	Reach     WhItemMeleeReach `json:"reach" validate:"item_melee_reach_valid"`
-	Group     WhItemMeleeGroup `json:"group" validate:"item_melee_group_valid"`
+type ItemAvailability int
+
+const (
+	ItemAvailabilityCommon = 0
+	ItemAvailabilityScarce = 1
+	ItemAvailabilityRare   = 2
+	ItemAvailabilityExotic = 3
+)
+
+func itemAvailabilityValues() string {
+	return formatIntegerValues([]ItemAvailability{
+		ItemAvailabilityCommon,
+		ItemAvailabilityScarce,
+		ItemAvailabilityRare,
+		ItemAvailabilityExotic,
+	})
 }
 
-func (input WhItemMelee) InitAndCopy() WhItemMelee {
-	return WhItemMelee{
+func (input ItemAvailability) InitAndCopy() ItemAvailability {
+	return input
+}
+
+type ItemMelee struct {
+	Hands     ItemHands      `json:"hands" validate:"item_hands_valid"`
+	Dmg       int            `json:"dmg" validate:"gte=-100,lte=100"`
+	DmgSbMult float64        `json:"dmgSbMult" validate:"gte=0,lte=10"`
+	Reach     ItemMeleeReach `json:"reach" validate:"item_melee_reach_valid"`
+	Group     ItemMeleeGroup `json:"group" validate:"item_melee_group_valid"`
+}
+
+func (input ItemMelee) InitAndCopy() ItemMelee {
+	return ItemMelee{
 		Hands:     input.Hands.InitAndCopy(),
 		Dmg:       input.Dmg,
 		DmgSbMult: input.DmgSbMult,
@@ -251,17 +273,17 @@ func (input WhItemMelee) InitAndCopy() WhItemMelee {
 	}
 }
 
-type WhItemRanged struct {
-	Hands     WhItemHands       `json:"hands" validate:"item_hands_valid"`
-	Dmg       int               `json:"dmg" validate:"gte=-100,lte=100"`
-	DmgSbMult float64           `json:"dmgSbMult" validate:"gte=0,lte=10"`
-	Rng       int               `json:"rng" validate:"gte=-10000,lte=10000"`
-	RngSbMult float64           `json:"rngSbMult" validate:"gte=0,lte=10"`
-	Group     WhItemRangedGroup `json:"group" validate:"item_ranged_group_valid"`
+type ItemRanged struct {
+	Hands     ItemHands       `json:"hands" validate:"item_hands_valid"`
+	Dmg       int             `json:"dmg" validate:"gte=-100,lte=100"`
+	DmgSbMult float64         `json:"dmgSbMult" validate:"gte=0,lte=10"`
+	Rng       int             `json:"rng" validate:"gte=-10000,lte=10000"`
+	RngSbMult float64         `json:"rngSbMult" validate:"gte=0,lte=10"`
+	Group     ItemRangedGroup `json:"group" validate:"item_ranged_group_valid"`
 }
 
-func (input WhItemRanged) InitAndCopy() WhItemRanged {
-	return WhItemRanged{
+func (input ItemRanged) InitAndCopy() ItemRanged {
+	return ItemRanged{
 		Hands:     input.Hands.InitAndCopy(),
 		Dmg:       input.Dmg,
 		DmgSbMult: input.DmgSbMult,
@@ -271,15 +293,15 @@ func (input WhItemRanged) InitAndCopy() WhItemRanged {
 	}
 }
 
-type WhItemAmmunition struct {
-	Dmg     int                   `json:"dmg" validate:"gte=-100,lte=100"`
-	Rng     int                   `json:"rng" validate:"gte=-10000,lte=10000"`
-	RngMult float64               `json:"rngMult" validate:"gte=0,lte=10"`
-	Group   WhItemAmmunitionGroup `json:"group" validate:"item_ammunition_group_valid"`
+type ItemAmmunition struct {
+	Dmg     int                 `json:"dmg" validate:"gte=-100,lte=100"`
+	Rng     int                 `json:"rng" validate:"gte=-10000,lte=10000"`
+	RngMult float64             `json:"rngMult" validate:"gte=0,lte=10"`
+	Group   ItemAmmunitionGroup `json:"group" validate:"item_ammunition_group_valid"`
 }
 
-func (input WhItemAmmunition) InitAndCopy() WhItemAmmunition {
-	return WhItemAmmunition{
+func (input ItemAmmunition) InitAndCopy() ItemAmmunition {
+	return ItemAmmunition{
 		Dmg:     input.Dmg,
 		Rng:     input.Rng,
 		RngMult: input.RngMult,
@@ -287,85 +309,87 @@ func (input WhItemAmmunition) InitAndCopy() WhItemAmmunition {
 	}
 }
 
-type WhItemArmour struct {
-	Points   int                  `json:"points" validate:"gte=0,lte=100"`
-	Location WhItemArmourLocation `json:"location" validate:"item_armour_location_valid"`
-	Group    WhItemArmourGroup    `json:"group" validate:"item_armour_group_valid"`
+type ItemArmour struct {
+	Points   int                `json:"points" validate:"gte=0,lte=100"`
+	Location ItemArmourLocation `json:"location" validate:"item_armour_location_valid"`
+	Group    ItemArmourGroup    `json:"group" validate:"item_armour_group_valid"`
 }
 
-func (input WhItemArmour) InitAndCopy() WhItemArmour {
-	return WhItemArmour{
+func (input ItemArmour) InitAndCopy() ItemArmour {
+	return ItemArmour{
 		Points:   input.Points,
 		Location: input.Location.InitAndCopy(),
 		Group:    input.Group.InitAndCopy(),
 	}
 }
 
-type WhItemContainer struct {
-	Capacity  int             `json:"capacity" validate:"gte=0,lte=1000"`
-	CarryType WhItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
+type ItemContainer struct {
+	Capacity  int           `json:"capacity" validate:"gte=0,lte=1000"`
+	CarryType ItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
 }
 
-func (input WhItemContainer) InitAndCopy() WhItemContainer {
-	return WhItemContainer{
+func (input ItemContainer) InitAndCopy() ItemContainer {
+	return ItemContainer{
 		Capacity:  input.Capacity,
 		CarryType: input.CarryType.InitAndCopy(),
 	}
 }
 
-type WhItemGrimoire struct {
+type ItemGrimoire struct {
 	Spells []string `json:"spells" validate:"dive,id_valid"`
 }
 
-func (input WhItemGrimoire) InitAndCopy() WhItemGrimoire {
-	return WhItemGrimoire{
+func (input ItemGrimoire) InitAndCopy() ItemGrimoire {
+	return ItemGrimoire{
 		Spells: copyStringArray(input.Spells),
 	}
 }
 
-type WhItemOther struct {
-	CarryType WhItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
+type ItemOther struct {
+	CarryType ItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
 }
 
-func (input WhItemOther) InitAndCopy() WhItemOther {
-	return WhItemOther{
+func (input ItemOther) InitAndCopy() ItemOther {
+	return ItemOther{
 		CarryType: input.CarryType.InitAndCopy(),
 	}
 }
 
-type WhItem struct {
-	Name        string      `json:"name" validate:"name_valid"`
-	Description string      `json:"description" validate:"desc_valid"`
-	Price       float64     `json:"price" validate:"gte=0,lte=1000000000"`
-	Enc         float64     `json:"enc" validate:"gte=0,lte=1000"`
-	Properties  []string    `json:"properties" validate:"dive,id_valid"`
-	Type        WhItemType  `json:"type" validate:"item_type_valid"`
-	Shared      bool        `json:"shared" validate:"shared_valid"`
-	Source      WhSourceMap `json:"source" validate:"source_valid"`
+type Item struct {
+	Name         string           `json:"name" validate:"name_valid"`
+	Description  string           `json:"description" validate:"desc_valid"`
+	Price        float64          `json:"price" validate:"gte=0,lte=1000000000"`
+	Enc          float64          `json:"enc" validate:"gte=0,lte=1000"`
+	Availability ItemAvailability `json:"availability" validate:"item_availability_valid"`
+	Properties   []string         `json:"properties" validate:"dive,id_valid"`
+	Type         ItemType         `json:"type" validate:"item_type_valid"`
+	Shared       bool             `json:"shared" validate:"shared_valid"`
+	Source       SourceMap        `json:"source" validate:"source_valid"`
 
-	Melee      WhItemMelee      `json:"melee"`
-	Ranged     WhItemRanged     `json:"ranged"`
-	Ammunition WhItemAmmunition `json:"ammunition"`
-	Armour     WhItemArmour     `json:"armour"`
-	Container  WhItemContainer  `json:"container"`
-	Grimoire   WhItemGrimoire   `json:"grimoire"`
-	Other      WhItemOther      `json:"other"`
+	Melee      ItemMelee      `json:"melee"`
+	Ranged     ItemRanged     `json:"ranged"`
+	Ammunition ItemAmmunition `json:"ammunition"`
+	Armour     ItemArmour     `json:"armour"`
+	Container  ItemContainer  `json:"container"`
+	Grimoire   ItemGrimoire   `json:"grimoire"`
+	Other      ItemOther      `json:"other"`
 }
 
-func (i WhItem) IsShared() bool {
+func (i Item) IsShared() bool {
 	return i.Shared
 }
 
-func (i WhItem) InitAndCopy() WhObject {
-	return WhItem{
-		Name:        strings.Clone(i.Name),
-		Description: strings.Clone(i.Description),
-		Price:       i.Price,
-		Enc:         i.Enc,
-		Properties:  copyStringArray(i.Properties),
-		Type:        i.Type.InitAndCopy(),
-		Shared:      i.Shared,
-		Source:      i.Source.InitAndCopy(),
+func (i Item) InitAndCopy() WhObject {
+	return Item{
+		Name:         strings.Clone(i.Name),
+		Description:  strings.Clone(i.Description),
+		Price:        i.Price,
+		Enc:          i.Enc,
+		Availability: i.Availability.InitAndCopy(),
+		Properties:   copyStringArray(i.Properties),
+		Type:         i.Type.InitAndCopy(),
+		Shared:       i.Shared,
+		Source:       i.Source.InitAndCopy(),
 
 		Melee:      i.Melee.InitAndCopy(),
 		Ranged:     i.Ranged.InitAndCopy(),
@@ -377,7 +401,7 @@ func (i WhItem) InitAndCopy() WhObject {
 	}
 }
 
-func GetWhItemValidationAliases() map[string]string {
+func GetItemValidationAliases() map[string]string {
 	return map[string]string{
 		"item_type_valid":             fmt.Sprintf("oneof=%s", itemTypeValues()),
 		"item_hands_valid":            fmt.Sprintf("oneof=%s", itemHandsValues()),
@@ -388,25 +412,27 @@ func GetWhItemValidationAliases() map[string]string {
 		"item_armour_group_valid":     fmt.Sprintf("oneof=%s", itemArmourGroupValues()),
 		"item_armour_location_valid":  fmt.Sprintf("oneof=%s", itemArmourLocationValues()),
 		"item_carry_type_valid":       fmt.Sprintf("oneof=%s", itemCarryTypeValues()),
+		"item_availability_valid":     fmt.Sprintf("oneof=%s", itemAvailabilityValues()),
 	}
 }
 
-func (i WhItem) ToFull(allProperties []*Wh, allSpells []*Wh) WhItemFull {
+func (i Item) ToFull(allProperties []*Wh, allSpells []*Wh) ItemFull {
 
 	itemProperties := idListToFull(i.Properties, allProperties)
 
-	var grimoire WhItemGrimoireFull
+	var grimoire ItemGrimoireFull
 	grimoire.Spells = idListToFull(i.Grimoire.Spells, allSpells)
 
-	return WhItemFull{
-		Name:        strings.Clone(i.Name),
-		Description: strings.Clone(i.Description),
-		Price:       i.Price,
-		Enc:         i.Enc,
-		Properties:  itemProperties,
-		Type:        i.Type.InitAndCopy(),
-		Shared:      i.Shared,
-		Source:      i.Source.InitAndCopy(),
+	return ItemFull{
+		Name:         strings.Clone(i.Name),
+		Description:  strings.Clone(i.Description),
+		Price:        i.Price,
+		Enc:          i.Enc,
+		Availability: i.Availability.InitAndCopy(),
+		Properties:   itemProperties,
+		Type:         i.Type.InitAndCopy(),
+		Shared:       i.Shared,
+		Source:       i.Source.InitAndCopy(),
 
 		Melee:      i.Melee.InitAndCopy(),
 		Ranged:     i.Ranged.InitAndCopy(),
@@ -428,49 +454,51 @@ func idListToFull(idList []string, allWh []*Wh) []Wh {
 	return whList
 }
 
-type WhItemGrimoireFull struct {
+type ItemGrimoireFull struct {
 	Spells []Wh `json:"spells"`
 }
 
-func (input WhItemGrimoireFull) InitAndCopy() WhItemGrimoireFull {
-	return WhItemGrimoireFull{
+func (input ItemGrimoireFull) InitAndCopy() ItemGrimoireFull {
+	return ItemGrimoireFull{
 		Spells: copyWhArray(input.Spells),
 	}
 }
 
-type WhItemFull struct {
-	Name        string      `json:"name"`
-	Description string      `json:"description" `
-	Price       float64     `json:"price"`
-	Enc         float64     `json:"enc"`
-	Properties  []Wh        `json:"properties"`
-	Type        WhItemType  `json:"type"`
-	Shared      bool        `json:"shared"`
-	Source      WhSourceMap `json:"source"`
+type ItemFull struct {
+	Name         string           `json:"name"`
+	Description  string           `json:"description" `
+	Price        float64          `json:"price"`
+	Enc          float64          `json:"enc"`
+	Availability ItemAvailability `json:"availability"`
+	Properties   []Wh             `json:"properties"`
+	Type         ItemType         `json:"type"`
+	Shared       bool             `json:"shared"`
+	Source       SourceMap        `json:"source"`
 
-	Melee      WhItemMelee        `json:"melee"`
-	Ranged     WhItemRanged       `json:"ranged"`
-	Ammunition WhItemAmmunition   `json:"ammunition"`
-	Armour     WhItemArmour       `json:"armour"`
-	Container  WhItemContainer    `json:"container"`
-	Grimoire   WhItemGrimoireFull `json:"grimoire"`
-	Other      WhItemOther        `json:"other"`
+	Melee      ItemMelee        `json:"melee"`
+	Ranged     ItemRanged       `json:"ranged"`
+	Ammunition ItemAmmunition   `json:"ammunition"`
+	Armour     ItemArmour       `json:"armour"`
+	Container  ItemContainer    `json:"container"`
+	Grimoire   ItemGrimoireFull `json:"grimoire"`
+	Other      ItemOther        `json:"other"`
 }
 
-func (i WhItemFull) IsShared() bool {
+func (i ItemFull) IsShared() bool {
 	return i.Shared
 }
 
-func (i WhItemFull) InitAndCopy() WhObject {
-	return WhItemFull{
-		Name:        strings.Clone(i.Name),
-		Description: strings.Clone(i.Description),
-		Price:       i.Price,
-		Enc:         i.Enc,
-		Properties:  copyWhArray(i.Properties),
-		Type:        i.Type.InitAndCopy(),
-		Shared:      i.Shared,
-		Source:      i.Source.InitAndCopy(),
+func (i ItemFull) InitAndCopy() WhObject {
+	return ItemFull{
+		Name:         strings.Clone(i.Name),
+		Description:  strings.Clone(i.Description),
+		Price:        i.Price,
+		Enc:          i.Enc,
+		Availability: i.Availability.InitAndCopy(),
+		Properties:   copyWhArray(i.Properties),
+		Type:         i.Type.InitAndCopy(),
+		Shared:       i.Shared,
+		Source:       i.Source.InitAndCopy(),
 
 		Melee:      i.Melee.InitAndCopy(),
 		Ranged:     i.Ranged.InitAndCopy(),

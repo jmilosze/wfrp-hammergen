@@ -8,7 +8,7 @@ import (
 var character0 = warhammer.Wh{
 	Id:      "800000000000000000000000",
 	OwnerId: user1.Id,
-	Object: warhammer.WhCharacter{
+	Object: warhammer.Character{
 		Name:        "character 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Notes:       "some notes",
@@ -33,8 +33,8 @@ var character0 = warhammer.Wh{
 			{Id: talent0.Id, Number: 1},
 			{Id: talent1.Id, Number: 5},
 		},
-		Species: warhammer.WhCharacterSpeciesHalflingBrandysnap,
-		BaseAttributes: warhammer.WhAttributes{
+		Species: warhammer.CharacterSpeciesHalflingBrandysnap,
+		BaseAttributes: warhammer.Attributes{
 			WS:  1,
 			BS:  2,
 			S:   3,
@@ -46,7 +46,7 @@ var character0 = warhammer.Wh{
 			WP:  9,
 			Fel: 10,
 		},
-		AttributeAdvances: warhammer.WhAttributes{
+		AttributeAdvances: warhammer.Attributes{
 			WS:  10,
 			BS:  9,
 			S:   8,
@@ -66,8 +66,8 @@ var character0 = warhammer.Wh{
 		Resolve:    1,
 		CurrentExp: 100,
 		SpentExp:   1500,
-		Status:     warhammer.WhStatusSilver,
-		Standing:   warhammer.WhStandingOne,
+		Status:     warhammer.StatusSilver,
+		Standing:   warhammer.StandingOne,
 		Brass:      100,
 		Silver:     15,
 		Gold:       1,
@@ -82,10 +82,10 @@ var character0 = warhammer.Wh{
 var character1 = warhammer.Wh{
 	Id:      "800000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.WhCharacter{
+	Object: warhammer.Character{
 		Name:        "character 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Species:     warhammer.WhCharacterSpeciesDwarfAltdorf,
+		Species:     warhammer.CharacterSpeciesDwarfAltdorf,
 		Career:      career0.Id,
 	},
 }
