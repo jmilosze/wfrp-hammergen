@@ -8,7 +8,7 @@ import (
 var career0 = warhammer.Wh{
 	Id:      "700000000000000000000000",
 	OwnerId: user1.Id,
-	Object: warhammer.WhCareer{
+	Object: warhammer.Career{
 		Name:        "career 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Class:       warhammer.CareerClassRanger,
@@ -60,7 +60,7 @@ var career0 = warhammer.Wh{
 var career1 = warhammer.Wh{
 	Id:      "700000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.WhCareer{
+	Object: warhammer.Career{
 		Name:        "career 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 	},

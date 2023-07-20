@@ -134,7 +134,7 @@ func (input CareerSpecies) InitAndCopy() CareerSpecies {
 	return input
 }
 
-type WhCareer struct {
+type Career struct {
 	Name        string        `json:"name" validate:"name_valid"`
 	Description string        `json:"description" validate:"desc_valid"`
 	Class       CareerClass   `json:"class" validate:"class_valid"`
@@ -147,12 +147,12 @@ type WhCareer struct {
 	Source      SourceMap     `json:"source" validate:"source_valid"`
 }
 
-func (c WhCareer) IsShared() bool {
+func (c Career) IsShared() bool {
 	return c.Shared
 }
 
-func (c WhCareer) InitAndCopy() WhObject {
-	return WhCareer{
+func (c Career) InitAndCopy() WhObject {
+	return Career{
 		Name:        strings.Clone(c.Name),
 		Description: strings.Clone(c.Description),
 		Class:       c.Class.InitAndCopy(),

@@ -99,7 +99,7 @@ for item in source_collection.find():
     else:
         new_item["object"]["armour"] = {
             "points": 0,
-            "location": 0,
+            "location": [],
             "group": 0,
         }
 

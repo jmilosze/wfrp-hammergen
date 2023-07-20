@@ -98,7 +98,7 @@ var itemArmour = warhammer.Wh{
 
 		Armour: warhammer.ItemArmour{
 			Points:   2,
-			Location: warhammer.ItemArmourLocationBody,
+			Location: []warhammer.ItemArmourLocation{warhammer.ItemArmourLocationBody, warhammer.ItemArmourLocationHead},
 			Group:    warhammer.ItemArmourGroupMail,
 		},
 	},

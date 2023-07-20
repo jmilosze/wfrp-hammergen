@@ -23,7 +23,10 @@ func RegisterWhRoutes(router *gin.Engine, ms warhammer.WhService, js auth.JwtSer
 
 func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.WhType) func(*gin.Context) {
 	return func(c *gin.Context) {
-		whWrite, err := warhammer.NewApiWh(t)
+		whWrite := warhammer.Wh{}
+		whObject, err := warhammer.NewWhObject(t)
+		whWrite.Object = whObject
+
 		if err != nil {
 			c.JSON(ServerErrResp(""))
 			return

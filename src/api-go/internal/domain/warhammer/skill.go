@@ -25,7 +25,7 @@ func (input SkillType) InitAndCopy() SkillType {
 	return input
 }
 
-type WhSkill struct {
+type Skill struct {
 	Name        string    `json:"name" validate:"name_valid"`
 	Description string    `json:"description" validate:"desc_valid"`
 	Attribute   Attribute `json:"attribute" validate:"att_type_valid"`
@@ -37,12 +37,12 @@ type WhSkill struct {
 	Source      SourceMap `json:"source" validate:"source_valid"`
 }
 
-func (s WhSkill) IsShared() bool {
+func (s Skill) IsShared() bool {
 	return s.Shared
 }
 
-func (s WhSkill) InitAndCopy() WhObject {
-	return WhSkill{
+func (s Skill) InitAndCopy() WhObject {
+	return Skill{
 		Name:        strings.Clone(s.Name),
 		Description: strings.Clone(s.Description),
 		Attribute:   s.Attribute.InitAndCopy(),

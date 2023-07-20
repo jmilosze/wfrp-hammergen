@@ -310,15 +310,15 @@ func (input ItemAmmunition) InitAndCopy() ItemAmmunition {
 }
 
 type ItemArmour struct {
-	Points   int                `json:"points" validate:"gte=0,lte=100"`
-	Location ItemArmourLocation `json:"location" validate:"item_armour_location_valid"`
-	Group    ItemArmourGroup    `json:"group" validate:"item_armour_group_valid"`
+	Points   int                  `json:"points" validate:"gte=0,lte=100"`
+	Location []ItemArmourLocation `json:"location" validate:"dive,item_armour_location_valid"`
+	Group    ItemArmourGroup      `json:"group" validate:"item_armour_group_valid"`
 }
 
 func (input ItemArmour) InitAndCopy() ItemArmour {
 	return ItemArmour{
 		Points:   input.Points,
-		Location: input.Location.InitAndCopy(),
+		Location: copyIntArray(input.Location),
 		Group:    input.Group.InitAndCopy(),
 	}
 }
