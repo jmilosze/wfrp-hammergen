@@ -3,6 +3,7 @@ package mongodb
 import (
 	"context"
 	"errors"
+	"fmt"
 	d "github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"go.mongodb.org/mongo-driver/bson"
@@ -65,22 +66,63 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 		return nil, errors.New("invalid owner id")
 	}
 
-	wh, err := warhammer.NewApiWh(t)
-	if err != nil {
-		return nil, err
-	}
-
-	wh.Id = id.Hex()
-	wh.OwnerId = ownerId
-	wh.CanEdit = false
-
 	bsonRaw, err := bson.Marshal(whMap["object"])
 	if err != nil {
 		return nil, errors.New("error marshaling object")
 	}
 
-	if err = bson.Unmarshal(bsonRaw, wh.Object); err != nil {
-		return nil, errors.New("error unmarshalling object")
+	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, CanEdit: false}
+	switch t {
+	case warhammer.WhTypeMutation:
+		mutation := warhammer.Mutation{}
+		if err = bson.Unmarshal(bsonRaw, &mutation); err != nil {
+			return nil, err
+		}
+		wh.Object = mutation
+	case warhammer.WhTypeSpell:
+		spell := warhammer.Spell{}
+		if err = bson.Unmarshal(bsonRaw, &spell); err != nil {
+			return nil, err
+		}
+		wh.Object = spell
+	case warhammer.WhTypeProperty:
+		property := warhammer.Property{}
+		if err = bson.Unmarshal(bsonRaw, &property); err != nil {
+			return nil, err
+		}
+		wh.Object = property
+	case warhammer.WhTypeItem:
+		item := warhammer.Item{}
+		if err = bson.Unmarshal(bsonRaw, &item); err != nil {
+			return nil, err
+		}
+		wh.Object = item
+	case warhammer.WhTypeTalent:
+		talent := warhammer.Talent{}
+		if err = bson.Unmarshal(bsonRaw, &talent); err != nil {
+			return nil, err
+		}
+		wh.Object = talent
+	case warhammer.WhTypeSkill:
+		skill := warhammer.Skill{}
+		if err = bson.Unmarshal(bsonRaw, &skill); err != nil {
+			return nil, err
+		}
+		wh.Object = skill
+	case warhammer.WhTypeCareer:
+		career := warhammer.Career{}
+		if err = bson.Unmarshal(bsonRaw, &career); err != nil {
+			return nil, err
+		}
+		wh.Object = career
+	case warhammer.WhTypeCharacter:
+		character := warhammer.Character{}
+		if err = bson.Unmarshal(bsonRaw, &character); err != nil {
+			return nil, err
+		}
+		wh.Object = character
+	default:
+		return nil, fmt.Errorf("invalid Wh type %s", t)
 	}
 
 	return &wh, nil
@@ -210,9 +252,9 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 	return whList, nil
 }
 
-func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.WhGenerationProps, *d.DbError) {
+func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.GenProps, *d.DbError) {
 	filter := bson.M{"name": "generationProps"}
-	var genProps warhammer.WhGenerationProps
+	var genProps warhammer.GenProps
 
 	err := s.Collections[warhammer.WhTypeOther].FindOne(ctx, filter).Decode(&genProps)
 	if err != nil {
@@ -226,7 +268,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.W
 	return &genProps, nil
 }
 
-func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.WhGenerationProps) (*warhammer.WhGenerationProps, *d.DbError) {
+func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, *d.DbError) {
 	_, err := s.Collections[warhammer.WhTypeOther].InsertOne(ctx, gp)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {

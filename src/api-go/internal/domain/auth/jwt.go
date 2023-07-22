@@ -4,7 +4,6 @@ const (
 	ErrorInvalidToken  = "token is invalid"
 	ErrorExpiredToken  = "token is expired"
 	ErrorInvalidClaims = "invalid claims"
-	ErrorTokenRead     = "could not read token"
 	ErrorCreateToken   = "could not create token"
 )
 
@@ -35,5 +34,5 @@ func (e *Error) Unwrap() error {
 }
 
 func (e *Error) Error() string {
-	return e.Type + " -> " + e.Err.Error()
+	return e.Type + ", " + e.Err.Error()
 }

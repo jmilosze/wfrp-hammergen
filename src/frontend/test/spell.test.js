@@ -203,7 +203,6 @@ test("updateElement calls axios with expected arguments", async () => {
   expect(result1.id).toBe("id1");
 
   expect(axiosSpy).toHaveBeenCalledWith("/api/wh/spell/id1", {
-    id: "id1",
     name: "spell1",
     cn: 1,
     range: "range1",
@@ -230,7 +229,6 @@ test("updateElement calls axios with expected arguments", async () => {
   });
 
   expect(mockAxios.put).toHaveBeenCalledWith("/api/wh/spell/id2", {
-    id: "id2",
     name: "prayer2",
     cn: -1,
     range: "range2",

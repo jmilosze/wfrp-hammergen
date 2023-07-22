@@ -155,7 +155,7 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, users []
 	return whs, nil
 }
 
-func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.WhGenerationProps, *domain.DbError) {
+func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.GenProps, *domain.DbError) {
 	txn := s.Db.Txn(false)
 	raw, err := txn.First(warhammer.WhTypeOther, "id", "generationProps")
 	if err != nil {
@@ -166,7 +166,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.W
 		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("generationProps not found")}
 	}
 
-	genProp, ok := raw.(*warhammer.WhGenerationProps)
+	genProp, ok := raw.(*warhammer.GenProps)
 	if !ok {
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate generationProp from raw %v", raw)}
 	}
@@ -174,7 +174,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.W
 	return genProp.PointToCopy(), nil
 }
 
-func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.WhGenerationProps) (*warhammer.WhGenerationProps, *domain.DbError) {
+func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, *domain.DbError) {
 	txn := s.Db.Txn(true)
 	defer txn.Abort()
 	if err := txn.Insert(warhammer.WhTypeOther, gp); err != nil {

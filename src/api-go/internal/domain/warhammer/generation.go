@@ -5,50 +5,50 @@ import (
 	"strings"
 )
 
-type WhIdNumberMap map[string]int
+type IdNumberMap map[string]int
 
-func (input WhIdNumberMap) InitAndCopy() WhIdNumberMap {
-	output := make(WhIdNumberMap, len(input))
+func (input IdNumberMap) InitAndCopy() IdNumberMap {
+	output := make(IdNumberMap, len(input))
 	for key, value := range input {
 		output[key] = value
 	}
 	return output
 }
 
-type WhItems struct {
-	Equipped WhIdNumberMap `json:"equipped"`
-	Carried  WhIdNumberMap `json:"carried"`
-	Stored   WhIdNumberMap `json:"stored"`
+type GenItems struct {
+	Equipped IdNumberMap `json:"equipped"`
+	Carried  IdNumberMap `json:"carried"`
+	Stored   IdNumberMap `json:"stored"`
 }
 
-func (input WhItems) InitAndCopy() WhItems {
-	return WhItems{
+func (input GenItems) InitAndCopy() GenItems {
+	return GenItems{
 		Equipped: input.Equipped.InitAndCopy(),
 		Carried:  input.Carried.InitAndCopy(),
 		Stored:   input.Stored.InitAndCopy(),
 	}
 }
 
-type WhRandomTalent struct {
+type GenRandomTalent struct {
 	Id      string `json:"id"`
 	MinRoll int    `json:"minRoll"`
 	MaxRoll int    `json:"maxRoll"`
 }
 
-func (input WhRandomTalent) InitAndCopy() WhRandomTalent {
-	return WhRandomTalent{
+func (input GenRandomTalent) InitAndCopy() GenRandomTalent {
+	return GenRandomTalent{
 		Id:      strings.Clone(input.Id),
 		MinRoll: input.MinRoll,
 		MaxRoll: input.MaxRoll,
 	}
 }
 
-type WhSpeciesTalents struct {
+type GenSpeciesTalents struct {
 	Single   []string   `json:"single"`
 	Multiple [][]string `json:"multiple"`
 }
 
-func (input WhSpeciesTalents) InitAndCopy() WhSpeciesTalents {
+func (input GenSpeciesTalents) InitAndCopy() GenSpeciesTalents {
 	single := make([]string, len(input.Single))
 	for k, v := range input.Single {
 		single[k] = strings.Clone(v)
@@ -62,34 +62,34 @@ func (input WhSpeciesTalents) InitAndCopy() WhSpeciesTalents {
 		}
 	}
 
-	return WhSpeciesTalents{Single: single, Multiple: multiple}
+	return GenSpeciesTalents{Single: single, Multiple: multiple}
 }
 
-type WhGenerationProps struct {
+type GenProps struct {
 	Name           string
-	ClassItems     map[WhCareerClass]WhItems               `json:"classItems"`
-	RandomTalents  []WhRandomTalent                        `json:"randomTalents"`
-	SpeciesTalents map[WhCharacterSpecies]WhSpeciesTalents `json:"speciesTalents"`
-	SpeciesSkills  map[WhCharacterSpecies][]string         `json:"speciesSkills"`
+	ClassItems     map[CareerClass]GenItems               `json:"classItems"`
+	RandomTalents  []GenRandomTalent                      `json:"randomTalents"`
+	SpeciesTalents map[CharacterSpecies]GenSpeciesTalents `json:"speciesTalents"`
+	SpeciesSkills  map[CharacterSpecies][]string          `json:"speciesSkills"`
 }
 
-func (gp WhGenerationProps) InitAndCopy() WhGenerationProps {
-	classItems := make(map[WhCareerClass]WhItems, len(gp.ClassItems))
+func (gp GenProps) InitAndCopy() GenProps {
+	classItems := make(map[CareerClass]GenItems, len(gp.ClassItems))
 	for k, v := range gp.ClassItems {
 		classItems[k] = v.InitAndCopy()
 	}
 
-	randomTalents := make([]WhRandomTalent, len(gp.RandomTalents))
+	randomTalents := make([]GenRandomTalent, len(gp.RandomTalents))
 	for k, v := range gp.RandomTalents {
 		randomTalents[k] = v.InitAndCopy()
 	}
 
-	speciesTalents := make(map[WhCharacterSpecies]WhSpeciesTalents, len(gp.SpeciesTalents))
+	speciesTalents := make(map[CharacterSpecies]GenSpeciesTalents, len(gp.SpeciesTalents))
 	for k, v := range gp.SpeciesTalents {
 		speciesTalents[k] = v.InitAndCopy()
 	}
 
-	speciesSkills := make(map[WhCharacterSpecies][]string, len(gp.SpeciesSkills))
+	speciesSkills := make(map[CharacterSpecies][]string, len(gp.SpeciesSkills))
 	for k1, v1 := range gp.SpeciesSkills {
 		skills := make([]string, len(v1))
 		for k2, v2 := range v1 {
@@ -98,7 +98,7 @@ func (gp WhGenerationProps) InitAndCopy() WhGenerationProps {
 		speciesSkills[k1] = skills
 	}
 
-	return WhGenerationProps{
+	return GenProps{
 		Name:           strings.Clone(gp.Name),
 		ClassItems:     classItems,
 		RandomTalents:  randomTalents,
@@ -107,12 +107,12 @@ func (gp WhGenerationProps) InitAndCopy() WhGenerationProps {
 	}
 }
 
-func (gp WhGenerationProps) PointToCopy() *WhGenerationProps {
+func (gp GenProps) PointToCopy() *GenProps {
 	cpy := gp.InitAndCopy()
 	return &cpy
 }
 
-func (gp WhGenerationProps) ToMap() (map[string]any, error) {
+func (gp GenProps) ToMap() (map[string]any, error) {
 	gMap, err := structToMap(gp)
 	if err != nil {
 		return map[string]any{}, fmt.Errorf("error while mapping wh structure %s", err)
@@ -120,7 +120,7 @@ func (gp WhGenerationProps) ToMap() (map[string]any, error) {
 	return gMap, nil
 }
 
-func GetWhGenerationPropsValidationAliases() map[string]string {
+func GetGenPropsValidationAliases() map[string]string {
 	return map[string]string{
 		"id_number_map_valid": "dive,keys,id_valid,endkeys,gte=1,lte=1000",
 	}

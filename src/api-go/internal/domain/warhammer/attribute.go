@@ -4,45 +4,45 @@ import (
 	"fmt"
 )
 
-type WhAttribute int
+type Attribute int
 
 const (
-	WhAttNone    = 0
-	WhAttWS      = 1
-	WhAttBS      = 2
-	WhAttS       = 3
-	WhAttT       = 4
-	WhAttI       = 5
-	WhAttAg      = 6
-	WhAttDex     = 7
-	WhAttInt     = 8
-	WhAttWP      = 9
-	WhAttFel     = 10
-	WhAttVarious = 11
+	AttNone    = 0
+	AttWS      = 1
+	AttBS      = 2
+	AttS       = 3
+	AttT       = 4
+	AttI       = 5
+	AttAg      = 6
+	AttDex     = 7
+	AttInt     = 8
+	AttWP      = 9
+	AttFel     = 10
+	AttVarious = 11
 )
 
 func attributeValues() string {
-	return formatIntegerValues([]WhAttribute{
-		WhAttNone,
-		WhAttWS,
-		WhAttBS,
-		WhAttS,
-		WhAttT,
-		WhAttI,
-		WhAttAg,
-		WhAttDex,
-		WhAttInt,
-		WhAttWP,
-		WhAttFel,
-		WhAttVarious,
+	return formatIntegerValues([]Attribute{
+		AttNone,
+		AttWS,
+		AttBS,
+		AttS,
+		AttT,
+		AttI,
+		AttAg,
+		AttDex,
+		AttInt,
+		AttWP,
+		AttFel,
+		AttVarious,
 	})
 }
 
-func (input WhAttribute) InitAndCopy() WhAttribute {
+func (input Attribute) InitAndCopy() Attribute {
 	return input
 }
 
-func GetWhAttributeValidationAliases() map[string]string {
+func GetAttributeValidationAliases() map[string]string {
 	return map[string]string{
 		"att_type_valid": fmt.Sprintf("oneof=%s", attributeValues()),
 	}

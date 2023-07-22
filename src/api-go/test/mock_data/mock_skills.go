@@ -8,18 +8,18 @@ import (
 var skill0 = warhammer.Wh{
 	Id:      "600000000000000000000000",
 	OwnerId: user1.Id,
-	Object: warhammer.WhSkill{
+	Object: warhammer.Skill{
 		Name:        "skill 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Attribute:   warhammer.WhAttWS,
-		Type:        warhammer.WhSkillTypeAdvanced,
+		Attribute:   warhammer.AttWS,
+		Type:        warhammer.SkillTypeAdvanced,
 		IsGroup:     false,
 		DisplayZero: true,
 		Group:       []string{skill1.Id},
 		Shared:      false,
-		Source: map[warhammer.WhSource]string{
-			warhammer.WhSourceArchivesOfTheEmpireVolI: "d",
-			warhammer.WhSourceSeaOfClaws:              "e",
+		Source: map[warhammer.Source]string{
+			warhammer.SourceArchivesOfTheEmpireVolI: "d",
+			warhammer.SourceSeaOfClaws:              "e",
 		},
 	},
 }
@@ -27,7 +27,7 @@ var skill0 = warhammer.Wh{
 var skill1 = warhammer.Wh{
 	Id:      "600000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.WhSkill{
+	Object: warhammer.Skill{
 		Name:        "skill 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 	},

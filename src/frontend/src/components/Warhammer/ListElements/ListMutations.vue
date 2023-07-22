@@ -82,7 +82,6 @@ const selectedFilter = reactive({
 });
 
 function formatListOfWh(wh) {
-  console.log(wh.name, wh.source)
   return {
     name: addSpaces(wh.name, MAX_CHARS),
     source: Object.entries(wh.source)
