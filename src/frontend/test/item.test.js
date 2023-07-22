@@ -3,16 +3,25 @@ import { ItemApi, compareItem } from "../src/services/wh/item";
 
 const meleeItemApiForm = {
   id: "id1",
-  name: "meleeItem",
-  description: "meleeDesc",
-  price: 20.0,
-  enc: 1.0,
-  availability: 1,
-  properties: ["qwe", "asd"],
-  stats: { type: 0, hands: 1, dmg: 2, dmg_sb_mult: 1, reach: 1, group: 1 },
-  can_edit: true,
-  shared: false,
-  source: { 1: "page 2", 3: "page 5-10" },
+  canEdit: true,
+  object: {
+    name: "meleeItem",
+    description: "meleeDesc",
+    price: 20.0,
+    enc: 1.0,
+    availability: 1,
+    properties: ["qwe", "asd"],
+    type: 0,
+    melee: { hands: 1, dmg: 2, dmgSbMult: 1, reach: 1, group: 1 },
+    ranged: { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 },
+    ammunition: { dmg: 0, rng: 0, rngMult: 0, group: 0 },
+    armour: { points: 0, location: [], group: 0 },
+    container: { capacity: 1, carryType: 1 },
+    other: { carryType: 2 },
+    grimoire: { spells: [] },
+    shared: false,
+    source: { 1: "page 2", 3: "page 5-10" },
+  },
 };
 
 const meleeItemModelForm = {
@@ -40,16 +49,25 @@ const meleeItemModelForm = {
 
 const otherItemApiForm = {
   id: "id2",
-  name: "otherItem",
-  description: "",
-  price: 10.0,
-  enc: 2.0,
-  availability: 1,
-  properties: [],
-  stats: { type: 5, carry_type: { carriable: true, wearable: false } },
-  can_edit: false,
-  shared: true,
-  source: {},
+  canEdit: false,
+  object: {
+    name: "otherItem",
+    description: "",
+    price: 10.0,
+    enc: 2.0,
+    availability: 1,
+    properties: [],
+    type: 5,
+    melee: { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 },
+    ranged: { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 },
+    ammunition: { dmg: 0, rng: 0, rngMult: 0, group: 0 },
+    armour: { points: 0, location: [], group: 0 },
+    container: { capacity: 1, carryType: 1 },
+    other: { carryType: 1 },
+    grimoire: { spells: [] },
+    shared: true,
+    source: {},
+  },
 };
 
 const otherItemModelForm = {
@@ -77,16 +95,25 @@ const otherItemModelForm = {
 
 const rangedItemApiForm = {
   id: "id3",
-  name: "item",
-  description: "desc",
-  price: 20.0,
-  enc: 1.0,
-  availability: 1,
-  properties: ["qwe", "asd"],
-  stats: { type: 1, hands: 2, dmg: 2, dmg_sb_mult: 1, rng: 10, rng_sb_mult: 1, group: 1 },
-  can_edit: true,
-  shared: false,
-  source: {},
+  canEdit: true,
+  object: {
+    name: "item",
+    description: "desc",
+    price: 20.0,
+    enc: 1.0,
+    availability: 1,
+    properties: ["qwe", "asd"],
+    type: 1,
+    melee: { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 },
+    ranged: { hands: 2, dmg: 2, dmgSbMult: 1, rng: 10, rngSbMult: 1, group: 1 },
+    ammunition: { dmg: 0, rng: 0, rngMult: 0, group: 0 },
+    armour: { points: 0, location: [], group: 0 },
+    container: { capacity: 1, carryType: 1 },
+    other: { carryType: 0 },
+    grimoire: { spells: [] },
+    shared: false,
+    source: {},
+  },
 };
 
 const rangedItemModelForm = {
@@ -104,7 +131,7 @@ const rangedItemModelForm = {
     { dmg: 0, rng: 0, rngMult: 0, group: 0 },
     { points: 0, location: [], group: 0 },
     { capacity: 1, wearable: false },
-    { carryType: { carriable: false, wearable: false } },
+    { carryType: { carriable: true, wearable: true } },
     { spells: [] },
   ],
   canEdit: true,
@@ -114,16 +141,25 @@ const rangedItemModelForm = {
 
 const ammoItemApiForm = {
   id: "id4",
-  name: "item",
-  description: "desc",
-  price: 20.0,
-  enc: 1.0,
-  availability: 1,
-  properties: ["qwe", "asd"],
-  stats: { type: 2, dmg: 1, rng: 1, rng_mult: 1, group: 1 },
-  can_edit: true,
-  shared: false,
-  source: {},
+  canEdit: true,
+  object: {
+    name: "item",
+    description: "desc",
+    price: 20.0,
+    enc: 1.0,
+    availability: 1,
+    properties: ["qwe", "asd"],
+    type: 2,
+    melee: { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 },
+    ranged: { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 },
+    ammunition: { dmg: 1, rng: 1, rngMult: 1, group: 1 },
+    armour: { points: 0, location: [], group: 0 },
+    container: { capacity: 1, carryType: 1 },
+    other: { carryType: 2 },
+    grimoire: { spells: [] },
+    shared: false,
+    source: {},
+  },
 };
 
 const ammoItemModelForm = {
@@ -149,21 +185,30 @@ const ammoItemModelForm = {
   source: {},
 };
 
-const armorItemApiForm = {
+const armourItemApiForm = {
   id: "id5",
-  name: "item",
-  description: "desc",
-  price: 20.0,
-  enc: 1.0,
-  availability: 1,
-  properties: ["qwe", "asd"],
-  stats: { type: 3, points: 2, location: [1, 3], group: 1 },
-  can_edit: true,
-  shared: false,
-  source: {},
+  canEdit: true,
+  object: {
+    name: "item",
+    description: "desc",
+    price: 20.0,
+    enc: 1.0,
+    availability: 1,
+    properties: ["qwe", "asd"],
+    type: 3,
+    melee: { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 },
+    ranged: { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 },
+    ammunition: { dmg: 0, rng: 0, rngMult: 0, group: 0 },
+    armour: { points: 2, location: [1, 3], group: 1 },
+    container: { capacity: 1, carryType: 1 },
+    other: { carryType: 2 },
+    grimoire: { spells: [] },
+    shared: false,
+    source: {},
+  },
 };
 
-const armorItemModelForm = {
+const armourItemModelForm = {
   id: "id5",
   name: "item",
   description: "desc",
@@ -188,16 +233,25 @@ const armorItemModelForm = {
 
 const containerItemApiForm = {
   id: "id6",
-  name: "item",
-  description: "desc",
-  price: 20.0,
-  enc: 1.0,
-  availability: 1,
-  properties: ["qwe", "asd"],
-  stats: { type: 4, capacity: 2, wearable: true },
-  can_edit: true,
-  shared: false,
-  source: {},
+  canEdit: true,
+  object: {
+    name: "item",
+    description: "desc",
+    price: 20.0,
+    enc: 1.0,
+    availability: 1,
+    properties: ["qwe", "asd"],
+    type: 4,
+    melee: { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 },
+    ranged: { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 },
+    ammunition: { dmg: 0, rng: 0, rngMult: 0, group: 0 },
+    armour: { points: 0, location: [], group: 0 },
+    container: { capacity: 2, carryType: 0 },
+    other: { carryType: 2 },
+    grimoire: { spells: [] },
+    shared: false,
+    source: {},
+  },
 };
 
 const containerItemModelForm = {
@@ -225,16 +279,25 @@ const containerItemModelForm = {
 
 const grimoireItemApiForm = {
   id: "id7",
-  name: "grimoireItem",
-  description: "grimoireDesc",
-  price: 10.0,
-  enc: 1.0,
-  availability: 1,
-  properties: ["qwe", "asd"],
-  stats: { type: 6, spells: ["spellId1", "spellId2"] },
-  can_edit: true,
-  shared: false,
-  source: {},
+  canEdit: true,
+  object: {
+    name: "grimoireItem",
+    description: "grimoireDesc",
+    price: 10.0,
+    enc: 1.0,
+    availability: 1,
+    properties: ["qwe", "asd"],
+    type: 6,
+    melee: { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 },
+    ranged: { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 },
+    ammunition: { dmg: 0, rng: 0, rngMult: 0, group: 0 },
+    armour: { points: 0, location: [], group: 0 },
+    container: { capacity: 1, carryType: 1 },
+    other: { carryType: 2 },
+    grimoire: { spells: ["spellId1", "spellId2"] },
+    shared: false,
+    source: {},
+  },
 };
 
 const grimoireItemModelForm = {
@@ -264,21 +327,21 @@ const mockAxios = {
   get: async (path) => {
     let apiData;
 
-    if (path === "/api/item") {
+    if (path === "/api/wh/item") {
       apiData = [JSON.parse(JSON.stringify(meleeItemApiForm)), JSON.parse(JSON.stringify(otherItemApiForm))];
-    } else if (path === "/api/item/id1") {
+    } else if (path === "/api/wh/item/id1") {
       apiData = JSON.parse(JSON.stringify(meleeItemApiForm));
-    } else if (path === "/api/item/id2") {
+    } else if (path === "/api/wh/item/id2") {
       apiData = JSON.parse(JSON.stringify(otherItemApiForm));
-    } else if (path === "/api/item/id3") {
+    } else if (path === "/api/wh/item/id3") {
       apiData = JSON.parse(JSON.stringify(rangedItemApiForm));
-    } else if (path === "/api/item/id4") {
+    } else if (path === "/api/wh/item/id4") {
       apiData = JSON.parse(JSON.stringify(ammoItemApiForm));
-    } else if (path === "/api/item/id5") {
-      apiData = JSON.parse(JSON.stringify(armorItemApiForm));
-    } else if (path === "/api/item/id6") {
+    } else if (path === "/api/wh/item/id5") {
+      apiData = JSON.parse(JSON.stringify(armourItemApiForm));
+    } else if (path === "/api/wh/item/id6") {
       apiData = JSON.parse(JSON.stringify(containerItemApiForm));
-    } else if (path === "/api/item/id7") {
+    } else if (path === "/api/wh/item/id7") {
       apiData = JSON.parse(JSON.stringify(grimoireItemApiForm));
     } else {
       throw "invalid id";
@@ -287,7 +350,10 @@ const mockAxios = {
     return { data: { data: apiData } };
   },
   post: async () => {
-    return { data: { data: "inserted_id" } };
+    return { data: { data: { id: "id" } } };
+  },
+  put: async () => {
+    return { data: { data: { id: "id" } } };
   },
   delete: async () => {},
 };
@@ -297,7 +363,7 @@ describe("getElement returns expected item", () => {
     { itemType: "melee", id: meleeItemApiForm.id, expectedModel: meleeItemModelForm },
     { itemType: "ranged", id: rangedItemApiForm.id, expectedModel: rangedItemModelForm },
     { itemType: "ammunition", id: ammoItemApiForm.id, expectedModel: ammoItemModelForm },
-    { itemType: "armor", id: armorItemApiForm.id, expectedModel: armorItemModelForm },
+    { itemType: "armor", id: armourItemApiForm.id, expectedModel: armourItemModelForm },
     { itemType: "container", id: containerItemApiForm.id, expectedModel: containerItemModelForm },
     { itemType: "other", id: otherItemApiForm.id, expectedModel: otherItemModelForm },
     { itemType: "grimoire", id: grimoireItemApiForm.id, expectedModel: grimoireItemModelForm },
@@ -321,7 +387,7 @@ describe("createElement calls axios with expected arguments", () => {
     { itemType: "melee", modelForm: meleeItemModelForm, expectedApiData: meleeItemApiForm },
     { itemType: "ranged", modelForm: rangedItemModelForm, expectedApiData: rangedItemApiForm },
     { itemType: "ammunition", modelForm: ammoItemModelForm, expectedApiData: ammoItemApiForm },
-    { itemType: "armor", modelForm: armorItemModelForm, expectedApiData: armorItemApiForm },
+    { itemType: "armor", modelForm: armourItemModelForm, expectedApiData: armourItemApiForm },
     { itemType: "container", modelForm: containerItemModelForm, expectedApiData: containerItemApiForm },
     { itemType: "other", modelForm: otherItemModelForm, expectedApiData: otherItemApiForm },
     { itemType: "grimoire", modelForm: grimoireItemModelForm, expectedApiData: grimoireItemApiForm },
@@ -329,24 +395,21 @@ describe("createElement calls axios with expected arguments", () => {
     const client = new ItemApi(mockAxios);
     const axiosSpy = vi.spyOn(mockAxios, "post");
     const result = await client.createElement(t.modelForm);
-    let expectedCalldata = JSON.parse(JSON.stringify(t.expectedApiData));
-    delete expectedCalldata["id"];
-    delete expectedCalldata["can_edit"];
+    let expectedCallData = JSON.parse(JSON.stringify(t.expectedApiData.object));
 
-    expect(result).toBe("inserted_id");
-    expect(axiosSpy).toHaveBeenCalledWith("/api/item", expectedCalldata);
+    expect(result.id).toBe("id");
+    expect(axiosSpy).toHaveBeenCalledWith("/api/wh/item", expectedCallData);
   });
 });
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new ItemApi(mockAxios);
-  const axiosSpy = vi.spyOn(mockAxios, "post");
+  const axiosSpy = vi.spyOn(mockAxios, "put");
   const result = await client.updateElement(meleeItemModelForm);
-  let expectedCalldata = JSON.parse(JSON.stringify(meleeItemApiForm));
-  delete expectedCalldata["can_edit"];
+  let expectedCallData = JSON.parse(JSON.stringify(meleeItemApiForm.object));
 
-  expect(result).toBe("inserted_id");
-  expect(axiosSpy).toHaveBeenCalledWith("/api/item/update", expectedCalldata);
+  expect(result.id).toBe("id");
+  expect(axiosSpy).toHaveBeenCalledWith(`/api/wh/item/${meleeItemApiForm.id}`, expectedCallData);
 });
 
 test("deleteElement calls axios with expected arguments", async () => {
@@ -354,7 +417,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/item/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/item/id1");
 });
 
 describe("compareItem returns true", () => {
@@ -365,9 +428,9 @@ describe("compareItem returns true", () => {
   });
 
   test("when other item is armor and has location field with elements in different order", () => {
-    let otherItem = JSON.parse(JSON.stringify(armorItemModelForm));
+    let otherItem = JSON.parse(JSON.stringify(armourItemModelForm));
     otherItem.stats[3].location = [3, 1];
-    expect(compareItem(armorItemModelForm, otherItem)).toBe(true);
+    expect(compareItem(armourItemModelForm, otherItem)).toBe(true);
   });
 
   test("when other item is grimoire and has spells field with elements in different order", () => {
@@ -389,7 +452,7 @@ describe("compareItem returns true", () => {
     { itemType: "melee", modelForm: meleeItemModelForm },
     { itemType: "ranged", modelForm: rangedItemModelForm },
     { itemType: "ammunition", modelForm: ammoItemModelForm },
-    { itemType: "armor", modelForm: armorItemModelForm },
+    { itemType: "armor", modelForm: armourItemModelForm },
     { itemType: "container", modelForm: containerItemModelForm },
     { itemType: "other", modelForm: otherItemModelForm },
     { itemType: "grimoire", modelForm: grimoireItemModelForm },
@@ -473,9 +536,9 @@ describe("compareItem returns false", () => {
     { field: "location", name: "location (different number of elements)", value: [1] },
     { field: "location", name: "location (different elements)", value: [2, 3] },
   ])("when item is armor and has different value of stat[type] $name", (t) => {
-    let otherItem = JSON.parse(JSON.stringify(armorItemModelForm));
+    let otherItem = JSON.parse(JSON.stringify(armourItemModelForm));
     otherItem.stats[3][t.field] = t.value;
-    expect(compareItem(armorItemModelForm, otherItem)).toBe(false);
+    expect(compareItem(armourItemModelForm, otherItem)).toBe(false);
   });
 
   test.each([

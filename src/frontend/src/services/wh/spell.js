@@ -35,7 +35,7 @@ const convertApiToModelData = (apiData) => {
   return spell;
 };
 
-const convertModelToApiData = (spell, includeId) => {
+const convertModelToApiData = (spell) => {
   const apiData = {
     name: spell.name,
     cn: spell.cn,
@@ -49,9 +49,6 @@ const convertModelToApiData = (spell, includeId) => {
 
   if (spell.type === "prayer") {
     apiData.cn = -1;
-  }
-  if (includeId) {
-    apiData.id = spell.id;
   }
 
   return apiData;

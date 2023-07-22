@@ -2,11 +2,11 @@ import { checkModifiers, compareModifiers, generateEmptyModifiers } from "./char
 import { compareObjects } from "../../utils/objectUtils";
 import { defaultSource } from "./source";
 import {
+  createElementFunc,
+  deleteElementFunc,
   getElementFunc,
   listElementsFunc,
-  createElementFunc,
   updateElementFunc,
-  deleteElementFunc,
 } from "./crudGenerator";
 
 const apiBasePath = "/api/wh/mutation";
@@ -25,8 +25,8 @@ const convertApiToModelData = (apiData) => {
   };
 };
 
-const convertModelToApiData = (mutation, includeId) => {
-  let apiData = {
+const convertModelToApiData = (mutation) => {
+  return {
     name: mutation.name,
     description: mutation.description,
     type: mutation.type,
@@ -34,12 +34,6 @@ const convertModelToApiData = (mutation, includeId) => {
     shared: mutation.shared,
     source: mutation.source,
   };
-
-  if (includeId) {
-    apiData.id = mutation.id;
-  }
-
-  return apiData;
 };
 
 class MutationApi {

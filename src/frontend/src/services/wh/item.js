@@ -143,13 +143,13 @@ const convertApiToModelData = (apiData) => {
     properties: apiData.object.properties,
     type: apiData.object.type,
     stats: [
-      apiData.object.object.melee,
-      apiData.object.object.ranged,
-      apiData.object.object.ammunition,
-      apiData.object.object.armour,
-      apiData.object.object.grimoire,
+      apiData.object.melee,
+      apiData.object.ranged,
+      apiData.object.ammunition,
+      apiData.object.armour,
       { capacity: apiData.object.container.capacity, wearable: containerIsWearable },
       { carryType: { carriable: otherIsCarriable, wearable: otherIsWearable } },
+      apiData.object.grimoire,
     ],
     shared: apiData.object.shared,
     source: apiData.object.source,
@@ -165,11 +165,11 @@ const generateNewItem = (canEdit) => {
   return item;
 };
 
-const convertModelToApiData = (item, includeId) => {
+const convertModelToApiData = (item) => {
   const containerCarryType = item.stats[4].wearable ? 0 : 1;
   const otherCarryType = item.stats[5].carryType.wearable ? 0 : item.stats[5].carryType.carriable ? 1 : 2;
 
-  let apiData = {
+  return {
     name: item.name,
     description: item.description,
     price: item.price,
@@ -187,12 +187,6 @@ const convertModelToApiData = (item, includeId) => {
     container: { capacity: item.stats[4].capacity, carryType: containerCarryType },
     other: { carryType: otherCarryType },
   };
-
-  if (includeId) {
-    apiData.id = item.id;
-  }
-
-  return apiData;
 };
 
 const compareItem = (item1, item2) => {

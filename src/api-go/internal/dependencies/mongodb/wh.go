@@ -76,57 +76,49 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 	case warhammer.WhTypeMutation:
 		mutation := warhammer.Mutation{}
 		if err = bson.Unmarshal(bsonRaw, &mutation); err != nil {
-			fmt.Println(err)
-			return nil, errors.New("error unmarshalling object")
+			return nil, err
 		}
 		wh.Object = mutation
 	case warhammer.WhTypeSpell:
 		spell := warhammer.Spell{}
 		if err = bson.Unmarshal(bsonRaw, &spell); err != nil {
-			fmt.Println(err)
-			return nil, errors.New("error unmarshalling object")
+			return nil, err
 		}
 		wh.Object = spell
 	case warhammer.WhTypeProperty:
 		property := warhammer.Property{}
 		if err = bson.Unmarshal(bsonRaw, &property); err != nil {
-			fmt.Println(err)
-			return nil, errors.New("error unmarshalling object")
+			return nil, err
 		}
 		wh.Object = property
 	case warhammer.WhTypeItem:
 		item := warhammer.Item{}
 		if err = bson.Unmarshal(bsonRaw, &item); err != nil {
-			fmt.Println(err)
-			return nil, errors.New("error unmarshalling object")
+			return nil, err
 		}
 		wh.Object = item
 	case warhammer.WhTypeTalent:
 		talent := warhammer.Talent{}
 		if err = bson.Unmarshal(bsonRaw, &talent); err != nil {
-			fmt.Println(err)
-			return nil, errors.New("error unmarshalling object")
+			return nil, err
 		}
 		wh.Object = talent
 	case warhammer.WhTypeSkill:
 		skill := warhammer.Skill{}
 		if err = bson.Unmarshal(bsonRaw, &skill); err != nil {
-			fmt.Println(err)
-			return nil, errors.New("error unmarshalling object")
+			return nil, err
 		}
 		wh.Object = skill
 	case warhammer.WhTypeCareer:
 		career := warhammer.Career{}
 		if err = bson.Unmarshal(bsonRaw, &career); err != nil {
-			fmt.Println(err)
-			return nil, errors.New("error unmarshalling object")
+			return nil, err
 		}
 		wh.Object = career
 	case warhammer.WhTypeCharacter:
 		character := warhammer.Character{}
 		if err = bson.Unmarshal(bsonRaw, &character); err != nil {
-			fmt.Println(err)
-			return nil, errors.New("error unmarshalling object")
+			return nil, err
 		}
 		wh.Object = character
 	default:
