@@ -5,6 +5,7 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
+	"log"
 	"time"
 )
 
@@ -36,11 +37,13 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 	return func(c *gin.Context) {
 		var userData UserCreate
 		if err := c.BindJSON(&userData); err != nil {
+			log.Println("error handling create user", err)
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
 		remoteAddr := c.Request.RemoteAddr
 		if !cs.Verify(c.Request.Context(), userData.Captcha, remoteAddr) {
+			log.Println("error handling create user, verifying captcha")
 			c.JSON(BadRequestErrResp("captcha verification error"))
 			return
 		}
@@ -54,6 +57,7 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 
 		userRead, uErr := us.Create(c.Request.Context(), &u)
 		if uErr != nil {
+			log.Println("error handling create user", uErr)
 			switch uErr.Type {
 			case user.ConflictError:
 				c.JSON(ConflictErrResp("user with this id or username already exists"))
@@ -92,6 +96,7 @@ func userGetHandler(us user.UserService) func(*gin.Context) {
 		u, uErr := us.Get(c.Request.Context(), claims, userId)
 
 		if uErr != nil {
+			log.Println("error handling get user", uErr)
 			switch uErr.Type {
 			case user.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
@@ -137,6 +142,7 @@ func userListHandler(us user.UserService) func(*gin.Context) {
 		claims := getUserClaims(c)
 		allUsers, uErr := us.List(c.Request.Context(), claims)
 		if uErr != nil {
+			log.Println("error handling list user", uErr)
 			switch uErr.Type {
 			case user.UnauthorizedError:
 				c.JSON(UnauthorizedErrResp(""))
@@ -182,6 +188,7 @@ func userUpdateHandler(users user.UserService) func(*gin.Context) {
 
 		var userData UserUpdate
 		if err := c.ShouldBindJSON(&userData); err != nil {
+			log.Println("error handling update user", err)
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
@@ -192,6 +199,7 @@ func userUpdateHandler(users user.UserService) func(*gin.Context) {
 
 		userRead, uErr := users.Update(c.Request.Context(), claims, &u)
 		if uErr != nil {
+			log.Println("error handling update user", uErr)
 			switch uErr.Type {
 			case user.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
@@ -226,6 +234,7 @@ func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 
 		var userData UserCredentials
 		if err := c.ShouldBindJSON(&userData); err != nil {
+			log.Println("error handling update user credentials", err)
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
@@ -237,6 +246,7 @@ func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 
 		userRead, uErr := us.UpdateCredentials(c.Request.Context(), claims, userData.CurrentPassword, &u)
 		if uErr != nil {
+			log.Println("error handling update user credentials", uErr)
 			switch uErr.Type {
 			case user.ConflictError:
 				c.JSON(ConflictErrResp("user with this username already exists"))
@@ -269,6 +279,7 @@ func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 
 		var userData UserClaims
 		if err := c.ShouldBindJSON(&userData); err != nil {
+			log.Println("error handling update user claims", err)
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
@@ -279,6 +290,7 @@ func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 
 		userRead, uErr := us.UpdateClaims(c.Request.Context(), claims, &u)
 		if uErr != nil {
+			log.Println("error handling update user claims", uErr)
 			switch uErr.Type {
 			case user.NotFoundError:
 				c.JSON(NotFoundErrResp(""))
@@ -311,11 +323,13 @@ func userDeleteHandler(us user.UserService) func(*gin.Context) {
 
 		var userData UserDelete
 		if err := c.ShouldBindJSON(&userData); err != nil {
+			log.Println("error handling delete user", err)
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
 
 		if uErr := us.Delete(c.Request.Context(), claims, userData.Password, userId); uErr != nil {
+			log.Println("error handling delete user", uErr)
 			switch uErr.Type {
 			case user.NotFoundError:
 				c.JSON(NotFoundErrResp("user not found"))
@@ -342,12 +356,14 @@ func resetSendPasswordHandler(us user.UserService, cs domain.CaptchaService) fun
 	return func(c *gin.Context) {
 		var userData UserSendResetPassword
 		if err := c.BindJSON(&userData); err != nil {
+			log.Println("error handling sand reset password", err)
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
 
 		remoteAddr := c.Request.RemoteAddr
 		if !cs.Verify(c.Request.Context(), userData.Captcha, remoteAddr) {
+			log.Println("error handling send reset password, verifying captcha")
 			c.JSON(BadRequestErrResp("captcha verification error"))
 			return
 		}
@@ -355,6 +371,7 @@ func resetSendPasswordHandler(us user.UserService, cs domain.CaptchaService) fun
 		uErr := us.SendResetPassword(c.Request.Context(), userData.Username)
 
 		if uErr != nil {
+			log.Println("error handling send reset password", uErr)
 			switch uErr.Type {
 			case user.InvalidArgumentsError:
 				c.JSON(BadRequestErrResp(uErr.Error()))
@@ -381,11 +398,13 @@ func resetPasswordHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		var userData UserResetPassword
 		if err := c.BindJSON(&userData); err != nil {
+			log.Println("error handling reset password", err)
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
 
 		if uErr := us.ResetPassword(c.Request.Context(), userData.Token, userData.Password); uErr != nil {
+			log.Println("error handling reset password", uErr)
 			switch uErr.Type {
 			case user.InternalError:
 				c.JSON(ServerErrResp(""))

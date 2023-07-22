@@ -27,8 +27,8 @@ const convertApiToModelData = (apiData) => {
   };
 };
 
-const convertModelToApiData = (skill, includeId) => {
-  let apiData = {
+const convertModelToApiData = (skill) => {
+  return {
     name: skill.name,
     description: skill.description,
     attribute: skill.attribute,
@@ -39,12 +39,6 @@ const convertModelToApiData = (skill, includeId) => {
     shared: skill.shared,
     source: skill.source,
   };
-
-  if (includeId) {
-    apiData.id = skill.id;
-  }
-
-  return apiData;
 };
 
 class SkillApi {

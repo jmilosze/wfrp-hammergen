@@ -5,64 +5,64 @@ import (
 	"strings"
 )
 
-type WhStatus int
+type Status int
 
 const (
-	WhStatusBrass  = 0
-	WhStatusSilver = 1
-	WhStatusGold   = 2
+	StatusBrass  = 0
+	StatusSilver = 1
+	StatusGold   = 2
 )
 
 func statusValues() string {
-	return formatIntegerValues([]WhStatus{WhStatusBrass, WhStatusSilver, WhStatusGold})
+	return formatIntegerValues([]Status{StatusBrass, StatusSilver, StatusGold})
 }
 
-func (input WhStatus) InitAndCopy() WhStatus {
+func (input Status) InitAndCopy() Status {
 	return input
 }
 
-type WhStanding int
+type Standing int
 
 const (
-	WhStandingZero  = 0
-	WhStandingOne   = 1
-	WhStandingTwo   = 2
-	WhStandingThree = 3
-	WhStandingFour  = 4
-	WhStandingFive  = 5
-	WhStandingSix   = 6
-	WhStandingSeven = 7
+	StandingZero  = 0
+	StandingOne   = 1
+	StandingTwo   = 2
+	StandingThree = 3
+	StandingFour  = 4
+	StandingFive  = 5
+	StandingSix   = 6
+	StandingSeven = 7
 )
 
 func standingValues() string {
-	return formatIntegerValues([]WhStanding{
-		WhStandingZero,
-		WhStandingOne,
-		WhStandingTwo,
-		WhStandingThree,
-		WhStandingFour,
-		WhStandingFive,
-		WhStandingSix,
-		WhStandingSeven,
+	return formatIntegerValues([]Standing{
+		StandingZero,
+		StandingOne,
+		StandingTwo,
+		StandingThree,
+		StandingFour,
+		StandingFive,
+		StandingSix,
+		StandingSeven,
 	})
 }
 
-func (input WhStanding) InitAndCopy() WhStanding {
+func (input Standing) InitAndCopy() Standing {
 	return input
 }
 
-type WhCareerLevel struct {
-	Name       string        `json:"name" validate:"name_valid"`
-	Status     WhStatus      `json:"status" validate:"status_valid"`
-	Standing   WhStanding    `json:"standing" validate:"standing_valid"`
-	Attributes []WhAttribute `json:"attributes" validate:"dive,att_type_valid"`
-	Skills     []string      `json:"skills" validate:"dive,id_valid"`
-	Talents    []string      `json:"talents" validate:"dive,id_valid"`
-	Items      string        `json:"items" validate:"desc_valid"`
+type CareerLevel struct {
+	Name       string      `json:"name" validate:"name_valid"`
+	Status     Status      `json:"status" validate:"status_valid"`
+	Standing   Standing    `json:"standing" validate:"standing_valid"`
+	Attributes []Attribute `json:"attributes" validate:"dive,att_type_valid"`
+	Skills     []string    `json:"skills" validate:"dive,id_valid"`
+	Talents    []string    `json:"talents" validate:"dive,id_valid"`
+	Items      string      `json:"items" validate:"desc_valid"`
 }
 
-func (input WhCareerLevel) InitAndCopy() WhCareerLevel {
-	return WhCareerLevel{
+func (input CareerLevel) InitAndCopy() CareerLevel {
+	return CareerLevel{
 		Name:       strings.Clone(input.Name),
 		Status:     input.Status.InitAndCopy(),
 		Standing:   input.Standing.InitAndCopy(),
@@ -73,86 +73,86 @@ func (input WhCareerLevel) InitAndCopy() WhCareerLevel {
 	}
 }
 
-type WhCareerClass int
+type CareerClass int
 
 const (
-	WhCareerClassAcademic  = 0
-	WhCareerClassBurghers  = 1
-	WhCareerClassCourtier  = 2
-	WhCareerClassPeasant   = 3
-	WhCareerClassRanger    = 4
-	WhCareerClassRiverfolk = 5
-	WhCareerClassRouge     = 6
-	WhCareerClassWarrior   = 7
-	WhCareerClassSeafarer  = 8
+	CareerClassAcademic  = 0
+	CareerClassBurghers  = 1
+	CareerClassCourtier  = 2
+	CareerClassPeasant   = 3
+	CareerClassRanger    = 4
+	CareerClassRiverfolk = 5
+	CareerClassRouge     = 6
+	CareerClassWarrior   = 7
+	CareerClassSeafarer  = 8
 )
 
 func classValues() string {
-	return formatIntegerValues([]WhCareerClass{
-		WhCareerClassAcademic,
-		WhCareerClassBurghers,
-		WhCareerClassCourtier,
-		WhCareerClassPeasant,
-		WhCareerClassRanger,
-		WhCareerClassRiverfolk,
-		WhCareerClassRouge,
-		WhCareerClassWarrior,
-		WhCareerClassSeafarer,
+	return formatIntegerValues([]CareerClass{
+		CareerClassAcademic,
+		CareerClassBurghers,
+		CareerClassCourtier,
+		CareerClassPeasant,
+		CareerClassRanger,
+		CareerClassRiverfolk,
+		CareerClassRouge,
+		CareerClassWarrior,
+		CareerClassSeafarer,
 	})
 }
 
-func (input WhCareerClass) InitAndCopy() WhCareerClass {
+func (input CareerClass) InitAndCopy() CareerClass {
 	return input
 }
 
-type WhCareerSpecies int
+type CareerSpecies int
 
 const (
-	WhCareerSpeciesHuman    = 0
-	WhCareerSpeciesHalfling = 1
-	WhCareerSpeciesDwarf    = 2
-	WhCareerSpeciesHighElf  = 3
-	WhCareerSpeciesWoodElf  = 4
-	WhCareerSpeciesGnome    = 5
-	WhCareerSpeciesOgre     = 6
+	CareerSpeciesHuman    = 0
+	CareerSpeciesHalfling = 1
+	CareerSpeciesDwarf    = 2
+	CareerSpeciesHighElf  = 3
+	CareerSpeciesWoodElf  = 4
+	CareerSpeciesGnome    = 5
+	CareerSpeciesOgre     = 6
 )
 
 func careerSpeciesValues() string {
-	return formatIntegerValues([]WhCareerSpecies{
-		WhCareerSpeciesHuman,
-		WhCareerSpeciesHalfling,
-		WhCareerSpeciesDwarf,
-		WhCareerSpeciesHighElf,
-		WhCareerSpeciesWoodElf,
-		WhCareerClassRiverfolk,
-		WhCareerSpeciesGnome,
-		WhCareerSpeciesOgre,
+	return formatIntegerValues([]CareerSpecies{
+		CareerSpeciesHuman,
+		CareerSpeciesHalfling,
+		CareerSpeciesDwarf,
+		CareerSpeciesHighElf,
+		CareerSpeciesWoodElf,
+		CareerClassRiverfolk,
+		CareerSpeciesGnome,
+		CareerSpeciesOgre,
 	})
 }
 
-func (input WhCareerSpecies) InitAndCopy() WhCareerSpecies {
+func (input CareerSpecies) InitAndCopy() CareerSpecies {
 	return input
 }
 
-type WhCareer struct {
-	Name        string          `json:"name" validate:"name_valid"`
-	Description string          `json:"description" validate:"desc_valid"`
-	Class       WhCareerClass   `json:"class" validate:"class_valid"`
-	Species     WhCareerSpecies `json:"species" validate:"career_species_valid"`
-	Level1      WhCareerLevel   `json:"level1"`
-	Level2      WhCareerLevel   `json:"level2"`
-	Level3      WhCareerLevel   `json:"level3"`
-	Level4      WhCareerLevel   `json:"level4"`
-	Shared      bool            `json:"shared" validate:"shared_valid"`
-	Source      WhSourceMap     `json:"source" validate:"source_valid"`
+type Career struct {
+	Name        string        `json:"name" validate:"name_valid"`
+	Description string        `json:"description" validate:"desc_valid"`
+	Class       CareerClass   `json:"class" validate:"class_valid"`
+	Species     CareerSpecies `json:"species" validate:"career_species_valid"`
+	Level1      CareerLevel   `json:"level1"`
+	Level2      CareerLevel   `json:"level2"`
+	Level3      CareerLevel   `json:"level3"`
+	Level4      CareerLevel   `json:"level4"`
+	Shared      bool          `json:"shared" validate:"shared_valid"`
+	Source      SourceMap     `json:"source" validate:"source_valid"`
 }
 
-func (c WhCareer) IsShared() bool {
+func (c Career) IsShared() bool {
 	return c.Shared
 }
 
-func (c WhCareer) InitAndCopy() WhObject {
-	return WhCareer{
+func (c Career) InitAndCopy() WhObject {
+	return Career{
 		Name:        strings.Clone(c.Name),
 		Description: strings.Clone(c.Description),
 		Class:       c.Class.InitAndCopy(),

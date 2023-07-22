@@ -24,8 +24,8 @@ const convertApiToModelData = (apiData) => {
   };
 };
 
-const convertModelToApiData = (itemProperty, includeId) => {
-  let apiData = {
+const convertModelToApiData = (itemProperty) => {
+  return {
     name: itemProperty.name,
     description: itemProperty.description,
     type: itemProperty.type,
@@ -33,12 +33,6 @@ const convertModelToApiData = (itemProperty, includeId) => {
     shared: itemProperty.shared,
     source: itemProperty.source,
   };
-
-  if (includeId) {
-    apiData.id = itemProperty.id;
-  }
-
-  return apiData;
 };
 
 class ItemPropertyApi {

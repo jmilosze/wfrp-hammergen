@@ -5,21 +5,21 @@ import (
 	"strings"
 )
 
-type WhMutation struct {
-	Name        string         `json:"name" validate:"name_valid"`
-	Description string         `json:"description" validate:"desc_valid"`
-	Type        WhMutationType `json:"type" validate:"mutation_type_valid"`
-	Modifiers   WhModifiers    `json:"modifiers"`
-	Shared      bool           `json:"shared" validate:"shared_valid"`
-	Source      WhSourceMap    `json:"source" validate:"source_valid"`
+type Mutation struct {
+	Name        string       `json:"name" validate:"name_valid"`
+	Description string       `json:"description" validate:"desc_valid"`
+	Type        MutationType `json:"type" validate:"mutation_type_valid"`
+	Modifiers   Modifiers    `json:"modifiers"`
+	Shared      bool         `json:"shared" validate:"shared_valid"`
+	Source      SourceMap    `json:"source" validate:"source_valid"`
 }
 
-func (m WhMutation) IsShared() bool {
+func (m Mutation) IsShared() bool {
 	return m.Shared
 }
 
-func (m WhMutation) InitAndCopy() WhObject {
-	return WhMutation{
+func (m Mutation) InitAndCopy() WhObject {
+	return Mutation{
 		Name:        strings.Clone(m.Name),
 		Description: strings.Clone(m.Description),
 		Type:        m.Type.InitAndCopy(),
@@ -29,22 +29,22 @@ func (m WhMutation) InitAndCopy() WhObject {
 	}
 }
 
-type WhMutationType int
+type MutationType int
 
 const (
-	WhMutationTypePhysical = 0
-	WhMutationTypeMental   = 1
+	MutationTypePhysical = 0
+	MutationTypeMental   = 1
 )
 
 func mutationTypeValues() string {
-	return formatIntegerValues([]WhMutationType{WhMutationTypePhysical, WhMutationTypeMental})
+	return formatIntegerValues([]MutationType{MutationTypePhysical, MutationTypeMental})
 }
 
-func (input WhMutationType) InitAndCopy() WhMutationType {
+func (input MutationType) InitAndCopy() MutationType {
 	return input
 }
 
-func GetWhMutationValidationAliases() map[string]string {
+func GetMutationValidationAliases() map[string]string {
 	return map[string]string{
 		"mutation_type_valid": fmt.Sprintf("oneof=%s", mutationTypeValues()),
 	}

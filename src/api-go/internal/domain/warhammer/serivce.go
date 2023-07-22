@@ -12,7 +12,7 @@ type WhService interface {
 	Delete(ctx context.Context, t WhType, whId string, c *auth.Claims) *WhError
 	Get(ctx context.Context, t WhType, c *auth.Claims, full bool, whIds []string) ([]*Wh, *WhError)
 
-	GetGenerationProps(ctx context.Context) (*WhGenerationProps, *WhError)
+	GetGenerationProps(ctx context.Context) (*GenProps, *WhError)
 }
 
 type WhDbService interface {
@@ -21,6 +21,6 @@ type WhDbService interface {
 	Delete(ctx context.Context, t WhType, whId string, userId string) *domain.DbError
 	Retrieve(ctx context.Context, t WhType, userIds []string, sharedUserIds []string, whIds []string) ([]*Wh, *domain.DbError)
 
-	RetrieveGenerationProps(ctx context.Context) (*WhGenerationProps, *domain.DbError)
-	CreateGenerationProps(ctx context.Context, gp *WhGenerationProps) (*WhGenerationProps, *domain.DbError)
+	RetrieveGenerationProps(ctx context.Context) (*GenProps, *domain.DbError)
+	CreateGenerationProps(ctx context.Context, gp *GenProps) (*GenProps, *domain.DbError)
 }

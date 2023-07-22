@@ -16,7 +16,7 @@ const listElementsFunc = (apiBasePath, axiosInstance, convertApiToModelData) => 
 
 const createElementFunc = (apiBasePath, axiosInstance, convertModelToApiData) => {
   const createElement = async (newElement) => {
-    const serverResp = await axiosInstance.post(`${apiBasePath}`, convertModelToApiData(newElement, false));
+    const serverResp = await axiosInstance.post(`${apiBasePath}`, convertModelToApiData(newElement));
     return serverResp.data.data;
   };
   return createElement;
@@ -24,7 +24,7 @@ const createElementFunc = (apiBasePath, axiosInstance, convertModelToApiData) =>
 
 const updateElementFunc = (apiBasePath, axiosInstance, convertModelToApiData) => {
   const updateElement = async (element) => {
-    const serverResp = await axiosInstance.put(`${apiBasePath}/${element.id}`, convertModelToApiData(element, true));
+    const serverResp = await axiosInstance.put(`${apiBasePath}/${element.id}`, convertModelToApiData(element));
     return serverResp.data.data;
   };
   return updateElement;

@@ -38,33 +38,6 @@ var WhApiTypes = []WhType{
 	WhTypeCharacter,
 }
 
-func NewApiWh(t WhType) (Wh, error) {
-	var wh Wh
-
-	switch t {
-	case WhTypeMutation:
-		wh.Object = &WhMutation{}
-	case WhTypeSpell:
-		wh.Object = &WhSpell{}
-	case WhTypeProperty:
-		wh.Object = &WhProperty{}
-	case WhTypeItem:
-		wh.Object = &WhItem{}
-	case WhTypeTalent:
-		wh.Object = &WhTalent{}
-	case WhTypeSkill:
-		wh.Object = &WhSkill{}
-	case WhTypeCareer:
-		wh.Object = &WhCareer{}
-	case WhTypeCharacter:
-		wh.Object = &WhCharacter{}
-	default:
-		return wh, fmt.Errorf("invalid Wh type %s", t)
-	}
-
-	return wh, nil
-}
-
 func (w Wh) InitAndCopy() Wh {
 	return Wh{
 		Id:      strings.Clone(w.Id),

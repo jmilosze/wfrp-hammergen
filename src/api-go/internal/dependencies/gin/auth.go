@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -56,6 +57,7 @@ func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 
 		claims, authErr := js.ParseToken(token)
 		if authErr != nil {
+			log.Println("error handling parsing auth token", err)
 			setAnonymous(c)
 			return
 		}

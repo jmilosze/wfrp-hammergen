@@ -5,51 +5,51 @@ import (
 	"strings"
 )
 
-type WhSource string
+type Source string
 
 const (
-	WhSourceCustom                    = "0"
-	WhSourceWFRP                      = "1"
-	WhSourceRoughNightsAndHardDays    = "2"
-	WhSourceArchivesOfTheEmpireVolI   = "3"
-	WhSourceArchivesOfTheEmpireVolII  = "4"
-	WhSourceArchivesOfTheEmpireVolIII = "5"
-	WhSourceUpInArms                  = "6"
-	WhSourceWindsOfMagic              = "7"
-	WhSourceMiddenheim                = "8"
-	WhSourceSalzenmund                = "9"
-	WhSourceSeaOfClaws                = "10"
-	WhSourceLustria                   = "11"
+	SourceCustom                    = "0"
+	SourceWFRP                      = "1"
+	SourceRoughNightsAndHardDays    = "2"
+	SourceArchivesOfTheEmpireVolI   = "3"
+	SourceArchivesOfTheEmpireVolII  = "4"
+	SourceArchivesOfTheEmpireVolIII = "5"
+	SourceUpInArms                  = "6"
+	SourceWindsOfMagic              = "7"
+	SourceMiddenheim                = "8"
+	SourceSalzenmund                = "9"
+	SourceSeaOfClaws                = "10"
+	SourceLustria                   = "11"
 )
 
 func sourceValues() string {
-	return formatStringValues([]WhSource{
-		WhSourceCustom,
-		WhSourceWFRP,
-		WhSourceRoughNightsAndHardDays,
-		WhSourceArchivesOfTheEmpireVolI,
-		WhSourceArchivesOfTheEmpireVolII,
-		WhSourceArchivesOfTheEmpireVolIII,
-		WhSourceUpInArms,
-		WhSourceWindsOfMagic,
-		WhSourceMiddenheim,
-		WhSourceSalzenmund,
-		WhSourceSeaOfClaws,
-		WhSourceLustria,
+	return formatStringValues([]Source{
+		SourceCustom,
+		SourceWFRP,
+		SourceRoughNightsAndHardDays,
+		SourceArchivesOfTheEmpireVolI,
+		SourceArchivesOfTheEmpireVolII,
+		SourceArchivesOfTheEmpireVolIII,
+		SourceUpInArms,
+		SourceWindsOfMagic,
+		SourceMiddenheim,
+		SourceSalzenmund,
+		SourceSeaOfClaws,
+		SourceLustria,
 	})
 }
 
-type WhSourceMap map[WhSource]string
+type SourceMap map[Source]string
 
-func (input WhSourceMap) InitAndCopy() WhSourceMap {
-	output := make(WhSourceMap, len(input))
+func (input SourceMap) InitAndCopy() SourceMap {
+	output := make(SourceMap, len(input))
 	for key, value := range input {
 		output[key] = strings.Clone(value)
 	}
 	return output
 }
 
-func GetWhSourceValidationAliases() map[string]string {
+func GetSourceValidationAliases() map[string]string {
 	return map[string]string{
 		"source_valid": fmt.Sprintf("dive,keys,oneof=%s,endkeys,min=0,max=15,excludesall=<>", sourceValues()),
 	}

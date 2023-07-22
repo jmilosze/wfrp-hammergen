@@ -91,8 +91,8 @@ const generateNewCareer = (canEdit) => {
   return newCareer;
 };
 
-const convertModelToApiData = (career, includeId) => {
-  const apiData = {
+const convertModelToApiData = (career) => {
+  return {
     name: career.name,
     description: career.description,
     species: JSON.parse(JSON.stringify(career.species)),
@@ -104,12 +104,6 @@ const convertModelToApiData = (career, includeId) => {
     level_3: JSON.parse(JSON.stringify(career.levelThree)),
     level_4: JSON.parse(JSON.stringify(career.levelFour)),
   };
-
-  if (includeId) {
-    apiData.id = career.id;
-  }
-
-  return apiData;
 };
 
 const convertApiToModelData = (apiData) => {

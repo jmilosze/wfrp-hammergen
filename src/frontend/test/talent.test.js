@@ -204,7 +204,6 @@ test("updateElement calls axios with expected arguments", async () => {
   expect(result.id).toBe("id1");
 
   expect(axiosSpy).toHaveBeenCalledWith("/api/wh/talent/id1", {
-    id: "id1",
     name: "talent1",
     description: "desc1",
     tests: "qwe",

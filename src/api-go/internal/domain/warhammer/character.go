@@ -5,92 +5,92 @@ import (
 	"strings"
 )
 
-type WhCharacterSpecies string
+type CharacterSpecies string
 
 const (
-	WhCharacterSpeciesHumanDefault             = "0000"
-	WhCharacterSpeciesHumanReikland            = "0001"
-	WhCharacterSpeciesHumanAltdorfSouthBank    = "0002"
-	WhCharacterSpeciesHumanAltdorfEastend      = "0003"
-	WhCharacterSpeciesHumanAltdorfHexxerbezrik = "0004"
-	WhCharacterSpeciesHumanAltdorfDocklands    = "0005"
-	WhCharacterSpeciesHumanMiddenheim          = "0006"
-	WhCharacterSpeciesHumanMiddenland          = "0007"
-	WhCharacterSpeciesHumanNordland            = "0008"
-	WhCharacterSpeciesHumanSalzenmund          = "0009"
-	WhCharacterSpeciesHumanTilea               = "0010"
-	WhCharacterSpeciesHumanNorseBjornling      = "0011"
-	WhCharacterSpeciesHumanNorseSarl           = "0012"
-	WhCharacterSpeciesHumanNorseSkaeling       = "0013"
-	WhCharacterSpeciesHalflingDefault          = "0100"
-	WhCharacterSpeciesHalflingAshfield         = "0101"
-	WhCharacterSpeciesHalflingBrambledown      = "0102"
-	WhCharacterSpeciesHalflingBrandysnap       = "0103"
-	WhCharacterSpeciesHalflingHayfoot          = "0104"
-	WhCharacterSpeciesHalflingHollyfoot        = "0105"
-	WhCharacterSpeciesHalflingHayfootHollyfoot = "0106"
-	WhCharacterSpeciesHalflingLostpockets      = "0107"
-	WhCharacterSpeciesHalflingLowhaven         = "0108"
-	WhCharacterSpeciesHalflingRumster          = "0109"
-	WhCharacterSpeciesHalflingSkelfsider       = "0110"
-	WhCharacterSpeciesHalflingThorncobble      = "0111"
-	WhCharacterSpeciesHalflingTumbleberry      = "0112"
-	WhCharacterSpeciesDwarfDefault             = "0200"
-	WhCharacterSpeciesDwarfAltdorf             = "0201"
-	WhCharacterSpeciesDwarfCragforgeClan       = "0202"
-	WhCharacterSpeciesDwarfGrumssonClan        = "0203"
-	WhCharacterSpeciesDwarfNorse               = "0204"
-	WhCharacterSpeciesHighElfDefault           = "0300"
-	WhCharacterSpeciesWoodElfDefault           = "0400"
-	WhCharacterSpeciesGnomeDefault             = "0500"
-	WhCharacterSpeciesOgreDefault              = "0600"
+	CharacterSpeciesHumanDefault             = "0000"
+	CharacterSpeciesHumanReikland            = "0001"
+	CharacterSpeciesHumanAltdorfSouthBank    = "0002"
+	CharacterSpeciesHumanAltdorfEastend      = "0003"
+	CharacterSpeciesHumanAltdorfHexxerbezrik = "0004"
+	CharacterSpeciesHumanAltdorfDocklands    = "0005"
+	CharacterSpeciesHumanMiddenheim          = "0006"
+	CharacterSpeciesHumanMiddenland          = "0007"
+	CharacterSpeciesHumanNordland            = "0008"
+	CharacterSpeciesHumanSalzenmund          = "0009"
+	CharacterSpeciesHumanTilea               = "0010"
+	CharacterSpeciesHumanNorseBjornling      = "0011"
+	CharacterSpeciesHumanNorseSarl           = "0012"
+	CharacterSpeciesHumanNorseSkaeling       = "0013"
+	CharacterSpeciesHalflingDefault          = "0100"
+	CharacterSpeciesHalflingAshfield         = "0101"
+	CharacterSpeciesHalflingBrambledown      = "0102"
+	CharacterSpeciesHalflingBrandysnap       = "0103"
+	CharacterSpeciesHalflingHayfoot          = "0104"
+	CharacterSpeciesHalflingHollyfoot        = "0105"
+	CharacterSpeciesHalflingHayfootHollyfoot = "0106"
+	CharacterSpeciesHalflingLostpockets      = "0107"
+	CharacterSpeciesHalflingLowhaven         = "0108"
+	CharacterSpeciesHalflingRumster          = "0109"
+	CharacterSpeciesHalflingSkelfsider       = "0110"
+	CharacterSpeciesHalflingThorncobble      = "0111"
+	CharacterSpeciesHalflingTumbleberry      = "0112"
+	CharacterSpeciesDwarfDefault             = "0200"
+	CharacterSpeciesDwarfAltdorf             = "0201"
+	CharacterSpeciesDwarfCragforgeClan       = "0202"
+	CharacterSpeciesDwarfGrumssonClan        = "0203"
+	CharacterSpeciesDwarfNorse               = "0204"
+	CharacterSpeciesHighElfDefault           = "0300"
+	CharacterSpeciesWoodElfDefault           = "0400"
+	CharacterSpeciesGnomeDefault             = "0500"
+	CharacterSpeciesOgreDefault              = "0600"
 )
 
 func characterSpeciesValues() string {
-	return formatStringValues([]WhCharacterSpecies{
-		WhCharacterSpeciesHumanDefault,
-		WhCharacterSpeciesHumanReikland,
-		WhCharacterSpeciesHumanAltdorfSouthBank,
-		WhCharacterSpeciesHumanAltdorfEastend,
-		WhCharacterSpeciesHumanAltdorfHexxerbezrik,
-		WhCharacterSpeciesHumanAltdorfDocklands,
-		WhCharacterSpeciesHumanMiddenheim,
-		WhCharacterSpeciesHumanMiddenland,
-		WhCharacterSpeciesHumanNordland,
-		WhCharacterSpeciesHumanSalzenmund,
-		WhCharacterSpeciesHumanTilea,
-		WhCharacterSpeciesHumanNorseBjornling,
-		WhCharacterSpeciesHumanNorseSarl,
-		WhCharacterSpeciesHumanNorseSkaeling,
-		WhCharacterSpeciesHalflingDefault,
-		WhCharacterSpeciesHalflingAshfield,
-		WhCharacterSpeciesHalflingBrambledown,
-		WhCharacterSpeciesHalflingBrandysnap,
-		WhCharacterSpeciesHalflingHayfoot,
-		WhCharacterSpeciesHalflingHollyfoot,
-		WhCharacterSpeciesHalflingHayfootHollyfoot,
-		WhCharacterSpeciesHalflingLostpockets,
-		WhCharacterSpeciesHalflingLowhaven,
-		WhCharacterSpeciesHalflingRumster,
-		WhCharacterSpeciesHalflingSkelfsider,
-		WhCharacterSpeciesHalflingThorncobble,
-		WhCharacterSpeciesHalflingTumbleberry,
-		WhCharacterSpeciesDwarfDefault,
-		WhCharacterSpeciesDwarfAltdorf,
-		WhCharacterSpeciesDwarfCragforgeClan,
-		WhCharacterSpeciesDwarfGrumssonClan,
-		WhCharacterSpeciesDwarfNorse,
-		WhCharacterSpeciesHighElfDefault,
-		WhCharacterSpeciesWoodElfDefault,
-		WhCharacterSpeciesGnomeDefault,
-		WhCharacterSpeciesOgreDefault,
+	return formatStringValues([]CharacterSpecies{
+		CharacterSpeciesHumanDefault,
+		CharacterSpeciesHumanReikland,
+		CharacterSpeciesHumanAltdorfSouthBank,
+		CharacterSpeciesHumanAltdorfEastend,
+		CharacterSpeciesHumanAltdorfHexxerbezrik,
+		CharacterSpeciesHumanAltdorfDocklands,
+		CharacterSpeciesHumanMiddenheim,
+		CharacterSpeciesHumanMiddenland,
+		CharacterSpeciesHumanNordland,
+		CharacterSpeciesHumanSalzenmund,
+		CharacterSpeciesHumanTilea,
+		CharacterSpeciesHumanNorseBjornling,
+		CharacterSpeciesHumanNorseSarl,
+		CharacterSpeciesHumanNorseSkaeling,
+		CharacterSpeciesHalflingDefault,
+		CharacterSpeciesHalflingAshfield,
+		CharacterSpeciesHalflingBrambledown,
+		CharacterSpeciesHalflingBrandysnap,
+		CharacterSpeciesHalflingHayfoot,
+		CharacterSpeciesHalflingHollyfoot,
+		CharacterSpeciesHalflingHayfootHollyfoot,
+		CharacterSpeciesHalflingLostpockets,
+		CharacterSpeciesHalflingLowhaven,
+		CharacterSpeciesHalflingRumster,
+		CharacterSpeciesHalflingSkelfsider,
+		CharacterSpeciesHalflingThorncobble,
+		CharacterSpeciesHalflingTumbleberry,
+		CharacterSpeciesDwarfDefault,
+		CharacterSpeciesDwarfAltdorf,
+		CharacterSpeciesDwarfCragforgeClan,
+		CharacterSpeciesDwarfGrumssonClan,
+		CharacterSpeciesDwarfNorse,
+		CharacterSpeciesHighElfDefault,
+		CharacterSpeciesWoodElfDefault,
+		CharacterSpeciesGnomeDefault,
+		CharacterSpeciesOgreDefault,
 	})
 }
-func (input WhCharacterSpecies) InitAndCopy() WhCharacterSpecies {
+func (input CharacterSpecies) InitAndCopy() CharacterSpecies {
 	if input == "" {
-		return WhCharacterSpeciesHumanDefault
+		return CharacterSpeciesHumanDefault
 	}
-	return WhCharacterSpecies(strings.Clone(string(input)))
+	return CharacterSpecies(strings.Clone(string(input)))
 }
 
 type IdNumber struct {
@@ -113,44 +113,44 @@ func copyArrayIdNumber(input []IdNumber) []IdNumber {
 	return output
 }
 
-type WhCharacter struct {
-	Name              string             `json:"name" validate:"name_valid"`
-	Description       string             `json:"description" validate:"desc_valid"`
-	Notes             string             `json:"notes" validate:"desc_valid"`
-	EquippedItems     []IdNumber         `json:"equippedItems" validate:"dive"`
-	CarriedItems      []IdNumber         `json:"carriedItems" validate:"dive"`
-	StoredItems       []IdNumber         `json:"storedItems" validate:"dive"`
-	Skills            []IdNumber         `json:"skills" validate:"dive"`
-	Talents           []IdNumber         `json:"talents" validate:"dive"`
-	Species           WhCharacterSpecies `json:"species" validate:"character_species_valid"`
-	BaseAttributes    WhAttributes       `json:"baseAttributes"`
-	AttributeAdvances WhAttributes       `json:"attributeAdvances"`
-	CareerPath        []string           `json:"careerPath" validate:"dive,id_valid"`
-	Career            string             `json:"career" validate:"id_valid"`
-	Fate              int                `json:"fate" validate:"gte=0,lte=1000"`
-	Fortune           int                `json:"fortune" validate:"gte=0,lte=1000"`
-	Resilience        int                `json:"resilience" validate:"gte=0,lte=1000"`
-	Resolve           int                `json:"resolve" validate:"gte=0,lte=1000"`
-	CurrentExp        int                `json:"currentExp" validate:"gte=0,lte=10000000"`
-	SpentExp          int                `json:"spentExp" validate:"gte=0,lte=10000000"`
-	Status            WhStatus           `json:"status" validate:"status_valid"`
-	Standing          WhStanding         `json:"standing" validate:"standing_valid"`
-	Brass             int                `json:"brass" validate:"gte=0,lte=1000000"`
-	Silver            int                `json:"silver" validate:"gte=0,lte=1000000"`
-	Gold              int                `json:"gold" validate:"gte=0,lte=1000000"`
-	Spells            []string           `json:"spells" validate:"dive,id_valid"`
-	Sin               int                `json:"sin" validate:"gte=0,lte=1000"`
-	Corruption        int                `json:"corruption" validate:"gte=0,lte=1000"`
-	Mutations         []string           `json:"mutations" validate:"dive,id_valid"`
-	Shared            bool               `json:"shared" validate:"shared_valid"`
+type Character struct {
+	Name              string           `json:"name" validate:"name_valid"`
+	Description       string           `json:"description" validate:"desc_valid"`
+	Notes             string           `json:"notes" validate:"desc_valid"`
+	EquippedItems     []IdNumber       `json:"equippedItems" validate:"dive"`
+	CarriedItems      []IdNumber       `json:"carriedItems" validate:"dive"`
+	StoredItems       []IdNumber       `json:"storedItems" validate:"dive"`
+	Skills            []IdNumber       `json:"skills" validate:"dive"`
+	Talents           []IdNumber       `json:"talents" validate:"dive"`
+	Species           CharacterSpecies `json:"species" validate:"character_species_valid"`
+	BaseAttributes    Attributes       `json:"baseAttributes"`
+	AttributeAdvances Attributes       `json:"attributeAdvances"`
+	CareerPath        []string         `json:"careerPath" validate:"dive,id_valid"`
+	Career            string           `json:"career" validate:"id_valid"`
+	Fate              int              `json:"fate" validate:"gte=0,lte=1000"`
+	Fortune           int              `json:"fortune" validate:"gte=0,lte=1000"`
+	Resilience        int              `json:"resilience" validate:"gte=0,lte=1000"`
+	Resolve           int              `json:"resolve" validate:"gte=0,lte=1000"`
+	CurrentExp        int              `json:"currentExp" validate:"gte=0,lte=10000000"`
+	SpentExp          int              `json:"spentExp" validate:"gte=0,lte=10000000"`
+	Status            Status           `json:"status" validate:"status_valid"`
+	Standing          Standing         `json:"standing" validate:"standing_valid"`
+	Brass             int              `json:"brass" validate:"gte=0,lte=1000000"`
+	Silver            int              `json:"silver" validate:"gte=0,lte=1000000"`
+	Gold              int              `json:"gold" validate:"gte=0,lte=1000000"`
+	Spells            []string         `json:"spells" validate:"dive,id_valid"`
+	Sin               int              `json:"sin" validate:"gte=0,lte=1000"`
+	Corruption        int              `json:"corruption" validate:"gte=0,lte=1000"`
+	Mutations         []string         `json:"mutations" validate:"dive,id_valid"`
+	Shared            bool             `json:"shared" validate:"shared_valid"`
 }
 
-func (c WhCharacter) IsShared() bool {
+func (c Character) IsShared() bool {
 	return c.Shared
 }
 
-func (c WhCharacter) InitAndCopy() WhObject {
-	return WhCharacter{
+func (c Character) InitAndCopy() WhObject {
+	return Character{
 		Name:              strings.Clone(c.Name),
 		Description:       strings.Clone(c.Description),
 		Notes:             strings.Clone(c.Notes),
@@ -183,7 +183,7 @@ func (c WhCharacter) InitAndCopy() WhObject {
 	}
 }
 
-func GetWhCharacterValidationAliases() map[string]string {
+func GetCharacterValidationAliases() map[string]string {
 	return map[string]string{
 		"character_species_valid": fmt.Sprintf("oneof=%s", characterSpeciesValues()),
 	}
@@ -209,7 +209,7 @@ func copyArrayWhNumber(input []WhNumber) []WhNumber {
 	return output
 }
 
-func (c WhCharacter) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh, allSpells []*Wh, allCareers []*Wh) WhCharacterFull {
+func (c Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh, allSpells []*Wh, allCareers []*Wh) CharacterFull {
 	equippedItems := idNumberListToFull(c.EquippedItems, allItems)
 	carriedItems := idNumberListToFull(c.CarriedItems, allItems)
 	storedItems := idNumberListToFull(c.StoredItems, allItems)
@@ -221,7 +221,7 @@ func (c WhCharacter) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, a
 	mutations := idListToFull(c.Mutations, allMutations)
 	career := idToFull(c.Career, allCareers)
 
-	return WhCharacterFull{
+	return CharacterFull{
 		Name:              strings.Clone(c.Name),
 		Description:       strings.Clone(c.Description),
 		Notes:             strings.Clone(c.Notes),
@@ -278,44 +278,44 @@ func idToFull(id string, allWh []*Wh) Wh {
 	return Wh{}
 }
 
-type WhCharacterFull struct {
-	Name              string             `json:"name"`
-	Description       string             `json:"description"`
-	Notes             string             `json:"notes"`
-	EquippedItems     []WhNumber         `json:"equippedItems"`
-	CarriedItems      []WhNumber         `json:"carriedItems"`
-	StoredItems       []WhNumber         `json:"storedItems"`
-	Skills            []WhNumber         `json:"skills"`
-	Talents           []WhNumber         `json:"talents"`
-	Species           WhCharacterSpecies `json:"species"`
-	BaseAttributes    WhAttributes       `json:"baseAttributes"`
-	AttributeAdvances WhAttributes       `json:"attributeAdvances"`
-	CareerPath        []Wh               `json:"careerPath"`
-	Career            Wh                 `json:"career"`
-	Fate              int                `json:"fate"`
-	Fortune           int                `json:"fortune"`
-	Resilience        int                `json:"resilience"`
-	Resolve           int                `json:"resolve"`
-	CurrentExp        int                `json:"currentExp"`
-	SpentExp          int                `json:"spentExp"`
-	Status            WhStatus           `json:"status"`
-	Standing          WhStanding         `json:"standing"`
-	Brass             int                `json:"brass"`
-	Silver            int                `json:"silver"`
-	Gold              int                `json:"gold"`
-	Spells            []Wh               `json:"spells"`
-	Sin               int                `json:"sin"`
-	Corruption        int                `json:"corruption"`
-	Mutations         []Wh               `json:"mutations"`
-	Shared            bool               `json:"shared"`
+type CharacterFull struct {
+	Name              string           `json:"name"`
+	Description       string           `json:"description"`
+	Notes             string           `json:"notes"`
+	EquippedItems     []WhNumber       `json:"equippedItems"`
+	CarriedItems      []WhNumber       `json:"carriedItems"`
+	StoredItems       []WhNumber       `json:"storedItems"`
+	Skills            []WhNumber       `json:"skills"`
+	Talents           []WhNumber       `json:"talents"`
+	Species           CharacterSpecies `json:"species"`
+	BaseAttributes    Attributes       `json:"baseAttributes"`
+	AttributeAdvances Attributes       `json:"attributeAdvances"`
+	CareerPath        []Wh             `json:"careerPath"`
+	Career            Wh               `json:"career"`
+	Fate              int              `json:"fate"`
+	Fortune           int              `json:"fortune"`
+	Resilience        int              `json:"resilience"`
+	Resolve           int              `json:"resolve"`
+	CurrentExp        int              `json:"currentExp"`
+	SpentExp          int              `json:"spentExp"`
+	Status            Status           `json:"status"`
+	Standing          Standing         `json:"standing"`
+	Brass             int              `json:"brass"`
+	Silver            int              `json:"silver"`
+	Gold              int              `json:"gold"`
+	Spells            []Wh             `json:"spells"`
+	Sin               int              `json:"sin"`
+	Corruption        int              `json:"corruption"`
+	Mutations         []Wh             `json:"mutations"`
+	Shared            bool             `json:"shared"`
 }
 
-func (f WhCharacterFull) IsShared() bool {
+func (f CharacterFull) IsShared() bool {
 	return f.Shared
 }
 
-func (f WhCharacterFull) InitAndCopy() WhObject {
-	return WhCharacterFull{
+func (f CharacterFull) InitAndCopy() WhObject {
+	return CharacterFull{
 		Name:              strings.Clone(f.Name),
 		Description:       strings.Clone(f.Description),
 		Notes:             strings.Clone(f.Notes),

@@ -5,21 +5,21 @@ import (
 	"strings"
 )
 
-type WhProperty struct {
-	Name         string         `json:"name" validate:"name_valid"`
-	Description  string         `json:"description" validate:"desc_valid"`
-	Type         WhPropertyType `json:"type" validate:"property_type_valid"`
-	ApplicableTo []WhItemType   `json:"applicableTo" validate:"dive,item_type_valid"`
-	Shared       bool           `json:"shared" validate:"shared_valid"`
-	Source       WhSourceMap    `json:"source" validate:"source_valid"`
+type Property struct {
+	Name         string       `json:"name" validate:"name_valid"`
+	Description  string       `json:"description" validate:"desc_valid"`
+	Type         PropertyType `json:"type" validate:"property_type_valid"`
+	ApplicableTo []ItemType   `json:"applicableTo" validate:"dive,item_type_valid"`
+	Shared       bool         `json:"shared" validate:"shared_valid"`
+	Source       SourceMap    `json:"source" validate:"source_valid"`
 }
 
-func (p WhProperty) IsShared() bool {
+func (p Property) IsShared() bool {
 	return p.Shared
 }
 
-func (p WhProperty) InitAndCopy() WhObject {
-	return WhProperty{
+func (p Property) InitAndCopy() WhObject {
+	return Property{
 		Name:         strings.Clone(p.Name),
 		Description:  strings.Clone(p.Description),
 		Type:         p.Type.InitAndCopy(),
@@ -29,29 +29,31 @@ func (p WhProperty) InitAndCopy() WhObject {
 	}
 }
 
-func copyApplicableTo(input []WhItemType) []WhItemType {
-	output := make([]WhItemType, len(input))
+func copyApplicableTo(input []ItemType) []ItemType {
+	output := make([]ItemType, len(input))
 	for i, v := range input {
 		output[i] = v.InitAndCopy()
 	}
 	return output
 }
 
-type WhPropertyType int
+type PropertyType int
 
-func (input WhPropertyType) InitAndCopy() WhPropertyType {
+const (
+	PropertyTypeQuality = 0
+	PropertyTypeFlaw    = 1
+)
+
+func getAllowedPropertyTypeValues() string {
+	return formatIntegerValues([]PropertyType{PropertyTypeQuality, PropertyTypeFlaw})
+}
+
+func (input PropertyType) InitAndCopy() PropertyType {
 	return input
 }
 
-func getAllowedPropertyType() string {
-	return formatAllowedIntTypesFromMap(map[string]int{
-		"quality": 0,
-		"flaw":    1,
-	})
-}
-
-func GetWhPropertyValidationAliases() map[string]string {
+func GetPropertyValidationAliases() map[string]string {
 	return map[string]string{
-		"property_type_valid": fmt.Sprintf("oneof=%s", getAllowedPropertyType()),
+		"property_type_valid": fmt.Sprintf("oneof=%s", getAllowedPropertyTypeValues()),
 	}
 }

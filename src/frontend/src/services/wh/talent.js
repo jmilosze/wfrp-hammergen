@@ -30,8 +30,8 @@ const convertApiToModelData = (apiData) => {
   };
 };
 
-const convertModelToApiData = (talent, includeId) => {
-  let apiData = {
+const convertModelToApiData = (talent) => {
+  return {
     name: talent.name,
     description: talent.description,
     tests: talent.tests,
@@ -43,12 +43,6 @@ const convertModelToApiData = (talent, includeId) => {
     shared: talent.shared,
     source: talent.source,
   };
-
-  if (includeId) {
-    apiData.id = talent.id;
-  }
-
-  return apiData;
 };
 
 class TalentApi {

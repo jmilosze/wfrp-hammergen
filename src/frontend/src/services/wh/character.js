@@ -32,7 +32,8 @@ import {
   HALFLING_LOWHAVEN,
   HALFLING_RUMSTER,
   HALFLING_SKELFSIDER,
-  HALFLING_THORNCOBBLE, HALFLING_TUMBLEBERRY
+  HALFLING_THORNCOBBLE,
+  HALFLING_TUMBLEBERRY,
 } from "./characterConstants";
 
 const apiBasePath = "/api/character";
@@ -190,7 +191,7 @@ const generateNewCharacter = (canEdit) => {
   return newCharacter;
 };
 
-const convertModelToApiData = (character, includeId) => {
+const convertModelToApiData = (character) => {
   const apiData = {
     name: character.name,
     species: character.speciesWithRegion,
@@ -228,10 +229,6 @@ const convertModelToApiData = (character, includeId) => {
 
   const baseAttributes = getBaseAttributes(character);
   apiData.base_attributes = JSON.parse(JSON.stringify(baseAttributes));
-
-  if (includeId) {
-    apiData.id = character.id;
-  }
 
   return apiData;
 };

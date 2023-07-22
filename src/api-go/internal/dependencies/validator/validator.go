@@ -12,34 +12,34 @@ func NewValidator() *v.Validate {
 }
 
 func configure(v *v.Validate) {
-	for k, r := range warhammer.GetWhCommonValidationAliases() {
+	for k, r := range warhammer.GetCommonValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
-	for k, r := range warhammer.GetWhSourceValidationAliases() {
+	for k, r := range warhammer.GetSourceValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
-	for k, r := range warhammer.GetWhAttributeValidationAliases() {
+	for k, r := range warhammer.GetAttributeValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
-	for k, r := range warhammer.GetWhMutationValidationAliases() {
+	for k, r := range warhammer.GetMutationValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
-	for k, r := range warhammer.GetWhPropertyValidationAliases() {
+	for k, r := range warhammer.GetPropertyValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
-	for k, r := range warhammer.GetWhItemValidationAliases() {
+	for k, r := range warhammer.GetItemValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
-	for k, r := range warhammer.GetWhSkillValidationAliases() {
+	for k, r := range warhammer.GetSkillValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
 	for k, r := range warhammer.GetWhCareerValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
-	for k, r := range warhammer.GetWhCharacterValidationAliases() {
+	for k, r := range warhammer.GetCharacterValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
-	for k, r := range warhammer.GetWhGenerationPropsValidationAliases() {
+	for k, r := range warhammer.GetGenPropsValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
 }
