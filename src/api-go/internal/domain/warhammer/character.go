@@ -41,6 +41,10 @@ func (character *Character) IsShared() bool {
 }
 
 func (character *Character) Copy() WhObject {
+	if character == nil {
+		return nil
+	}
+
 	return &Character{
 		Name:              character.Name,
 		Description:       character.Description,
@@ -171,6 +175,10 @@ type IdNumber struct {
 }
 
 func (idNumber *IdNumber) Copy() *IdNumber {
+	if idNumber == nil {
+		return nil
+	}
+
 	return &IdNumber{
 		Id:     idNumber.Id,
 		Number: idNumber.Number,
@@ -314,6 +322,10 @@ func (characterFull *CharacterFull) IsShared() bool {
 }
 
 func (characterFull *CharacterFull) Copy() WhObject {
+	if characterFull == nil {
+		return nil
+	}
+
 	return &CharacterFull{
 		Name:              characterFull.Name,
 		Description:       characterFull.Description,
@@ -365,6 +377,10 @@ type WhNumber struct {
 }
 
 func (input *WhNumber) Copy() *WhNumber {
+	if input == nil {
+		return nil
+	}
+
 	return &WhNumber{
 		Wh:     input.Wh.Copy(),
 		Number: input.Number,

@@ -18,6 +18,10 @@ func (talent *Talent) IsShared() bool {
 }
 
 func (talent *Talent) Copy() WhObject {
+	if talent == nil {
+		return nil
+	}
+
 	return &Talent{
 		Name:        talent.Name,
 		Description: talent.Description,

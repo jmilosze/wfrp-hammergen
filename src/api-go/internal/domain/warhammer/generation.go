@@ -74,6 +74,10 @@ func (genProps GenProps) ToMap() (map[string]any, error) {
 type IdNumberMap map[string]int
 
 func (input IdNumberMap) Copy() IdNumberMap {
+	if input == nil {
+		return nil
+	}
+
 	output := make(IdNumberMap, len(input))
 	for key, value := range input {
 		output[key] = value
@@ -88,6 +92,10 @@ type GenItems struct {
 }
 
 func (input *GenItems) Copy() *GenItems {
+	if input == nil {
+		return nil
+	}
+
 	return &GenItems{
 		Equipped: input.Equipped.Copy(),
 		Carried:  input.Carried.Copy(),
@@ -102,6 +110,10 @@ type GenRandomTalent struct {
 }
 
 func (input *GenRandomTalent) Copy() *GenRandomTalent {
+	if input == nil {
+		return nil
+	}
+
 	return &GenRandomTalent{
 		Id:      input.Id,
 		MinRoll: input.MinRoll,
@@ -115,6 +127,9 @@ type GenSpeciesTalents struct {
 }
 
 func (input *GenSpeciesTalents) Copy() *GenSpeciesTalents {
+	if input == nil {
+		return nil
+	}
 
 	var single []string
 	if input.Single != nil {

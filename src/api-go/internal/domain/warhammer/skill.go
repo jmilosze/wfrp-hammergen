@@ -21,6 +21,10 @@ func (skill *Skill) IsShared() bool {
 }
 
 func (skill *Skill) Copy() WhObject {
+	if skill == nil {
+		return nil
+	}
+
 	return &Skill{
 		Name:        skill.Name,
 		Description: skill.Description,

@@ -22,6 +22,10 @@ func (career *Career) IsShared() bool {
 }
 
 func (career *Career) Copy() WhObject {
+	if career == nil {
+		return nil
+	}
+
 	return &Career{
 		Name:        career.Name,
 		Description: career.Description,
@@ -84,6 +88,10 @@ type CareerLevel struct {
 }
 
 func (careerLevel *CareerLevel) Copy() *CareerLevel {
+	if careerLevel == nil {
+		return nil
+	}
+
 	return &CareerLevel{
 		Name:       careerLevel.Name,
 		Status:     careerLevel.Status,

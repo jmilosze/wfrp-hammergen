@@ -29,6 +29,10 @@ func (item *Item) IsShared() bool {
 }
 
 func (item *Item) Copy() WhObject {
+	if item == nil {
+		return nil
+	}
+
 	return &Item{
 		Name:         item.Name,
 		Description:  item.Description,
@@ -139,6 +143,10 @@ type ItemMelee struct {
 }
 
 func (itemMelee *ItemMelee) Copy() *ItemMelee {
+	if itemMelee == nil {
+		return nil
+	}
+
 	return &ItemMelee{
 		Hands:     itemMelee.Hands,
 		Dmg:       itemMelee.Dmg,
@@ -162,6 +170,10 @@ type ItemRanged struct {
 }
 
 func (itemRanged *ItemRanged) Copy() *ItemRanged {
+	if itemRanged == nil {
+		return nil
+	}
+
 	return &ItemRanged{
 		Hands:     itemRanged.Hands,
 		Dmg:       itemRanged.Dmg,
@@ -184,6 +196,10 @@ type ItemAmmunition struct {
 }
 
 func (itemAmmunition *ItemAmmunition) Copy() *ItemAmmunition {
+	if itemAmmunition == nil {
+		return nil
+	}
+
 	return &ItemAmmunition{
 		Dmg:     itemAmmunition.Dmg,
 		Rng:     itemAmmunition.Rng,
@@ -203,6 +219,10 @@ type ItemArmour struct {
 }
 
 func (itemArmour *ItemArmour) Copy() *ItemArmour {
+	if itemArmour == nil {
+		return nil
+	}
+
 	return &ItemArmour{
 		Points:   itemArmour.Points,
 		Location: append([]ItemArmourLocation(nil), itemArmour.Location...),
@@ -220,6 +240,10 @@ type ItemContainer struct {
 }
 
 func (itemContainer *ItemContainer) Copy() *ItemContainer {
+	if itemContainer == nil {
+		return nil
+	}
+
 	return &ItemContainer{
 		Capacity:  itemContainer.Capacity,
 		CarryType: itemContainer.CarryType,
@@ -235,6 +259,10 @@ type ItemGrimoire struct {
 }
 
 func (itemGrimoire *ItemGrimoire) Copy() *ItemGrimoire {
+	if itemGrimoire == nil {
+		return nil
+	}
+
 	return &ItemGrimoire{
 		Spells: append([]string(nil), itemGrimoire.Spells...),
 	}
@@ -249,6 +277,10 @@ type ItemOther struct {
 }
 
 func (itemOther *ItemOther) Copy() *ItemOther {
+	if itemOther == nil {
+		return nil
+	}
+
 	return &ItemOther{
 		CarryType: itemOther.CarryType,
 	}
@@ -493,6 +525,10 @@ func (itemFull *ItemFull) IsShared() bool {
 }
 
 func (itemFull *ItemFull) Copy() WhObject {
+	if itemFull == nil {
+		return nil
+	}
+
 	return &ItemFull{
 		Name:         itemFull.Name,
 		Description:  itemFull.Description,
@@ -557,6 +593,10 @@ type ItemGrimoireFull struct {
 }
 
 func (itemGrimoireFull *ItemGrimoireFull) Copy() *ItemGrimoireFull {
+	if itemGrimoireFull == nil {
+		return nil
+	}
+
 	return &ItemGrimoireFull{
 		Spells: copyWhArray(itemGrimoireFull.Spells),
 	}

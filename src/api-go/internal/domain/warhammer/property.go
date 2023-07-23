@@ -18,6 +18,10 @@ func (property *Property) IsShared() bool {
 }
 
 func (property *Property) Copy() WhObject {
+	if property == nil {
+		return nil
+	}
+
 	return &Property{
 		Name:         property.Name,
 		Description:  property.Description,

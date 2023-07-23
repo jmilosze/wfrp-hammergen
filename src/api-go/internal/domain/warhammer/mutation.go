@@ -18,6 +18,10 @@ func (mutation *Mutation) IsShared() bool {
 }
 
 func (mutation *Mutation) Copy() WhObject {
+	if mutation == nil {
+		return nil
+	}
+
 	return &Mutation{
 		Name:        mutation.Name,
 		Description: mutation.Description,

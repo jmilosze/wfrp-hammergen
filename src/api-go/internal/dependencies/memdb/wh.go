@@ -176,7 +176,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.G
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate generationProp from raw %v", raw)}
 	}
 
-	return genProp.PointToCopy(), nil
+	return genProp.Copy(), nil
 }
 
 func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, *domain.DbError) {
@@ -187,5 +187,5 @@ func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.G
 	}
 	txn.Commit()
 
-	return gp.PointToCopy(), nil
+	return gp.Copy(), nil
 }

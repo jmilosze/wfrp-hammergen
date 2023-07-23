@@ -32,6 +32,10 @@ func formatStringValues[T ~string](list []T) string {
 }
 
 func copyWhArray(input []*Wh) []*Wh {
+	if input == nil {
+		return nil
+	}
+
 	output := make([]*Wh, len(input))
 	for i, v := range input {
 		output[i] = v.Copy()

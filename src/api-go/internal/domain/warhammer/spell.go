@@ -16,6 +16,10 @@ func (spell *Spell) IsShared() bool {
 }
 
 func (spell *Spell) Copy() WhObject {
+	if spell == nil {
+		return nil
+	}
+
 	return &Spell{
 		Name:        spell.Name,
 		Description: spell.Description,

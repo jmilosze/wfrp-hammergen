@@ -58,6 +58,10 @@ type Attributes struct {
 }
 
 func (attributes *Attributes) Copy() *Attributes {
+	if attributes == nil {
+		return nil
+	}
+
 	return &Attributes{
 		WS:  attributes.WS,
 		BS:  attributes.BS,

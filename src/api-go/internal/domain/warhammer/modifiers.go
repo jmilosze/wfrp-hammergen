@@ -7,6 +7,10 @@ type Modifiers struct {
 }
 
 func (modifiers *Modifiers) Copy() *Modifiers {
+	if modifiers == nil {
+		return nil
+	}
+
 	return &Modifiers{
 		Size:       modifiers.Size,
 		Movement:   modifiers.Movement,
