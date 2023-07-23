@@ -28,7 +28,7 @@ func createNewWhMemDb() (*memdb.MemDB, error) {
 		Tables: map[string]*memdb.TableSchema{},
 	}
 
-	for _, whType := range warhammer.WhApiTypes {
+	for _, whType := range warhammer.WhCoreTypes {
 		schema.Tables[string(whType)] = &memdb.TableSchema{
 			Name: string(whType),
 			Indexes: map[string]*memdb.IndexSchema{

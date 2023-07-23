@@ -2,8 +2,44 @@ package warhammer
 
 import (
 	"fmt"
-	"strings"
 )
+
+type Skill struct {
+	Name        string    `json:"name" validate:"name_valid"`
+	Description string    `json:"description" validate:"desc_valid"`
+	Attribute   Attribute `json:"attribute" validate:"att_type_valid"`
+	Type        SkillType `json:"type" validate:"skill_type_valid"`
+	IsGroup     bool      `json:"isGroup" validate:"boolean"`
+	DisplayZero bool      `json:"displayZero" validate:"boolean"`
+	Group       []string  `json:"group" validate:"dive,id_valid"`
+	Shared      bool      `json:"shared" validate:"shared_valid"`
+	Source      SourceMap `json:"source" validate:"source_valid"`
+}
+
+func (skill *Skill) IsShared() bool {
+	return skill.Shared
+}
+
+func (skill *Skill) Copy() WhObject {
+	return &Skill{
+		Name:        skill.Name,
+		Description: skill.Description,
+		Attribute:   skill.Attribute,
+		Type:        skill.Type,
+		IsGroup:     skill.IsGroup,
+		DisplayZero: skill.DisplayZero,
+		Group:       append([]string(nil), skill.Group...),
+		Shared:      skill.Shared,
+		Source:      skill.Source.Copy(),
+	}
+}
+
+func NewSkill() *Skill {
+	return &Skill{
+		Group:  []string{},
+		Source: NewSourceMap(),
+	}
+}
 
 type SkillType int
 
@@ -19,40 +55,6 @@ func skillTypeValues() string {
 		SkillTypeAdvanced,
 		SkillTypeMixed,
 	})
-}
-
-func (input SkillType) InitAndCopy() SkillType {
-	return input
-}
-
-type Skill struct {
-	Name        string    `json:"name" validate:"name_valid"`
-	Description string    `json:"description" validate:"desc_valid"`
-	Attribute   Attribute `json:"attribute" validate:"att_type_valid"`
-	Type        SkillType `json:"type" validate:"skill_type_valid"`
-	IsGroup     bool      `json:"isGroup" validate:"boolean"`
-	DisplayZero bool      `json:"displayZero" validate:"boolean"`
-	Group       []string  `json:"group" validate:"dive,id_valid"`
-	Shared      bool      `json:"shared" validate:"shared_valid"`
-	Source      SourceMap `json:"source" validate:"source_valid"`
-}
-
-func (s Skill) IsShared() bool {
-	return s.Shared
-}
-
-func (s Skill) InitAndCopy() WhObject {
-	return Skill{
-		Name:        strings.Clone(s.Name),
-		Description: strings.Clone(s.Description),
-		Attribute:   s.Attribute.InitAndCopy(),
-		Type:        s.Type.InitAndCopy(),
-		IsGroup:     s.IsGroup,
-		DisplayZero: s.DisplayZero,
-		Group:       copyStringArray(s.Group),
-		Shared:      s.Shared,
-		Source:      s.Source.InitAndCopy(),
-	}
 }
 
 func GetSkillValidationAliases() map[string]string {

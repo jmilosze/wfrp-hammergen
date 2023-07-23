@@ -2,7 +2,6 @@ package warhammer
 
 import (
 	"fmt"
-	"strings"
 )
 
 type Property struct {
@@ -14,27 +13,26 @@ type Property struct {
 	Source       SourceMap    `json:"source" validate:"source_valid"`
 }
 
-func (p Property) IsShared() bool {
+func (p *Property) IsShared() bool {
 	return p.Shared
 }
 
-func (p Property) InitAndCopy() WhObject {
-	return Property{
-		Name:         strings.Clone(p.Name),
-		Description:  strings.Clone(p.Description),
-		Type:         p.Type.InitAndCopy(),
-		ApplicableTo: copyApplicableTo(p.ApplicableTo),
+func (p *Property) Copy() WhObject {
+	return &Property{
+		Name:         p.Name,
+		Description:  p.Description,
+		Type:         p.Type,
+		ApplicableTo: append([]ItemType(nil), p.ApplicableTo...),
 		Shared:       p.Shared,
-		Source:       p.Source.InitAndCopy(),
+		Source:       p.Source.Copy(),
 	}
 }
 
-func copyApplicableTo(input []ItemType) []ItemType {
-	output := make([]ItemType, len(input))
-	for i, v := range input {
-		output[i] = v.InitAndCopy()
+func NewProperty() WhObject {
+	return &Property{
+		ApplicableTo: []ItemType{},
+		Source:       NewSourceMap(),
 	}
-	return output
 }
 
 type PropertyType int
@@ -46,10 +44,6 @@ const (
 
 func getAllowedPropertyTypeValues() string {
 	return formatIntegerValues([]PropertyType{PropertyTypeQuality, PropertyTypeFlaw})
-}
-
-func (input PropertyType) InitAndCopy() PropertyType {
-	return input
 }
 
 func GetPropertyValidationAliases() map[string]string {

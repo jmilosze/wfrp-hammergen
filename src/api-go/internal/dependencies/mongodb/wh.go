@@ -19,7 +19,7 @@ type WhDbService struct {
 func NewWhDbService(db *DbService) *WhDbService {
 	collections := map[warhammer.WhType]*mongo.Collection{}
 
-	for _, whType := range warhammer.WhApiTypes {
+	for _, whType := range warhammer.WhCoreTypes {
 		collections[whType] = db.Client.Database(db.DbName).Collection(string(whType))
 	}
 	collections[warhammer.WhTypeOther] = db.Client.Database(db.DbName).Collection(warhammer.WhTypeOther)

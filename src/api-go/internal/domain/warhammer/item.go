@@ -2,9 +2,195 @@ package warhammer
 
 import (
 	"fmt"
-	"golang.org/x/exp/slices"
-	"strings"
 )
+
+type Item struct {
+	Name         string           `json:"name" validate:"name_valid"`
+	Description  string           `json:"description" validate:"desc_valid"`
+	Price        float64          `json:"price" validate:"gte=0,lte=1000000000"`
+	Enc          float64          `json:"enc" validate:"gte=0,lte=1000"`
+	Availability ItemAvailability `json:"availability" validate:"item_availability_valid"`
+	Properties   []string         `json:"properties" validate:"dive,id_valid"`
+	Type         ItemType         `json:"type" validate:"item_type_valid"`
+	Shared       bool             `json:"shared" validate:"shared_valid"`
+	Source       SourceMap        `json:"source" validate:"source_valid"`
+
+	Melee      *ItemMelee      `json:"melee"`
+	Ranged     *ItemRanged     `json:"ranged"`
+	Ammunition *ItemAmmunition `json:"ammunition"`
+	Armour     *ItemArmour     `json:"armour"`
+	Container  *ItemContainer  `json:"container"`
+	Grimoire   *ItemGrimoire   `json:"grimoire"`
+	Other      *ItemOther      `json:"other"`
+}
+
+func (item *Item) IsShared() bool {
+	return item.Shared
+}
+
+func (item *Item) Copy() WhObject {
+	return &Item{
+		Name:         item.Name,
+		Description:  item.Description,
+		Price:        item.Price,
+		Enc:          item.Enc,
+		Availability: item.Availability,
+		Properties:   append([]string(nil), item.Properties...),
+		Type:         item.Type,
+		Shared:       item.Shared,
+		Source:       item.Source.Copy(),
+
+		Melee:      item.Melee.Copy(),
+		Ranged:     item.Ranged.Copy(),
+		Ammunition: item.Ammunition.Copy(),
+		Armour:     item.Armour.Copy(),
+		Container:  item.Container.Copy(),
+		Grimoire:   item.Grimoire.Copy(),
+		Other:      item.Other.Copy(),
+	}
+}
+
+func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) *ItemFull {
+
+	itemProperties := idListToWhList(item.Properties, allProperties)
+
+	grimoire := &ItemGrimoireFull{}
+	grimoire.Spells = idListToWhList(item.Grimoire.Spells, allSpells)
+
+	return &ItemFull{
+		Name:         item.Name,
+		Description:  item.Description,
+		Price:        item.Price,
+		Enc:          item.Enc,
+		Availability: item.Availability,
+		Properties:   itemProperties,
+		Type:         item.Type,
+		Shared:       item.Shared,
+		Source:       item.Source.Copy(),
+
+		Melee:      item.Melee.Copy(),
+		Ranged:     item.Ranged.Copy(),
+		Ammunition: item.Ammunition.Copy(),
+		Armour:     item.Armour.Copy(),
+		Container:  item.Container.Copy(),
+		Grimoire:   grimoire,
+		Other:      item.Other.Copy(),
+	}
+}
+
+func NewItem() WhObject {
+	return &Item{
+		Properties: []string{},
+		Source:     NewSourceMap(),
+		Melee:      &ItemMelee{},
+		Ranged:     &ItemRanged{},
+		Ammunition: &ItemAmmunition{},
+		Armour:     &ItemArmour{Location: []ItemArmourLocation{}},
+		Container:  &ItemContainer{},
+		Grimoire:   &ItemGrimoire{Spells: []string{}},
+		Other:      &ItemOther{},
+	}
+}
+
+type ItemMelee struct {
+	Hands     ItemHands      `json:"hands" validate:"item_hands_valid"`
+	Dmg       int            `json:"dmg" validate:"gte=-100,lte=100"`
+	DmgSbMult float64        `json:"dmgSbMult" validate:"gte=0,lte=10"`
+	Reach     ItemMeleeReach `json:"reach" validate:"item_melee_reach_valid"`
+	Group     ItemMeleeGroup `json:"group" validate:"item_melee_group_valid"`
+}
+
+func (itemMelee *ItemMelee) Copy() *ItemMelee {
+	return &ItemMelee{
+		Hands:     itemMelee.Hands,
+		Dmg:       itemMelee.Dmg,
+		DmgSbMult: itemMelee.DmgSbMult,
+		Reach:     itemMelee.Reach,
+		Group:     itemMelee.Group,
+	}
+}
+
+type ItemRanged struct {
+	Hands     ItemHands       `json:"hands" validate:"item_hands_valid"`
+	Dmg       int             `json:"dmg" validate:"gte=-100,lte=100"`
+	DmgSbMult float64         `json:"dmgSbMult" validate:"gte=0,lte=10"`
+	Rng       int             `json:"rng" validate:"gte=-10000,lte=10000"`
+	RngSbMult float64         `json:"rngSbMult" validate:"gte=0,lte=10"`
+	Group     ItemRangedGroup `json:"group" validate:"item_ranged_group_valid"`
+}
+
+func (itemRanged *ItemRanged) Copy() *ItemRanged {
+	return &ItemRanged{
+		Hands:     itemRanged.Hands,
+		Dmg:       itemRanged.Dmg,
+		DmgSbMult: itemRanged.DmgSbMult,
+		Rng:       itemRanged.Rng,
+		RngSbMult: itemRanged.RngSbMult,
+		Group:     itemRanged.Group,
+	}
+}
+
+type ItemAmmunition struct {
+	Dmg     int                 `json:"dmg" validate:"gte=-100,lte=100"`
+	Rng     int                 `json:"rng" validate:"gte=-10000,lte=10000"`
+	RngMult float64             `json:"rngMult" validate:"gte=0,lte=10"`
+	Group   ItemAmmunitionGroup `json:"group" validate:"item_ammunition_group_valid"`
+}
+
+func (itemAmmunition *ItemAmmunition) Copy() *ItemAmmunition {
+	return &ItemAmmunition{
+		Dmg:     itemAmmunition.Dmg,
+		Rng:     itemAmmunition.Rng,
+		RngMult: itemAmmunition.RngMult,
+		Group:   itemAmmunition.Group,
+	}
+}
+
+type ItemArmour struct {
+	Points   int                  `json:"points" validate:"gte=0,lte=100"`
+	Location []ItemArmourLocation `json:"location" validate:"dive,item_armour_location_valid"`
+	Group    ItemArmourGroup      `json:"group" validate:"item_armour_group_valid"`
+}
+
+func (itemArmour *ItemArmour) Copy() *ItemArmour {
+	return &ItemArmour{
+		Points:   itemArmour.Points,
+		Location: append([]ItemArmourLocation(nil), itemArmour.Location...),
+		Group:    itemArmour.Group,
+	}
+}
+
+type ItemContainer struct {
+	Capacity  int           `json:"capacity" validate:"gte=0,lte=1000"`
+	CarryType ItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
+}
+
+func (itemContainer *ItemContainer) Copy() *ItemContainer {
+	return &ItemContainer{
+		Capacity:  itemContainer.Capacity,
+		CarryType: itemContainer.CarryType,
+	}
+}
+
+type ItemGrimoire struct {
+	Spells []string `json:"spells" validate:"dive,id_valid"`
+}
+
+func (itemGrimoire *ItemGrimoire) Copy() *ItemGrimoire {
+	return &ItemGrimoire{
+		Spells: append([]string(nil), itemGrimoire.Spells...),
+	}
+}
+
+type ItemOther struct {
+	CarryType ItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
+}
+
+func (itemOther *ItemOther) Copy() *ItemOther {
+	return &ItemOther{
+		CarryType: itemOther.CarryType,
+	}
+}
 
 type ItemType int
 
@@ -29,9 +215,6 @@ func itemTypeValues() string {
 		ItemTypeOther,
 	})
 }
-func (input ItemType) InitAndCopy() ItemType {
-	return input
-}
 
 type ItemHands int
 
@@ -47,10 +230,6 @@ func itemHandsValues() string {
 		ItemHandsOne,
 		ItemHandsTwo,
 	})
-}
-
-func (input ItemHands) InitAndCopy() ItemHands {
-	return input
 }
 
 type ItemMeleeReach int
@@ -75,10 +254,6 @@ func itemMeleeReachValues() string {
 		ItemMeleeReachVeryLong,
 		ItemMeleeReachMassive,
 	})
-}
-
-func (input ItemMeleeReach) InitAndCopy() ItemMeleeReach {
-	return input
 }
 
 type ItemMeleeGroup int
@@ -107,10 +282,6 @@ func itemMeleeGroupValues() string {
 	})
 }
 
-func (input ItemMeleeGroup) InitAndCopy() ItemMeleeGroup {
-	return input
-}
-
 type ItemRangedGroup int
 
 const (
@@ -137,10 +308,6 @@ func ItemRangedGroupValues() string {
 	})
 }
 
-func (input ItemRangedGroup) InitAndCopy() ItemRangedGroup {
-	return input
-}
-
 type ItemAmmunitionGroup int
 
 const (
@@ -159,10 +326,6 @@ func itemAmmunitionGroupValues() string {
 		ItemAmmunitionGroupSling,
 		ItemAmmunitionGroupEntangling,
 	})
-}
-
-func (input ItemAmmunitionGroup) InitAndCopy() ItemAmmunitionGroup {
-	return input
 }
 
 type ItemArmourGroup int
@@ -187,10 +350,6 @@ func itemArmourGroupValues() string {
 	})
 }
 
-func (input ItemArmourGroup) InitAndCopy() ItemArmourGroup {
-	return input
-}
-
 type ItemArmourLocation int
 
 const (
@@ -209,10 +368,6 @@ func itemArmourLocationValues() string {
 	})
 }
 
-func (input ItemArmourLocation) InitAndCopy() ItemArmourLocation {
-	return input
-}
-
 type ItemCarryType int
 
 const (
@@ -227,10 +382,6 @@ func itemCarryTypeValues() string {
 		ItemCarryTypeCarriableAndNotWearable,
 		ItemCarryTypeNotCarriableAndNotWearable,
 	})
-}
-
-func (input ItemCarryType) InitAndCopy() ItemCarryType {
-	return input
 }
 
 type ItemAvailability int
@@ -251,153 +402,59 @@ func itemAvailabilityValues() string {
 	})
 }
 
-func (input ItemAvailability) InitAndCopy() ItemAvailability {
-	return input
+type ItemFull struct {
+	Name         string           `json:"name"`
+	Description  string           `json:"description" `
+	Price        float64          `json:"price"`
+	Enc          float64          `json:"enc"`
+	Availability ItemAvailability `json:"availability"`
+	Properties   []*Wh            `json:"properties"`
+	Type         ItemType         `json:"type"`
+	Shared       bool             `json:"shared"`
+	Source       SourceMap        `json:"source"`
+
+	Melee      *ItemMelee        `json:"melee"`
+	Ranged     *ItemRanged       `json:"ranged"`
+	Ammunition *ItemAmmunition   `json:"ammunition"`
+	Armour     *ItemArmour       `json:"armour"`
+	Container  *ItemContainer    `json:"container"`
+	Grimoire   *ItemGrimoireFull `json:"grimoire"`
+	Other      *ItemOther        `json:"other"`
 }
 
-type ItemMelee struct {
-	Hands     ItemHands      `json:"hands" validate:"item_hands_valid"`
-	Dmg       int            `json:"dmg" validate:"gte=-100,lte=100"`
-	DmgSbMult float64        `json:"dmgSbMult" validate:"gte=0,lte=10"`
-	Reach     ItemMeleeReach `json:"reach" validate:"item_melee_reach_valid"`
-	Group     ItemMeleeGroup `json:"group" validate:"item_melee_group_valid"`
+func (itemFull ItemFull) IsShared() bool {
+	return itemFull.Shared
 }
 
-func (input ItemMelee) InitAndCopy() ItemMelee {
-	return ItemMelee{
-		Hands:     input.Hands.InitAndCopy(),
-		Dmg:       input.Dmg,
-		DmgSbMult: input.DmgSbMult,
-		Reach:     input.Reach.InitAndCopy(),
-		Group:     input.Group.InitAndCopy(),
+func (itemFull ItemFull) Copy() WhObject {
+	return ItemFull{
+		Name:         itemFull.Name,
+		Description:  itemFull.Description,
+		Price:        itemFull.Price,
+		Enc:          itemFull.Enc,
+		Availability: itemFull.Availability,
+		Properties:   copyWhArray(itemFull.Properties),
+		Type:         itemFull.Type,
+		Shared:       itemFull.Shared,
+		Source:       itemFull.Source.Copy(),
+
+		Melee:      itemFull.Melee.Copy(),
+		Ranged:     itemFull.Ranged.Copy(),
+		Ammunition: itemFull.Ammunition.Copy(),
+		Armour:     itemFull.Armour.Copy(),
+		Container:  itemFull.Container.Copy(),
+		Grimoire:   itemFull.Grimoire.Copy(),
+		Other:      itemFull.Other.Copy(),
 	}
 }
 
-type ItemRanged struct {
-	Hands     ItemHands       `json:"hands" validate:"item_hands_valid"`
-	Dmg       int             `json:"dmg" validate:"gte=-100,lte=100"`
-	DmgSbMult float64         `json:"dmgSbMult" validate:"gte=0,lte=10"`
-	Rng       int             `json:"rng" validate:"gte=-10000,lte=10000"`
-	RngSbMult float64         `json:"rngSbMult" validate:"gte=0,lte=10"`
-	Group     ItemRangedGroup `json:"group" validate:"item_ranged_group_valid"`
+type ItemGrimoireFull struct {
+	Spells []*Wh `json:"spells"`
 }
 
-func (input ItemRanged) InitAndCopy() ItemRanged {
-	return ItemRanged{
-		Hands:     input.Hands.InitAndCopy(),
-		Dmg:       input.Dmg,
-		DmgSbMult: input.DmgSbMult,
-		Rng:       input.Rng,
-		RngSbMult: input.RngSbMult,
-		Group:     input.Group.InitAndCopy(),
-	}
-}
-
-type ItemAmmunition struct {
-	Dmg     int                 `json:"dmg" validate:"gte=-100,lte=100"`
-	Rng     int                 `json:"rng" validate:"gte=-10000,lte=10000"`
-	RngMult float64             `json:"rngMult" validate:"gte=0,lte=10"`
-	Group   ItemAmmunitionGroup `json:"group" validate:"item_ammunition_group_valid"`
-}
-
-func (input ItemAmmunition) InitAndCopy() ItemAmmunition {
-	return ItemAmmunition{
-		Dmg:     input.Dmg,
-		Rng:     input.Rng,
-		RngMult: input.RngMult,
-		Group:   input.Group.InitAndCopy(),
-	}
-}
-
-type ItemArmour struct {
-	Points   int                  `json:"points" validate:"gte=0,lte=100"`
-	Location []ItemArmourLocation `json:"location" validate:"dive,item_armour_location_valid"`
-	Group    ItemArmourGroup      `json:"group" validate:"item_armour_group_valid"`
-}
-
-func (input ItemArmour) InitAndCopy() ItemArmour {
-	return ItemArmour{
-		Points:   input.Points,
-		Location: copyIntArray(input.Location),
-		Group:    input.Group.InitAndCopy(),
-	}
-}
-
-type ItemContainer struct {
-	Capacity  int           `json:"capacity" validate:"gte=0,lte=1000"`
-	CarryType ItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
-}
-
-func (input ItemContainer) InitAndCopy() ItemContainer {
-	return ItemContainer{
-		Capacity:  input.Capacity,
-		CarryType: input.CarryType.InitAndCopy(),
-	}
-}
-
-type ItemGrimoire struct {
-	Spells []string `json:"spells" validate:"dive,id_valid"`
-}
-
-func (input ItemGrimoire) InitAndCopy() ItemGrimoire {
-	return ItemGrimoire{
-		Spells: copyStringArray(input.Spells),
-	}
-}
-
-type ItemOther struct {
-	CarryType ItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
-}
-
-func (input ItemOther) InitAndCopy() ItemOther {
-	return ItemOther{
-		CarryType: input.CarryType.InitAndCopy(),
-	}
-}
-
-type Item struct {
-	Name         string           `json:"name" validate:"name_valid"`
-	Description  string           `json:"description" validate:"desc_valid"`
-	Price        float64          `json:"price" validate:"gte=0,lte=1000000000"`
-	Enc          float64          `json:"enc" validate:"gte=0,lte=1000"`
-	Availability ItemAvailability `json:"availability" validate:"item_availability_valid"`
-	Properties   []string         `json:"properties" validate:"dive,id_valid"`
-	Type         ItemType         `json:"type" validate:"item_type_valid"`
-	Shared       bool             `json:"shared" validate:"shared_valid"`
-	Source       SourceMap        `json:"source" validate:"source_valid"`
-
-	Melee      ItemMelee      `json:"melee"`
-	Ranged     ItemRanged     `json:"ranged"`
-	Ammunition ItemAmmunition `json:"ammunition"`
-	Armour     ItemArmour     `json:"armour"`
-	Container  ItemContainer  `json:"container"`
-	Grimoire   ItemGrimoire   `json:"grimoire"`
-	Other      ItemOther      `json:"other"`
-}
-
-func (i Item) IsShared() bool {
-	return i.Shared
-}
-
-func (i Item) InitAndCopy() WhObject {
-	return Item{
-		Name:         strings.Clone(i.Name),
-		Description:  strings.Clone(i.Description),
-		Price:        i.Price,
-		Enc:          i.Enc,
-		Availability: i.Availability.InitAndCopy(),
-		Properties:   copyStringArray(i.Properties),
-		Type:         i.Type.InitAndCopy(),
-		Shared:       i.Shared,
-		Source:       i.Source.InitAndCopy(),
-
-		Melee:      i.Melee.InitAndCopy(),
-		Ranged:     i.Ranged.InitAndCopy(),
-		Ammunition: i.Ammunition.InitAndCopy(),
-		Armour:     i.Armour.InitAndCopy(),
-		Container:  i.Container.InitAndCopy(),
-		Grimoire:   i.Grimoire.InitAndCopy(),
-		Other:      i.Other.InitAndCopy(),
+func (itemGrimoireFull *ItemGrimoireFull) Copy() *ItemGrimoireFull {
+	return &ItemGrimoireFull{
+		Spells: copyWhArray(itemGrimoireFull.Spells),
 	}
 }
 
@@ -413,99 +470,5 @@ func GetItemValidationAliases() map[string]string {
 		"item_armour_location_valid":  fmt.Sprintf("oneof=%s", itemArmourLocationValues()),
 		"item_carry_type_valid":       fmt.Sprintf("oneof=%s", itemCarryTypeValues()),
 		"item_availability_valid":     fmt.Sprintf("oneof=%s", itemAvailabilityValues()),
-	}
-}
-
-func (i Item) ToFull(allProperties []*Wh, allSpells []*Wh) ItemFull {
-
-	itemProperties := idListToFull(i.Properties, allProperties)
-
-	var grimoire ItemGrimoireFull
-	grimoire.Spells = idListToFull(i.Grimoire.Spells, allSpells)
-
-	return ItemFull{
-		Name:         strings.Clone(i.Name),
-		Description:  strings.Clone(i.Description),
-		Price:        i.Price,
-		Enc:          i.Enc,
-		Availability: i.Availability.InitAndCopy(),
-		Properties:   itemProperties,
-		Type:         i.Type.InitAndCopy(),
-		Shared:       i.Shared,
-		Source:       i.Source.InitAndCopy(),
-
-		Melee:      i.Melee.InitAndCopy(),
-		Ranged:     i.Ranged.InitAndCopy(),
-		Ammunition: i.Ammunition.InitAndCopy(),
-		Armour:     i.Armour.InitAndCopy(),
-		Container:  i.Container.InitAndCopy(),
-		Grimoire:   grimoire,
-		Other:      i.Other.InitAndCopy(),
-	}
-}
-
-func idListToFull(idList []string, allWh []*Wh) []Wh {
-	whList := make([]Wh, 0)
-	for _, v := range allWh {
-		if slices.Contains(idList, v.Id) {
-			whList = append(whList, v.InitAndCopy())
-		}
-	}
-	return whList
-}
-
-type ItemGrimoireFull struct {
-	Spells []Wh `json:"spells"`
-}
-
-func (input ItemGrimoireFull) InitAndCopy() ItemGrimoireFull {
-	return ItemGrimoireFull{
-		Spells: copyWhArray(input.Spells),
-	}
-}
-
-type ItemFull struct {
-	Name         string           `json:"name"`
-	Description  string           `json:"description" `
-	Price        float64          `json:"price"`
-	Enc          float64          `json:"enc"`
-	Availability ItemAvailability `json:"availability"`
-	Properties   []Wh             `json:"properties"`
-	Type         ItemType         `json:"type"`
-	Shared       bool             `json:"shared"`
-	Source       SourceMap        `json:"source"`
-
-	Melee      ItemMelee        `json:"melee"`
-	Ranged     ItemRanged       `json:"ranged"`
-	Ammunition ItemAmmunition   `json:"ammunition"`
-	Armour     ItemArmour       `json:"armour"`
-	Container  ItemContainer    `json:"container"`
-	Grimoire   ItemGrimoireFull `json:"grimoire"`
-	Other      ItemOther        `json:"other"`
-}
-
-func (i ItemFull) IsShared() bool {
-	return i.Shared
-}
-
-func (i ItemFull) InitAndCopy() WhObject {
-	return ItemFull{
-		Name:         strings.Clone(i.Name),
-		Description:  strings.Clone(i.Description),
-		Price:        i.Price,
-		Enc:          i.Enc,
-		Availability: i.Availability.InitAndCopy(),
-		Properties:   copyWhArray(i.Properties),
-		Type:         i.Type.InitAndCopy(),
-		Shared:       i.Shared,
-		Source:       i.Source.InitAndCopy(),
-
-		Melee:      i.Melee.InitAndCopy(),
-		Ranged:     i.Ranged.InitAndCopy(),
-		Ammunition: i.Ammunition.InitAndCopy(),
-		Armour:     i.Armour.InitAndCopy(),
-		Container:  i.Container.InitAndCopy(),
-		Grimoire:   i.Grimoire.InitAndCopy(),
-		Other:      i.Other.InitAndCopy(),
 	}
 }

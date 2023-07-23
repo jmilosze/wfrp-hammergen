@@ -13,7 +13,7 @@ func seedUsers(ctx context.Context, db user.UserDbService, bcryptCost int, us []
 	for _, u := range us {
 		newUser := u.Copy()
 		newUser.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(u.Password), bcryptCost)
-		if _, dbErr := db.Create(ctx, &newUser); dbErr != nil {
+		if _, dbErr := db.Create(ctx, newUser); dbErr != nil {
 			if dbErr.Type != domain.DbConflictError {
 				log.Fatal(dbErr)
 			}

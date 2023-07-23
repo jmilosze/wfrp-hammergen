@@ -28,7 +28,7 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
-	newWh := w.InitAndCopy()
+	newWh := w.Copy()
 
 	if err := s.Validator.Struct(newWh); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
@@ -41,13 +41,13 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 	newWh.Id = hex.EncodeToString(xid.New().Bytes())
 
-	createdWh, dbErr := s.WhDbService.Create(ctx, t, &newWh)
+	createdWh, dbErr := s.WhDbService.Create(ctx, t, newWh)
 	if dbErr != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: dbErr}
 	}
 
 	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
-	return createdWh.PointToCopy(), nil
+	return createdWh.Copy(), nil
 }
 
 func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []string) bool {
@@ -71,7 +71,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
-	newWh := w.InitAndCopy()
+	newWh := w.Copy()
 
 	if err := s.Validator.Struct(newWh); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
@@ -83,7 +83,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		newWh.OwnerId = c.Id
 	}
 
-	updatedWh, dbErr := s.WhDbService.Update(ctx, t, &newWh, c.Id)
+	updatedWh, dbErr := s.WhDbService.Update(ctx, t, newWh, c.Id)
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
@@ -94,7 +94,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	updatedWh.CanEdit = canEdit(updatedWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
-	return updatedWh.PointToCopy(), nil
+	return updatedWh.Copy(), nil
 }
 
 func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) *wh.WhError {
@@ -139,7 +139,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 	whsRet := make([]*wh.Wh, len(whs))
 
 	for k, v := range whs {
-		whsRet[k] = v.PointToCopy()
+		whsRet[k] = v.Copy()
 		whsRet[k].CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 	}
 
@@ -187,10 +187,10 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 
 	fullItems := make([]*wh.Wh, len(items))
 	for k, v := range items {
-		item := v.Object.(wh.Item)
+		item := v.Object.(*wh.Item)
 		fullItem := v.CopyHeaders()
 		fullItem.Object = item.ToFull(allProperties, allSpells)
-		fullItems[k] = &fullItem
+		fullItems[k] = fullItem
 	}
 
 	return fullItems, nil
@@ -240,8 +240,8 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, character.Spells)
 	}
 
-	//var wg sync.WaitGroup
-	//wg.Add(6)
+	var wg sync.WaitGroup
+	wg.Add(6)
 
 	components := map[wh.WhType]*struct {
 		err  *wh.WhError
@@ -257,15 +257,16 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		wh.WhTypeSpell:    {err: nil, full: false, wh: nil, ids: allSpellIds},
 	}
 
-	for k, v := range components {
-		v.wh, v.err = whService.Get(ctx, k, claims, v.full, v.ids)
-		//go func() {
-		//	defer wg.Done()
-		//	v.wh, v.err = whService.Get(ctx, k, claims, v.full, v.ids)
-		//}()
+	for k := range components {
+		k := k
+		v := components[k]
+		go func() {
+			defer wg.Done()
+			v.wh, v.err = whService.Get(ctx, k, claims, v.full, v.ids)
+		}()
 	}
 
-	//wg.Wait()
+	wg.Wait()
 
 	for _, v := range components {
 		if v.err != nil && v.err.ErrType != wh.NotFoundError {
@@ -275,7 +276,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 
 	fullCharacters := make([]*wh.Wh, len(characters))
 	for k, v := range characters {
-		character := v.Object.(wh.Character)
+		character := v.Object.(*wh.Character)
 		fullCharacter := v.CopyHeaders()
 		fullCharacter.Object = character.ToFull(
 			components[wh.WhTypeItem].wh,
@@ -284,7 +285,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 			components[wh.WhTypeMutation].wh,
 			components[wh.WhTypeSpell].wh,
 			components[wh.WhTypeCareer].wh)
-		fullCharacters[k] = &fullCharacter
+		fullCharacters[k] = fullCharacter
 	}
 
 	return fullCharacters, nil

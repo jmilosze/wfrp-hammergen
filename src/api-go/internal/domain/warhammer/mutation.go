@@ -2,30 +2,36 @@ package warhammer
 
 import (
 	"fmt"
-	"strings"
 )
 
 type Mutation struct {
 	Name        string       `json:"name" validate:"name_valid"`
 	Description string       `json:"description" validate:"desc_valid"`
 	Type        MutationType `json:"type" validate:"mutation_type_valid"`
-	Modifiers   Modifiers    `json:"modifiers"`
+	Modifiers   *Modifiers   `json:"modifiers"`
 	Shared      bool         `json:"shared" validate:"shared_valid"`
 	Source      SourceMap    `json:"source" validate:"source_valid"`
 }
 
-func (m Mutation) IsShared() bool {
+func (m *Mutation) IsShared() bool {
 	return m.Shared
 }
 
-func (m Mutation) InitAndCopy() WhObject {
-	return Mutation{
-		Name:        strings.Clone(m.Name),
-		Description: strings.Clone(m.Description),
-		Type:        m.Type.InitAndCopy(),
-		Modifiers:   m.Modifiers.InitAndCopy(),
+func (m *Mutation) Copy() WhObject {
+	return &Mutation{
+		Name:        m.Name,
+		Description: m.Description,
+		Type:        m.Type,
+		Modifiers:   m.Modifiers.Copy(),
 		Shared:      m.Shared,
-		Source:      m.Source.InitAndCopy(),
+		Source:      m.Source.Copy(),
+	}
+}
+
+func NewMutation() *Mutation {
+	return &Mutation{
+		Modifiers: NewModifiers(),
+		Source:    NewSourceMap(),
 	}
 }
 
@@ -38,10 +44,6 @@ const (
 
 func mutationTypeValues() string {
 	return formatIntegerValues([]MutationType{MutationTypePhysical, MutationTypeMental})
-}
-
-func (input MutationType) InitAndCopy() MutationType {
-	return input
 }
 
 func GetMutationValidationAliases() map[string]string {

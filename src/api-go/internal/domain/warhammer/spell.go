@@ -1,9 +1,5 @@
 package warhammer
 
-import (
-	"strings"
-)
-
 type Spell struct {
 	Name        string    `json:"name" validate:"name_valid"`
 	Description string    `json:"description" validate:"desc_valid"`
@@ -15,19 +11,25 @@ type Spell struct {
 	Source      SourceMap `json:"source" validate:"source_valid"`
 }
 
-func (s Spell) IsShared() bool {
-	return s.Shared
+func (spell *Spell) IsShared() bool {
+	return spell.Shared
 }
 
-func (s Spell) InitAndCopy() WhObject {
-	return Spell{
-		Name:        strings.Clone(s.Name),
-		Description: strings.Clone(s.Description),
-		Cn:          s.Cn,
-		Range:       strings.Clone(s.Range),
-		Target:      strings.Clone(s.Target),
-		Duration:    strings.Clone(s.Duration),
-		Shared:      s.Shared,
-		Source:      s.Source.InitAndCopy(),
+func (spell *Spell) Copy() WhObject {
+	return &Spell{
+		Name:        spell.Name,
+		Description: spell.Description,
+		Cn:          spell.Cn,
+		Range:       spell.Range,
+		Target:      spell.Target,
+		Duration:    spell.Duration,
+		Shared:      spell.Shared,
+		Source:      spell.Source.Copy(),
+	}
+}
+
+func NewSpell() *Spell {
+	return &Spell{
+		Source: NewSourceMap(),
 	}
 }

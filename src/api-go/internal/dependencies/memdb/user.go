@@ -61,7 +61,7 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
 	}
 	udb := userRaw.(*user.User)
-	u := udb.PointToCopy()
+	u := udb.Copy()
 
 	linkedUsers, dbErr := getManyUsers(s.Db, "id", u.SharedAccountIds)
 	if dbErr != nil {
@@ -94,13 +94,13 @@ func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*u
 	for obj := it.Next(); obj != nil; obj = it.Next() {
 		u := obj.(*user.User)
 		if getAll {
-			users = append(users, u.PointToCopy())
+			users = append(users, u.Copy())
 		} else {
 			if fieldName == "username" && slices.Contains(fieldValues, u.Username) {
-				users = append(users, u.PointToCopy())
+				users = append(users, u.Copy())
 			}
 			if fieldName == "id" && slices.Contains(fieldValues, u.Id) {
-				users = append(users, u.PointToCopy())
+				users = append(users, u.Copy())
 			}
 		}
 	}
@@ -144,7 +144,7 @@ func (s *UserDbService) Update(ctx context.Context, u *user.User) (*user.User, *
 }
 
 func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, *domain.DbError) {
-	userUpsert := u.PointToCopy()
+	userUpsert := u.Copy()
 
 	linkedUsers, dbErr := getManyUsers(s.Db, "username", userUpsert.SharedAccountNames)
 	if dbErr != nil {
@@ -189,7 +189,7 @@ func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, *dom
 	}
 	txn.Commit()
 
-	return userUpsert.PointToCopy(), nil
+	return userUpsert.Copy(), nil
 }
 
 func usernamesToIds(usernames []string, us []*user.User) []string {

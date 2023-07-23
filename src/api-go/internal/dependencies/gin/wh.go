@@ -11,7 +11,7 @@ import (
 )
 
 func RegisterWhRoutes(router *gin.Engine, ms warhammer.WhService, js auth.JwtService) {
-	for _, v := range warhammer.WhApiTypes {
+	for _, v := range warhammer.WhCoreTypes {
 		router.POST(fmt.Sprintf("api/wh/%s", v), RequireJwt(js), whCreateOrUpdateHandler(true, ms, v))
 		router.GET(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whGetHandler(ms, v))
 		router.PUT(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whCreateOrUpdateHandler(false, ms, v))
