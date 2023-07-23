@@ -28,7 +28,7 @@ func (genProps *GenProps) Copy() *GenProps {
 
 	var randomTalents []*GenRandomTalent
 	if genProps.RandomTalents != nil {
-		randomTalents = []*GenRandomTalent{}
+		randomTalents = make([]*GenRandomTalent, len(genProps.RandomTalents))
 		for k, v := range genProps.RandomTalents {
 			randomTalents[k] = v.Copy()
 		}
@@ -63,7 +63,7 @@ func (genProps *GenProps) Copy() *GenProps {
 	}
 }
 
-func (genProps GenProps) ToMap() (map[string]any, error) {
+func (genProps *GenProps) ToMap() (map[string]any, error) {
 	gMap, err := structToMap(genProps)
 	if err != nil {
 		return map[string]any{}, fmt.Errorf("error while mapping wh structure %s", err)
@@ -133,7 +133,7 @@ func (input *GenSpeciesTalents) Copy() *GenSpeciesTalents {
 
 	var single []string
 	if input.Single != nil {
-		single = []string{}
+		single = make([]string, len(input.Single))
 		for k, v := range input.Single {
 			single[k] = v
 		}
@@ -141,7 +141,7 @@ func (input *GenSpeciesTalents) Copy() *GenSpeciesTalents {
 
 	var multiple [][]string
 	if input.Multiple != nil {
-		multiple = [][]string{}
+		multiple = make([][]string, len(input.Multiple))
 		for k1, v1 := range input.Multiple {
 			if v1 != nil {
 				multiple[k1] = make([]string, len(v1))
