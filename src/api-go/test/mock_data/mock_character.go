@@ -8,33 +8,33 @@ import (
 var character0 = warhammer.Wh{
 	Id:      "800000000000000000000000",
 	OwnerId: user1.Id,
-	Object: warhammer.Character{
+	Object: &warhammer.Character{
 		Name:        "character 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Notes:       "some notes",
-		EquippedItems: []warhammer.IdNumber{
+		EquippedItems: []*warhammer.IdNumber{
 			{Id: itemArmour.Id, Number: 1},
 			{Id: itemMelee.Id, Number: 2},
 		},
-		CarriedItems: []warhammer.IdNumber{
+		CarriedItems: []*warhammer.IdNumber{
 			{Id: itemRanged.Id, Number: 1},
 			{Id: itemArmour.Id, Number: 1},
 			{Id: itemAmmunition.Id, Number: 200},
 		},
-		StoredItems: []warhammer.IdNumber{
+		StoredItems: []*warhammer.IdNumber{
 			{Id: itemGrimoire.Id, Number: 1},
 			{Id: itemOther.Id, Number: 100},
 		},
-		Skills: []warhammer.IdNumber{
+		Skills: []*warhammer.IdNumber{
 			{Id: skill0.Id, Number: 1},
 			{Id: skill1.Id, Number: 10},
 		},
-		Talents: []warhammer.IdNumber{
+		Talents: []*warhammer.IdNumber{
 			{Id: talent0.Id, Number: 1},
 			{Id: talent1.Id, Number: 5},
 		},
 		Species: warhammer.CharacterSpeciesHalflingBrandysnap,
-		BaseAttributes: warhammer.Attributes{
+		BaseAttributes: &warhammer.Attributes{
 			WS:  1,
 			BS:  2,
 			S:   3,
@@ -46,7 +46,7 @@ var character0 = warhammer.Wh{
 			WP:  9,
 			Fel: 10,
 		},
-		AttributeAdvances: warhammer.Attributes{
+		AttributeAdvances: &warhammer.Attributes{
 			WS:  10,
 			BS:  9,
 			S:   8,
@@ -82,7 +82,7 @@ var character0 = warhammer.Wh{
 var character1 = warhammer.Wh{
 	Id:      "800000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.Character{
+	Object: &warhammer.Character{
 		Name:        "character 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Species:     warhammer.CharacterSpeciesDwarfAltdorf,

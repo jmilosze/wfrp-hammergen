@@ -7,14 +7,14 @@ import (
 func NewMockGenProps() *warhammer.GenProps {
 	return &warhammer.GenProps{
 		Name: "generationProps",
-		ClassItems: map[warhammer.CareerClass]warhammer.GenItems{
+		ClassItems: map[warhammer.CareerClass]*warhammer.GenItems{
 			warhammer.CareerClassBurghers: {
 				Equipped: warhammer.IdNumberMap{itemMelee.Id: 1, itemArmour.Id: 1},
 				Carried:  warhammer.IdNumberMap{itemOther.Id: 2},
 				Stored:   warhammer.IdNumberMap{itemOther.Id: 2},
 			},
 		},
-		RandomTalents: []warhammer.GenRandomTalent{
+		RandomTalents: []*warhammer.GenRandomTalent{
 			{
 				Id:      talent1.Id,
 				MinRoll: 1,
@@ -26,7 +26,7 @@ func NewMockGenProps() *warhammer.GenProps {
 				MaxRoll: 101,
 			},
 		},
-		SpeciesTalents: map[warhammer.CharacterSpecies]warhammer.GenSpeciesTalents{
+		SpeciesTalents: map[warhammer.CharacterSpecies]*warhammer.GenSpeciesTalents{
 			warhammer.CharacterSpeciesDwarfAltdorf: {
 				Single:   []string{talent0.Id, talent1.Id},
 				Multiple: [][]string{{talent0.Id, talent1.Id}, {talent0.Id, talent1.Id}},

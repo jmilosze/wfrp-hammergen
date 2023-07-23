@@ -5,9 +5,75 @@ import (
 	"strings"
 )
 
+type GenProps struct {
+	Name           string
+	ClassItems     map[CareerClass]*GenItems               `json:"classItems"`
+	RandomTalents  []*GenRandomTalent                      `json:"randomTalents"`
+	SpeciesTalents map[CharacterSpecies]*GenSpeciesTalents `json:"speciesTalents"`
+	SpeciesSkills  map[CharacterSpecies][]string           `json:"speciesSkills"`
+}
+
+func (genProps *GenProps) Copy() *GenProps {
+	if genProps == nil {
+		return nil
+	}
+
+	var classItems map[CareerClass]*GenItems
+	if genProps.ClassItems != nil {
+		classItems = map[CareerClass]*GenItems{}
+		for k, v := range genProps.ClassItems {
+			classItems[k] = v.Copy()
+		}
+	}
+
+	var randomTalents []*GenRandomTalent
+	if genProps.RandomTalents != nil {
+		randomTalents = []*GenRandomTalent{}
+		for k, v := range genProps.RandomTalents {
+			randomTalents[k] = v.Copy()
+		}
+	}
+
+	var speciesTalents map[CharacterSpecies]*GenSpeciesTalents
+	if genProps.SpeciesTalents != nil {
+		speciesTalents = map[CharacterSpecies]*GenSpeciesTalents{}
+		for k, v := range genProps.SpeciesTalents {
+			speciesTalents[k] = v.Copy()
+		}
+	}
+
+	var speciesSkills map[CharacterSpecies][]string
+	if genProps.SpeciesSkills != nil {
+		speciesSkills = map[CharacterSpecies][]string{}
+		for k1, v1 := range genProps.SpeciesSkills {
+			skills := make([]string, len(v1))
+			for k2, v2 := range v1 {
+				skills[k2] = v2
+			}
+			speciesSkills[k1] = skills
+		}
+	}
+
+	return &GenProps{
+		Name:           strings.Clone(genProps.Name),
+		ClassItems:     classItems,
+		RandomTalents:  randomTalents,
+		SpeciesTalents: speciesTalents,
+		SpeciesSkills:  speciesSkills,
+	}
+}
+
+func (genProps GenProps) ToMap() (map[string]any, error) {
+	gMap, err := structToMap(genProps)
+	if err != nil {
+		return map[string]any{}, fmt.Errorf("error while mapping wh structure %s", err)
+	}
+	return gMap, nil
+}
+
 type IdNumberMap map[string]int
 
-func (input IdNumberMap) InitAndCopy() IdNumberMap {
+func (input IdNumberMap) Copy() IdNumberMap {
 	output := make(IdNumberMap, len(input))
 	for key, value := range input {
 		output[key] = value
@@ -21,11 +87,11 @@ type GenItems struct {
 	Stored   IdNumberMap `json:"stored"`
 }
 
-func (input GenItems) InitAndCopy() GenItems {
-	return GenItems{
-		Equipped: input.Equipped.InitAndCopy(),
-		Carried:  input.Carried.InitAndCopy(),
-		Stored:   input.Stored.InitAndCopy(),
+func (input *GenItems) Copy() *GenItems {
+	return &GenItems{
+		Equipped: input.Equipped.Copy(),
+		Carried:  input.Carried.Copy(),
+		Stored:   input.Stored.Copy(),
 	}
 }
 
@@ -35,9 +101,9 @@ type GenRandomTalent struct {
 	MaxRoll int    `json:"maxRoll"`
 }
 
-func (input GenRandomTalent) InitAndCopy() GenRandomTalent {
-	return GenRandomTalent{
-		Id:      strings.Clone(input.Id),
+func (input *GenRandomTalent) Copy() *GenRandomTalent {
+	return &GenRandomTalent{
+		Id:      input.Id,
 		MinRoll: input.MinRoll,
 		MaxRoll: input.MaxRoll,
 	}
@@ -48,76 +114,32 @@ type GenSpeciesTalents struct {
 	Multiple [][]string `json:"multiple"`
 }
 
-func (input GenSpeciesTalents) InitAndCopy() GenSpeciesTalents {
-	single := make([]string, len(input.Single))
-	for k, v := range input.Single {
-		single[k] = strings.Clone(v)
-	}
+func (input *GenSpeciesTalents) Copy() *GenSpeciesTalents {
 
-	multiple := make([][]string, len(input.Multiple))
-	for k1, v1 := range input.Multiple {
-		multiple[k1] = make([]string, len(v1))
-		for k2, v2 := range v1 {
-			multiple[k1][k2] = strings.Clone(v2)
+	var single []string
+	if input.Single != nil {
+		single = []string{}
+		for k, v := range input.Single {
+			single[k] = v
 		}
 	}
 
-	return GenSpeciesTalents{Single: single, Multiple: multiple}
-}
-
-type GenProps struct {
-	Name           string
-	ClassItems     map[CareerClass]GenItems               `json:"classItems"`
-	RandomTalents  []GenRandomTalent                      `json:"randomTalents"`
-	SpeciesTalents map[CharacterSpecies]GenSpeciesTalents `json:"speciesTalents"`
-	SpeciesSkills  map[CharacterSpecies][]string          `json:"speciesSkills"`
-}
-
-func (gp GenProps) InitAndCopy() GenProps {
-	classItems := make(map[CareerClass]GenItems, len(gp.ClassItems))
-	for k, v := range gp.ClassItems {
-		classItems[k] = v.InitAndCopy()
-	}
-
-	randomTalents := make([]GenRandomTalent, len(gp.RandomTalents))
-	for k, v := range gp.RandomTalents {
-		randomTalents[k] = v.InitAndCopy()
-	}
-
-	speciesTalents := make(map[CharacterSpecies]GenSpeciesTalents, len(gp.SpeciesTalents))
-	for k, v := range gp.SpeciesTalents {
-		speciesTalents[k] = v.InitAndCopy()
-	}
-
-	speciesSkills := make(map[CharacterSpecies][]string, len(gp.SpeciesSkills))
-	for k1, v1 := range gp.SpeciesSkills {
-		skills := make([]string, len(v1))
-		for k2, v2 := range v1 {
-			skills[k2] = strings.Clone(v2)
+	var multiple [][]string
+	if input.Multiple != nil {
+		multiple = [][]string{}
+		for k1, v1 := range input.Multiple {
+			if v1 != nil {
+				multiple[k1] = make([]string, len(v1))
+				for k2, v2 := range v1 {
+					multiple[k1][k2] = v2
+				}
+			} else {
+				multiple[k1] = nil
+			}
 		}
-		speciesSkills[k1] = skills
 	}
 
-	return GenProps{
-		Name:           strings.Clone(gp.Name),
-		ClassItems:     classItems,
-		RandomTalents:  randomTalents,
-		SpeciesTalents: speciesTalents,
-		SpeciesSkills:  speciesSkills,
-	}
-}
-
-func (gp GenProps) PointToCopy() *GenProps {
-	cpy := gp.InitAndCopy()
-	return &cpy
-}
-
-func (gp GenProps) ToMap() (map[string]any, error) {
-	gMap, err := structToMap(gp)
-	if err != nil {
-		return map[string]any{}, fmt.Errorf("error while mapping wh structure %s", err)
-	}
-	return gMap, nil
+	return &GenSpeciesTalents{Single: single, Multiple: multiple}
 }
 
 func GetGenPropsValidationAliases() map[string]string {

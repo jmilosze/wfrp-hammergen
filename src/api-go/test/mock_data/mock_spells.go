@@ -8,7 +8,7 @@ import (
 var spell0 = warhammer.Wh{
 	Id:      "200000000000000000000000",
 	OwnerId: "admin",
-	Object: warhammer.Spell{
+	Object: &warhammer.Spell{
 		Name:        "spell 0",
 		Description: "owned by admin",
 		Cn:          1,
@@ -26,7 +26,7 @@ var spell0 = warhammer.Wh{
 var spell1 = warhammer.Wh{
 	Id:      "200000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.Spell{
+	Object: &warhammer.Spell{
 		Name:        "spell 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Shared:      false,

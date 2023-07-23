@@ -45,15 +45,15 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 
 		switch t {
 		case warhammer.WhTypeMutation:
-			mutation := warhammer.Mutation{}
-			if err = json.Unmarshal(reqData, &mutation); err != nil {
+			mutation := warhammer.NewMutation()
+			if err = json.Unmarshal(reqData, mutation); err != nil {
 				log.Println("error handling create or update wh", err)
 				c.JSON(BadRequestErrResp(err.Error()))
 				return
 			}
 			whWrite.Object = mutation
 		case warhammer.WhTypeSpell:
-			spell := warhammer.Spell{}
+			spell := warhammer.NewSpell()
 			if err = json.Unmarshal(reqData, &spell); err != nil {
 				log.Println("error handling create or update wh", err)
 				c.JSON(BadRequestErrResp(err.Error()))
@@ -61,7 +61,7 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			}
 			whWrite.Object = spell
 		case warhammer.WhTypeProperty:
-			property := warhammer.Property{}
+			property := warhammer.NewProperty()
 			if err = json.Unmarshal(reqData, &property); err != nil {
 				log.Println("error handling create or update wh", err)
 				c.JSON(BadRequestErrResp(err.Error()))
@@ -69,7 +69,7 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			}
 			whWrite.Object = property
 		case warhammer.WhTypeItem:
-			item := warhammer.Item{}
+			item := warhammer.NewItem()
 			if err = json.Unmarshal(reqData, &item); err != nil {
 				log.Println("error handling create or update wh", err)
 				c.JSON(BadRequestErrResp(err.Error()))
@@ -77,7 +77,7 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			}
 			whWrite.Object = item
 		case warhammer.WhTypeTalent:
-			talent := warhammer.Talent{}
+			talent := warhammer.NewTalent()
 			if err = json.Unmarshal(reqData, &talent); err != nil {
 				log.Println("error handling create or update wh", err)
 				c.JSON(BadRequestErrResp(err.Error()))
@@ -85,7 +85,7 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			}
 			whWrite.Object = talent
 		case warhammer.WhTypeSkill:
-			skill := warhammer.Skill{}
+			skill := warhammer.NewSkill()
 			if err = json.Unmarshal(reqData, &skill); err != nil {
 				log.Println("error handling create or update wh", err)
 				c.JSON(BadRequestErrResp(err.Error()))
@@ -93,7 +93,7 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			}
 			whWrite.Object = skill
 		case warhammer.WhTypeCareer:
-			career := warhammer.Career{}
+			career := warhammer.NewCareer()
 			if err = json.Unmarshal(reqData, &career); err != nil {
 				log.Println("error handling create or update wh", err)
 				c.JSON(BadRequestErrResp(err.Error()))
@@ -101,7 +101,7 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			}
 			whWrite.Object = career
 		case warhammer.WhTypeCharacter:
-			character := warhammer.Character{}
+			character := warhammer.NewCharacter()
 			if err = json.Unmarshal(reqData, &character); err != nil {
 				log.Println("error handling create or update wh", err)
 				c.JSON(BadRequestErrResp(err.Error()))

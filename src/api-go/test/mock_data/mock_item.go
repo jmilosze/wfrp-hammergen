@@ -8,7 +8,7 @@ import (
 var itemMelee = warhammer.Wh{
 	Id:      "400000000000000000000000",
 	OwnerId: user1.Id,
-	Object: warhammer.Item{
+	Object: &warhammer.Item{
 		Name:         "melee item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
 		Price:        2.31,
@@ -22,7 +22,7 @@ var itemMelee = warhammer.Wh{
 			warhammer.SourceUpInArms:                "f",
 		},
 
-		Melee: warhammer.ItemMelee{
+		Melee: &warhammer.ItemMelee{
 			Hands:     warhammer.ItemHandsOne,
 			Dmg:       5,
 			DmgSbMult: 1.0,
@@ -35,7 +35,7 @@ var itemMelee = warhammer.Wh{
 var itemRanged = warhammer.Wh{
 	Id:      "400000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.Item{
+	Object: &warhammer.Item{
 		Name:         "ranged item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
 		Price:        5,
@@ -44,7 +44,7 @@ var itemRanged = warhammer.Wh{
 		Type:         warhammer.ItemTypeRanged,
 		Shared:       true,
 
-		Ranged: warhammer.ItemRanged{
+		Ranged: &warhammer.ItemRanged{
 			Hands:     warhammer.ItemHandsOne,
 			Dmg:       2,
 			DmgSbMult: 2.0,
@@ -58,7 +58,7 @@ var itemRanged = warhammer.Wh{
 var itemAmmunition = warhammer.Wh{
 	Id:      "400000000000000000000002",
 	OwnerId: user1.Id,
-	Object: warhammer.Item{
+	Object: &warhammer.Item{
 		Name:         "ammunition item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
 		Price:        2.2,
@@ -71,7 +71,7 @@ var itemAmmunition = warhammer.Wh{
 			warhammer.SourceWFRP: "g",
 		},
 
-		Ammunition: warhammer.ItemAmmunition{
+		Ammunition: &warhammer.ItemAmmunition{
 			Dmg:     1.0,
 			Rng:     50,
 			RngMult: 1.0,
@@ -83,7 +83,7 @@ var itemAmmunition = warhammer.Wh{
 var itemArmour = warhammer.Wh{
 	Id:      "400000000000000000000003",
 	OwnerId: user1.Id,
-	Object: warhammer.Item{
+	Object: &warhammer.Item{
 		Name:         "armour item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
 		Price:        2000,
@@ -96,7 +96,7 @@ var itemArmour = warhammer.Wh{
 			warhammer.SourceWFRP: "g",
 		},
 
-		Armour: warhammer.ItemArmour{
+		Armour: &warhammer.ItemArmour{
 			Points:   2,
 			Location: []warhammer.ItemArmourLocation{warhammer.ItemArmourLocationBody, warhammer.ItemArmourLocationHead},
 			Group:    warhammer.ItemArmourGroupMail,
@@ -107,7 +107,7 @@ var itemArmour = warhammer.Wh{
 var itemContainer = warhammer.Wh{
 	Id:      "400000000000000000000004",
 	OwnerId: user1.Id,
-	Object: warhammer.Item{
+	Object: &warhammer.Item{
 		Name:         "container item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
 		Price:        20,
@@ -120,7 +120,7 @@ var itemContainer = warhammer.Wh{
 			warhammer.SourceWFRP: "g",
 		},
 
-		Container: warhammer.ItemContainer{
+		Container: &warhammer.ItemContainer{
 			Capacity:  2,
 			CarryType: warhammer.ItemCarryTypeCarriableAndWearable,
 		},
@@ -130,7 +130,7 @@ var itemContainer = warhammer.Wh{
 var itemGrimoire = warhammer.Wh{
 	Id:      "400000000000000000000005",
 	OwnerId: user1.Id,
-	Object: warhammer.Item{
+	Object: &warhammer.Item{
 		Name:         "grimoire item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
 		Price:        20000,
@@ -143,7 +143,7 @@ var itemGrimoire = warhammer.Wh{
 			warhammer.SourceCustom: "",
 		},
 
-		Grimoire: warhammer.ItemGrimoire{
+		Grimoire: &warhammer.ItemGrimoire{
 			Spells: []string{spell0.Id, spell1.Id},
 		},
 	},
@@ -152,7 +152,7 @@ var itemGrimoire = warhammer.Wh{
 var itemOther = warhammer.Wh{
 	Id:      "400000000000000000000006",
 	OwnerId: user1.Id,
-	Object: warhammer.Item{
+	Object: &warhammer.Item{
 		Name:         "other item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
 		Price:        2,
@@ -165,7 +165,7 @@ var itemOther = warhammer.Wh{
 			warhammer.SourceCustom: "",
 		},
 
-		Other: warhammer.ItemOther{CarryType: warhammer.ItemCarryTypeNotCarriableAndNotWearable},
+		Other: &warhammer.ItemOther{CarryType: warhammer.ItemCarryTypeNotCarriableAndNotWearable},
 	},
 }
 

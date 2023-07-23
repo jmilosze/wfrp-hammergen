@@ -150,7 +150,7 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	allPropertyIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range items {
-		item, ok := v.Object.(wh.Item)
+		item, ok := v.Object.(*wh.Item)
 		if !ok {
 			return nil, &wh.WhError{WhType: wh.WhTypeItem, ErrType: wh.InternalError, Err: errors.New("non-item stored as item")}
 		}
@@ -222,7 +222,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	allMutationIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range characters {
-		character, ok := v.Object.(wh.Character)
+		character, ok := v.Object.(*wh.Character)
 		if !ok {
 			return nil, &wh.WhError{WhType: wh.WhTypeCharacter, ErrType: wh.InternalError, Err: errors.New("non-character stored as character")}
 		}
@@ -291,7 +291,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	return fullCharacters, nil
 }
 
-func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []wh.IdNumber) []string {
+func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []*wh.IdNumber) []string {
 	// Create a map to store unique strings
 	uniqueStrings := make(map[string]bool)
 

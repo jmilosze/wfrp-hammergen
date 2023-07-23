@@ -8,12 +8,12 @@ import (
 var career0 = warhammer.Wh{
 	Id:      "700000000000000000000000",
 	OwnerId: user1.Id,
-	Object: warhammer.Career{
+	Object: &warhammer.Career{
 		Name:        "career 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Class:       warhammer.CareerClassRanger,
-		Species:     warhammer.CareerSpeciesDwarf,
-		Level1: warhammer.CareerLevel{
+		Species:     []warhammer.CareerSpecies{warhammer.CareerSpeciesDwarf, warhammer.CareerSpeciesHuman},
+		Level1: &warhammer.CareerLevel{
 			Name:       "career 0 level 1",
 			Status:     warhammer.StatusGold,
 			Standing:   warhammer.StandingTwo,
@@ -22,7 +22,7 @@ var career0 = warhammer.Wh{
 			Talents:    []string{talent0.Id, talent1.Id},
 			Items:      "some items",
 		},
-		Level2: warhammer.CareerLevel{
+		Level2: &warhammer.CareerLevel{
 			Name:       "career 0 level 2",
 			Status:     warhammer.StatusGold,
 			Standing:   warhammer.StandingFive,
@@ -31,7 +31,7 @@ var career0 = warhammer.Wh{
 			Talents:    []string{talent0.Id},
 			Items:      "more items",
 		},
-		Level3: warhammer.CareerLevel{
+		Level3: &warhammer.CareerLevel{
 			Name:       "career 0 level 3",
 			Status:     warhammer.StatusGold,
 			Standing:   warhammer.StandingFive,
@@ -40,7 +40,7 @@ var career0 = warhammer.Wh{
 			Talents:    []string{talent0.Id},
 			Items:      "even more items",
 		},
-		Level4: warhammer.CareerLevel{
+		Level4: &warhammer.CareerLevel{
 			Name:       "career 0 level 4",
 			Status:     warhammer.StatusGold,
 			Standing:   warhammer.StandingFive,
@@ -60,7 +60,7 @@ var career0 = warhammer.Wh{
 var career1 = warhammer.Wh{
 	Id:      "700000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.Career{
+	Object: &warhammer.Career{
 		Name:        "career 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 	},

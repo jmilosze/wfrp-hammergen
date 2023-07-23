@@ -8,7 +8,7 @@ import (
 var skill0 = warhammer.Wh{
 	Id:      "600000000000000000000000",
 	OwnerId: user1.Id,
-	Object: warhammer.Skill{
+	Object: &warhammer.Skill{
 		Name:        "skill 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Attribute:   warhammer.AttWS,
@@ -27,7 +27,7 @@ var skill0 = warhammer.Wh{
 var skill1 = warhammer.Wh{
 	Id:      "600000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.Skill{
+	Object: &warhammer.Skill{
 		Name:        "skill 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 	},

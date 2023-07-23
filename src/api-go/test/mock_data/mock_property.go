@@ -8,7 +8,7 @@ import (
 var property0 = warhammer.Wh{
 	Id:      "300000000000000000000000",
 	OwnerId: "admin",
-	Object: warhammer.Property{
+	Object: &warhammer.Property{
 		Name:         "property 0",
 		Description:  "owned by admin",
 		Type:         0,
@@ -24,7 +24,7 @@ var property0 = warhammer.Wh{
 var property1 = warhammer.Wh{
 	Id:      "300000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.Property{
+	Object: &warhammer.Property{
 		Name:        "property 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Shared:      false,

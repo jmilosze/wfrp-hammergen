@@ -13,18 +13,28 @@ type Mutation struct {
 	Source      SourceMap    `json:"source" validate:"source_valid"`
 }
 
-func (m *Mutation) IsShared() bool {
-	return m.Shared
+func (mutation *Mutation) IsShared() bool {
+	return mutation.Shared
 }
 
-func (m *Mutation) Copy() WhObject {
+func (mutation *Mutation) Copy() WhObject {
 	return &Mutation{
-		Name:        m.Name,
-		Description: m.Description,
-		Type:        m.Type,
-		Modifiers:   m.Modifiers.Copy(),
-		Shared:      m.Shared,
-		Source:      m.Source.Copy(),
+		Name:        mutation.Name,
+		Description: mutation.Description,
+		Type:        mutation.Type,
+		Modifiers:   mutation.Modifiers.Copy(),
+		Shared:      mutation.Shared,
+		Source:      mutation.Source.Copy(),
+	}
+}
+
+func (mutation *Mutation) InitNilPointers() {
+	if mutation.Modifiers == nil {
+		mutation.Modifiers = NewModifiers()
+	}
+
+	if mutation.Source == nil {
+		mutation.Source = NewSourceMap()
 	}
 }
 

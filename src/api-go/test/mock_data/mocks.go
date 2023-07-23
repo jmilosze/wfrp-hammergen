@@ -27,7 +27,7 @@ func InitUser(ctx context.Context, db user.UserDbService, bcryptCost int) {
 
 func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, whs []*warhammer.Wh) {
 	for _, wh := range whs {
-		if _, dbErr := db.Create(ctx, t, wh.PointToCopy()); dbErr != nil {
+		if _, dbErr := db.Create(ctx, t, wh.Copy()); dbErr != nil {
 			if dbErr.Type != domain.DbConflictError {
 				log.Fatal(dbErr)
 			}

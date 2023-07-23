@@ -74,49 +74,49 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, CanEdit: false}
 	switch t {
 	case warhammer.WhTypeMutation:
-		mutation := warhammer.Mutation{}
+		mutation := warhammer.NewMutation()
 		if err = bson.Unmarshal(bsonRaw, &mutation); err != nil {
 			return nil, err
 		}
 		wh.Object = mutation
 	case warhammer.WhTypeSpell:
-		spell := warhammer.Spell{}
+		spell := warhammer.NewSpell()
 		if err = bson.Unmarshal(bsonRaw, &spell); err != nil {
 			return nil, err
 		}
 		wh.Object = spell
 	case warhammer.WhTypeProperty:
-		property := warhammer.Property{}
+		property := warhammer.NewProperty()
 		if err = bson.Unmarshal(bsonRaw, &property); err != nil {
 			return nil, err
 		}
 		wh.Object = property
 	case warhammer.WhTypeItem:
-		item := warhammer.Item{}
+		item := warhammer.NewItem()
 		if err = bson.Unmarshal(bsonRaw, &item); err != nil {
 			return nil, err
 		}
 		wh.Object = item
 	case warhammer.WhTypeTalent:
-		talent := warhammer.Talent{}
+		talent := warhammer.NewTalent()
 		if err = bson.Unmarshal(bsonRaw, &talent); err != nil {
 			return nil, err
 		}
 		wh.Object = talent
 	case warhammer.WhTypeSkill:
-		skill := warhammer.Skill{}
+		skill := warhammer.NewSkill()
 		if err = bson.Unmarshal(bsonRaw, &skill); err != nil {
 			return nil, err
 		}
 		wh.Object = skill
 	case warhammer.WhTypeCareer:
-		career := warhammer.Career{}
+		career := warhammer.NewCareer()
 		if err = bson.Unmarshal(bsonRaw, &career); err != nil {
 			return nil, err
 		}
 		wh.Object = career
 	case warhammer.WhTypeCharacter:
-		character := warhammer.Character{}
+		character := warhammer.NewCharacter()
 		if err = bson.Unmarshal(bsonRaw, &character); err != nil {
 			return nil, err
 		}

@@ -42,35 +42,6 @@ var WhCoreTypes = []WhType{
 	WhTypeCharacter,
 }
 
-func New(t WhType) *Wh {
-	wh := &Wh{}
-
-	switch t {
-	case WhTypeMutation:
-		wh.Object = &Mutation{}
-	case WhTypeSpell:
-		wh.Object = &Spell{}
-	case WhTypeProperty:
-		wh.Object = &Property{}
-	case WhTypeItem:
-		wh.Object = &Item{}
-	case WhTypeTalent:
-		wh.Object = &Talent{}
-	case WhTypeSkill:
-		wh.Object = &Skill{}
-	case WhTypeCareer:
-		wh.Object = &Career{}
-	case WhTypeCharacter:
-		wh.Object = &Character{}
-	case WhTypeItemFull:
-		wh.Object = &ItemFull{}
-	case WhTypeCharacterFull:
-		wh.Object = &CharacterFull{}
-	}
-
-	return wh
-}
-
 func (w *Wh) Copy() *Wh {
 	if w == nil {
 		return nil
@@ -113,9 +84,51 @@ func (w *Wh) IsShared() (bool, error) {
 	return w.Object.IsShared(), nil
 }
 
+func New(t WhType) *Wh {
+	wh := &Wh{}
+
+	switch t {
+	case WhTypeMutation:
+		wh.Object = &Mutation{}
+	case WhTypeSpell:
+		wh.Object = &Spell{}
+	case WhTypeProperty:
+		wh.Object = &Property{}
+	case WhTypeItem:
+		wh.Object = &Item{}
+	case WhTypeTalent:
+		wh.Object = &Talent{}
+	case WhTypeSkill:
+		wh.Object = &Skill{}
+	case WhTypeCareer:
+		wh.Object = &Career{}
+	case WhTypeCharacter:
+		wh.Object = &Character{}
+	case WhTypeItemFull:
+		wh.Object = &ItemFull{}
+	case WhTypeCharacterFull:
+		wh.Object = &CharacterFull{}
+	}
+	return wh
+}
+
+func (w *Wh) InitNilPointers() error {
+	if w == nil {
+		return errors.New("wh pointer is nil")
+	}
+
+	if w.Object == nil {
+		return errors.New("object pointer is nil")
+	}
+
+	w.Object.InitNilPointers()
+
+}
+
 type WhObject interface {
 	Copy() WhObject
 	IsShared() bool
+	InitNilPointers()
 }
 
 func (w *Wh) ToMap() (map[string]any, error) {

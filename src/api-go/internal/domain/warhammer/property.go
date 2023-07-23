@@ -13,18 +13,28 @@ type Property struct {
 	Source       SourceMap    `json:"source" validate:"source_valid"`
 }
 
-func (p *Property) IsShared() bool {
-	return p.Shared
+func (property *Property) IsShared() bool {
+	return property.Shared
 }
 
-func (p *Property) Copy() WhObject {
+func (property *Property) Copy() WhObject {
 	return &Property{
-		Name:         p.Name,
-		Description:  p.Description,
-		Type:         p.Type,
-		ApplicableTo: append([]ItemType(nil), p.ApplicableTo...),
-		Shared:       p.Shared,
-		Source:       p.Source.Copy(),
+		Name:         property.Name,
+		Description:  property.Description,
+		Type:         property.Type,
+		ApplicableTo: append([]ItemType(nil), property.ApplicableTo...),
+		Shared:       property.Shared,
+		Source:       property.Source.Copy(),
+	}
+}
+
+func (property *Property) InitNilPointers() {
+	if property.ApplicableTo == nil {
+		property.ApplicableTo = []ItemType{}
+	}
+
+	if property.Source == nil {
+		property.Source = NewSourceMap()
 	}
 }
 

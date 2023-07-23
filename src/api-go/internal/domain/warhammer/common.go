@@ -39,19 +39,25 @@ func copyWhArray(input []*Wh) []*Wh {
 	return output
 }
 
-func idListToWhList(idList []string, allWh []*Wh) []*Wh {
-	if idList == nil {
+func whListToIdWhMap(allWh []*Wh) map[string]*Wh {
+	if allWh == nil {
 		return nil
 	}
-
 	allWhMap := make(map[string]*Wh, 0)
 	for _, v := range allWh {
 		allWhMap[v.Id] = v
 	}
+	return allWhMap
+}
+
+func idListToWhList(idList []string, allIdWhMap map[string]*Wh) []*Wh {
+	if idList == nil {
+		return nil
+	}
 
 	whList := make([]*Wh, 0)
 	for _, v := range idList {
-		wh, ok := allWhMap[v]
+		wh, ok := allIdWhMap[v]
 		if ok {
 			whList = append(whList, wh.Copy())
 		} else {

@@ -75,16 +75,18 @@ func (character *Character) Copy() WhObject {
 }
 
 func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh, allSpells []*Wh, allCareers []*Wh) *CharacterFull {
-	equippedItems := idNumberListToWhNumberList(character.EquippedItems, allItems)
-	carriedItems := idNumberListToWhNumberList(character.CarriedItems, allItems)
-	storedItems := idNumberListToWhNumberList(character.StoredItems, allItems)
+	allItemIdMap := whListToIdWhMap(allItems)
 
-	skills := idNumberListToWhNumberList(character.Skills, allSkills)
-	talents := idNumberListToWhNumberList(character.Talents, allTalents)
-	careerPath := idListToWhList(character.CareerPath, allCareers)
-	spells := idListToWhList(character.Spells, allSpells)
-	mutations := idListToWhList(character.Mutations, allMutations)
-	career := idToWh(character.Career, allCareers)
+	equippedItems := idNumberListToWhNumberList(character.EquippedItems, allItemIdMap)
+	carriedItems := idNumberListToWhNumberList(character.CarriedItems, allItemIdMap)
+	storedItems := idNumberListToWhNumberList(character.StoredItems, allItemIdMap)
+
+	skills := idNumberListToWhNumberList(character.Skills, whListToIdWhMap(allSkills))
+	talents := idNumberListToWhNumberList(character.Talents, whListToIdWhMap(allTalents))
+	careerPath := idListToWhList(character.CareerPath, whListToIdWhMap(allCareers))
+	spells := idListToWhList(character.Spells, whListToIdWhMap(allSpells))
+	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
+	career := idToWh(character.Career, whListToIdWhMap(allCareers))
 
 	return &CharacterFull{
 		Name:              character.Name,
@@ -119,20 +121,30 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 	}
 }
 
-func idNumberListToWhNumberList(idNumberList []*IdNumber, allWh []*Wh) []*WhNumber {
+func NewCharacter() *Character {
+	return &Character{
+		EquippedItems:     []*IdNumber{},
+		CarriedItems:      []*IdNumber{},
+		StoredItems:       []*IdNumber{},
+		Skills:            []*IdNumber{},
+		Talents:           []*IdNumber{},
+		BaseAttributes:    NewAttributes(),
+		AttributeAdvances: NewAttributes(),
+		CareerPath:        []string{},
+		Spells:            []string{},
+		Mutations:         []string{},
+	}
+}
+
+func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]*Wh) []*WhNumber {
 	if idNumberList == nil {
 		return nil
-	}
-
-	allWhMap := make(map[string]*Wh, 0)
-	for _, v := range allWh {
-		allWhMap[v.Id] = v
 	}
 
 	whNumberList := make([]*WhNumber, 0)
 
 	for _, v := range idNumberList {
-		wh, ok := allWhMap[v.Id]
+		wh, ok := allIdWhMap[v.Id]
 		if ok {
 			whNumberList = append(whNumberList, &WhNumber{Wh: wh.Copy(), Number: v.Number})
 		}
@@ -141,13 +153,13 @@ func idNumberListToWhNumberList(idNumberList []*IdNumber, allWh []*Wh) []*WhNumb
 	return whNumberList
 }
 
-func idToWh(id string, allWh []*Wh) *Wh {
-	for _, v := range allWh {
-		if id == v.Id {
-			return v.Copy()
-		}
+func idToWh(id string, allIdWhMap map[string]*Wh) *Wh {
+	wh, ok := allIdWhMap[id]
+	if ok {
+		return wh.Copy()
+	} else {
+		return New(WhTypeNone)
 	}
-	return New(WhTypeNone)
 }
 
 type IdNumber struct {

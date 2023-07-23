@@ -8,17 +8,17 @@ import (
 var talent0 = warhammer.Wh{
 	Id:      "500000000000000000000000",
 	OwnerId: user1.Id,
-	Object: warhammer.Talent{
+	Object: &warhammer.Talent{
 		Name:        "talent 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Tests:       "tests",
 		MaxRank:     3,
 		Attribute:   warhammer.AttBS,
 		IsGroup:     false,
-		Modifiers: warhammer.Modifiers{
+		Modifiers: &warhammer.Modifiers{
 			Size:     1,
 			Movement: 1,
-			Attributes: warhammer.Attributes{
+			Attributes: &warhammer.Attributes{
 				WS:  1,
 				BS:  2,
 				S:   3,
@@ -43,7 +43,7 @@ var talent0 = warhammer.Wh{
 var talent1 = warhammer.Wh{
 	Id:      "500000000000000000000001",
 	OwnerId: user1.Id,
-	Object: warhammer.Talent{
+	Object: &warhammer.Talent{
 		Name:        "talent 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 	},
