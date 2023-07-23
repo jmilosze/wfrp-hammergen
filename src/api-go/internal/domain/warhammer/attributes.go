@@ -76,6 +76,10 @@ func (attributes *Attributes) Copy() *Attributes {
 	}
 }
 
+func (attributes *Attributes) InitNilPointers() {
+	return
+}
+
 func NewAttributes() *Attributes {
 	return &Attributes{}
 }

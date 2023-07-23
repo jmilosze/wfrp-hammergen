@@ -1,14 +1,14 @@
 package warhammer
 
 type Spell struct {
-	Name        string    `json:"name" validate:"name_valid"`
-	Description string    `json:"description" validate:"desc_valid"`
-	Cn          int       `json:"cn" validate:"min=-1,max=99"`
-	Range       string    `json:"range" validate:"medium_string_valid"`
-	Target      string    `json:"target" validate:"medium_string_valid"`
-	Duration    string    `json:"duration" validate:"medium_string_valid"`
-	Shared      bool      `json:"shared" validate:"shared_valid"`
-	Source      SourceMap `json:"source" validate:"source_valid"`
+	Name        string            `json:"name" validate:"name_valid"`
+	Description string            `json:"description" validate:"desc_valid"`
+	Cn          int               `json:"cn" validate:"min=-1,max=99"`
+	Range       string            `json:"range" validate:"medium_string_valid"`
+	Target      string            `json:"target" validate:"medium_string_valid"`
+	Duration    string            `json:"duration" validate:"medium_string_valid"`
+	Shared      bool              `json:"shared" validate:"shared_valid"`
+	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
 func (spell *Spell) IsShared() bool {
@@ -28,18 +28,22 @@ func (spell *Spell) Copy() WhObject {
 		Target:      spell.Target,
 		Duration:    spell.Duration,
 		Shared:      spell.Shared,
-		Source:      spell.Source.Copy(),
+		Source:      copySourceMap(spell.Source),
 	}
 }
 
-//func (spell *Spell) InitNilPointers() {
-//	if spell.Source == nil {
-//		spell.Source = NewSourceMap()
-//	}
-//}
+func (spell *Spell) InitNilPointers() {
+	if spell == nil {
+		return
+	}
+
+	if spell.Source == nil {
+		spell.Source = map[Source]string{}
+	}
+}
 
 func NewSpell() *Spell {
 	return &Spell{
-		Source: NewSourceMap(),
+		Source: map[Source]string{},
 	}
 }

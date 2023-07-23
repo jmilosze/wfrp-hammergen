@@ -64,11 +64,6 @@ var career1 = wh.Wh{
 		Name:        "career 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Species:     []wh.CareerSpecies{wh.CareerSpeciesHuman},
-		Level1:      wh.NewCareerLevel(),
-		Level2:      wh.NewCareerLevel(),
-		Level3:      wh.NewCareerLevel(),
-		Level4:      wh.NewCareerLevel(),
-		Source:      wh.NewSourceMap(),
 	},
 }
 

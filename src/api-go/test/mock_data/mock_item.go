@@ -21,7 +21,6 @@ var itemMelee = wh.Wh{
 			wh.SourceArchivesOfTheEmpireVolI: "g",
 			wh.SourceUpInArms:                "f",
 		},
-
 		Melee: &wh.ItemMelee{
 			Hands:     wh.ItemHandsOne,
 			Dmg:       5,
@@ -29,12 +28,6 @@ var itemMelee = wh.Wh{
 			Reach:     wh.ItemMeleeReachAverage,
 			Group:     wh.ItemMeleeGroupBasic,
 		},
-		Ranged:     wh.NewItemRanged(),
-		Ammunition: wh.NewItemAmmunition(),
-		Armour:     wh.NewItemArmour(),
-		Container:  wh.NewItemContainer(),
-		Grimoire:   wh.NewItemGrimoire(),
-		Other:      wh.NewItemOther(),
 	},
 }
 
@@ -53,8 +46,6 @@ var itemRanged = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},
-
-		Melee: wh.NewItemMelee(),
 		Ranged: &wh.ItemRanged{
 			Hands:     wh.ItemHandsOne,
 			Dmg:       2,
@@ -63,11 +54,6 @@ var itemRanged = wh.Wh{
 			RngSbMult: 0,
 			Group:     wh.RangedGroupCrossbow,
 		},
-		Ammunition: wh.NewItemAmmunition(),
-		Armour:     wh.NewItemArmour(),
-		Container:  wh.NewItemContainer(),
-		Grimoire:   wh.NewItemGrimoire(),
-		Other:      wh.NewItemOther(),
 	},
 }
 
@@ -86,19 +72,12 @@ var itemAmmunition = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
-
-		Melee:  wh.NewItemMelee(),
-		Ranged: wh.NewItemRanged(),
 		Ammunition: &wh.ItemAmmunition{
 			Dmg:     1.0,
 			Rng:     50,
 			RngMult: 1.0,
 			Group:   wh.ItemAmmunitionGroupBow,
 		},
-		Armour:    wh.NewItemArmour(),
-		Container: wh.NewItemContainer(),
-		Grimoire:  wh.NewItemGrimoire(),
-		Other:     wh.NewItemOther(),
 	},
 }
 
@@ -117,18 +96,11 @@ var itemArmour = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
-
-		Melee:      wh.NewItemMelee(),
-		Ranged:     wh.NewItemRanged(),
-		Ammunition: wh.NewItemAmmunition(),
 		Armour: &wh.ItemArmour{
 			Points:   2,
 			Location: []wh.ItemArmourLocation{wh.ItemArmourLocationBody, wh.ItemArmourLocationHead},
 			Group:    wh.ItemArmourGroupMail,
 		},
-		Container: wh.NewItemContainer(),
-		Grimoire:  wh.NewItemGrimoire(),
-		Other:     wh.NewItemOther(),
 	},
 }
 
@@ -147,17 +119,10 @@ var itemContainer = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
-
-		Melee:      wh.NewItemMelee(),
-		Ranged:     wh.NewItemRanged(),
-		Ammunition: wh.NewItemAmmunition(),
-		Armour:     wh.NewItemArmour(),
 		Container: &wh.ItemContainer{
 			Capacity:  2,
 			CarryType: wh.ItemCarryTypeCarriableAndWearable,
 		},
-		Grimoire: wh.NewItemGrimoire(),
-		Other:    wh.NewItemOther(),
 	},
 }
 
@@ -176,16 +141,9 @@ var itemGrimoire = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},
-
-		Melee:      wh.NewItemMelee(),
-		Ranged:     wh.NewItemRanged(),
-		Ammunition: wh.NewItemAmmunition(),
-		Armour:     wh.NewItemArmour(),
-		Container:  wh.NewItemContainer(),
 		Grimoire: &wh.ItemGrimoire{
 			Spells: []string{spell0.Id, spell1.Id},
 		},
-		Other: wh.NewItemOther(),
 	},
 }
 
@@ -204,14 +162,7 @@ var itemOther = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},
-
-		Melee:      wh.NewItemMelee(),
-		Ranged:     wh.NewItemRanged(),
-		Ammunition: wh.NewItemAmmunition(),
-		Armour:     wh.NewItemArmour(),
-		Container:  wh.NewItemContainer(),
-		Grimoire:   wh.NewItemGrimoire(),
-		Other:      &wh.ItemOther{CarryType: wh.ItemCarryTypeNotCarriableAndNotWearable},
+		Other: &wh.ItemOther{CarryType: wh.ItemCarryTypeNotCarriableAndNotWearable},
 	},
 }
 

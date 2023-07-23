@@ -29,7 +29,6 @@ var spell1 = wh.Wh{
 	Object: &wh.Spell{
 		Name:        "spell 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Source:      wh.NewSourceMap(),
 	},
 }
 

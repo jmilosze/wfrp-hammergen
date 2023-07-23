@@ -38,22 +38,16 @@ func sourceValues() string {
 	})
 }
 
-type SourceMap map[Source]string
-
-func (input SourceMap) Copy() SourceMap {
+func copySourceMap(input map[Source]string) map[Source]string {
 	if input == nil {
 		return nil
 	}
 
-	output := make(SourceMap, len(input))
+	output := make(map[Source]string, len(input))
 	for key, value := range input {
 		output[key] = value
 	}
 	return output
-}
-
-func NewSourceMap() SourceMap {
-	return SourceMap{}
 }
 
 func GetSourceValidationAliases() map[string]string {

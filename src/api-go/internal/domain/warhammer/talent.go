@@ -1,16 +1,16 @@
 package warhammer
 
 type Talent struct {
-	Name        string     `json:"name" validate:"name_valid"`
-	Description string     `json:"description" validate:"desc_valid"`
-	Tests       string     `json:"tests" validate:"medium_string_valid"`
-	MaxRank     int        `json:"maxRank" validate:"gte=0,lte=99"`
-	Attribute   Attribute  `json:"attribute" validate:"att_type_valid"`
-	IsGroup     bool       `json:"isGroup" validate:"boolean"`
-	Modifiers   *Modifiers `json:"modifiers"`
-	Group       []string   `json:"group" validate:"dive,id_valid"`
-	Shared      bool       `json:"shared" validate:"shared_valid"`
-	Source      SourceMap  `json:"source" validate:"source_valid"`
+	Name        string            `json:"name" validate:"name_valid"`
+	Description string            `json:"description" validate:"desc_valid"`
+	Tests       string            `json:"tests" validate:"medium_string_valid"`
+	MaxRank     int               `json:"maxRank" validate:"gte=0,lte=99"`
+	Attribute   Attribute         `json:"attribute" validate:"att_type_valid"`
+	IsGroup     bool              `json:"isGroup" validate:"boolean"`
+	Modifiers   *Modifiers        `json:"modifiers"`
+	Group       []string          `json:"group" validate:"dive,id_valid"`
+	Shared      bool              `json:"shared" validate:"shared_valid"`
+	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
 func (talent *Talent) IsShared() bool {
@@ -32,28 +32,33 @@ func (talent *Talent) Copy() WhObject {
 		Modifiers:   talent.Modifiers.Copy(),
 		Group:       append([]string(nil), talent.Group...),
 		Shared:      talent.Shared,
-		Source:      talent.Source.Copy(),
+		Source:      copySourceMap(talent.Source),
 	}
 }
 
-//func (talent *Talent) InitNilPointers() {
-//	if talent.Modifiers == nil {
-//		talent.Modifiers = NewModifiers()
-//	}
-//
-//	if talent.Group == nil {
-//		talent.Group = []string{}
-//	}
-//
-//	if talent.Source == nil {
-//		talent.Source = NewSourceMap()
-//	}
-//}
+func (talent *Talent) InitNilPointers() {
+	if talent == nil {
+		return
+	}
+
+	if talent.Modifiers == nil {
+		talent.Modifiers = &Modifiers{}
+	}
+	talent.Modifiers.InitNilPointers()
+
+	if talent.Group == nil {
+		talent.Group = []string{}
+	}
+
+	if talent.Source == nil {
+		talent.Source = map[Source]string{}
+	}
+}
 
 func NewTalent() *Talent {
 	return &Talent{
 		Modifiers: NewModifiers(),
 		Group:     []string{},
-		Source:    NewSourceMap(),
+		Source:    map[Source]string{},
 	}
 }

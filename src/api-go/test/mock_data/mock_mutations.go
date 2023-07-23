@@ -42,8 +42,6 @@ var mutation1 = wh.Wh{
 	Object: &wh.Mutation{
 		Name:        "mutation 1",
 		Description: "owned by admin shared",
-		Modifiers:   wh.NewModifiers(),
-		Source:      wh.NewSourceMap(),
 		Shared:      true,
 	},
 }
@@ -54,8 +52,6 @@ var mutation2 = wh.Wh{
 	Object: &wh.Mutation{
 		Name:        "mutation 2",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Modifiers:   wh.NewModifiers(),
-		Source:      wh.NewSourceMap(),
 		Shared:      false,
 	},
 }
@@ -66,8 +62,6 @@ var mutation3 = wh.Wh{
 	Object: &wh.Mutation{
 		Name:        "mutation 3",
 		Description: fmt.Sprintf("owned by %s shared", user1.Username),
-		Modifiers:   wh.NewModifiers(),
-		Source:      wh.NewSourceMap(),
 		Shared:      true,
 	},
 }
@@ -78,8 +72,6 @@ var mutation4 = wh.Wh{
 	Object: &wh.Mutation{
 		Name:        "mutation 4",
 		Description: fmt.Sprintf("owned by %s", user2.Username),
-		Modifiers:   wh.NewModifiers(),
-		Source:      wh.NewSourceMap(),
 		Shared:      false,
 	},
 }
@@ -90,8 +82,6 @@ var mutation5 = wh.Wh{
 	Object: &wh.Mutation{
 		Name:        "mutation 5",
 		Description: fmt.Sprintf("owned by %s shared", user2.Username),
-		Modifiers:   wh.NewModifiers(),
-		Source:      wh.NewSourceMap(),
 		Shared:      true,
 	},
 }
@@ -102,8 +92,6 @@ var mutation6 = wh.Wh{
 	Object: &wh.Mutation{
 		Name:        "mutation 6",
 		Description: fmt.Sprintf("owned by %s", user3.Username),
-		Modifiers:   wh.NewModifiers(),
-		Source:      wh.NewSourceMap(),
 		Shared:      false,
 	},
 }
@@ -114,8 +102,6 @@ var mutation7 = wh.Wh{
 	Object: &wh.Mutation{
 		Name:        "mutation 7",
 		Description: fmt.Sprintf("owned by %s shared", user4.Username),
-		Modifiers:   wh.NewModifiers(),
-		Source:      wh.NewSourceMap(),
 		Shared:      true,
 	},
 }

@@ -47,7 +47,6 @@ var talent1 = wh.Wh{
 		Name:        "talent 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Group:       []string{},
-		Source:      wh.NewSourceMap(),
 	},
 }
 

@@ -5,15 +5,15 @@ import (
 )
 
 type Skill struct {
-	Name        string    `json:"name" validate:"name_valid"`
-	Description string    `json:"description" validate:"desc_valid"`
-	Attribute   Attribute `json:"attribute" validate:"att_type_valid"`
-	Type        SkillType `json:"type" validate:"skill_type_valid"`
-	IsGroup     bool      `json:"isGroup" validate:"boolean"`
-	DisplayZero bool      `json:"displayZero" validate:"boolean"`
-	Group       []string  `json:"group" validate:"dive,id_valid"`
-	Shared      bool      `json:"shared" validate:"shared_valid"`
-	Source      SourceMap `json:"source" validate:"source_valid"`
+	Name        string            `json:"name" validate:"name_valid"`
+	Description string            `json:"description" validate:"desc_valid"`
+	Attribute   Attribute         `json:"attribute" validate:"att_type_valid"`
+	Type        SkillType         `json:"type" validate:"skill_type_valid"`
+	IsGroup     bool              `json:"isGroup" validate:"boolean"`
+	DisplayZero bool              `json:"displayZero" validate:"boolean"`
+	Group       []string          `json:"group" validate:"dive,id_valid"`
+	Shared      bool              `json:"shared" validate:"shared_valid"`
+	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
 func (skill *Skill) IsShared() bool {
@@ -34,24 +34,28 @@ func (skill *Skill) Copy() WhObject {
 		DisplayZero: skill.DisplayZero,
 		Group:       append([]string(nil), skill.Group...),
 		Shared:      skill.Shared,
-		Source:      skill.Source.Copy(),
+		Source:      copySourceMap(skill.Source),
 	}
 }
 
-//func (skill *Skill) InitNilPointers() {
-//	if skill.Group == nil {
-//		skill.Group = []string{}
-//	}
-//
-//	if skill.Source == nil {
-//		skill.Source = NewSourceMap()
-//	}
-//}
+func (skill *Skill) InitNilPointers() {
+	if skill == nil {
+		return
+	}
+
+	if skill.Group == nil {
+		skill.Group = []string{}
+	}
+
+	if skill.Source == nil {
+		skill.Source = map[Source]string{}
+	}
+}
 
 func NewSkill() *Skill {
 	return &Skill{
 		Group:  []string{},
-		Source: NewSourceMap(),
+		Source: map[Source]string{},
 	}
 }
 

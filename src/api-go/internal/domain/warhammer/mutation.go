@@ -5,12 +5,12 @@ import (
 )
 
 type Mutation struct {
-	Name        string       `json:"name" validate:"name_valid"`
-	Description string       `json:"description" validate:"desc_valid"`
-	Type        MutationType `json:"type" validate:"mutation_type_valid"`
-	Modifiers   *Modifiers   `json:"modifiers"`
-	Shared      bool         `json:"shared" validate:"shared_valid"`
-	Source      SourceMap    `json:"source" validate:"source_valid"`
+	Name        string            `json:"name" validate:"name_valid"`
+	Description string            `json:"description" validate:"desc_valid"`
+	Type        MutationType      `json:"type" validate:"mutation_type_valid"`
+	Modifiers   *Modifiers        `json:"modifiers"`
+	Shared      bool              `json:"shared" validate:"shared_valid"`
+	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
 func (mutation *Mutation) IsShared() bool {
@@ -28,24 +28,29 @@ func (mutation *Mutation) Copy() WhObject {
 		Type:        mutation.Type,
 		Modifiers:   mutation.Modifiers.Copy(),
 		Shared:      mutation.Shared,
-		Source:      mutation.Source.Copy(),
+		Source:      copySourceMap(mutation.Source),
 	}
 }
 
-//func (mutation *Mutation) InitNilPointers() {
-//	if mutation.Modifiers == nil {
-//		mutation.Modifiers = NewModifiers()
-//	}
-//
-//	if mutation.Source == nil {
-//		mutation.Source = NewSourceMap()
-//	}
-//}
+func (mutation *Mutation) InitNilPointers() {
+	if mutation == nil {
+		return
+	}
+
+	if mutation.Modifiers == nil {
+		mutation.Modifiers = NewModifiers()
+	}
+	mutation.Modifiers.InitNilPointers()
+
+	if mutation.Source == nil {
+		mutation.Source = map[Source]string{}
+	}
+}
 
 func NewMutation() *Mutation {
 	return &Mutation{
 		Modifiers: NewModifiers(),
-		Source:    NewSourceMap(),
+		Source:    map[Source]string{},
 	}
 }
 

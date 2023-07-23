@@ -18,12 +18,17 @@ func (modifiers *Modifiers) Copy() *Modifiers {
 	}
 }
 
-//func (modifiers *Modifiers) InitNilPointers() {
-//	if modifiers.Attributes == nil {
-//		modifiers.Attributes = NewAttributes()
-//	}
-//
-//}
+func (modifiers *Modifiers) InitNilPointers() {
+	if modifiers == nil {
+		return
+	}
+
+	if modifiers.Attributes == nil {
+		modifiers.Attributes = NewAttributes()
+	} else {
+		modifiers.Attributes.InitNilPointers()
+	}
+}
 
 func NewModifiers() *Modifiers {
 	return &Modifiers{Attributes: NewAttributes()}
