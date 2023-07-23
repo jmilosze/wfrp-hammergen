@@ -36,6 +36,32 @@ func (career *Career) Copy() WhObject {
 	}
 }
 
+func (career *Career) InitNilPointers() {
+	if career.Species == nil {
+		career.Species = []CareerSpecies{}
+	}
+
+	if career.Level1 == nil {
+		career.Level1 = NewCareerLevel()
+	}
+
+	if career.Level2 == nil {
+		career.Level2 = NewCareerLevel()
+	}
+
+	if career.Level3 == nil {
+		career.Level3 = NewCareerLevel()
+	}
+
+	if career.Level4 == nil {
+		career.Level4 = NewCareerLevel()
+	}
+
+	if career.Source == nil {
+		career.Source = NewSourceMap()
+	}
+}
+
 func NewCareer() *Career {
 	return &Career{
 		Species: []CareerSpecies{},

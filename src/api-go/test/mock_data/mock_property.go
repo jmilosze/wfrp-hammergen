@@ -2,35 +2,36 @@ package mock_data
 
 import (
 	"fmt"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
+	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 )
 
-var property0 = warhammer.Wh{
+var property0 = wh.Wh{
 	Id:      "300000000000000000000000",
 	OwnerId: "admin",
-	Object: &warhammer.Property{
+	Object: &wh.Property{
 		Name:         "property 0",
 		Description:  "owned by admin",
 		Type:         0,
-		ApplicableTo: []warhammer.ItemType{0, 1, 2},
+		ApplicableTo: []wh.ItemType{0, 1, 2},
 		Shared:       false,
-		Source: map[warhammer.Source]string{
-			warhammer.SourceArchivesOfTheEmpireVolI: "d",
-			warhammer.SourceSeaOfClaws:              "e",
+		Source: map[wh.Source]string{
+			wh.SourceArchivesOfTheEmpireVolI: "d",
+			wh.SourceSeaOfClaws:              "e",
 		},
 	},
 }
 
-var property1 = warhammer.Wh{
+var property1 = wh.Wh{
 	Id:      "300000000000000000000001",
 	OwnerId: user1.Id,
-	Object: &warhammer.Property{
-		Name:        "property 1",
-		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Shared:      false,
+	Object: &wh.Property{
+		Name:         "property 1",
+		Description:  fmt.Sprintf("owned by %s", user1.Username),
+		ApplicableTo: []wh.ItemType{0, 1},
+		Source:       wh.NewSourceMap(),
 	},
 }
 
-func NewMockProperties() []*warhammer.Wh {
-	return []*warhammer.Wh{&property0, &property1}
+func NewMockProperties() []*wh.Wh {
+	return []*wh.Wh{&property0, &property1}
 }

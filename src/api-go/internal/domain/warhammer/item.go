@@ -78,43 +78,43 @@ func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) *ItemFull {
 	}
 }
 
-func (item *Item) InitNilPointers() {
-	if item.Properties == nil {
-		item.Properties = []string{}
-	}
-
-	if item.Source == nil {
-		item.Source = NewSourceMap()
-	}
-
-	if item.Melee == nil {
-		item.Melee = NewItemMelee()
-	}
-
-	if item.Ranged == nil {
-		item.Ranged = NewItemRanged()
-	}
-
-	if item.Ammunition == nil {
-		item.Ammunition = NewItemAmmunition()
-	}
-
-	if item.Armour == nil {
-		item.Armour = NewItemArmour()
-	}
-
-	if item.Container == nil {
-		item.Container = NewItemContainer()
-	}
-
-	if item.Grimoire == nil {
-		item.Grimoire = NewItemGrimoire()
-	}
-
-	if item.Other == nil {
-		item.Other = NewItemOther()
-	}
-}
+//func (item *Item) InitNilPointers() {
+//	if item.Properties == nil {
+//		item.Properties = []string{}
+//	}
+//
+//	if item.Source == nil {
+//		item.Source = NewSourceMap()
+//	}
+//
+//	if item.Melee == nil {
+//		item.Melee = NewItemMelee()
+//	}
+//
+//	if item.Ranged == nil {
+//		item.Ranged = NewItemRanged()
+//	}
+//
+//	if item.Ammunition == nil {
+//		item.Ammunition = NewItemAmmunition()
+//	}
+//
+//	if item.Armour == nil {
+//		item.Armour = NewItemArmour()
+//	}
+//
+//	if item.Container == nil {
+//		item.Container = NewItemContainer()
+//	}
+//
+//	if item.Grimoire == nil {
+//		item.Grimoire = NewItemGrimoire()
+//	}
+//
+//	if item.Other == nil {
+//		item.Other = NewItemOther()
+//	}
+//}
 
 func NewItem() WhObject {
 	return &Item{
@@ -514,43 +514,43 @@ func (itemFull *ItemFull) Copy() WhObject {
 	}
 }
 
-func (itemFull *ItemFull) InitNilPointers() {
-	if itemFull.Properties == nil {
-		itemFull.Properties = []*Wh{}
-	}
-
-	if itemFull.Source == nil {
-		itemFull.Source = NewSourceMap()
-	}
-
-	if itemFull.Melee == nil {
-		itemFull.Melee = NewItemMelee()
-	}
-
-	if itemFull.Ranged == nil {
-		itemFull.Ranged = NewItemRanged()
-	}
-
-	if itemFull.Ammunition == nil {
-		itemFull.Ammunition = NewItemAmmunition()
-	}
-
-	if itemFull.Armour == nil {
-		itemFull.Armour = NewItemArmour()
-	}
-
-	if itemFull.Container == nil {
-		itemFull.Container = NewItemContainer()
-	}
-
-	if itemFull.Grimoire == nil {
-		itemFull.Grimoire = NewItemGrimoireFull()
-	}
-
-	if itemFull.Other == nil {
-		itemFull.Other = NewItemOther()
-	}
-}
+//func (itemFull *ItemFull) InitNilPointers() {
+//	if itemFull.Properties == nil {
+//		itemFull.Properties = []*Wh{}
+//	}
+//
+//	if itemFull.Source == nil {
+//		itemFull.Source = NewSourceMap()
+//	}
+//
+//	if itemFull.Melee == nil {
+//		itemFull.Melee = NewItemMelee()
+//	}
+//
+//	if itemFull.Ranged == nil {
+//		itemFull.Ranged = NewItemRanged()
+//	}
+//
+//	if itemFull.Ammunition == nil {
+//		itemFull.Ammunition = NewItemAmmunition()
+//	}
+//
+//	if itemFull.Armour == nil {
+//		itemFull.Armour = NewItemArmour()
+//	}
+//
+//	if itemFull.Container == nil {
+//		itemFull.Container = NewItemContainer()
+//	}
+//
+//	if itemFull.Grimoire == nil {
+//		itemFull.Grimoire = NewItemGrimoireFull()
+//	}
+//
+//	if itemFull.Other == nil {
+//		itemFull.Other = NewItemOther()
+//	}
+//}
 
 type ItemGrimoireFull struct {
 	Spells []*Wh `json:"spells"`

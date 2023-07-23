@@ -34,15 +34,15 @@ func (skill *Skill) Copy() WhObject {
 	}
 }
 
-func (skill *Skill) InitNilPointers() {
-	if skill.Group == nil {
-		skill.Group = []string{}
-	}
-
-	if skill.Source == nil {
-		skill.Source = NewSourceMap()
-	}
-}
+//func (skill *Skill) InitNilPointers() {
+//	if skill.Group == nil {
+//		skill.Group = []string{}
+//	}
+//
+//	if skill.Source == nil {
+//		skill.Source = NewSourceMap()
+//	}
+//}
 
 func NewSkill() *Skill {
 	return &Skill{

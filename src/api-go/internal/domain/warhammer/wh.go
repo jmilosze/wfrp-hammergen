@@ -15,7 +15,6 @@ type Wh struct {
 }
 
 const (
-	WhTypeNone          = "none"
 	WhTypeMutation      = "mutation"
 	WhTypeSpell         = "spell"
 	WhTypeProperty      = "property"
@@ -112,23 +111,23 @@ func New(t WhType) *Wh {
 	return wh
 }
 
-func (w *Wh) InitNilPointers() error {
-	if w == nil {
-		return errors.New("wh pointer is nil")
-	}
-
-	if w.Object == nil {
-		return errors.New("object pointer is nil")
-	}
-
-	w.Object.InitNilPointers()
-
-}
+//func (w *Wh) InitNilPointers() error {
+//	if w == nil {
+//		return errors.New("wh pointer is nil")
+//	}
+//
+//	if w.Object == nil {
+//		return errors.New("object pointer is nil")
+//	}
+//
+//	w.Object.InitNilPointers()
+//
+//}
 
 type WhObject interface {
 	Copy() WhObject
 	IsShared() bool
-	InitNilPointers()
+	//InitNilPointers()
 }
 
 func (w *Wh) ToMap() (map[string]any, error) {

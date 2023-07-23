@@ -60,9 +60,6 @@ func idListToWhList(idList []string, allIdWhMap map[string]*Wh) []*Wh {
 		wh, ok := allIdWhMap[v]
 		if ok {
 			whList = append(whList, wh.Copy())
-		} else {
-			blankWh := New(WhTypeNone)
-			whList = append(whList, blankWh)
 		}
 	}
 	return whList

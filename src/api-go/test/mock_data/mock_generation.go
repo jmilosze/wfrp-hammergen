@@ -1,20 +1,20 @@
 package mock_data
 
 import (
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
+	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 )
 
-func NewMockGenProps() *warhammer.GenProps {
-	return &warhammer.GenProps{
+func NewMockGenProps() *wh.GenProps {
+	return &wh.GenProps{
 		Name: "generationProps",
-		ClassItems: map[warhammer.CareerClass]*warhammer.GenItems{
-			warhammer.CareerClassBurghers: {
-				Equipped: warhammer.IdNumberMap{itemMelee.Id: 1, itemArmour.Id: 1},
-				Carried:  warhammer.IdNumberMap{itemOther.Id: 2},
-				Stored:   warhammer.IdNumberMap{itemOther.Id: 2},
+		ClassItems: map[wh.CareerClass]*wh.GenItems{
+			wh.CareerClassBurghers: {
+				Equipped: wh.IdNumberMap{itemMelee.Id: 1, itemArmour.Id: 1},
+				Carried:  wh.IdNumberMap{itemOther.Id: 2},
+				Stored:   wh.IdNumberMap{itemOther.Id: 2},
 			},
 		},
-		RandomTalents: []*warhammer.GenRandomTalent{
+		RandomTalents: []*wh.GenRandomTalent{
 			{
 				Id:      talent1.Id,
 				MinRoll: 1,
@@ -26,14 +26,14 @@ func NewMockGenProps() *warhammer.GenProps {
 				MaxRoll: 101,
 			},
 		},
-		SpeciesTalents: map[warhammer.CharacterSpecies]*warhammer.GenSpeciesTalents{
-			warhammer.CharacterSpeciesDwarfAltdorf: {
+		SpeciesTalents: map[wh.CharacterSpecies]*wh.GenSpeciesTalents{
+			wh.CharacterSpeciesDwarfAltdorf: {
 				Single:   []string{talent0.Id, talent1.Id},
 				Multiple: [][]string{{talent0.Id, talent1.Id}, {talent0.Id, talent1.Id}},
 			},
 		},
-		SpeciesSkills: map[warhammer.CharacterSpecies][]string{
-			warhammer.CharacterSpeciesDwarfNorse: {skill1.Id, skill0.Id},
+		SpeciesSkills: map[wh.CharacterSpecies][]string{
+			wh.CharacterSpeciesDwarfNorse: {skill1.Id, skill0.Id},
 		},
 	}
 }

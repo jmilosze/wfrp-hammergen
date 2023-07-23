@@ -28,15 +28,15 @@ func (mutation *Mutation) Copy() WhObject {
 	}
 }
 
-func (mutation *Mutation) InitNilPointers() {
-	if mutation.Modifiers == nil {
-		mutation.Modifiers = NewModifiers()
-	}
-
-	if mutation.Source == nil {
-		mutation.Source = NewSourceMap()
-	}
-}
+//func (mutation *Mutation) InitNilPointers() {
+//	if mutation.Modifiers == nil {
+//		mutation.Modifiers = NewModifiers()
+//	}
+//
+//	if mutation.Source == nil {
+//		mutation.Source = NewSourceMap()
+//	}
+//}
 
 func NewMutation() *Mutation {
 	return &Mutation{

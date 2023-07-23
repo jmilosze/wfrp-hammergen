@@ -28,11 +28,11 @@ func (spell *Spell) Copy() WhObject {
 	}
 }
 
-func (spell *Spell) InitNilPointers() {
-	if spell.Source == nil {
-		spell.Source = NewSourceMap()
-	}
-}
+//func (spell *Spell) InitNilPointers() {
+//	if spell.Source == nil {
+//		spell.Source = NewSourceMap()
+//	}
+//}
 
 func NewSpell() *Spell {
 	return &Spell{

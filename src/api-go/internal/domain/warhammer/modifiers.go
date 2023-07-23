@@ -14,6 +14,13 @@ func (modifiers *Modifiers) Copy() *Modifiers {
 	}
 }
 
+//func (modifiers *Modifiers) InitNilPointers() {
+//	if modifiers.Attributes == nil {
+//		modifiers.Attributes = NewAttributes()
+//	}
+//
+//}
+
 func NewModifiers() *Modifiers {
 	return &Modifiers{Attributes: NewAttributes()}
 }

@@ -28,15 +28,15 @@ func (property *Property) Copy() WhObject {
 	}
 }
 
-func (property *Property) InitNilPointers() {
-	if property.ApplicableTo == nil {
-		property.ApplicableTo = []ItemType{}
-	}
-
-	if property.Source == nil {
-		property.Source = NewSourceMap()
-	}
-}
+//func (property *Property) InitNilPointers() {
+//	if property.ApplicableTo == nil {
+//		property.ApplicableTo = []ItemType{}
+//	}
+//
+//	if property.Source == nil {
+//		property.Source = NewSourceMap()
+//	}
+//}
 
 func NewProperty() WhObject {
 	return &Property{

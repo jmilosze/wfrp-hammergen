@@ -32,19 +32,19 @@ func (talent *Talent) Copy() WhObject {
 	}
 }
 
-func (talent *Talent) InitNilPointers() {
-	if talent.Modifiers == nil {
-		talent.Modifiers = NewModifiers()
-	}
-
-	if talent.Group == nil {
-		talent.Group = []string{}
-	}
-
-	if talent.Source == nil {
-		talent.Source = NewSourceMap()
-	}
-}
+//func (talent *Talent) InitNilPointers() {
+//	if talent.Modifiers == nil {
+//		talent.Modifiers = NewModifiers()
+//	}
+//
+//	if talent.Group == nil {
+//		talent.Group = []string{}
+//	}
+//
+//	if talent.Source == nil {
+//		talent.Source = NewSourceMap()
+//	}
+//}
 
 func NewTalent() *Talent {
 	return &Talent{
