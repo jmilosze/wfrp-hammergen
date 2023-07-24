@@ -1,6 +1,7 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -36,8 +37,12 @@ type Character struct {
 	Shared            bool             `json:"shared" validate:"shared_valid"`
 }
 
-func (character *Character) IsShared() bool {
-	return character.Shared
+func (character *Character) IsShared() (bool, error) {
+	if character == nil {
+		return false, errors.New("character pointer is nil")
+	}
+
+	return character.Shared, nil
 }
 
 func (character *Character) Copy() WhObject {
@@ -351,8 +356,12 @@ type CharacterFull struct {
 	Shared            bool             `json:"shared"`
 }
 
-func (characterFull *CharacterFull) IsShared() bool {
-	return characterFull.Shared
+func (characterFull *CharacterFull) IsShared() (bool, error) {
+	if characterFull == nil {
+		return false, errors.New("characterFull pointer is nil")
+	}
+
+	return characterFull.Shared, nil
 }
 
 func (characterFull *CharacterFull) Copy() WhObject {

@@ -1,6 +1,7 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -24,8 +25,12 @@ type Item struct {
 	Other      *ItemOther      `json:"other"`
 }
 
-func (item *Item) IsShared() bool {
-	return item.Shared
+func (item *Item) IsShared() (bool, error) {
+	if item == nil {
+		return false, errors.New("item pointer is nil")
+	}
+
+	return item.Shared, nil
 }
 
 func (item *Item) Copy() WhObject {
@@ -82,9 +87,9 @@ func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) *ItemFull {
 	}
 }
 
-func (item *Item) InitNilPointers() {
+func (item *Item) InitNilPointers() error {
 	if item == nil {
-		return
+		return errors.New("item pointer is nil")
 	}
 
 	if item.Properties == nil {
@@ -110,7 +115,10 @@ func (item *Item) InitNilPointers() {
 	if item.Armour == nil {
 		item.Armour = &ItemArmour{}
 	}
-	item.Armour.InitNilPointers()
+	err := item.Armour.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if item.Container == nil {
 		item.Container = &ItemContainer{}
@@ -119,11 +127,16 @@ func (item *Item) InitNilPointers() {
 	if item.Grimoire == nil {
 		item.Grimoire = &ItemGrimoire{}
 	}
-	item.Grimoire.InitNilPointers()
+	err = item.Grimoire.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if item.Other == nil {
 		item.Other = &ItemOther{}
 	}
+
+	return nil
 }
 
 type ItemMelee struct {
@@ -210,15 +223,16 @@ func (itemArmour *ItemArmour) Copy() *ItemArmour {
 	}
 }
 
-func (itemArmour *ItemArmour) InitNilPointers() {
+func (itemArmour *ItemArmour) InitNilPointers() error {
 	if itemArmour == nil {
-		return
+		return errors.New("itemArmour pointer is nil")
 	}
 
 	if itemArmour.Location == nil {
 		itemArmour.Location = []ItemArmourLocation{}
 	}
 
+	return nil
 }
 
 type ItemContainer struct {
@@ -251,13 +265,15 @@ func (itemGrimoire *ItemGrimoire) Copy() *ItemGrimoire {
 	}
 }
 
-func (itemGrimoire *ItemGrimoire) InitNilPointers() {
+func (itemGrimoire *ItemGrimoire) InitNilPointers() error {
 	if itemGrimoire == nil {
-		return
+		return errors.New("itemArmour pointer is nil")
 	}
 	if itemGrimoire.Spells == nil {
 		itemGrimoire.Spells = []string{}
 	}
+
+	return nil
 }
 
 type ItemOther struct {
@@ -504,8 +520,12 @@ type ItemFull struct {
 	Other      *ItemOther        `json:"other"`
 }
 
-func (itemFull *ItemFull) IsShared() bool {
-	return itemFull.Shared
+func (itemFull *ItemFull) IsShared() (bool, error) {
+	if itemFull == nil {
+		return false, errors.New("itemFull pointer is nil")
+	}
+
+	return itemFull.Shared, nil
 }
 
 func (itemFull *ItemFull) Copy() WhObject {
@@ -534,16 +554,19 @@ func (itemFull *ItemFull) Copy() WhObject {
 	}
 }
 
-func (itemFull *ItemFull) InitNilPointers() {
+func (itemFull *ItemFull) InitNilPointers() error {
 	if itemFull == nil {
-		return
+		return errors.New("itemFull pointer is nil")
 	}
 
 	if itemFull.Properties == nil {
 		itemFull.Properties = []*Wh{}
 	}
 	for _, v := range itemFull.Properties {
-		v.InitNilPointers(WhTypeProperty)
+		err := v.InitNilPointers()
+		if err != nil {
+			return err
+		}
 	}
 
 	if itemFull.Source == nil {
@@ -565,7 +588,10 @@ func (itemFull *ItemFull) InitNilPointers() {
 	if itemFull.Armour == nil {
 		itemFull.Armour = &ItemArmour{}
 	}
-	itemFull.Armour.InitNilPointers()
+	err := itemFull.Armour.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if itemFull.Container == nil {
 		itemFull.Container = &ItemContainer{}
@@ -574,11 +600,16 @@ func (itemFull *ItemFull) InitNilPointers() {
 	if itemFull.Grimoire == nil {
 		itemFull.Grimoire = &ItemGrimoireFull{}
 	}
-	itemFull.Grimoire.InitNilPointers()
+	err = itemFull.Grimoire.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if itemFull.Other == nil {
 		itemFull.Other = &ItemOther{}
 	}
+
+	return nil
 }
 
 type ItemGrimoireFull struct {
@@ -595,17 +626,22 @@ func (itemGrimoireFull *ItemGrimoireFull) Copy() *ItemGrimoireFull {
 	}
 }
 
-func (itemGrimoireFull *ItemGrimoireFull) InitNilPointers() {
+func (itemGrimoireFull *ItemGrimoireFull) InitNilPointers() error {
 	if itemGrimoireFull == nil {
-		return
+		return errors.New("itemGrimoireFull pointer is nil")
 	}
 
 	if itemGrimoireFull.Spells == nil {
 		itemGrimoireFull.Spells = []*Wh{}
 	}
 	for _, v := range itemGrimoireFull.Spells {
-		v.InitNilPointers(WhTypeSpell)
+		err := v.InitNilPointers()
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 func GetItemValidationAliases() map[string]string {
