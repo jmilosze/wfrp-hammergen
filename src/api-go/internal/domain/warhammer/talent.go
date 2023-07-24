@@ -1,5 +1,7 @@
 package warhammer
 
+import "errors"
+
 type Talent struct {
 	Name        string            `json:"name" validate:"name_valid"`
 	Description string            `json:"description" validate:"desc_valid"`
@@ -13,8 +15,12 @@ type Talent struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (talent *Talent) IsShared() bool {
-	return talent.Shared
+func (talent *Talent) IsShared() (bool, error) {
+	if talent == nil {
+		return false, errors.New("talent pointer is nil")
+	}
+
+	return talent.Shared, nil
 }
 
 func (talent *Talent) Copy() WhObject {
@@ -36,15 +42,19 @@ func (talent *Talent) Copy() WhObject {
 	}
 }
 
-func (talent *Talent) InitNilPointers() {
+func (talent *Talent) InitNilPointers() error {
 	if talent == nil {
-		return
+		return errors.New("talent pointer is nil")
 	}
 
 	if talent.Modifiers == nil {
 		talent.Modifiers = &Modifiers{}
 	}
-	talent.Modifiers.InitNilPointers()
+
+	err := talent.Modifiers.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if talent.Group == nil {
 		talent.Group = []string{}
@@ -53,4 +63,6 @@ func (talent *Talent) InitNilPointers() {
 	if talent.Source == nil {
 		talent.Source = map[Source]string{}
 	}
+
+	return nil
 }

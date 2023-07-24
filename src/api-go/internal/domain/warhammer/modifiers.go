@@ -1,5 +1,7 @@
 package warhammer
 
+import "errors"
+
 type Modifiers struct {
 	Size       int         `json:"size" validate:"min=-3,max=3"`
 	Movement   int         `json:"movement" validate:"min=-3,max=3"`
@@ -18,12 +20,13 @@ func (modifiers *Modifiers) Copy() *Modifiers {
 	}
 }
 
-func (modifiers *Modifiers) InitNilPointers() {
+func (modifiers *Modifiers) InitNilPointers() error {
 	if modifiers == nil {
-		return
+		return errors.New("talent pointer is nil")
 	}
 
 	if modifiers.Attributes == nil {
 		modifiers.Attributes = &Attributes{}
 	}
+	return nil
 }

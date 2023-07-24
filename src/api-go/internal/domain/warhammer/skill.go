@@ -1,6 +1,7 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -16,8 +17,12 @@ type Skill struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (skill *Skill) IsShared() bool {
-	return skill.Shared
+func (skill *Skill) IsShared() (bool, error) {
+	if skill == nil {
+		return false, errors.New("skill pointer is nil")
+	}
+
+	return skill.Shared, nil
 }
 
 func (skill *Skill) Copy() WhObject {
@@ -38,9 +43,9 @@ func (skill *Skill) Copy() WhObject {
 	}
 }
 
-func (skill *Skill) InitNilPointers() {
+func (skill *Skill) InitNilPointers() error {
 	if skill == nil {
-		return
+		return errors.New("skill pointer is nil")
 	}
 
 	if skill.Group == nil {
@@ -50,6 +55,8 @@ func (skill *Skill) InitNilPointers() {
 	if skill.Source == nil {
 		skill.Source = map[Source]string{}
 	}
+
+	return nil
 }
 
 type SkillType int

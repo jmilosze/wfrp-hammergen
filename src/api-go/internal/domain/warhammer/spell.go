@@ -1,5 +1,7 @@
 package warhammer
 
+import "errors"
+
 type Spell struct {
 	Name        string            `json:"name" validate:"name_valid"`
 	Description string            `json:"description" validate:"desc_valid"`
@@ -11,8 +13,12 @@ type Spell struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (spell *Spell) IsShared() bool {
-	return spell.Shared
+func (spell *Spell) IsShared() (bool, error) {
+	if spell == nil {
+		return false, errors.New("spell pointer is nil")
+	}
+
+	return spell.Shared, nil
 }
 
 func (spell *Spell) Copy() WhObject {
@@ -32,12 +38,14 @@ func (spell *Spell) Copy() WhObject {
 	}
 }
 
-func (spell *Spell) InitNilPointers() {
+func (spell *Spell) InitNilPointers() error {
 	if spell == nil {
-		return
+		return errors.New("spell pointer is nil")
 	}
 
 	if spell.Source == nil {
 		spell.Source = map[Source]string{}
 	}
+
+	return nil
 }

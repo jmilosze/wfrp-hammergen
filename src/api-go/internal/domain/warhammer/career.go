@@ -1,6 +1,7 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -17,8 +18,12 @@ type Career struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (career *Career) IsShared() bool {
-	return career.Shared
+func (career *Career) IsShared() (bool, error) {
+	if career == nil {
+		return false, errors.New("career pointer is nil")
+	}
+
+	return career.Shared, nil
 }
 
 func (career *Career) Copy() WhObject {
@@ -40,9 +45,9 @@ func (career *Career) Copy() WhObject {
 	}
 }
 
-func (career *Career) InitNilPointers() {
+func (career *Career) InitNilPointers() error {
 	if career == nil {
-		return
+		return errors.New("career pointer is nil")
 	}
 
 	if career.Species == nil {
@@ -52,26 +57,40 @@ func (career *Career) InitNilPointers() {
 	if career.Level1 == nil {
 		career.Level1 = &CareerLevel{}
 	}
-	career.Level1.InitNilPointers()
+	err := career.Level1.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if career.Level2 == nil {
 		career.Level2 = &CareerLevel{}
 	}
-	career.Level2.InitNilPointers()
+	err = career.Level2.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if career.Level3 == nil {
 		career.Level3 = &CareerLevel{}
 	}
-	career.Level3.InitNilPointers()
+	err = career.Level3.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if career.Level4 == nil {
 		career.Level4 = &CareerLevel{}
 	}
-	career.Level4.InitNilPointers()
+	err = career.Level4.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if career.Source == nil {
 		career.Source = map[Source]string{}
 	}
+
+	return nil
 }
 
 type CareerLevel struct {
@@ -100,9 +119,9 @@ func (careerLevel *CareerLevel) Copy() *CareerLevel {
 	}
 }
 
-func (careerLevel *CareerLevel) InitNilPointers() {
+func (careerLevel *CareerLevel) InitNilPointers() error {
 	if careerLevel == nil {
-		return
+		return errors.New("careerLevel pointer is nil")
 	}
 
 	if careerLevel.Attributes == nil {
@@ -116,6 +135,8 @@ func (careerLevel *CareerLevel) InitNilPointers() {
 	if careerLevel.Talents == nil {
 		careerLevel.Talents = []string{}
 	}
+
+	return nil
 }
 
 type Status int

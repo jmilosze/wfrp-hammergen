@@ -1,6 +1,7 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -13,8 +14,12 @@ type Mutation struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (mutation *Mutation) IsShared() bool {
-	return mutation.Shared
+func (mutation *Mutation) IsShared() (bool, error) {
+	if mutation == nil {
+		return false, errors.New("mutation pointer is nil")
+	}
+
+	return mutation.Shared, nil
 }
 
 func (mutation *Mutation) Copy() WhObject {
@@ -32,19 +37,24 @@ func (mutation *Mutation) Copy() WhObject {
 	}
 }
 
-func (mutation *Mutation) InitNilPointers() {
+func (mutation *Mutation) InitNilPointers() error {
 	if mutation == nil {
-		return
+		return errors.New("mutation pointer is nil")
 	}
 
 	if mutation.Modifiers == nil {
 		mutation.Modifiers = &Modifiers{}
 	}
-	mutation.Modifiers.InitNilPointers()
+	err := mutation.Modifiers.InitNilPointers()
+	if err != nil {
+		return err
+	}
 
 	if mutation.Source == nil {
 		mutation.Source = map[Source]string{}
 	}
+
+	return nil
 }
 
 type MutationType int

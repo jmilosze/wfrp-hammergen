@@ -1,6 +1,7 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -13,8 +14,12 @@ type Property struct {
 	Source       map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (property *Property) IsShared() bool {
-	return property.Shared
+func (property *Property) IsShared() (bool, error) {
+	if property == nil {
+		return false, errors.New("property pointer is nil")
+	}
+
+	return property.Shared, nil
 }
 
 func (property *Property) Copy() WhObject {
@@ -32,9 +37,9 @@ func (property *Property) Copy() WhObject {
 	}
 }
 
-func (property *Property) InitNilPointers() {
+func (property *Property) InitNilPointers() error {
 	if property == nil {
-		return
+		return errors.New("property pointer is nil")
 	}
 
 	if property.ApplicableTo == nil {
@@ -44,6 +49,8 @@ func (property *Property) InitNilPointers() {
 	if property.Source == nil {
 		property.Source = map[Source]string{}
 	}
+
+	return nil
 }
 
 type PropertyType int

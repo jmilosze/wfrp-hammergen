@@ -110,23 +110,22 @@ func NewWhObject(t WhType) WhObject {
 	return &Character{}
 }
 
-func (w *Wh) InitNilPointers(t WhType) {
+func (w *Wh) InitNilPointers() error {
 	if w == nil {
-		return
+		return errors.New("wh pointer is nil")
 	}
 
 	if w.Object == nil {
-		w.Object = NewWhObject(t)
+		return errors.New("wh.object pointer is nil")
 	}
 
-	w.Object.InitNilPointers()
-
+	return w.Object.InitNilPointers()
 }
 
 type WhObject interface {
 	Copy() WhObject
-	IsShared() bool
-	InitNilPointers()
+	IsShared() (bool, error)
+	InitNilPointers() error
 }
 
 func (w *Wh) ToMap() (map[string]any, error) {
