@@ -46,13 +46,6 @@ func (property *Property) InitNilPointers() {
 	}
 }
 
-func NewProperty() WhObject {
-	return &Property{
-		ApplicableTo: []ItemType{},
-		Source:       map[Source]string{},
-	}
-}
-
 type PropertyType int
 
 const (

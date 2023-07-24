@@ -38,19 +38,12 @@ func (mutation *Mutation) InitNilPointers() {
 	}
 
 	if mutation.Modifiers == nil {
-		mutation.Modifiers = NewModifiers()
+		mutation.Modifiers = &Modifiers{}
 	}
 	mutation.Modifiers.InitNilPointers()
 
 	if mutation.Source == nil {
 		mutation.Source = map[Source]string{}
-	}
-}
-
-func NewMutation() *Mutation {
-	return &Mutation{
-		Modifiers: NewModifiers(),
-		Source:    map[Source]string{},
 	}
 }
 

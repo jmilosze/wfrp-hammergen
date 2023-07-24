@@ -41,9 +41,3 @@ func (spell *Spell) InitNilPointers() {
 		spell.Source = map[Source]string{}
 	}
 }
-
-func NewSpell() *Spell {
-	return &Spell{
-		Source: map[Source]string{},
-	}
-}

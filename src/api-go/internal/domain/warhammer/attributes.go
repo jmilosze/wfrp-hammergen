@@ -75,11 +75,3 @@ func (attributes *Attributes) Copy() *Attributes {
 		Fel: attributes.Fel,
 	}
 }
-
-func (attributes *Attributes) InitNilPointers() {
-	return
-}
-
-func NewAttributes() *Attributes {
-	return &Attributes{}
-}

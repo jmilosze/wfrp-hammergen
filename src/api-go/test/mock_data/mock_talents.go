@@ -46,7 +46,6 @@ var talent1 = wh.Wh{
 	Object: &wh.Talent{
 		Name:        "talent 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Group:       []string{},
 	},
 }
 

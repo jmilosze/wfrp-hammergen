@@ -83,41 +83,40 @@ func (w *Wh) IsShared() (bool, error) {
 	return w.Object.IsShared(), nil
 }
 
-func New(t WhType) *Wh {
-	wh := &Wh{}
-
+func NewWhObject(t WhType) WhObject {
 	switch t {
 	case WhTypeMutation:
-		wh.Object = &Mutation{}
+		return &Mutation{}
 	case WhTypeSpell:
-		wh.Object = &Spell{}
+		return &Spell{}
 	case WhTypeProperty:
-		wh.Object = &Property{}
+		return &Property{}
 	case WhTypeItem:
-		wh.Object = &Item{}
+		return &Item{}
 	case WhTypeTalent:
-		wh.Object = &Talent{}
+		return &Talent{}
 	case WhTypeSkill:
-		wh.Object = &Skill{}
+		return &Skill{}
 	case WhTypeCareer:
-		wh.Object = &Career{}
+		return &Career{}
 	case WhTypeCharacter:
-		wh.Object = &Character{}
+		return &Character{}
 	case WhTypeItemFull:
-		wh.Object = &ItemFull{}
+		return &ItemFull{}
 	case WhTypeCharacterFull:
-		wh.Object = &CharacterFull{}
+		return &CharacterFull{}
 	}
-	return wh
+
+	return &Character{}
 }
 
-func (w *Wh) InitNilPointers() {
+func (w *Wh) InitNilPointers(t WhType) {
 	if w == nil {
 		return
 	}
 
 	if w.Object == nil {
-		return
+		w.Object = NewWhObject(t)
 	}
 
 	w.Object.InitNilPointers()

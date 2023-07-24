@@ -25,10 +25,8 @@ var property1 = wh.Wh{
 	Id:      "300000000000000000000001",
 	OwnerId: user1.Id,
 	Object: &wh.Property{
-		Name:         "property 1",
-		Description:  fmt.Sprintf("owned by %s", user1.Username),
-		ApplicableTo: []wh.ItemType{0, 1},
-		Source:       wh.NewSourceMap(),
+		Name:        "property 1",
+		Description: fmt.Sprintf("owned by %s", user1.Username),
 	},
 }
 

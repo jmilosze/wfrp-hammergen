@@ -5,16 +5,16 @@ import (
 )
 
 type Career struct {
-	Name        string          `json:"name" validate:"name_valid"`
-	Description string          `json:"description" validate:"desc_valid"`
-	Class       CareerClass     `json:"class" validate:"class_valid"`
-	Species     []CareerSpecies `json:"species" validate:"dive,career_species_valid"`
-	Level1      *CareerLevel    `json:"level1"`
-	Level2      *CareerLevel    `json:"level2"`
-	Level3      *CareerLevel    `json:"level3"`
-	Level4      *CareerLevel    `json:"level4"`
-	Shared      bool            `json:"shared" validate:"shared_valid"`
-	Source      SourceMap       `json:"source" validate:"source_valid"`
+	Name        string            `json:"name" validate:"name_valid"`
+	Description string            `json:"description" validate:"desc_valid"`
+	Class       CareerClass       `json:"class" validate:"class_valid"`
+	Species     []CareerSpecies   `json:"species" validate:"dive,career_species_valid"`
+	Level1      *CareerLevel      `json:"level1"`
+	Level2      *CareerLevel      `json:"level2"`
+	Level3      *CareerLevel      `json:"level3"`
+	Level4      *CareerLevel      `json:"level4"`
+	Shared      bool              `json:"shared" validate:"shared_valid"`
+	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
 func (career *Career) IsShared() bool {
@@ -36,44 +36,41 @@ func (career *Career) Copy() WhObject {
 		Level3:      career.Level3.Copy(),
 		Level4:      career.Level4.Copy(),
 		Shared:      career.Shared,
-		Source:      career.Source.Copy(),
+		Source:      copySourceMap(career.Source),
 	}
 }
 
 func (career *Career) InitNilPointers() {
+	if career == nil {
+		return
+	}
+
 	if career.Species == nil {
 		career.Species = []CareerSpecies{}
 	}
 
 	if career.Level1 == nil {
-		career.Level1 = NewCareerLevel()
+		career.Level1 = &CareerLevel{}
 	}
+	career.Level1.InitNilPointers()
 
 	if career.Level2 == nil {
-		career.Level2 = NewCareerLevel()
+		career.Level2 = &CareerLevel{}
 	}
+	career.Level2.InitNilPointers()
 
 	if career.Level3 == nil {
-		career.Level3 = NewCareerLevel()
+		career.Level3 = &CareerLevel{}
 	}
+	career.Level3.InitNilPointers()
 
 	if career.Level4 == nil {
-		career.Level4 = NewCareerLevel()
+		career.Level4 = &CareerLevel{}
 	}
+	career.Level4.InitNilPointers()
 
 	if career.Source == nil {
-		career.Source = NewSourceMap()
-	}
-}
-
-func NewCareer() *Career {
-	return &Career{
-		Species: []CareerSpecies{},
-		Level1:  NewCareerLevel(),
-		Level2:  NewCareerLevel(),
-		Level3:  NewCareerLevel(),
-		Level4:  NewCareerLevel(),
-		Source:  NewSourceMap(),
+		career.Source = map[Source]string{}
 	}
 }
 
@@ -103,11 +100,21 @@ func (careerLevel *CareerLevel) Copy() *CareerLevel {
 	}
 }
 
-func NewCareerLevel() *CareerLevel {
-	return &CareerLevel{
-		Attributes: []Attribute{},
-		Skills:     []string{},
-		Talents:    []string{},
+func (careerLevel *CareerLevel) InitNilPointers() {
+	if careerLevel == nil {
+		return
+	}
+
+	if careerLevel.Attributes == nil {
+		careerLevel.Attributes = []Attribute{}
+	}
+
+	if careerLevel.Skills == nil {
+		careerLevel.Skills = []string{}
+	}
+
+	if careerLevel.Talents == nil {
+		careerLevel.Talents = []string{}
 	}
 }
 

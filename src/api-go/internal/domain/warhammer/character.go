@@ -125,18 +125,49 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 	}
 }
 
-func NewCharacter() *Character {
-	return &Character{
-		EquippedItems:     []*IdNumber{},
-		CarriedItems:      []*IdNumber{},
-		StoredItems:       []*IdNumber{},
-		Skills:            []*IdNumber{},
-		Talents:           []*IdNumber{},
-		BaseAttributes:    NewAttributes(),
-		AttributeAdvances: NewAttributes(),
-		CareerPath:        []string{},
-		Spells:            []string{},
-		Mutations:         []string{},
+func (character *Character) InitNilPointers() {
+	if character == nil {
+		return
+	}
+
+	if character.EquippedItems == nil {
+		character.EquippedItems = []*IdNumber{}
+	}
+
+	if character.CarriedItems == nil {
+		character.CarriedItems = []*IdNumber{}
+	}
+
+	if character.StoredItems == nil {
+		character.StoredItems = []*IdNumber{}
+	}
+
+	if character.Skills == nil {
+		character.Skills = []*IdNumber{}
+	}
+
+	if character.Talents == nil {
+		character.Talents = []*IdNumber{}
+	}
+
+	if character.BaseAttributes == nil {
+		character.BaseAttributes = &Attributes{}
+	}
+
+	if character.AttributeAdvances == nil {
+		character.AttributeAdvances = &Attributes{}
+	}
+
+	if character.CareerPath == nil {
+		character.CareerPath = []string{}
+	}
+
+	if character.Spells == nil {
+		character.Spells = []string{}
+	}
+
+	if character.Mutations == nil {
+		character.Mutations = []string{}
 	}
 }
 
@@ -166,7 +197,10 @@ func idToWh(id string, allIdWhMap map[string]*Wh, whType WhType) *Wh {
 			return v.Copy()
 		}
 	}
-	return New(whType)
+
+	newWh := &Wh{}
+	newWh.InitNilPointers(whType)
+	return newWh
 }
 
 type IdNumber struct {
@@ -369,6 +403,86 @@ func copyWhNumberArray(input []*WhNumber) []*WhNumber {
 		output[i] = v.Copy()
 	}
 	return output
+}
+
+func (characterFull *CharacterFull) InitNilPointers() {
+	if characterFull == nil {
+		return
+	}
+
+	if characterFull.EquippedItems == nil {
+		characterFull.EquippedItems = []*WhNumber{}
+	}
+	initNilPointersInWhNumberList(characterFull.EquippedItems, WhTypeItem)
+
+	if characterFull.CarriedItems == nil {
+		characterFull.CarriedItems = []*WhNumber{}
+	}
+	initNilPointersInWhNumberList(characterFull.CarriedItems, WhTypeItem)
+
+	if characterFull.StoredItems == nil {
+		characterFull.StoredItems = []*WhNumber{}
+	}
+	initNilPointersInWhNumberList(characterFull.StoredItems, WhTypeItem)
+
+	if characterFull.Skills == nil {
+		characterFull.Skills = []*WhNumber{}
+	}
+	initNilPointersInWhNumberList(characterFull.Skills, WhTypeSkill)
+
+	if characterFull.Talents == nil {
+		characterFull.Talents = []*WhNumber{}
+	}
+	initNilPointersInWhNumberList(characterFull.Talents, WhTypeTalent)
+
+	if characterFull.BaseAttributes == nil {
+		characterFull.BaseAttributes = &Attributes{}
+	}
+
+	if characterFull.AttributeAdvances == nil {
+		characterFull.AttributeAdvances = &Attributes{}
+	}
+
+	if characterFull.CareerPath == nil {
+		characterFull.CareerPath = []*Wh{}
+	}
+	initNilPointersInWhList(characterFull.CareerPath, WhTypeCareer)
+
+	if characterFull.Spells == nil {
+		characterFull.Spells = []*Wh{}
+	}
+	initNilPointersInWhList(characterFull.Spells, WhTypeSpell)
+
+	if characterFull.Mutations == nil {
+		characterFull.Mutations = []*Wh{}
+	}
+	initNilPointersInWhList(characterFull.Mutations, WhTypeMutation)
+
+	if characterFull.Mutations == nil {
+		characterFull.Mutations = []*Wh{}
+	}
+
+	characterFull.Career.InitNilPointers(WhTypeCareer)
+}
+
+func initNilPointersInWhNumberList(list []*WhNumber, t WhType) {
+	if list == nil {
+		return
+	}
+	for _, v := range list {
+		if v == nil {
+			v.Wh.InitNilPointers(t)
+		}
+	}
+}
+
+func initNilPointersInWhList(list []*Wh, t WhType) {
+	if list == nil {
+		return
+	}
+	for _, v := range list {
+		v.InitNilPointers(t)
+	}
 }
 
 type WhNumber struct {

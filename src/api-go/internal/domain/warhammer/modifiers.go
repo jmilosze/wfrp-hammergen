@@ -24,12 +24,6 @@ func (modifiers *Modifiers) InitNilPointers() {
 	}
 
 	if modifiers.Attributes == nil {
-		modifiers.Attributes = NewAttributes()
-	} else {
-		modifiers.Attributes.InitNilPointers()
+		modifiers.Attributes = &Attributes{}
 	}
-}
-
-func NewModifiers() *Modifiers {
-	return &Modifiers{Attributes: NewAttributes()}
 }

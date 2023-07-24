@@ -63,7 +63,6 @@ var career1 = wh.Wh{
 	Object: &wh.Career{
 		Name:        "career 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Species:     []wh.CareerSpecies{wh.CareerSpeciesHuman},
 	},
 }
 

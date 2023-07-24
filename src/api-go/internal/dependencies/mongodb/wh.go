@@ -74,53 +74,53 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, CanEdit: false}
 	switch t {
 	case warhammer.WhTypeMutation:
-		mutation := warhammer.NewMutation()
+		mutation := warhammer.Mutation{}
 		if err = bson.Unmarshal(bsonRaw, &mutation); err != nil {
 			return nil, err
 		}
-		wh.Object = mutation
+		wh.Object = &mutation
 	case warhammer.WhTypeSpell:
-		spell := warhammer.NewSpell()
+		spell := warhammer.Spell{}
 		if err = bson.Unmarshal(bsonRaw, &spell); err != nil {
 			return nil, err
 		}
-		wh.Object = spell
+		wh.Object = &spell
 	case warhammer.WhTypeProperty:
-		property := warhammer.NewProperty()
+		property := warhammer.Property{}
 		if err = bson.Unmarshal(bsonRaw, &property); err != nil {
 			return nil, err
 		}
-		wh.Object = property
+		wh.Object = &property
 	case warhammer.WhTypeItem:
-		item := warhammer.NewItem()
+		item := warhammer.Item{}
 		if err = bson.Unmarshal(bsonRaw, &item); err != nil {
 			return nil, err
 		}
-		wh.Object = item
+		wh.Object = &item
 	case warhammer.WhTypeTalent:
-		talent := warhammer.NewTalent()
+		talent := warhammer.Talent{}
 		if err = bson.Unmarshal(bsonRaw, &talent); err != nil {
 			return nil, err
 		}
-		wh.Object = talent
+		wh.Object = &talent
 	case warhammer.WhTypeSkill:
-		skill := warhammer.NewSkill()
+		skill := warhammer.Skill{}
 		if err = bson.Unmarshal(bsonRaw, &skill); err != nil {
 			return nil, err
 		}
-		wh.Object = skill
+		wh.Object = &skill
 	case warhammer.WhTypeCareer:
-		career := warhammer.NewCareer()
+		career := warhammer.Career{}
 		if err = bson.Unmarshal(bsonRaw, &career); err != nil {
 			return nil, err
 		}
-		wh.Object = career
+		wh.Object = &career
 	case warhammer.WhTypeCharacter:
-		character := warhammer.NewCharacter()
+		character := warhammer.Character{}
 		if err = bson.Unmarshal(bsonRaw, &character); err != nil {
 			return nil, err
 		}
-		wh.Object = character
+		wh.Object = &character
 	default:
 		return nil, fmt.Errorf("invalid Wh type %s", t)
 	}

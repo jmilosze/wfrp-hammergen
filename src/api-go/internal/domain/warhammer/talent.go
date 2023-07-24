@@ -54,11 +54,3 @@ func (talent *Talent) InitNilPointers() {
 		talent.Source = map[Source]string{}
 	}
 }
-
-func NewTalent() *Talent {
-	return &Talent{
-		Modifiers: NewModifiers(),
-		Group:     []string{},
-		Source:    map[Source]string{},
-	}
-}

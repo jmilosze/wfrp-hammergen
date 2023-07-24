@@ -52,13 +52,6 @@ func (skill *Skill) InitNilPointers() {
 	}
 }
 
-func NewSkill() *Skill {
-	return &Skill{
-		Group:  []string{},
-		Source: map[Source]string{},
-	}
-}
-
 type SkillType int
 
 const (
