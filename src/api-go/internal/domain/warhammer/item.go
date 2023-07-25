@@ -60,26 +60,17 @@ func (item *Item) Copy() WhObject {
 }
 
 func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) (*ItemFull, error) {
+	if allProperties == nil {
+		return nil, errors.New("allProperties is nil")
+	}
+	if allSpells == nil {
+		return nil, errors.New("allSpells is nil")
+	}
 
-	allPropertyIdMap, err := whListToIdWhMap(allProperties)
-	if err != nil {
-		return nil, err
-	}
-	itemProperties, err := idListToWhList(item.Properties, allPropertyIdMap)
-	if err != nil {
-		return nil, err
-	}
+	itemProperties := idListToWhList(item.Properties, whListToIdWhMap(allProperties))
 
 	grimoire := &ItemGrimoireFull{}
-
-	allSpellIdMap, err := whListToIdWhMap(allSpells)
-	if err != nil {
-		return nil, err
-	}
-	grimoire.Spells, err = idListToWhList(item.Grimoire.Spells, allSpellIdMap)
-	if err != nil {
-		return nil, err
-	}
+	grimoire.Spells = idListToWhList(item.Grimoire.Spells, whListToIdWhMap(allSpells))
 
 	return &ItemFull{
 		Name:         item.Name,

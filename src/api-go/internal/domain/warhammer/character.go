@@ -84,68 +84,37 @@ func (character *Character) Copy() WhObject {
 }
 
 func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh, allSpells []*Wh, allCareers []*Wh) (*CharacterFull, error) {
-	allItemIdMap, err := whListToIdWhMap(allItems)
-	if err != nil {
-		return nil, err
+	if allItems == nil {
+		return nil, errors.New("allItems is nil")
 	}
-	equippedItems, err := idNumberListToWhNumberList(character.EquippedItems, allItemIdMap)
-	if err != nil {
-		return nil, err
+	if allSkills == nil {
+		return nil, errors.New("allSkills is nil")
 	}
-	carriedItems, err := idNumberListToWhNumberList(character.CarriedItems, allItemIdMap)
-	if err != nil {
-		return nil, err
+	if allTalents == nil {
+		return nil, errors.New("allTalents is nil")
 	}
-	storedItems, err := idNumberListToWhNumberList(character.StoredItems, allItemIdMap)
-	if err != nil {
-		return nil, err
+	if allMutations == nil {
+		return nil, errors.New("allMutations is nil")
 	}
-
-	allSkillIdMap, err := whListToIdWhMap(allSkills)
-	if err != nil {
-		return nil, err
+	if allSpells == nil {
+		return nil, errors.New("allSpells is nil")
 	}
-	skills, err := idNumberListToWhNumberList(character.Skills, allSkillIdMap)
-	if err != nil {
-		return nil, err
+	if allCareers == nil {
+		return nil, errors.New("allCareers is nil")
 	}
 
-	allTalentIdMap, err := whListToIdWhMap(allTalents)
-	if err != nil {
-		return nil, err
-	}
-	talents, err := idNumberListToWhNumberList(character.Talents, allTalentIdMap)
-	if err != nil {
-		return nil, err
-	}
+	allItemIdMap := whListToIdWhMap(allItems)
+	equippedItems := idNumberListToWhNumberList(character.EquippedItems, allItemIdMap)
+	carriedItems := idNumberListToWhNumberList(character.CarriedItems, allItemIdMap)
+	storedItems := idNumberListToWhNumberList(character.StoredItems, allItemIdMap)
 
-	allCareerIdMap, err := whListToIdWhMap(allCareers)
-	if err != nil {
-		return nil, err
-	}
-	careerPath, err := idListToWhList(character.CareerPath, allCareerIdMap)
-	if err != nil {
-		return nil, err
-	}
+	skills := idNumberListToWhNumberList(character.Skills, whListToIdWhMap(allSkills))
+	talents := idNumberListToWhNumberList(character.Talents, whListToIdWhMap(allTalents))
+	spells := idListToWhList(character.Spells, whListToIdWhMap(allSpells))
+	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
 
-	allSpellIdMap, err := whListToIdWhMap(allSpells)
-	if err != nil {
-		return nil, err
-	}
-	spells, err := idListToWhList(character.Spells, allSpellIdMap)
-	if err != nil {
-		return nil, err
-	}
-
-	allMutationIdMap, err := whListToIdWhMap(allMutations)
-	if err != nil {
-		return nil, err
-	}
-	mutations, err := idListToWhList(character.Mutations, allMutationIdMap)
-	if err != nil {
-		return nil, err
-	}
-
+	allCareerIdMap := whListToIdWhMap(allCareers)
+	careerPath := idListToWhList(character.CareerPath, allCareerIdMap)
 	career, err := idToWh(character.Career, allCareerIdMap)
 	if err != nil {
 		return nil, err
@@ -257,13 +226,9 @@ func (character *Character) InitNilPointers() error {
 	return nil
 }
 
-func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]*Wh) ([]*WhNumber, error) {
-	if allIdWhMap == nil {
-		return nil, errors.New("allIdWhMap is nil")
-	}
-
+func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]*Wh) []*WhNumber {
 	if idNumberList == nil {
-		return nil, errors.New("idNumberList is nil")
+		return nil
 	}
 
 	whNumberList := make([]*WhNumber, 0)
@@ -274,7 +239,7 @@ func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]
 		}
 	}
 
-	return whNumberList, nil
+	return whNumberList
 }
 
 func idToWh(id string, allIdWhMap map[string]*Wh) (*Wh, error) {
