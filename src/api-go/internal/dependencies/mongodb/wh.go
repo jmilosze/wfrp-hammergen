@@ -3,7 +3,6 @@ package mongodb
 import (
 	"context"
 	"errors"
-	"fmt"
 	d "github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"go.mongodb.org/mongo-driver/bson"
@@ -72,57 +71,10 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 	}
 
 	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, CanEdit: false}
-	switch t {
-	case warhammer.WhTypeMutation:
-		mutation := warhammer.Mutation{}
-		if err = bson.Unmarshal(bsonRaw, &mutation); err != nil {
-			return nil, err
-		}
-		wh.Object = &mutation
-	case warhammer.WhTypeSpell:
-		spell := warhammer.Spell{}
-		if err = bson.Unmarshal(bsonRaw, &spell); err != nil {
-			return nil, err
-		}
-		wh.Object = &spell
-	case warhammer.WhTypeProperty:
-		property := warhammer.Property{}
-		if err = bson.Unmarshal(bsonRaw, &property); err != nil {
-			return nil, err
-		}
-		wh.Object = &property
-	case warhammer.WhTypeItem:
-		item := warhammer.Item{}
-		if err = bson.Unmarshal(bsonRaw, &item); err != nil {
-			return nil, err
-		}
-		wh.Object = &item
-	case warhammer.WhTypeTalent:
-		talent := warhammer.Talent{}
-		if err = bson.Unmarshal(bsonRaw, &talent); err != nil {
-			return nil, err
-		}
-		wh.Object = &talent
-	case warhammer.WhTypeSkill:
-		skill := warhammer.Skill{}
-		if err = bson.Unmarshal(bsonRaw, &skill); err != nil {
-			return nil, err
-		}
-		wh.Object = &skill
-	case warhammer.WhTypeCareer:
-		career := warhammer.Career{}
-		if err = bson.Unmarshal(bsonRaw, &career); err != nil {
-			return nil, err
-		}
-		wh.Object = &career
-	case warhammer.WhTypeCharacter:
-		character := warhammer.Character{}
-		if err = bson.Unmarshal(bsonRaw, &character); err != nil {
-			return nil, err
-		}
-		wh.Object = &character
-	default:
-		return nil, fmt.Errorf("invalid Wh type %s", t)
+	wh.Object = warhammer.NewWhObject(t)
+
+	if err = bson.Unmarshal(bsonRaw, wh.Object); err != nil {
+		return nil, err
 	}
 
 	return &wh, nil
