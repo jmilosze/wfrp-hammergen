@@ -29,6 +29,9 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	newWh := w.Copy()
+	if err := newWh.InitNilPointers(); err != nil {
+		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: err}
+	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
@@ -72,6 +75,9 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	newWh := w.Copy()
+	if err := newWh.InitNilPointers(); err != nil {
+		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: err}
+	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
