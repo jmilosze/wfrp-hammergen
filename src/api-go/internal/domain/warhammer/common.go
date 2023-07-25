@@ -1,6 +1,7 @@
 package warhammer
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -50,20 +51,20 @@ func copyWhArray(input []*Wh) []*Wh {
 	return output
 }
 
-func whListToIdWhMap(allWh []*Wh) map[string]*Wh {
-	if allWh == nil {
-		return nil
+func whListToIdWhMap(whList []*Wh) (map[string]*Wh, error) {
+	if whList == nil {
+		return nil, errors.New("whList is nil")
 	}
 	allWhMap := make(map[string]*Wh, 0)
-	for _, v := range allWh {
+	for _, v := range whList {
 		allWhMap[v.Id] = v
 	}
-	return allWhMap
+	return allWhMap, nil
 }
 
-func idListToWhList(idList []string, allIdWhMap map[string]*Wh) []*Wh {
+func idListToWhList(idList []string, allIdWhMap map[string]*Wh) ([]*Wh, error) {
 	if idList == nil {
-		return nil
+		return nil, errors.New("idList is nil")
 	}
 
 	whList := make([]*Wh, 0)
@@ -73,5 +74,5 @@ func idListToWhList(idList []string, allIdWhMap map[string]*Wh) []*Wh {
 			whList = append(whList, wh.Copy())
 		}
 	}
-	return whList
+	return whList, nil
 }

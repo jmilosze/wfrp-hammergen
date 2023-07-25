@@ -206,9 +206,13 @@ func (character *Character) InitNilPointers() error {
 	return nil
 }
 
-func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]*Wh) []*WhNumber {
+func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]*Wh) ([]*WhNumber, error) {
+	if allIdWhMap == nil {
+		return nil, errors.New("allIdWhMap is nil")
+	}
+
 	if idNumberList == nil {
-		return nil
+		return nil, errors.New("idNumberList is nil")
 	}
 
 	whNumberList := make([]*WhNumber, 0)
@@ -219,10 +223,14 @@ func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]
 		}
 	}
 
-	return whNumberList
+	return whNumberList, nil
 }
 
 func idToWh(id string, allIdWhMap map[string]*Wh) (*Wh, error) {
+	if allIdWhMap == nil {
+		return nil, errors.New("allIdWhMap is nil")
+	}
+
 	wh, ok := allIdWhMap[id]
 	if ok {
 		return wh.Copy(), nil
