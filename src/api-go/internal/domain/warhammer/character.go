@@ -84,18 +84,69 @@ func (character *Character) Copy() WhObject {
 }
 
 func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh, allSpells []*Wh, allCareers []*Wh) (*CharacterFull, error) {
-	allItemIdMap := whListToIdWhMap(allItems)
+	allItemIdMap, err := whListToIdWhMap(allItems)
+	if err != nil {
+		return nil, err
+	}
+	equippedItems, err := idNumberListToWhNumberList(character.EquippedItems, allItemIdMap)
+	if err != nil {
+		return nil, err
+	}
+	carriedItems, err := idNumberListToWhNumberList(character.CarriedItems, allItemIdMap)
+	if err != nil {
+		return nil, err
+	}
+	storedItems, err := idNumberListToWhNumberList(character.StoredItems, allItemIdMap)
+	if err != nil {
+		return nil, err
+	}
 
-	equippedItems := idNumberListToWhNumberList(character.EquippedItems, allItemIdMap)
-	carriedItems := idNumberListToWhNumberList(character.CarriedItems, allItemIdMap)
-	storedItems := idNumberListToWhNumberList(character.StoredItems, allItemIdMap)
+	allSkillIdMap, err := whListToIdWhMap(allSkills)
+	if err != nil {
+		return nil, err
+	}
+	skills, err := idNumberListToWhNumberList(character.Skills, allSkillIdMap)
+	if err != nil {
+		return nil, err
+	}
 
-	skills := idNumberListToWhNumberList(character.Skills, whListToIdWhMap(allSkills))
-	talents := idNumberListToWhNumberList(character.Talents, whListToIdWhMap(allTalents))
-	careerPath := idListToWhList(character.CareerPath, whListToIdWhMap(allCareers))
-	spells := idListToWhList(character.Spells, whListToIdWhMap(allSpells))
-	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
-	career, err := idToWh(character.Career, whListToIdWhMap(allCareers))
+	allTalentIdMap, err := whListToIdWhMap(allTalents)
+	if err != nil {
+		return nil, err
+	}
+	talents, err := idNumberListToWhNumberList(character.Talents, allTalentIdMap)
+	if err != nil {
+		return nil, err
+	}
+
+	allCareerIdMap, err := whListToIdWhMap(allCareers)
+	if err != nil {
+		return nil, err
+	}
+	careerPath, err := idListToWhList(character.CareerPath, allCareerIdMap)
+	if err != nil {
+		return nil, err
+	}
+
+	allSpellIdMap, err := whListToIdWhMap(allSpells)
+	if err != nil {
+		return nil, err
+	}
+	spells, err := idListToWhList(character.Spells, allSpellIdMap)
+	if err != nil {
+		return nil, err
+	}
+
+	allMutationIdMap, err := whListToIdWhMap(allMutations)
+	if err != nil {
+		return nil, err
+	}
+	mutations, err := idListToWhList(character.Mutations, allMutationIdMap)
+	if err != nil {
+		return nil, err
+	}
+
+	career, err := idToWh(character.Career, allCareerIdMap)
 	if err != nil {
 		return nil, err
 	}

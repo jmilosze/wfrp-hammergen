@@ -59,12 +59,27 @@ func (item *Item) Copy() WhObject {
 	}
 }
 
-func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) *ItemFull {
+func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) (*ItemFull, error) {
 
-	itemProperties := idListToWhList(item.Properties, whListToIdWhMap(allProperties))
+	allPropertyIdMap, err := whListToIdWhMap(allProperties)
+	if err != nil {
+		return nil, err
+	}
+	itemProperties, err := idListToWhList(item.Properties, allPropertyIdMap)
+	if err != nil {
+		return nil, err
+	}
 
 	grimoire := &ItemGrimoireFull{}
-	grimoire.Spells = idListToWhList(item.Grimoire.Spells, whListToIdWhMap(allSpells))
+
+	allSpellIdMap, err := whListToIdWhMap(allSpells)
+	if err != nil {
+		return nil, err
+	}
+	grimoire.Spells, err = idListToWhList(item.Grimoire.Spells, allSpellIdMap)
+	if err != nil {
+		return nil, err
+	}
 
 	return &ItemFull{
 		Name:         item.Name,
@@ -84,7 +99,7 @@ func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) *ItemFull {
 		Container:  item.Container.Copy(),
 		Grimoire:   grimoire,
 		Other:      item.Other.Copy(),
-	}
+	}, nil
 }
 
 func (item *Item) InitNilPointers() error {

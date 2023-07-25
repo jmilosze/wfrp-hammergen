@@ -199,8 +199,12 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 		if !ok {
 			continue
 		}
+		var err error
 		fullItem := v.CopyHeaders()
-		fullItem.Object = item.ToFull(allProperties, allSpells)
+		fullItem.Object, err = item.ToFull(allProperties, allSpells)
+		if err != nil {
+			continue
+		}
 		fullItems = append(fullItems, fullItem)
 	}
 
