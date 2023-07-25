@@ -234,19 +234,15 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 		var whMap bson.M
 		err := cur.Decode(&whMap)
 		if err != nil {
-			return nil, d.CreateDbError(d.DbInternalError, err)
+			continue
 		}
 
 		wh, err := bsonMToWh(whMap, t)
 		if err != nil {
-			return nil, d.CreateDbError(d.DbInternalError, err)
+			continue
 		}
 
 		whList = append(whList, wh)
-	}
-
-	if len(whIds) != 0 && len(whList) != len(whIds) {
-		return nil, d.CreateDbError(d.DbNotFoundError, errors.New("some of the ids not found"))
 	}
 
 	return whList, nil

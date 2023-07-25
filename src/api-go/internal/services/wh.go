@@ -110,18 +110,13 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 	return nil
 }
 
-func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, whIds []string) ([]*wh.Wh, *wh.WhError) {
+func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, whIds []string) ([]*wh.Wh, *wh.WhError) {
 	users := []string{"admin", c.Id}
 
 	whs, dbErr := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, whIds)
 
 	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: dbErr}
-		default:
-			return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
-		}
+		return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
 	}
 
 	if full {
@@ -136,11 +131,19 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		}
 	}
 
-	whsRet := make([]*wh.Wh, len(whs))
+	whsRet := make([]*wh.Wh, 0)
 
-	for k, v := range whs {
-		whsRet[k] = v.Copy()
-		whsRet[k].CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
+	for _, v := range whs {
+		err := v.InitNilPointers()
+		if err != nil {
+			continue
+		}
+		v.CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
+		whsRet = append(whsRet, v)
+	}
+
+	if errIfNotFound && len(whIds) != 0 && len(whsRet) != len(whIds) {
+		return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: errors.New("not all id found")}
 	}
 
 	return whsRet, nil
@@ -165,14 +168,14 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	var propertyWhErr *wh.WhError
 	go func() {
 		defer wg.Done()
-		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, allPropertyIds)
+		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, false, allPropertyIds)
 	}()
 
 	var allSpells []*wh.Wh
 	var spellWhErr *wh.WhError
 	go func() {
 		defer wg.Done()
-		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, allSpellIds)
+		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, false, allSpellIds)
 	}()
 
 	wg.Wait()
@@ -262,7 +265,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		v := components[k]
 		go func() {
 			defer wg.Done()
-			v.wh, v.err = whService.Get(ctx, k, claims, v.full, v.ids)
+			v.wh, v.err = whService.Get(ctx, k, claims, v.full, false, v.ids)
 		}()
 	}
 

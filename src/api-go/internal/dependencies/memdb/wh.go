@@ -139,7 +139,7 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, users []
 	for obj := it.Next(); obj != nil; obj = it.Next() {
 		wh, ok := obj.(*warhammer.Wh)
 		if !ok {
-			return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate wh from raw %v", obj)}
+			continue
 		}
 		if slices.Contains(whIds, wh.Id) || len(whIds) == 0 {
 			isShared, err := wh.IsShared()
@@ -151,10 +151,6 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, users []
 				whs = append(whs, wh.Copy())
 			}
 		}
-	}
-
-	if len(whIds) != 0 && len(whs) != len(whIds) {
-		return nil, domain.CreateDbError(domain.DbNotFoundError, errors.New("some of the ids not found"))
 	}
 
 	return whs, nil

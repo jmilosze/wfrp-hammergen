@@ -157,7 +157,7 @@ func whGetHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) 
 			full = true
 		}
 
-		wh, whErr := s.Get(c.Request.Context(), t, claims, full, []string{whId})
+		wh, whErr := s.Get(c.Request.Context(), t, claims, full, true, []string{whId})
 
 		if whErr != nil {
 			log.Println("error handling get wh", whErr)
@@ -227,7 +227,7 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 			full = true
 		}
 
-		whs, whErr := s.Get(c.Request.Context(), t, claims, full, ids)
+		whs, whErr := s.Get(c.Request.Context(), t, claims, full, true, ids)
 
 		if whErr != nil {
 			log.Println("error handling list wh", whErr)
