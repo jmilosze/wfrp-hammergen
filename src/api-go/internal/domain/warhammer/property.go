@@ -31,7 +31,7 @@ func (property *Property) Copy() WhObject {
 		Name:         property.Name,
 		Description:  property.Description,
 		Type:         property.Type,
-		ApplicableTo: append([]ItemType(nil), property.ApplicableTo...),
+		ApplicableTo: copyArray(property.ApplicableTo),
 		Shared:       property.Shared,
 		Source:       copySourceMap(property.Source),
 	}

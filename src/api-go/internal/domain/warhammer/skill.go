@@ -37,7 +37,7 @@ func (skill *Skill) Copy() WhObject {
 		Type:        skill.Type,
 		IsGroup:     skill.IsGroup,
 		DisplayZero: skill.DisplayZero,
-		Group:       append([]string(nil), skill.Group...),
+		Group:       copyArray(skill.Group),
 		Shared:      skill.Shared,
 		Source:      copySourceMap(skill.Source),
 	}

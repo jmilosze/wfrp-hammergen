@@ -35,7 +35,7 @@ func (career *Career) Copy() WhObject {
 		Name:        career.Name,
 		Description: career.Description,
 		Class:       career.Class,
-		Species:     append([]CareerSpecies(nil), career.Species...),
+		Species:     copyArray(career.Species),
 		Level1:      career.Level1.Copy(),
 		Level2:      career.Level2.Copy(),
 		Level3:      career.Level3.Copy(),
@@ -112,9 +112,9 @@ func (careerLevel *CareerLevel) Copy() *CareerLevel {
 		Name:       careerLevel.Name,
 		Status:     careerLevel.Status,
 		Standing:   careerLevel.Standing,
-		Attributes: append([]Attribute(nil), careerLevel.Attributes...),
-		Skills:     append([]string(nil), careerLevel.Skills...),
-		Talents:    append([]string(nil), careerLevel.Talents...),
+		Attributes: copyArray(careerLevel.Attributes),
+		Skills:     copyArray(careerLevel.Skills),
+		Talents:    copyArray(careerLevel.Talents),
 		Items:      careerLevel.Items,
 	}
 }

@@ -44,7 +44,7 @@ func (item *Item) Copy() WhObject {
 		Price:        item.Price,
 		Enc:          item.Enc,
 		Availability: item.Availability,
-		Properties:   append([]string(nil), item.Properties...),
+		Properties:   copyArray(item.Properties),
 		Type:         item.Type,
 		Shared:       item.Shared,
 		Source:       copySourceMap(item.Source),
@@ -218,7 +218,7 @@ func (itemArmour *ItemArmour) Copy() *ItemArmour {
 
 	return &ItemArmour{
 		Points:   itemArmour.Points,
-		Location: append([]ItemArmourLocation(nil), itemArmour.Location...),
+		Location: copyArray(itemArmour.Location),
 		Group:    itemArmour.Group,
 	}
 }
@@ -261,7 +261,7 @@ func (itemGrimoire *ItemGrimoire) Copy() *ItemGrimoire {
 	}
 
 	return &ItemGrimoire{
-		Spells: append([]string(nil), itemGrimoire.Spells...),
+		Spells: copyArray(itemGrimoire.Spells),
 	}
 }
 

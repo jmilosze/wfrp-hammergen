@@ -62,7 +62,7 @@ func (character *Character) Copy() WhObject {
 		Species:           character.Species,
 		BaseAttributes:    character.BaseAttributes.Copy(),
 		AttributeAdvances: character.AttributeAdvances.Copy(),
-		CareerPath:        append([]string(nil), character.CareerPath...),
+		CareerPath:        copyArray(character.CareerPath),
 		Career:            character.Career,
 		Fate:              character.Fate,
 		Fortune:           character.Fortune,
@@ -75,10 +75,10 @@ func (character *Character) Copy() WhObject {
 		Brass:             character.Brass,
 		Silver:            character.Silver,
 		Gold:              character.Gold,
-		Spells:            append([]string(nil), character.Spells...),
+		Spells:            copyArray(character.Spells),
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
-		Mutations:         append([]string(nil), character.Mutations...),
+		Mutations:         copyArray(character.Mutations),
 		Shared:            character.Shared,
 	}
 }

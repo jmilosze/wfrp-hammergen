@@ -31,6 +31,13 @@ func formatStringValues[T ~string](list []T) string {
 	return strings.Join(values, " ")
 }
 
+func copyArray[T any](arr []T) []T {
+	if arr != nil && len(arr) == 0 {
+		return make([]T, 0)
+	}
+	return append([]T(nil), arr...)
+}
+
 func copyWhArray(input []*Wh) []*Wh {
 	if input == nil {
 		return nil

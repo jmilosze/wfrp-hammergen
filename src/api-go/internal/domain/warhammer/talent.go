@@ -1,6 +1,8 @@
 package warhammer
 
-import "errors"
+import (
+	"errors"
+)
 
 type Talent struct {
 	Name        string            `json:"name" validate:"name_valid"`
@@ -36,7 +38,7 @@ func (talent *Talent) Copy() WhObject {
 		Attribute:   talent.Attribute,
 		IsGroup:     talent.IsGroup,
 		Modifiers:   talent.Modifiers.Copy(),
-		Group:       append([]string(nil), talent.Group...),
+		Group:       copyArray(talent.Group),
 		Shared:      talent.Shared,
 		Source:      copySourceMap(talent.Source),
 	}
