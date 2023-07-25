@@ -125,20 +125,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
 	}
 
-	if full {
-		var whErr *wh.WhError
-		if t == wh.WhTypeItem {
-			whs, whErr = retrieveFullItems(ctx, s, c, whs)
-		} else if t == wh.WhTypeCharacter {
-			whs, whErr = retrieveFullCharacters(ctx, s, c, whs)
-		}
-		if whErr != nil {
-			return nil, whErr
-		}
-	}
-
 	whsRet := make([]*wh.Wh, 0)
-
 	for _, v := range whs {
 		err := v.InitNilPointers()
 		if err != nil {
@@ -146,6 +133,18 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		}
 		v.CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 		whsRet = append(whsRet, v)
+	}
+
+	if full {
+		var whErr *wh.WhError
+		if t == wh.WhTypeItem {
+			whsRet, whErr = retrieveFullItems(ctx, s, c, whsRet)
+		} else if t == wh.WhTypeCharacter {
+			whsRet, whErr = retrieveFullCharacters(ctx, s, c, whsRet)
+		}
+		if whErr != nil {
+			return nil, whErr
+		}
 	}
 
 	if errIfNotFound && len(whIds) != 0 && len(whsRet) != len(whIds) {
@@ -186,20 +185,23 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 
 	wg.Wait()
 
-	if propertyWhErr != nil && propertyWhErr.ErrType != wh.NotFoundError {
+	if propertyWhErr != nil {
 		return nil, propertyWhErr
 	}
 
-	if spellWhErr != nil && spellWhErr.ErrType != wh.NotFoundError {
+	if spellWhErr != nil {
 		return nil, spellWhErr
 	}
 
-	fullItems := make([]*wh.Wh, len(items))
-	for k, v := range items {
-		item := v.Object.(*wh.Item)
+	fullItems := make([]*wh.Wh, 0)
+	for _, v := range items {
+		item, ok := v.Object.(*wh.Item)
+		if !ok {
+			continue
+		}
 		fullItem := v.CopyHeaders()
 		fullItem.Object = item.ToFull(allProperties, allSpells)
-		fullItems[k] = fullItem
+		fullItems = append(fullItems, fullItem)
 	}
 
 	return fullItems, nil
@@ -278,14 +280,17 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	wg.Wait()
 
 	for _, v := range components {
-		if v.err != nil && v.err.ErrType != wh.NotFoundError {
+		if v.err != nil {
 			return nil, v.err
 		}
 	}
 
-	fullCharacters := make([]*wh.Wh, len(characters))
-	for k, v := range characters {
-		character := v.Object.(*wh.Character)
+	fullCharacters := make([]*wh.Wh, 0)
+	for _, v := range characters {
+		character, ok := v.Object.(*wh.Character)
+		if !ok {
+			continue
+		}
 		fullCharacter := v.CopyHeaders()
 		var err error
 		fullCharacter.Object, err = character.ToFull(
@@ -296,8 +301,9 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 			components[wh.WhTypeSpell].wh,
 			components[wh.WhTypeCareer].wh)
 		if err != nil {
-			fullCharacters[k] = fullCharacter
+			continue
 		}
+		fullCharacters = append(fullCharacters, fullCharacter)
 	}
 
 	return fullCharacters, nil
