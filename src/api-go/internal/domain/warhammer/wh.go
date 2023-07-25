@@ -80,7 +80,7 @@ func (w *Wh) IsShared() (bool, error) {
 		return false, errors.New("wh.object is nil")
 	}
 
-	return w.Object.IsShared(), nil
+	return w.Object.IsShared()
 }
 
 func NewWhObject(t WhType) WhObject {

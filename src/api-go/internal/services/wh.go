@@ -278,14 +278,17 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	for k, v := range characters {
 		character := v.Object.(*wh.Character)
 		fullCharacter := v.CopyHeaders()
-		fullCharacter.Object = character.ToFull(
+		var err error
+		fullCharacter.Object, err = character.ToFull(
 			components[wh.WhTypeItem].wh,
 			components[wh.WhTypeSkill].wh,
 			components[wh.WhTypeTalent].wh,
 			components[wh.WhTypeMutation].wh,
 			components[wh.WhTypeSpell].wh,
 			components[wh.WhTypeCareer].wh)
-		fullCharacters[k] = fullCharacter
+		if err != nil {
+			fullCharacters[k] = fullCharacter
+		}
 	}
 
 	return fullCharacters, nil

@@ -83,7 +83,7 @@ func (character *Character) Copy() WhObject {
 	}
 }
 
-func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh, allSpells []*Wh, allCareers []*Wh) *CharacterFull {
+func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh, allSpells []*Wh, allCareers []*Wh) (*CharacterFull, error) {
 	allItemIdMap := whListToIdWhMap(allItems)
 
 	equippedItems := idNumberListToWhNumberList(character.EquippedItems, allItemIdMap)
@@ -95,7 +95,10 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 	careerPath := idListToWhList(character.CareerPath, whListToIdWhMap(allCareers))
 	spells := idListToWhList(character.Spells, whListToIdWhMap(allSpells))
 	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
-	career := idToWh(character.Career, whListToIdWhMap(allCareers), WhTypeCareer)
+	career, err := idToWh(character.Career, whListToIdWhMap(allCareers))
+	if err != nil {
+		return nil, err
+	}
 
 	return &CharacterFull{
 		Name:              character.Name,
@@ -127,32 +130,57 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 		Corruption:        character.Corruption,
 		Mutations:         mutations,
 		Shared:            character.Shared,
-	}
+	}, nil
 }
 
-func (character *Character) InitNilPointers() {
+func (character *Character) InitNilPointers() error {
 	if character == nil {
-		return
+		return errors.New("character pointer is nil")
 	}
 
 	if character.EquippedItems == nil {
 		character.EquippedItems = []*IdNumber{}
 	}
+	for _, v := range character.EquippedItems {
+		if v == nil {
+			return errors.New("equipped items idNumber pointer is nil")
+		}
+	}
 
 	if character.CarriedItems == nil {
 		character.CarriedItems = []*IdNumber{}
+	}
+	for _, v := range character.CarriedItems {
+		if v == nil {
+			return errors.New("carried items idNumber pointer is nil")
+		}
 	}
 
 	if character.StoredItems == nil {
 		character.StoredItems = []*IdNumber{}
 	}
+	for _, v := range character.StoredItems {
+		if v == nil {
+			return errors.New("stored items idNumber pointer is nil")
+		}
+	}
 
 	if character.Skills == nil {
 		character.Skills = []*IdNumber{}
 	}
+	for _, v := range character.Skills {
+		if v == nil {
+			return errors.New("skills idNumber pointer is nil")
+		}
+	}
 
 	if character.Talents == nil {
 		character.Talents = []*IdNumber{}
+	}
+	for _, v := range character.Talents {
+		if v == nil {
+			return errors.New("talents idNumber pointer is nil")
+		}
 	}
 
 	if character.BaseAttributes == nil {
@@ -174,6 +202,8 @@ func (character *Character) InitNilPointers() {
 	if character.Mutations == nil {
 		character.Mutations = []string{}
 	}
+
+	return nil
 }
 
 func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]*Wh) []*WhNumber {
@@ -192,20 +222,18 @@ func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]
 	return whNumberList
 }
 
-func idToWh(id string, allIdWhMap map[string]*Wh, whType WhType) *Wh {
+func idToWh(id string, allIdWhMap map[string]*Wh) (*Wh, error) {
 	wh, ok := allIdWhMap[id]
 	if ok {
-		return wh.Copy()
+		return wh.Copy(), nil
 	}
 	if len(allIdWhMap) > 0 {
 		for _, v := range allIdWhMap {
-			return v.Copy()
+			return v.Copy(), nil
 		}
 	}
 
-	newWh := &Wh{}
-	newWh.InitNilPointers(whType)
-	return newWh
+	return nil, errors.New("no careers in allIdWhMap")
 }
 
 type IdNumber struct {
@@ -414,35 +442,50 @@ func copyWhNumberArray(input []*WhNumber) []*WhNumber {
 	return output
 }
 
-func (characterFull *CharacterFull) InitNilPointers() {
+func (characterFull *CharacterFull) InitNilPointers() error {
 	if characterFull == nil {
-		return
+		return errors.New("characterFull pointer is nil")
 	}
 
 	if characterFull.EquippedItems == nil {
 		characterFull.EquippedItems = []*WhNumber{}
 	}
-	initNilPointersInWhNumberList(characterFull.EquippedItems, WhTypeItem)
+	err := initNilPointersInWhNumberList(characterFull.EquippedItems, WhTypeItem)
+	if err != nil {
+		return err
+	}
 
 	if characterFull.CarriedItems == nil {
 		characterFull.CarriedItems = []*WhNumber{}
 	}
-	initNilPointersInWhNumberList(characterFull.CarriedItems, WhTypeItem)
+	err = initNilPointersInWhNumberList(characterFull.CarriedItems, WhTypeItem)
+	if err != nil {
+		return err
+	}
 
 	if characterFull.StoredItems == nil {
 		characterFull.StoredItems = []*WhNumber{}
 	}
-	initNilPointersInWhNumberList(characterFull.StoredItems, WhTypeItem)
+	err = initNilPointersInWhNumberList(characterFull.StoredItems, WhTypeItem)
+	if err != nil {
+		return err
+	}
 
 	if characterFull.Skills == nil {
 		characterFull.Skills = []*WhNumber{}
 	}
-	initNilPointersInWhNumberList(characterFull.Skills, WhTypeSkill)
+	err = initNilPointersInWhNumberList(characterFull.Skills, WhTypeSkill)
+	if err != nil {
+		return err
+	}
 
 	if characterFull.Talents == nil {
 		characterFull.Talents = []*WhNumber{}
 	}
-	initNilPointersInWhNumberList(characterFull.Talents, WhTypeTalent)
+	err = initNilPointersInWhNumberList(characterFull.Talents, WhTypeTalent)
+	if err != nil {
+		return err
+	}
 
 	if characterFull.BaseAttributes == nil {
 		characterFull.BaseAttributes = &Attributes{}
@@ -455,43 +498,51 @@ func (characterFull *CharacterFull) InitNilPointers() {
 	if characterFull.CareerPath == nil {
 		characterFull.CareerPath = []*Wh{}
 	}
-	initNilPointersInWhList(characterFull.CareerPath, WhTypeCareer)
+	err = initNilPointersInWhList(characterFull.CareerPath)
+	if err != nil {
+		return err
+	}
 
 	if characterFull.Spells == nil {
 		characterFull.Spells = []*Wh{}
 	}
-	initNilPointersInWhList(characterFull.Spells, WhTypeSpell)
+	err = initNilPointersInWhList(characterFull.Spells)
+	if err != nil {
+		return err
+	}
 
 	if characterFull.Mutations == nil {
 		characterFull.Mutations = []*Wh{}
 	}
-	initNilPointersInWhList(characterFull.Mutations, WhTypeMutation)
-
-	if characterFull.Mutations == nil {
-		characterFull.Mutations = []*Wh{}
+	err = initNilPointersInWhList(characterFull.Mutations)
+	if err != nil {
+		return err
 	}
 
-	characterFull.Career.InitNilPointers(WhTypeCareer)
+	return characterFull.Career.InitNilPointers()
 }
 
-func initNilPointersInWhNumberList(list []*WhNumber, t WhType) {
-	if list == nil {
-		return
-	}
+func initNilPointersInWhNumberList(list []*WhNumber, t WhType) error {
 	for _, v := range list {
 		if v == nil {
-			v.Wh.InitNilPointers(t)
+			return errors.New(fmt.Sprintf("%s idWh pointer is nil", t))
+		}
+		err := v.Wh.InitNilPointers()
+		if err != nil {
+			return err
 		}
 	}
+	return nil
 }
 
-func initNilPointersInWhList(list []*Wh, t WhType) {
-	if list == nil {
-		return
-	}
+func initNilPointersInWhList(list []*Wh) error {
 	for _, v := range list {
-		v.InitNilPointers(t)
+		err := v.InitNilPointers()
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 type WhNumber struct {
