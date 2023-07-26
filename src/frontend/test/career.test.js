@@ -3,48 +3,50 @@ import { CareerApi, compareCareer } from "../src/services/wh/career";
 
 const career1ApiForm = {
   id: "id1",
-  name: "career1",
-  description: "desc1",
-  species: [0, 1],
-  class: 1,
-  can_edit: true,
-  shared: false,
-  source: { 1: "page 2", 3: "page 5-10" },
-  level_1: {
-    name: "c1",
-    status: 1,
-    standing: 1,
-    attributes: [1, 2],
-    skills: ["s11", "s12"],
-    talents: ["t11", "t12"],
-    items: "items1",
-  },
-  level_2: {
-    name: "c2",
-    status: 2,
-    standing: 2,
-    attributes: [3, 4],
-    skills: ["s21", "s22"],
-    talents: ["t21", "t22"],
-    items: "items2",
-  },
-  level_3: {
-    name: "c3",
-    status: 3,
-    standing: 3,
-    attributes: [5, 6],
-    skills: ["s31", "s32"],
-    talents: ["t31", "t32"],
-    items: "items3",
-  },
-  level_4: {
-    name: "c4",
-    status: 4,
-    standing: 4,
-    attributes: [7, 8],
-    skills: ["s41", "s42"],
-    talents: ["t41", "t42"],
-    items: "items4",
+  canEdit: true,
+  object: {
+    name: "career1",
+    description: "desc1",
+    species: [0, 1],
+    class: 1,
+    shared: false,
+    source: { 1: "page 2", 3: "page 5-10" },
+    level1: {
+      name: "c1",
+      status: 1,
+      standing: 1,
+      attributes: [1, 2],
+      skills: ["s11", "s12"],
+      talents: ["t11", "t12"],
+      items: "items1",
+    },
+    level2: {
+      name: "c2",
+      status: 2,
+      standing: 2,
+      attributes: [3, 4],
+      skills: ["s21", "s22"],
+      talents: ["t21", "t22"],
+      items: "items2",
+    },
+    level3: {
+      name: "c3",
+      status: 3,
+      standing: 3,
+      attributes: [5, 6],
+      skills: ["s31", "s32"],
+      talents: ["t31", "t32"],
+      items: "items3",
+    },
+    level4: {
+      name: "c4",
+      status: 4,
+      standing: 4,
+      attributes: [7, 8],
+      skills: ["s41", "s42"],
+      talents: ["t41", "t42"],
+      items: "items4",
+    },
   },
 };
 
@@ -97,32 +99,34 @@ const career1ModelForm = {
 
 const career2ApiForm = {
   id: "id2",
-  name: "career2",
-  description: "desc2",
-  species: [0],
-  class: 3,
-  can_edit: false,
-  shared: true,
-  source: {},
-  level_1: { name: "c2l1", status: 0, standing: 0, attributes: [], skills: [], talents: [], items: "" },
-  level_2: { name: "c2l2", status: 0, standing: 0, attributes: [], skills: [], talents: [], items: "" },
-  level_3: {
-    name: "c2l3",
-    status: 1,
-    standing: 1,
-    attributes: [1, 2, 5],
-    skills: ["a", "s", "d"],
-    talents: ["q", "w", "e"],
-    items: "items11",
-  },
-  level_4: {
-    name: "c2l4",
-    status: 2,
-    standing: 2,
-    attributes: [1, 2],
-    skills: ["z"],
-    talents: ["z", "x", "c"],
-    items: "i12",
+  canEdit: false,
+  object: {
+    name: "career2",
+    description: "desc2",
+    species: [0],
+    class: 3,
+    shared: true,
+    source: {},
+    level1: { name: "c2l1", status: 0, standing: 0, attributes: [], skills: [], talents: [], items: "" },
+    level2: { name: "c2l2", status: 0, standing: 0, attributes: [], skills: [], talents: [], items: "" },
+    level3: {
+      name: "c2l3",
+      status: 1,
+      standing: 1,
+      attributes: [1, 2, 5],
+      skills: ["a", "s", "d"],
+      talents: ["q", "w", "e"],
+      items: "items11",
+    },
+    level4: {
+      name: "c2l4",
+      status: 2,
+      standing: 2,
+      attributes: [1, 2],
+      skills: ["z"],
+      talents: ["z", "x", "c"],
+      items: "i12",
+    },
   },
 };
 
@@ -160,11 +164,11 @@ const career2ModelForm = {
 const mockAxios = {
   get: async (path) => {
     let apiData;
-    if (path === "/api/career") {
+    if (path === "/api/wh/career") {
       apiData = [JSON.parse(JSON.stringify(career1ApiForm)), JSON.parse(JSON.stringify(career2ApiForm))];
-    } else if (path === "/api/career/id1") {
+    } else if (path === "/api/wh/career/id1") {
       apiData = JSON.parse(JSON.stringify(career1ApiForm));
-    } else if (path === "/api/career/id2") {
+    } else if (path === "/api/wh/career/id2") {
       apiData = JSON.parse(JSON.stringify(career2ApiForm));
     } else {
       throw "invalid id";
@@ -172,7 +176,10 @@ const mockAxios = {
     return { data: { data: apiData } };
   },
   post: async () => {
-    return { data: { data: "inserted_id" } };
+    return { data: { data: { id: "id1" } } };
+  },
+  put: async () => {
+    return { data: { data: { id: "id1" } } };
   },
   delete: async () => {},
 };
@@ -196,24 +203,21 @@ test("createElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.createElement(career1ModelForm);
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  const expectedCareerCall = JSON.parse(JSON.stringify(career1ApiForm));
-  delete expectedCareerCall.id;
-  delete expectedCareerCall.can_edit;
-  expect(axiosSpy).toHaveBeenCalledWith("/api/career", expectedCareerCall);
+  const expectedCareerCall = JSON.parse(JSON.stringify(career1ApiForm.object));
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/career", expectedCareerCall);
 });
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new CareerApi(mockAxios);
-  const axiosSpy = vi.spyOn(mockAxios, "post");
+  const axiosSpy = vi.spyOn(mockAxios, "put");
   const result = await client.updateElement(career1ModelForm);
 
-  expect(result).toBe("inserted_id");
+  expect(result.id).toBe("id1");
 
-  const expectedCareerCall = JSON.parse(JSON.stringify(career1ApiForm));
-  delete expectedCareerCall.can_edit;
-  expect(axiosSpy).toHaveBeenCalledWith("/api/career/update", expectedCareerCall);
+  const expectedCareerCall = JSON.parse(JSON.stringify(career1ApiForm.object));
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/career/id1", expectedCareerCall);
 });
 
 test("deleteElement calls axios with expected arguments", async () => {
@@ -221,7 +225,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/career/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/career/id1");
 });
 
 describe("compareCareer returns true", () => {
