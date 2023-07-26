@@ -1,32 +1,60 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
-	"strings"
 )
 
 type Mutation struct {
-	Name        string       `json:"name" validate:"name_valid"`
-	Description string       `json:"description" validate:"desc_valid"`
-	Type        MutationType `json:"type" validate:"mutation_type_valid"`
-	Modifiers   Modifiers    `json:"modifiers"`
-	Shared      bool         `json:"shared" validate:"shared_valid"`
-	Source      SourceMap    `json:"source" validate:"source_valid"`
+	Name        string            `json:"name" validate:"name_valid"`
+	Description string            `json:"description" validate:"desc_valid"`
+	Type        MutationType      `json:"type" validate:"mutation_type_valid"`
+	Modifiers   *Modifiers        `json:"modifiers"`
+	Shared      bool              `json:"shared" validate:"shared_valid"`
+	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (m Mutation) IsShared() bool {
-	return m.Shared
-}
-
-func (m Mutation) InitAndCopy() WhObject {
-	return Mutation{
-		Name:        strings.Clone(m.Name),
-		Description: strings.Clone(m.Description),
-		Type:        m.Type.InitAndCopy(),
-		Modifiers:   m.Modifiers.InitAndCopy(),
-		Shared:      m.Shared,
-		Source:      m.Source.InitAndCopy(),
+func (mutation *Mutation) IsShared() (bool, error) {
+	if mutation == nil {
+		return false, errors.New("mutation pointer is nil")
 	}
+
+	return mutation.Shared, nil
+}
+
+func (mutation *Mutation) Copy() WhObject {
+	if mutation == nil {
+		return nil
+	}
+
+	return &Mutation{
+		Name:        mutation.Name,
+		Description: mutation.Description,
+		Type:        mutation.Type,
+		Modifiers:   mutation.Modifiers.Copy(),
+		Shared:      mutation.Shared,
+		Source:      copySourceMap(mutation.Source),
+	}
+}
+
+func (mutation *Mutation) InitNilPointers() error {
+	if mutation == nil {
+		return errors.New("mutation pointer is nil")
+	}
+
+	if mutation.Modifiers == nil {
+		mutation.Modifiers = &Modifiers{}
+	}
+	err := mutation.Modifiers.InitNilPointers()
+	if err != nil {
+		return err
+	}
+
+	if mutation.Source == nil {
+		mutation.Source = map[Source]string{}
+	}
+
+	return nil
 }
 
 type MutationType int
@@ -38,10 +66,6 @@ const (
 
 func mutationTypeValues() string {
 	return formatIntegerValues([]MutationType{MutationTypePhysical, MutationTypeMental})
-}
-
-func (input MutationType) InitAndCopy() MutationType {
-	return input
 }
 
 func GetMutationValidationAliases() map[string]string {

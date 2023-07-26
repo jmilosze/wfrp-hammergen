@@ -15,14 +15,6 @@ func GetCommonValidationAliases() map[string]string {
 	}
 }
 
-func formatAllowedIntTypesFromMap[T ~int](list map[string]T) string {
-	values := make([]string, len(list))
-	for _, v := range list {
-		values = append(values, strconv.Itoa(int(v)))
-	}
-	return strings.Join(values, " ")
-}
-
 func formatIntegerValues[T ~int](list []T) string {
 	values := make([]string, len(list))
 	for _, v := range list {
@@ -39,26 +31,44 @@ func formatStringValues[T ~string](list []T) string {
 	return strings.Join(values, " ")
 }
 
-func copyStringArray[T ~string](input []T) []T {
-	output := make([]T, len(input))
+func copyArray[T any](arr []T) []T {
+	if arr != nil && len(arr) == 0 {
+		return make([]T, 0)
+	}
+	return append([]T(nil), arr...)
+}
+
+func copyWhArray(input []*Wh) []*Wh {
+	if input == nil {
+		return nil
+	}
+
+	output := make([]*Wh, len(input))
 	for i, v := range input {
-		output[i] = T(strings.Clone(string(v)))
+		output[i] = v.Copy()
 	}
 	return output
 }
 
-func copyIntArray[T ~int](input []T) []T {
-	output := make([]T, len(input))
-	for i, v := range input {
-		output[i] = v
+func whListToIdWhMap(whList []*Wh) map[string]*Wh {
+	allWhMap := make(map[string]*Wh, 0)
+	for _, v := range whList {
+		allWhMap[v.Id] = v
 	}
-	return output
+	return allWhMap
 }
 
-func copyWhArray(input []Wh) []Wh {
-	output := make([]Wh, len(input))
-	for i, v := range input {
-		output[i] = v.InitAndCopy()
+func idListToWhList(idList []string, allIdWhMap map[string]*Wh) []*Wh {
+	if idList == nil {
+		return nil
 	}
-	return output
+
+	whList := make([]*Wh, 0)
+	for _, v := range idList {
+		wh, ok := allIdWhMap[v]
+		if ok {
+			whList = append(whList, wh.Copy())
+		}
+	}
+	return whList
 }

@@ -48,7 +48,7 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 			return
 		}
 
-		u := user.EmptyUser()
+		u := user.New()
 		u.Username = userData.Username
 		u.Password = userData.Password
 		u.SharedAccountNames = userData.SharedAccounts
@@ -193,7 +193,7 @@ func userUpdateHandler(users user.UserService) func(*gin.Context) {
 			return
 		}
 
-		u := user.EmptyUser()
+		u := user.New()
 		u.Id = userId
 		u.SharedAccountNames = userData.SharedAccounts
 
@@ -239,7 +239,7 @@ func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 			return
 		}
 
-		u := user.EmptyUser()
+		u := user.New()
 		u.Id = userId
 		u.Username = userData.Username
 		u.Password = userData.Password
@@ -284,7 +284,7 @@ func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 			return
 		}
 
-		u := user.EmptyUser()
+		u := user.New()
 		u.Id = userId
 		u.Admin = userData.Admin
 

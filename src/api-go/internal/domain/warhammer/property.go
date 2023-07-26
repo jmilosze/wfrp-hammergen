@@ -1,40 +1,56 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
-	"strings"
 )
 
 type Property struct {
-	Name         string       `json:"name" validate:"name_valid"`
-	Description  string       `json:"description" validate:"desc_valid"`
-	Type         PropertyType `json:"type" validate:"property_type_valid"`
-	ApplicableTo []ItemType   `json:"applicableTo" validate:"dive,item_type_valid"`
-	Shared       bool         `json:"shared" validate:"shared_valid"`
-	Source       SourceMap    `json:"source" validate:"source_valid"`
+	Name         string            `json:"name" validate:"name_valid"`
+	Description  string            `json:"description" validate:"desc_valid"`
+	Type         PropertyType      `json:"type" validate:"property_type_valid"`
+	ApplicableTo []ItemType        `json:"applicableTo" validate:"dive,item_type_valid"`
+	Shared       bool              `json:"shared" validate:"shared_valid"`
+	Source       map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (p Property) IsShared() bool {
-	return p.Shared
+func (property *Property) IsShared() (bool, error) {
+	if property == nil {
+		return false, errors.New("property pointer is nil")
+	}
+
+	return property.Shared, nil
 }
 
-func (p Property) InitAndCopy() WhObject {
-	return Property{
-		Name:         strings.Clone(p.Name),
-		Description:  strings.Clone(p.Description),
-		Type:         p.Type.InitAndCopy(),
-		ApplicableTo: copyApplicableTo(p.ApplicableTo),
-		Shared:       p.Shared,
-		Source:       p.Source.InitAndCopy(),
+func (property *Property) Copy() WhObject {
+	if property == nil {
+		return nil
+	}
+
+	return &Property{
+		Name:         property.Name,
+		Description:  property.Description,
+		Type:         property.Type,
+		ApplicableTo: copyArray(property.ApplicableTo),
+		Shared:       property.Shared,
+		Source:       copySourceMap(property.Source),
 	}
 }
 
-func copyApplicableTo(input []ItemType) []ItemType {
-	output := make([]ItemType, len(input))
-	for i, v := range input {
-		output[i] = v.InitAndCopy()
+func (property *Property) InitNilPointers() error {
+	if property == nil {
+		return errors.New("property pointer is nil")
 	}
-	return output
+
+	if property.ApplicableTo == nil {
+		property.ApplicableTo = []ItemType{}
+	}
+
+	if property.Source == nil {
+		property.Source = map[Source]string{}
+	}
+
+	return nil
 }
 
 type PropertyType int
@@ -46,10 +62,6 @@ const (
 
 func getAllowedPropertyTypeValues() string {
 	return formatIntegerValues([]PropertyType{PropertyTypeQuality, PropertyTypeFlaw})
-}
-
-func (input PropertyType) InitAndCopy() PropertyType {
-	return input
 }
 
 func GetPropertyValidationAliases() map[string]string {

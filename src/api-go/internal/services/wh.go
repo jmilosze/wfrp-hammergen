@@ -28,7 +28,10 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
-	newWh := w.InitAndCopy()
+	newWh := w.Copy()
+	if err := newWh.InitNilPointers(); err != nil {
+		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: err}
+	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
@@ -41,13 +44,13 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 	newWh.Id = hex.EncodeToString(xid.New().Bytes())
 
-	createdWh, dbErr := s.WhDbService.Create(ctx, t, &newWh)
+	createdWh, dbErr := s.WhDbService.Create(ctx, t, newWh)
 	if dbErr != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: dbErr}
 	}
 
 	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
-	return createdWh.PointToCopy(), nil
+	return createdWh.Copy(), nil
 }
 
 func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []string) bool {
@@ -71,7 +74,10 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
-	newWh := w.InitAndCopy()
+	newWh := w.Copy()
+	if err := newWh.InitNilPointers(); err != nil {
+		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: err}
+	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
@@ -83,7 +89,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		newWh.OwnerId = c.Id
 	}
 
-	updatedWh, dbErr := s.WhDbService.Update(ctx, t, &newWh, c.Id)
+	updatedWh, dbErr := s.WhDbService.Update(ctx, t, newWh, c.Id)
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
@@ -94,7 +100,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	updatedWh.CanEdit = canEdit(updatedWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
-	return updatedWh.PointToCopy(), nil
+	return updatedWh.Copy(), nil
 }
 
 func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) *wh.WhError {
@@ -110,37 +116,39 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 	return nil
 }
 
-func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, whIds []string) ([]*wh.Wh, *wh.WhError) {
+func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, whIds []string) ([]*wh.Wh, *wh.WhError) {
 	users := []string{"admin", c.Id}
 
 	whs, dbErr := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, whIds)
 
 	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: dbErr}
-		default:
-			return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
+		return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
+	}
+
+	whsRet := make([]*wh.Wh, 0)
+	for _, v := range whs {
+		err := v.InitNilPointers()
+		if err != nil {
+			continue
 		}
+		v.CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
+		whsRet = append(whsRet, v)
 	}
 
 	if full {
 		var whErr *wh.WhError
 		if t == wh.WhTypeItem {
-			whs, whErr = retrieveFullItems(ctx, s, c, whs)
+			whsRet, whErr = retrieveFullItems(ctx, s, c, whsRet)
 		} else if t == wh.WhTypeCharacter {
-			whs, whErr = retrieveFullCharacters(ctx, s, c, whs)
+			whsRet, whErr = retrieveFullCharacters(ctx, s, c, whsRet)
 		}
 		if whErr != nil {
 			return nil, whErr
 		}
 	}
 
-	whsRet := make([]*wh.Wh, len(whs))
-
-	for k, v := range whs {
-		whsRet[k] = v.PointToCopy()
-		whsRet[k].CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
+	if errIfNotFound && len(whIds) != 0 && len(whsRet) != len(whIds) {
+		return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: errors.New("not all id found")}
 	}
 
 	return whsRet, nil
@@ -150,7 +158,7 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	allPropertyIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range items {
-		item, ok := v.Object.(wh.Item)
+		item, ok := v.Object.(*wh.Item)
 		if !ok {
 			return nil, &wh.WhError{WhType: wh.WhTypeItem, ErrType: wh.InternalError, Err: errors.New("non-item stored as item")}
 		}
@@ -165,32 +173,39 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	var propertyWhErr *wh.WhError
 	go func() {
 		defer wg.Done()
-		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, allPropertyIds)
+		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, false, allPropertyIds)
 	}()
 
 	var allSpells []*wh.Wh
 	var spellWhErr *wh.WhError
 	go func() {
 		defer wg.Done()
-		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, allSpellIds)
+		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, false, allSpellIds)
 	}()
 
 	wg.Wait()
 
-	if propertyWhErr != nil && propertyWhErr.ErrType != wh.NotFoundError {
+	if propertyWhErr != nil {
 		return nil, propertyWhErr
 	}
 
-	if spellWhErr != nil && spellWhErr.ErrType != wh.NotFoundError {
+	if spellWhErr != nil {
 		return nil, spellWhErr
 	}
 
-	fullItems := make([]*wh.Wh, len(items))
-	for k, v := range items {
-		item := v.Object.(wh.Item)
+	fullItems := make([]*wh.Wh, 0)
+	for _, v := range items {
+		item, ok := v.Object.(*wh.Item)
+		if !ok {
+			continue
+		}
+		var err error
 		fullItem := v.CopyHeaders()
-		fullItem.Object = item.ToFull(allProperties, allSpells)
-		fullItems[k] = &fullItem
+		fullItem.Object, err = item.ToFull(allProperties, allSpells)
+		if err != nil {
+			continue
+		}
+		fullItems = append(fullItems, fullItem)
 	}
 
 	return fullItems, nil
@@ -222,7 +237,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	allMutationIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range characters {
-		character, ok := v.Object.(wh.Character)
+		character, ok := v.Object.(*wh.Character)
 		if !ok {
 			return nil, &wh.WhError{WhType: wh.WhTypeCharacter, ErrType: wh.InternalError, Err: errors.New("non-character stored as character")}
 		}
@@ -240,8 +255,8 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, character.Spells)
 	}
 
-	//var wg sync.WaitGroup
-	//wg.Add(6)
+	var wg sync.WaitGroup
+	wg.Add(6)
 
 	components := map[wh.WhType]*struct {
 		err  *wh.WhError
@@ -257,40 +272,48 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		wh.WhTypeSpell:    {err: nil, full: false, wh: nil, ids: allSpellIds},
 	}
 
-	for k, v := range components {
-		v.wh, v.err = whService.Get(ctx, k, claims, v.full, v.ids)
-		//go func() {
-		//	defer wg.Done()
-		//	v.wh, v.err = whService.Get(ctx, k, claims, v.full, v.ids)
-		//}()
+	for k := range components {
+		k := k
+		v := components[k]
+		go func() {
+			defer wg.Done()
+			v.wh, v.err = whService.Get(ctx, k, claims, v.full, false, v.ids)
+		}()
 	}
 
-	//wg.Wait()
+	wg.Wait()
 
 	for _, v := range components {
-		if v.err != nil && v.err.ErrType != wh.NotFoundError {
+		if v.err != nil {
 			return nil, v.err
 		}
 	}
 
-	fullCharacters := make([]*wh.Wh, len(characters))
-	for k, v := range characters {
-		character := v.Object.(wh.Character)
+	fullCharacters := make([]*wh.Wh, 0)
+	for _, v := range characters {
+		character, ok := v.Object.(*wh.Character)
+		if !ok {
+			continue
+		}
 		fullCharacter := v.CopyHeaders()
-		fullCharacter.Object = character.ToFull(
+		var err error
+		fullCharacter.Object, err = character.ToFull(
 			components[wh.WhTypeItem].wh,
 			components[wh.WhTypeSkill].wh,
 			components[wh.WhTypeTalent].wh,
 			components[wh.WhTypeMutation].wh,
 			components[wh.WhTypeSpell].wh,
 			components[wh.WhTypeCareer].wh)
-		fullCharacters[k] = &fullCharacter
+		if err != nil {
+			continue
+		}
+		fullCharacters = append(fullCharacters, fullCharacter)
 	}
 
 	return fullCharacters, nil
 }
 
-func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []wh.IdNumber) []string {
+func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []*wh.IdNumber) []string {
 	// Create a map to store unique strings
 	uniqueStrings := make(map[string]bool)
 
