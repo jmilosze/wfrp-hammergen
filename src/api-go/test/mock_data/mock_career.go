@@ -66,6 +66,15 @@ var career1 = wh.Wh{
 	},
 }
 
+var career2 = wh.Wh{
+	Id:      "700000000000000000000002",
+	OwnerId: "admin",
+	Object: &wh.Career{
+		Name:        "career 2",
+		Description: fmt.Sprintf("owned by admin"),
+	},
+}
+
 func NewMockCareers() []*wh.Wh {
-	return []*wh.Wh{&career0, &career1}
+	return []*wh.Wh{&career0, &career1, &career2}
 }

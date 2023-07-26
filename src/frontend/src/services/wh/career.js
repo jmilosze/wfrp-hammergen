@@ -9,7 +9,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator";
 
-const apiBasePath = "/api/career";
+const apiBasePath = "/api/wh/career";
 
 const careerClasses = {
   0: "Academic",
@@ -91,6 +91,23 @@ const generateNewCareer = (canEdit) => {
   return newCareer;
 };
 
+const convertApiToModelData = (apiData) => {
+  return {
+    id: apiData.id,
+    canEdit: apiData.canEdit,
+    name: apiData.object.name,
+    description: apiData.object.description,
+    species: JSON.parse(JSON.stringify(apiData.object.species)),
+    class: apiData.object.class,
+    levelOne: JSON.parse(JSON.stringify(apiData.object.level1)),
+    levelTwo: JSON.parse(JSON.stringify(apiData.object.level2)),
+    levelThree: JSON.parse(JSON.stringify(apiData.object.level3)),
+    levelFour: JSON.parse(JSON.stringify(apiData.object.level4)),
+    shared: apiData.object.shared,
+    source: apiData.object.source,
+  };
+};
+
 const convertModelToApiData = (career) => {
   return {
     name: career.name,
@@ -99,27 +116,10 @@ const convertModelToApiData = (career) => {
     class: career.class,
     shared: career.shared,
     source: career.source,
-    level_1: JSON.parse(JSON.stringify(career.levelOne)),
-    level_2: JSON.parse(JSON.stringify(career.levelTwo)),
-    level_3: JSON.parse(JSON.stringify(career.levelThree)),
-    level_4: JSON.parse(JSON.stringify(career.levelFour)),
-  };
-};
-
-const convertApiToModelData = (apiData) => {
-  return {
-    id: apiData.id,
-    name: apiData.name,
-    description: apiData.description,
-    species: JSON.parse(JSON.stringify(apiData.species)),
-    class: apiData.class,
-    levelOne: JSON.parse(JSON.stringify(apiData.level_1)),
-    levelTwo: JSON.parse(JSON.stringify(apiData.level_2)),
-    levelThree: JSON.parse(JSON.stringify(apiData.level_3)),
-    levelFour: JSON.parse(JSON.stringify(apiData.level_4)),
-    canEdit: apiData.can_edit,
-    shared: apiData.shared,
-    source: apiData.source,
+    level1: JSON.parse(JSON.stringify(career.levelOne)),
+    level2: JSON.parse(JSON.stringify(career.levelTwo)),
+    level3: JSON.parse(JSON.stringify(career.levelThree)),
+    level4: JSON.parse(JSON.stringify(career.levelFour)),
   };
 };
 
