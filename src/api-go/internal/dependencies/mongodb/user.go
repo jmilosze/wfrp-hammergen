@@ -138,11 +138,11 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 
 	users := make([]*Mongo, 0)
 	for cur.Next(ctx) {
-		var user Mongo
-		if err := cur.Decode(&user); err != nil {
+		var u Mongo
+		if err := cur.Decode(&u); err != nil {
 			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
 		}
-		users = append(users, &user)
+		users = append(users, &u)
 	}
 
 	if err := cur.Close(ctx); err != nil {
@@ -246,7 +246,7 @@ func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *user.User {
 		sharedAccountIds = nil
 	}
 
-	user := user.EmptyUser()
+	user := user.New()
 	user.Id = u.Id.Hex()
 	user.Username = u.Username
 	user.Admin = u.Admin

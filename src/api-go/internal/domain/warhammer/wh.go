@@ -2,6 +2,7 @@ package warhammer
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -14,20 +15,22 @@ type Wh struct {
 }
 
 const (
-	WhTypeMutation  = "mutation"
-	WhTypeSpell     = "spell"
-	WhTypeProperty  = "property"
-	WhTypeItem      = "item"
-	WhTypeTalent    = "talent"
-	WhTypeSkill     = "skill"
-	WhTypeCareer    = "career"
-	WhTypeCharacter = "character"
-	WhTypeOther     = "other"
+	WhTypeMutation      = "mutation"
+	WhTypeSpell         = "spell"
+	WhTypeProperty      = "property"
+	WhTypeItem          = "item"
+	WhTypeTalent        = "talent"
+	WhTypeSkill         = "skill"
+	WhTypeCareer        = "career"
+	WhTypeCharacter     = "character"
+	WhTypeOther         = "other"
+	WhTypeItemFull      = "itemFull"
+	WhTypeCharacterFull = "characterFull"
 )
 
 type WhType string
 
-var WhApiTypes = []WhType{
+var WhCoreTypes = []WhType{
 	WhTypeMutation,
 	WhTypeSpell,
 	WhTypeProperty,
@@ -38,38 +41,94 @@ var WhApiTypes = []WhType{
 	WhTypeCharacter,
 }
 
-func (w Wh) InitAndCopy() Wh {
-	return Wh{
-		Id:      strings.Clone(w.Id),
-		OwnerId: strings.Clone(w.OwnerId),
-		CanEdit: w.CanEdit,
-		Object:  w.Object.InitAndCopy(),
+func (w *Wh) Copy() *Wh {
+	if w == nil {
+		return nil
 	}
-}
 
-func (w Wh) CopyHeaders() Wh {
-	return Wh{
+	wh := Wh{
 		Id:      strings.Clone(w.Id),
 		OwnerId: strings.Clone(w.OwnerId),
 		CanEdit: w.CanEdit,
 	}
+
+	if w.Object != nil {
+		wh.Object = w.Object.Copy()
+	}
+
+	return &wh
 }
 
-func (w Wh) PointToCopy() *Wh {
-	cpy := w.InitAndCopy()
-	return &cpy
+func (w *Wh) CopyHeaders() *Wh {
+	if w == nil {
+		return nil
+	}
+
+	return &Wh{
+		Id:      strings.Clone(w.Id),
+		OwnerId: strings.Clone(w.OwnerId),
+		CanEdit: w.CanEdit,
+	}
 }
 
-func (w Wh) IsShared() bool {
+func (w *Wh) IsShared() (bool, error) {
+	if w == nil {
+		return false, errors.New("wh is nil")
+	}
+
+	if w.Object == nil {
+		return false, errors.New("wh.object is nil")
+	}
+
 	return w.Object.IsShared()
 }
 
-type WhObject interface {
-	InitAndCopy() WhObject
-	IsShared() bool
+func NewWhObject(t WhType) WhObject {
+	switch t {
+	case WhTypeMutation:
+		return &Mutation{}
+	case WhTypeSpell:
+		return &Spell{}
+	case WhTypeProperty:
+		return &Property{}
+	case WhTypeItem:
+		return &Item{}
+	case WhTypeTalent:
+		return &Talent{}
+	case WhTypeSkill:
+		return &Skill{}
+	case WhTypeCareer:
+		return &Career{}
+	case WhTypeCharacter:
+		return &Character{}
+	case WhTypeItemFull:
+		return &ItemFull{}
+	case WhTypeCharacterFull:
+		return &CharacterFull{}
+	}
+
+	return &Character{}
 }
 
-func (w Wh) ToMap() (map[string]any, error) {
+func (w *Wh) InitNilPointers() error {
+	if w == nil {
+		return errors.New("wh pointer is nil")
+	}
+
+	if w.Object == nil {
+		return errors.New("wh.object pointer is nil")
+	}
+
+	return w.Object.InitNilPointers()
+}
+
+type WhObject interface {
+	Copy() WhObject
+	IsShared() (bool, error)
+	InitNilPointers() error
+}
+
+func (w *Wh) ToMap() (map[string]any, error) {
 	whMap, err := structToMap(w)
 	if err != nil {
 		return map[string]any{}, fmt.Errorf("error while mapping wh structure %s", err)

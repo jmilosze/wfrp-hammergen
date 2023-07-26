@@ -2,7 +2,6 @@ package warhammer
 
 import (
 	"fmt"
-	"strings"
 )
 
 type Source string
@@ -39,12 +38,14 @@ func sourceValues() string {
 	})
 }
 
-type SourceMap map[Source]string
+func copySourceMap(input map[Source]string) map[Source]string {
+	if input == nil {
+		return nil
+	}
 
-func (input SourceMap) InitAndCopy() SourceMap {
-	output := make(SourceMap, len(input))
+	output := make(map[Source]string, len(input))
 	for key, value := range input {
-		output[key] = strings.Clone(value)
+		output[key] = value
 	}
 	return output
 }

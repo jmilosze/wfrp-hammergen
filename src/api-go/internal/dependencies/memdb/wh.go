@@ -28,7 +28,7 @@ func createNewWhMemDb() (*memdb.MemDB, error) {
 		Tables: map[string]*memdb.TableSchema{},
 	}
 
-	for _, whType := range warhammer.WhApiTypes {
+	for _, whType := range warhammer.WhCoreTypes {
 		schema.Tables[string(whType)] = &memdb.TableSchema{
 			Name: string(whType),
 			Indexes: map[string]*memdb.IndexSchema{
@@ -72,7 +72,7 @@ func getOne(db *memdb.MemDB, t warhammer.WhType, whId string) (*warhammer.Wh, *d
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate wh from raw %v", whRaw)}
 	}
 
-	return wh.PointToCopy(), nil
+	return wh.Copy(), nil
 }
 
 func (s *WhDbService) Create(ctx context.Context, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, *domain.DbError) {
@@ -100,7 +100,7 @@ func upsertWh(db *memdb.MemDB, t warhammer.WhType, w *warhammer.Wh) (*warhammer.
 	}
 	txn.Commit()
 
-	return w.PointToCopy(), nil
+	return w.Copy(), nil
 }
 
 func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId string, userId string) *domain.DbError {
@@ -139,17 +139,18 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, users []
 	for obj := it.Next(); obj != nil; obj = it.Next() {
 		wh, ok := obj.(*warhammer.Wh)
 		if !ok {
-			return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate wh from raw %v", obj)}
+			continue
 		}
 		if slices.Contains(whIds, wh.Id) || len(whIds) == 0 {
-			if slices.Contains(users, wh.OwnerId) || slices.Contains(sharedUsers, wh.OwnerId) && wh.IsShared() {
-				whs = append(whs, wh.PointToCopy())
+			isShared, err := wh.IsShared()
+			if err != nil {
+				return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+			}
+
+			if slices.Contains(users, wh.OwnerId) || slices.Contains(sharedUsers, wh.OwnerId) && isShared {
+				whs = append(whs, wh.Copy())
 			}
 		}
-	}
-
-	if len(whIds) != 0 && len(whs) != len(whIds) {
-		return nil, domain.CreateDbError(domain.DbNotFoundError, errors.New("some of the ids not found"))
 	}
 
 	return whs, nil
@@ -171,7 +172,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.G
 		return nil, &domain.DbError{Type: domain.DbInternalError, Err: fmt.Errorf("could not populate generationProp from raw %v", raw)}
 	}
 
-	return genProp.PointToCopy(), nil
+	return genProp.Copy(), nil
 }
 
 func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, *domain.DbError) {
@@ -182,5 +183,5 @@ func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.G
 	}
 	txn.Commit()
 
-	return gp.PointToCopy(), nil
+	return gp.Copy(), nil
 }

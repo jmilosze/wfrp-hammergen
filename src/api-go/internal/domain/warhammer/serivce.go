@@ -10,7 +10,7 @@ type WhService interface {
 	Create(ctx context.Context, t WhType, w *Wh, c *auth.Claims) (*Wh, *WhError)
 	Update(ctx context.Context, t WhType, w *Wh, c *auth.Claims) (*Wh, *WhError)
 	Delete(ctx context.Context, t WhType, whId string, c *auth.Claims) *WhError
-	Get(ctx context.Context, t WhType, c *auth.Claims, full bool, whIds []string) ([]*Wh, *WhError)
+	Get(ctx context.Context, t WhType, c *auth.Claims, full bool, errIfNotFound bool, whIds []string) ([]*Wh, *WhError)
 
 	GetGenerationProps(ctx context.Context) (*GenProps, *WhError)
 }
