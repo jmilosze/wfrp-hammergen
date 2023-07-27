@@ -37,6 +37,10 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
 	}
 
+	if err := extraCharacterValidation(t, newWh, s.Validator); err != nil {
+		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+	}
+
 	if c.Admin {
 		newWh.OwnerId = "admin"
 	} else {
@@ -51,6 +55,23 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 
 	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 	return createdWh.Copy(), nil
+}
+
+func extraCharacterValidation(t wh.WhType, newWh *wh.Wh, validator *validator.Validate) error {
+	if t == wh.WhTypeCharacter {
+		char := newWh.Object.(*wh.Character)
+		err := validator.Var(char.Career.Number, "gte=1,lte=4")
+		if err != nil {
+			return err
+		}
+		for _, v := range char.CareerPath {
+			err := validator.Var(v.Number, "gte=1,lte=4")
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []string) bool {
@@ -80,6 +101,10 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
+		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+	}
+
+	if err := extraCharacterValidation(t, newWh, s.Validator); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
 	}
 

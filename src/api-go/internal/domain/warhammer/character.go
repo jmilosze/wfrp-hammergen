@@ -3,7 +3,6 @@ package warhammer
 import (
 	"errors"
 	"fmt"
-	"github.com/go-playground/validator/v10"
 )
 
 type Character struct {
@@ -18,8 +17,8 @@ type Character struct {
 	Species           CharacterSpecies `json:"species" validate:"character_species_valid"`
 	BaseAttributes    *Attributes      `json:"baseAttributes"`
 	AttributeAdvances *Attributes      `json:"attributeAdvances"`
-	CareerPath        []*IdNumber      `json:"careerPath" validate:"dive,character_career_valid"`
-	Career            *IdNumber        `json:"career" validate:"character_career_valid"`
+	CareerPath        []*IdNumber      `json:"careerPath" validate:"dive"`
+	Career            *IdNumber        `json:"career"`
 	Fate              int              `json:"fate" validate:"gte=0,lte=1000"`
 	Fortune           int              `json:"fortune" validate:"gte=0,lte=1000"`
 	Resilience        int              `json:"resilience" validate:"gte=0,lte=1000"`
@@ -384,15 +383,6 @@ func characterSpeciesValues() string {
 func GetCharacterValidationAliases() map[string]string {
 	return map[string]string{
 		"character_species_valid": fmt.Sprintf("oneof=%s", characterSpeciesValues()),
-	}
-}
-
-func GetCharacterCustomValidators() map[string]func(validator.FieldLevel) bool {
-	return map[string]func(validator.FieldLevel) bool{
-		"character_career_valid": func(fl validator.FieldLevel) bool {
-			//a :=fl.Field()
-			return true
-		},
 	}
 }
 
