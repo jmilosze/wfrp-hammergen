@@ -248,8 +248,8 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		allSkillIds = mergeStrAndIdNumberAndRemoveDuplicates(allSkillIds, character.Skills)
 		allTalentIds = mergeStrAndIdNumberAndRemoveDuplicates(allTalentIds, character.Talents)
 
-		allCareerIds = mergeStrAndRemoveDuplicates(allCareerIds, character.CareerPath)
-		allCareerIds = mergeStrAndRemoveDuplicates(allCareerIds, []string{character.Career})
+		allCareerIds = mergeStrAndIdNumberAndRemoveDuplicates(allCareerIds, character.CareerPath)
+		allCareerIds = mergeStrAndIdNumberAndRemoveDuplicates(allCareerIds, []*wh.IdNumber{character.Career})
 
 		allMutationIds = mergeStrAndRemoveDuplicates(allMutationIds, character.Mutations)
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, character.Spells)

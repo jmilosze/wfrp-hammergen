@@ -3,6 +3,7 @@ package warhammer
 import (
 	"errors"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 )
 
 type Character struct {
@@ -17,8 +18,8 @@ type Character struct {
 	Species           CharacterSpecies `json:"species" validate:"character_species_valid"`
 	BaseAttributes    *Attributes      `json:"baseAttributes"`
 	AttributeAdvances *Attributes      `json:"attributeAdvances"`
-	CareerPath        []string         `json:"careerPath" validate:"dive,id_valid"`
-	Career            string           `json:"career" validate:"id_valid"`
+	CareerPath        []*IdNumber      `json:"careerPath" validate:"dive,character_career_valid"`
+	Career            *IdNumber        `json:"career" validate:"character_career_valid"`
 	Fate              int              `json:"fate" validate:"gte=0,lte=1000"`
 	Fortune           int              `json:"fortune" validate:"gte=0,lte=1000"`
 	Resilience        int              `json:"resilience" validate:"gte=0,lte=1000"`
@@ -62,8 +63,8 @@ func (character *Character) Copy() WhObject {
 		Species:           character.Species,
 		BaseAttributes:    character.BaseAttributes.Copy(),
 		AttributeAdvances: character.AttributeAdvances.Copy(),
-		CareerPath:        copyArray(character.CareerPath),
-		Career:            character.Career,
+		CareerPath:        copyArrayIdNumber(character.CareerPath),
+		Career:            character.Career.Copy(),
 		Fate:              character.Fate,
 		Fortune:           character.Fortune,
 		Resilience:        character.Resilience,
@@ -114,8 +115,8 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
 
 	allCareerIdMap := whListToIdWhMap(allCareers)
-	careerPath := idListToWhList(character.CareerPath, allCareerIdMap)
-	career, err := idToWh(character.Career, allCareerIdMap)
+	careerPath := idNumberListToWhNumberList(character.CareerPath, allCareerIdMap)
+	career, err := idNumberToWhNumber(character.Career, allCareerIdMap)
 	if err != nil {
 		return nil, err
 	}
@@ -211,8 +212,12 @@ func (character *Character) InitNilPointers() error {
 		character.AttributeAdvances = &Attributes{}
 	}
 
+	if character.Career == nil {
+		character.Career = &IdNumber{}
+	}
+
 	if character.CareerPath == nil {
-		character.CareerPath = []string{}
+		character.CareerPath = []*IdNumber{}
 	}
 
 	if character.Spells == nil {
@@ -242,18 +247,24 @@ func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]
 	return whNumberList
 }
 
-func idToWh(id string, allIdWhMap map[string]*Wh) (*Wh, error) {
+func idNumberToWhNumber(idNumer *IdNumber, allIdWhMap map[string]*Wh) (*WhNumber, error) {
 	if allIdWhMap == nil {
 		return nil, errors.New("allIdWhMap is nil")
 	}
 
-	wh, ok := allIdWhMap[id]
+	if idNumer == nil {
+		return nil, errors.New("idNumer is nil")
+	}
+
+	wh, ok := allIdWhMap[idNumer.Id]
 	if ok {
-		return wh.Copy(), nil
+		whNum := WhNumber{Wh: wh.Copy(), Number: idNumer.Number}
+		return &whNum, nil
 	}
 	if len(allIdWhMap) > 0 {
 		for _, v := range allIdWhMap {
-			return v.Copy(), nil
+			whNum := WhNumber{Wh: v.Copy(), Number: idNumer.Number}
+			return &whNum, nil
 		}
 	}
 
@@ -376,6 +387,15 @@ func GetCharacterValidationAliases() map[string]string {
 	}
 }
 
+func GetCharacterCustomValidators() map[string]func(validator.FieldLevel) bool {
+	return map[string]func(validator.FieldLevel) bool{
+		"character_career_valid": func(fl validator.FieldLevel) bool {
+			//a :=fl.Field()
+			return true
+		},
+	}
+}
+
 type CharacterFull struct {
 	Name              string           `json:"name"`
 	Description       string           `json:"description"`
@@ -388,8 +408,8 @@ type CharacterFull struct {
 	Species           CharacterSpecies `json:"species"`
 	BaseAttributes    *Attributes      `json:"baseAttributes"`
 	AttributeAdvances *Attributes      `json:"attributeAdvances"`
-	CareerPath        []*Wh            `json:"careerPath"`
-	Career            *Wh              `json:"career"`
+	CareerPath        []*WhNumber      `json:"careerPath"`
+	Career            *WhNumber        `json:"career"`
 	Fate              int              `json:"fate"`
 	Fortune           int              `json:"fortune"`
 	Resilience        int              `json:"resilience"`
@@ -433,7 +453,7 @@ func (characterFull *CharacterFull) Copy() WhObject {
 		Species:           characterFull.Species,
 		BaseAttributes:    characterFull.BaseAttributes.Copy(),
 		AttributeAdvances: characterFull.AttributeAdvances.Copy(),
-		CareerPath:        copyWhArray(characterFull.CareerPath),
+		CareerPath:        copyWhNumberArray(characterFull.CareerPath),
 		Career:            characterFull.Career.Copy(),
 		Fate:              characterFull.Fate,
 		Fortune:           characterFull.Fortune,
@@ -520,9 +540,9 @@ func (characterFull *CharacterFull) InitNilPointers() error {
 	}
 
 	if characterFull.CareerPath == nil {
-		characterFull.CareerPath = []*Wh{}
+		characterFull.CareerPath = []*WhNumber{}
 	}
-	err = initNilPointersInWhList(characterFull.CareerPath)
+	err = initNilPointersInWhNumberList(characterFull.CareerPath, WhTypeCareer)
 	if err != nil {
 		return err
 	}
@@ -543,7 +563,11 @@ func (characterFull *CharacterFull) InitNilPointers() error {
 		return err
 	}
 
-	return characterFull.Career.InitNilPointers()
+	if characterFull.Career == nil {
+		characterFull.Career = &WhNumber{}
+	}
+
+	return characterFull.Career.Wh.InitNilPointers()
 }
 
 func initNilPointersInWhNumberList(list []*WhNumber, t WhType) error {
