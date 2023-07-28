@@ -22,7 +22,7 @@ import {
 import { getAttributes, sumAndMultAttr } from "./attributes";
 import { generateEmptyModifiers, sumAndMultModifiers } from "./characterModifiers";
 
-const apiBasePath = "/api/character";
+const apiBasePath = "/api/wh/character";
 const apiCharacterDisplayPath = "/api/character_resolved";
 const apiSkillPath = "/api/skill";
 
@@ -164,7 +164,6 @@ const generateEmptyCharacterForDisplay = () => {
     corruption: 0,
     mutations: [],
     canEdit: false,
-
     modifiers: generateEmptyModifiers(),
   };
 };
@@ -206,16 +205,11 @@ const convertApiToModelData = (apiData) => {
     sin: apiData.object.sin,
     corruption: apiData.object.corruption,
     mutations: JSON.parse(JSON.stringify(apiData.object.mutations)),
+    career: JSON.parse(JSON.stringify(apiData.object.career)),
+    careerPath: JSON.parse(JSON.stringify(apiData.object.careerPath)),
     shared: apiData.object.shared,
     modifiers: generateEmptyModifiers(),
   };
-
-  newCharacter.careerPath = [];
-  for (let c of apiData.object.careerPath) {
-    newCharacter.careerPath.push({ id: c.id, number: c.level });
-  }
-
-  newCharacter.career = { id: apiData.object.career.id, number: apiData.object.career.level };
 
   const attributeRacial = getAttributes(newCharacter.speciesWithRegion);
   newCharacter.attributeRolls = {};
@@ -227,7 +221,7 @@ const convertApiToModelData = (apiData) => {
 };
 
 const convertModelToApiData = (character) => {
-  const apiData = {
+  return {
     name: character.name,
     species: character.speciesWithRegion,
     fate: character.fate,
@@ -237,35 +231,27 @@ const convertModelToApiData = (character) => {
     brass: character.brass,
     silver: character.silver,
     gold: character.gold,
-    spent_exp: character.spentExp,
-    current_exp: character.currentExp,
+    spentExp: character.spentExp,
+    currentExp: character.currentExp,
     status: character.status,
     standing: character.standing,
     description: character.description,
     notes: character.notes,
-    attribute_advances: JSON.parse(JSON.stringify(character.attributeAdvances)),
+    baseAttributes: JSON.parse(JSON.stringify(getBaseAttributes(character))),
+    attributeAdvances: JSON.parse(JSON.stringify(character.attributeAdvances)),
     skills: JSON.parse(JSON.stringify(character.skills)),
     talents: JSON.parse(JSON.stringify(character.talents)),
-    equipped_items: JSON.parse(JSON.stringify(character.equippedItems)),
-    carried_items: JSON.parse(JSON.stringify(character.carriedItems)),
-    stored_items: JSON.parse(JSON.stringify(character.storedItems)),
+    equippedItems: JSON.parse(JSON.stringify(character.equippedItems)),
+    carriedItems: JSON.parse(JSON.stringify(character.carriedItems)),
+    storedItems: JSON.parse(JSON.stringify(character.storedItems)),
     spells: JSON.parse(JSON.stringify(character.spells)),
     sin: character.sin,
     corruption: character.corruption,
     mutations: JSON.parse(JSON.stringify(character.mutations)),
+    career: JSON.parse(JSON.stringify(character.career)),
+    careerPath: JSON.parse(JSON.stringify(character.careerPath)),
     shared: character.shared,
   };
-
-  apiData.career_path = [];
-  for (let c of character.careerPath) {
-    apiData.career_path.push({ id: c.id, level: c.number });
-  }
-  apiData.career = { id: character.career.id, level: character.career.number };
-
-  const baseAttributes = getBaseAttributes(character);
-  apiData.base_attributes = JSON.parse(JSON.stringify(baseAttributes));
-
-  return apiData;
 };
 
 class CharacterApi {
