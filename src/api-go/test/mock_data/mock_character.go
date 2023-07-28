@@ -58,8 +58,8 @@ var character0 = wh.Wh{
 			WP:  2,
 			Fel: 1,
 		},
-		CareerPath: []string{career0.Id},
-		Career:     career1.Id,
+		CareerPath: []*wh.IdNumber{{Id: career0.Id, Number: 1}, {Id: career0.Id, Number: 2}},
+		Career:     &wh.IdNumber{Id: career1.Id, Number: 1},
 		Fate:       2,
 		Fortune:    1,
 		Resilience: 3,
@@ -81,12 +81,12 @@ var character0 = wh.Wh{
 
 var character1 = wh.Wh{
 	Id:      "800000000000000000000001",
-	OwnerId: user1.Id,
+	OwnerId: "admin",
 	Object: &wh.Character{
 		Name:        "character 1",
-		Description: fmt.Sprintf("owned by %s", user1.Username),
+		Description: "owned by admin",
 		Species:     wh.CharacterSpeciesDwarfAltdorf,
-		Career:      career0.Id,
+		Career:      &wh.IdNumber{Id: career0.Id, Number: 1},
 	},
 }
 
