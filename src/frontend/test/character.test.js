@@ -14,58 +14,62 @@ import { generateEmptyModifiers } from "../src/services/wh/characterModifiers";
 import * as c from "../src/services/wh/characterConstants";
 
 const character1ApiForm = {
-  name: "char1",
-  species: c.WOOD_ELF_DEFAULT,
-  fate: 1,
-  fortune: 2,
-  resilience: 3,
-  resolve: 4,
-  brass: 12,
-  silver: 5,
-  gold: 1,
-  spent_exp: 1000,
-  current_exp: 230,
-  status: 1,
-  standing: 2,
-  description: "character 1",
-  notes: "",
-  career_path: [
-    { id: "careerId1", level: 1 },
-    { id: "careerId2", level: 2 },
-  ],
-  career: { id: "careerId3", level: 3 },
-  base_attributes: { WS: 40, BS: 40, S: 30, T: 25, I: 50, Ag: 35, Dex: 50, Int: 35, WP: 35, Fel: 25 },
-  attribute_advances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-  skills: [
-    { id: "skillId1", number: 4 },
-    { id: "skillId2", number: 5 },
-  ],
-  talents: [
-    { id: "talentId1", number: 1 },
-    { id: "talentId2", number: 2 },
-  ],
-  equipped_items: [
-    { id: "eItemId1", number: 7 },
-    { id: "eItemId2", number: 7 },
-  ],
-  carried_items: [
-    { id: "cItemId1", number: 8 },
-    { id: "cItemId2", number: 9 },
-    { id: "cItemId3", number: 10 },
-  ],
-  stored_items: [
-    { id: "sItemId1", number: 2 },
-    { id: "sItemId2", number: 3 },
-  ],
-  spells: ["spellId1", "spellId2"],
-  sin: 1,
-  corruption: 2,
-  mutations: ["mutationId1", "mutationId2"],
-  can_edit: true,
-  shared: true,
+  id: "id1",
+  canEdit: true,
+  object: {
+    name: "char1",
+    species: c.WOOD_ELF_DEFAULT,
+    fate: 1,
+    fortune: 2,
+    resilience: 3,
+    resolve: 4,
+    brass: 12,
+    silver: 5,
+    gold: 1,
+    spentExp: 1000,
+    currentExp: 230,
+    status: 1,
+    standing: 2,
+    description: "character 1",
+    notes: "",
+    careerPath: [
+      { id: "careerId1", number: 1 },
+      { id: "careerId2", number: 2 },
+    ],
+    career: { id: "careerId3", number: 3 },
+    baseAttributes: { WS: 40, BS: 40, S: 30, T: 25, I: 50, Ag: 35, Dex: 50, Int: 35, WP: 35, Fel: 25 },
+    attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    skills: [
+      { id: "skillId1", number: 4 },
+      { id: "skillId2", number: 5 },
+    ],
+    talents: [
+      { id: "talentId1", number: 1 },
+      { id: "talentId2", number: 2 },
+    ],
+    equippedItems: [
+      { id: "eItemId1", number: 7 },
+      { id: "eItemId2", number: 7 },
+    ],
+    carriedItems: [
+      { id: "cItemId1", number: 8 },
+      { id: "cItemId2", number: 9 },
+      { id: "cItemId3", number: 10 },
+    ],
+    storedItems: [
+      { id: "sItemId1", number: 2 },
+      { id: "sItemId2", number: 3 },
+    ],
+    spells: ["spellId1", "spellId2"],
+    sin: 1,
+    corruption: 2,
+    mutations: ["mutationId1", "mutationId2"],
+    shared: true,
+  },
 };
 
 const character1ModelForm = {
+  id: "id1",
   name: "char1",
   speciesWithRegion: c.WOOD_ELF_DEFAULT,
   fate: 1,
@@ -119,42 +123,46 @@ const character1ModelForm = {
 };
 
 const character2ApiForm = {
-  name: "char2",
-  species: c.HUMAN_NORDLAND,
-  fate: 2,
-  fortune: 3,
-  resilience: 1,
-  resolve: 1,
-  brass: 56,
-  silver: 51,
-  gold: 10,
-  spent_exp: 345,
-  current_exp: 3,
-  status: 2,
-  standing: 4,
-  description: "character 2",
-  notes: "some note",
-  career_path: [],
-  career: { id: "id1", level: 1 },
-  base_attributes: { WS: 31, BS: 25, S: 40, T: 25, I: 25, Ag: 35, Dex: 27, Int: 33, WP: 36, Fel: 27 },
-  attribute_advances: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-  skills: [],
-  talents: [],
-  equipped_items: [],
-  carried_items: [],
-  stored_items: [
-    { id: "id7", number: 7 },
-    { id: "id7", number: 7 },
-  ],
-  spells: [],
-  sin: 2,
-  corruption: 3,
-  mutations: [],
-  can_edit: false,
-  shared: false,
+  id: "id2",
+  canEdit: false,
+  object: {
+    name: "char2",
+    species: c.HUMAN_NORDLAND,
+    fate: 2,
+    fortune: 3,
+    resilience: 1,
+    resolve: 1,
+    brass: 56,
+    silver: 51,
+    gold: 10,
+    spentExp: 345,
+    currentExp: 3,
+    status: 2,
+    standing: 4,
+    description: "character 2",
+    notes: "some note",
+    careerPath: [],
+    career: { id: "id1", number: 1 },
+    baseAttributes: { WS: 31, BS: 25, S: 40, T: 25, I: 25, Ag: 35, Dex: 27, Int: 33, WP: 36, Fel: 27 },
+    attributeAdvances: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    skills: [],
+    talents: [],
+    equippedItems: [],
+    carriedItems: [],
+    storedItems: [
+      { id: "id7", number: 7 },
+      { id: "id7", number: 7 },
+    ],
+    spells: [],
+    sin: 2,
+    corruption: 3,
+    mutations: [],
+    shared: false,
+  },
 };
 
 const character2ModelForm = {
+  id: "id2",
   name: "char2",
   speciesWithRegion: c.HUMAN_NORDLAND,
   fate: 2,
@@ -522,11 +530,11 @@ const skillsApiForm = [
 const mockAxios = {
   get: async (path) => {
     let apiData;
-    if (path === "/api/character") {
+    if (path === "/api/wh/character") {
       apiData = [character1ApiForm, character2ApiForm];
-    } else if (path === "/api/character/id1") {
+    } else if (path === "/api/wh/character/id1") {
       apiData = character1ApiForm;
-    } else if (path === "/api/character/id2") {
+    } else if (path === "/api/wh/character/id2") {
       apiData = character2ApiForm;
     } else if (path === "/api/character_resolved/id3") {
       apiData = characterDisplayApiForm;
@@ -538,7 +546,10 @@ const mockAxios = {
     return { data: { data: apiData } };
   },
   post: async () => {
-    return { data: { data: "inserted_id" } };
+    return { data: { data: { id: "id1" } } };
+  },
+  put: async () => {
+    return { data: { data: { id: "id1" } } };
   },
   delete: async () => {},
 };
@@ -562,24 +573,22 @@ test("createElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "post");
   const result = await client.createElement(character1ModelForm);
 
-  expect(result).toEqual("inserted_id");
+  expect(result.id).toBe("id1");
 
-  const expectedCareerCall = JSON.parse(JSON.stringify(character1ApiForm));
-  delete expectedCareerCall.id;
-  delete expectedCareerCall.can_edit;
-  expect(axiosSpy).toHaveBeenCalledWith("/api/character", expectedCareerCall);
+  const expectedCareerCall = JSON.parse(JSON.stringify(character1ApiForm.object));
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/character", expectedCareerCall);
 });
 
 test("updateElement calls axios with expected arguments", async () => {
   const client = new CharacterApi(mockAxios);
-  const axiosSpy = vi.spyOn(mockAxios, "post");
-  const result = await client.updateElement(character2ModelForm);
+  const axiosSpy = vi.spyOn(mockAxios, "put");
+  const result = await client.updateElement(character1ModelForm);
 
-  expect(result).toEqual("inserted_id");
+  expect(result.id).toBe("id1");
 
-  const expectedCareerCall = JSON.parse(JSON.stringify(character2ApiForm));
+  const expectedCareerCall = JSON.parse(JSON.stringify(character1ApiForm.object));
   delete expectedCareerCall.can_edit;
-  expect(axiosSpy).toHaveBeenCalledWith("/api/character/update", expectedCareerCall);
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/character/id1", expectedCareerCall);
 });
 
 test("deleteElement calls axios with expected arguments", async () => {
@@ -587,7 +596,7 @@ test("deleteElement calls axios with expected arguments", async () => {
   const axiosSpy = vi.spyOn(mockAxios, "delete");
   await client.deleteElement("id1");
 
-  expect(axiosSpy).toHaveBeenCalledWith("/api/character/id1");
+  expect(axiosSpy).toHaveBeenCalledWith("/api/wh/character/id1");
 });
 
 describe("compareCharacters returns true", () => {
