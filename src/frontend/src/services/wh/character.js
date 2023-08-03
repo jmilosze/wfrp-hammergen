@@ -23,8 +23,7 @@ import { getAttributes, sumAndMultAttr } from "./attributes";
 import { generateEmptyModifiers, sumAndMultModifiers } from "./characterModifiers";
 
 const apiBasePath = "/api/wh/character";
-const apiCharacterDisplayPath = "/api/character_resolved";
-const apiSkillPath = "/api/skill";
+const apiSkillPath = "/api/wh/skill";
 
 const speciesWithRegion = {
   [c.HUMAN_REIKLAND]: "Human (Reikland)",
@@ -268,14 +267,14 @@ class CharacterApi {
 
   async getElementForDisplay(id) {
     const skillsPromise = this.axiosInstance.get(apiSkillPath);
-    const rawCharacterPromise = this.axiosInstance.get(`${apiCharacterDisplayPath}/${id}`);
+    const rawCharacterPromise = this.axiosInstance.get(`${apiBasePath}/${id}?full=true`);
 
     const rawSkills = (await skillsPromise).data.data;
     const rawCharacter = (await rawCharacterPromise).data.data;
 
     const totalModifiers = sumAndMultModifiers([
-      ...rawCharacter.mutations.map((t) => ({ multiplier: 1, modifiers: t.value.modifiers })),
-      ...rawCharacter.talents.map((t) => ({ multiplier: t.number, modifiers: t.value.modifiers })),
+      ...rawCharacter.object.mutations.map((t) => ({ multiplier: 1, modifiers: t.object.modifiers })),
+      ...rawCharacter.object.talents.map((t) => ({ multiplier: t.number, modifiers: t.wh.object.modifiers })),
     ]);
 
     const otherAttributes = totalModifiers.attributes;
@@ -284,68 +283,72 @@ class CharacterApi {
 
     const attributes = sumAndMultAttr([
       { multiplier: 1, attributes: otherAttributes },
-      { multiplier: 1, attributes: rawCharacter.base_attributes },
-      { multiplier: 1, attributes: rawCharacter.attribute_advances },
+      { multiplier: 1, attributes: rawCharacter.object.baseAttributes },
+      { multiplier: 1, attributes: rawCharacter.object.attributeAdvances },
     ]);
 
-    const [basicSkills, advancedSkills] = formatSkills(rawCharacter.skills, rawSkills, attributes);
-    const equippedArmor = rawCharacter.equipped_items.filter((x) => x.value.stats.type === 3);
-    const equippedWeapon = rawCharacter.equipped_items.filter((x) => [0, 1, 2].includes(x.value.stats.type));
-    const equippedOther = rawCharacter.equipped_items.filter((x) => [4, 5].includes(x.value.stats.type));
+    const [basicSkills, advancedSkills] = formatSkills(rawCharacter.object.skills, rawSkills, attributes);
+    const equippedArmor = rawCharacter.object.equippedItems.filter((x) => x.wh.object.type === 3);
+    const equippedWeapon = rawCharacter.object.equippedItems.filter((x) => [0, 1, 2].includes(x.wh.object.type));
+    const equippedOther = rawCharacter.object.equippedItems.filter((x) => [4, 5].includes(x.wh.object.type));
     return {
       id: id,
-      name: rawCharacter.name,
-      speciesWithRegion: speciesWithRegion[rawCharacter.species],
-      fate: rawCharacter.fate,
-      fortune: rawCharacter.fortune,
-      resilience: rawCharacter.resilience,
-      resolve: rawCharacter.resolve,
-      brass: rawCharacter.brass,
-      silver: rawCharacter.silver,
-      gold: rawCharacter.gold,
-      spentExp: rawCharacter.spent_exp,
-      currentExp: rawCharacter.current_exp,
-      status: statusTiers[rawCharacter.status],
-      standing: rawCharacter.standing,
-      description: rawCharacter.description,
-      notes: rawCharacter.notes,
-      sin: rawCharacter.sin,
-      corruption: rawCharacter.corruption,
-      shared: rawCharacter.shared,
-      canEdit: rawCharacter.can_edit,
+      name: rawCharacter.object.name,
+      speciesWithRegion: speciesWithRegion[rawCharacter.object.species],
+      fate: rawCharacter.object.fate,
+      fortune: rawCharacter.object.fortune,
+      resilience: rawCharacter.object.resilience,
+      resolve: rawCharacter.object.resolve,
+      brass: rawCharacter.object.brass,
+      silver: rawCharacter.object.silver,
+      gold: rawCharacter.object.gold,
+      spentExp: rawCharacter.object.spentExp,
+      currentExp: rawCharacter.object.currentExp,
+      status: statusTiers[rawCharacter.object.status],
+      standing: rawCharacter.object.standing,
+      description: rawCharacter.object.description,
+      notes: rawCharacter.object.notes,
+      sin: rawCharacter.object.sin,
+      corruption: rawCharacter.object.corruption,
+      shared: rawCharacter.object.shared,
+      canEdit: rawCharacter.canEdit,
 
-      careerName: getCareerName(rawCharacter.career),
-      careerLevelName: getCareerLevelName(rawCharacter.career),
-      className: careerClasses[rawCharacter.career.value.class],
-      pastCareers: rawCharacter.career_path.map((x) => `${getCareerName(x)}`),
+      careerName: getCareerName(rawCharacter.object.career),
+      careerLevelName: getCareerLevelName(rawCharacter.object.career),
+      className: careerClasses[rawCharacter.object.career.wh.object.class],
+      pastCareers: rawCharacter.object.careerPath.map((x) => `${getCareerName(x)}`),
 
-      baseAttributes: rawCharacter.base_attributes,
+      baseAttributes: rawCharacter.object.baseAttributes,
       otherAttributes: otherAttributes,
-      attributeAdvances: rawCharacter.attribute_advances,
+      attributeAdvances: rawCharacter.object.attributeAdvances,
       attributes: attributes,
 
-      movement: getMovementFormula(rawCharacter.species) + movementModifier,
-      walk: 2 * (getMovementFormula(rawCharacter.species) + movementModifier),
-      run: 4 * (getMovementFormula(rawCharacter.species) + movementModifier),
+      movement: getMovementFormula(rawCharacter.object.species) + movementModifier,
+      walk: 2 * (getMovementFormula(rawCharacter.object.species) + movementModifier),
+      run: 4 * (getMovementFormula(rawCharacter.object.species) + movementModifier),
       wounds: getWoundsFormula(defaultSize + sizeModifier, attributes.T, attributes.WP, attributes.S),
 
-      talents: rawCharacter.talents.map((x) => ({ name: x.value.name, rank: x.number })),
+      talents: rawCharacter.object.talents.map((x) => ({ name: x.wh.object.name, rank: x.number })),
       basicSkills: basicSkills,
       advancedSkills: advancedSkills,
 
       equippedArmor: formatItems(equippedArmor, attributes),
       equippedWeapon: formatItems(equippedWeapon, attributes),
       equippedOther: formatItems(equippedOther, attributes),
-      carried: formatItems(rawCharacter.carried_items, attributes),
-      stored: formatItems(rawCharacter.stored_items, attributes),
+      carried: formatItems(rawCharacter.object.carriedItems, attributes),
+      stored: formatItems(rawCharacter.object.storedItems, attributes),
 
-      spells: formatSpells(rawCharacter.spells.map((x) => x.value)),
-      mutations: formatMutations(rawCharacter.mutations),
+      spells: formatSpells(rawCharacter.object.spells),
+      mutations: formatMutations(rawCharacter.object.mutations),
 
-      encWeapon: equippedWeapon.map((x) => x.value.enc * x.number).reduce((x, y) => x + y, 0),
-      encArmor: equippedArmor.map((x) => (x.value.enc > 0 ? x.value.enc - 1 : 0) * x.number).reduce((x, y) => x + y, 0),
-      encOther: equippedOther.map((x) => (x.value.enc > 0 ? x.value.enc - 1 : 0) * x.number).reduce((x, y) => x + y, 0),
-      encCarried: rawCharacter.carried_items.map((x) => x.value.enc).reduce((x, y) => x + y, 0),
+      encWeapon: equippedWeapon.map((x) => x.wh.object.enc * x.number).reduce((x, y) => x + y, 0),
+      encArmor: equippedArmor
+        .map((x) => (x.wh.object.enc > 0 ? x.wh.object.enc - 1 : 0) * x.number)
+        .reduce((x, y) => x + y, 0),
+      encOther: equippedOther
+        .map((x) => (x.wh.object.enc > 0 ? x.wh.object.enc - 1 : 0) * x.number)
+        .reduce((x, y) => x + y, 0),
+      encCarried: rawCharacter.object.carriedItems.map((x) => x.wh.object.enc).reduce((x, y) => x + y, 0),
     };
   }
 }

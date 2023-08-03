@@ -63,11 +63,11 @@ function sortByName(x, y) {
 
 function skillForDisplay(rawSkill, skillRank, attributes) {
   return {
-    name: rawSkill.is_group ? `${rawSkill.name} (Any)` : rawSkill.name,
-    attributeName: skillAttributeTypesGroup[rawSkill.attribute],
-    attributeValue: attributes[skillAttributeTypesGroup[rawSkill.attribute]],
+    name: rawSkill.object.isGroup ? `${rawSkill.object.name} (Any)` : rawSkill.object.name,
+    attributeName: skillAttributeTypesGroup[rawSkill.object.attribute],
+    attributeValue: attributes[skillAttributeTypesGroup[rawSkill.object.attribute]],
     advances: skillRank,
-    skill: attributes[skillAttributeTypesGroup[rawSkill.attribute]] + skillRank,
+    skill: attributes[skillAttributeTypesGroup[rawSkill.object.attribute]] + skillRank,
   };
 }
 
@@ -81,12 +81,12 @@ function formatSkills(characterSkills, allSkills, attributes) {
       const skillRank = characterSkill ? characterSkill.number : 0;
 
       // Do not display basic skills with rank 0 that do not have display_zero set to true
-      if (skillRank === 0 && !skill.display_zero) {
+      if (skillRank === 0 && !skill.object.displayZero) {
         continue;
       }
 
       // Do not display basic that do not depend on one attribute
-      if (skillAttributeTypesGroup[skill.attribute] === "Various") {
+      if (skillAttributeTypesGroup[skill.object.attribute] === "Various") {
         continue;
       }
 
@@ -109,49 +109,50 @@ function formatItems(characterItems, attributes) {
 
   for (const charItem of characterItems) {
     const item = {
-      name: charItem.value.name,
-      enc: charItem.value.enc,
-      qualities: charItem.value.properties.map((x) => x.name),
+      name: charItem.wh.object.name,
+      enc: charItem.wh.object.enc,
+      qualities: charItem.wh.object.properties.map((x) => x.object.name),
       number: charItem.number,
-      desc: charItem.value.description,
+      desc: charItem.wh.object.description,
     };
 
-    if (charItem.value.stats.type === 0) {
-      item.group = meleeGroups[charItem.value.stats.group];
-      item.rng = meleeReach[charItem.value.stats.reach];
-      item.dmg = charItem.value.stats.dmg + charItem.value.stats.dmg_sb_mult * SB;
-    } else if (charItem.value.stats.type === 1) {
-      item.group = rangedGroups[charItem.value.stats.group];
-      item.rng = charItem.value.stats.rng + charItem.value.stats.rng_sb_mult * SB;
-      item.dmg = charItem.value.stats.dmg + charItem.value.stats.dmg_sb_mult * SB;
-    } else if (charItem.value.stats.type === 2) {
-      let range = charItem.value.stats.rng_mult !== 1 ? `Weapon x${charItem.value.stats.rng_mult}` : "Weapon";
-      if (charItem.value.stats.rng > 0) {
-        range += `+${parseInt(charItem.value.stats.rng)}`;
-      } else if (charItem.value.stats.rng < 0) {
-        range += `${parseInt(charItem.value.stats.rng)}`;
+    if (charItem.wh.object.type === 0) {
+      item.group = meleeGroups[charItem.wh.object.melee.group];
+      item.rng = meleeReach[charItem.wh.object.melee.reach];
+      item.dmg = charItem.wh.object.melee.dmg + charItem.wh.object.melee.dmgSbMult * SB;
+    } else if (charItem.wh.object.type === 1) {
+      item.group = rangedGroups[charItem.wh.object.ranged.group];
+      item.rng = charItem.wh.object.ranged.rng + charItem.wh.object.ranged.rngSbMult * SB;
+      item.dmg = charItem.wh.object.ranged.dmg + charItem.wh.object.ranged.dmgSbMult * SB;
+    } else if (charItem.wh.object.type === 2) {
+      let range =
+        charItem.wh.object.ammunition.rngMult !== 1 ? `Weapon x${charItem.wh.object.ammunition.rngMult}` : "Weapon";
+      if (charItem.wh.object.ammunition.rng > 0) {
+        range += `+${parseInt(charItem.wh.object.ammunition.rng)}`;
+      } else if (charItem.wh.object.ammunition.rng < 0) {
+        range += `${parseInt(charItem.wh.object.ammunition.rng)}`;
       }
 
       let damage = "Weapon";
-      if (charItem.value.stats.dmg > 0) {
-        damage += `+${parseInt(charItem.value.stats.dmg)}`;
-      } else if (charItem.value.stats.rng < 0) {
-        damage += `${parseInt(charItem.value.stats.dmg)}`;
+      if (charItem.wh.object.ammunition.dmg > 0) {
+        damage += `+${parseInt(charItem.wh.object.ammunition.dmg)}`;
+      } else if (charItem.wh.object.ammunition.rng < 0) {
+        damage += `${parseInt(charItem.wh.object.ammunition.dmg)}`;
       }
 
-      item.group = ammunitionGroups[charItem.value.stats.group];
+      item.group = ammunitionGroups[charItem.wh.object.ammunition.group];
       item.rng = range;
       item.dmg = damage;
-    } else if (charItem.value.stats.type === 3) {
-      item.group = armorGroups[charItem.value.stats.group];
-      item.locations = charItem.value.stats.location.map((x) => armorLocations[x]);
-      item.ap = charItem.value.stats.points;
-    } else if (charItem.value.stats.type === 6) {
-      item.spells = formatSpells(charItem.value.stats.spells);
+    } else if (charItem.wh.object.type === 3) {
+      item.group = armorGroups[charItem.wh.object.armour.group];
+      item.locations = charItem.wh.object.armour.location.map((x) => armorLocations[x]);
+      item.ap = charItem.wh.object.armour.points;
+    } else if (charItem.wh.object.type === 6) {
+      item.spells = formatSpells(charItem.wh.object.grimoire.spells);
     } else {
       item.desc =
-        (charItem.value.stats.type === 4 ? `(Capacity ${charItem.value.stats.capacity}) ` : "") +
-        charItem.value.description;
+        (charItem.wh.object.type === 4 ? `(Capacity ${charItem.wh.object.container.capacity}) ` : "") +
+        charItem.wh.object.description;
     }
     items.push(item);
   }
@@ -161,33 +162,33 @@ function formatItems(characterItems, attributes) {
 
 function formatSpells(rawSpells) {
   return rawSpells.map((x) => ({
-    name: x.name,
-    range: x.range,
-    target: x.target,
-    duration: x.duration,
-    description: x.description,
-    type: x.cn === -1 ? "Prayer" : "Spell",
-    cn: x.cn === -1 ? null : x.cn,
+    name: x.object.name,
+    range: x.object.range,
+    target: x.object.target,
+    duration: x.object.duration,
+    description: x.object.description,
+    type: x.object.cn === -1 ? "Prayer" : "Spell",
+    cn: x.object.cn === -1 ? null : x.object.cn,
   }));
 }
 
 function formatMutations(rawMutations) {
   return rawMutations.map((x) => {
     return {
-      name: x.value.name,
-      type: mutationTypes[x.value.type],
-      description: x.value.description,
+      name: x.object.name,
+      type: mutationTypes[x.object.type],
+      description: x.object.description,
     };
   });
 }
 
 function getCareerName(career) {
-  return `${career.value.name} ${career.level}`;
+  return `${career.wh.object.name} ${career.number}`;
 }
 
 function getCareerLevelName(career) {
-  const lvl = "level_" + career.level;
-  return `${career.value[lvl].name}`;
+  const lvl = "level" + career.number;
+  return `${career.wh.object[lvl].name}`;
 }
 
 function csvStr(stringValue) {
