@@ -199,333 +199,338 @@ const character2ModelForm = {
 };
 
 const characterDisplayApiForm = {
-  name: "charDisplay",
-  species: c.WOOD_ELF_DEFAULT,
-  fate: 1,
-  fortune: 2,
-  resilience: 3,
-  resolve: 4,
-  brass: 12,
-  silver: 5,
-  gold: 1,
-  spent_exp: 1000,
-  current_exp: 230,
-  status: 1,
-  standing: 2,
-  description: "character display",
-  notes: "",
-  career_path: [
-    {
-      id: "id1",
-      level: 1,
-      value: {
-        name: "career_1",
-        class: "career_1_class",
-        level_1: { name: "career_1_level_1" },
-        level_2: { name: "career_2_level_2" },
-        level_3: { name: "career_3_level_3" },
-        level_4: { name: "career_4_level_4" },
+  id: "id",
+  canEdit: true,
+  object: {
+    name: "charDisplay",
+    species: c.WOOD_ELF_DEFAULT,
+    fate: 1,
+    fortune: 2,
+    resilience: 3,
+    resolve: 4,
+    brass: 12,
+    silver: 5,
+    gold: 1,
+    spentExp: 1000,
+    currentExp: 230,
+    status: 1,
+    standing: 2,
+    description: "character display",
+    notes: "",
+    careerPath: [
+      {
+        number: 1,
+        wh: {
+          id: "id1",
+          object: {
+            name: "career_1",
+            class: "career_1_class",
+            level1: { name: "career_1_level_1" },
+            level2: { name: "career_2_level_2" },
+            level3: { name: "career_3_level_3" },
+            level4: { name: "career_4_level_4" },
+          },
+        },
+      },
+      {
+        number: 2,
+        wh: {
+          id: "id2",
+          object: {
+            name: "career_2",
+            class: "career_2_class",
+            level1: { name: "career_2_level_1" },
+            level2: { name: "career_2_level_2" },
+            level3: { name: "career_2_level_3" },
+            level4: { name: "career_2_level_4" },
+          },
+        },
+      },
+    ],
+    career: {
+      number: 3,
+      wh: {
+        id: "id3",
+        object: {
+          name: "career_3",
+          class: 2,
+          level1: { name: "career_3_level_1" },
+          level2: { name: "career_3_level_2" },
+          level3: { name: "career_3_level_3" },
+          level4: { name: "career_3_level_4" },
+        },
       },
     },
-    {
-      id: "id2",
-      level: 2,
-      value: {
-        name: "career_2",
-        class: "career_2_class",
-        level_1: { name: "career_2_level_1" },
-        level_2: { name: "career_2_level_2" },
-        level_3: { name: "career_2_level_3" },
-        level_4: { name: "career_2_level_4" },
+    baseAttributes: { WS: 40, BS: 40, S: 30, T: 25, I: 50, Ag: 35, Dex: 50, Int: 35, WP: 35, Fel: 25 },
+    attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+    skills: [
+      {
+        wh: {
+          id: "id4",
+          object: {
+            name: "basic",
+            isGroup: true,
+            attribute: 3,
+            type: 0,
+          },
+        },
+        number: 4,
       },
-    },
-  ],
-  career: {
-    id: "id3",
-    level: 3,
-    value: {
-      name: "career_3",
-      class: 2,
-      level_1: { name: "career_3_level_1" },
-      level_2: { name: "career_3_level_2" },
-      level_3: { name: "career_3_level_3" },
-      level_4: { name: "career_3_level_4" },
-    },
+      {
+        wh: {
+          id: "id5",
+          object: {
+            name: "advanced",
+            isGroup: false,
+            attribute: 1,
+            type: 1,
+          },
+        },
+        number: 5,
+      },
+    ],
+    talents: [
+      {
+        number: 6,
+        wh: {
+          id: "id6",
+          object: {
+            name: "talent_1",
+            modifiers: {
+              size: 0,
+              attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+              movement: 0,
+            },
+          },
+        },
+      },
+      {
+        number: 6,
+        wh: {
+          id: "id7",
+          object: {
+            name: "talent_2",
+            modifiers: {
+              size: 0,
+              attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 1 },
+              movement: 0,
+            },
+          },
+        },
+      },
+      {
+        number: 1,
+        wh: {
+          id: "id8",
+          object: {
+            name: "talent_3",
+            modifiers: {
+              size: -1,
+              attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+              movement: 1,
+            },
+          },
+        },
+      },
+    ],
+    equippedItems: [
+      {
+        number: 1,
+        wh: {
+          id: "id9",
+          object: {
+            name: "item_1",
+            enc: 1.5,
+            type: 0,
+            melee: { group: 0, reach: 2, dmg: 2, dmgSbMult: 2 },
+            properties: [{ object: { name: "item_1_property_1" } }],
+            description: "item_1_desc",
+          },
+        },
+      },
+      {
+        number: 2,
+        wh: {
+          id: "id10",
+          object: {
+            name: "item_2",
+            enc: 1,
+            type: 1,
+            ranged: { group: 1, rng: 10, rngSbMult: 1.5, dmg: 2, dmgSbMult: 1.2 },
+            properties: [{ object: { name: "item_2_property_1" } }, { object: { name: "item_2_property_2" } }],
+            description: "item_2_desc",
+          },
+        },
+      },
+      {
+        number: 3,
+        wh: {
+          id: "id11",
+          object: {
+            name: "item_3",
+            enc: 0.5,
+            type: 2,
+            ammunition: { group: 1, dmg: 1, rng: 5, rngMult: 1.3 },
+            properties: [],
+            description: "item_3_desc",
+          },
+        },
+      },
+      {
+        number: 3,
+        wh: {
+          id: "id12",
+          object: {
+            name: "item_4",
+            enc: 2,
+            type: 3,
+            armour: { group: 1, points: 2, location: [1, 3] },
+            properties: [{ object: { name: "item_4_property_1" } }],
+            description: "item_4_desc",
+          },
+        },
+      },
+    ],
+    carriedItems: [
+      {
+        number: 1,
+        wh: {
+          id: "id13",
+          object: {
+            name: "item_5",
+            enc: 2,
+            type: 4,
+            container: { capacity: 2, carryType: 0 },
+            properties: [{ object: { name: "item_5_property_1" } }, { object: { name: "item_5_property_2" } }],
+            description: "item_5_desc",
+          },
+        },
+      },
+      {
+        number: 2,
+        wh: {
+          id: "id14",
+          object: {
+            name: "item_6",
+            enc: 0,
+            type: 5,
+            other: { carryType: 1 },
+            properties: [],
+            description: "item_6_desc",
+          },
+        },
+      },
+      {
+        number: 1,
+        wh: {
+          id: "id14a",
+          object: {
+            name: "spellbook",
+            enc: 1,
+            type: 6,
+            grimoire: {
+              spells: [
+                {
+                  object: {
+                    name: "spellbook_spell_1",
+                    range: "spellbook_spell_1_range",
+                    target: "spellbook_spell_1_target",
+                    duration: "spellbook_spell_1_duration",
+                    description: "spellbook_spell_1_desc",
+                    cn: 1,
+                  },
+                },
+                {
+                  object: {
+                    name: "spellbook_spell_2",
+                    range: "spellbook_spell_2_range",
+                    target: "spellbook_spell_2_target",
+                    duration: "spellbook_spell_2_duration",
+                    description: "spellbook_spell_2_desc",
+                    cn: 2,
+                  },
+                },
+              ],
+            },
+            properties: [],
+            description: "spellbook_desc",
+          },
+        },
+      },
+    ],
+    storedItems: [
+      {
+        number: 5,
+        wh: {
+          id: "id15",
+          object: {
+            name: "item_7",
+            enc: 7,
+            type: 5,
+            other: { carry_type: 2 },
+            properties: [],
+            description: "item_7_desc",
+          },
+        },
+      },
+    ],
+    spells: [
+      {
+        id: "id16",
+        object: {
+          name: "spell_1",
+          range: "spell_1_range",
+          target: "spell_1_target",
+          duration: "spell_1_duration",
+          description: "spell_1_desc",
+          cn: 1,
+        },
+      },
+      {
+        id: "id17",
+        object: {
+          name: "spell_2",
+          range: "spell_2_range",
+          target: "spell_2_target",
+          duration: "spell_2_duration",
+          description: "spell_2_desc",
+          cn: -1,
+        },
+      },
+    ],
+    sin: 1,
+    corruption: 2,
+    mutations: [
+      {
+        id: "id18",
+        object: {
+          name: "mut_1",
+          type: 0,
+          description: "mut_1_desc",
+          modifiers: {
+            size: -1,
+            attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 2 },
+            movement: 1,
+          },
+        },
+      },
+      {
+        id: "id19",
+        object: {
+          name: "mut_2",
+          type: 1,
+          description: "mut_2_desc",
+          modifiers: {
+            size: 1,
+            attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+            movement: 0,
+          },
+        },
+      },
+    ],
+    shared: true,
   },
-  base_attributes: { WS: 40, BS: 40, S: 30, T: 25, I: 50, Ag: 35, Dex: 50, Int: 35, WP: 35, Fel: 25 },
-  attribute_advances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-  skills: [
-    { id: "id4", number: 4 },
-    { id: "id5", number: 5 },
-  ],
-  talents: [
-    {
-      id: "id6",
-      number: 6,
-      value: {
-        name: "talent_1",
-        modifiers: {
-          size: 0,
-          attributes: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-          movement: 0,
-        },
-      },
-    },
-    {
-      id: "id7",
-      number: 6,
-      value: {
-        name: "talent_2",
-        modifiers: {
-          size: 0,
-          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 1 },
-          movement: 0,
-        },
-      },
-    },
-    {
-      id: "id8",
-      number: 1,
-      value: {
-        name: "talent_3",
-        modifiers: {
-          size: -1,
-          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-          movement: 1,
-        },
-      },
-    },
-  ],
-  equipped_items: [
-    {
-      id: "id9",
-      number: 1,
-      value: {
-        name: "item_1",
-        enc: 1.5,
-        stats: { type: 0, group: 0, reach: 2, dmg: 2, dmg_sb_mult: 2 },
-        properties: [{ name: "item_1_property_1" }],
-        description: "item_1_desc",
-      },
-    },
-    {
-      id: "id10",
-      number: 2,
-      value: {
-        name: "item_2",
-        enc: 1,
-        stats: { type: 1, group: 1, rng: 10, rng_sb_mult: 1.5, dmg: 2, dmg_sb_mult: 1.2 },
-        properties: [{ name: "item_2_property_1" }, { name: "item_2_property_2" }],
-        description: "item_2_desc",
-      },
-    },
-    {
-      id: "id11",
-      number: 3,
-      value: {
-        name: "item_3",
-        enc: 0.5,
-        stats: { type: 2, group: 1, dmg: 1, rng: 5, rng_mult: 1.3 },
-        properties: [],
-        description: "item_3_desc",
-      },
-    },
-    {
-      id: "id12",
-      number: 3,
-      value: {
-        name: "item_4",
-        enc: 2,
-        stats: { type: 3, group: 1, points: 2, location: [1, 3] },
-        properties: [{ name: "item_4_property_1" }],
-        description: "item_4_desc",
-      },
-    },
-  ],
-  carried_items: [
-    {
-      id: "id13",
-      number: 1,
-      value: {
-        name: "item_5",
-        enc: 2,
-        stats: { type: 4, capacity: 2, wearable: true },
-        properties: [{ name: "item_5_property_1" }, { name: "item_5_property_2" }],
-        description: "item_5_desc",
-      },
-    },
-    {
-      id: "id14",
-      number: 2,
-      value: {
-        name: "item_6",
-        enc: 0,
-        stats: { type: 5, carry_type: { carriable: true, wearable: false } },
-        properties: [],
-        description: "item_6_desc",
-      },
-    },
-    {
-      id: "id14a",
-      number: 1,
-      value: {
-        name: "spellbook",
-        enc: 1,
-        stats: {
-          type: 6,
-          spells: [
-            {
-              name: "spellbook_spell_1",
-              range: "spellbook_spell_1_range",
-              target: "spellbook_spell_1_target",
-              duration: "spellbook_spell_1_duration",
-              description: "spellbook_spell_1_desc",
-              cn: 1,
-            },
-            {
-              name: "spellbook_spell_2",
-              range: "spellbook_spell_2_range",
-              target: "spellbook_spell_2_target",
-              duration: "spellbook_spell_2_duration",
-              description: "spellbook_spell_2_desc",
-              cn: 2,
-            },
-          ],
-        },
-        properties: [],
-        description: "spellbook_desc",
-      },
-    },
-  ],
-  stored_items: [
-    {
-      id: "id15",
-      number: 5,
-      value: {
-        name: "item_7",
-        enc: 7,
-        stats: { type: 5, carry_type: { carriable: false, wearable: false } },
-        properties: [],
-        description: "item_7_desc",
-      },
-    },
-  ],
-  spells: [
-    {
-      id: "id16",
-      value: {
-        name: "spell_1",
-        range: "spell_1_range",
-        target: "spell_1_target",
-        duration: "spell_1_duration",
-        description: "spell_1_desc",
-        cn: 1,
-      },
-    },
-    {
-      id: "id17",
-      value: {
-        name: "spell_2",
-        range: "spell_2_range",
-        target: "spell_2_target",
-        duration: "spell_2_duration",
-        description: "spell_2_desc",
-        cn: -1,
-      },
-    },
-  ],
-  sin: 1,
-  corruption: 2,
-  mutations: [
-    {
-      id: "id18",
-      value: {
-        name: "mut_1",
-        type: 0,
-        description: "mut_1_desc",
-        modifiers: {
-          size: -1,
-          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 2 },
-          movement: 1,
-        },
-      },
-    },
-    {
-      id: "id19",
-      value: {
-        name: "mut_2",
-        type: 1,
-        description: "mut_2_desc",
-        modifiers: {
-          size: 1,
-          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-          movement: 0,
-        },
-      },
-    },
-  ],
-  can_edit: true,
-  shared: true,
 };
-
-const skillsApiForm = [
-  {
-    // Should be displayed
-    id: "id4",
-    name: "taken_basic_skill",
-    attribute: 1,
-    type: 0,
-    display_zero: true,
-  },
-  {
-    // Should be displayed
-    id: "id5",
-    name: "taken_adv_skill",
-    attribute: 3,
-    type: 1,
-    display_zero: false,
-  },
-  {
-    // Should be displayed because not taken basic with display_zero: true
-    id: "not_taken_id1",
-    name: "basic_skill_1",
-    attribute: 4,
-    type: 0,
-    display_zero: true,
-  },
-  {
-    // Should NOT be displayed because not taken basic with display_zero: false
-    id: "not_taken_id2",
-    name: "basic_skill_2",
-    attribute: 7,
-    type: 0,
-    display_zero: false,
-  },
-  {
-    // Should NOT be displayed because not taken basic with attribute "Various" (11)
-    id: "not_taken_id3",
-    name: "basic_skill_3",
-    attribute: 11,
-    type: 0,
-    display_zero: true,
-  },
-  {
-    // Should NOT be displayed because not taken advanced
-    id: "not_taken_id4",
-    name: "advanced_skill_1",
-    attribute: 1,
-    type: 1,
-    display_zero: true,
-  },
-  {
-    // Should NOT be displayed because mixed (type 2)
-    id: "not_taken_id5",
-    name: "mixed_skill_1",
-    attribute: 1,
-    type: 2,
-    display_zero: true,
-  },
-];
 
 const mockAxios = {
   get: async (path) => {
@@ -536,10 +541,8 @@ const mockAxios = {
       apiData = character1ApiForm;
     } else if (path === "/api/wh/character/id2") {
       apiData = character2ApiForm;
-    } else if (path === "/api/character_resolved/id3") {
+    } else if (path === "/api/wh/character/id3?full=true") {
       apiData = characterDisplayApiForm;
-    } else if (path === "/api/skill") {
-      apiData = skillsApiForm;
     } else {
       throw "invalid id";
     }
@@ -1199,7 +1202,7 @@ describe("getTotalAttributes returns correct value", () => {
   });
 });
 
-test("getElementDisplay return correct value", async () => {
+test("getElementDisplay returns correct value", async () => {
   const client = new CharacterApi(mockAxios);
   const result = await client.getElementForDisplay("id3");
 
@@ -1243,27 +1246,20 @@ test("getElementDisplay return correct value", async () => {
     ],
     basicSkills: [
       {
-        name: "basic_skill_1",
-        attributeName: "T",
-        attributeValue: 25,
-        advances: 0,
-        skill: 25,
-      },
-      {
-        name: "taken_basic_skill",
-        attributeName: "WS",
-        attributeValue: 47,
+        name: "basic (Any)",
+        attributeName: "S",
+        attributeValue: 51,
         advances: 4,
-        skill: 51,
+        skill: 55,
       },
     ],
     advancedSkills: [
       {
-        name: "taken_adv_skill",
-        attributeName: "S",
-        attributeValue: 51,
+        name: "advanced",
+        attributeName: "WS",
+        attributeValue: 47,
         advances: 5,
-        skill: 56,
+        skill: 52,
       },
     ],
     equippedArmor: [

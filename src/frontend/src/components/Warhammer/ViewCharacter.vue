@@ -581,7 +581,7 @@
               <b-tbody>
                 <b-tr v-for="spell in book.spells" :key="spell.name">
                   <b-td stacked-heading="Name">{{ spell.name }}</b-td>
-                  <b-td stacked-heading="CN">{{ spell.cn }}</b-td>
+                  <b-td stacked-heading="CN">{{ spell.cn ? spell.cn : "N/A" }}</b-td>
                   <b-td stacked-heading="Range">{{ spell.range }}</b-td>
                   <b-td stacked-heading="Target">{{ spell.target }}</b-td>
                   <b-td stacked-heading="Duration">{{ spell.duration }}</b-td>

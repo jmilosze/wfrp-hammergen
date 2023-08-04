@@ -26,8 +26,8 @@ var character0 = wh.Wh{
 			{Id: itemOther.Id, Number: 100},
 		},
 		Skills: []*wh.IdNumber{
-			{Id: skill0.Id, Number: 1},
-			{Id: skill1.Id, Number: 10},
+			{Id: advanced0.Id, Number: 1},
+			{Id: advanced1.Id, Number: 10},
 		},
 		Talents: []*wh.IdNumber{
 			{Id: talent0.Id, Number: 1},
