@@ -108,7 +108,10 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 	carriedItems := idNumberListToWhNumberList(character.CarriedItems, allItemIdMap)
 	storedItems := idNumberListToWhNumberList(character.StoredItems, allItemIdMap)
 
-	skills := idNumberListToWhNumberList(character.Skills, whListToIdWhMap(allSkills))
+	skills, err := skillIdNumberListToWhNumberList(character.Skills, allSkills)
+	if err != nil {
+		return nil, err
+	}
 	talents := idNumberListToWhNumberList(character.Talents, whListToIdWhMap(allTalents))
 	spells := idListToWhList(character.Spells, whListToIdWhMap(allSpells))
 	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
@@ -244,6 +247,36 @@ func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]
 	}
 
 	return whNumberList
+}
+
+func skillIdNumberListToWhNumberList(skillIdNumberList []*IdNumber, allSkills []*Wh) ([]*WhNumber, error) {
+	if skillIdNumberList == nil {
+		return nil, nil
+	}
+
+	whNumberList := make([]*WhNumber, 0)
+
+	var skillMap = make(map[string]int, len(skillIdNumberList))
+	for _, v := range skillIdNumberList {
+		skillMap[v.Id] = v.Number
+	}
+
+	for _, v := range allSkills {
+		skillNumber, ok := skillMap[v.Id]
+		if ok {
+			whNumberList = append(whNumberList, &WhNumber{Wh: v.Copy(), Number: skillNumber})
+		} else {
+			allSkill, ok := v.Object.(*Skill)
+			if !ok {
+				return nil, errors.New("error asserting skill")
+			}
+			if allSkill.Type == SkillTypeBasic && allSkill.DisplayZero && allSkill.Attribute != AttVarious {
+				whNumberList = append(whNumberList, &WhNumber{Wh: v.Copy(), Number: 0})
+			}
+		}
+	}
+
+	return whNumberList, nil
 }
 
 func idNumberToWhNumber(idNumer *IdNumber, allIdWhMap map[string]*Wh) (*WhNumber, error) {

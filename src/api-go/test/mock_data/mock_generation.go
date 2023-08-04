@@ -33,7 +33,7 @@ func NewMockGenProps() *wh.GenProps {
 			},
 		},
 		SpeciesSkills: map[wh.CharacterSpecies][]string{
-			wh.CharacterSpeciesDwarfNorse: {skill1.Id, skill0.Id},
+			wh.CharacterSpeciesDwarfNorse: {advanced0.Id, advanced1.Id},
 		},
 	}
 }
