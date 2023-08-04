@@ -23,7 +23,6 @@ import { getAttributes, sumAndMultAttr } from "./attributes";
 import { generateEmptyModifiers, sumAndMultModifiers } from "./characterModifiers";
 
 const apiBasePath = "/api/wh/character";
-const apiSkillPath = "/api/wh/skill";
 
 const speciesWithRegion = {
   [c.HUMAN_REIKLAND]: "Human (Reikland)",
@@ -266,10 +265,8 @@ class CharacterApi {
   }
 
   async getElementForDisplay(id) {
-    const skillsPromise = this.axiosInstance.get(apiSkillPath);
     const rawCharacterPromise = this.axiosInstance.get(`${apiBasePath}/${id}?full=true`);
 
-    const rawSkills = (await skillsPromise).data.data;
     const rawCharacter = (await rawCharacterPromise).data.data;
 
     const totalModifiers = sumAndMultModifiers([
@@ -287,7 +284,7 @@ class CharacterApi {
       { multiplier: 1, attributes: rawCharacter.object.attributeAdvances },
     ]);
 
-    const [basicSkills, advancedSkills] = formatSkills(rawCharacter.object.skills, rawSkills, attributes);
+    const [basicSkills, advancedSkills] = formatSkills(rawCharacter.object.skills, attributes);
     const equippedArmor = rawCharacter.object.equippedItems.filter((x) => x.wh.object.type === 3);
     const equippedWeapon = rawCharacter.object.equippedItems.filter((x) => [0, 1, 2].includes(x.wh.object.type));
     const equippedOther = rawCharacter.object.equippedItems.filter((x) => [4, 5].includes(x.wh.object.type));

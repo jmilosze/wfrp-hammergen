@@ -256,7 +256,6 @@ func mergeStrAndRemoveDuplicates(slice1 []string, slice2 []string) []string {
 
 func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, *wh.WhError) {
 	allItemIds := make([]string, 0)
-	allSkillIds := make([]string, 0)
 	allTalentIds := make([]string, 0)
 	allCareerIds := make([]string, 0)
 	allMutationIds := make([]string, 0)
@@ -270,7 +269,6 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.CarriedItems)
 		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.StoredItems)
 
-		allSkillIds = mergeStrAndIdNumberAndRemoveDuplicates(allSkillIds, character.Skills)
 		allTalentIds = mergeStrAndIdNumberAndRemoveDuplicates(allTalentIds, character.Talents)
 
 		allCareerIds = mergeStrAndIdNumberAndRemoveDuplicates(allCareerIds, character.CareerPath)
@@ -290,7 +288,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		ids  []string
 	}{
 		wh.WhTypeItem:     {err: nil, full: true, wh: nil, ids: allItemIds},
-		wh.WhTypeSkill:    {err: nil, full: false, wh: nil, ids: allSkillIds},
+		wh.WhTypeSkill:    {err: nil, full: false, wh: nil, ids: []string{}},
 		wh.WhTypeTalent:   {err: nil, full: false, wh: nil, ids: allTalentIds},
 		wh.WhTypeCareer:   {err: nil, full: false, wh: nil, ids: allCareerIds},
 		wh.WhTypeMutation: {err: nil, full: false, wh: nil, ids: allMutationIds},
@@ -332,6 +330,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		if err != nil {
 			continue
 		}
+
 		fullCharacters = append(fullCharacters, fullCharacter)
 	}
 

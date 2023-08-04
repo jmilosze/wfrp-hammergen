@@ -71,32 +71,16 @@ function skillForDisplay(rawSkill, skillRank, attributes) {
   };
 }
 
-function formatSkills(characterSkills, allSkills, attributes) {
+function formatSkills(characterSkills, attributes) {
   const basicSkills = [];
   const advancedSkills = [];
 
-  for (const skill of allSkills) {
-    if (skill.type === 0) {
-      const characterSkill = characterSkills.find((x) => x.id === skill.id);
-      const skillRank = characterSkill ? characterSkill.number : 0;
-
-      // Do not display basic skills with rank 0 that do not have display_zero set to true
-      if (skillRank === 0 && !skill.object.displayZero) {
-        continue;
-      }
-
-      // Do not display basic that do not depend on one attribute
-      if (skillAttributeTypesGroup[skill.object.attribute] === "Various") {
-        continue;
-      }
-
-      basicSkills.push(skillForDisplay(skill, skillRank, attributes));
+  for (const skill of characterSkills) {
+    const formattedSkill = skillForDisplay(skill.wh, skill.number, attributes);
+    if (skill.wh.object.type === 0) {
+      basicSkills.push(formattedSkill);
     } else {
-      const characterSkill = characterSkills.find((x) => x.id === skill.id);
-      if (!characterSkill) {
-        continue;
-      }
-      advancedSkills.push(skillForDisplay(skill, characterSkill.number, attributes));
+      advancedSkills.push(formattedSkill);
     }
   }
 
