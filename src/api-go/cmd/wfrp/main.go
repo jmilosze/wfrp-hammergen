@@ -38,7 +38,7 @@ func run() error {
 	userDbService := mongodb.NewUserDbService(mongoDbService, cfg.MongoDb.CreateUserIndexes)
 	userService := services.NewUserService(&cfg.UserService, userDbService, emailService, jwtService, val)
 
-	whDbService := mongodb.NewWhDbService(mongoDbService)
+	whDbService := mongodb.NewWhDbService(mongoDbService, cfg.MongoDb.CreateWhIndexes)
 	whService := services.NewWhService(val, whDbService)
 
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.RequestTimeout)
