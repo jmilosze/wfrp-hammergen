@@ -5,7 +5,7 @@ import sys
 from pymongo import MongoClient
 
 MONGO_URI = os.environ["MONGO_URI"]
-DB_NAME = os.environ["DB_NAME"]
+DB_NAME = os.environ["DB_NAME"] + "-go"
 
 print(f"Are you sure you want to run this in {MONGO_URI}?")
 x = input()
