@@ -9,9 +9,9 @@ func NewMockGenProps() *wh.GenProps {
 		Name: "generationProps",
 		ClassItems: map[wh.CareerClass]*wh.GenItems{
 			wh.CareerClassBurghers: {
-				Equipped: wh.IdNumberMap{itemMelee.Id: 1, itemArmour.Id: 1},
-				Carried:  wh.IdNumberMap{itemOther.Id: 2},
-				Stored:   wh.IdNumberMap{itemOther.Id: 2},
+				Equipped: wh.IdStringMap{itemMelee.Id: "1", itemArmour.Id: "1"},
+				Carried:  wh.IdStringMap{itemOther.Id: "2"},
+				Stored:   wh.IdStringMap{itemOther.Id: "2"},
 			},
 		},
 		RandomTalents: []*wh.GenRandomTalent{
@@ -26,11 +26,8 @@ func NewMockGenProps() *wh.GenProps {
 				MaxRoll: 101,
 			},
 		},
-		SpeciesTalents: map[wh.CharacterSpecies]*wh.GenSpeciesTalents{
-			wh.CharacterSpeciesDwarfAltdorf: {
-				Single:   []string{talent0.Id, talent1.Id},
-				Multiple: [][]string{{talent0.Id, talent1.Id}, {talent0.Id, talent1.Id}},
-			},
+		SpeciesTalents: map[wh.CharacterSpecies][]string{
+			wh.CharacterSpeciesDwarfAltdorf: {talent0.Id, talent1.Id, talent0.Id + "," + talent1.Id, talent0.Id + "," + talent1.Id},
 		},
 		SpeciesSkills: map[wh.CharacterSpecies][]string{
 			wh.CharacterSpeciesDwarfNorse: {advanced0.Id, advanced1.Id},

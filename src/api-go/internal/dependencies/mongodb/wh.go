@@ -8,6 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 )
 
 type WhDbService struct {
@@ -15,15 +17,27 @@ type WhDbService struct {
 	Collections map[warhammer.WhType]*mongo.Collection
 }
 
-func NewWhDbService(db *DbService) *WhDbService {
+func NewWhDbService(db *DbService, createIndex bool) *WhDbService {
 	collections := map[warhammer.WhType]*mongo.Collection{}
 
 	for _, whType := range warhammer.WhCoreTypes {
 		collections[whType] = db.Client.Database(db.DbName).Collection(string(whType))
 	}
 	collections[warhammer.WhTypeOther] = db.Client.Database(db.DbName).Collection(warhammer.WhTypeOther)
+	if createIndex {
+		createIndexOnField("name", collections[warhammer.WhTypeOther])
+	}
 
 	return &WhDbService{Db: db, Collections: collections}
+}
+
+func createIndexOnField(fieldName string, collection *mongo.Collection) {
+	unique := true
+	mod := mongo.IndexModel{Keys: bson.M{fieldName: 1}, Options: &options.IndexOptions{Unique: &unique}}
+	_, err := collection.Indexes().CreateOne(context.TODO(), mod)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
