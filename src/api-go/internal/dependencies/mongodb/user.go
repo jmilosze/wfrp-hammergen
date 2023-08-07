@@ -9,8 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 	"time"
 )
 
@@ -36,12 +34,7 @@ func NewUserDbService(db *DbService, createIndex bool) *UserDbService {
 	coll := db.Client.Database(db.DbName).Collection(userCollectionName)
 
 	if createIndex {
-		unique := true
-		mod := mongo.IndexModel{Keys: bson.M{"username": 1}, Options: &options.IndexOptions{Unique: &unique}}
-		_, err := coll.Indexes().CreateOne(context.TODO(), mod)
-		if err != nil {
-			log.Fatal(err)
-		}
+		createIndexOnField("username", coll)
 	}
 
 	return &UserDbService{Db: db, Collection: coll}

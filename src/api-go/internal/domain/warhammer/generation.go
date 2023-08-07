@@ -7,10 +7,10 @@ import (
 
 type GenProps struct {
 	Name           string
-	ClassItems     map[CareerClass]*GenItems               `json:"classItems"`
-	RandomTalents  []*GenRandomTalent                      `json:"randomTalents"`
-	SpeciesTalents map[CharacterSpecies]*GenSpeciesTalents `json:"speciesTalents"`
-	SpeciesSkills  map[CharacterSpecies][]string           `json:"speciesSkills"`
+	ClassItems     map[CareerClass]*GenItems     `json:"classItems"`
+	RandomTalents  []*GenRandomTalent            `json:"randomTalents"`
+	SpeciesTalents map[CharacterSpecies][]string `json:"speciesTalents"`
+	SpeciesSkills  map[CharacterSpecies][]string `json:"speciesSkills"`
 }
 
 func (genProps *GenProps) Copy() *GenProps {
@@ -34,11 +34,15 @@ func (genProps *GenProps) Copy() *GenProps {
 		}
 	}
 
-	var speciesTalents map[CharacterSpecies]*GenSpeciesTalents
+	var speciesTalents map[CharacterSpecies][]string
 	if genProps.SpeciesTalents != nil {
-		speciesTalents = map[CharacterSpecies]*GenSpeciesTalents{}
-		for k, v := range genProps.SpeciesTalents {
-			speciesTalents[k] = v.Copy()
+		speciesTalents = map[CharacterSpecies][]string{}
+		for k1, v1 := range genProps.SpeciesTalents {
+			talents := make([]string, len(v1))
+			for k2, v2 := range v1 {
+				talents[k2] = v2
+			}
+			speciesTalents[k1] = talents
 		}
 	}
 
@@ -71,14 +75,14 @@ func (genProps *GenProps) ToMap() (map[string]any, error) {
 	return gMap, nil
 }
 
-type IdNumberMap map[string]int
+type IdStringMap map[string]string
 
-func (input IdNumberMap) Copy() IdNumberMap {
+func (input IdStringMap) Copy() IdStringMap {
 	if input == nil {
 		return nil
 	}
 
-	output := make(IdNumberMap, len(input))
+	output := make(IdStringMap, len(input))
 	for key, value := range input {
 		output[key] = value
 	}
@@ -86,9 +90,9 @@ func (input IdNumberMap) Copy() IdNumberMap {
 }
 
 type GenItems struct {
-	Equipped IdNumberMap `json:"equipped"`
-	Carried  IdNumberMap `json:"carried"`
-	Stored   IdNumberMap `json:"stored"`
+	Equipped IdStringMap `json:"equipped"`
+	Carried  IdStringMap `json:"carried"`
+	Stored   IdStringMap `json:"stored"`
 }
 
 func (input *GenItems) Copy() *GenItems {
@@ -118,47 +122,5 @@ func (input *GenRandomTalent) Copy() *GenRandomTalent {
 		Id:      input.Id,
 		MinRoll: input.MinRoll,
 		MaxRoll: input.MaxRoll,
-	}
-}
-
-type GenSpeciesTalents struct {
-	Single   []string   `json:"single"`
-	Multiple [][]string `json:"multiple"`
-}
-
-func (input *GenSpeciesTalents) Copy() *GenSpeciesTalents {
-	if input == nil {
-		return nil
-	}
-
-	var single []string
-	if input.Single != nil {
-		single = make([]string, len(input.Single))
-		for k, v := range input.Single {
-			single[k] = v
-		}
-	}
-
-	var multiple [][]string
-	if input.Multiple != nil {
-		multiple = make([][]string, len(input.Multiple))
-		for k1, v1 := range input.Multiple {
-			if v1 != nil {
-				multiple[k1] = make([]string, len(v1))
-				for k2, v2 := range v1 {
-					multiple[k1][k2] = v2
-				}
-			} else {
-				multiple[k1] = nil
-			}
-		}
-	}
-
-	return &GenSpeciesTalents{Single: single, Multiple: multiple}
-}
-
-func GetGenPropsValidationAliases() map[string]string {
-	return map[string]string{
-		"id_number_map_valid": "dive,keys,id_valid,endkeys,gte=1,lte=1000",
 	}
 }

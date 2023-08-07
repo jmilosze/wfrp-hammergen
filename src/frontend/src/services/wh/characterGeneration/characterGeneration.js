@@ -6,6 +6,7 @@ import { generateSkills } from "./skillGeneration";
 import { genTalentsAndAdvances } from "./talentGeneration";
 import { getAttributes, sumAndMultAttr } from "@/services/wh/attributes";
 import * as c from "../characterConstants";
+import { skillTypesGroup } from "@/services/wh/skill";
 
 export function generateFateAndResilience(speciesWithRegion) {
   let fate;
@@ -62,28 +63,35 @@ function generateCoins(status, standing) {
 
 export function generateClassItems(classItems) {
   let items = { equipped: [], carried: [] };
-
   for (let itemType of Object.keys(items)) {
-    for (let item of classItems[itemType]) {
+    for (let [itemIds, itemNumber] of Object.entries(classItems[itemType])) {
       let id = "";
       let number = "";
 
-      if (typeof item.id === "string") {
-        id = item.id;
+      const itemIdsList = itemIds.split(",");
+      if (itemIdsList.length === 1) {
+        id = itemIdsList[0];
       } else {
-        id = selectRandom(item.id);
+        id = selectRandom(itemIdsList);
       }
 
-      if (Number.isInteger(item.number)) {
-        number = item.number;
+      if (isIntegerString(itemNumber)) {
+        number = parseInt(itemNumber);
       } else {
-        let roll = item.number.split("d");
+        let roll = itemNumber.split("d");
         number = diceRoll(parseInt(roll[1]), parseInt(roll[0]));
       }
       items[itemType].push({ id: id, number: number });
     }
   }
   return items;
+}
+
+function isIntegerString(str) {
+  // Use parseInt() to convert the string to an integer.
+  // If the result is not NaN and the string is equal to its string representation,
+  // then the input is a valid integer string.
+  return !isNaN(parseInt(str)) && String(parseInt(str)) === str;
 }
 
 export function generateCharacter(
@@ -103,7 +111,7 @@ export function generateCharacter(
   let career = listOfCareers[genCareer];
   let speciesWithRegion = genSpeciesWithRegion;
 
-  let items = generateClassItems(generationProps.class_items[career.class]);
+  let items = generateClassItems(generationProps.classItems[career.class]);
 
   character.name = generateName(speciesWithRegion, 2);
   character.speciesWithRegion = speciesWithRegion;
@@ -133,7 +141,7 @@ export function generateCharacter(
   let skillExpSpent;
   [character.skills, skillExpSpent] = generateSkills(
     speciesWithRegion,
-    generationProps.species_skills,
+    generationProps.speciesSkills,
     [lvl1.skills, lvl2.skills, lvl3.skills, lvl4.skills],
     listOfSkills,
     level
@@ -146,8 +154,8 @@ export function generateCharacter(
 
   let talentAndAttExpSpent;
   [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
-    generationProps.species_talents[speciesWithRegion],
-    generationProps.random_talents,
+    generationProps.speciesTalents[speciesWithRegion],
+    generationProps.randomTalents,
     [lvl1.talents, lvl2.talents, lvl3.talents, lvl4.talents],
     baseAttributes,
     listOfTalents,
