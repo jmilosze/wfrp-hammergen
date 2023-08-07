@@ -17,8 +17,8 @@ collection = db.other
 collection_talent = db.talent
 collection_skill = db.skill
 
-talents = list(collection_talent.find({"owner_id": "admin"}))
-skills = list(collection_skill.find({"owner_id": "admin"}))
+talents = list(collection_talent.find({"ownerid": "admin"}))
+skills = list(collection_skill.find({"ownerid": "admin"}))
 
 
 class Species(enum.Enum):
@@ -62,7 +62,7 @@ class Species(enum.Enum):
 
 def find_id(name, list_of_elems):
     for elem in list_of_elems:
-        if elem["name"] == name and elem["owner_id"] == "admin":
+        if elem["object"]["name"] == name and elem["ownerid"] == "admin":
             return str(elem["_id"])
     raise Exception(f'"{name}" not found!')
 
@@ -105,7 +105,7 @@ random_talents = [
 random_talents_ids = []
 
 for r_talent in random_talents:
-    random_talents_ids.append([find_id(r_talent[0], talents), r_talent[1], r_talent[2] + 1])
+    random_talents_ids.append({"id": find_id(r_talent[0], talents), "minroll": r_talent[1], "maxroll": r_talent[2] + 1})
 
 species_talents = {
     str(Species.HUMAN_DEFAULT.value): ["Doomed", ["Savvy", "Suave"], "random", "random", "random"],
@@ -366,7 +366,7 @@ for species, s_talents in species_talents.items():
                     talent_id.append("random")
                 else:
                     talent_id.append(find_id(sub_talent, talents))
-            species_talents_ids[species].append(talent_id)
+            species_talents_ids[species].append(",".join(talent_id))
         else:
             species_talents_ids[species].append(find_id(s_talent, talents))
 
@@ -883,6 +883,6 @@ for species, s_skills in species_skills.items():
     for s_skill in s_skills:
         species_skills_ids[species].append(find_id(s_skill, skills))
 
-collection.update_one({"name": "generation_props"}, {"$set": {"random_talents": random_talents_ids}})
-collection.update_one({"name": "generation_props"}, {"$set": {"species_talents": species_talents_ids}})
-collection.update_one({"name": "generation_props"}, {"$set": {"species_skills": species_skills_ids}})
+collection.update_one({"name": "generationProps"}, {"$set": {"randomtalents": random_talents_ids}}, upsert=True)
+collection.update_one({"name": "generationProps"}, {"$set": {"speciestalents": species_talents_ids}}, upsert=True)
+collection.update_one({"name": "generationProps"}, {"$set": {"speciesskills": species_skills_ids}}, upsert=True)

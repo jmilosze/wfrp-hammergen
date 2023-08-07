@@ -36,10 +36,7 @@ describe("generateSpeciesTalents returns expected talents SpeciesTalents has", (
   });
 
   test("non-group non-random multi talents", () => {
-    const speciesTalents = [
-      ["id1", "id2", "id3"],
-      ["id4", "id5"],
-    ];
+    const speciesTalents = ["id1,id2,id3", "id4,id5"];
     const talentGroups = {};
     const randomTalents = [];
 
@@ -52,7 +49,7 @@ describe("generateSpeciesTalents returns expected talents SpeciesTalents has", (
   });
 
   test("group talents, no multiple talents belonging to the same group", () => {
-    const speciesTalents = ["id1", ["id2", "id3"]];
+    const speciesTalents = ["id1", "id2,id3"];
     const talentGroups = { id1: ["id11", "id12"], id2: ["id21", "id22"], id3: ["id31", "id32"] };
     const randomTalents = [];
 
@@ -65,7 +62,7 @@ describe("generateSpeciesTalents returns expected talents SpeciesTalents has", (
   });
 
   test("group talents, multiple talents belonging to the same group, group has enough elements", () => {
-    const speciesTalents = ["id11", "id1", "id1", ["id1", "id2"]];
+    const speciesTalents = ["id11", "id1", "id1", "id1,id2"];
     const talentGroups = { id1: ["id11", "id12", "id13", "id14"] };
     const randomTalents = [];
 
@@ -80,12 +77,12 @@ describe("generateSpeciesTalents returns expected talents SpeciesTalents has", (
   });
 
   test("single and multi talents, random with no groups in random table", () => {
-    const speciesTalents = ["random", "random", ["random", "id4"]];
+    const speciesTalents = ["random", "random", "random,id4"];
     const talentGroups = {};
     const randomTalents = [
-      ["id1", 1, 25],
-      ["id2", 25, 51],
-      ["id3", 51, 101],
+      { id: "id1", minRoll: 1, maxRoll: 25 },
+      { id: "id2", minRoll: 25, maxRoll: 51 },
+      { id: "id3", minRoll: 51, maxRoll: 101 },
     ];
 
     const expected = [
@@ -102,12 +99,12 @@ describe("generateSpeciesTalents returns expected talents SpeciesTalents has", (
       .mockImplementationOnce(getRollInTableMock(30))
       .mockImplementationOnce(getRollInTableMock(60))
       .mockImplementationOnce(getRollInTableMock(20));
-    const speciesTalents = ["random", "random", ["random", "id4"]];
+    const speciesTalents = ["random", "random", "random,id4"];
     const talentGroups = {};
     const randomTalents = [
-      ["id1", 1, 25],
-      ["id2", 25, 51],
-      ["id3", 51, 101],
+      { id: "id1", minRoll: 1, maxRoll: 25 },
+      { id: "id2", minRoll: 25, maxRoll: 51 },
+      { id: "id3", minRoll: 51, maxRoll: 101 },
     ];
 
     const expected = [
@@ -120,12 +117,12 @@ describe("generateSpeciesTalents returns expected talents SpeciesTalents has", (
   });
 
   test("single and multi talents, random with groups in random table", () => {
-    const speciesTalents = ["id11", "random", "id21", "id22", ["random", "id4"]];
+    const speciesTalents = ["id11", "random", "id21", "id22", "random,id4"];
     const talentGroups = { id1: ["id11", "id12"], id2: ["id21", "id22"] };
     const randomTalents = [
-      ["id1", 1, 25],
-      ["id2", 25, 51],
-      ["id3", 51, 101],
+      { id: "id1", minRoll: 1, maxRoll: 25 },
+      { id: "id2", minRoll: 25, maxRoll: 51 },
+      { id: "id3", minRoll: 51, maxRoll: 101 },
     ];
 
     const expected = [
@@ -152,7 +149,7 @@ describe("generateSpeciesTalents throws exception if not not enough talents to p
   });
 
   test("multi talent has group talents with not enough elements", () => {
-    const speciesTalents = ["id11", "id12", ["id1", "id2"]];
+    const speciesTalents = ["id11", "id12", "id1,id2"];
     const talentGroups = { id1: ["id11", "id12"] };
     const randomTalents = [];
 
@@ -162,11 +159,11 @@ describe("generateSpeciesTalents throws exception if not not enough talents to p
   });
 
   test("random table has not enough elements", () => {
-    const speciesTalents = ["random", "random", ["random", "id1"]];
+    const speciesTalents = ["random", "random", "random,id1"];
     const talentGroups = { id4: ["id1", "id12"] };
     const randomTalents = [
-      ["id1", 1, 25],
-      ["id2", 25, 51],
+      { id: "id1", minRoll: 1, maxRoll: 25 },
+      { id: "id2", minRoll: 25, maxRoll: 51 },
     ];
 
     expect(() => {
@@ -252,7 +249,7 @@ describe("generateSpeciesTalents throws exception if speciesTalents is invalid",
   });
 
   test("speciesTalents has duplicated multi talents", () => {
-    const speciesTalents = ["id1", "id2", "id3", ["id3", "id4"], ["id4", "id5"]];
+    const speciesTalents = ["id1", "id2", "id3", "id3,id4", "id4,id5"];
     const talentGroups = {};
     const randomTalents = [];
 
@@ -262,7 +259,7 @@ describe("generateSpeciesTalents throws exception if speciesTalents is invalid",
   });
 
   test("speciesTalents has duplicated talents between multi and single", () => {
-    const speciesTalents = ["id1", "id2", "id3", ["id3", "id4"], ["id5", "id6"]];
+    const speciesTalents = ["id1", "id2", "id3", "id3,id4", "id5,id6"];
     const talentGroups = {};
     const randomTalents = [];
 

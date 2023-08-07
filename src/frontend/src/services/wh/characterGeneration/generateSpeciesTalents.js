@@ -16,7 +16,8 @@ export function generateSpeciesTalents(speciesTalents, groupTalents, randomTalen
   const randomTalentPicker = new RandomTalentPicker(RANDOM_TALENTS_ROLL, randomTalents);
 
   for (const speciesTalent of speciesTalents) {
-    let newTalent = typeof speciesTalent === "string" ? speciesTalent : selectRandom(speciesTalent);
+    const newTalents = speciesTalent.split(",");
+    let newTalent = newTalents > 1 ? speciesTalent : selectRandom(newTalents);
     if (newTalent === "random") {
       selectRandomTalent(randomTalentPicker, talents, groupTalentPicker);
     } else {
@@ -28,12 +29,12 @@ export function generateSpeciesTalents(speciesTalents, groupTalents, randomTalen
 }
 
 function randomTalentsValid(randomTalents) {
-  const uniqueTalents = new Set(randomTalents.map((x) => x[0]));
+  const uniqueTalents = new Set(randomTalents.map((x) => x.id));
   if (uniqueTalents.size !== randomTalents.length) {
     return false;
   }
 
-  let sortedRanges = randomTalents.map((x) => [x[1], x[2]]);
+  let sortedRanges = randomTalents.map((x) => [x.minRoll, x.maxRoll]);
   sortedRanges.sort((a, b) => a[0] - b[0]);
 
   let prevMax = 1;
@@ -49,13 +50,9 @@ function randomTalentsValid(randomTalents) {
 
 function speciesTalentsValid(speciesTalents, talentGroups) {
   let allTalents = [];
-  for (const talent of speciesTalents) {
-    if (typeof talent === "string") {
+  for (const talents of speciesTalents) {
+    for (const talent of talents.split(",")) {
       allTalents.push(talent);
-    } else {
-      for (const subTalent of talent) {
-        allTalents.push(subTalent);
-      }
     }
   }
 
@@ -93,7 +90,10 @@ function removeFromTalentGroup(talentGroup, talentToRemove) {
 class RandomTalentPicker {
   constructor(initialMaxRandomRoll, randomTalents) {
     this.maxRandomRoll = initialMaxRandomRoll;
-    this.randomTalents = JSON.parse(JSON.stringify(randomTalents));
+    this.randomTalents = [];
+    for (const talent of randomTalents) {
+      this.randomTalents.push([talent.id, talent.minRoll, talent.maxRoll]);
+    }
   }
 
   pickFromRandom(selectedTalents, groupTalentPicker) {
@@ -147,6 +147,7 @@ function selectRandomTalent(randomTalentPicker, selectedTalents, groupTalentPick
   }
   selectedTalents.add(newSelectedTalent);
 }
+
 function selectTalent(newTalent, selectedTalents, groupTalentPicker) {
   let newSelectedTalent;
   if (groupTalentPicker.isGroupTalent(newTalent)) {

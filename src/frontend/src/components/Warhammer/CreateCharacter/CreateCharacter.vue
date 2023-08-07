@@ -963,31 +963,30 @@ export default {
         return {};
       } else {
         let selectedCareer = this.listOfCareers.find((x) => x.id === this.element.career.id);
-
-        if (selectedCareer && this.generationProps && Object.hasOwn(this.generationProps, "class_items")) {
-          return this.generationProps.class_items[selectedCareer.class];
+        if (selectedCareer && this.generationProps && Object.hasOwn(this.generationProps, "classItems")) {
+          return this.generationProps.classItems[selectedCareer.class];
         } else {
           return {};
         }
       }
     },
     speciesTalents() {
-      if (this.generationProps && Object.hasOwn(this.generationProps, "species_talents")) {
-        return this.generationProps.species_talents[this.element.speciesWithRegion];
+      if (this.generationProps && Object.hasOwn(this.generationProps, "speciesTalents")) {
+        return this.generationProps.speciesTalents[this.element.speciesWithRegion];
       } else {
         return [];
       }
     },
     speciesSkills() {
-      if (this.generationProps && Object.hasOwn(this.generationProps, "species_skills")) {
-        return this.generationProps.species_skills[this.element.speciesWithRegion];
+      if (this.generationProps && Object.hasOwn(this.generationProps, "speciesSkills")) {
+        return this.generationProps.speciesSkills[this.element.speciesWithRegion];
       } else {
         return [];
       }
     },
     randomTalents() {
-      if (this.generationProps && Object.hasOwn(this.generationProps, "random_talents")) {
-        return this.generationProps.random_talents;
+      if (this.generationProps && Object.hasOwn(this.generationProps, "randomTalents")) {
+        return this.generationProps.randomTalents;
       } else {
         return [];
       }
@@ -1122,7 +1121,7 @@ export default {
     async loadGenerationProps() {
       let serverResp = null;
       try {
-        serverResp = await this.callAndLogoutIfUnauthorized(authRequest.get)("/api/generation_props");
+        serverResp = await this.callAndLogoutIfUnauthorized(authRequest.get)("/api/wh/generation");
         this.generationProps = serverResp.data.data;
       } catch (error) {
         this.addError();
