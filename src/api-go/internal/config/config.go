@@ -31,11 +31,11 @@ type Server struct {
 type UserService struct {
 	BcryptCost  int      `default:"12" split_words:"true"`
 	FrontEndUrl *url.URL `default:"http://localhost:5173" split_words:"true"`
-	CreateMocks bool     `default:"true" split_words:"true"`
+	CreateMocks bool     `default:"false" split_words:"true"`
 }
 
 type WhService struct {
-	CreateMocks bool `default:"true" split_words:"true"`
+	CreateMocks bool `default:"false" split_words:"true"`
 }
 
 type Jwt struct {
@@ -54,8 +54,8 @@ type Email struct {
 type MongoDb struct {
 	Uri               string `default:"mongodb://admin:admin@localhost:27017" split_words:"true"`
 	Name              string `default:"hammergenGo" split_words:"true"`
-	CreateUserIndexes bool   `default:"true" split_words:"true"`
-	CreateWhIndexes   bool   `default:"true" split_words:"true"`
+	CreateUserIndexes bool   `default:"false" split_words:"false"`
+	CreateWhIndexes   bool   `default:"false" split_words:"false"`
 }
 
 type Captcha struct {
