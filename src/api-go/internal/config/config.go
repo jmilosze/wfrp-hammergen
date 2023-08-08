@@ -22,7 +22,6 @@ type Config struct {
 }
 
 type Server struct {
-	Host            string        `default:"localhost" split_words:"true"`
 	Port            int           `default:"8080" split_words:"true"`
 	ShutdownTimeout time.Duration `default:"10s" split_words:"true"`
 	RequestTimeout  time.Duration `default:"10s" split_words:"true"`
