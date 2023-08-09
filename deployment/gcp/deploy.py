@@ -9,17 +9,23 @@ import argparse
 SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent.parent.absolute()
 FRONTEND_DIR = ROOT_DIR / "src" / "frontend"
-WEB_DIR = ROOT_DIR / "src"
+SRC_DIR = ROOT_DIR / "src"
 CONFIG_JSON = "config.json"
 
 
 def build_new_static(env):
     shutil.rmtree("dist", ignore_errors=True)
+    os.mkdir("dist")
 
     if env == "production":
-        output = subprocess.run("npm run-script build_gcp_prod", shell=True, capture_output=True)
+        build = "build_gcp_prod"
     else:
-        output = subprocess.run("npm run-script build_gcp_staging", shell=True, capture_output=True)
+        build = "build_gcp_staging"
+
+    build_command = f"docker build -t build_dist -f Dockerfile_build_dist --build-arg build={build} ."
+    run_command = "docker run -v ./dist:/dist -u $(id -u ${USER}):$(id -g ${USER}) build_dist"
+
+    output = subprocess.run(build_command + " && " + run_command, shell=True, capture_output=True)
 
     print(output.stdout.decode())
     print(output.stderr.decode())
@@ -108,12 +114,11 @@ if __name__ == "__main__":
     DEPLOY_CONFIG = read_deployment_config(ARGS.env)
 
     if ARGS.part in ["api", "all"]:
-        os.chdir(WEB_DIR)
+        os.chdir(SRC_DIR)
         docker_build_and_push(ARGS.env, DEPLOY_CONFIG)
         deploy_to_cloud_run(ARGS.env, DEPLOY_CONFIG)
 
     if ARGS.part in ["frontend", "all"]:
-        os.chdir(FRONTEND_DIR)
+        os.chdir(SRC_DIR)
         build_new_static(ARGS.env)
-        os.chdir(WEB_DIR)
         deploy_static(ARGS.env)
