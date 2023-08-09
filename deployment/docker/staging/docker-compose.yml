@@ -12,11 +12,11 @@ services:
   web:
     build:
       context: ../../../src
-    volumes:
-      - static_volume:/app/static
     restart: always
     expose:
       - 5000
+    ports:
+      - "5000:5000"
     env_file:
       - .env
   nginx:

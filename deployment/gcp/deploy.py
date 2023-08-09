@@ -59,6 +59,8 @@ def run_and_output(command):
     output = subprocess.run(command, shell=True, capture_output=True)
     print(output.stdout.decode())
     print(output.stderr.decode())
+    if output.returncode != 0:
+        raise subprocess.CalledProcessError(returncode=output.returncode, cmd=output.args, stderr=output.stderr)
 
 
 def docker_build_and_push(env, deploy_config):
@@ -81,12 +83,15 @@ def deploy_to_cloud_run(env, deploy_config):
     concurrency = deploy_config["concurrency"]
 
     image = "/".join(
-        [deploy_config["ar_registry"], project, deploy_config["ar_repository"], deploy_config["image_name"]])
+        [deploy_config["ar_registry"], project, deploy_config["ar_repository"], deploy_config["image_name"]]
+    )
 
-    env_vars = ",".join([f"{k}=\"{v}\"" for k, v in deploy_config["env_variables"].items()])
+    env_vars = ",".join([f'{k}="{v}"' for k, v in deploy_config["env_variables"].items()])
 
-    command = f"gcloud run deploy {service_name} --region={region} --project={project} --image={image}:{env} " \
-              f"--allow-unauthenticated --concurrency={concurrency} --set-env-vars={env_vars}"
+    command = (
+        f"gcloud run deploy {service_name} --region={region} --project={project} --image={image}:{env} "
+        f"--allow-unauthenticated --concurrency={concurrency} --set-env-vars={env_vars}"
+    )
 
     run_and_output(command)
 

@@ -18,7 +18,7 @@ type Server struct {
 
 func NewServer(cfg *config.Server, router http.Handler) *Server {
 	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		Addr:    fmt.Sprintf(":%d", cfg.Port),
 		Handler: router,
 	}
 
