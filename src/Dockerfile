@@ -1,17 +1,17 @@
-FROM python:3.11.2-slim-buster
+FROM golang:1.18.2-alpine3.15 AS build
 
-RUN addgroup --system appusergroup && adduser --system appuser && usermod -G appusergroup appuser
+WORKDIR /src
+ADD api-go /src
+RUN CGO_ENABLED=0 go build -o ./bin/ ./cmd/...
+RUN echo "nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin" > passwd && chmod 644 passwd
 
-WORKDIR /app
-COPY api ./api
-COPY requirements.txt ./requirements.txt
+FROM scratch
 
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+COPY --from=build /src/bin/wfrp /
 
-RUN chown -R appuser:appusergroup /app
-USER appuser
+COPY --from=build /src/passwd /etc/passwd
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-ENV PYTHONUNBUFFERED True
+USER nobody
 
-CMD bash -c "gunicorn --threads 8 --workers 1 --timeout 0 -k gthread -b :$PORT --log-level=debug api:create_app\(\)"
+CMD ["/wfrp"]

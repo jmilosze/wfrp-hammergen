@@ -24,5 +24,7 @@ func NewRouter(requestTimeout time.Duration) *gin.Engine {
 	corsConfig.AllowHeaders = append(corsConfig.AllowHeaders, "Authorization")
 	router.Use(cors.New(corsConfig))
 
+	router.GET("api/keepwarm", func(c *gin.Context) { c.JSON(OkResp("")) })
+
 	return router
 }
