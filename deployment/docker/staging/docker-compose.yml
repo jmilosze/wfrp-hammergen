@@ -5,8 +5,6 @@ services:
     build:
       context: ../../../src
       dockerfile: Dockerfile_build_dist
-      args:
-        build: build_container_staging
     volumes:
       - static_volume:/dist
   web:
