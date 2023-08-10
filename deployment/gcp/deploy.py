@@ -24,8 +24,9 @@ def build_new_static(env):
 
     build_command = f"docker build -t build_dist -f Dockerfile_build_dist --build-arg build={build} ."
     run_command = "docker run -v ./dist:/dist -u $(id -u ${USER}):$(id -g ${USER}) build_dist"
+    delete_command = "docker rmi -f build_dist"
 
-    output = subprocess.run(build_command + " && " + run_command, shell=True, capture_output=True)
+    output = subprocess.run(build_command + " && " + run_command + " && " + delete_command, shell=True, capture_output=True)
 
     print(output.stdout.decode())
     print(output.stderr.decode())
