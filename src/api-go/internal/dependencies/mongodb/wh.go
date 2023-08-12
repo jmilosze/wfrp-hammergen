@@ -51,7 +51,7 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 		for _, v := range sharedUserIds {
 			sharedOwners = append(sharedOwners, bson.M{"ownerid": v})
 		}
-		owners = append(owners, bson.M{"$and": bson.A{bson.M{"shared": true}, bson.M{"$or": sharedOwners}}})
+		owners = append(owners, bson.M{"$and": bson.A{bson.M{"object.shared": true}, bson.M{"$or": sharedOwners}}})
 	}
 	return bson.M{"$or": owners}
 }
