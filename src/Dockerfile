@@ -1,4 +1,4 @@
-FROM golang:1.18.2-alpine3.15 AS build
+FROM golang:1.21.0-alpine3.18 AS build
 
 WORKDIR /src
 ADD api-go /src
