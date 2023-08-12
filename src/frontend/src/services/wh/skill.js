@@ -34,7 +34,7 @@ const convertModelToApiData = (skill) => {
     attribute: skill.attribute,
     type: skill.type,
     display_zero: skill.displayZero,
-    is_group: skill.isGroup,
+    isGroup: skill.isGroup,
     group: skill.group,
     shared: skill.shared,
     source: skill.source,
