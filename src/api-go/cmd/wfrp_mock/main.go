@@ -53,6 +53,7 @@ func run() error {
 	gin.RegisterUserRoutes(router, userService, jwtService, captchaService)
 	gin.RegisterAuthRoutes(router, userService, jwtService)
 	gin.RegisterWhRoutes(router, whService, jwtService)
+	gin.RegisterOtherRoutes(router, jwtService)
 
 	server := http.NewServer(&cfg.Server, router)
 
