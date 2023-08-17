@@ -22,7 +22,6 @@
 <script>
 import NavBar from "./components/NavBar.vue";
 import NavHelpers from "./components/NavHelpers.vue";
-import { authRequest } from "./services/auth";
 
 export default {
   name: "app",
@@ -32,7 +31,6 @@ export default {
     this.$recaptchaLoaded().then(() => {
       this.$recaptchaInstance.hideBadge();
     });
-    this.callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
   },
 };
 </script>
