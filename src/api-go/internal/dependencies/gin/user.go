@@ -13,7 +13,7 @@ func RegisterUserRoutes(router *gin.Engine, us user.UserService, js auth.JwtServ
 	router.POST("api/user", userCreateHandler(us, cs))
 	router.GET("api/user/:userId", RequireJwt(js), userGetHandler(us))
 	router.GET("api/user", RequireJwt(js), userGetHandler(us))
-	router.GET("api/user/exists/:userName", RequireJwt(js), userGetExistsHandler(us))
+	router.GET("api/user/exists/:userName", userGetExistsHandler(us))
 	router.GET("api/user/list", RequireJwt(js), userListHandler(us))
 	router.PUT("api/user/:userId", RequireJwt(js), userUpdateHandler(us))
 	router.PUT("api/user", RequireJwt(js), userUpdateHandler(us))
@@ -86,8 +86,12 @@ func userToMap(u *user.User) map[string]any {
 
 func userGetHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		userId := c.Param("userId")
 		claims := getUserClaims(c)
+		if invalid(claims) {
+			c.JSON(UnauthorizedErrResp(""))
+			return
+		}
+		userId := c.Param("userId")
 
 		if userId == "" {
 			userId = claims.Id
@@ -140,6 +144,11 @@ func userGetExistsHandler(us user.UserService) func(*gin.Context) {
 func userListHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
+		if invalid(claims) {
+			c.JSON(UnauthorizedErrResp(""))
+			return
+		}
+
 		allUsers, uErr := us.List(c.Request.Context(), claims)
 		if uErr != nil {
 			log.Println("error handling list user", uErr)
@@ -179,9 +188,13 @@ type UserUpdate struct {
 
 func userUpdateHandler(users user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		userId := c.Param("userId")
 		claims := getUserClaims(c)
+		if invalid(claims) {
+			c.JSON(UnauthorizedErrResp(""))
+			return
+		}
 
+		userId := c.Param("userId")
 		if userId == "" {
 			userId = claims.Id
 		}
@@ -225,8 +238,13 @@ type UserCredentials struct {
 
 func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		userId := c.Param("userId")
 		claims := getUserClaims(c)
+		if invalid(claims) {
+			c.JSON(UnauthorizedErrResp(""))
+			return
+		}
+
+		userId := c.Param("userId")
 
 		if userId == "" {
 			userId = claims.Id
@@ -274,8 +292,13 @@ type UserClaims struct {
 
 func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		userId := c.Param("userId")
 		claims := getUserClaims(c)
+		if invalid(claims) {
+			c.JSON(UnauthorizedErrResp(""))
+			return
+		}
+
+		userId := c.Param("userId")
 
 		var userData UserClaims
 		if err := c.ShouldBindJSON(&userData); err != nil {
@@ -314,9 +337,13 @@ type UserDelete struct {
 
 func userDeleteHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		userId := c.Param("userId")
 		claims := getUserClaims(c)
+		if invalid(claims) {
+			c.JSON(UnauthorizedErrResp(""))
+			return
+		}
 
+		userId := c.Param("userId")
 		if userId == "" {
 			userId = claims.Id
 		}

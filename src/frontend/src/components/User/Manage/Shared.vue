@@ -27,7 +27,7 @@
     </p>
     <div v-if="sharedAccounts.length > 0">
       <div class="row">
-        <b-table class="col-12" hover :items="tableFields" :fields="tableHeader" :responsive="true">
+        <b-table class="col" hover :items="tableFields" :fields="tableHeader" :responsive="true">
           <template v-slot:cell(name)="row">
             <div class="flex-container">
               <span class="username mt-1">{{ row.item.name }}</span>

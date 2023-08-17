@@ -57,8 +57,8 @@ func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 
 		claims, authErr := js.ParseToken(token)
 		if authErr != nil {
-			log.Println("error handling parsing auth token", err)
-			setAnonymous(c)
+			log.Println("error handling parsing auth token", authErr)
+			setInvalid(c)
 			return
 		}
 
@@ -75,6 +75,12 @@ func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 
 func setAnonymous(c *gin.Context) {
 	c.Set("ClaimsId", "anonymous")
+	c.Set("ClaimsAdmin", false)
+	c.Set("ClaimsSharedAccounts", []string{})
+}
+
+func setInvalid(c *gin.Context) {
+	c.Set("ClaimsId", "invalid")
 	c.Set("ClaimsAdmin", false)
 	c.Set("ClaimsSharedAccounts", []string{})
 }
