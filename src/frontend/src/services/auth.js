@@ -15,7 +15,6 @@ export const anonRequest = axios.create({
 export const authRequest = axios.create({
   baseURL: import.meta.env.VITE_ROOT_API,
   timeout: import.meta.env.VITE_API_TIMEOUT,
-  skipIntercept: false,
   headers: {
     "Content-Type": "application/json",
   },
