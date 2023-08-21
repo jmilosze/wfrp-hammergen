@@ -108,13 +108,13 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
 	}
 
+	ownerId := c.Id
 	if c.Admin {
-		newWh.OwnerId = "admin"
-	} else {
-		newWh.OwnerId = c.Id
+		ownerId = "admin"
 	}
 
-	updatedWh, dbErr := s.WhDbService.Update(ctx, t, newWh, c.Id)
+	newWh.OwnerId = ownerId
+	updatedWh, dbErr := s.WhDbService.Update(ctx, t, newWh, ownerId)
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
