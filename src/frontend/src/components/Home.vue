@@ -51,6 +51,7 @@
           <li>Middenheim City of the White Wolf</li>
           <li>Salzenmund, City of Salt and Silver</li>
           <li>Sea of Claws</li>
+          <li>Lustria</li>
         </ul>
 
         <div class="h3">How do I use it?</div>

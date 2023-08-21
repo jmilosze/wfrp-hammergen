@@ -2,11 +2,20 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
-        <div class="h3">02 May 2023</div>
+        <div class="h3">21 Aug 2023</div>
         <p>
-          Added generation rules (Talents, Skills, and names) for the following regional variations from the following
-          books:
+          Added careers and weapons from
+          <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-lustria" target="_blank">Lustria</b-link>
         </p>
+        <div class="h3">14 May 2023</div>
+        <p>
+          Added generation rules for halfling clans from
+          <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire" target="_blank"
+            >Archives of the Empire: Volume I
+          </b-link>
+        </p>
+        <div class="h3">02 May 2023</div>
+        <p>Added generation rules (Talents, Skills, and names) from the following books:</p>
         <ul>
           <li>
             <b-link href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3" target="_blank"
