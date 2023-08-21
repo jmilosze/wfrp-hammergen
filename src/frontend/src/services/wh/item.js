@@ -41,6 +41,7 @@ const rangedGroups = {
   5: "Explosives",
   6: "Sling",
   7: "Throwing",
+  8: "Blowpipe",
 };
 
 const ammunitionGroups = {
@@ -49,6 +50,7 @@ const ammunitionGroups = {
   2: "Crossbow",
   3: "Sling",
   4: "Entangling",
+  5: "Blowpipe",
 };
 
 const armorGroups = {

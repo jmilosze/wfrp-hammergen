@@ -397,6 +397,7 @@ const (
 	RangedGroupExplosives  = 5
 	RangedGroupSling       = 6
 	RangedGroupThrowing    = 7
+	RangedGroupBlowpipe    = 8
 )
 
 func ItemRangedGroupValues() string {
@@ -409,6 +410,7 @@ func ItemRangedGroupValues() string {
 		RangedGroupExplosives,
 		RangedGroupSling,
 		RangedGroupThrowing,
+		RangedGroupBlowpipe,
 	})
 }
 
@@ -420,6 +422,7 @@ const (
 	ItemAmmunitionGroupCrossbow                  = 2
 	ItemAmmunitionGroupSling                     = 3
 	ItemAmmunitionGroupEntangling                = 4
+	ItemAmmunitionGroupBlowpipe                  = 5
 )
 
 func itemAmmunitionGroupValues() string {
@@ -429,6 +432,7 @@ func itemAmmunitionGroupValues() string {
 		ItemAmmunitionGroupCrossbow,
 		ItemAmmunitionGroupSling,
 		ItemAmmunitionGroupEntangling,
+		ItemAmmunitionGroupBlowpipe,
 	})
 }
 
