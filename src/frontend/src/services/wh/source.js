@@ -11,6 +11,8 @@ export const source = {
   9: "Salzenmund",
   10: "Sea of Claws",
   11: "Lustria",
+  12: "Enemy in Shadows Companion",
+  13: "Death on the Reik Companion",
 };
 
 export function sourceOptions() {
