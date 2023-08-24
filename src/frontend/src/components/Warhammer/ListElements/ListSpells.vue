@@ -72,14 +72,28 @@ const displayFields = ref([
 const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(spellApi);
 const route = useRoute();
 
-const filterOptions = reactive({
-  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
-  type: [{ value: "any", text: "Any" }].concat(spellTypeOptions()),
-});
-
 const selectedFilter = reactive({
   source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
   type: route.query.selectedType ? route.query.selectedType : "any",
+});
+
+const filterOptions = computed(() => {
+  let sourcesInData = {};
+  let typesInData = {};
+  for (const wh of listOfWh.value) {
+    typesInData[wh.type] = "";
+    for (const source of Object.keys(wh.source)) {
+      sourcesInData[source] = "";
+    }
+  }
+
+  const sourceTypeOpts = sourceOptions().filter((x) => x.value in sourcesInData);
+  const typeOpts = spellTypeOptions().filter((x) => x.value in typesInData);
+
+  return {
+    source: [{ value: -1, text: "Any" }].concat(sourceTypeOpts),
+    type: [{ value: "any", text: "Any" }].concat(typeOpts),
+  };
 });
 
 function formatListOfWh(wh) {

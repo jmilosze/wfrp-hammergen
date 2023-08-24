@@ -87,16 +87,33 @@ const displayFields = ref([
 const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(skillApi);
 const route = useRoute();
 
-const filterOptions = reactive({
-  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
-  attr: [{ value: -1, text: "Any" }].concat(skillAttributeTypeGroupOptions()),
-  type: [{ value: -1, text: "Any" }].concat(skillTypeGroupOptions()),
-});
-
 const selectedFilter = reactive({
   source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
   attr: route.query.selectedAttr ? Number(route.query.selectedAttr) : -1,
   type: route.query.selectedType ? Number(route.query.selectedType) : -1,
+});
+
+const filterOptions = computed(() => {
+  let sourcesInData = {};
+  let attrsInData = {};
+  let typesInData = {};
+  for (const wh of listOfWh.value) {
+    attrsInData[wh.attribute] = "";
+    typesInData[wh.type] = "";
+    for (const source of Object.keys(wh.source)) {
+      sourcesInData[source] = "";
+    }
+  }
+
+  const sourceTypeOpts = sourceOptions().filter((x) => x.value in sourcesInData);
+  const attrOpts = skillAttributeTypeGroupOptions().filter((x) => x.value in attrsInData);
+  const typeOpts = skillTypeGroupOptions().filter((x) => x.value in typesInData);
+
+  return {
+    source: [{ value: -1, text: "Any" }].concat(sourceTypeOpts),
+    attr: [{ value: -1, text: "Any" }].concat(attrOpts),
+    type: [{ value: -1, text: "Any" }].concat(typeOpts),
+  };
 });
 
 function formatListOfWh(wh) {

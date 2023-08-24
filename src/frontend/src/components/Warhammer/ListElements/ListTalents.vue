@@ -62,12 +62,23 @@ const displayFields = ref([
 const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(talentApi);
 const route = useRoute();
 
-const filterOptions = reactive({
-  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
-});
-
 const selectedFilter = reactive({
   source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
+});
+
+const filterOptions = computed(() => {
+  let sourcesInData = {};
+  for (const wh of listOfWh.value) {
+    for (const source of Object.keys(wh.source)) {
+      sourcesInData[source] = "";
+    }
+  }
+
+  const sourceTypeOpts = sourceOptions().filter((x) => x.value in sourcesInData);
+
+  return {
+    source: [{ value: -1, text: "Any" }].concat(sourceTypeOpts),
+  };
 });
 
 function formatListOfWh(wh) {

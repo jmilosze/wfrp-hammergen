@@ -82,16 +82,35 @@ const displayFields = ref([
 const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(itemPropertyApi);
 const route = useRoute();
 
-const filterOptions = reactive({
-  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
-  type: [{ value: -1, text: "Any" }].concat(itemPropertyOptions()),
-  applicableTo: [{ value: -1, text: "Any" }].concat(itemTypeOptions()),
-});
-
 const selectedFilter = reactive({
   source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
   type: route.query.selectedType ? Number(route.query.selectedType) : -1,
   applicableTo: route.query.selectedApplicableTo ? Number(route.query.selectedApplicableTo) : -1,
+});
+
+const filterOptions = computed(() => {
+  let sourcesInData = {};
+  let typesInData = {};
+  let applicableToInData = {};
+  for (const wh of listOfWh.value) {
+    typesInData[wh.type] = "";
+    for (const source of Object.keys(wh.source)) {
+      sourcesInData[source] = "";
+    }
+    for (const applicableTo of Object.keys(wh.applicableTo)) {
+      applicableToInData[applicableTo] = "";
+    }
+  }
+
+  const sourceTypeOpts = sourceOptions().filter((x) => x.value in sourcesInData);
+  const typeOpts = itemPropertyOptions().filter((x) => x.value in typesInData);
+  const applicableToTypeOpts = itemTypeOptions().filter((x) => x.value in applicableToInData);
+
+  return {
+    source: [{ value: -1, text: "Any" }].concat(sourceTypeOpts),
+    type: [{ value: -1, text: "Any" }].concat(typeOpts),
+    applicableTo: [{ value: -1, text: "Any" }].concat(applicableToTypeOpts),
+  };
 });
 
 function formatListOfWh(wh) {

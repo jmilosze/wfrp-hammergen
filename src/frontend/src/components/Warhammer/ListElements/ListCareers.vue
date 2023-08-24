@@ -81,16 +81,33 @@ const displayFields = ref([
 const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(careerApi);
 const route = useRoute();
 
-const filterOptions = reactive({
-  source: [{ value: -1, text: "Any" }].concat(sourceOptions()),
-  class: [{ value: -1, text: "Any" }].concat(careerClassOptions()),
-  species: [{ value: -1, text: "Any" }].concat(speciesOptions()),
-});
-
 const selectedFilter = reactive({
   source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
   class: route.query.selectedClass ? Number(route.query.selectedClass) : -1,
   species: route.query.selectedSpecies ? Number(route.query.selectedSpecies) : -1,
+});
+
+const filterOptions = computed(() => {
+  let sourcesInData = {};
+  let classesInData = {};
+  let speciesInData = {};
+  for (const wh of listOfWh.value) {
+    classesInData[wh.class] = "";
+    speciesInData[wh.species] = "";
+    for (const source of Object.keys(wh.source)) {
+      sourcesInData[source] = "";
+    }
+  }
+
+  const sourceTypeOpts = sourceOptions().filter((x) => x.value in sourcesInData);
+  const classOpts = careerClassOptions().filter((x) => x.value in classesInData);
+  const speciesOpts = speciesOptions().filter((x) => x.value in speciesInData);
+
+  return {
+    source: [{ value: -1, text: "Any" }].concat(sourceTypeOpts),
+    class: [{ value: -1, text: "Any" }].concat(classOpts),
+    species: [{ value: -1, text: "Any" }].concat(speciesOpts),
+  };
 });
 
 function formatListOfWh(wh) {
