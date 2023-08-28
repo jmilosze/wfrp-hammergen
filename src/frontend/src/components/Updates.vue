@@ -4,7 +4,7 @@
       <div class="text-sm-left">
         <div class="h3">28 Aug 2023</div>
         <p>
-          Added talents, spells, and careers from
+          Added mutations, talents, spells, and Cult Magus of Tzeentch career from
           <b-link
             href="https://cubicle7games.com/enemy-within-campaign-volume-1-enemy-in-shadows-companion"
             target="_blank"
