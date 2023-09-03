@@ -21,6 +21,7 @@ const (
 	SourceLustria                   = "11"
 	SourceEnemyInShadowsCompanion   = "12"
 	SourceDeathOnTheReikCompanion   = "13"
+	SourceEnemyInShadows            = "14"
 )
 
 func sourceValues() string {
@@ -39,6 +40,7 @@ func sourceValues() string {
 		SourceLustria,
 		SourceEnemyInShadowsCompanion,
 		SourceDeathOnTheReikCompanion,
+		SourceEnemyInShadows,
 	})
 }
 

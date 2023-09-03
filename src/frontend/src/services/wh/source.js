@@ -13,6 +13,7 @@ export const source = {
   11: "Lustria",
   12: "Enemy in Shadows Companion",
   13: "Death on the Reik Companion",
+  14: "Enemy in Shadows",
 };
 
 export function sourceOptions() {

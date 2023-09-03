@@ -2,9 +2,22 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">3 Sep 2023</div>
+        <p>
+          Added herbs, talents, spells, and Warrior of Tzeentch career from
+          <b-link
+            href="https://cubicle7games.com/enemy-within-campaign-volume-2-death-on-the-reik-companion"
+            target="_blank"
+            >Death on the Reik Companion
+          </b-link>
+        </p>
         <div class="h3">28 Aug 2023</div>
         <p>
           Added mutations, talents, spells, and Cult Magus of Tzeentch career from
+          <b-link href="https://cubicle7games.com/enemy-within-campaign-volume-1-enemy-in-shadows" target="_blank"
+            >Enemy in Shadows
+          </b-link>
+          and
           <b-link
             href="https://cubicle7games.com/enemy-within-campaign-volume-1-enemy-in-shadows-companion"
             target="_blank"

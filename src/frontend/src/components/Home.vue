@@ -52,7 +52,9 @@
           <li>Salzenmund, City of Salt and Silver</li>
           <li>Sea of Claws</li>
           <li>Lustria</li>
+          <li>Enemy in Shadows</li>
           <li>Enemy in Shadows Companion</li>
+          <li>Death on the Reik Companion</li>
         </ul>
 
         <div class="h3">How do I use it?</div>
