@@ -31,6 +31,7 @@ type Character struct {
 	Silver            int              `json:"silver" validate:"gte=0,lte=1000000"`
 	Gold              int              `json:"gold" validate:"gte=0,lte=1000000"`
 	Spells            []string         `json:"spells" validate:"dive,id_valid"`
+	Prayers           []string         `json:"prayers" validate:"dive,id_valid"`
 	Sin               int              `json:"sin" validate:"gte=0,lte=1000"`
 	Corruption        int              `json:"corruption" validate:"gte=0,lte=1000"`
 	Mutations         []string         `json:"mutations" validate:"dive,id_valid"`
@@ -76,6 +77,7 @@ func (character *Character) Copy() WhObject {
 		Silver:            character.Silver,
 		Gold:              character.Gold,
 		Spells:            copyArray(character.Spells),
+		Prayers:           copyArray(character.Prayers),
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
 		Mutations:         copyArray(character.Mutations),
@@ -83,7 +85,10 @@ func (character *Character) Copy() WhObject {
 	}
 }
 
-func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh, allSpells []*Wh, allCareers []*Wh) (*CharacterFull, error) {
+func (character *Character) ToFull(
+	allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh,
+	allSpells []*Wh, allPrayers []*Wh, allCareers []*Wh,
+) (*CharacterFull, error) {
 	if allItems == nil {
 		return nil, errors.New("allItems is nil")
 	}
@@ -98,6 +103,9 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 	}
 	if allSpells == nil {
 		return nil, errors.New("allSpells is nil")
+	}
+	if allPrayers == nil {
+		return nil, errors.New("allPrayers is nil")
 	}
 	if allCareers == nil {
 		return nil, errors.New("allCareers is nil")
@@ -114,6 +122,7 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 	}
 	talents := idNumberListToWhNumberList(character.Talents, whListToIdWhMap(allTalents))
 	spells := idListToWhList(character.Spells, whListToIdWhMap(allSpells))
+	prayers := idListToWhList(character.Prayers, whListToIdWhMap(allPrayers))
 	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
 
 	allCareerIdMap := whListToIdWhMap(allCareers)
@@ -149,6 +158,7 @@ func (character *Character) ToFull(allItems []*Wh, allSkills []*Wh, allTalents [
 		Silver:            character.Silver,
 		Gold:              character.Gold,
 		Spells:            spells,
+		Prayers:           prayers,
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
 		Mutations:         mutations,
@@ -224,6 +234,10 @@ func (character *Character) InitNilPointers() error {
 
 	if character.Spells == nil {
 		character.Spells = []string{}
+	}
+
+	if character.Prayers == nil {
+		character.Prayers = []string{}
 	}
 
 	if character.Mutations == nil {
@@ -445,6 +459,7 @@ type CharacterFull struct {
 	Silver            int              `json:"silver"`
 	Gold              int              `json:"gold"`
 	Spells            []*Wh            `json:"spells"`
+	Prayers           []*Wh            `json:"prayers"`
 	Sin               int              `json:"sin"`
 	Corruption        int              `json:"corruption"`
 	Mutations         []*Wh            `json:"mutations"`
@@ -490,6 +505,7 @@ func (characterFull *CharacterFull) Copy() WhObject {
 		Silver:            characterFull.Silver,
 		Gold:              characterFull.Gold,
 		Spells:            copyWhArray(characterFull.Spells),
+		Prayers:           copyWhArray(characterFull.Prayers),
 		Sin:               characterFull.Sin,
 		Corruption:        characterFull.Corruption,
 		Mutations:         copyWhArray(characterFull.Mutations),
@@ -574,6 +590,14 @@ func (characterFull *CharacterFull) InitNilPointers() error {
 		characterFull.Spells = []*Wh{}
 	}
 	err = initNilPointersInWhList(characterFull.Spells)
+	if err != nil {
+		return err
+	}
+
+	if characterFull.Prayers == nil {
+		characterFull.Prayers = []*Wh{}
+	}
+	err = initNilPointersInWhList(characterFull.Prayers)
 	if err != nil {
 		return err
 	}

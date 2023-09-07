@@ -46,6 +46,7 @@ func seedGenProps(ctx context.Context, db warhammer.WhDbService, genProps *warha
 func InitWh(ctx context.Context, db warhammer.WhDbService) {
 	seedWh(ctx, db, warhammer.WhTypeMutation, NewMockMutations())
 	seedWh(ctx, db, warhammer.WhTypeSpell, NewMockSpells())
+	seedWh(ctx, db, warhammer.WhTypePrayer, NewMockPrayers())
 	seedWh(ctx, db, warhammer.WhTypeProperty, NewMockProperties())
 	seedWh(ctx, db, warhammer.WhTypeItem, NewMockItems())
 	seedWh(ctx, db, warhammer.WhTypeTalent, NewMockTalents())

@@ -5,7 +5,7 @@ import "errors"
 type Spell struct {
 	Name        string            `json:"name" validate:"name_valid"`
 	Description string            `json:"description" validate:"desc_valid"`
-	Cn          int               `json:"cn" validate:"min=-1,max=99"`
+	Cn          int               `json:"cn" validate:"min=0,max=99"`
 	Range       string            `json:"range" validate:"medium_string_valid"`
 	Target      string            `json:"target" validate:"medium_string_valid"`
 	Duration    string            `json:"duration" validate:"medium_string_valid"`

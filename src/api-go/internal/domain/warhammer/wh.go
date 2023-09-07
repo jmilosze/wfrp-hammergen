@@ -17,6 +17,7 @@ type Wh struct {
 const (
 	WhTypeMutation      = "mutation"
 	WhTypeSpell         = "spell"
+	WhTypePrayer        = "prayer"
 	WhTypeProperty      = "property"
 	WhTypeItem          = "item"
 	WhTypeTalent        = "talent"
@@ -33,6 +34,7 @@ type WhType string
 var WhCoreTypes = []WhType{
 	WhTypeMutation,
 	WhTypeSpell,
+	WhTypePrayer,
 	WhTypeProperty,
 	WhTypeItem,
 	WhTypeTalent,
@@ -89,6 +91,8 @@ func NewWhObject(t WhType) WhObject {
 		return &Mutation{}
 	case WhTypeSpell:
 		return &Spell{}
+	case WhTypePrayer:
+		return &Prayer{}
 	case WhTypeProperty:
 		return &Property{}
 	case WhTypeItem:
