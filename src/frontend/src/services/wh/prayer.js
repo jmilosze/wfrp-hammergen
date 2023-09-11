@@ -8,14 +8,13 @@ import {
   deleteElementFunc,
 } from "./crudGenerator";
 
-const apiBasePath = "/api/wh/spell";
+const apiBasePath = "/api/wh/prayer";
 
 const convertApiToModelData = (apiData) => {
-  const spell = {
+  const prayer = {
     id: apiData.id,
     canEdit: apiData.canEdit,
     name: apiData.object.name,
-    cn: apiData.object.cn,
     range: apiData.object.range,
     target: apiData.object.target,
     duration: apiData.object.duration,
@@ -24,25 +23,24 @@ const convertApiToModelData = (apiData) => {
     source: apiData.object.source,
   };
 
-  return spell;
+  return prayer;
 };
 
-const convertModelToApiData = (spell) => {
+const convertModelToApiData = (prayer) => {
   const apiData = {
-    name: spell.name,
-    cn: spell.cn,
-    range: spell.range,
-    target: spell.target,
-    duration: spell.duration,
-    description: spell.description,
-    shared: spell.shared,
-    source: spell.source,
+    name: prayer.name,
+    range: prayer.range,
+    target: prayer.target,
+    duration: prayer.duration,
+    description: prayer.description,
+    shared: prayer.shared,
+    source: prayer.source,
   };
 
   return apiData;
 };
 
-class SpellApi {
+class PrayerApi {
   constructor(axiosInstance) {
     this.getElement = getElementFunc(apiBasePath, axiosInstance, convertApiToModelData);
     this.listElements = listElementsFunc(apiBasePath, axiosInstance, convertApiToModelData);
@@ -52,23 +50,22 @@ class SpellApi {
   }
 }
 
-const compareSpell = (spell1, spell2) => {
-  for (let [key, value] of Object.entries(spell1)) {
+const comparePrayer = (prayer1, prayer2) => {
+  for (let [key, value] of Object.entries(prayer1)) {
     if (key !== "source") {
-      if (spell2[key] !== value) {
+      if (prayer2[key] !== value) {
         return false;
       }
     }
   }
 
-  return compareObjects(spell1.source, spell2.source);
+  return compareObjects(prayer1.source, prayer2.source);
 };
 
-const generateEmptySpell = () => {
+const generateEmptyPrayer = () => {
   return {
     id: "",
     name: "",
-    cn: 0,
     range: "",
     target: "",
     duration: "",
@@ -79,13 +76,13 @@ const generateEmptySpell = () => {
   };
 };
 
-const generateNewSpell = (canEdit) => {
-  const spell = generateEmptySpell();
-  spell.name = "New spell";
-  spell.canEdit = canEdit;
-  spell.shared = true;
-  spell.source = defaultSource();
-  return spell;
+const generateNewPrayer = (canEdit) => {
+  const prayer = generateEmptyPrayer();
+  prayer.name = "New prayer";
+  prayer.canEdit = canEdit;
+  prayer.shared = true;
+  prayer.source = defaultSource();
+  return prayer;
 };
 
-export { SpellApi, generateEmptySpell, generateNewSpell, compareSpell };
+export { PrayerApi, generateEmptyPrayer, generateNewPrayer, comparePrayer };

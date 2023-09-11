@@ -1,11 +1,11 @@
 <template>
-  <div class="spell">
+  <div class="prayer">
     <b-container>
-      <b-form id="edit-spell" @submit.stop.prevent="submit">
-        <h1>{{ titlePrefix }} Spell</h1>
+      <b-form id="edit-prayer" @submit.stop.prevent="submit">
+        <h1>{{ titlePrefix }} Prayer</h1>
 
         <b-alert variant="success" :fade="true" :show="saveSuccessCountdown" @dismissed="saveSuccessCountdown = 0"
-          >Spell saved successfully.
+          >Prayer saved successfully.
         </b-alert>
 
         <div v-if="errors.length" class="text-danger field-validation-error mt-3">
@@ -24,17 +24,6 @@
                 type="text"
               ></b-form-input>
               <b-form-invalid-feedback :state="validName[0]">{{ validName[1] }}</b-form-invalid-feedback>
-            </b-form-group>
-
-            <b-form-group label="Casting Number" label-for="cn-input">
-              <b-form-input
-                id="cn-input"
-                :disabled="!element.canEdit"
-                :number="true"
-                v-model="element.cn"
-                type="number"
-              ></b-form-input>
-              <b-form-invalid-feedback :state="validCn[0]">{{ validCn[1] }}</b-form-invalid-feedback>
             </b-form-group>
 
             <b-form-group label="Description" label-for="description-input">
@@ -91,7 +80,7 @@
             ></SourceTable>
           </b-col>
           <b-col md="6">
-            <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Spell" />
+            <PublicElementBox v-if="element.canEdit" v-model="element.shared" elementName="Prayer" />
           </b-col>
         </b-row>
         <b-row>
@@ -115,12 +104,12 @@ import CreateElement2 from "./CreateElement.vue";
 import CreateSubmit from "./CreateSubmit.vue";
 import PublicElementBox from "./PublicElementBox.vue";
 import SourceTable from "./SourceTable.vue";
-import { compareSpell, generateEmptySpell, generateNewSpell, SpellApi } from "../../services/wh/spell";
+import { comparePrayer, generateEmptyPrayer, generateNewPrayer, PrayerApi } from "../../services/wh/prayer";
 import { authRequest } from "../../services/auth";
-import { validWhCastingNumber, validWhShortDesc } from "../../utils/validation/wh";
+import { validWhShortDesc } from "../../utils/validation/wh";
 
 export default {
-  name: "CreateSpell",
+  name: "CreatePrayer",
   mixins: [CreateElement2],
   components: {
     SourceTable,
@@ -129,25 +118,26 @@ export default {
   },
   data() {
     return {
-      elementApi: new SpellApi(authRequest),
+      elementApi: new PrayerApi(authRequest),
 
-      element: generateEmptySpell(),
-      elementOriginal: generateEmptySpell(),
+      element: generateEmptyPrayer(),
+      elementOriginal: generateEmptyPrayer(),
 
       validSources: true,
     };
   },
   created() {
-    this.elementType = "spell";
+    this.elementType = "prayer";
     this.initializeElement();
   },
   methods: {
     formModified() {
-      return !compareSpell(this.element, this.elementOriginal);
+      return !comparePrayer(this.element, this.elementOriginal);
     },
     setElementToNew(canEdit) {
-      this.element = generateNewSpell(canEdit);
-      this.elementOriginal = generateNewSpell(canEdit);
+      this.element = generateNewPrayer(canEdit);
+      this.elementOriginal = generateNewPrayer(canEdit);
+      this.elementOriginal = generateNewPrayer(canEdit);
     },
     validate() {
       return (
@@ -156,7 +146,6 @@ export default {
         this.validRange[0] &&
         this.validTarget[0] &&
         this.validDuration[0] &&
-        this.validCn[0] &&
         this.validSources
       );
     },
@@ -170,9 +159,6 @@ export default {
     },
     validDuration() {
       return validWhShortDesc(this.element.duration);
-    },
-    validCn() {
-      return validWhCastingNumber(this.element.cn);
     },
   },
 };

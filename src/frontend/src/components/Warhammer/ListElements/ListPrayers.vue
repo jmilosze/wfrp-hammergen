@@ -1,7 +1,7 @@
 <template>
-  <div class="spells">
+  <div class="prayers">
     <b-container>
-      <h1>Available Spells</h1>
+      <h1>Available Prayers</h1>
 
       <b-row>
         <b-col>
@@ -19,7 +19,7 @@
         v-if="loaded"
         :displayFields="displayFields"
         :listOfElements="filteredListOfWh"
-        elementType="spell"
+        elementType="prayer"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
       />
@@ -44,23 +44,22 @@ import ElementList from "./ListTemplate.vue";
 import { authRequest } from "../../../services/auth";
 import { computed, onBeforeMount, reactive, ref, watch } from "vue";
 import { useListWh } from "../../../composables/listWh";
-import { SpellApi } from "../../../services/wh/spell";
+import { PrayerApi } from "../../../services/wh/prayer";
 import { addSpaces } from "../../../utils/stringUtils";
 import { source, sourceOptions } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
 
 const MAX_CHARS = 15;
-const spellApi = new SpellApi(authRequest);
+const prayerApi = new PrayerApi(authRequest);
 
 const displayFields = ref([
   { key: "name", sortable: true },
-  { key: "cn", sortable: true, label: "CN" },
   { key: "description", sortable: true },
   { key: "source", sortable: false },
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(spellApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(prayerApi);
 const route = useRoute();
 
 const selectedFilter = reactive({
@@ -85,7 +84,6 @@ const filterOptions = computed(() => {
 function formatListOfWh(wh) {
   return {
     name: addSpaces(wh.name, MAX_CHARS),
-    cn: wh.cn,
     source: Object.entries(wh.source)
       .map((x) => source[x[0]])
       .join(", "),

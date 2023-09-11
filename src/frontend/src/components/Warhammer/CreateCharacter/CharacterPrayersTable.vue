@@ -1,5 +1,5 @@
 <template>
-  <div class="spell-select-table">
+  <div class="prayer-select-table">
     <b-row>
       <b-col>
         <b-table
@@ -13,13 +13,13 @@
       </b-col>
     </b-row>
 
-    <b-button size="sm" class="mb-2 mr-2" @click="showEdit('edit-spells')" variant="primary" :disabled="disabled">
+    <b-button size="sm" class="mb-2 mr-2" @click="showEdit('edit-prayers')" variant="primary" :disabled="disabled">
       Add/Modify
     </b-button>
 
     <b-button size="sm" class="mb-2 mr-2" @click="clearAll" variant="danger" :disabled="disabled"> Clear All </b-button>
 
-    <b-modal id="edit-spells" title="Add/Remove Spells" ok-only ok-title="Close" size="lg" scrollable>
+    <b-modal id="edit-prayers" title="Add/Remove Prayers" ok-only ok-title="Close" size="lg" scrollable>
       <b-form-group>
         <b-button variant="secondary" size="sm" class="mr-2 mb-1" @click="$emit('createNew')" :disabled="!canSave">
           Create New
@@ -31,7 +31,7 @@
         </b-button>
 
         <b-form-invalid-feedback :state="canSave" class="mb-2">
-          To create new Spells, correct all invalid form fields.
+          To create new Prayers, correct all invalid form fields.
         </b-form-invalid-feedback>
       </b-form-group>
       <b-form-group>
@@ -57,7 +57,7 @@
         stacked="lg"
       >
         <template #cell(name)="row">
-          <b-link :to="'/spell/' + row.item.id" target="_blank">{{ row.item.name }}</b-link>
+          <b-link :to="'/prayer/' + row.item.id" target="_blank">{{ row.item.name }}</b-link>
         </template>
 
         <template v-slot:cell(actions)="row">
@@ -100,14 +100,14 @@
 import TableCommon from "./TableCommon.vue";
 import NavHelpers from "../../NavHelpers.vue";
 import { addSpaces } from "../../../utils/stringUtils";
-import { SpellApi } from "../../../services/wh/spell";
+import { PrayerApi } from "../../../services/wh/prayer";
 import { authRequest } from "../../../services/auth";
 import { compareBoolFn, compareStringFn } from "../../../utils/comapreUtils";
 
 const MAX_CHARS = 15;
 
 export default {
-  name: "CharacterSpellsTable",
+  name: "CharacterPrayersTable",
   props: {
     selectedItems: {
       type: Array,
@@ -117,7 +117,7 @@ export default {
   mixins: [TableCommon, NavHelpers],
   data() {
     return {
-      spellApi: new SpellApi(authRequest),
+      prayerApi: new PrayerApi(authRequest),
 
       editFilter: null,
       listOfItems: [],
@@ -178,12 +178,12 @@ export default {
         }
       });
     },
-    resetItems(newSpells) {
+    resetItems(newPrayers) {
       this.listOfItems.forEach((x) => {
         x.selected = false;
       });
-      for (let newSpell of newSpells) {
-        let item = this.listOfItems.find((x) => x.id === newSpell);
+      for (let newPrayer of newPrayers) {
+        let item = this.listOfItems.find((x) => x.id === newPrayer);
         if (item) {
           item.selected = true;
         } else {
@@ -197,9 +197,9 @@ export default {
     },
     async loadData(reload = false) {
       this.editLoading = true;
-      let currentSpells = this.getCurrentSpells();
+      let currentPrayers = this.getCurrentPrayers();
 
-      const listOfItems = await this.callAndLogoutIfUnauthorized(this.spellApi.listElements)();
+      const listOfItems = await this.callAndLogoutIfUnauthorized(this.prayerApi.listElements)();
 
       for (let item of listOfItems) {
         item.selected = false;
@@ -213,7 +213,7 @@ export default {
       this.listOfItems = listOfItems;
 
       if (reload) {
-        this.resetItems(currentSpells);
+        this.resetItems(currentPrayers);
       } else {
         this.resetItems(this.selectedItems);
       }
@@ -221,14 +221,14 @@ export default {
       this.editLoading = false;
     },
 
-    getCurrentSpells() {
-      let currentSpells = [];
+    getCurrentPrayers() {
+      let currentPrayers = [];
       for (let item of this.listOfItems) {
         if (item.selected > 0) {
-          currentSpells.push(item.id);
+          currentPrayers.push(item.id);
         }
       }
-      return currentSpells;
+      return currentPrayers;
     },
   },
 };
