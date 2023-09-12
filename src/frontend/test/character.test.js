@@ -61,6 +61,7 @@ const character1ApiForm = {
       { id: "sItemId2", number: 3 },
     ],
     spells: ["spellId1", "spellId2"],
+    prayers: ["prayerId1", "prayerId2"],
     sin: 1,
     corruption: 2,
     mutations: ["mutationId1", "mutationId2"],
@@ -114,6 +115,7 @@ const character1ModelForm = {
     { id: "sItemId2", number: 3 },
   ],
   spells: ["spellId1", "spellId2"],
+  prayers: ["prayerId1", "prayerId2"],
   sin: 1,
   corruption: 2,
   mutations: ["mutationId1", "mutationId2"],
@@ -154,6 +156,7 @@ const character2ApiForm = {
       { id: "id7", number: 7 },
     ],
     spells: [],
+    prayers: [],
     sin: 2,
     corruption: 3,
     mutations: [],
@@ -191,6 +194,7 @@ const character2ModelForm = {
     { id: "id7", number: 7 },
   ],
   spells: [],
+  prayers: [],
   sin: 2,
   corruption: 3,
   mutations: [],
@@ -494,7 +498,29 @@ const characterDisplayApiForm = {
           target: "spell_2_target",
           duration: "spell_2_duration",
           description: "spell_2_desc",
-          cn: -1,
+          cn: 2,
+        },
+      },
+    ],
+    prayers: [
+      {
+        id: "id16a",
+        object: {
+          name: "prayer_1",
+          range: "prayer_1_range",
+          target: "prayer_1_target",
+          duration: "prayer_1_duration",
+          description: "prayer_1_desc",
+        },
+      },
+      {
+        id: "id17a",
+        object: {
+          name: "prayer_2",
+          range: "prayer_2_range",
+          target: "prayer_2_target",
+          duration: "prayer_2_duration",
+          description: "prayer_2_desc",
         },
       },
     ],
@@ -663,6 +689,10 @@ describe("compareCharacters returns true", () => {
     {
       field: "spells",
       value: ["spellId2", "spellId1"],
+    },
+    {
+      field: "prayers",
+      value: ["prayerId2", "prayerId1"],
     },
     {
       field: "mutations",
@@ -838,6 +868,8 @@ describe("compareCharacters returns false", () => {
     },
     { name: "spells (different value)", field: "spells", value: ["spellId1", "otherId"] },
     { name: "spells (different number of elements)", field: "spells", value: ["spellId1"] },
+    { name: "prayers (different value)", field: "prayers", value: ["prayerId1", "otherId"] },
+    { name: "prayers (different number of elements)", field: "prayers", value: ["prayerId1"] },
     { name: "mutations (different value)", field: "mutations", value: ["mutationId1", "otherId"] },
     { name: "mutations (different number of elements)", field: "mutations", value: ["mutationId1"] },
   ])("when other character has a different value of $name", (t) => {
@@ -1335,7 +1367,6 @@ test("getElementDisplay returns correct value", async () => {
             target: "spellbook_spell_1_target",
             duration: "spellbook_spell_1_duration",
             description: "spellbook_spell_1_desc",
-            type: "Spell",
             cn: 1,
           },
           {
@@ -1344,7 +1375,6 @@ test("getElementDisplay returns correct value", async () => {
             target: "spellbook_spell_2_target",
             duration: "spellbook_spell_2_duration",
             description: "spellbook_spell_2_desc",
-            type: "Spell",
             cn: 2,
           },
         ],
@@ -1358,7 +1388,6 @@ test("getElementDisplay returns correct value", async () => {
         target: "spell_1_target",
         duration: "spell_1_duration",
         description: "spell_1_desc",
-        type: "Spell",
         cn: 1,
       },
       {
@@ -1367,8 +1396,23 @@ test("getElementDisplay returns correct value", async () => {
         target: "spell_2_target",
         duration: "spell_2_duration",
         description: "spell_2_desc",
-        type: "Prayer",
-        cn: null,
+        cn: 2,
+      },
+    ],
+    prayers: [
+      {
+        name: "prayer_1",
+        range: "prayer_1_range",
+        target: "prayer_1_target",
+        duration: "prayer_1_duration",
+        description: "prayer_1_desc",
+      },
+      {
+        name: "prayer_2",
+        range: "prayer_2_range",
+        target: "prayer_2_target",
+        duration: "prayer_2_duration",
+        description: "prayer_2_desc",
       },
     ],
     mutations: [
