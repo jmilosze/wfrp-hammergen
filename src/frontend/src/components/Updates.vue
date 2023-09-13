@@ -2,6 +2,10 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">14 Sep 2023</div>
+        <p>
+          Spells and Prayers are now split into separate properties. Character has now list of spells and list of prayers.
+        </p>
         <div class="h3">3 Sep 2023</div>
         <p>
           Added herbs, talents, spells, and Warrior of Tzeentch career from
