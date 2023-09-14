@@ -14,6 +14,7 @@ export const source = {
   12: "Enemy in Shadows Companion",
   13: "Death on the Reik Companion",
   14: "Enemy in Shadows",
+  15: "Death on the Reik",
 };
 
 export function sourceOptions() {
