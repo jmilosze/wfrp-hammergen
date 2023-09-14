@@ -151,8 +151,17 @@ function formatSpells(rawSpells) {
     target: x.object.target,
     duration: x.object.duration,
     description: x.object.description,
-    type: x.object.cn === -1 ? "Prayer" : "Spell",
-    cn: x.object.cn === -1 ? null : x.object.cn,
+    cn: x.object.cn,
+  }));
+}
+
+function formatPrayers(rawPrayers) {
+  return rawPrayers.map((x) => ({
+    name: x.object.name,
+    range: x.object.range,
+    target: x.object.target,
+    duration: x.object.duration,
+    description: x.object.description,
   }));
 }
 
@@ -185,6 +194,7 @@ export {
   formatSkills,
   formatItems,
   formatSpells,
+  formatPrayers,
   formatMutations,
   getCareerName,
   getCareerLevelName,

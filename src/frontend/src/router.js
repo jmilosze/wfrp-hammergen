@@ -9,6 +9,7 @@ import UserForgotPassword from "./components/User/ForgotPassword.vue";
 import UserNewPassword from "./components/User/ResetPassword.vue";
 import CreateProperty from "./components/Warhammer/CreateProperty.vue";
 import CreateSpell from "./components/Warhammer/CreateSpell.vue";
+import CreatePrayer from "./components/Warhammer/CreatePrayer.vue";
 import CreateMutation from "./components/Warhammer/CreateMutation.vue";
 import CreateItem from "./components/Warhammer/CreateItem.vue";
 import CreateTalent from "./components/Warhammer/CreateTalent.vue";
@@ -22,6 +23,7 @@ import ListSkills from "./components/Warhammer/ListElements/ListSkills.vue";
 import ListTalents from "./components/Warhammer/ListElements/ListTalents.vue";
 import ListItemProperties from "./components/Warhammer/ListElements/ListItemProperties.vue";
 import ListSpells from "./components/Warhammer/ListElements/ListSpells.vue";
+import ListPrayers from "./components/Warhammer/ListElements/ListPrayers.vue";
 import ListMutations from "./components/Warhammer/ListElements/ListMutations.vue";
 import ListCareers from "./components/Warhammer/ListElements/ListCareers.vue";
 
@@ -75,6 +77,11 @@ export const router = new Router({
       component: ListSpells,
     },
     {
+      path: "/list/prayer",
+      name: "list_prayer",
+      component: ListPrayers,
+    },
+    {
       path: "/list/mutation",
       name: "list_mutation",
       component: ListMutations,
@@ -94,6 +101,12 @@ export const router = new Router({
       path: "/spell/:id",
       name: "spell",
       component: CreateSpell,
+      props: true,
+    },
+    {
+      path: "/prayer/:id",
+      name: "prayer",
+      component: CreatePrayer,
       props: true,
     },
     {

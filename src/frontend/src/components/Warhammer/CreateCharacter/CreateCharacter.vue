@@ -799,7 +799,7 @@
 
         <b-row>
           <b-col md="6">
-            <b-form-group label="Spells/Prayers">
+            <b-form-group label="Spells">
               <CharacterSpellsTable
                 :disabled="!element.canEdit"
                 :canSave="validAll"
@@ -820,6 +820,20 @@
                 @createNew="submitForm('mutation')"
                 @modifiersChanged="mutationModifiers = $event"
               ></CharacterMutationsTable>
+            </b-form-group>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col md="6">
+            <b-form-group label="Prayers">
+              <CharacterPrayersTable
+                :disabled="!element.canEdit"
+                :canSave="validAll"
+                :selectedItems="initialPrayers"
+                @changed="updateIdList(element.prayers, $event)"
+                @createNew="submitForm('prayer')"
+              ></CharacterPrayersTable>
             </b-form-group>
           </b-col>
         </b-row>
@@ -851,6 +865,7 @@ import CharacterSkillsTable from "./CharacterSkillsTable.vue";
 import CharacterTalentsTable from "./CharacterTalentsTable.vue";
 import CharacterItemsTable from "./CharacterItemsTable.vue";
 import CharacterSpellsTable from "./CharacterSpellsTable.vue";
+import CharacterPrayersTable from "./CharacterPrayersTable.vue";
 import CharacterMutationsTable from "./CharacterMutationsTable.vue";
 import PublicElementBox from "../PublicElementBox.vue";
 import generateName from "../../../services/wh/characterGeneration/nameGeneration";
@@ -895,6 +910,7 @@ export default {
     CharacterTalentsTable,
     CharacterItemsTable,
     CharacterSpellsTable,
+    CharacterPrayersTable,
     CharacterMutationsTable,
     PublicElementBox,
   },
@@ -927,6 +943,7 @@ export default {
       initialCarriedItems: [],
       initialStoredItems: [],
       initialSpells: [],
+      initialPrayers: [],
       initialMutations: [],
 
       selectedGenSpeciesWithRegion: c.HUMAN_REIKLAND,
@@ -1205,6 +1222,7 @@ export default {
       this.initialCarriedItems = JSON.parse(JSON.stringify(this.element.carriedItems));
       this.initialStoredItems = JSON.parse(JSON.stringify(this.element.storedItems));
       this.initialSpells = JSON.parse(JSON.stringify(this.element.spells));
+      this.initialPrayers = JSON.parse(JSON.stringify(this.element.prayers));
       this.initialMutations = JSON.parse(JSON.stringify(this.element.mutations));
     },
     validate() {

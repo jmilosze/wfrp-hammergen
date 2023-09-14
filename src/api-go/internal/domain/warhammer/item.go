@@ -400,7 +400,7 @@ const (
 	RangedGroupBlowpipe    = 8
 )
 
-func ItemRangedGroupValues() string {
+func itemRangedGroupValues() string {
 	return formatIntegerValues([]ItemRangedGroup{
 		RangedGroupBlackpowder,
 		RangedGroupBow,
@@ -660,7 +660,7 @@ func GetItemValidationAliases() map[string]string {
 		"item_hands_valid":            fmt.Sprintf("oneof=%s", itemHandsValues()),
 		"item_melee_reach_valid":      fmt.Sprintf("oneof=%s", itemMeleeReachValues()),
 		"item_melee_group_valid":      fmt.Sprintf("oneof=%s", itemMeleeGroupValues()),
-		"item_ranged_group_valid":     fmt.Sprintf("oneof=%s", ItemRangedGroupValues()),
+		"item_ranged_group_valid":     fmt.Sprintf("oneof=%s", itemRangedGroupValues()),
 		"item_ammunition_group_valid": fmt.Sprintf("oneof=%s", itemAmmunitionGroupValues()),
 		"item_armour_group_valid":     fmt.Sprintf("oneof=%s", itemArmourGroupValues()),
 		"item_armour_location_valid":  fmt.Sprintf("oneof=%s", itemArmourLocationValues()),

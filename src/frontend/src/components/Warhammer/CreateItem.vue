@@ -427,7 +427,6 @@
                 :elementApi="spellApi"
                 v-model="element.stats[6].spells"
                 :disabled="!element.canEdit || !validAll"
-                :filterFunction="spellFilter"
                 @apiCallError="addError"
                 @createNewElement="submitForm('spell')"
               ></SelectTable>
@@ -623,9 +622,6 @@ export default {
   methods: {
     propertyFilter(property) {
       return property.applicableTo.includes(this.element.type);
-    },
-    spellFilter(spell) {
-      return spell.type === "spell";
     },
     formModified() {
       return !compareItem(this.element, this.elementOriginal);

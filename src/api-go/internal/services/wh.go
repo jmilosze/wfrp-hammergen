@@ -260,6 +260,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	allCareerIds := make([]string, 0)
 	allMutationIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
+	allPrayerIds := make([]string, 0)
 	for _, v := range characters {
 		character, ok := v.Object.(*wh.Character)
 		if !ok {
@@ -276,10 +277,11 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 
 		allMutationIds = mergeStrAndRemoveDuplicates(allMutationIds, character.Mutations)
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, character.Spells)
+		allPrayerIds = mergeStrAndRemoveDuplicates(allPrayerIds, character.Prayers)
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(6)
+	wg.Add(7)
 
 	components := map[wh.WhType]*struct {
 		err  *wh.WhError
@@ -293,6 +295,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		wh.WhTypeCareer:   {err: nil, full: false, wh: nil, ids: allCareerIds},
 		wh.WhTypeMutation: {err: nil, full: false, wh: nil, ids: allMutationIds},
 		wh.WhTypeSpell:    {err: nil, full: false, wh: nil, ids: allSpellIds},
+		wh.WhTypePrayer:   {err: nil, full: false, wh: nil, ids: allPrayerIds},
 	}
 
 	for k := range components {
@@ -326,6 +329,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 			components[wh.WhTypeTalent].wh,
 			components[wh.WhTypeMutation].wh,
 			components[wh.WhTypeSpell].wh,
+			components[wh.WhTypePrayer].wh,
 			components[wh.WhTypeCareer].wh)
 		if err != nil {
 			continue

@@ -14,6 +14,7 @@ import {
   formatMutations,
   formatSkills,
   formatSpells,
+  formatPrayers,
   getCareerLevelName,
   getCareerName,
   getMovementFormula,
@@ -104,6 +105,7 @@ const generateEmptyCharacter = () => {
     carriedItems: [],
     storedItems: [],
     spells: [],
+    prayers: [],
     sin: 0,
     corruption: 0,
     mutations: [],
@@ -158,6 +160,7 @@ const generateEmptyCharacterForDisplay = () => {
     encCarried: 0,
     notes: "",
     spells: [],
+    prayers: [],
     sin: 0,
     corruption: 0,
     mutations: [],
@@ -200,6 +203,7 @@ const convertApiToModelData = (apiData) => {
     carriedItems: JSON.parse(JSON.stringify(apiData.object.carriedItems)),
     storedItems: JSON.parse(JSON.stringify(apiData.object.storedItems)),
     spells: JSON.parse(JSON.stringify(apiData.object.spells)),
+    prayers: JSON.parse(JSON.stringify(apiData.object.prayers)),
     sin: apiData.object.sin,
     corruption: apiData.object.corruption,
     mutations: JSON.parse(JSON.stringify(apiData.object.mutations)),
@@ -243,6 +247,7 @@ const convertModelToApiData = (character) => {
     carriedItems: JSON.parse(JSON.stringify(character.carriedItems)),
     storedItems: JSON.parse(JSON.stringify(character.storedItems)),
     spells: JSON.parse(JSON.stringify(character.spells)),
+    prayers: JSON.parse(JSON.stringify(character.prayers)),
     sin: character.sin,
     corruption: character.corruption,
     mutations: JSON.parse(JSON.stringify(character.mutations)),
@@ -336,6 +341,7 @@ class CharacterApi {
       stored: formatItems(rawCharacter.object.storedItems, attributes),
 
       spells: formatSpells(rawCharacter.object.spells),
+      prayers: formatPrayers(rawCharacter.object.prayers),
       mutations: formatMutations(rawCharacter.object.mutations),
 
       encWeapon: equippedWeapon.map((x) => x.wh.object.enc * x.number).reduce((x, y) => x + y, 0),
@@ -362,6 +368,7 @@ const compareCharacter = (character1, character2) => {
     "carriedItems",
     "storedItems",
     "spells",
+    "prayers",
     "mutations",
     "modifiers",
   ];
@@ -393,7 +400,7 @@ const compareCharacter = (character1, character2) => {
     }
   }
 
-  const stringArrays = ["spells", "mutations"];
+  const stringArrays = ["spells", "prayers", "mutations"];
   for (let arr of stringArrays) {
     if (!compareArrayIgnoreOrder(character1[arr], character2[arr])) {
       return false;
@@ -613,11 +620,20 @@ function characterForDisplayToCsv(charForDisplay) {
   }
 
   csv += ",,,,,,,,,,\n";
-  csv += "Known Spells/Prayers,,,,,,,,,,\n";
+  csv += "Known Spells,,,,,,,,,,\n";
   csv += "Name,CN,Range,Target,Duration,,,,,,\n";
 
   for (const item of charForDisplay.spells) {
-    csv += csvStr(item.name) + "," + (item.cn ? item.cn : "N/A") + "," + csvStr(item.range) + ",";
+    csv += csvStr(item.name) + "," + item.cn + "," + csvStr(item.range) + ",";
+    csv += csvStr(item.target) + "," + csvStr(item.duration) + ",,,,,,\n";
+  }
+
+  csv += ",,,,,,,,,,\n";
+  csv += "Known Prayers,,,,,,,,,,\n";
+  csv += "Name,Range,Target,Duration,,,,,,\n";
+
+  for (const item of charForDisplay.prayers) {
+    csv += csvStr(item.name) + "," + csvStr(item.range) + ",";
     csv += csvStr(item.target) + "," + csvStr(item.duration) + ",,,,,,\n";
   }
 

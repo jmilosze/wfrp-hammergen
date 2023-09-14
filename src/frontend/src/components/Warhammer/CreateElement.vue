@@ -112,7 +112,7 @@ export default {
         if (redirectElementType) {
           this.redirectAfterSubmit(serverResp.id, redirectElementType);
         } else if (!this.addAnother) {
-          this.goBack();
+          this.goBack(true);
         } else {
           this.setElementToNew(true);
           this.resetTables();

@@ -539,7 +539,7 @@
 
       <b-row v-if="char.spells.length">
         <b-col>
-          <div class="h6">Known Spells/Prayers</div>
+          <div class="h6">Known Spells</div>
           <b-table-simple bordered stacked="md">
             <b-thead>
               <b-tr>
@@ -553,10 +553,35 @@
             <b-tbody>
               <b-tr v-for="spell in char.spells" :key="spell.name">
                 <b-td stacked-heading="Name">{{ spell.name }}</b-td>
-                <b-td stacked-heading="CN">{{ spell.cn ? spell.cn : "N/A" }}</b-td>
+                <b-td stacked-heading="CN">{{ spell.cn }}</b-td>
                 <b-td stacked-heading="Range">{{ spell.range }}</b-td>
                 <b-td stacked-heading="Target">{{ spell.target }}</b-td>
                 <b-td stacked-heading="Duration">{{ spell.duration }}</b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
+        </b-col>
+      </b-row>
+
+      <b-row v-if="char.prayers.length">
+        <b-col>
+          <div class="h6">Known Prayers</div>
+          <b-table-simple bordered stacked="md">
+            <b-thead>
+              <b-tr>
+                <b-th>Name</b-th>
+                <b-th>CN</b-th>
+                <b-th>Range</b-th>
+                <b-th>Target</b-th>
+                <b-th>Duration</b-th>
+              </b-tr>
+            </b-thead>
+            <b-tbody>
+              <b-tr v-for="prayer in char.prayers" :key="prayer.name">
+                <b-td stacked-heading="Name">{{ prayer.name }}</b-td>
+                <b-td stacked-heading="Range">{{ prayer.range }}</b-td>
+                <b-td stacked-heading="Target">{{ prayer.target }}</b-td>
+                <b-td stacked-heading="Duration">{{ prayer.duration }}</b-td>
               </b-tr>
             </b-tbody>
           </b-table-simple>
@@ -581,7 +606,7 @@
               <b-tbody>
                 <b-tr v-for="spell in book.spells" :key="spell.name">
                   <b-td stacked-heading="Name">{{ spell.name }}</b-td>
-                  <b-td stacked-heading="CN">{{ spell.cn ? spell.cn : "N/A" }}</b-td>
+                  <b-td stacked-heading="CN">{{ spell.cn }}</b-td>
                   <b-td stacked-heading="Range">{{ spell.range }}</b-td>
                   <b-td stacked-heading="Target">{{ spell.target }}</b-td>
                   <b-td stacked-heading="Duration">{{ spell.duration }}</b-td>
