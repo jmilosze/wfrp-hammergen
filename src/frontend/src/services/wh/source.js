@@ -15,6 +15,12 @@ export const source = {
   13: "Death on the Reik Companion",
   14: "Enemy in Shadows",
   15: "Death on the Reik",
+  16: "Power Behind the Throne",
+  17: "Power Behind the Throne Companion",
+  18: "The Horned Rat",
+  19: "The Horned Rat Companion",
+  20: "Empire in Ruins",
+  21: "Empire in Ruins Companion",
 };
 
 export function sourceOptions() {
