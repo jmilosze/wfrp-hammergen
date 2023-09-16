@@ -7,22 +7,28 @@ import (
 type Source string
 
 const (
-	SourceCustom                    = "0"
-	SourceWFRP                      = "1"
-	SourceRoughNightsAndHardDays    = "2"
-	SourceArchivesOfTheEmpireVolI   = "3"
-	SourceArchivesOfTheEmpireVolII  = "4"
-	SourceArchivesOfTheEmpireVolIII = "5"
-	SourceUpInArms                  = "6"
-	SourceWindsOfMagic              = "7"
-	SourceMiddenheim                = "8"
-	SourceSalzenmund                = "9"
-	SourceSeaOfClaws                = "10"
-	SourceLustria                   = "11"
-	SourceEnemyInShadowsCompanion   = "12"
-	SourceDeathOnTheReikCompanion   = "13"
-	SourceEnemyInShadows            = "14"
-	SourceDeathOnTheReik            = "15"
+	SourceCustom                        = "0"
+	SourceWFRP                          = "1"
+	SourceRoughNightsAndHardDays        = "2"
+	SourceArchivesOfTheEmpireVolI       = "3"
+	SourceArchivesOfTheEmpireVolII      = "4"
+	SourceArchivesOfTheEmpireVolIII     = "5"
+	SourceUpInArms                      = "6"
+	SourceWindsOfMagic                  = "7"
+	SourceMiddenheim                    = "8"
+	SourceSalzenmund                    = "9"
+	SourceSeaOfClaws                    = "10"
+	SourceLustria                       = "11"
+	SourceEnemyInShadowsCompanion       = "12"
+	SourceDeathOnTheReikCompanion       = "13"
+	SourceEnemyInShadows                = "14"
+	SourceDeathOnTheReik                = "15"
+	SourcePowerBehindTheThrone          = "16"
+	SourcePowerBehindTheThroneCompanion = "17"
+	SourceTheHornedRat                  = "18"
+	SourceTheHornedRatCompanion         = "19"
+	SourceEmpireInRuins                 = "20"
+	SourceEmpireInRuinsCompanion        = "21"
 )
 
 func sourceValues() string {
@@ -43,6 +49,12 @@ func sourceValues() string {
 		SourceDeathOnTheReikCompanion,
 		SourceEnemyInShadows,
 		SourceDeathOnTheReik,
+		SourcePowerBehindTheThrone,
+		SourcePowerBehindTheThroneCompanion,
+		SourceTheHornedRat,
+		SourceTheHornedRatCompanion,
+		SourceEmpireInRuins,
+		SourceEmpireInRuinsCompanion,
 	})
 }
 
