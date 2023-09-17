@@ -465,7 +465,7 @@
               :showAddAnother="showAddAnother"
               :disabled="!element.canEdit"
               :submitting="submitting"
-              @goBack="goBack"
+              @goBack="goBack(true)"
               v-model="addAnother"
             ></CreateSubmit>
           </b-col>
