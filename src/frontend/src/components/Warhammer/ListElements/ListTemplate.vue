@@ -1,12 +1,7 @@
 <template>
   <div class="list-template">
     <div class="d-flex align-items-center mb-3">
-      <b-button
-        v-if="authStore.loggedIn"
-        variant="primary"
-        class="mr-2 text-nowrap"
-        :to="{ name: elementType, params: { id: 'create' } }"
-      >
+      <b-button v-if="authStore.loggedIn" variant="primary" class="mr-2 text-nowrap" @click="createNew">
         Create New
       </b-button>
 
@@ -161,6 +156,9 @@ export default {
     copyItem(id) {
       this.$emit("elementCopied", id);
     },
+    createNew() {
+      this.$emit("createNew");
+    },
   },
 };
 </script>
@@ -171,6 +169,7 @@ export default {
 .actions {
   min-width: 0;
 }
+
 @include media-breakpoint-up(md) {
   .actions {
     min-width: 250px;

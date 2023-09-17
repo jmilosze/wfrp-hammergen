@@ -31,6 +31,7 @@
         elementType="mutation"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
+        @createNew="createNewWh('mutation')"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -55,6 +56,7 @@ import { computed, onBeforeMount, reactive, ref, watch } from "vue";
 import { useListWh } from "../../../composables/listWh";
 import { MutationApi, mutationTypeOptions, mutationTypes } from "../../../services/wh/mutation";
 import { addSpaces } from "../../../utils/stringUtils";
+import { hasValue } from "../../../utils/otherUtils";
 import { source, sourceOptions } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
 
@@ -68,12 +70,13 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(mutationApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
+  useListWh(mutationApi);
 const route = useRoute();
 
 const selectedFilter = reactive({
-  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
-  type: route.query.selectedType ? Number(route.query.selectedType) : -1,
+  source: hasValue(route.query.selectedSource) ? Number(route.query.selectedSource) : -1,
+  type: hasValue(route.query.selectedType) ? Number(route.query.selectedType) : -1,
 });
 
 function formatListOfWh(wh) {

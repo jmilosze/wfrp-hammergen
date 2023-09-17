@@ -22,6 +22,7 @@
         elementType="spell"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
+        @createNew="createNewWh('spell')"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -46,6 +47,7 @@ import { computed, onBeforeMount, reactive, ref, watch } from "vue";
 import { useListWh } from "../../../composables/listWh";
 import { SpellApi } from "../../../services/wh/spell";
 import { addSpaces } from "../../../utils/stringUtils";
+import { hasValue } from "../../../utils/otherUtils";
 import { source, sourceOptions } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
 
@@ -60,11 +62,12 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(spellApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
+  useListWh(spellApi);
 const route = useRoute();
 
 const selectedFilter = reactive({
-  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
+  source: hasValue(route.query.selectedSource) ? Number(route.query.selectedSource) : -1,
 });
 
 const filterOptions = computed(() => {

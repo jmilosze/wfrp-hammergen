@@ -81,7 +81,8 @@ export default {
         this.$router
           .push({
             name: goTo.name,
-            params: { id: goTo.id, goBackChain: this.goBackChain },
+            params: { ...goTo.params, goBackChain: this.goBackChain },
+            query: goTo.query,
           })
           .catch(() => {});
       }
@@ -128,7 +129,11 @@ export default {
     },
     redirectAfterSubmit(elementId, redirectElementName) {
       // eslint-disable-next-line vue/no-mutating-props
-      this.goBackChain.push({ name: this.elementType, id: elementId });
+      this.goBackChain.push({
+        name: this.elementType,
+        params: { id: elementId },
+        query: this.$router.currentRoute.query,
+      });
       this.$router
         .push({
           name: redirectElementName,
