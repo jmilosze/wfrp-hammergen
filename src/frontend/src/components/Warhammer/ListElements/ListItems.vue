@@ -31,7 +31,8 @@
         elementType="item"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
-        @createNew="createNewWh('item')"
+        @createNew="modifyWh('item', 'create')"
+        @modifyElement="modifyWh('item', $event)"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -70,7 +71,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } = useListWh(itemApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, modifyWh } = useListWh(itemApi);
 const route = useRoute();
 
 const selectedFilter = reactive({

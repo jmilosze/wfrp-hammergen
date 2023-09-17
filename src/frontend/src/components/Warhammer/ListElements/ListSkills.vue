@@ -40,7 +40,8 @@
         elementType="skill"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
-        @createNew="createNewWh('skill')"
+        @createNew="modifyWh('skill', 'create')"
+        @modifyElement="modifyWh('skill', $event)"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -86,8 +87,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
-  useListWh(skillApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, modifyWh } = useListWh(skillApi);
 const route = useRoute();
 
 const selectedFilter = reactive({

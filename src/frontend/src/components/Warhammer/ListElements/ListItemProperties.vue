@@ -40,7 +40,8 @@
         elementType="property"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
-        @createNew="createNewWh('property')"
+        @createNew="modifyWh('property', 'create')"
+        @modifyElement="modifyWh('property', $event)"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -81,7 +82,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, modifyWh } =
   useListWh(itemPropertyApi);
 const route = useRoute();
 
