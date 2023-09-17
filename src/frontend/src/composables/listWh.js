@@ -1,17 +1,16 @@
 import { useAuthStore } from "../stores/auth";
 import { ref } from "vue";
 import { shortDescMaxChars, validWhShortDesc } from "../utils/validation/wh";
-import { useRouter } from "vue-router/composables";
+import { useRouter, useRoute } from "vue-router/composables";
 
 export function useListWh(elementApi) {
   const authStore = useAuthStore();
   const router = useRouter();
+  const route = useRoute();
 
   const loaded = ref(false);
   const errors = ref([]);
   const listOfWh = ref([]);
-
-  const queryParams = ref({});
 
   async function deleteWh(whId) {
     try {
@@ -68,7 +67,7 @@ export function useListWh(elementApi) {
   }
 
   function addParamsToLocation(path, params) {
-    queryParams.value = params;
+    route.query = params;
 
     history.pushState(
       {},
@@ -83,16 +82,28 @@ export function useListWh(elementApi) {
     );
   }
 
-  function createNewWh(elementType) {
+  function modifyWh(elementType, id, viewOnly = false) {
     const goBackChain = [
       {
         name: "list_" + elementType,
         params: {},
-        query: queryParams.value,
+        query: route.query,
       },
     ];
-    router.push({ name: elementType, params: { id: "create", goBackChain: goBackChain } });
+
+    let pushId = "create";
+    let pushName = elementType;
+
+    if (id !== "create") {
+      pushId = id;
+    }
+
+    if (elementType === "character" && viewOnly) {
+      pushName = "viewCharacter";
+    }
+
+    router.push({ name: pushName, params: { id: pushId, goBackChain: goBackChain } });
   }
 
-  return { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh };
+  return { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, modifyWh };
 }

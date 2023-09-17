@@ -32,7 +32,7 @@
               <b-button
                 v-if="elementType !== 'character' || (elementType === 'character' && row.item.canEdit)"
                 variant="primary"
-                :to="{ name: elementType, params: { id: row.item.id } }"
+                @click="modifyItem(row.item.id)"
                 size="sm"
                 class="mr-2 mb-1"
               >
@@ -41,7 +41,7 @@
 
               <b-button
                 v-if="elementType === 'character'"
-                :to="{ name: 'viewCharacter', params: { id: row.item.id } }"
+                @click="viewItem(row.item.id)"
                 size="sm"
                 class="mr-2 mb-1"
                 variant="primary"
@@ -158,6 +158,12 @@ export default {
     },
     createNew() {
       this.$emit("createNew");
+    },
+    modifyItem(id) {
+      this.$emit("modifyElement", id);
+    },
+    viewItem(id) {
+      this.$emit("viewElement", id);
     },
   },
 };

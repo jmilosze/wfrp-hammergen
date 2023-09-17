@@ -10,7 +10,9 @@
         elementType="character"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
-        @createNew="createNewWh('character')"
+        @createNew="modifyWh('character', 'create')"
+        @modifyElement="modifyWh('character', $event)"
+        @viewElement="modifyWh('character', $event, true)"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -46,7 +48,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, createNewWh } = useListWh(characterApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, modifyWh } = useListWh(characterApi);
 
 function formatListOfWh(wh) {
   return {

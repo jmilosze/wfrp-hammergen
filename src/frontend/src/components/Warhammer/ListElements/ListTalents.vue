@@ -22,7 +22,8 @@
         elementType="talent"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
-        @createNew="createNewWh('talent')"
+        @createNew="modifyWh('talent', 'create')"
+        @modifyElement="modifyWh('talent', $event)"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -61,8 +62,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
-  useListWh(talentApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, modifyWh } = useListWh(talentApi);
 const route = useRoute();
 
 const selectedFilter = reactive({

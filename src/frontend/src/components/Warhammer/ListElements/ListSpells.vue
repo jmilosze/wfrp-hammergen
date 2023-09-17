@@ -22,7 +22,8 @@
         elementType="spell"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
-        @createNew="createNewWh('spell')"
+        @createNew="modifyWh('spell', 'create')"
+        @modifyElement="modifyWh('spell', $event)"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -62,8 +63,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
-  useListWh(spellApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, modifyWh } = useListWh(spellApi);
 const route = useRoute();
 
 const selectedFilter = reactive({

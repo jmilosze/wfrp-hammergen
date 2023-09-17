@@ -22,7 +22,8 @@
         elementType="prayer"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
-        @createNew="createNewWh('prayer')"
+        @createNew="modifyWh('prayer', 'create')"
+        @modifyElement="modifyWh('prayer', $event)"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -61,8 +62,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
-  useListWh(prayerApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, modifyWh } = useListWh(prayerApi);
 const route = useRoute();
 
 const selectedFilter = reactive({

@@ -31,7 +31,8 @@
         elementType="mutation"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
-        @createNew="createNewWh('mutation')"
+        @createNew="modifyWh('mutation', 'create')"
+        @modifyElement="modifyWh('mutation', $event)"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -70,7 +71,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, modifyWh } =
   useListWh(mutationApi);
 const route = useRoute();
 
