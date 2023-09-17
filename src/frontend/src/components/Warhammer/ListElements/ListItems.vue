@@ -31,6 +31,7 @@
         elementType="item"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
+        @createNew="createNewWh('item')"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -55,6 +56,7 @@ import { onBeforeMount, ref, computed, reactive, watch } from "vue";
 import { useListWh } from "../../../composables/listWh";
 import { ItemApi, itemTypes, itemTypeOptions } from "../../../services/wh/item";
 import { addSpaces } from "../../../utils/stringUtils";
+import { hasValue } from "../../../utils/otherUtils";
 import { sourceOptions, source } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
 
@@ -68,12 +70,12 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(itemApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } = useListWh(itemApi);
 const route = useRoute();
 
 const selectedFilter = reactive({
-  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
-  type: route.query.selectedType ? Number(route.query.selectedType) : -1,
+  source: hasValue(route.query.selectedSource) ? Number(route.query.selectedSource) : -1,
+  type: hasValue(route.query.selectedType) ? Number(route.query.selectedType) : -1,
 });
 
 const filterOptions = computed(() => {

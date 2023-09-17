@@ -1,13 +1,17 @@
 import { useAuthStore } from "../stores/auth";
 import { ref } from "vue";
 import { shortDescMaxChars, validWhShortDesc } from "../utils/validation/wh";
+import { useRouter } from "vue-router/composables";
 
 export function useListWh(elementApi) {
   const authStore = useAuthStore();
+  const router = useRouter();
 
   const loaded = ref(false);
   const errors = ref([]);
   const listOfWh = ref([]);
+
+  const queryParams = ref({});
 
   async function deleteWh(whId) {
     try {
@@ -64,6 +68,8 @@ export function useListWh(elementApi) {
   }
 
   function addParamsToLocation(path, params) {
+    queryParams.value = params;
+
     history.pushState(
       {},
       null,
@@ -77,5 +83,16 @@ export function useListWh(elementApi) {
     );
   }
 
-  return { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation };
+  function createNewWh(elementType) {
+    const goBackChain = [
+      {
+        name: "list_" + elementType,
+        params: {},
+        query: queryParams.value,
+      },
+    ];
+    router.push({ name: elementType, params: { id: "create", goBackChain: goBackChain } });
+  }
+
+  return { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh };
 }

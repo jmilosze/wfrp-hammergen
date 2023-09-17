@@ -40,6 +40,7 @@
         elementType="skill"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
+        @createNew="createNewWh('skill')"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -70,6 +71,7 @@ import {
   skillTypesGroup,
 } from "../../../services/wh/skill";
 import { addSpaces } from "../../../utils/stringUtils";
+import { hasValue } from "../../../utils/otherUtils";
 import { source, sourceOptions } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
 
@@ -84,13 +86,14 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(skillApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
+  useListWh(skillApi);
 const route = useRoute();
 
 const selectedFilter = reactive({
-  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
-  attr: route.query.selectedAttr ? Number(route.query.selectedAttr) : -1,
-  type: route.query.selectedType ? Number(route.query.selectedType) : -1,
+  source: hasValue(route.query.selectedSource) ? Number(route.query.selectedSource) : -1,
+  attr: hasValue(route.query.selectedAttr) ? Number(route.query.selectedAttr) : -1,
+  type: hasValue(route.query.selectedType) ? Number(route.query.selectedType) : -1,
 });
 
 const filterOptions = computed(() => {

@@ -10,6 +10,7 @@
         elementType="character"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
+        @createNew="createNewWh('character')"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -33,7 +34,7 @@ import { authRequest } from "../../../services/auth";
 import { computed, onBeforeMount, ref } from "vue";
 import { CharacterApi, speciesWithRegion } from "../../../services/wh/character";
 import { useListWh } from "../../../composables/listWh";
-import { addSpaces } from "@/utils/stringUtils";
+import { addSpaces } from "../../../utils/stringUtils";
 
 const MAX_CHARS = 15;
 const characterApi = new CharacterApi(authRequest);
@@ -45,7 +46,7 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh } = useListWh(characterApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, createNewWh } = useListWh(characterApi);
 
 function formatListOfWh(wh) {
   return {

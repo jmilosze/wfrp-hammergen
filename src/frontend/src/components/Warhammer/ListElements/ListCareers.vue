@@ -40,6 +40,7 @@
         elementType="career"
         @elementDeleted="deleteWh"
         @elementCopied="copyWh"
+        @createNew="createNewWh('career')"
       />
 
       <div v-if="!loaded && errors.length === 0" class="text-center">
@@ -66,6 +67,7 @@ import { CareerApi, careerClasses, careerClassOptions, species, speciesOptions }
 import { addSpaces } from "../../../utils/stringUtils";
 import { sourceOptions, source } from "../../../services/wh/source";
 import { useRoute } from "vue-router/composables";
+import { hasValue } from "@/utils/otherUtils";
 
 const MAX_CHARS = 15;
 const careerApi = new CareerApi(authRequest);
@@ -78,13 +80,14 @@ const displayFields = ref([
   { key: "actions", sortable: false },
 ]);
 
-const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation } = useListWh(careerApi);
+const { copyWh, deleteWh, loadWhList, loaded, errors, listOfWh, addParamsToLocation, createNewWh } =
+  useListWh(careerApi);
 const route = useRoute();
 
 const selectedFilter = reactive({
-  source: route.query.selectedSource ? Number(route.query.selectedSource) : -1,
-  class: route.query.selectedClass ? Number(route.query.selectedClass) : -1,
-  species: route.query.selectedSpecies ? Number(route.query.selectedSpecies) : -1,
+  source: hasValue(route.query.selectedSource) ? Number(route.query.selectedSource) : -1,
+  class: hasValue(route.query.selectedClass) ? Number(route.query.selectedClass) : -1,
+  species: hasValue(route.query.selectedSpecies) ? Number(route.query.selectedSpecies) : -1,
 });
 
 const filterOptions = computed(() => {
