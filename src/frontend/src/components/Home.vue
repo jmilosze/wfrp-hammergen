@@ -16,9 +16,9 @@
         </p>
 
         <p>
-          In addition to tools allowing you tou create your own items (trappings, skills, talents, mutations, etc.), it
-          comes with a very large selection of items from WFRP 4th ed Rulebook and almost all other 4th ed books
-          published by Cubicle 7.
+          In addition to the tools allowing you tou create your own items (trappings, skills, talents, mutations, etc.),
+          it comes with a very large selection of items from WFRP 4th ed Rulebook and almost all other 4th ed books
+          published by <a href="https://cubicle7games.com/warhammer-fantasy" target="_blank">Cubicle 7</a>.
           <b>
             Please keep in mind that descriptions of those items are often incomplete and abbreviated and cannot replace
             original descriptions from the books.
@@ -27,9 +27,9 @@
 
         <p>
           This is a second iteration of Hammergen. If you had account on the previous version (at
-          <a href="https://warhammer.azurewebsites.net/">warhammer.azurewebsites.net</a>), your account and all
-          characters are available here. To access this account and characters go to Login and use the “Forgot your
-          password” link.
+          <a href="https://warhammer.azurewebsites.net/" target="_blank">warhammer.azurewebsites.net</a>), your account
+          and all characters are available here. To access this account and characters go to Login and use the “Forgot
+          your password” link.
         </p>
         <div class="h3">What exactly can I do here?</div>
         <ul>
