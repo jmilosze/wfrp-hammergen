@@ -12,10 +12,19 @@
         <p>
           Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th Edition character generator. It lets you create,
           store, and manage characters as well as custom skills, talents, etc. You can share everything you create with
-          other players! To use it, you will need a Warhammer Fantasy Roleplay Rulebook and, optionally, other
-          supplementary books, which you can buy from
-          <a href="https://www.cubicle7games.com/our-games/warhammer-fantasy-roleplay/">Cubicle 7 store</a>.
+          other players!
         </p>
+
+        <p>
+          In addition to tools allowing you tou create your own items (trappings, skills, talents, mutations, etc.), it
+          comes with a very large selection of items from WFRP 4th ed Rulebook and almost all other 4th ed books
+          published by Cubicle 7.
+          <b>
+            Please keep in mind that descriptions of those items are often incomplete and abbreviated and cannot replace
+            original descriptions from the books.
+          </b>
+        </p>
+
         <p>
           This is a second iteration of Hammergen. If you had account on the previous version (at
           <a href="https://warhammer.azurewebsites.net/">warhammer.azurewebsites.net</a>), your account and all
