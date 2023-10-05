@@ -100,6 +100,26 @@ const itemTypeOptions = () => {
   return options;
 };
 
+const itemGroupOptions = (itemType) => {
+  let groups;
+  if (itemType === 0) {
+    groups = meleeGroups;
+  } else if (itemType === 1) {
+    groups = rangedGroups;
+  } else if (itemType === 2) {
+    groups = ammunitionGroups;
+  } else if (itemType === 3) {
+    groups = armorGroups;
+  } else {
+    return [];
+  }
+  const options = [];
+  for (let [k, v] of Object.entries(groups)) {
+    options.push({ value: Number(k), text: v });
+  }
+  return options;
+};
+
 const generateEmptyStats = () => {
   return [
     { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 },
@@ -251,4 +271,5 @@ export {
   compareItem,
   ItemApi,
   itemTypeOptions,
+  itemGroupOptions,
 };
