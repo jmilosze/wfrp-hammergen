@@ -8,6 +8,22 @@
       </div>
 
       <div class="text-sm-left">
+        <div class="alert alert-info" role="alert">
+          <div class="h3">Added new Spells, Trappings, Careers from Enemy Within Campaign</div>
+          <p>
+            In addition to the new items, we added Dwarf Runes as a new trapping property type (in addition to Quality
+            and Flaw). You can read more about this and previous
+            <b-link :to="{ name: 'updates' }" target="_blank">Updates</b-link>
+            on our
+            <b-link href="https://ko-fi.com/Post/Enemy-Within-Update-H2H4PU40F" target="_blank">Ko-fi blog.</b-link>
+          </p>
+          <p>
+            As always, to keep Hammergen up-to-date and add-free please consider supporting us with a small donation via
+            <b-link href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Ko-fi</b-link>
+            :)
+          </p>
+        </div>
+
         <div class="h3">What is Hammergen?</div>
         <p>
           Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th Edition character generator. It lets you create,
@@ -35,7 +51,8 @@
         <ul>
           <li>Auto-generate new level 1 characters using rulebook character creation rules</li>
           <li>Auto-generate high level characters</li>
-          <li>Create custom Skills, Talents, Careers, Items, Qualities, Spells, and Mutations</li>
+          <li>Create custom Skills, Talents, Careers, Trappings, Qualities, Spells, and Mutations</li>
+          <li>Create custom Skills, Talents, Careers, Trappings, Qualities, Spells, and Mutations</li>
           <li>Share everything you create with other players.</li>
           <li>Generate names and physical descriptions using rulebook rules</li>
           <li>
@@ -77,9 +94,9 @@
           Create New button.
         </p>
         <p>
-          Now you can also share any element you made (Character, Skill, Item, etc.) with other players! When an element
-          is marked as <b>Public</b> anyone you give your username to, can see that element in read-only mode. Sharing
-          is explained in the Linked Users tab in
+          Now you can also share any item you made (Character, Skill, Item, etc.) with other players! When an item is
+          marked as <b>Public</b> anyone you give your username to, can see that item in read-only mode. Sharing is
+          explained in the Linked Users tab in
           <b-link :to="{ name: 'manage' }" target="_blank">Manage Account</b-link>
           section.
         </p>
