@@ -2,10 +2,10 @@
   <div class="item">
     <b-container>
       <b-form id="edit-item" @submit.stop.prevent="submit">
-        <h1>{{ titlePrefix }} Item</h1>
+        <h1>{{ titlePrefix }} Trapping</h1>
 
         <b-alert variant="success" :fade="true" :show="saveSuccessCountdown" @dismissed="saveSuccessCountdown = 0"
-          >Item saved successfully.
+          >Trapping saved successfully.
         </b-alert>
 
         <div v-if="errors.length" class="text-danger field-validation-error mt-3">

@@ -3,6 +3,7 @@
     <div class="container">
       <div class="text-sm-left">
         <div class="h3">5 Oct 2023</div>
+        <p>Added filter by group to Trappings.</p>
         <p>Added new Item property type (in addition to Quality and Flaw): Dwarf Rune.</p>
         <p>Added all skills, talents, items, spells, etc. from all remaining Enemy Within Campaign books:</p>
         <ul>
