@@ -11,7 +11,7 @@
             <b-dropdown-item :to="{ name: 'list_item' }">Items</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'list_skill' }">Skills</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'list_talent' }">Talents</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'list_property' }">Qualities and Flaws</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'list_property' }">Qualities and Runes</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'list_spell' }">Spells</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'list_prayer' }">Prayers</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'list_mutation' }">Mutations</b-dropdown-item>

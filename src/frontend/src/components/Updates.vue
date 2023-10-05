@@ -2,13 +2,59 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">5 Oct 2023</div>
+        <p>Added all skills, talents, items, spells, etc. from all remaining Enemy Within Campaign books:</p>
+        <ul>
+          <li>
+            <b-link
+              href="https://cubicle7games.com/enemy-within-campaign-volume-3-power-behind-the-throne"
+              target="_blank"
+              >Power Behind the Throne
+            </b-link>
+          </li>
+          <li>
+            <b-link
+              href="https://cubicle7games.com/enemy-within-campaign-volume-3-power-behind-the-throne-companion"
+              target="_blank"
+              >Power Behind the Throne Companion
+            </b-link>
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/enemy-within-campaign-volume-4-the-horned-rat" target="_blank"
+              >The Horned Rat
+            </b-link>
+          </li>
+          <li>
+            <b-link
+              href="https://cubicle7games.com/enemy-within-campaign-volume-4-the-horned-rat-companion"
+              target="_blank"
+              >The Horned Rat Companion
+            </b-link>
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/enemy-within-campaign-volume-5-the-empire-in-ruins" target="_blank"
+              >Empire in Ruins
+            </b-link>
+          </li>
+          <li>
+            <b-link
+              href="https://cubicle7games.com/enemy-within-campaign-volume-5-the-empire-in-ruins-companion"
+              target="_blank"
+              >Empire in Ruins Companion
+            </b-link>
+          </li>
+        </ul>
         <div class="h3">14 Sep 2023</div>
         <p>
-          Spells and Prayers are now split into separate properties. Character has now list of spells and list of prayers.
+          Spells and Prayers are now split into separate properties. Character has now list of spells and list of
+          prayers.
         </p>
         <div class="h3">3 Sep 2023</div>
         <p>
-          Added herbs, talents, spells, and Warrior of Tzeentch career from
+          Added talents, spells, Warrior of Tzeentch career, herbs and other items from
+          <b-link href="https://cubicle7games.com/enemy-within-campaign-volume-2-death-on-the-reik" target="_blank"
+            >Death on the Reik
+          </b-link>
           <b-link
             href="https://cubicle7games.com/enemy-within-campaign-volume-2-death-on-the-reik-companion"
             target="_blank"

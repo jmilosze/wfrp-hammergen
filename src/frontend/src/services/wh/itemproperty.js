@@ -48,6 +48,7 @@ class ItemPropertyApi {
 const itemPropertyTypes = {
   0: "Quality",
   1: "Flaw",
+  2: "Dwarf Rune",
 };
 
 const itemPropertyOptions = () => {
