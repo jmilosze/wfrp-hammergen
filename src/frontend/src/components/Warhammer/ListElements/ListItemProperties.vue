@@ -1,7 +1,7 @@
 <template>
   <div class="item-properties">
     <b-container>
-      <h1>Available Item Qualities and Flaws</h1>
+      <h1>Available Qualities and Runes</h1>
 
       <b-row>
         <b-col>

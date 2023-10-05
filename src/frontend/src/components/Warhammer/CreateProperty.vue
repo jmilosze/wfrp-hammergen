@@ -2,7 +2,7 @@
   <div class="property">
     <b-container>
       <b-form id="edit-property" @submit.stop.prevent="submit">
-        <h1>{{ titlePrefix }} Item Quality/Flaw</h1>
+        <h1>{{ titlePrefix }} Quality or Rune</h1>
 
         <b-alert variant="success" :fade="true" :show="saveSuccessCountdown" @dismissed="saveSuccessCountdown = 0"
           >Item Property saved successfully.

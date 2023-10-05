@@ -58,10 +58,11 @@ type PropertyType int
 const (
 	PropertyTypeQuality = 0
 	PropertyTypeFlaw    = 1
+	PropertyRune        = 2
 )
 
 func getAllowedPropertyTypeValues() string {
-	return formatIntegerValues([]PropertyType{PropertyTypeQuality, PropertyTypeFlaw})
+	return formatIntegerValues([]PropertyType{PropertyTypeQuality, PropertyTypeFlaw, PropertyRune})
 }
 
 func GetPropertyValidationAliases() map[string]string {
