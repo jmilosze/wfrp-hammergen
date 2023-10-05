@@ -432,9 +432,9 @@
               ></SelectTable>
             </div>
 
-            <div class="mb-2">Qualities and Flaws</div>
+            <div class="mb-2">Qualities and Runes</div>
             <SelectTable
-              title="Add/Remove Qualities and Flaws"
+              title="Add/Remove Qualities and Runes"
               :elementApi="propertyApi"
               v-model="element.properties"
               :disabled="!element.canEdit || !validAll"
@@ -443,7 +443,7 @@
               @createNewElement="submitForm('property')"
             ></SelectTable>
             <b-form-invalid-feedback :state="validAll">
-              To modify Qualities And Flaws, correct invalid form fields.
+              To modify Qualities And Runes, correct invalid form fields.
             </b-form-invalid-feedback>
           </b-col>
         </b-row>
