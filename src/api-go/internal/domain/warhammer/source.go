@@ -29,6 +29,12 @@ const (
 	SourceTheHornedRatCompanion         = "19"
 	SourceEmpireInRuins                 = "20"
 	SourceEmpireInRuinsCompanion        = "21"
+	SourceImperialZoo                   = "22"
+	SourceAltdorf                       = "23"
+	SourceUbersreikAdventures1          = "24"
+	SourceUbersreikAdventures2          = "25"
+	SourceStarterSetGuideToUbersreik    = "26"
+	SourceStarterSetAdventureBook       = "27"
 )
 
 func sourceValues() string {
@@ -55,6 +61,12 @@ func sourceValues() string {
 		SourceTheHornedRatCompanion,
 		SourceEmpireInRuins,
 		SourceEmpireInRuinsCompanion,
+		SourceImperialZoo,
+		SourceAltdorf,
+		SourceUbersreikAdventures1,
+		SourceUbersreikAdventures2,
+		SourceStarterSetGuideToUbersreik,
+		SourceStarterSetAdventureBook,
 	})
 }
 

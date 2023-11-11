@@ -21,6 +21,12 @@ export const source = {
   19: "The Horned Rat Companion",
   20: "Empire in Ruins",
   21: "Empire in Ruins Companion",
+  22: "The Imperial Zoo",
+  23: "Altdorf Crown of the Empire",
+  24: "Ubersreik Adventures",
+  25: "Ubersreik Adventures 2",
+  26: "Guide to Ubersreik (Starter Set)",
+  27: "Adventure Book (Starter Set)",
 };
 
 export function sourceOptions() {
