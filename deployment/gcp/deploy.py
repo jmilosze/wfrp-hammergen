@@ -26,20 +26,14 @@ def build_new_static(env):
     run_command = "docker run -v ./dist:/dist -u $(id -u ${USER}):$(id -g ${USER}) build_dist"
     delete_command = "docker rmi -f build_dist"
 
-    output = subprocess.run(build_command + " && " + run_command + " && " + delete_command, shell=True, capture_output=True)
-
-    print(output.stdout.decode())
-    print(output.stderr.decode())
+    run_and_output(build_command + " && " + run_command + " && " + delete_command)
 
 
 def deploy_static(env):
     if "PYCHARM_HOSTED" in os.environ:
         del os.environ["PYCHARM_HOSTED"]
 
-    output = subprocess.run(f"firebase deploy --only hosting:{env}", shell=True, capture_output=True)
-
-    print(output.stdout.decode())
-    print(output.stderr.decode())
+    run_and_output(f"firebase deploy --only hosting:{env}")
 
 
 def parse_arguments():
