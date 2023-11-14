@@ -14,7 +14,7 @@ export function validWhShortDesc(shortDesc) {
   return checkString(shortDesc, shortDescRe, invalidShortDesc);
 }
 
-const veryShortDescRe = new RegExp(`^[^<>]{0,${shortDescMaxChars}}$`);
+const veryShortDescRe = /^[^<>]{0,15}$/;
 const invalidVeryShortDesc = "This field has to be shorter than 15 characters and cannot use <> symbols.";
 export function validWhVeryShortDesc(veryShortDesc) {
   return checkString(veryShortDesc, veryShortDescRe, invalidVeryShortDesc);
