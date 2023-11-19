@@ -2,6 +2,28 @@
   <div class="updates">
     <div class="container">
       <div class="text-sm-left">
+        <div class="h3">19 Nov 2023</div>
+        <p>Added contents of:</p>
+        <ul>
+          <li>
+            <b-link href="https://cubicle7games.com/warhammer-fantasy-starter-set" target="_blank">Starter Set </b-link>
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/ubersreik-adventures" target="_blank">Ubersreik Adventures </b-link>
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/ubersreik-adventures-ii" target="_blank">Ubersreik Adventures 2</b-link>
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/wfrp-altdorf-crown-of-the-empire" target="_blank"
+              >Altdorf - Crown of the Empire
+            </b-link>
+          </li>
+          <li>
+            <b-link href="https://cubicle7games.com/wfrp-the-imperial-zoo" target="_blank">The Imperial Zoo </b-link>
+          </li>
+        </ul>
+
         <div class="h3">5 Oct 2023</div>
         <p>Added filter by group to Trappings.</p>
         <p>Added new Item property type (in addition to Quality and Flaw): Dwarf Rune.</p>
