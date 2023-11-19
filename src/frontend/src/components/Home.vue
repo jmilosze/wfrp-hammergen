@@ -81,6 +81,11 @@
           <li>Enemy in Shadows</li>
           <li>Enemy in Shadows Companion</li>
           <li>Death on the Reik Companion</li>
+          <li>Starter Set</li>
+          <li>Ubersreik Adventures</li>
+          <li>Ubersreik Adventures 2</li>
+          <li>Altdorf - Crown of the Empire</li>
+          <li>The Imperial Zoo</li>
         </ul>
 
         <div class="h3">How do I use it?</div>
