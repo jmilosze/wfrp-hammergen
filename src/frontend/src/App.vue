@@ -1,79 +1,106 @@
-<template>
-  <div id="app">
-    <header class="navigation">
-      <NavBar />
-    </header>
-    <div class="content">
-      <router-view :key="$route.fullPath"></router-view>
-    </div>
-    <footer class="border-top footer">
-      <b-container>
-        <div class="text-center mt-2">
-          <p>
-            Contact:
-            <a href="mailto:admin@hammergen.net">admin@hammergen.net</a>
-          </p>
-        </div>
-      </b-container>
-    </footer>
-  </div>
-</template>
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import { useScreen } from "./composables/screen.ts";
 
-<script>
-import NavBar from "./components/NavBar.vue";
-import NavHelpers from "./components/NavHelpers.vue";
+import SideBarLink from "./components/navigation/SideBarLink.vue";
+import TopBarLink from "./components/navigation/TopBarLink.vue";
 
-export default {
-  name: "app",
-  components: { NavBar },
-  mixins: [NavHelpers],
-  created() {
-    this.$recaptchaLoaded().then(() => {
-      this.$recaptchaInstance.hideBadge();
-    });
-  },
-};
+const showSideBar = ref(false);
+const { screenSizeMd } = useScreen();
+watch(screenSizeMd, () => {
+  if (screenSizeMd) {
+    showSideBar.value = false;
+  }
+});
 </script>
 
-<style>
-html,
-body {
-  height: 100%;
-}
-
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-}
-
-.content {
-  flex: 1 0 auto;
-  padding: 20px;
-}
-
-.footer {
-  flex-shrink: 0;
-}
-
-.navigation {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-/* Firefox */
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-</style>
+<template>
+  <!-- Top NavBar -->
+  <div class="fixed md:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
+    <div class="flex-auto max-w-6xl px-4 flex items-center">
+      <div class="flex-auto flex items-center justify-between">
+        <div class="text-amber-300 hover:text-amber-100">
+          <a href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Support Hammergen</a>
+        </div>
+        <button class="text-amber-300 md:hidden" @click="showSideBar = true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+            <path
+              fill-rule="evenodd"
+              d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
+            ></path>
+          </svg>
+        </button>
+        <div class="hidden md:flex justify-center">
+          <TopBarLink routeName="register" class="mx-5">Register</TopBarLink>
+          <TopBarLink routeName="placeholder" class="ml-5">Login</TopBarLink>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- SideBar -->
+  <div
+    class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 transition-transform ease-in-out duration-150 border-r border-neutral-400 text-neutral-900"
+    :class="!screenSizeMd && !showSideBar ? '-translate-x-64' : ''"
+  >
+    <div class="pl-1 md:p-0 mt-2 mb-8 flex items-center justify-between md:justify-center md:ml-0">
+      <RouterLink
+        to="/"
+        class="text-3xl hover:bg-neutral-700 hover:text-amber-300 py-1 px-2 rounded font-hammergen"
+        @click="showSideBar = false"
+        >Hammergen</RouterLink
+      >
+      <button
+        v-if="!screenSizeMd && showSideBar"
+        @click="showSideBar = false"
+        class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <path
+            d="M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 0-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    <div class="pl-1 pr-6">
+      <div class="text-xl mb-3">
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Characters</SideBarLink>
+      </div>
+      <div class="">
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Careers</SideBarLink>
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Mutations</SideBarLink>
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Prayers</SideBarLink>
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Qualities and Runes</SideBarLink>
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Skills</SideBarLink>
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Spells</SideBarLink>
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Talents</SideBarLink>
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Trappings</SideBarLink>
+      </div>
+      <div class="mt-8">
+        <SideBarLink routeName="register" @click="showSideBar = false">Register</SideBarLink>
+        <SideBarLink routeName="placeholder" @click="showSideBar = false">Login</SideBarLink>
+      </div>
+      <div class="mt-8">
+        <SideBarLink routeName="howto" @click="showSideBar = false">How to use Hammergen</SideBarLink>
+        <SideBarLink routeName="about" @click="showSideBar = false">About</SideBarLink>
+      </div>
+    </div>
+  </div>
+  <!-- Content and footer-->
+  <div class="md:pl-64 pt-16 h-screen">
+    <div class="h-full flex flex-col justify-between items-center">
+      <div class="flex-auto p-9 max-w-6xl w-full"><RouterView /></div>
+      <div class="flex-none bg-neutral-700 w-full">
+        <div class="text-center text-sm my-2 text-amber-300">
+          Contact:
+          <a class="hover:text-amber-100" href="mailto:admin@hammergen.net">admin@hammergen.net</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Out of focus -->
+  <div
+    class="top-0 w-screen h-screen z-20 bg-zinc-500 transition-opacity ease-in-out duration-150"
+    :class="!screenSizeMd && showSideBar ? ['fixed', 'opacity-40'] : ['hidden', 'opacity-0']"
+    @click="showSideBar = false"
+  ></div>
+</template>
