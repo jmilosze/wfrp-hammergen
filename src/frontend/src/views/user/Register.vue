@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useUserValidator } from "../../composables/userValidators.ts";
-import Header from "../../components/Header.vue";
-import Button from "../../components/Button.vue";
+import Header from "../../components/PageHeader.vue";
+import SubmitButton from "../../components/SubmitButton.vue";
+import FormStringInput from "../../components/FormStringInput.vue";
 
 const validatorOn = ref(false);
 const email = ref("");
 const password = ref("");
 const retypedPassword = ref("");
-const registrationSuccessful = ref(true);
 const errors = ref([]);
 
 const { validEmail, validPassword, passwordMatch, invalidEmailMsg, invalidPasswordMsg, passwordDoNotMatchMsg } =
@@ -27,34 +27,29 @@ const { validEmail, validPassword, passwordMatch, invalidEmailMsg, invalidPasswo
       <div class="flex flex-col md:flex-row">
         <div class="pt-2 md:w-96">
           <div class="flex flex-col items-start">
-            <div class="mt-3 w-full">
-              <p>Email</p>
-              <input
-                class="border-2 rounded border-neutral-200 focus:border-neutral-700 w-full h-10 px-2 outline-0"
-                v-model="email"
-              />
-              <p class="text-sm text-red-600" :class="[validEmail ? 'hidden' : '']">{{ invalidEmailMsg }}</p>
-            </div>
-            <div class="mt-3 w-full">
-              <p>Password</p>
-              <input
-                class="border-2 rounded border-neutral-200 focus:border-neutral-700 w-full h-10 px-2 outline-0"
-                v-model="password"
-              />
-              <p class="text-sm text-red-600" :class="[validPassword ? 'hidden' : '']">{{ invalidPasswordMsg }}</p>
-            </div>
-            <div class="mt-3 w-full">
-              <p>Confirm Password</p>
-              <input
-                class="border-2 rounded border-neutral-200 focus:border-neutral-700 w-full h-10 px-2 outline-0"
-                v-model="retypedPassword"
-              />
-              <p class="text-sm text-red-600" :class="[passwordMatch ? 'hidden' : '']">{{ passwordDoNotMatchMsg }}</p>
-            </div>
+            <FormStringInput
+              class="mt-3"
+              v-model="email"
+              title="Email"
+              :invalidMsg="invalidEmailMsg"
+              :isValid="validEmail"
+            />
+            <FormStringInput
+              class="mt-3"
+              v-model="password"
+              title="Password"
+              :invalidMsg="invalidPasswordMsg"
+              :isValid="validPassword"
+            />
+            <FormStringInput
+              class="mt-3"
+              v-model="retypedPassword"
+              title="Confirm Password"
+              :invalidMsg="passwordDoNotMatchMsg"
+              :isValid="passwordMatch"
+            />
           </div>
-          <div class="mt-5">
-            <Button>Register</Button>
-          </div>
+          <SubmitButton class="mt-5">Register</SubmitButton>
         </div>
       </div>
       <div class="pt-5 lg:pl-5">

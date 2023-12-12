@@ -8,6 +8,7 @@ withDefaults(
 </script>
 
 <template>
+  <div>
   <button
     class="bg-neutral-600 hover:bg-neutral-700 rounded text-neutral-50 px-3 py-2 active:outline outline-2 outline-neutral-400"
   >
@@ -32,4 +33,5 @@ withDefaults(
       </svg>
     </span>
   </button>
+  </div>
 </template>
