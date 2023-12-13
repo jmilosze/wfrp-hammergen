@@ -3,12 +3,14 @@ import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
+    type: string;
     title: string;
     isValid: boolean;
     invalidMsg: string;
     modelValue: string;
   }>(),
   {
+    type: "text",
     title: "",
     isValid: true,
     invalidMsg: "",
@@ -33,6 +35,7 @@ const value = computed({
   <div class="w-full">
     <p>{{ title }}</p>
     <input
+      :type="type"
       class="border-2 border-neutral-200 rounded w-full h-10 px-2 mt-1 focus:border-neutral-700 transition-colors duration-200"
       v-model="value"
     />

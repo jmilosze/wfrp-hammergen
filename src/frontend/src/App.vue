@@ -17,7 +17,7 @@ watch(screenSizeMd, () => {
 <template>
   <!-- Top NavBar -->
   <div class="fixed md:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
-    <div class="flex-auto max-w-6xl px-4 flex items-center">
+    <div class="flex-auto max-w-7xl px-4 flex items-center">
       <div class="flex-auto flex items-center justify-between">
         <div class="text-amber-300 hover:text-amber-100">
           <a href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Support Hammergen</a>
@@ -88,7 +88,7 @@ watch(screenSizeMd, () => {
   <!-- Content and footer-->
   <div class="md:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
-      <div class="flex-auto p-9 max-w-6xl w-full"><RouterView /></div>
+      <div class="flex-auto p-9 max-w-7xl w-full"><RouterView /></div>
       <div class="flex-none bg-neutral-700 w-full">
         <div class="text-center text-sm my-2 text-amber-300">
           Contact:

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { Ref, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useUserValidator } from "../../composables/userValidators.ts";
 import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
@@ -9,10 +10,57 @@ const validatorOn = ref(false);
 const email = ref("");
 const password = ref("");
 const retypedPassword = ref("");
-const errors = ref([]);
+const errors: Ref<string[]> = ref([]);
+const registering = ref(false);
+const registrationSuccessful = ref(false);
 
 const { validEmail, validPassword, passwordMatch, invalidEmailMsg, invalidPasswordMsg, passwordDoNotMatchMsg } =
-  useUserValidator(validatorOn, email, password, retypedPassword);
+  useUserValidator(email, password, retypedPassword);
+
+const router = useRouter();
+
+function onRegistrationSuccessful() {
+  validatorOn.value = false;
+  email.value = "";
+  password.value = "";
+  retypedPassword.value = "";
+  registrationSuccessful.value = true;
+
+  setTimeout(() => {
+    router.push({ name: "home" });
+  }, 1000);
+}
+
+// function onRegistrationFailed(error) {
+//   if (error.response && error.response.status === 409) {
+//     errors.value.push("User with this email already exists.");
+//   } else if (
+//     error.response &&
+//     error.response.status === 400 &&
+//     error.response.data.details === "captcha verification error"
+//   ) {
+//     errors.value.push("We suspect you might be a robot. Please try again.");
+//   } else {
+//     errors.value.push("Server error.");
+//   }
+// }
+
+async function submitForm() {
+  validatorOn.value = true;
+  registering.value = false;
+  registrationSuccessful.value = false;
+  errors.value = [];
+
+  if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
+    console.log("abort!");
+    return;
+  }
+
+  // registering.value = true;
+  // onRegistrationSuccessful();
+  // await new Promise((r) => setTimeout(r, 2000));
+  // registering.value = false;
+}
 </script>
 
 <template>
@@ -32,24 +80,26 @@ const { validEmail, validPassword, passwordMatch, invalidEmailMsg, invalidPasswo
               v-model="email"
               title="Email"
               :invalidMsg="invalidEmailMsg"
-              :isValid="validEmail"
+              :isValid="!validatorOn ? true : validEmail"
             />
             <FormStringInput
+              type="password"
               class="mt-3"
               v-model="password"
               title="Password"
               :invalidMsg="invalidPasswordMsg"
-              :isValid="validPassword"
+              :isValid="!validatorOn ? true : validPassword"
             />
             <FormStringInput
+              type="password"
               class="mt-3"
               v-model="retypedPassword"
               title="Confirm Password"
               :invalidMsg="passwordDoNotMatchMsg"
-              :isValid="passwordMatch"
+              :isValid="!validatorOn ? true : passwordMatch"
             />
           </div>
-          <SubmitButton class="mt-5">Register</SubmitButton>
+          <SubmitButton class="mt-5" @click="submitForm" :processing="registering">Register</SubmitButton>
         </div>
       </div>
       <div class="pt-5 lg:pl-5">
