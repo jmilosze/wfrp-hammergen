@@ -4,22 +4,17 @@ const emailRegex =
   /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/;
 const pwdRegex = /^.{5,30}$/;
 
-export function useUserValidator(
-  validatorOn: Ref<boolean>,
-  email: Ref<string>,
-  password: Ref<string>,
-  retypedPassword: Ref<string>,
-) {
+export function useUserValidator(email: Ref<string>, password: Ref<string>, retypedPassword: Ref<string>) {
   const validEmail = computed(() => {
-    return !validatorOn.value ? true : emailRegex.test(email.value);
+    return emailRegex.test(email.value);
   });
 
   const validPassword = computed(() => {
-    return !validatorOn.value ? true : pwdRegex.test(password.value);
+    return pwdRegex.test(password.value);
   });
 
   const passwordMatch = computed(() => {
-    return !validatorOn.value ? true : password.value === retypedPassword.value;
+    return password.value === retypedPassword.value;
   });
 
   return {
