@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "vue-tsc",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview",
-    "lint": "vue-tsc"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@vueuse/core": "^10.7.0",
+    "axios": "^1.6.2",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"
   },
