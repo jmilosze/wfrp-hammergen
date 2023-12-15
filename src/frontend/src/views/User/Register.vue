@@ -5,6 +5,7 @@ import { useUserValidator } from "../../composables/userValidators.ts";
 import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
+import { anonRequest } from "../../services/auth";
 
 const validatorOn = ref(false);
 const email = ref("");
@@ -31,35 +32,47 @@ function onRegistrationSuccessful() {
   }, 1000);
 }
 
-// function onRegistrationFailed(error) {
-//   if (error.response && error.response.status === 409) {
-//     errors.value.push("User with this email already exists.");
-//   } else if (
-//     error.response &&
-//     error.response.status === 400 &&
-//     error.response.data.details === "captcha verification error"
-//   ) {
-//     errors.value.push("We suspect you might be a robot. Please try again.");
-//   } else {
-//     errors.value.push("Server error.");
-//   }
-// }
+function onRegistrationFailed(error: any) {
+  if ("response" in error) {
+    if (error.response && error.response.status === 409) {
+      errors.value.push("User with this email already exists.");
+    } else if (
+      error.response &&
+      error.response.status === 400 &&
+      error.response.data.details === "captcha verification error"
+    ) {
+      errors.value.push("We suspect you might be a robot. Please try again.");
+    } else {
+      errors.value.push("Server error.");
+    }
+  } else {
+    errors.value.push("Server error.");
+  }
+}
 
 async function submitForm() {
   validatorOn.value = true;
   registering.value = false;
   registrationSuccessful.value = false;
   errors.value = [];
-
   if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
-    console.log("abort!");
     return;
   }
 
-  // registering.value = true;
-  // onRegistrationSuccessful();
-  // await new Promise((r) => setTimeout(r, 2000));
-  // registering.value = false;
+  registering.value = true;
+
+  try {
+    await anonRequest.post("/api/user", {
+      username: email.value.toLowerCase(),
+      password: password.value,
+      captcha: "success",
+    });
+    onRegistrationSuccessful();
+  } catch (error) {
+    onRegistrationFailed(error);
+  }
+
+  registering.value = false;
 }
 </script>
 
@@ -76,6 +89,7 @@ async function submitForm() {
         <div class="pt-2 md:w-96">
           <div class="flex flex-col items-start">
             <FormStringInput
+              type="text"
               class="mt-3"
               v-model="email"
               title="Email"
