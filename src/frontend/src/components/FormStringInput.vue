@@ -3,7 +3,7 @@ import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    type: string;
+    type: "text" | "password";
     title: string;
     isValid: boolean;
     invalidMsg: string;
