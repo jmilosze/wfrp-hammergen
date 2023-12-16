@@ -62,7 +62,6 @@ type Captcha struct {
 	Url      string        `default:"https://www.google.com/recaptcha/api/siteverify" split_words:"true"`
 	Timeout  time.Duration `default:"10s" split_words:"true"`
 	MinScore float64       `default:"0.5"`
-	Bypass   string        `default:"success"`
 }
 
 func NewConfig() Config {

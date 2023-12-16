@@ -15,15 +15,13 @@ type CaptchaService struct {
 	Url        string
 	HttpClient *http.Client
 	MinScore   float64
-	Bypass     string
 }
 
-func NewCaptchaService(secret string, url string, minScore float64, bypass string, timeout time.Duration) *CaptchaService {
+func NewCaptchaService(secret string, url string, minScore float64, timeout time.Duration) *CaptchaService {
 	return &CaptchaService{
 		Secret:   secret,
 		Url:      url,
 		MinScore: minScore,
-		Bypass:   bypass,
 		HttpClient: &http.Client{
 			Timeout: timeout,
 		},
@@ -31,10 +29,6 @@ func NewCaptchaService(secret string, url string, minScore float64, bypass strin
 }
 
 func (e *CaptchaService) Verify(ctx context.Context, captcha string, remoteAddr string) bool {
-	if captcha == e.Bypass {
-		return true
-	}
-
 	data := url.Values{}
 	data.Set("secret", e.Secret)
 	data.Set("response", captcha)
