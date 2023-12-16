@@ -31,7 +31,7 @@ func run() error {
 	val := validator.NewValidator()
 	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, cfg.Jwt.AccessExpiry, cfg.Jwt.ResetExpiry)
 	emailService := mailjet.NewEmailService(cfg.Email.FromAddress, cfg.Email.PublicApiKey, cfg.Email.PrivateApiKey)
-	captchaService := recaptcha.NewCaptchaService(cfg.Captcha.Secret, cfg.Captcha.Url, cfg.Captcha.MinScore, cfg.Captcha.Bypass, cfg.Captcha.Timeout)
+	captchaService := recaptcha.NewCaptchaService(cfg.Captcha.Secret, cfg.Captcha.Url, cfg.Captcha.MinScore, cfg.Captcha.Timeout)
 	mongoDbService := mongodb.NewDbService(cfg.MongoDb.Uri, cfg.MongoDb.Name)
 	defer mongoDbService.Disconnect()
 
