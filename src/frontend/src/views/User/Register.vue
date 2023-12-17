@@ -7,6 +7,7 @@ import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
 import Alert from "../../components/Alert.vue";
+import { useScriptTag } from "@vueuse/core";
 
 const validatorOn = ref(false);
 const email = ref("");
@@ -61,18 +62,33 @@ async function submitForm() {
 
   registering.value = true;
 
-  const token = "success";
-
-  try {
-    await anonRequest.post("/api/user", {
-      username: email.value.toLowerCase(),
-      password: password.value,
-      captcha: token,
+  grecaptcha.ready(function () {
+    grecaptcha.execute("6Lfsg9EZAAAAACTDNGPwgLTLEOSQEIOrywksODEk", { action: "register" }).then(function (
+      token: string,
+    ) {
+      anonRequest
+        .post("/api/user", {
+          username: email.value.toLowerCase(),
+          password: password.value,
+          captcha: token,
+        })
+        .then(() => onRegistrationSuccessful())
+        .catch((error) => onRegistrationFailed(error));
     });
-    onRegistrationSuccessful();
-  } catch (error) {
-    onRegistrationFailed(error);
-  }
+  });
+
+  // const captchaToken = "success";
+
+  // try {
+  //   await anonRequest.post("/api/user", {
+  //     username: email.value.toLowerCase(),
+  //     password: password.value,
+  //     captcha: captchaToken,
+  //   });
+  //   onRegistrationSuccessful();
+  // } catch (error) {
+  //   onRegistrationFailed(error);
+  // }
 
   registering.value = false;
 }

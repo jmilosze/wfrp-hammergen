@@ -104,3 +104,9 @@ watch(screenSizeMd, () => {
     @click="showSideBar = false"
   ></div>
 </template>
+
+<style>
+.grecaptcha-badge {
+  visibility: hidden;
+}
+</style>
