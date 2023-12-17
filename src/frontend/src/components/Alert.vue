@@ -3,6 +3,9 @@ import { computed } from "vue";
 
 type AlertType = "green" | "red";
 
+const GREEN_SCHEME = ["bg-green-200", "text-green-800", "border-green-500"];
+const RED_SCHEME = ["bg-red-200", "text-red-800", "border-red-500"];
+
 const props = withDefaults(
   defineProps<{
     alertType: AlertType;
@@ -16,13 +19,13 @@ const props = withDefaults(
 
 const colour = computed(() => {
   if (props.alertType === "green") {
-    return ["bg-green-200", "text-green-800", "border-green-500"];
+    return GREEN_SCHEME;
   }
   if (props.alertType === "red") {
-    return ["bg-red-200", "text-red-800", "border-red-500"];
+    return RED_SCHEME;
+  } else {
+    return GREEN_SCHEME;
   }
-
-  return { bg: "bg-red-400", text: "text-red-700" };
 });
 </script>
 
