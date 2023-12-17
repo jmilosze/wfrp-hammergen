@@ -7,7 +7,6 @@ import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
 import Alert from "../../components/Alert.vue";
-import { useScriptTag } from "@vueuse/core";
 
 const validatorOn = ref(false);
 const email = ref("");

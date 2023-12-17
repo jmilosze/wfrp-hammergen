@@ -105,8 +105,4 @@ watch(screenSizeMd, () => {
   ></div>
 </template>
 
-<style>
-.grecaptcha-badge {
-  visibility: hidden;
-}
-</style>
+<style></style>
