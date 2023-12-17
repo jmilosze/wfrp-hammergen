@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserValidator } from "../../composables/userValidators.ts";
 import Header from "../../components/PageHeader.vue";
@@ -7,6 +7,7 @@ import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
 import Alert from "../../components/Alert.vue";
+import { useReCaptcha } from "vue-recaptcha-v3";
 
 const validatorOn = ref(false);
 const email = ref("");
@@ -20,6 +21,16 @@ const { validEmail, validPassword, passwordMatch, invalidEmailMsg, invalidPasswo
   useUserValidator(email, password, retypedPassword);
 
 const router = useRouter();
+
+const recaptcha = useReCaptcha();
+
+onMounted(() => {
+  recaptcha?.instance.value?.showBadge();
+});
+
+onUnmounted(() => {
+  recaptcha?.instance.value?.hideBadge();
+});
 
 function onRegistrationSuccessful() {
   validatorOn.value = false;
@@ -61,33 +72,22 @@ async function submitForm() {
 
   registering.value = true;
 
-  grecaptcha.ready(function () {
-    grecaptcha.execute("6Lfsg9EZAAAAACTDNGPwgLTLEOSQEIOrywksODEk", { action: "register" }).then(function (
-      token: string,
-    ) {
-      anonRequest
-        .post("/api/user", {
-          username: email.value.toLowerCase(),
-          password: password.value,
-          captcha: token,
-        })
-        .then(() => onRegistrationSuccessful())
-        .catch((error) => onRegistrationFailed(error));
+  await recaptcha?.recaptchaLoaded();
+  const token = await recaptcha?.executeRecaptcha("register");
+
+  // const token = "success";
+  console.log(token);
+
+  try {
+    await anonRequest.post("/api/user", {
+      username: email.value.toLowerCase(),
+      password: password.value,
+      captcha: token,
     });
-  });
-
-  // const captchaToken = "success";
-
-  // try {
-  //   await anonRequest.post("/api/user", {
-  //     username: email.value.toLowerCase(),
-  //     password: password.value,
-  //     captcha: captchaToken,
-  //   });
-  //   onRegistrationSuccessful();
-  // } catch (error) {
-  //   onRegistrationFailed(error);
-  // }
+    onRegistrationSuccessful();
+  } catch (error) {
+    onRegistrationFailed(error);
+  }
 
   registering.value = false;
 }
