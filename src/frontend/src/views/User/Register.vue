@@ -61,11 +61,13 @@ async function submitForm() {
 
   registering.value = true;
 
+  const token = "success";
+
   try {
     await anonRequest.post("/api/user", {
       username: email.value.toLowerCase(),
       password: password.value,
-      captcha: "success",
+      captcha: token,
     });
     onRegistrationSuccessful();
   } catch (error) {
