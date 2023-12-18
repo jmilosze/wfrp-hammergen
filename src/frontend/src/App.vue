@@ -25,7 +25,7 @@ watch(screenSizeMd, () => {
   <div class="fixed md:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
     <div class="flex-auto max-w-7xl px-4 flex items-center">
       <div class="flex-auto flex items-center justify-between">
-        <div class="text-amber-300 hover:text-amber-100">
+        <div class="text-amber-300 hover:bg-neutral-800 p-3 rounded">
           <a href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Support Hammergen</a>
         </div>
         <button class="text-amber-300 md:hidden" @click="showSideBar = true">
