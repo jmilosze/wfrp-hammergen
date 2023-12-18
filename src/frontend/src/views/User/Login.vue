@@ -2,7 +2,7 @@
 import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
-import Alert from "../../components/Alert.vue";
+import AlertBlock from "../../components/AlertBlock.vue";
 import { computed, ref } from "vue";
 import { useAuthStore } from "../../stores/auth";
 
@@ -54,7 +54,7 @@ function onLoginFailed(error: any) {
   <div>
     <Header title="Log in"> </Header>
     <div class="pt-2 md:w-96">
-      <Alert class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</Alert>
+      <AlertBlock class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</AlertBlock>
       <div class="flex flex-col items-start">
         <FormStringInput
           type="text"
