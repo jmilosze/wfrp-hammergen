@@ -8,8 +8,8 @@ const route = useRoute();
 <template>
   <RouterLink
     :to="{ name: routeName }"
-    class="text-amber-300 hover:text-amber-100"
-    :class="[route.name == routeName && route.name != 'placeholder' ? 'text-amber-200' : '']"
+    class="text-amber-300 hover:bg-neutral-800 p-3 rounded"
+    :class="[route.name == routeName && route.name != 'placeholder' ? 'text-amber-100' : '']"
   >
     <slot />
   </RouterLink>
