@@ -44,10 +44,13 @@ async function submitForm() {
 
   registering.value = true;
 
-  await recaptcha?.recaptchaLoaded();
-  const token = await recaptcha?.executeRecaptcha("register");
-
-  // const token = "success";
+  let token;
+  if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
+    token = "success";
+  } else {
+    await recaptcha?.recaptchaLoaded();
+    token = await recaptcha?.executeRecaptcha("register");
+  }
 
   try {
     await anonRequest.post("/api/user", {
