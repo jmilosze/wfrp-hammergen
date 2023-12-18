@@ -32,7 +32,7 @@ watch(screenSizeMd, () => {
         </button>
         <div class="hidden md:flex justify-center">
           <TopBarLink routeName="register" class="mx-5">Register</TopBarLink>
-          <TopBarLink routeName="placeholder" class="ml-5">Login</TopBarLink>
+          <TopBarLink routeName="login" class="ml-5">Login</TopBarLink>
         </div>
       </div>
     </div>
@@ -77,7 +77,7 @@ watch(screenSizeMd, () => {
       </div>
       <div class="mt-8">
         <SideBarLink routeName="register" @click="showSideBar = false">Register</SideBarLink>
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Login</SideBarLink>
+        <SideBarLink routeName="login" @click="showSideBar = false">Login</SideBarLink>
       </div>
       <div class="mt-8">
         <SideBarLink routeName="howto" @click="showSideBar = false">How to use Hammergen</SideBarLink>

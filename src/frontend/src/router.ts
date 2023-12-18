@@ -3,6 +3,7 @@ import Home from "./views/Home.vue";
 import About from "./views/About.vue";
 import Howto from "./views/Howto.vue";
 import Register from "./views/User/Register.vue";
+import Login from "./views/User/Login.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -31,6 +32,11 @@ export default createRouter({
       path: "/register",
       name: "register",
       component: Register,
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: Login,
     },
   ],
 });
