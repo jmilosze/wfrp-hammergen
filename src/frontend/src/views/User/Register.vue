@@ -8,6 +8,7 @@ import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
 import Alert from "../../components/Alert.vue";
 import { useReCaptcha } from "vue-recaptcha-v3";
+import { isAxiosError } from "axios";
 
 const validatorOn = ref(false);
 const email = ref("");
@@ -40,20 +41,16 @@ function onRegistrationSuccessful() {
   registrationSuccessful.value = true;
 
   setTimeout(() => {
-    router.push({ name: "home" });
+    router.push({ name: "login" });
   }, 1500);
 }
 
 function onRegistrationFailed(error: any) {
-  if ("response" in error) {
-    if (error.response && error.response.status === 409) {
+  if (isAxiosError(error) && error.response) {
+    if (error.response.status === 409) {
       errors.value = "User with this email already exists.";
       return;
-    } else if (
-      error.response &&
-      error.response.status === 400 &&
-      error.response.data.details === "captcha verification error"
-    ) {
+    } else if (error.response.status === 400 && error.response.data.details === "captcha verification error") {
       errors.value = "We suspect you might be a robot. Please try again.";
       return;
     }
