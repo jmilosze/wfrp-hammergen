@@ -47,11 +47,13 @@ const authHeaderInterceptor = (requestConfig: InternalAxiosRequestConfig) => {
 authRequest.interceptors.request.use(authHeaderInterceptor);
 
 export const userInfo = () => {
+  const usernameInStorage = localStorage.getItem(USERNAME);
+
   return {
-    username: localStorage.getItem(USERNAME),
+    username: usernameInStorage != null ? usernameInStorage : "",
   };
 };
 
 export const isUserLoggedIn = () => {
-  return userInfo().username != null;
+  return userInfo().username != "";
 };

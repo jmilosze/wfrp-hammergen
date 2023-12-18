@@ -33,6 +33,36 @@ onUnmounted(() => {
   recaptcha?.instance.value?.hideBadge();
 });
 
+async function submitForm() {
+  validatorOn.value = true;
+  registering.value = false;
+  registrationSuccessful.value = false;
+  errors.value = "";
+  if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
+    return;
+  }
+
+  registering.value = true;
+
+  await recaptcha?.recaptchaLoaded();
+  const token = await recaptcha?.executeRecaptcha("register");
+
+  // const token = "success";
+
+  try {
+    await anonRequest.post("/api/user", {
+      username: email.value.toLowerCase(),
+      password: password.value,
+      captcha: token,
+    });
+    onRegistrationSuccessful();
+  } catch (error) {
+    onRegistrationFailed(error);
+  }
+
+  registering.value = false;
+}
+
 function onRegistrationSuccessful() {
   validatorOn.value = false;
   email.value = "";
@@ -56,37 +86,6 @@ function onRegistrationFailed(error: any) {
     }
   }
   errors.value = "Server error.";
-}
-
-async function submitForm() {
-  validatorOn.value = true;
-  registering.value = false;
-  registrationSuccessful.value = false;
-  errors.value = "";
-  if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
-    return;
-  }
-
-  registering.value = true;
-
-  await recaptcha?.recaptchaLoaded();
-  const token = await recaptcha?.executeRecaptcha("register");
-
-  // const token = "success";
-  console.log(token);
-
-  try {
-    await anonRequest.post("/api/user", {
-      username: email.value.toLowerCase(),
-      password: password.value,
-      captcha: token,
-    });
-    onRegistrationSuccessful();
-  } catch (error) {
-    onRegistrationFailed(error);
-  }
-
-  registering.value = false;
 }
 </script>
 

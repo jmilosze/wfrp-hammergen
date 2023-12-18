@@ -1,6 +1,5 @@
 <script setup lang="ts">
 defineProps<{ routeName: string }>();
-defineEmits<{}>();
 
 import { useRoute } from "vue-router";
 const route = useRoute();
