@@ -18,9 +18,6 @@ const props = withDefaults(
 );
 
 const colour = computed(() => {
-  if (props.alertType === "green") {
-    return GREEN_SCHEME;
-  }
   if (props.alertType === "red") {
     return RED_SCHEME;
   } else {
