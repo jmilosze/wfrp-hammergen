@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useScreen } from "./composables/screen.ts";
-
-import SideBarLink from "./components/navigation/SideBarLink.vue";
-import TopBarLink from "./components/navigation/TopBarLink.vue";
+import NavLink from "./components/NavLink.vue";
 import { useAuthStore } from "./stores/auth.ts";
-import SideBarButton from "./components/navigation/SideBarButton.vue";
-import TopBarButton from "./components/navigation/TopBarButton.vue";
 
 const showSideBar = ref(false);
 
@@ -25,9 +21,7 @@ watch(screenSizeMd, () => {
   <div class="fixed md:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
     <div class="flex-auto max-w-7xl px-4 flex items-center">
       <div class="flex-auto flex items-center justify-between">
-        <div class="text-amber-300 hover:bg-neutral-800 p-3 rounded">
-          <a href="https://ko-fi.com/Q5Q12E0KB" target="_blank">Support Hammergen</a>
-        </div>
+        <NavLink href="https://ko-fi.com/Q5Q12E0KB" variant="top" class="mx-5">Support Hammergen</NavLink>
         <button class="text-amber-300 md:hidden" @click="showSideBar = true">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
             <path
@@ -37,11 +31,11 @@ watch(screenSizeMd, () => {
           </svg>
         </button>
         <div v-if="authStore.loggedIn" class="hidden md:flex justify-center">
-          <TopBarButton class="mx-5" @click="authStore.logout">Logout</TopBarButton>
+          <NavLink class="mx-5" variant="top" @click="authStore.logout">Logout</NavLink>
         </div>
         <div v-else class="hidden md:flex justify-center">
-          <TopBarLink routeName="register" class="mx-5">Register</TopBarLink>
-          <TopBarLink routeName="login" class="ml-5">Login</TopBarLink>
+          <NavLink routeName="register" variant="top" class="mx-5">Register</NavLink>
+          <NavLink routeName="login" variant="top" class="ml-5">Login</NavLink>
         </div>
       </div>
     </div>
@@ -52,12 +46,7 @@ watch(screenSizeMd, () => {
     :class="!screenSizeMd && !showSideBar ? '-translate-x-64' : ''"
   >
     <div class="pl-1 md:p-0 mt-2 mb-8 flex items-center justify-between md:justify-center md:ml-0">
-      <RouterLink
-        to="/"
-        class="text-3xl hover:bg-neutral-700 hover:text-amber-300 py-1 px-2 rounded font-hammergen"
-        @click="showSideBar = false"
-        >Hammergen</RouterLink
-      >
+      <NavLink routeName="home" variant="side" class="text-3xl font-hammergen">Hammergen</NavLink>
       <button
         v-if="!screenSizeMd && showSideBar"
         @click="showSideBar = false"
@@ -72,28 +61,28 @@ watch(screenSizeMd, () => {
     </div>
     <div class="pl-3 pr-3 divide-y divide-neutral-700">
       <div class="text-xl pb-2">
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Characters</SideBarLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Characters</NavLink>
       </div>
       <div class="py-2">
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Careers</SideBarLink>
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Mutations</SideBarLink>
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Prayers</SideBarLink>
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Qualities and Runes</SideBarLink>
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Skills</SideBarLink>
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Spells</SideBarLink>
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Talents</SideBarLink>
-        <SideBarLink routeName="placeholder" @click="showSideBar = false">Trappings</SideBarLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Careers</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Mutations</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Prayers</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Qualities and Runes</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Skills</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Spells</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Talents</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Trappings</NavLink>
       </div>
       <div v-if="authStore.loggedIn" class="py-2">
-        <SideBarButton @click="authStore.logout">Logout</SideBarButton>
+        <NavLink variant="side" @click="authStore.logout">Logout</NavLink>
       </div>
       <div v-else class="py-2">
-        <SideBarLink routeName="register" @click="showSideBar = false">Register</SideBarLink>
-        <SideBarLink routeName="login" @click="showSideBar = false">Login</SideBarLink>
+        <NavLink routeName="register" variant="side" @click="showSideBar = false">Register</NavLink>
+        <NavLink routeName="login" variant="side" @click="showSideBar = false">Login</NavLink>
       </div>
       <div class="pt-2">
-        <SideBarLink routeName="howto" @click="showSideBar = false">How to use Hammergen</SideBarLink>
-        <SideBarLink routeName="about" @click="showSideBar = false">About</SideBarLink>
+        <NavLink routeName="howto" variant="side" @click="showSideBar = false">How to use Hammergen</NavLink>
+        <NavLink routeName="about" variant="side" @click="showSideBar = false">About</NavLink>
       </div>
     </div>
   </div>
