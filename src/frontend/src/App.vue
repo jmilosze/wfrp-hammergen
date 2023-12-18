@@ -70,11 +70,11 @@ watch(screenSizeMd, () => {
         </svg>
       </button>
     </div>
-    <div class="pl-1 pr-6">
-      <div class="text-xl mb-3">
+    <div class="pl-3 pr-3 divide-y divide-neutral-700">
+      <div class="text-xl pb-2">
         <SideBarLink routeName="placeholder" @click="showSideBar = false">Characters</SideBarLink>
       </div>
-      <div class="">
+      <div class="py-2">
         <SideBarLink routeName="placeholder" @click="showSideBar = false">Careers</SideBarLink>
         <SideBarLink routeName="placeholder" @click="showSideBar = false">Mutations</SideBarLink>
         <SideBarLink routeName="placeholder" @click="showSideBar = false">Prayers</SideBarLink>
@@ -84,14 +84,14 @@ watch(screenSizeMd, () => {
         <SideBarLink routeName="placeholder" @click="showSideBar = false">Talents</SideBarLink>
         <SideBarLink routeName="placeholder" @click="showSideBar = false">Trappings</SideBarLink>
       </div>
-      <div v-if="authStore.loggedIn" class="mt-8">
+      <div v-if="authStore.loggedIn" class="py-2">
         <SideBarButton @click="authStore.logout">Logout</SideBarButton>
       </div>
-      <div v-else class="mt-8">
+      <div v-else class="py-2">
         <SideBarLink routeName="register" @click="showSideBar = false">Register</SideBarLink>
         <SideBarLink routeName="login" @click="showSideBar = false">Login</SideBarLink>
       </div>
-      <div class="mt-8">
+      <div class="pt-2">
         <SideBarLink routeName="howto" @click="showSideBar = false">How to use Hammergen</SideBarLink>
         <SideBarLink routeName="about" @click="showSideBar = false">About</SideBarLink>
       </div>
