@@ -14,14 +14,21 @@ const errors = ref("");
 
 const authStore = useAuthStore();
 
-function onLoginFailed(error: any) {
-  if ("response" in error) {
-    if (error.response.status === 403) {
-      errors.value = "Invalid username or password.";
-      return;
-    }
+async function submitForm() {
+  validatorOn.value = true;
+  loggingIn.value = false;
+  errors.value = "";
+  if (!validEmail.value || !validPassword.value) {
+    return;
   }
-  errors.value = "Server error.";
+
+  try {
+    loggingIn.value = true;
+    await authStore.login(email.value.toLowerCase(), password.value);
+  } catch (error) {
+    onLoginFailed(error);
+  }
+  loggingIn.value = false;
 }
 
 const validEmail = computed(() => {
@@ -32,17 +39,14 @@ const validPassword = computed(() => {
   return password.value !== "";
 });
 
-async function submitForm() {
-  validatorOn.value = true;
-  loggingIn.value = false;
-  errors.value = "";
-
-  try {
-    await authStore.login(email.value.toLowerCase(), password.value);
-  } catch (error) {
-    onLoginFailed(error);
+function onLoginFailed(error: any) {
+  if (error.response) {
+    if (error.response.status === 403 || error.response.status === 404) {
+      errors.value = "Invalid username or password.";
+      return;
+    }
   }
-  loggingIn.value = true;
+  errors.value = "Server error.";
 }
 </script>
 

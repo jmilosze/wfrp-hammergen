@@ -4,9 +4,15 @@ import { useScreen } from "./composables/screen.ts";
 
 import SideBarLink from "./components/navigation/SideBarLink.vue";
 import TopBarLink from "./components/navigation/TopBarLink.vue";
+import { useAuthStore } from "./stores/auth.ts";
+import SideBarButton from "./components/navigation/SideBarButton.vue";
+import TopBarButton from "./components/navigation/TopBarButton.vue";
 
 const showSideBar = ref(false);
+
 const { screenSizeMd } = useScreen();
+const authStore = useAuthStore();
+
 watch(screenSizeMd, () => {
   if (screenSizeMd) {
     showSideBar.value = false;
@@ -30,7 +36,10 @@ watch(screenSizeMd, () => {
             ></path>
           </svg>
         </button>
-        <div class="hidden md:flex justify-center">
+        <div v-if="authStore.loggedIn" class="hidden md:flex justify-center">
+          <TopBarButton class="mx-5" @click="authStore.logout">Logout</TopBarButton>
+        </div>
+        <div v-else class="hidden md:flex justify-center">
           <TopBarLink routeName="register" class="mx-5">Register</TopBarLink>
           <TopBarLink routeName="login" class="ml-5">Login</TopBarLink>
         </div>
@@ -75,7 +84,10 @@ watch(screenSizeMd, () => {
         <SideBarLink routeName="placeholder" @click="showSideBar = false">Talents</SideBarLink>
         <SideBarLink routeName="placeholder" @click="showSideBar = false">Trappings</SideBarLink>
       </div>
-      <div class="mt-8">
+      <div v-if="authStore.loggedIn" class="mt-8">
+        <SideBarButton @click="authStore.logout">Logout</SideBarButton>
+      </div>
+      <div v-else class="mt-8">
         <SideBarLink routeName="register" @click="showSideBar = false">Register</SideBarLink>
         <SideBarLink routeName="login" @click="showSideBar = false">Login</SideBarLink>
       </div>
