@@ -27,7 +27,7 @@ const colour = computed(() => {
 </script>
 
 <template>
-  <div :class="[...colour, visible ? '' : 'hidden']" class="text-neutral-50 p-2 rounded border">
+  <div :class="[...colour, visible ? '' : 'hidden']" class="p-2 rounded border">
     <slot></slot>
   </div>
 </template>
