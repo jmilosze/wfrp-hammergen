@@ -6,7 +6,7 @@ import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
-import Alert from "../../components/Alert.vue";
+import AlertBlock from "../../components/AlertBlock.vue";
 import { useReCaptcha } from "vue-recaptcha-v3";
 import { isAxiosError } from "axios";
 
@@ -101,9 +101,9 @@ function onRegistrationFailed(error: any) {
       </p>
     </Header>
     <div class="pt-2 md:w-96">
-      <Alert class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</Alert>
-      <Alert class="mt-3" alertType="green" :visible="registrationSuccessful"
-        >Registration successful, redirecting to login...</Alert
+      <AlertBlock class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</AlertBlock>
+      <AlertBlock class="mt-3" alertType="green" :visible="registrationSuccessful"
+        >Registration successful, redirecting to login...</AlertBlock
       >
       <div class="flex flex-col items-start">
         <FormStringInput
