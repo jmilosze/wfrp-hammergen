@@ -343,7 +343,7 @@ func (s *UserService) SendResetPassword(ctx context.Context, username string) *u
 		return &user.UserError{Type: user.InternalError, Err: err}
 	}
 
-	resetTokenPath := fmt.Sprintf("/resetPassword/%s", resetToken)
+	resetTokenPath := fmt.Sprintf("/resetpassword/%s", resetToken)
 	clickUrl.Path = path.Join(clickUrl.Path, resetTokenPath)
 
 	emailMessage := fmt.Sprintf("Please reset your password by <a href=%s>clicking here</a>", clickUrl.String())

@@ -5,6 +5,7 @@ import Howto from "./views/Howto.vue";
 import Register from "./views/User/Register.vue";
 import Login from "./views/User/Login.vue";
 import ForgotPassword from "./views/User/ForgotPassword.vue";
+import ResetPassword from "./views/User/ResetPassword.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -43,6 +44,12 @@ export default createRouter({
       path: "/forgotpassword",
       name: "forgotpassword",
       component: ForgotPassword,
+    },
+    {
+      path: "/resetpassword/:token",
+      name: "resetpassword",
+      component: ResetPassword,
+      props: true,
     },
   ],
 });
