@@ -5,6 +5,7 @@ import FormStringInput from "../../components/FormStringInput.vue";
 import AlertBlock from "../../components/AlertBlock.vue";
 import { computed, ref } from "vue";
 import { useAuthStore } from "../../stores/auth";
+import TextLink from "../../components/TextLink.vue";
 
 const email = ref("");
 const validatorOn = ref(false);
@@ -73,7 +74,13 @@ function onLoginFailed(error: any) {
           :isValid="!validatorOn ? true : validPassword"
         />
       </div>
-      <SubmitButton class="mt-3" @click="submitForm" :processing="loggingIn">Login</SubmitButton>
+      <SubmitButton class="mt-3" @click="submitForm" :processing="loggingIn">Log in</SubmitButton>
+      <div class="mt-5">
+        <TextLink routeName="forgotpassword">Forgot your password?</TextLink>
+      </div>
+      <div class="mt-3">
+        <TextLink routeName="register">Register as a new user.</TextLink>
+      </div>
     </div>
   </div>
 </template>
