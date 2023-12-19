@@ -27,7 +27,7 @@ import Header from "../components/PageHeader.vue";
       <li>The Imperial Zoo</li>
     </ul>
   </div>
-  <div class="text-2xl font-semibold mt-5">About the author</div>
+  <div class="text-2xl font-semibold mt-5">The author</div>
   <p>
     Hi there! Hammergen is a non-commercial hobby project run by an overworked middle-aged man. If you have any
     comments, discovered bugs, or have any suggestions on how to improve Hammergen, you can contact me by email:
