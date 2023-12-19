@@ -30,8 +30,9 @@ watch(screenSizeMd, () => {
             ></path>
           </svg>
         </button>
-        <div v-if="authStore.loggedIn" class="hidden md:flex justify-center">
-          <NavLink class="mx-5" variant="top" @click="authStore.logout">Logout</NavLink>
+        <div v-if="authStore.loggedIn" class="hidden md:flex items-center">
+          <NavLink routeName="placeholder" variant="top" class="mx-5 whitespace-nowrap">Manage Account</NavLink>
+          <NavLink class="ml-5" variant="top" @click="authStore.logout">Logout</NavLink>
         </div>
         <div v-else class="hidden md:flex justify-center">
           <NavLink routeName="register" variant="top" class="mx-5">Register</NavLink>
@@ -74,6 +75,7 @@ watch(screenSizeMd, () => {
         <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Trappings</NavLink>
       </div>
       <div v-if="authStore.loggedIn" class="py-2">
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Manage Account</NavLink>
         <NavLink variant="side" @click="authStore.logout">Logout</NavLink>
       </div>
       <div v-else class="py-2">

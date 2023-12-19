@@ -3,12 +3,12 @@ import { useRoute } from "vue-router";
 import { computed } from "vue";
 
 const SIDE_VARIANT = {
-  static: ["block", "hover:bg-neutral-700", "hover:text-amber-300", "py-1", "px-2", "rounded"],
+  static: ["block", "hover:bg-neutral-700", "hover:text-amber-300", "py-1", "px-2", "rounded", "text-start"],
   unselected: [],
   selected: ["font-bold"],
 };
 const TOP_VARIANT = {
-  static: ["block", "hover:bg-neutral-800", "p-3", "rounded"],
+  static: ["hover:bg-neutral-800", "p-3", "rounded"],
   unselected: ["text-amber-300"],
   selected: ["text-amber-100"],
 };
@@ -36,10 +36,8 @@ const style = computed(() => {
   <RouterLink v-if="routeName" :to="{ name: routeName }" :class="style">
     <slot />
   </RouterLink>
-  <div v-else-if="href">
-    <a :href="href" target="_blank" :class="style"><slot /></a>
-  </div>
-  <button v-else :class="[...style, 'text-start', 'w-full']"><slot /></button>
+  <a v-else-if="href" :href="href" target="_blank" :class="style"><slot /></a>
+  <button v-else :class="[...style, 'w-full', 'h-fit']"><slot /></button>
 </template>
 
 <style scoped></style>
