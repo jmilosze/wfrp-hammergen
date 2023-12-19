@@ -4,11 +4,18 @@ const emailRegex =
   /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/;
 const pwdRegex = /^.{5,30}$/;
 
-export function useUserValidator(email: Ref<string>, password: Ref<string>, retypedPassword: Ref<string>) {
+export function useEmailValidator(email: Ref<string>) {
   const validEmail = computed(() => {
     return emailRegex.test(email.value);
   });
 
+  return {
+    validEmail,
+    invalidEmailMsg: "Email address is invalid.",
+  };
+}
+
+export function usePasswordValidator(password: Ref<string>, retypedPassword: Ref<string>) {
   const validPassword = computed(() => {
     return pwdRegex.test(password.value);
   });
@@ -18,10 +25,8 @@ export function useUserValidator(email: Ref<string>, password: Ref<string>, rety
   });
 
   return {
-    validEmail,
     validPassword,
     passwordMatch,
-    invalidEmailMsg: "Email address is invalid.",
     invalidPasswordMsg: "Password has to have between 5 and 30 characters.",
     passwordDoNotMatchMsg: "Passwords do not match.",
   };
