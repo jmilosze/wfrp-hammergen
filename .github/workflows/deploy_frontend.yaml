@@ -1,4 +1,8 @@
   name: deploy-frontend
+  on:
+    push:
+      branches:
+        - main
   jobs:
     hello-world:
       runs-on: ubuntu-latest
