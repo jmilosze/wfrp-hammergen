@@ -4,6 +4,7 @@ import About from "./views/About.vue";
 import Howto from "./views/Howto.vue";
 import Register from "./views/User/Register.vue";
 import Login from "./views/User/Login.vue";
+import ForgotPassword from "./views/User/ForgotPassword.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -37,6 +38,11 @@ export default createRouter({
       path: "/login",
       name: "login",
       component: Login,
+    },
+    {
+      path: "/forgotpassword",
+      name: "forgotpassword",
+      component: ForgotPassword,
     },
   ],
 });
