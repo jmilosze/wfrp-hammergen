@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useUserValidator } from "../../composables/userValidators.ts";
+import { useEmailValidator, usePasswordValidator } from "../../composables/userValidators.ts";
 import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
@@ -10,16 +10,19 @@ import AlertBlock from "../../components/AlertBlock.vue";
 import { useReCaptcha } from "vue-recaptcha-v3";
 import { isAxiosError } from "axios";
 
-const validatorOn = ref(false);
 const email = ref("");
 const password = ref("");
 const retypedPassword = ref("");
+const validatorOn = ref(false);
 const errors = ref("");
-const registering = ref(false);
-const registrationSuccessful = ref(false);
+const submitting = ref(false);
+const submissionSuccessful = ref(false);
 
-const { validEmail, validPassword, passwordMatch, invalidEmailMsg, invalidPasswordMsg, passwordDoNotMatchMsg } =
-  useUserValidator(email, password, retypedPassword);
+const { validEmail, invalidEmailMsg } = useEmailValidator(email);
+const { validPassword, passwordMatch, invalidPasswordMsg, passwordDoNotMatchMsg } = usePasswordValidator(
+  password,
+  retypedPassword,
+);
 
 const router = useRouter();
 
@@ -35,14 +38,14 @@ onUnmounted(() => {
 
 async function submitForm() {
   validatorOn.value = true;
-  registering.value = false;
-  registrationSuccessful.value = false;
+  submitting.value = false;
+  submissionSuccessful.value = false;
   errors.value = "";
   if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
     return;
   }
 
-  registering.value = true;
+  submitting.value = true;
 
   let token;
   if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
@@ -58,27 +61,27 @@ async function submitForm() {
       password: password.value,
       captcha: token,
     });
-    onRegistrationSuccessful();
+    onSubmissionSuccessful();
   } catch (error) {
-    onRegistrationFailed(error);
+    onSubmissionFailed(error);
   }
 
-  registering.value = false;
+  submitting.value = false;
 }
 
-function onRegistrationSuccessful() {
+function onSubmissionSuccessful() {
   validatorOn.value = false;
   email.value = "";
   password.value = "";
   retypedPassword.value = "";
-  registrationSuccessful.value = true;
+  submissionSuccessful.value = true;
 
   setTimeout(() => {
     router.push({ name: "login" });
   }, 1500);
 }
 
-function onRegistrationFailed(error: any) {
+function onSubmissionFailed(error: any) {
   if (isAxiosError(error) && error.response) {
     if (error.response.status === 409) {
       errors.value = "User with this email already exists.";
@@ -102,7 +105,7 @@ function onRegistrationFailed(error: any) {
     </Header>
     <div class="pt-2 md:w-96">
       <AlertBlock class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</AlertBlock>
-      <AlertBlock class="mt-3" alertType="green" :visible="registrationSuccessful"
+      <AlertBlock class="mt-3" alertType="green" :visible="submissionSuccessful"
         >Registration successful, redirecting to login...</AlertBlock
       >
       <div class="flex flex-col items-start">
@@ -131,7 +134,7 @@ function onRegistrationFailed(error: any) {
           :isValid="!validatorOn ? true : passwordMatch"
         />
       </div>
-      <SubmitButton class="mt-3" @click="submitForm" :processing="registering">Register</SubmitButton>
+      <SubmitButton class="mt-3" @click="submitForm" :processing="submitting">Register</SubmitButton>
     </div>
   </div>
 </template>

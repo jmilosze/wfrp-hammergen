@@ -8,28 +8,28 @@ import { useAuthStore } from "../../stores/auth";
 import TextLink from "../../components/TextLink.vue";
 
 const email = ref("");
-const validatorOn = ref(false);
 const password = ref("");
-const loggingIn = ref(false);
+const validatorOn = ref(false);
 const errors = ref("");
+const submitting = ref(false);
 
 const authStore = useAuthStore();
 
 async function submitForm() {
   validatorOn.value = true;
-  loggingIn.value = false;
+  submitting.value = false;
   errors.value = "";
   if (!validEmail.value || !validPassword.value) {
     return;
   }
 
   try {
-    loggingIn.value = true;
+    submitting.value = true;
     await authStore.login(email.value.toLowerCase(), password.value);
   } catch (error) {
-    onLoginFailed(error);
+    onSubmissionFailed(error);
   }
-  loggingIn.value = false;
+  submitting.value = false;
 }
 
 const validEmail = computed(() => {
@@ -40,7 +40,7 @@ const validPassword = computed(() => {
   return password.value !== "";
 });
 
-function onLoginFailed(error: any) {
+function onSubmissionFailed(error: any) {
   if (error.response) {
     if (error.response.status === 403 || error.response.status === 404) {
       errors.value = "Invalid username or password.";
@@ -74,7 +74,7 @@ function onLoginFailed(error: any) {
           :isValid="!validatorOn ? true : validPassword"
         />
       </div>
-      <SubmitButton class="mt-3" @click="submitForm" :processing="loggingIn">Log in</SubmitButton>
+      <SubmitButton class="mt-3" @click="submitForm" :processing="submitting">Log in</SubmitButton>
       <div class="mt-5">
         <TextLink routeName="forgotpassword">Forgot your password?</TextLink>
       </div>
