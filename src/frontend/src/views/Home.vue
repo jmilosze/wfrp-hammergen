@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TextLink from "../components/TextLink.vue";
+</script>
 
 <template>
   <div class="">
@@ -13,7 +15,7 @@
     <p>
       Hammergen includes all trappings, careers, skills, talents, mutations, spells, and qualities from WFRP 4th ed
       Rulebook and almost all other 4th ed books published by
-      <a href="https://cubicle7games.com/warhammer-fantasy" target="_blank">Cubicle 7</a>.
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy">Cubicle 7</TextLink>.
       <span class="font-semibold">
         Please keep in mind that descriptions of those items are often incomplete, abbreviated, and cannot replace
         original descriptions from the source books.
@@ -37,7 +39,7 @@
     <p>
       Hammergen has almost all trappings, careers, skills, talents, mutations, spells, and qualities from WFRP 4th ed
       Rulebook and all other 4th ed books published. Full list of included source books can be fond in
-      <RouterLink :to="{ name: 'about' }" class="text-blue-500 hover:underline">About</RouterLink>
+      <TextLink routeName="about">About</TextLink>
       section. Each of them has a reference to the source book and page they are from. Some examples of what you can use
       filters for are:
     </p>
@@ -48,7 +50,7 @@
     </ul>
     <p>
       You can see example characters (even without registering) by going to
-      <RouterLink :to="{ name: 'placeholder' }" class="text-blue-500 hover:underline">Characters</RouterLink>
+      <TextLink routeName="placeholder">Characters</TextLink>
       in the side navigation bar.
     </p>
     <div class="text-2xl font-semibold mt-5">How do I use it?</div>
@@ -68,24 +70,23 @@
       You can share any custom property (character, skill, trapping, etc.) you made with other players! When a property
       is marked as <span class="font-bold">Public</span>, anyone you give your username to, can see that item in
       read-only mode. Sharing is explained in the Linked Users tab in
-      <RouterLink to="/" class="text-blue-500 hover:underline">Manage Account</RouterLink>
+      <TextLink routeName="placeholder">Manage Account</TextLink>
       section.
     </p>
     <p>
       More in-depth description of how to use Hammergen features can be found in
-      <RouterLink :to="{ name: 'howto' }" class="text-blue-500 hover:underline">How to use Hammergen</RouterLink>.
+      <TextLink routeName="howto">How to use Hammergen</TextLink>.
     </p>
     <div class="text-2xl font-semibold mt-5">About</div>
     <p>
       Hi there! Hammergen is a non-commercial hobby project run by an overworked middle-aged man. If you have any
       comments, discovered bugs, or have any suggestions on how to improve Hammergen, you can contact me by email:
-      <a class="text-blue-500 hover:underline" href="mailto:admin@hammergen.net">admin@hammergen.net</a>. I try to
-      answer emails/fix bugs on the same or next day but sometimes life gets in the way so please be patient.
+      <TextLink href="mailto:admin@hammergen.net">admin@hammergen.net</TextLink>. I try to answer emails/fix bugs on the
+      same or next day but sometimes life gets in the way so please be patient.
     </p>
     <p>
       If you enjoy using Hammergen, please consider supporting me on
-      <a href="https://ko-fi.com/Q5Q12E0KB" target="_blank" class="text-blue-500 hover:underline">Ko-fi</a>. Any
-      donations will help to cover hosting costs.
+      <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>. Any donations will help to cover hosting costs.
     </p>
   </div>
 </template>
