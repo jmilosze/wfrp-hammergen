@@ -43,3 +43,4 @@ export class User {
 export const invalidEmailMsg = "Email address is invalid.";
 export const invalidPasswordMsg = "Password has to have between 5 and 30 characters.";
 export const passwordDoNotMatchMsg = "Passwords do not match.";
+export const invalidCurrentPasswordMsg = "Password is required.";

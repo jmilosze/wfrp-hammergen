@@ -3,11 +3,9 @@ import Header from "../../components/PageHeader.vue";
 import TextLink from "../../components/TextLink.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useReCaptcha } from "vue-recaptcha-v3";
-import AlertBlock from "../../components/AlertBlock.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import { anonRequest } from "../../services/auth.ts";
-import { isAxiosError } from "axios";
 import { invalidEmailMsg, User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
@@ -15,7 +13,7 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
-const validEmail = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validateEmail());
+const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
 
 const recaptcha = useReCaptcha();
 
@@ -45,7 +43,7 @@ async function submitForm() {
 
   try {
     await anonRequest.post("/api/user/sendResetPassword", {
-      username: user.email.toLowerCase(),
+      username: user.value.email.toLowerCase(),
       captcha: token,
     });
     user.value.reset();

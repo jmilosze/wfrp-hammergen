@@ -21,8 +21,8 @@ const props = withDefaults(
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
-const validPassword = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validatePassword());
-const passwordMatch = computed(() => submissionState.value.notStartedOrSuccess() || user.value.passwordMatch());
+const validPassword = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validatePassword());
+const passwordMatch = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.passwordMatch());
 
 async function submitForm() {
   submissionState.value.setInProgress();
