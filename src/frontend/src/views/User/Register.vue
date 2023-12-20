@@ -7,7 +7,6 @@ import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
 import { useReCaptcha } from "vue-recaptcha-v3";
-import { isAxiosError } from "axios";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { SubmissionState } from "../../utils/submission.ts";
 
@@ -42,7 +41,7 @@ async function submitForm() {
     return;
   }
 
-  submissionState.value.status = "inProgress";
+  submissionState.value.setInProgress();
 
   let token;
   if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
@@ -60,7 +59,18 @@ async function submitForm() {
     });
     onSubmissionSuccessful();
   } catch (error) {
-    onSubmissionFailed(error);
+    submissionState.value.setFailureFromError(error, [
+      {
+        statusCode: 400,
+        details: "captcha verification error",
+        message: "We suspect you might be a robot. Please try again.",
+      },
+      {
+        statusCode: 409,
+        details: "",
+        message: "User with this email already exists.",
+      },
+    ]);
   }
 }
 
@@ -74,19 +84,6 @@ function onSubmissionSuccessful() {
   setTimeout(() => {
     router.push({ name: "login" });
   }, 1500);
-}
-
-function onSubmissionFailed(error: any) {
-  if (isAxiosError(error) && error.response) {
-    if (error.response.status === 409) {
-      submissionState.value.setFailure("User with this email already exists.");
-      return;
-    } else if (error.response.status === 400 && error.response.data.details === "captcha verification error") {
-      submissionState.value.setFailure("We suspect you might be a robot. Please try again.");
-      return;
-    }
-  }
-  submissionState.value.setFailure("Server error.");
 }
 </script>
 
