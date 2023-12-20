@@ -10,15 +10,12 @@ import { useReCaptcha } from "vue-recaptcha-v3";
 import { isAxiosError } from "axios";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 
-type SubmissionStatus = "notStarted" | "inProgress" | "success" | "failure";
-
 const email = ref("");
 const password = ref("");
 const retypedPassword = ref("");
-
 const validatorOn = ref(false);
-const submissionStatus: Ref<SubmissionStatus> = ref("notStarted");
-const afterSubmitMsg = ref("");
+const submissionStatus: Ref<"notStarted" | "inProgress" | "success" | "failure"> = ref("notStarted");
+const submissionMessage = ref("");
 
 const { validEmail, invalidEmailMsg } = useEmailValidator(email);
 const { validPassword, passwordMatch, invalidPasswordMsg, passwordDoNotMatchMsg } = usePasswordValidator(
@@ -41,7 +38,7 @@ onUnmounted(() => {
 async function submitForm() {
   validatorOn.value = true;
   submissionStatus.value = "notStarted";
-  afterSubmitMsg.value = "";
+  submissionMessage.value = "";
   if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
     return;
   }
@@ -74,7 +71,7 @@ function onSubmissionSuccessful() {
   retypedPassword.value = "";
   validatorOn.value = false;
   submissionStatus.value = "success";
-  afterSubmitMsg.value = "Registration successful, redirecting to login...";
+  submissionMessage.value = "Registration successful, redirecting to login...";
 
   setTimeout(() => {
     router.push({ name: "login" });
@@ -83,16 +80,17 @@ function onSubmissionSuccessful() {
 
 function onSubmissionFailed(error: any) {
   submissionStatus.value = "failure";
+
   if (isAxiosError(error) && error.response) {
     if (error.response.status === 409) {
-      afterSubmitMsg.value = "User with this email already exists.";
+      submissionMessage.value = "User with this email already exists.";
       return;
     } else if (error.response.status === 400 && error.response.data.details === "captcha verification error") {
-      afterSubmitMsg.value = "We suspect you might be a robot. Please try again.";
+      submissionMessage.value = "We suspect you might be a robot. Please try again.";
       return;
     }
   }
-  afterSubmitMsg.value = "Server error.";
+  submissionMessage.value = "Server error.";
 }
 </script>
 
@@ -106,9 +104,9 @@ function onSubmissionFailed(error: any) {
     </Header>
     <div class="pt-2 md:w-96">
       <AfterSubmit
-        :display="submissionStatus == 'failure' || submissionStatus == 'success'"
-        :message="afterSubmitMsg"
+        :display="submissionStatus == 'success' || submissionStatus == 'failure'"
         :submissionSuccessful="submissionStatus == 'success'"
+        :message="submissionMessage"
       />
       <div class="flex flex-col items-start">
         <FormStringInput
