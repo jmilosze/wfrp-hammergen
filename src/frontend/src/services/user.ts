@@ -26,6 +26,10 @@ export class User {
     return emailRegex.test(this.email);
   }
 
+  validateCurrentPassword() {
+    return this.currentPassword !== "";
+  }
+
   validatePassword() {
     return pwdRegex.test(this.password);
   }
