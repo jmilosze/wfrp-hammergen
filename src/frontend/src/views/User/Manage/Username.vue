@@ -20,7 +20,7 @@ const validCurrentPassword = computed(
   () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
 
-const { callAndLogoutIfUnauthorized } = useAuthStore();
+const { callAndLogoutIfUnauthorized, setLoggedUserInfo } = useAuthStore();
 
 watch(
   () => props.currentEmail,
@@ -44,7 +44,8 @@ async function submitForm() {
       currentPassword: user.value.currentPassword,
     });
 
-    user.value.reset();
+    setLoggedUserInfo(user.value.email);
+    user.value.currentPassword = "";
     submissionState.value.setSuccess("Username (email) updated successfully.");
   } catch (error) {
     submissionState.value.setFailureFromError(error, [

@@ -8,10 +8,10 @@ import { useAuthStore } from "../../stores/auth.ts";
 
 const email = ref("");
 
-const { loggedUserInfo } = useAuthStore();
+const { getLoggedUserInfo } = useAuthStore();
 
 onMounted(() => {
-  email.value = loggedUserInfo().username;
+  email.value = getLoggedUserInfo().username;
 });
 </script>
 
