@@ -34,6 +34,7 @@ export class SubmissionState {
   }
 
   setFailureFromError(error: any, errorMessages: Array<{ statusCode: number; details: string; message: string }>) {
+    console.log("Error!!!");
     if (isAxiosError(error) && error.response) {
       for (const errMsg of errorMessages) {
         const detailsMatch =
@@ -44,8 +45,7 @@ export class SubmissionState {
           return;
         }
       }
-    } else {
-      this.setFailure("Unexpected error has occurred.");
     }
+    this.setFailure("Unexpected error has occurred.");
   }
 }

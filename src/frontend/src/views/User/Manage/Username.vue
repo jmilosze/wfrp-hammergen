@@ -4,6 +4,9 @@ import { computed, ref, watch } from "vue";
 import { invalidEmailMsg, User } from "../../../services/user.ts";
 import { SubmissionState } from "../../../utils/submission.ts";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
+import SubmitButton from "../../../components/SubmitButton.vue";
+import { authRequest } from "../../../services/auth.ts";
+import { useAuthStore } from "../../../stores/auth.ts";
 
 const props = defineProps<{
   currentEmail: string;
@@ -17,12 +20,47 @@ const validCurrentPassword = computed(
   () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
 
+const { callAndLogoutIfUnauthorized } = useAuthStore();
+
 watch(
   () => props.currentEmail,
   (newCurrentEmail) => {
     user.value.email = newCurrentEmail;
   },
 );
+
+async function submitForm() {
+  submissionState.value.setInProgress();
+
+  if (!validEmail.value || !validCurrentPassword.value) {
+    submissionState.value.setValidationError();
+    return;
+  }
+
+  try {
+    await callAndLogoutIfUnauthorized(authRequest.put)("/api/user/credentials", {
+      username: user.value.email.toLowerCase(),
+      password: user.value.currentPassword,
+      currentPassword: user.value.currentPassword,
+    });
+
+    user.value.reset();
+    submissionState.value.setSuccess("Username (email) updated successfully.");
+  } catch (error) {
+    submissionState.value.setFailureFromError(error, [
+      {
+        statusCode: 403,
+        details: "captcha verification error",
+        message: "Incorrect current password.",
+      },
+      {
+        statusCode: 409,
+        details: "",
+        message: "User with this email already exists.",
+      },
+    ]);
+  }
+}
 </script>
 
 <template>
@@ -46,6 +84,7 @@ watch(
         invalidMsg="Password is required"
         :isValid="validCurrentPassword"
       />
+      <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Update</SubmitButton>
     </div>
   </div>
 </template>
