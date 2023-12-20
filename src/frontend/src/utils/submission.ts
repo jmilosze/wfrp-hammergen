@@ -13,6 +13,11 @@ export class SubmissionState {
     return this.status == "notStarted" || this.status == "success" || this.status == "failure";
   }
 
+  setNotStarted() {
+    this.status = "notStarted";
+    this.message = "";
+  }
+
   setSuccess(message: string) {
     this.status = "success";
     this.message = message;
