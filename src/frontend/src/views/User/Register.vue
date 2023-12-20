@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, Ref, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useEmailValidator, usePasswordValidator } from "../../composables/userValidators.ts";
 import Header from "../../components/PageHeader.vue";
@@ -15,7 +15,7 @@ const email = ref("");
 const password = ref("");
 const retypedPassword = ref("");
 const validatorOn = ref(false);
-const submissionState: Ref<SubmissionState> = ref({ status: "notStarted", message: "" });
+const submissionState = ref(new SubmissionState());
 
 const { validEmail, invalidEmailMsg } = useEmailValidator(email);
 const { validPassword, passwordMatch, invalidPasswordMsg, passwordDoNotMatchMsg } = usePasswordValidator(
@@ -37,8 +37,7 @@ onUnmounted(() => {
 
 async function submitForm() {
   validatorOn.value = true;
-  submissionState.value.status = "notStarted";
-  submissionState.value.message = "";
+  submissionState.value.reset();
   if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
     return;
   }
@@ -70,8 +69,7 @@ function onSubmissionSuccessful() {
   password.value = "";
   retypedPassword.value = "";
   validatorOn.value = false;
-  submissionState.value.status = "success";
-  submissionState.value.message = "Registration successful, redirecting to login...";
+  submissionState.value.setSuccess("Registration successful, redirecting to login...");
 
   setTimeout(() => {
     router.push({ name: "login" });
@@ -79,18 +77,16 @@ function onSubmissionSuccessful() {
 }
 
 function onSubmissionFailed(error: any) {
-  submissionState.value.status = "failure";
-
   if (isAxiosError(error) && error.response) {
     if (error.response.status === 409) {
-      submissionState.value.message = "User with this email already exists.";
+      submissionState.value.setFailure("User with this email already exists.");
       return;
     } else if (error.response.status === 400 && error.response.data.details === "captcha verification error") {
-      submissionState.value.message = "We suspect you might be a robot. Please try again.";
+      submissionState.value.setFailure("We suspect you might be a robot. Please try again.");
       return;
     }
   }
-  submissionState.value.message = "Server error.";
+  submissionState.value.setFailure("Server error.");
 }
 </script>
 
