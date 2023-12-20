@@ -12,9 +12,9 @@ const props = defineProps<{
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
-const validEmail = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validateEmail());
+const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
 const validCurrentPassword = computed(
-  () => submissionState.value.notStartedOrSuccess() || user.value.validateCurrentPassword(),
+  () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
 
 watch(

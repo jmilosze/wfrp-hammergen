@@ -9,8 +9,8 @@ export class SubmissionState {
     this.message = "";
   }
 
-  notStartedOrSuccess() {
-    return this.status == "notStarted" || this.status == "success";
+  notStartedOrSubmitted() {
+    return this.status == "notStarted" || this.status == "success" || this.status == "failure";
   }
 
   setSuccess(message: string) {

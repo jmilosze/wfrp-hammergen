@@ -5,16 +5,16 @@ import FormStringInput from "../../components/FormStringInput.vue";
 import { computed, ref } from "vue";
 import { useAuthStore } from "../../stores/auth";
 import TextLink from "../../components/TextLink.vue";
-import { User } from "../../services/user.ts";
+import { invalidCurrentPasswordMsg, invalidEmailMsg, User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
-const validEmail = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validateEmail());
+const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
 const validCurrentPassword = computed(
-  () => submissionState.value.notStartedOrSuccess() || user.value.validateCurrentPassword(),
+  () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
 
 const authStore = useAuthStore();
@@ -56,7 +56,7 @@ async function submitForm() {
         class="mt-3"
         v-model="user.email"
         title="Username (email)"
-        invalidMsg="Username is required."
+        :invalidMsg="invalidEmailMsg"
         :isValid="validEmail"
       />
       <FormStringInput
@@ -64,7 +64,7 @@ async function submitForm() {
         class="mt-3"
         v-model="user.currentPassword"
         title="Password"
-        invalidMsg="Password is required"
+        :invalidMsg="invalidCurrentPasswordMsg"
         :isValid="validCurrentPassword"
       />
     </div>
