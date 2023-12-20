@@ -12,20 +12,19 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
-const validatorOn = ref(false);
-const validEmail = computed(() => !validatorOn.value || user.value.validateEmail());
-const validCurrentPassword = computed(() => !validatorOn.value || user.value.validateCurrentPassword());
+const validEmail = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validateEmail());
+const validCurrentPassword = computed(
+  () => submissionState.value.notStartedOrSuccess() || user.value.validateCurrentPassword(),
+);
 
 const authStore = useAuthStore();
 
 async function submitForm() {
-  validatorOn.value = true;
-  submissionState.value.reset();
+  submissionState.value.setInProgress();
+
   if (!validEmail.value || !validCurrentPassword.value) {
     return;
   }
-
-  submissionState.value.setInProgress();
 
   try {
     await authStore.login(user.value.email.toLowerCase(), user.value.currentPassword);
@@ -58,7 +57,7 @@ async function submitForm() {
           v-model="user.email"
           title="Username (email)"
           invalidMsg="Username is required."
-          :isValid="!validatorOn ? true : validEmail"
+          :isValid="validEmail"
         />
         <FormStringInput
           type="password"
@@ -66,7 +65,7 @@ async function submitForm() {
           v-model="user.currentPassword"
           title="Password"
           invalidMsg="Password is required"
-          :isValid="!validatorOn ? true : validCurrentPassword"
+          :isValid="validCurrentPassword"
         />
       </div>
       <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
