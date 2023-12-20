@@ -1,23 +1,17 @@
 <script setup lang="ts">
 import AlertBlock from "./AlertBlock.vue";
+import { SubmissionState } from "../utils/submission.ts";
 
-withDefaults(
-  defineProps<{
-    display: boolean;
-    submissionSuccessful: boolean;
-    message: string;
-  }>(),
-  {
-    display: false,
-    submissionSuccessful: false,
-    message: "",
-  },
-);
+defineProps<{
+  submissionState: SubmissionState;
+}>();
 </script>
 
 <template>
-  <AlertBlock alertType="red" :visible="display && !submissionSuccessful">{{ message }}</AlertBlock>
-  <AlertBlock alertType="green" :visible="display && submissionSuccessful">{{ message }}</AlertBlock>
+  <AlertBlock alertType="red" :visible="submissionState.status == 'failure'">{{ submissionState.message }}</AlertBlock>
+  <AlertBlock alertType="green" :visible="submissionState.status == 'success'">{{
+    submissionState.message
+  }}</AlertBlock>
 </template>
 
 <style scoped></style>

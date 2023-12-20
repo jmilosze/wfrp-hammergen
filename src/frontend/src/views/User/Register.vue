@@ -9,13 +9,13 @@ import { anonRequest } from "../../services/auth";
 import { useReCaptcha } from "vue-recaptcha-v3";
 import { isAxiosError } from "axios";
 import AfterSubmit from "../../components/AfterSubmit.vue";
+import { SubmissionState } from "../../utils/submission.ts";
 
 const email = ref("");
 const password = ref("");
 const retypedPassword = ref("");
 const validatorOn = ref(false);
-const submissionStatus: Ref<"notStarted" | "inProgress" | "success" | "failure"> = ref("notStarted");
-const submissionMessage = ref("");
+const submissionState: Ref<SubmissionState> = ref({ status: "notStarted", message: "" });
 
 const { validEmail, invalidEmailMsg } = useEmailValidator(email);
 const { validPassword, passwordMatch, invalidPasswordMsg, passwordDoNotMatchMsg } = usePasswordValidator(
@@ -37,13 +37,13 @@ onUnmounted(() => {
 
 async function submitForm() {
   validatorOn.value = true;
-  submissionStatus.value = "notStarted";
-  submissionMessage.value = "";
+  submissionState.value.status = "notStarted";
+  submissionState.value.message = "";
   if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
     return;
   }
 
-  submissionStatus.value = "inProgress";
+  submissionState.value.status = "inProgress";
 
   let token;
   if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
@@ -70,8 +70,8 @@ function onSubmissionSuccessful() {
   password.value = "";
   retypedPassword.value = "";
   validatorOn.value = false;
-  submissionStatus.value = "success";
-  submissionMessage.value = "Registration successful, redirecting to login...";
+  submissionState.value.status = "success";
+  submissionState.value.message = "Registration successful, redirecting to login...";
 
   setTimeout(() => {
     router.push({ name: "login" });
@@ -79,18 +79,18 @@ function onSubmissionSuccessful() {
 }
 
 function onSubmissionFailed(error: any) {
-  submissionStatus.value = "failure";
+  submissionState.value.status = "failure";
 
   if (isAxiosError(error) && error.response) {
     if (error.response.status === 409) {
-      submissionMessage.value = "User with this email already exists.";
+      submissionState.value.message = "User with this email already exists.";
       return;
     } else if (error.response.status === 400 && error.response.data.details === "captcha verification error") {
-      submissionMessage.value = "We suspect you might be a robot. Please try again.";
+      submissionState.value.message = "We suspect you might be a robot. Please try again.";
       return;
     }
   }
-  submissionMessage.value = "Server error.";
+  submissionState.value.message = "Server error.";
 }
 </script>
 
@@ -103,11 +103,7 @@ function onSubmissionFailed(error: any) {
       </p>
     </Header>
     <div class="pt-2 md:w-96">
-      <AfterSubmit
-        :display="submissionStatus == 'success' || submissionStatus == 'failure'"
-        :submissionSuccessful="submissionStatus == 'success'"
-        :message="submissionMessage"
-      />
+      <AfterSubmit :submissionState="submissionState" />
       <div class="flex flex-col items-start">
         <FormStringInput
           type="text"
@@ -134,7 +130,7 @@ function onSubmissionFailed(error: any) {
           :isValid="!validatorOn ? true : passwordMatch"
         />
       </div>
-      <SubmitButton class="mt-3" @click="submitForm" :processing="submissionStatus == 'inProgress'"
+      <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
         >Register</SubmitButton
       >
     </div>
