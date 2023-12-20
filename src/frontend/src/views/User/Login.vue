@@ -23,6 +23,7 @@ async function submitForm() {
   submissionState.value.setInProgress();
 
   if (!validEmail.value || !validCurrentPassword.value) {
+    submissionState.value.setValidationError();
     return;
   }
 
@@ -50,33 +51,31 @@ async function submitForm() {
     <Header title="Log in"> </Header>
     <div class="pt-2 md:w-96">
       <AfterSubmit :submissionState="submissionState" />
-      <div class="flex flex-col items-start">
-        <FormStringInput
-          type="text"
-          class="mt-3"
-          v-model="user.email"
-          title="Username (email)"
-          invalidMsg="Username is required."
-          :isValid="validEmail"
-        />
-        <FormStringInput
-          type="password"
-          class="mt-3"
-          v-model="user.currentPassword"
-          title="Password"
-          invalidMsg="Password is required"
-          :isValid="validCurrentPassword"
-        />
-      </div>
-      <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
-        >Log in</SubmitButton
-      >
-      <div class="mt-5">
-        <TextLink routeName="forgotpassword">Forgot your password?</TextLink>
-      </div>
-      <div class="mt-3">
-        <TextLink routeName="register">Register as a new user.</TextLink>
-      </div>
+      <FormStringInput
+        type="text"
+        class="mt-3"
+        v-model="user.email"
+        title="Username (email)"
+        invalidMsg="Username is required."
+        :isValid="validEmail"
+      />
+      <FormStringInput
+        type="password"
+        class="mt-3"
+        v-model="user.currentPassword"
+        title="Password"
+        invalidMsg="Password is required"
+        :isValid="validCurrentPassword"
+      />
+    </div>
+    <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
+      >Log in</SubmitButton
+    >
+    <div class="mt-5">
+      <TextLink routeName="forgotpassword">Forgot your password?</TextLink>
+    </div>
+    <div class="mt-3">
+      <TextLink routeName="register">Register as a new user.</TextLink>
     </div>
   </div>
 </template>

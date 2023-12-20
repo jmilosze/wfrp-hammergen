@@ -13,6 +13,7 @@ export class User {
     this.currentPassword = "";
     this.password = "";
     this.retypedPassword = "";
+    this.retypedPassword = "";
   }
 
   reset() {
