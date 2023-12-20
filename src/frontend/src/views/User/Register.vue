@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, Ref, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useEmailValidator, usePasswordValidator } from "../../composables/userValidators.ts";
 import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
-import AlertBlock from "../../components/AlertBlock.vue";
 import { useReCaptcha } from "vue-recaptcha-v3";
 import { isAxiosError } from "axios";
+import AfterSubmit from "../../components/AfterSubmit.vue";
+
+type SubmissionStatus = "notStarted" | "inProgress" | "success" | "failure";
 
 const email = ref("");
 const password = ref("");
 const retypedPassword = ref("");
+
 const validatorOn = ref(false);
-const errors = ref("");
-const submitting = ref(false);
-const submissionSuccessful = ref(false);
+const submissionStatus: Ref<SubmissionStatus> = ref("notStarted");
+const afterSubmitMsg = ref("");
 
 const { validEmail, invalidEmailMsg } = useEmailValidator(email);
 const { validPassword, passwordMatch, invalidPasswordMsg, passwordDoNotMatchMsg } = usePasswordValidator(
@@ -38,14 +40,13 @@ onUnmounted(() => {
 
 async function submitForm() {
   validatorOn.value = true;
-  submitting.value = false;
-  submissionSuccessful.value = false;
-  errors.value = "";
+  submissionStatus.value = "notStarted";
+  afterSubmitMsg.value = "";
   if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
     return;
   }
 
-  submitting.value = true;
+  submissionStatus.value = "inProgress";
 
   let token;
   if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
@@ -65,16 +66,15 @@ async function submitForm() {
   } catch (error) {
     onSubmissionFailed(error);
   }
-
-  submitting.value = false;
 }
 
 function onSubmissionSuccessful() {
-  validatorOn.value = false;
   email.value = "";
   password.value = "";
   retypedPassword.value = "";
-  submissionSuccessful.value = true;
+  validatorOn.value = false;
+  submissionStatus.value = "success";
+  afterSubmitMsg.value = "Registration successful, redirecting to login...";
 
   setTimeout(() => {
     router.push({ name: "login" });
@@ -82,16 +82,17 @@ function onSubmissionSuccessful() {
 }
 
 function onSubmissionFailed(error: any) {
+  submissionStatus.value = "failure";
   if (isAxiosError(error) && error.response) {
     if (error.response.status === 409) {
-      errors.value = "User with this email already exists.";
+      afterSubmitMsg.value = "User with this email already exists.";
       return;
     } else if (error.response.status === 400 && error.response.data.details === "captcha verification error") {
-      errors.value = "We suspect you might be a robot. Please try again.";
+      afterSubmitMsg.value = "We suspect you might be a robot. Please try again.";
       return;
     }
   }
-  errors.value = "Server error.";
+  afterSubmitMsg.value = "Server error.";
 }
 </script>
 
@@ -104,10 +105,11 @@ function onSubmissionFailed(error: any) {
       </p>
     </Header>
     <div class="pt-2 md:w-96">
-      <AlertBlock class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</AlertBlock>
-      <AlertBlock class="mt-3" alertType="green" :visible="submissionSuccessful"
-        >Registration successful, redirecting to login...</AlertBlock
-      >
+      <AfterSubmit
+        :display="submissionStatus == 'failure' || submissionStatus == 'success'"
+        :message="afterSubmitMsg"
+        :submissionSuccessful="submissionStatus == 'success'"
+      />
       <div class="flex flex-col items-start">
         <FormStringInput
           type="text"
@@ -134,7 +136,9 @@ function onSubmissionFailed(error: any) {
           :isValid="!validatorOn ? true : passwordMatch"
         />
       </div>
-      <SubmitButton class="mt-3" @click="submitForm" :processing="submitting">Register</SubmitButton>
+      <SubmitButton class="mt-3" @click="submitForm" :processing="submissionStatus == 'inProgress'"
+        >Register</SubmitButton
+      >
     </div>
   </div>
 </template>

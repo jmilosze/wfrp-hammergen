@@ -6,6 +6,7 @@ import Register from "./views/User/Register.vue";
 import Login from "./views/User/Login.vue";
 import ForgotPassword from "./views/User/ForgotPassword.vue";
 import ResetPassword from "./views/User/ResetPassword.vue";
+import Manage from "./views/User/Manage.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -50,6 +51,11 @@ export default createRouter({
       name: "resetpassword",
       component: ResetPassword,
       props: true,
+    },
+    {
+      path: "/manage",
+      name: "manage",
+      component: Manage,
     },
   ],
 });
