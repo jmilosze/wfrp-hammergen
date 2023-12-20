@@ -2,52 +2,47 @@
 import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
-import AlertBlock from "../../components/AlertBlock.vue";
 import { computed, ref } from "vue";
 import { useAuthStore } from "../../stores/auth";
 import TextLink from "../../components/TextLink.vue";
+import { User } from "../../services/user.ts";
+import { SubmissionState } from "../../utils/submission.ts";
+import AfterSubmit from "../../components/AfterSubmit.vue";
 
-const email = ref("");
-const password = ref("");
+const user = ref(new User());
+const submissionState = ref(new SubmissionState());
+
 const validatorOn = ref(false);
-const errors = ref("");
-const submitting = ref(false);
+const validEmail = computed(() => !validatorOn.value || user.value.validateEmail());
+const validCurrentPassword = computed(() => !validatorOn.value || user.value.validateCurrentPassword());
 
 const authStore = useAuthStore();
 
 async function submitForm() {
   validatorOn.value = true;
-  submitting.value = false;
-  errors.value = "";
-  if (!validEmail.value || !validPassword.value) {
+  submissionState.value.reset();
+  if (!validEmail.value || !validCurrentPassword.value) {
     return;
   }
 
+  submissionState.value.setInProgress();
+
   try {
-    submitting.value = true;
-    await authStore.login(email.value.toLowerCase(), password.value);
+    await authStore.login(user.value.email.toLowerCase(), user.value.currentPassword);
   } catch (error) {
-    onSubmissionFailed(error);
+    submissionState.value.setFailureFromError(error, [
+      {
+        statusCode: 403,
+        details: "",
+        message: "Invalid username or password.",
+      },
+      {
+        statusCode: 404,
+        details: "",
+        message: "Invalid username or password.",
+      },
+    ]);
   }
-  submitting.value = false;
-}
-
-const validEmail = computed(() => {
-  return email.value !== "";
-});
-
-const validPassword = computed(() => {
-  return password.value !== "";
-});
-
-function onSubmissionFailed(error: any) {
-  if (error.response) {
-    if (error.response.status === 403 || error.response.status === 404) {
-      errors.value = "Invalid username or password.";
-      return;
-    }
-  }
-  errors.value = "Server error.";
 }
 </script>
 
@@ -55,12 +50,12 @@ function onSubmissionFailed(error: any) {
   <div>
     <Header title="Log in"> </Header>
     <div class="pt-2 md:w-96">
-      <AlertBlock class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</AlertBlock>
+      <AfterSubmit :submissionState="submissionState" />
       <div class="flex flex-col items-start">
         <FormStringInput
           type="text"
           class="mt-3"
-          v-model="email"
+          v-model="user.email"
           title="Username (email)"
           invalidMsg="Username is required."
           :isValid="!validatorOn ? true : validEmail"
@@ -68,13 +63,15 @@ function onSubmissionFailed(error: any) {
         <FormStringInput
           type="password"
           class="mt-3"
-          v-model="password"
+          v-model="user.currentPassword"
           title="Password"
           invalidMsg="Password is required"
-          :isValid="!validatorOn ? true : validPassword"
+          :isValid="!validatorOn ? true : validCurrentPassword"
         />
       </div>
-      <SubmitButton class="mt-3" @click="submitForm" :processing="submitting">Log in</SubmitButton>
+      <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
+        >Log in</SubmitButton
+      >
       <div class="mt-5">
         <TextLink routeName="forgotpassword">Forgot your password?</TextLink>
       </div>
