@@ -11,15 +11,14 @@ import { SubmissionState } from "../../utils/submission.ts";
 import { invalidEmailMsg, invalidPasswordMsg, passwordDoNotMatchMsg, User } from "../../services/user.ts";
 
 const user = ref(new User());
-const validatorOn = ref(false);
 const submissionState = ref(new SubmissionState());
 
-const validEmail = computed(() => user.value.validateEmail());
-const validPassword = computed(() => user.value.validatePassword());
-const passwordMatch = computed(() => user.value.passwordMatch());
+const validatorOn = ref(false);
+const validEmail = computed(() => !validatorOn.value || user.value.validateEmail());
+const validPassword = computed(() => !validatorOn.value || user.value.validatePassword());
+const passwordMatch = computed(() => !validatorOn.value || user.value.passwordMatch());
 
 const router = useRouter();
-
 const recaptcha = useReCaptcha();
 
 onMounted(() => {
@@ -98,7 +97,7 @@ function onSubmissionSuccessful() {
           v-model="user.email"
           title="Email"
           :invalidMsg="invalidEmailMsg"
-          :isValid="!validatorOn ? true : validEmail"
+          :isValid="validEmail"
         />
         <FormStringInput
           type="password"
@@ -106,7 +105,7 @@ function onSubmissionSuccessful() {
           v-model="user.password"
           title="Password"
           :invalidMsg="invalidPasswordMsg"
-          :isValid="!validatorOn ? true : validPassword"
+          :isValid="validPassword"
         />
         <FormStringInput
           type="password"
@@ -114,7 +113,7 @@ function onSubmissionSuccessful() {
           v-model="user.retypedPassword"
           title="Confirm Password"
           :invalidMsg="passwordDoNotMatchMsg"
-          :isValid="!validatorOn ? true : passwordMatch"
+          :isValid="passwordMatch"
         />
       </div>
       <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
