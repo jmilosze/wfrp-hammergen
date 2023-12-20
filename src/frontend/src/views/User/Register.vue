@@ -109,9 +109,7 @@ async function submitForm() {
         :isValid="passwordMatch"
       />
     </div>
-    <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
-      >Register</SubmitButton
-    >
+    <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Register</SubmitButton>
   </div>
 </template>
 

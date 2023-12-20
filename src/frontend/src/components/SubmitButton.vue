@@ -1,10 +1,9 @@
 <script setup lang="ts">
-withDefaults(
-  defineProps<{
-    processing: boolean;
-  }>(),
-  { processing: false },
-);
+import { SubmissionState } from "../utils/submission.ts";
+
+defineProps<{
+  submissionState: SubmissionState;
+}>();
 </script>
 
 <template>
@@ -17,7 +16,7 @@ withDefaults(
         <svg
           aria-hidden="true"
           class="text-neutral-50 animate-spin fill-indigo-600 w-5 ml-2"
-          :class="[processing ? '' : 'hidden']"
+          :class="[submissionState.status == 'inProgress' ? '' : 'hidden']"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
-import AlertBlock from "../../components/AlertBlock.vue";
 import { computed, ref } from "vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
-import { usePasswordValidator } from "../../composables/userValidators.ts";
 import router from "../../router.ts";
-import { isAxiosError } from "axios";
 import { anonRequest } from "../../services/auth.ts";
 import { invalidPasswordMsg, passwordDoNotMatchMsg, User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
@@ -85,9 +82,7 @@ async function submitForm() {
         :invalidMsg="passwordDoNotMatchMsg"
         :isValid="passwordMatch"
       />
-      <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
-        >Submit</SubmitButton
-      >
+      <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Submit</SubmitButton>
     </div>
   </div>
 </template>
