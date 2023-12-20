@@ -29,7 +29,6 @@ onUnmounted(() => {
 });
 
 async function submitForm() {
-  submissionState.value.reset();
   submissionState.value.setInProgress();
 
   if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
@@ -51,7 +50,12 @@ async function submitForm() {
       password: user.value.password,
       captcha: token,
     });
-    onSubmissionSuccessful();
+    user.value.reset();
+    submissionState.value.setSuccess("Registration successful, redirecting to login...");
+
+    setTimeout(() => {
+      router.push({ name: "login" });
+    }, 1500);
   } catch (error) {
     submissionState.value.setFailureFromError(error, [
       {
@@ -66,15 +70,6 @@ async function submitForm() {
       },
     ]);
   }
-}
-
-function onSubmissionSuccessful() {
-  user.value.reset();
-  submissionState.value.setSuccess("Registration successful, redirecting to login...");
-
-  setTimeout(() => {
-    router.push({ name: "login" });
-  }, 1500);
 }
 </script>
 

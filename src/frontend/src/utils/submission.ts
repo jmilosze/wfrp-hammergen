@@ -9,11 +9,6 @@ export class SubmissionState {
     this.message = "";
   }
 
-  reset() {
-    this.status = "notStarted";
-    this.message = "";
-  }
-
   notStartedOrSuccess() {
     return this.status == "notStarted" || this.status == "success";
   }
@@ -30,10 +25,12 @@ export class SubmissionState {
 
   setInProgress() {
     this.status = "inProgress";
+    this.message = "";
   }
 
   setValidationError() {
     this.status = "validationError";
+    this.message = "";
   }
 
   setFailureFromError(error: any, errorMessages: Array<{ statusCode: number; details: string; message: string }>) {
