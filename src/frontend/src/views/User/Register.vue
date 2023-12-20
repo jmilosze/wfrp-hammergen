@@ -84,36 +84,34 @@ async function submitForm() {
     </Header>
     <div class="pt-2 md:w-96">
       <AfterSubmit :submissionState="submissionState" />
-      <div class="flex flex-col items-start">
-        <FormStringInput
-          type="text"
-          class="mt-3"
-          v-model="user.email"
-          title="Email"
-          :invalidMsg="invalidEmailMsg"
-          :isValid="validEmail"
-        />
-        <FormStringInput
-          type="password"
-          class="mt-3"
-          v-model="user.password"
-          title="Password"
-          :invalidMsg="invalidPasswordMsg"
-          :isValid="validPassword"
-        />
-        <FormStringInput
-          type="password"
-          class="mt-3"
-          v-model="user.retypedPassword"
-          title="Confirm Password"
-          :invalidMsg="passwordDoNotMatchMsg"
-          :isValid="passwordMatch"
-        />
-      </div>
-      <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
-        >Register</SubmitButton
-      >
+      <FormStringInput
+        type="text"
+        class="mt-3"
+        v-model="user.email"
+        title="Email"
+        :invalidMsg="invalidEmailMsg"
+        :isValid="validEmail"
+      />
+      <FormStringInput
+        type="password"
+        class="mt-3"
+        v-model="user.password"
+        title="Password"
+        :invalidMsg="invalidPasswordMsg"
+        :isValid="validPassword"
+      />
+      <FormStringInput
+        type="password"
+        class="mt-3"
+        v-model="user.retypedPassword"
+        title="Confirm Password"
+        :invalidMsg="passwordDoNotMatchMsg"
+        :isValid="passwordMatch"
+      />
     </div>
+    <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
+      >Register</SubmitButton
+    >
   </div>
 </template>
 

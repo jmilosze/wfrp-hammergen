@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
 import AlertBlock from "../../components/AlertBlock.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import { usePasswordValidator } from "../../composables/userValidators.ts";
 import router from "../../router.ts";
 import { isAxiosError } from "axios";
 import { anonRequest } from "../../services/auth.ts";
+import { invalidPasswordMsg, passwordDoNotMatchMsg, User } from "../../services/user.ts";
+import { SubmissionState } from "../../utils/submission.ts";
+import AfterSubmit from "../../components/AfterSubmit.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -18,64 +21,45 @@ const props = withDefaults(
   },
 );
 
-const password = ref("");
-const retypedPassword = ref("");
-const validatorOn = ref(false);
-const errors = ref("");
-const submitting = ref(false);
-const submissionSuccessful = ref(false);
+const user = ref(new User());
+const submissionState = ref(new SubmissionState());
 
-const { validPassword, passwordMatch, invalidPasswordMsg, passwordDoNotMatchMsg } = usePasswordValidator(
-  password,
-  retypedPassword,
-);
+const validPassword = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validatePassword());
+const passwordMatch = computed(() => submissionState.value.notStartedOrSuccess() || user.value.passwordMatch());
 
 async function submitForm() {
-  validatorOn.value = true;
-  submitting.value = false;
-  submissionSuccessful.value = false;
-  errors.value = "";
+  submissionState.value.setInProgress();
+
   if (!validPassword.value || !passwordMatch.value) {
+    submissionState.value.setValidationError();
     return;
   }
 
-  submitting.value = true;
-
   try {
     await anonRequest.post("/api/user/resetPassword", {
-      password: password.value,
+      password: user.value.password,
       token: props.token,
     });
-    onSubmissionSuccessful();
+    user.value.reset();
+    submissionState.value.setSuccess("Password reset successful, redirecting to login...");
+
+    setTimeout(() => {
+      router.push({ name: "login" });
+    }, 1500);
   } catch (error) {
-    onSubmissionFailed(error);
+    submissionState.value.setFailureFromError(error, [
+      {
+        statusCode: 403,
+        details: "",
+        message: 'Reset link has expired. Use "Forgot your password?" to generate another password reset email.',
+      },
+      {
+        statusCode: 400,
+        details: "",
+        message: "Bad request. Password reset token is invalid.",
+      },
+    ]);
   }
-
-  submitting.value = false;
-}
-
-function onSubmissionSuccessful() {
-  validatorOn.value = false;
-  password.value = "";
-  retypedPassword.value = "";
-  submissionSuccessful.value = true;
-
-  setTimeout(() => {
-    router.push({ name: "login" });
-  }, 1500);
-}
-
-function onSubmissionFailed(error: any) {
-  if (isAxiosError(error) && error.response) {
-    if (error.response.status === 403) {
-      errors.value = 'Reset link has expired. Use "Forgot your password?" to generate another password reset email.';
-      return;
-    } else if (error.response.status === 400) {
-      errors.value = "Bad request. Password reset token is invalid.";
-      return;
-    }
-  }
-  errors.value = "Server error.";
 }
 </script>
 
@@ -83,28 +67,27 @@ function onSubmissionFailed(error: any) {
   <div>
     <Header title="Reset password">Create a new password.</Header>
     <div class="pt-2 md:w-96">
-      <AlertBlock class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</AlertBlock>
-      <AlertBlock class="mt-3" alertType="green" :visible="submissionSuccessful"
-        >Password reset successful, redirecting to login...</AlertBlock
-      >
+      <AfterSubmit :submissionState="submissionState" />
 
       <FormStringInput
         type="password"
         class="mt-3"
-        v-model="password"
+        v-model="user.password"
         title="Password"
         :invalidMsg="invalidPasswordMsg"
-        :isValid="!validatorOn ? true : validPassword"
+        :isValid="validPassword"
       />
       <FormStringInput
         type="password"
         class="mt-3"
-        v-model="retypedPassword"
+        v-model="user.retypedPassword"
         title="Confirm Password"
         :invalidMsg="passwordDoNotMatchMsg"
-        :isValid="!validatorOn ? true : passwordMatch"
+        :isValid="passwordMatch"
       />
-      <SubmitButton class="mt-3" @click="submitForm" :processing="submitting">Submit</SubmitButton>
+      <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
+        >Submit</SubmitButton
+      >
     </div>
   </div>
 </template>
