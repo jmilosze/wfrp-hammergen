@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useEmailValidator, usePasswordValidator } from "../../composables/userValidators.ts";
 import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
@@ -9,18 +8,15 @@ import { anonRequest } from "../../services/auth";
 import { useReCaptcha } from "vue-recaptcha-v3";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { SubmissionState } from "../../utils/submission.ts";
+import { invalidEmailMsg, invalidPasswordMsg, passwordDoNotMatchMsg, User } from "../../services/user.ts";
 
-const email = ref("");
-const password = ref("");
-const retypedPassword = ref("");
+const user = ref(new User());
 const validatorOn = ref(false);
 const submissionState = ref(new SubmissionState());
 
-const { validEmail, invalidEmailMsg } = useEmailValidator(email);
-const { validPassword, passwordMatch, invalidPasswordMsg, passwordDoNotMatchMsg } = usePasswordValidator(
-  password,
-  retypedPassword,
-);
+const validEmail = computed(() => user.value.validateEmail());
+const validPassword = computed(() => user.value.validatePassword());
+const passwordMatch = computed(() => user.value.passwordMatch());
 
 const router = useRouter();
 
@@ -53,8 +49,8 @@ async function submitForm() {
 
   try {
     await anonRequest.post("/api/user", {
-      username: email.value.toLowerCase(),
-      password: password.value,
+      username: user.value.email.toLowerCase(),
+      password: user.value.password,
       captcha: token,
     });
     onSubmissionSuccessful();
@@ -75,9 +71,7 @@ async function submitForm() {
 }
 
 function onSubmissionSuccessful() {
-  email.value = "";
-  password.value = "";
-  retypedPassword.value = "";
+  user.value.reset();
   validatorOn.value = false;
   submissionState.value.setSuccess("Registration successful, redirecting to login...");
 
@@ -101,7 +95,7 @@ function onSubmissionSuccessful() {
         <FormStringInput
           type="text"
           class="mt-3"
-          v-model="email"
+          v-model="user.email"
           title="Email"
           :invalidMsg="invalidEmailMsg"
           :isValid="!validatorOn ? true : validEmail"
@@ -109,7 +103,7 @@ function onSubmissionSuccessful() {
         <FormStringInput
           type="password"
           class="mt-3"
-          v-model="password"
+          v-model="user.password"
           title="Password"
           :invalidMsg="invalidPasswordMsg"
           :isValid="!validatorOn ? true : validPassword"
@@ -117,7 +111,7 @@ function onSubmissionSuccessful() {
         <FormStringInput
           type="password"
           class="mt-3"
-          v-model="retypedPassword"
+          v-model="user.retypedPassword"
           title="Confirm Password"
           :invalidMsg="passwordDoNotMatchMsg"
           :isValid="!validatorOn ? true : passwordMatch"
