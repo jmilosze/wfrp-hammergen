@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 
 export class SubmissionState {
-  status: "notStarted" | "inProgress" | "success" | "failure";
+  status: "notStarted" | "validationError" | "inProgress" | "success" | "failure";
   message: string;
 
   constructor() {
@@ -12,6 +12,10 @@ export class SubmissionState {
   reset() {
     this.status = "notStarted";
     this.message = "";
+  }
+
+  notStartedOrSuccess() {
+    return this.status == "notStarted" || this.status == "success";
   }
 
   setSuccess(message: string) {
@@ -26,6 +30,10 @@ export class SubmissionState {
 
   setInProgress() {
     this.status = "inProgress";
+  }
+
+  setValidationError() {
+    this.status = "validationError";
   }
 
   setFailureFromError(error: any, errorMessages: Array<{ statusCode: number; details: string; message: string }>) {

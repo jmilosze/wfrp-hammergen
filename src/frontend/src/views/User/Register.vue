@@ -13,10 +13,9 @@ import { invalidEmailMsg, invalidPasswordMsg, passwordDoNotMatchMsg, User } from
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
-const validatorOn = ref(false);
-const validEmail = computed(() => !validatorOn.value || user.value.validateEmail());
-const validPassword = computed(() => !validatorOn.value || user.value.validatePassword());
-const passwordMatch = computed(() => !validatorOn.value || user.value.passwordMatch());
+const validEmail = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validateEmail());
+const validPassword = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validatePassword());
+const passwordMatch = computed(() => submissionState.value.notStartedOrSuccess() || user.value.passwordMatch());
 
 const router = useRouter();
 const recaptcha = useReCaptcha();
@@ -30,13 +29,13 @@ onUnmounted(() => {
 });
 
 async function submitForm() {
-  validatorOn.value = true;
   submissionState.value.reset();
+  submissionState.value.setInProgress();
+
   if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
+    submissionState.value.setValidationError();
     return;
   }
-
-  submissionState.value.setInProgress();
 
   let token;
   if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
@@ -71,7 +70,6 @@ async function submitForm() {
 
 function onSubmissionSuccessful() {
   user.value.reset();
-  validatorOn.value = false;
   submissionState.value.setSuccess("Registration successful, redirecting to login...");
 
   setTimeout(() => {
