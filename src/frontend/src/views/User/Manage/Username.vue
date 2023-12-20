@@ -51,7 +51,7 @@ async function submitForm() {
     submissionState.value.setFailureFromError(error, [
       {
         statusCode: 403,
-        details: "captcha verification error",
+        details: "",
         message: "Incorrect current password.",
       },
       {
