@@ -50,6 +50,7 @@ async function submitForm() {
       password: user.value.password,
       captcha: token,
     });
+
     user.value.reset();
     submissionState.value.setSuccess("Registration successful, redirecting to login...");
 
