@@ -1,24 +1,23 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
 import TextLink from "../../components/TextLink.vue";
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useReCaptcha } from "vue-recaptcha-v3";
 import AlertBlock from "../../components/AlertBlock.vue";
-import { useEmailValidator } from "../../composables/userValidators.ts";
 import FormStringInput from "../../components/FormStringInput.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import { anonRequest } from "../../services/auth.ts";
 import { isAxiosError } from "axios";
+import { invalidEmailMsg, User } from "../../services/user.ts";
+import { SubmissionState } from "../../utils/submission.ts";
+import AfterSubmit from "../../components/AfterSubmit.vue";
 
-const email = ref("");
-const validatorOn = ref(false);
-const errors = ref("");
-const submitting = ref(false);
-const submissionSuccessful = ref(false);
+const user = ref(new User());
+const submissionState = ref(new SubmissionState());
+
+const validEmail = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validateEmail());
 
 const recaptcha = useReCaptcha();
-
-const { validEmail, invalidEmailMsg } = useEmailValidator(email);
 
 onMounted(() => {
   recaptcha?.instance.value?.showBadge();
@@ -29,11 +28,10 @@ onUnmounted(() => {
 });
 
 async function submitForm() {
-  validatorOn.value = true;
-  submitting.value = false;
-  submissionSuccessful.value = false;
-  errors.value = "";
+  submissionState.value.setInProgress();
+
   if (!validEmail.value) {
+    submissionState.value.setValidationError();
     return;
   }
 
@@ -47,32 +45,25 @@ async function submitForm() {
 
   try {
     await anonRequest.post("/api/user/sendResetPassword", {
-      username: email.value.toLowerCase(),
+      username: user.email.toLowerCase(),
       captcha: token,
     });
-    onSubmissionSuccessful();
+    user.value.reset();
+    submissionState.value.setSuccess("To reset you password please check your email and follow instructions.");
   } catch (error) {
-    onSubmissionFailed(error);
+    submissionState.value.setFailureFromError(error, [
+      {
+        statusCode: 404,
+        details: "",
+        message: "User not found.",
+      },
+      {
+        statusCode: 400,
+        details: "captcha verification error",
+        message: "We suspect you might be a robot. Please try again.",
+      },
+    ]);
   }
-}
-
-function onSubmissionSuccessful() {
-  validatorOn.value = false;
-  email.value = "";
-  submissionSuccessful.value = true;
-}
-
-function onSubmissionFailed(error: any) {
-  if (isAxiosError(error) && error.response) {
-    if (error.response.status === 404) {
-      errors.value = "User not found.";
-      return;
-    } else if (error.response.status === 400 && error.response.data.details === "captcha verification error") {
-      errors.value = "We suspect you might be a robot. Please try again.";
-      return;
-    }
-  }
-  errors.value = "Server error.";
 }
 </script>
 
@@ -94,20 +85,17 @@ function onSubmissionFailed(error: any) {
     </div>
   </div>
   <div class="pt-2 md:w-96">
-    <AlertBlock class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</AlertBlock>
-    <AlertBlock class="mt-3" alertType="green" :visible="submissionSuccessful"
-      >To reset you password please check your email and follow instructions.</AlertBlock
-    >
+    <AfterSubmit :submissionState="submissionState" />
     <FormStringInput
       type="text"
       class="mt-3"
-      v-model="email"
+      v-model="user.email"
       title="Email"
       :invalidMsg="invalidEmailMsg"
-      :isValid="!validatorOn ? true : validEmail"
+      :isValid="validEmail"
     />
   </div>
-  <SubmitButton class="mt-3" @click="submitForm" :processing="submitting">Submit</SubmitButton>
+  <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Submit</SubmitButton>
 </template>
 
 <style scoped></style>

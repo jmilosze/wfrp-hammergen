@@ -1,30 +1,26 @@
 <script setup lang="ts">
 import FormStringInput from "../../../components/FormStringInput.vue";
-import { computed, onMounted, ref, watch } from "vue";
-import { useEmailValidator } from "../../../composables/userValidators.ts";
-import AlertBlock from "../../../components/AlertBlock.vue";
+import { computed, ref, watch } from "vue";
+import { invalidEmailMsg, User } from "../../../services/user.ts";
+import { SubmissionState } from "../../../utils/submission.ts";
+import AfterSubmit from "../../../components/AfterSubmit.vue";
 
 const props = defineProps<{
   currentEmail: string;
 }>();
 
-const email = ref();
-const password = ref("");
-const validatorOn = ref(false);
-const errors = ref("");
-const submitting = ref(false);
-const submissionSuccessful = ref(false);
+const user = ref(new User());
+const submissionState = ref(new SubmissionState());
 
-const { validEmail, invalidEmailMsg } = useEmailValidator(email);
-
-const validPassword = computed(() => {
-  return password.value !== "";
-});
+const validEmail = computed(() => submissionState.value.notStartedOrSuccess() || user.value.validateEmail());
+const validCurrentPassword = computed(
+  () => submissionState.value.notStartedOrSuccess() || user.value.validateCurrentPassword(),
+);
 
 watch(
   () => props.currentEmail,
   (newCurrentEmail) => {
-    email.value = newCurrentEmail;
+    user.value.email = newCurrentEmail;
   },
 );
 </script>
@@ -33,25 +29,22 @@ watch(
   <div class="mt-5 pb-2 border-b-2 border-neutral-200">
     <div class="text-xl">Change username (email)</div>
     <div class="pt-2 md:w-96">
-      <AlertBlock class="mt-3" alertType="red" :visible="errors !== ''">{{ errors }}</AlertBlock>
-      <AlertBlock class="mt-3" alertType="green" :visible="submissionSuccessful"
-        >Registration successful, redirecting to login...</AlertBlock
-      >
+      <AfterSubmit :submissionState="submissionState" />
       <FormStringInput
         type="text"
         class="mt-1"
-        v-model="email"
+        v-model="user.email"
         title="Email"
         :invalidMsg="invalidEmailMsg"
-        :isValid="!validatorOn ? true : validEmail"
+        :isValid="validEmail"
       />
       <FormStringInput
         type="password"
         class="mt-3"
-        v-model="password"
+        v-model="user.currentPassword"
         title="Confirm password"
         invalidMsg="Password is required"
-        :isValid="!validatorOn ? true : validPassword"
+        :isValid="validCurrentPassword"
       />
     </div>
   </div>

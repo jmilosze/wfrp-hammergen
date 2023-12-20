@@ -68,9 +68,7 @@ async function submitForm() {
         :isValid="validCurrentPassword"
       />
     </div>
-    <SubmitButton class="mt-3" @click="submitForm" :processing="submissionState.status == 'inProgress'"
-      >Log in</SubmitButton
-    >
+    <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Log in</SubmitButton>
     <div class="mt-5">
       <TextLink routeName="forgotpassword">Forgot your password?</TextLink>
     </div>
