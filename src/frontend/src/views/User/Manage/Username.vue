@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import FormStringInput from "../../../components/FormStringInput.vue";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { invalidEmailMsg, User } from "../../../services/user.ts";
 import { SubmissionState } from "../../../utils/submission.ts";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SubmitButton from "../../../components/SubmitButton.vue";
 import { authRequest } from "../../../services/auth.ts";
 import { useAuthStore } from "../../../stores/auth.ts";
-
-const props = defineProps<{
-  currentEmail: string;
-}>();
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -20,14 +16,11 @@ const validCurrentPassword = computed(
   () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
 
-const { callAndLogoutIfUnauthorized, setLoggedUserInfo } = useAuthStore();
+const { callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo } = useAuthStore();
 
-watch(
-  () => props.currentEmail,
-  (newCurrentEmail) => {
-    user.value.email = newCurrentEmail;
-  },
-);
+onMounted(() => {
+  user.value.email = getLoggedUserInfo().username;
+});
 
 async function submitForm() {
   submissionState.value.setInProgress();
@@ -65,7 +58,7 @@ async function submitForm() {
 </script>
 
 <template>
-  <div class="mt-5 pb-2 border-b-2 border-neutral-200">
+  <div class="mt-5 pb-2 pl-2 border-b-2 border-neutral-200">
     <div class="text-xl">Change username (email)</div>
     <div class="pt-2 md:w-96">
       <AfterSubmit :submissionState="submissionState" />
@@ -81,7 +74,7 @@ async function submitForm() {
         type="password"
         class="mt-3"
         v-model="user.currentPassword"
-        title="Confirm password"
+        title="Current password"
         invalidMsg="Password is required"
         :isValid="validCurrentPassword"
       />
