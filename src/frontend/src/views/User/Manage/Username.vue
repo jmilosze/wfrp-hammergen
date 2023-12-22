@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormStringInput from "../../../components/FormStringInput.vue";
-import { computed, onMounted, onUpdated, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { invalidEmailMsg, User } from "../../../services/user.ts";
 import { SubmissionState } from "../../../utils/submission.ts";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
@@ -19,10 +19,6 @@ const validCurrentPassword = computed(
 const { callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo } = useAuthStore();
 
 onMounted(() => {
-  user.value.email = getLoggedUserInfo().username;
-});
-
-onUpdated(() => {
   user.value.email = getLoggedUserInfo().username;
 });
 

@@ -3,11 +3,13 @@ import { ref, watch } from "vue";
 import { useScreen } from "./composables/screen.ts";
 import NavLink from "./components/NavLink.vue";
 import { useAuthStore } from "./stores/auth.ts";
+import { useRoute } from "vue-router";
 
 const showSideBar = ref(false);
 
 const { screenSizeMd } = useScreen();
 const authStore = useAuthStore();
+const route = useRoute();
 
 watch(screenSizeMd, () => {
   if (screenSizeMd) {
@@ -92,7 +94,7 @@ watch(screenSizeMd, () => {
   <!-- Content and footer-->
   <div class="md:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
-      <div class="flex-auto p-9 max-w-7xl w-full"><RouterView /></div>
+      <div class="flex-auto p-9 max-w-7xl w-full"><RouterView :key="route.fullPath" /></div>
       <div class="flex-none bg-neutral-700 w-full">
         <div class="text-center text-sm my-2 text-amber-300">
           Contact:
