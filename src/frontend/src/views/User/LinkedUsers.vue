@@ -76,7 +76,10 @@ async function submitForm() {}
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
   </div>
-  <div class="pt-2 lg:w-3/4">
+  <div class="pt-2 md:w-96">
+    <FormStringInput type="text" class="mt-3" v-model="newSharedAccount" title="Email">
+      <ActionButton variant="normal" class="text-sm h-full ml-3" @click="">Add user</ActionButton>
+    </FormStringInput>
     <AfterSubmit :submissionState="submissionState" />
     <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Apply changes</SubmitButton>
   </div>
