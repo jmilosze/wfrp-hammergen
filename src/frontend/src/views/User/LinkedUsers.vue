@@ -63,9 +63,9 @@ async function submitForm() {}
         <tbody>
           <tr v-for="sharedAccount in sharedAccounts" :key="sharedAccount">
             <td
-              class="py-2 px-5 hover:bg-neutral-200 border-b border-neutral-200 bg-white flex flex-col items-center md:justify-between flex-wrap md:flex-row md:gap-2"
+              class="py-2 px-5 hover:bg-neutral-200 border-b border-neutral-200 bg-white flex flex-col items-stretch md:justify-between flex-wrap md:flex-row md:gap-2"
             >
-              <span class="flex-auto">{{ sharedAccount }}</span>
+              <span class="flex-auto text-center md:text-start">{{ sharedAccount }}</span>
               <ActionButton variant="danger" class="text-sm mt-2 md:mt-0" @click="removeUsername(sharedAccount)"
                 >Remove</ActionButton
               >
