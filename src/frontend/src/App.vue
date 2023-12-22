@@ -75,6 +75,7 @@ watch(screenSizeMd, () => {
         <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Trappings</NavLink>
       </div>
       <div v-if="authStore.loggedIn" class="py-2">
+        <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked Users</NavLink>
         <NavLink routeName="manage" variant="side" @click="showSideBar = false">Manage Account</NavLink>
         <NavLink variant="side" @click="authStore.logout">Logout</NavLink>
       </div>
