@@ -1,5 +1,27 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
+import AfterSubmit from "../../components/AfterSubmit.vue";
+import SubmitButton from "../../components/SubmitButton.vue";
+import { onMounted, Ref, ref } from "vue";
+import { SubmissionState } from "../../utils/submission.ts";
+import { useAuthStore } from "../../stores/auth.ts";
+import { authRequest } from "../../services/auth.ts";
+
+const submissionState = ref(new SubmissionState());
+const sharedAccounts: Ref<Array<string>> = ref([]);
+
+const { callAndLogoutIfUnauthorized } = useAuthStore();
+
+onMounted(async () => {
+  try {
+    const resp = await callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
+    sharedAccounts.value = resp?.data.data.sharedAccounts;
+  } catch (error) {
+    submissionState.value.setFailureFromError(error, []);
+  }
+});
+
+async function submitForm() {}
 </script>
 
 <template>
@@ -22,6 +44,25 @@ import Header from "../../components/PageHeader.vue";
       able to see shared item but it will not have your custom quality.
     </p>
   </Header>
+  <div class="mt-3 bg-neutral-50 rounded-t-xl border border-neutral-200">
+    <table class="table-auto w-full">
+      <thead>
+        <tr>
+          <th class="border-b border-neutral-200 p-2">Linked users</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="sharedAccount in sharedAccounts" :key="sharedAccount">
+          <td class="p-2 hover:bg-neutral-200">{{ sharedAccount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="bg-neutral-50 rounded-b-xl border-b border-l border-r border-neutral-200 h-5"></div>
+  <div class="pt-2 md:w-96">
+    <AfterSubmit :submissionState="submissionState" />
+    <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Apply changes</SubmitButton>
+  </div>
 </template>
 
 <style scoped></style>
