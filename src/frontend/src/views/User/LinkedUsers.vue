@@ -6,20 +6,28 @@ import { onMounted, Ref, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
+import ActionButton from "../../components/ActionButton.vue";
+import { invalidEmailMsg } from "../../services/user.ts";
+import FormStringInput from "../../components/FormStringInput.vue";
 
 const submissionState = ref(new SubmissionState());
 const sharedAccounts: Ref<Array<string>> = ref([]);
+const newSharedAccount = ref("");
 
 const { callAndLogoutIfUnauthorized } = useAuthStore();
 
 onMounted(async () => {
   try {
     const resp = await callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
-    sharedAccounts.value = resp?.data.data.sharedAccounts;
+    sharedAccounts.value = resp?.data.data.sharedAccounts.sort();
   } catch (error) {
     submissionState.value.setFailureFromError(error, []);
   }
 });
+
+function removeUsername(username: string) {
+  sharedAccounts.value = sharedAccounts.value.filter((item) => item !== username).sort();
+}
 
 async function submitForm() {}
 </script>
@@ -44,22 +52,31 @@ async function submitForm() {}
       able to see shared item but it will not have your custom quality.
     </p>
   </Header>
-  <div class="mt-3 bg-neutral-50 rounded-t-xl border border-neutral-200">
-    <table class="table-auto w-full">
-      <thead>
-        <tr>
-          <th class="border-b border-neutral-200 p-2">Linked users</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="sharedAccount in sharedAccounts" :key="sharedAccount">
-          <td class="p-2 hover:bg-neutral-200">{{ sharedAccount }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="pt-2 overflow-x-auto">
+    <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-200 min-w-fit">
+      <table class="table-auto w-full">
+        <thead>
+          <tr>
+            <th class="border-b border-neutral-200 p-2">Linked users</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="sharedAccount in sharedAccounts" :key="sharedAccount">
+            <td
+              class="py-2 px-5 hover:bg-neutral-200 border-b border-neutral-200 bg-white flex flex-col items-center md:justify-between flex-wrap md:flex-row md:gap-2"
+            >
+              <span class="flex-auto">{{ sharedAccount }}</span>
+              <ActionButton variant="danger" class="text-sm mt-2 md:mt-0" @click="removeUsername(sharedAccount)"
+                >Remove</ActionButton
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+    </div>
   </div>
-  <div class="bg-neutral-50 rounded-b-xl border-b border-l border-r border-neutral-200 h-5"></div>
-  <div class="pt-2 md:w-96">
+  <div class="pt-2 lg:w-3/4">
     <AfterSubmit :submissionState="submissionState" />
     <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Apply changes</SubmitButton>
   </div>
