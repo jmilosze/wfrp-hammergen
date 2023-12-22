@@ -7,7 +7,7 @@ import Login from "./views/User/Login.vue";
 import ForgotPassword from "./views/User/ForgotPassword.vue";
 import ResetPassword from "./views/User/ResetPassword.vue";
 import Manage from "./views/User/Manage.vue";
-import LinkedUsers from "./views/User/Manage.vue";
+import LinkedUsers from "./views/User/LinkedUsers.vue";
 
 export default createRouter({
   history: createWebHistory(),
