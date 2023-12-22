@@ -13,11 +13,7 @@ function setClass() {
 </script>
 
 <template>
-  <div>
-    <button :class="setClass()">
-      <span class="flex justify-between">
-        <span><slot></slot></span>
-      </span>
-    </button>
-  </div>
+  <button :class="setClass()">
+    <slot></slot>
+  </button>
 </template>
