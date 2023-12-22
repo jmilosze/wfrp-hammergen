@@ -6,9 +6,6 @@ export default {
       fontFamily: {
         hammergen: ["hammergen", "serif"],
       },
-      width: {
-        192: "48rem",
-      },
     },
   },
   plugins: [],
