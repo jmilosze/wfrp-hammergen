@@ -78,7 +78,7 @@ async function submitForm() {
         invalidMsg="Password is required"
         :isValid="validCurrentPassword"
       />
-      <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Update</SubmitButton>
+      <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Update email</SubmitButton>
     </div>
   </div>
 </template>
