@@ -39,7 +39,6 @@ export class SubmissionState {
   }
 
   setFailureFromError(error: any, errorMessages: Array<{ statusCode: number; details: string; message: string }>) {
-    console.log("Error!!!");
     if (isAxiosError(error) && error.response) {
       for (const errMsg of errorMessages) {
         const detailsMatch =
