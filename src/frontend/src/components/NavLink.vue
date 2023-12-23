@@ -2,12 +2,21 @@
 import { useRoute } from "vue-router";
 
 const SIDE_VARIANT = {
-  static: ["block", "hover:bg-neutral-700", "hover:text-amber-300", "py-1", "px-2", "rounded", "text-start"],
+  static: [
+    "block",
+    "hover:bg-neutral-700",
+    "hover:text-amber-300",
+    "py-1",
+    "px-2",
+    "rounded",
+    "text-start",
+    "select-none",
+  ],
   unselected: [],
   selected: ["font-bold"],
 };
 const TOP_VARIANT = {
-  static: ["hover:bg-neutral-800", "p-3", "rounded"],
+  static: ["hover:bg-neutral-800", "p-3", "rounded", "select-none"],
   unselected: ["text-amber-300"],
   selected: ["text-amber-100"],
 };

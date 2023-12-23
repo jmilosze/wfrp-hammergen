@@ -123,7 +123,7 @@ async function submitForm() {
       able to see shared item but it will not have your custom quality.
     </p>
   </Header>
-  <div class="pt-2 overflow-x-auto">
+  <div class="pt-2 overflow-x-auto select-none">
     <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-200 min-w-fit">
       <table class="table-auto w-full">
         <thead>
