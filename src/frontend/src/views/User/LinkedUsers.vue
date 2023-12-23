@@ -10,13 +10,12 @@ import ActionButton from "../../components/ActionButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 
 const submissionState = ref(new SubmissionState());
-const addUserSubmissionState = ref(new SubmissionState());
 const sharedAccounts: Ref<Array<string>> = ref([]);
 const newSharedAccount = ref("");
 const email = ref("");
 
 const validNewSharedAccount = computed(() => {
-  if (addUserSubmissionState.value.notStartedOrSubmitted()) {
+  if (submissionState.value.notStartedOrSubmitted()) {
     return {
       status: true,
       message: "",
@@ -67,10 +66,10 @@ function removeUsername(username: string) {
 }
 
 async function addUsername() {
-  addUserSubmissionState.value.setInProgress();
+  submissionState.value.setInProgress();
 
   if (!validNewSharedAccount.value.status) {
-    addUserSubmissionState.value.setValidationError();
+    submissionState.value.setValidationError();
     return;
   }
 
@@ -79,12 +78,12 @@ async function addUsername() {
     if (resp?.data.data.exists) {
       sharedAccounts.value.push(newSharedAccount.value);
       newSharedAccount.value = "";
-      addUserSubmissionState.value.setSuccess("");
+      submissionState.value.setSuccess("");
     } else {
-      addUserSubmissionState.value.setFailure(`User ${newSharedAccount.value} not found.`);
+      submissionState.value.setFailure(`User ${newSharedAccount.value} not found.`);
     }
   } catch (error) {
-    addUserSubmissionState.value.setFailureFromError(error, []);
+    submissionState.value.setFailureFromError(error, []);
   }
 }
 
@@ -149,8 +148,7 @@ async function submitForm() {
     </div>
   </div>
   <div class="pt-2 md:w-96">
-    <AfterSubmit :submissionState="addUserSubmissionState" />
-    <AfterSubmit :submissionState="submissionState" />
+    <AfterSubmit class="mt-2" :submissionState="submissionState" />
     <FormStringInput
       type="text"
       class="mt-3"
@@ -159,11 +157,7 @@ async function submitForm() {
       :invalidMsg="validNewSharedAccount.message"
       :isValid="validNewSharedAccount.status"
     >
-      <SubmitButton
-        variant="normal"
-        class="text-sm h-full ml-3"
-        :submissionState="addUserSubmissionState"
-        @click="addUsername"
+      <SubmitButton variant="normal" class="text-sm h-full ml-3" :submissionState="submissionState" @click="addUsername"
         >Add</SubmitButton
       >
     </FormStringInput>
