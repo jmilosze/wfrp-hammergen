@@ -69,9 +69,8 @@ import TextLink from "../components/TextLink.vue";
     <p>
       You can share any custom property (character, skill, trapping, etc.) you made with other players! When a property
       is marked as <span class="font-bold">Public</span>, anyone you give your username to, can see that item in
-      read-only mode. Sharing is explained in the Linked Users tab in
-      <TextLink routeName="placeholder">Manage Account</TextLink>
-      section.
+      read-only mode. Sharing is explained in the <TextLink routeName="linkedusers">Linked Users</TextLink> tab
+      available after logging in.
     </p>
     <p>
       More in-depth description of how to use Hammergen features can be found in
