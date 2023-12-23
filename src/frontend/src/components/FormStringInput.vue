@@ -41,11 +41,11 @@ const value = computed({
           class="border-2 border-neutral-200 rounded w-full h-10 px-2 focus:border-neutral-700 transition-colors duration-200"
           v-model="value"
         />
-        <p class="text-sm text-red-600" :class="[isValid ? 'hidden' : '']">{{ invalidMsg }}</p>
       </div>
       <div>
         <slot></slot>
       </div>
     </div>
+    <p class="text-sm text-red-600" :class="[isValid ? 'hidden' : '']">{{ invalidMsg }}</p>
   </div>
 </template>
