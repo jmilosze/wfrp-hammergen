@@ -8,12 +8,14 @@ defineProps<{
 </script>
 
 <template>
-  <AlertBlock alertType="red" :visible="submissionState.status == 'failure' && submissionState.message != ''">
-    {{ submissionState.message }}
-  </AlertBlock>
-  <AlertBlock alertType="green" :visible="submissionState.status == 'success' && submissionState.message != ''">
-    {{ submissionState.message }}
-  </AlertBlock>
+  <div>
+    <AlertBlock alertType="red" :visible="submissionState.status == 'failure' && submissionState.message != ''">
+      {{ submissionState.message }}
+    </AlertBlock>
+    <AlertBlock alertType="green" :visible="submissionState.status == 'success' && submissionState.message != ''">
+      {{ submissionState.message }}
+    </AlertBlock>
+  </div>
 </template>
 
 <style scoped></style>
