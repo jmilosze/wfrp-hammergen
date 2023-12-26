@@ -32,9 +32,6 @@ async function submitForm() {
   }
 
   try {
-    // await callAndLogoutIfUnauthorized(authRequest.delete)("/api/user", {
-    //   data: { password: user.value.currentPassword },
-    // });
     await callAndLogoutIfUnauthorized(userApi.delete)(user.value);
     user.value.reset();
     submissionState.value.setSuccess("Account deleted successfully deleted. Logging out...");

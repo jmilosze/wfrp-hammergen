@@ -75,6 +75,7 @@ export class UserApi {
   resetPassword: (user: User, token: string) => Promise<void>;
   updateEmail: (user: User) => Promise<void>;
   updatePassword: (user: User) => Promise<void>;
+  updateSharedAccounts: (user: User) => Promise<void>;
   delete: (user: User) => Promise<void>;
   get: () => Promise<User>;
   checkIfExists: (email: string) => Promise<boolean>;
@@ -115,6 +116,12 @@ export class UserApi {
         username: user.email.toLowerCase(),
         password: user.newPassword,
         currentPassword: user.currentPassword,
+      });
+    };
+
+    this.updateSharedAccounts = async (user: User) => {
+      await axios.put("/api/user", {
+        sharedAccounts: user.sharedAccounts,
       });
     };
 
