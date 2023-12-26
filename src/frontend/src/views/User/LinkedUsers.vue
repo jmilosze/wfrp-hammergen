@@ -2,7 +2,7 @@
 import Header from "../../components/PageHeader.vue";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
-import { computed, Ref, ref } from "vue";
+import { computed, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
@@ -12,7 +12,6 @@ import { User } from "../../services/user.ts";
 import { setValidationStatus } from "../../services/validation.ts";
 
 const submissionState = ref(new SubmissionState());
-const sharedAccounts: Ref<Array<string>> = ref([]);
 const newSharedAccount = ref("");
 const user = ref(new User());
 
@@ -21,33 +20,21 @@ const { callAndLogoutIfUnauthorized } = useAuthStore();
 const validNewSharedAccount = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
     return setValidationStatus(true);
+  } else {
+    return user.value.validateNewSharedAccount(newSharedAccount.value);
   }
-
-  if (sharedAccounts.value.includes(newSharedAccount.value)) {
-    return setValidationStatus(false, `Username ${newSharedAccount.value} is already on the list.`);
-  }
-
-  if (newSharedAccount.value == "") {
-    return setValidationStatus(false, "Please specify username.");
-  }
-
-  if (newSharedAccount.value == user.value.email) {
-    return setValidationStatus(false, "You cannot add your own username.");
-  }
-
-  return setValidationStatus(true);
 });
 
 try {
   const resp = await callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
-  sharedAccounts.value = resp?.data.data.sharedAccounts.sort();
+  user.value.sharedAccounts = resp?.data.data.sharedAccounts.sort();
   user.value.email = resp?.data.data.username;
 } catch (error) {
   submissionState.value.setFailureFromError(error, []);
 }
 
 function removeUsername(username: string) {
-  sharedAccounts.value = sharedAccounts.value.filter((item) => item !== username).sort();
+  user.value.sharedAccounts = user.value.sharedAccounts.filter((item) => item !== username).sort();
 }
 
 async function addUsername() {
@@ -61,7 +48,7 @@ async function addUsername() {
   try {
     const resp = await callAndLogoutIfUnauthorized(authRequest.get)(`/api/user/exists/${newSharedAccount.value}`);
     if (resp?.data.data.exists) {
-      sharedAccounts.value.push(newSharedAccount.value);
+      user.value.sharedAccounts.push(newSharedAccount.value);
       newSharedAccount.value = "";
       submissionState.value.setSuccess("");
     } else {
@@ -77,7 +64,7 @@ async function submitForm() {
 
   try {
     await callAndLogoutIfUnauthorized(authRequest.put)("/api/user", {
-      sharedAccounts: sharedAccounts.value,
+      sharedAccounts: user.value.sharedAccounts,
     });
     submissionState.value.setSuccess(
       "Linked user list updated successfully! In order to be able to see content shared by newly added users please log out and then log back in.",
@@ -117,7 +104,7 @@ async function submitForm() {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="sharedAccount in sharedAccounts" :key="sharedAccount">
+          <tr v-for="sharedAccount in user.sharedAccounts" :key="sharedAccount">
             <td
               class="py-2 px-5 hover:bg-neutral-200 border-b border-neutral-200 bg-white flex flex-col items-stretch md:justify-between flex-wrap md:flex-row md:gap-2"
             >

@@ -34,7 +34,7 @@ const passwordMatch = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
     return setValidationStatus(true);
   } else {
-    return user.value.passwordMatch();
+    return user.value.validatePasswordMatch();
   }
 });
 
@@ -48,7 +48,7 @@ async function submitForm() {
 
   try {
     await anonRequest.post("/api/user/resetPassword", {
-      password: user.value.password,
+      password: user.value.newPassword,
       token: props.token,
     });
     user.value.reset();
@@ -83,14 +83,14 @@ async function submitForm() {
       <FormStringInput
         type="password"
         class="mt-3"
-        v-model="user.password"
+        v-model="user.newPassword"
         title="Password"
         :validationStatus="validPassword"
       />
       <FormStringInput
         type="password"
         class="mt-3"
-        v-model="user.retypedPassword"
+        v-model="user.confirmNewPassword"
         title="Confirm Password"
         :validationStatus="passwordMatch"
       />
