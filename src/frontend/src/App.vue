@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useScreen } from "./composables/screen.ts";
 import NavLink from "./components/NavLink.vue";
 import { useAuthStore } from "./stores/auth.ts";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
+import { UserApi } from "./services/user.ts";
+import { authRequest } from "./services/auth.ts";
 
 const showSideBar = ref(false);
+const userApi = new UserApi(authRequest);
 
 const { screenSizeMd } = useScreen();
 const authStore = useAuthStore();
@@ -13,6 +16,12 @@ const authStore = useAuthStore();
 watch(screenSizeMd, () => {
   if (screenSizeMd) {
     showSideBar.value = false;
+  }
+});
+
+onMounted(async () => {
+  if (authStore.loggedIn) {
+    await authStore.callAndLogoutIfUnauthorized(userApi.get, false)();
   }
 });
 </script>
