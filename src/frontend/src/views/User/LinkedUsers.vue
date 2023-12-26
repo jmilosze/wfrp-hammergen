@@ -73,7 +73,7 @@ async function submitForm() {
 </script>
 
 <template>
-  <Header title="Update linked users">
+  <Header title="Linked users">
     <p>
       In this page, you can add "linked users". You need to know their username (the email they used to register). When
       you add a user, you can see all their public properties (characters, items, skills, etc.) in read-only mode. This
