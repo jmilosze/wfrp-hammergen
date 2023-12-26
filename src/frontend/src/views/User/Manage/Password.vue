@@ -11,13 +11,13 @@ import { authRequest } from "../../../services/auth.ts";
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
+const { getLoggedUserInfo, callAndLogoutIfUnauthorized } = useAuthStore();
+
 const validPassword = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validatePassword());
 const passwordMatch = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.passwordMatch());
 const validCurrentPassword = computed(
   () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
-
-const { getLoggedUserInfo, callAndLogoutIfUnauthorized } = useAuthStore();
 
 async function submitForm() {
   submissionState.value.setInProgress();

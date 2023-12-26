@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormStringInput from "../../../components/FormStringInput.vue";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { invalidEmailMsg, User } from "../../../services/user.ts";
 import { SubmissionState } from "../../../utils/submission.ts";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
@@ -11,16 +11,14 @@ import { useAuthStore } from "../../../stores/auth.ts";
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
+const { callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo } = useAuthStore();
+
 const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
 const validCurrentPassword = computed(
   () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
 
-const { callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo } = useAuthStore();
-
-onMounted(() => {
-  user.value.email = getLoggedUserInfo().username;
-});
+user.value.email = getLoggedUserInfo().username;
 
 async function submitForm() {
   submissionState.value.setInProgress();
