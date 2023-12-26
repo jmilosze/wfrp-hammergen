@@ -9,6 +9,7 @@ import { authRequest } from "../../services/auth.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { User } from "../../services/user.ts";
+import { setValidationStatus } from "../../services/validation.ts";
 
 const submissionState = ref(new SubmissionState());
 const sharedAccounts: Ref<Array<string>> = ref([]);
@@ -19,37 +20,22 @@ const { callAndLogoutIfUnauthorized } = useAuthStore();
 
 const validNewSharedAccount = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
-    return {
-      status: true,
-      message: "",
-    };
+    return setValidationStatus(true);
   }
 
   if (sharedAccounts.value.includes(newSharedAccount.value)) {
-    return {
-      status: false,
-      message: `Username ${newSharedAccount.value} is already on the list.`,
-    };
+    return setValidationStatus(false, `Username ${newSharedAccount.value} is already on the list.`);
   }
 
   if (newSharedAccount.value == "") {
-    return {
-      status: false,
-      message: "Please specify username.",
-    };
+    return setValidationStatus(false, "Please specify username.");
   }
 
   if (newSharedAccount.value == user.value.email) {
-    return {
-      status: false,
-      message: "You cannot add your own username.",
-    };
+    return setValidationStatus(false, "You cannot add your own username.");
   }
 
-  return {
-    status: true,
-    message: "",
-  };
+  return setValidationStatus(true);
 });
 
 try {
@@ -67,7 +53,7 @@ function removeUsername(username: string) {
 async function addUsername() {
   submissionState.value.setInProgress();
 
-  if (!validNewSharedAccount.value.status) {
+  if (!validNewSharedAccount.value.valid) {
     submissionState.value.setValidationError();
     return;
   }
@@ -153,8 +139,7 @@ async function submitForm() {
       class="mt-3"
       v-model="newSharedAccount"
       title="Add new user (email)"
-      :invalidMsg="validNewSharedAccount.message"
-      :isValid="validNewSharedAccount.status"
+      :validationStatus="validNewSharedAccount"
     >
       <SubmitButton variant="normal" class="ml-3" :submissionState="submissionState" @click="addUsername"
         >Add</SubmitButton

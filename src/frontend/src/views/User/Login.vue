@@ -5,24 +5,36 @@ import FormStringInput from "../../components/FormStringInput.vue";
 import { computed, ref } from "vue";
 import { useAuthStore } from "../../stores/auth";
 import TextLink from "../../components/TextLink.vue";
-import { invalidCurrentPasswordMsg, invalidEmailMsg, User } from "../../services/user.ts";
+import { User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
+import { setValidationStatus } from "../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
 const authStore = useAuthStore();
 
-const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
-const validCurrentPassword = computed(
-  () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
-);
+const validEmail = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validateEmail();
+  }
+});
+
+const validCurrentPassword = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validateCurrentPassword();
+  }
+});
 
 async function submitForm() {
   submissionState.value.setInProgress();
 
-  if (!validEmail.value || !validCurrentPassword.value) {
+  if (!validEmail.value.valid || !validCurrentPassword.value.valid) {
     submissionState.value.setValidationError();
     return;
   }
@@ -56,16 +68,14 @@ async function submitForm() {
         class="mt-3"
         v-model="user.email"
         title="Username (email)"
-        :invalidMsg="invalidEmailMsg"
-        :isValid="validEmail"
+        :validationStatus="validEmail"
       />
       <FormStringInput
         type="password"
         class="mt-3"
         v-model="user.currentPassword"
         title="Password"
-        :invalidMsg="invalidCurrentPasswordMsg"
-        :isValid="validCurrentPassword"
+        :validationStatus="validCurrentPassword"
       />
     </div>
     <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Log in</SubmitButton>

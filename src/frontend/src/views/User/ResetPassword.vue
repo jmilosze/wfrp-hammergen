@@ -5,9 +5,10 @@ import FormStringInput from "../../components/FormStringInput.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import router from "../../router.ts";
 import { anonRequest } from "../../services/auth.ts";
-import { invalidPasswordMsg, passwordDoNotMatchMsg, User } from "../../services/user.ts";
+import { User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
+import { setValidationStatus } from "../../services/validation.ts";
 
 const props = withDefaults(
   defineProps<{
@@ -21,13 +22,26 @@ const props = withDefaults(
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
-const validPassword = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validatePassword());
-const passwordMatch = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.passwordMatch());
+const validPassword = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validatePassword();
+  }
+});
+
+const passwordMatch = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.passwordMatch();
+  }
+});
 
 async function submitForm() {
   submissionState.value.setInProgress();
 
-  if (!validPassword.value || !passwordMatch.value) {
+  if (!validPassword.value.valid || !passwordMatch.value.valid) {
     submissionState.value.setValidationError();
     return;
   }
@@ -71,16 +85,14 @@ async function submitForm() {
         class="mt-3"
         v-model="user.password"
         title="Password"
-        :invalidMsg="invalidPasswordMsg"
-        :isValid="validPassword"
+        :validationStatus="validPassword"
       />
       <FormStringInput
         type="password"
         class="mt-3"
         v-model="user.retypedPassword"
         title="Confirm Password"
-        :invalidMsg="passwordDoNotMatchMsg"
-        :isValid="passwordMatch"
+        :validationStatus="passwordMatch"
       />
       <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Submit</SubmitButton>
     </div>

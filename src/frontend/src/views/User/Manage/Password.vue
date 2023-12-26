@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { invalidPasswordMsg, passwordDoNotMatchMsg, User } from "../../../services/user.ts";
+import { User } from "../../../services/user.ts";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormStringInput from "../../../components/FormStringInput.vue";
 import SubmitButton from "../../../components/SubmitButton.vue";
@@ -7,22 +7,41 @@ import { computed, ref } from "vue";
 import { SubmissionState } from "../../../utils/submission.ts";
 import { useAuthStore } from "../../../stores/auth.ts";
 import { authRequest } from "../../../services/auth.ts";
+import { setValidationStatus } from "../../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
 const { getLoggedUserInfo, callAndLogoutIfUnauthorized } = useAuthStore();
 
-const validPassword = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validatePassword());
-const passwordMatch = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.passwordMatch());
-const validCurrentPassword = computed(
-  () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
-);
+const validPassword = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validatePassword();
+  }
+});
+
+const passwordMatch = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.passwordMatch();
+  }
+});
+
+const validCurrentPassword = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validateCurrentPassword();
+  }
+});
 
 async function submitForm() {
   submissionState.value.setInProgress();
 
-  if (!validPassword.value || !passwordMatch.value || !validCurrentPassword.value) {
+  if (!validPassword.value.valid || !passwordMatch.value.valid || !validCurrentPassword.value.valid) {
     submissionState.value.setValidationError();
     return;
   }
@@ -58,24 +77,21 @@ async function submitForm() {
         class="mt-1"
         v-model="user.password"
         title="New password"
-        :invalidMsg="invalidPasswordMsg"
-        :isValid="validPassword"
+        :validationStatus="validPassword"
       />
       <FormStringInput
         type="password"
         class="mt-3"
         v-model="user.retypedPassword"
         title="Confirm new password"
-        :invalidMsg="passwordDoNotMatchMsg"
-        :isValid="passwordMatch"
+        :validationStatus="passwordMatch"
       />
       <FormStringInput
         type="password"
         class="mt-3"
         v-model="user.currentPassword"
         title="Current password"
-        invalidMsg="Password is required"
-        :isValid="validCurrentPassword"
+        :validationStatus="validCurrentPassword"
       />
       <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Update password</SubmitButton>
     </div>

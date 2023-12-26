@@ -8,7 +8,8 @@ import { anonRequest } from "../../services/auth";
 import { useReCaptcha } from "vue-recaptcha-v3";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { SubmissionState } from "../../utils/submission.ts";
-import { invalidEmailMsg, invalidPasswordMsg, passwordDoNotMatchMsg, User } from "../../services/user.ts";
+import { User } from "../../services/user.ts";
+import { setValidationStatus } from "../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -16,9 +17,29 @@ const submissionState = ref(new SubmissionState());
 const router = useRouter();
 const recaptcha = useReCaptcha();
 
-const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
-const validPassword = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validatePassword());
-const passwordMatch = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.passwordMatch());
+const validEmail = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validateEmail();
+  }
+});
+
+const validPassword = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validatePassword();
+  }
+});
+
+const passwordMatch = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.passwordMatch();
+  }
+});
 
 onMounted(() => {
   recaptcha?.instance.value?.showBadge();
@@ -31,7 +52,7 @@ onUnmounted(() => {
 async function submitForm() {
   submissionState.value.setInProgress();
 
-  if (!validEmail.value || !validPassword.value || !passwordMatch.value) {
+  if (!validEmail.value.valid || !validPassword.value.valid || !passwordMatch.value.valid) {
     submissionState.value.setValidationError();
     return;
   }
@@ -84,29 +105,20 @@ async function submitForm() {
     </Header>
     <div class="pt-2 md:w-96">
       <AfterSubmit :submissionState="submissionState" />
-      <FormStringInput
-        type="text"
-        class="mt-3"
-        v-model="user.email"
-        title="Email"
-        :invalidMsg="invalidEmailMsg"
-        :isValid="validEmail"
-      />
+      <FormStringInput type="text" class="mt-3" v-model="user.email" title="Email" :validationStatus="validEmail" />
       <FormStringInput
         type="password"
         class="mt-3"
         v-model="user.password"
         title="Password"
-        :invalidMsg="invalidPasswordMsg"
-        :isValid="validPassword"
+        :validationStatus="validPassword"
       />
       <FormStringInput
         type="password"
         class="mt-3"
         v-model="user.retypedPassword"
         title="Confirm Password"
-        :invalidMsg="passwordDoNotMatchMsg"
-        :isValid="passwordMatch"
+        :validationStatus="passwordMatch"
       />
     </div>
     <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Register</SubmitButton>
