@@ -48,7 +48,7 @@ async function addUsername() {
   try {
     const resp = await callAndLogoutIfUnauthorized(authRequest.get)(`/api/user/exists/${newSharedAccount.value}`);
     if (resp?.data.data.exists) {
-      user.value.sharedAccounts.push(newSharedAccount.value);
+      user.value.addSharedAccount(newSharedAccount.value);
       newSharedAccount.value = "";
       submissionState.value.setSuccess("");
     } else {
