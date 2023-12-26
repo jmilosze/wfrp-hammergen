@@ -13,9 +13,9 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
-const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
-
 const recaptcha = useReCaptcha();
+
+const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
 
 onMounted(() => {
   recaptcha?.instance.value?.showBadge();

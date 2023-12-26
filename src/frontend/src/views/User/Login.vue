@@ -12,12 +12,12 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
+const authStore = useAuthStore();
+
 const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
 const validCurrentPassword = computed(
   () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
-
-const authStore = useAuthStore();
 
 async function submitForm() {
   submissionState.value.setInProgress();

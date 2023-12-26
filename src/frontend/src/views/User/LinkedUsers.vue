@@ -2,17 +2,20 @@
 import Header from "../../components/PageHeader.vue";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
-import { computed, onMounted, Ref, ref } from "vue";
+import { computed, Ref, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
+import { User } from "../../services/user.ts";
 
 const submissionState = ref(new SubmissionState());
 const sharedAccounts: Ref<Array<string>> = ref([]);
 const newSharedAccount = ref("");
-const email = ref("");
+const user = ref(new User());
+
+const { callAndLogoutIfUnauthorized } = useAuthStore();
 
 const validNewSharedAccount = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -36,7 +39,7 @@ const validNewSharedAccount = computed(() => {
     };
   }
 
-  if (newSharedAccount.value == email.value) {
+  if (newSharedAccount.value == user.value.email) {
     return {
       status: false,
       message: "You cannot add your own username.",
@@ -49,17 +52,13 @@ const validNewSharedAccount = computed(() => {
   };
 });
 
-const { callAndLogoutIfUnauthorized } = useAuthStore();
-
-onMounted(async () => {
-  try {
-    const resp = await callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
-    sharedAccounts.value = resp?.data.data.sharedAccounts.sort();
-    email.value = resp?.data.data.username;
-  } catch (error) {
-    submissionState.value.setFailureFromError(error, []);
-  }
-});
+try {
+  const resp = await callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
+  sharedAccounts.value = resp?.data.data.sharedAccounts.sort();
+  user.value.email = resp?.data.data.username;
+} catch (error) {
+  submissionState.value.setFailureFromError(error, []);
+}
 
 function removeUsername(username: string) {
   sharedAccounts.value = sharedAccounts.value.filter((item) => item !== username).sort();
@@ -157,7 +156,7 @@ async function submitForm() {
       :invalidMsg="validNewSharedAccount.message"
       :isValid="validNewSharedAccount.status"
     >
-      <SubmitButton variant="normal" class="text-sm h-full ml-3" :submissionState="submissionState" @click="addUsername"
+      <SubmitButton variant="normal" class="ml-3" :submissionState="submissionState" @click="addUsername"
         >Add</SubmitButton
       >
     </FormStringInput>

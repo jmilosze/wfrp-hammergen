@@ -48,6 +48,7 @@ export const useAuthStore = defineStore("auth", () => {
   function getLoggedUserInfo() {
     return getUserInfo();
   }
+
   function setLoggedUserInfo(username: string) {
     return setUserInfo(username);
   }
