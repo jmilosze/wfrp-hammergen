@@ -1,5 +1,5 @@
 import { setValidationStatus, ValidationStatus } from "./validation.ts";
-import { Axios, AxiosInstance, create } from "axios";
+import { AxiosInstance } from "axios";
 
 const EMAIL_REGEX =
   /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/;
@@ -26,6 +26,11 @@ export class User {
     this.newPassword = "";
     this.confirmNewPassword = "";
     this.sharedAccounts = [];
+  }
+
+  addSharedAccount(newSharedAccount: string) {
+    this.sharedAccounts.push(newSharedAccount);
+    this.sharedAccounts.sort();
   }
 
   validateEmail(): ValidationStatus {
@@ -64,23 +69,23 @@ export class User {
   }
 }
 
-export class UserApi {
-  create: (user: User, token: string) => Promise<void>;
-  resetPassword: (user: User, token: string) => Promise<void>;
-  sendResetPassword: (user: User, token: string) => Promise<void>;
-  updateEmail: (user: User) => Promise<void>;
-  updatePassword: (user: User) => Promise<void>;
-  deleter: (user: User) => Promise<void>;
-  get: () => Promise<User>;
-  checkIfExists: (email: string) => Promise<boolean>;
-
-  constructor(axios: AxiosInstance) {
-    this.create = async (user: User, token: string) => {
-      await axios.post("/api/user", {
-        username: user.email.toLowerCase(),
-        password: user.newPassword,
-        captcha: token,
-      });
-    };
-  }
-}
+// export class UserApi {
+//   create: (user: User, token: string) => Promise<void>;
+//   resetPassword: (user: User, token: string) => Promise<void>;
+//   sendResetPassword: (user: User, token: string) => Promise<void>;
+//   updateEmail: (user: User) => Promise<void>;
+//   updatePassword: (user: User) => Promise<void>;
+//   deleter: (user: User) => Promise<void>;
+//   get: () => Promise<User>;
+//   checkIfExists: (email: string) => Promise<boolean>;
+//
+//   constructor(axios: AxiosInstance) {
+//     this.create = async (user: User, token: string) => {
+//       await axios.post("/api/user", {
+//         username: user.email.toLowerCase(),
+//         password: user.newPassword,
+//         captcha: token,
+//       });
+//     };
+//   }
+// }
