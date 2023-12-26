@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("auth", () => {
   const loggedIn = ref(isUserLoggedIn());
   const router = useRouter();
 
-  function callAndLogoutIfUnauthorized(apiCall: (...args: any[]) => Promise<any>) {
+  function callAndLogoutIfUnauthorized(apiCall: (...args: any[]) => Promise<any>, redirectToLogin = true) {
     return async (...args: any[]) => {
       try {
         return await apiCall(...args);
@@ -17,7 +17,7 @@ export const useAuthStore = defineStore("auth", () => {
           logoutUser();
           loggedIn.value = false;
 
-          if (router.currentRoute.value.name !== "login") {
+          if (redirectToLogin && router.currentRoute.value.name !== "login") {
             await router.push({ name: "login" });
           }
         } else {
