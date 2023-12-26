@@ -8,12 +8,13 @@ import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
-import { User } from "../../services/user.ts";
+import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../services/validation.ts";
 
 const submissionState = ref(new SubmissionState());
 const newSharedAccount = ref("");
 const user = ref(new User());
+const userApi = new UserApi(authRequest);
 
 const { callAndLogoutIfUnauthorized } = useAuthStore();
 
@@ -26,9 +27,7 @@ const validNewSharedAccount = computed(() => {
 });
 
 try {
-  const resp = await callAndLogoutIfUnauthorized(authRequest.get)("/api/user");
-  user.value.sharedAccounts = resp?.data.data.sharedAccounts.sort();
-  user.value.email = resp?.data.data.username;
+  user.value = await callAndLogoutIfUnauthorized(userApi.get)();
 } catch (error) {
   submissionState.value.setFailureFromError(error, []);
 }
@@ -46,8 +45,8 @@ async function addUsername() {
   }
 
   try {
-    const resp = await callAndLogoutIfUnauthorized(authRequest.get)(`/api/user/exists/${newSharedAccount.value}`);
-    if (resp?.data.data.exists) {
+    const userExists: boolean = await callAndLogoutIfUnauthorized(userApi.checkIfExists)(newSharedAccount.value);
+    if (userExists) {
       user.value.addSharedAccount(newSharedAccount.value);
       newSharedAccount.value = "";
       submissionState.value.setSuccess("");
@@ -63,9 +62,7 @@ async function submitForm() {
   submissionState.value.setInProgress();
 
   try {
-    await callAndLogoutIfUnauthorized(authRequest.put)("/api/user", {
-      sharedAccounts: user.value.sharedAccounts,
-    });
+    await callAndLogoutIfUnauthorized(userApi.updateSharedAccounts)(user.value);
     submissionState.value.setSuccess(
       "Linked user list updated successfully! In order to be able to see content shared by newly added users please log out and then log back in.",
     );

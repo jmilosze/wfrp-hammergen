@@ -3,14 +3,12 @@ import { ref, watch } from "vue";
 import { useScreen } from "./composables/screen.ts";
 import NavLink from "./components/NavLink.vue";
 import { useAuthStore } from "./stores/auth.ts";
-import { useRoute } from "vue-router";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 
 const showSideBar = ref(false);
 
 const { screenSizeMd } = useScreen();
 const authStore = useAuthStore();
-const route = useRoute();
 
 watch(screenSizeMd, () => {
   if (screenSizeMd) {
