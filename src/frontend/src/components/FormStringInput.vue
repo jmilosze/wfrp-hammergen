@@ -1,21 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { ValidationStatus } from "../services/validation.ts";
 
-const props = withDefaults(
-  defineProps<{
-    type: "text" | "password";
-    title: string;
-    isValid: boolean;
-    invalidMsg: string;
-    modelValue: string;
-  }>(),
-  {
-    type: "text",
-    title: "",
-    isValid: true,
-    invalidMsg: "",
-  },
-);
+const props = defineProps<{
+  type: "text" | "password";
+  title: string;
+  validationStatus: ValidationStatus;
+  modelValue: string;
+}>();
 
 const emit = defineEmits<{
   (e: "update:modelValue", modelValue: string): void;
@@ -46,6 +38,6 @@ const value = computed({
         <slot></slot>
       </div>
     </div>
-    <p class="text-sm text-red-600" :class="[isValid ? 'hidden' : '']">{{ invalidMsg }}</p>
+    <p class="text-sm text-red-600" :class="[validationStatus.valid ? 'hidden' : '']">{{ validationStatus.message }}</p>
   </div>
 </template>

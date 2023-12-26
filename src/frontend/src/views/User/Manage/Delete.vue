@@ -7,15 +7,20 @@ import { authRequest } from "../../../services/auth.ts";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormStringInput from "../../../components/FormStringInput.vue";
 import SubmitButton from "../../../components/SubmitButton.vue";
+import { setValidationStatus } from "../../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
 const { callAndLogoutIfUnauthorized, logout } = useAuthStore();
 
-const validCurrentPassword = computed(
-  () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
-);
+const validCurrentPassword = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validateCurrentPassword();
+  }
+});
 
 async function submitForm() {
   submissionState.value.setInProgress();
@@ -58,8 +63,7 @@ async function submitForm() {
         class="mt-3"
         v-model="user.currentPassword"
         title="Current password"
-        invalidMsg="Password is required"
-        :isValid="validCurrentPassword"
+        :validationStatus="validCurrentPassword"
       />
       <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState" :variant="'danger'"
         >Delete account</SubmitButton

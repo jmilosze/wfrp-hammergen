@@ -6,16 +6,23 @@ import { useReCaptcha } from "vue-recaptcha-v3";
 import FormStringInput from "../../components/FormStringInput.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import { anonRequest } from "../../services/auth.ts";
-import { invalidEmailMsg, User } from "../../services/user.ts";
+import { User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
+import { setValidationStatus } from "../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
 const recaptcha = useReCaptcha();
 
-const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
+const validEmail = computed(() => {
+  if (submissionState.value.notStartedOrSubmitted()) {
+    return setValidationStatus(true);
+  } else {
+    return user.value.validateEmail();
+  }
+});
 
 onMounted(() => {
   recaptcha?.instance.value?.showBadge();
@@ -28,7 +35,7 @@ onUnmounted(() => {
 async function submitForm() {
   submissionState.value.setInProgress();
 
-  if (!validEmail.value) {
+  if (!validEmail.value.valid) {
     submissionState.value.setValidationError();
     return;
   }
@@ -84,14 +91,7 @@ async function submitForm() {
   </div>
   <div class="pt-2 md:w-96">
     <AfterSubmit :submissionState="submissionState" />
-    <FormStringInput
-      type="text"
-      class="mt-3"
-      v-model="user.email"
-      title="Email"
-      :invalidMsg="invalidEmailMsg"
-      :isValid="validEmail"
-    />
+    <FormStringInput type="text" class="mt-3" v-model="user.email" title="Email" :validationStatus="validEmail" />
   </div>
   <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Submit</SubmitButton>
 </template>
