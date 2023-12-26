@@ -5,17 +5,18 @@ import Header from "../../components/PageHeader.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
-import { useReCaptcha } from "vue-recaptcha-v3";
+import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { SubmissionState } from "../../utils/submission.ts";
-import { User } from "../../services/user.ts";
+import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const userApi = new UserApi(anonRequest);
 
 const router = useRouter();
-const recaptcha = useReCaptcha();
+const recaptcha = useReCaptcha() as IReCaptchaComposition;
 
 const validEmail = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -42,11 +43,11 @@ const passwordMatch = computed(() => {
 });
 
 onMounted(() => {
-  recaptcha?.instance.value?.showBadge();
+  recaptcha.instance.value?.showBadge();
 });
 
 onUnmounted(() => {
-  recaptcha?.instance.value?.hideBadge();
+  recaptcha.instance.value?.hideBadge();
 });
 
 async function submitForm() {
@@ -57,21 +58,16 @@ async function submitForm() {
     return;
   }
 
-  let token;
+  let token: string;
   if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
     token = "success";
   } else {
-    await recaptcha?.recaptchaLoaded();
-    token = await recaptcha?.executeRecaptcha("register");
+    await recaptcha.recaptchaLoaded();
+    token = await recaptcha.executeRecaptcha("register");
   }
 
   try {
-    await anonRequest.post("/api/user", {
-      username: user.value.email.toLowerCase(),
-      password: user.value.newPassword,
-      captcha: token,
-    });
-
+    await userApi.create(user.value, token);
     user.value.reset();
     submissionState.value.setSuccess("Registration successful, redirecting to login...");
 

@@ -1,8 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-const ACCESS_TOKEN = "accessToken";
-const USERNAME = "username";
-const TOKEN_PATH = "/api/token";
+const LOCAL_STORAGE_KEY_ACCESS_TOKEN = "accessToken";
+const LOCALS_STORAGE_KEY_USERNAME = "username";
 
 export const anonRequest = axios.create({
   baseURL: import.meta.env.VITE_ROOT_API,
@@ -22,24 +21,24 @@ export const authRequest = axios.create({
 
 export const loginUser = async (username: string, password: string) => {
   const response = await anonRequest.post(
-    TOKEN_PATH,
+    "/api/token",
     { username, password },
     {
       headers: { "Content-Type": "multipart/form-data" },
     },
   );
-  localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
-  localStorage.setItem(USERNAME, username);
+  localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, response.data.accessToken);
+  localStorage.setItem(LOCALS_STORAGE_KEY_USERNAME, username);
 };
 
 export const logoutUser = () => {
-  localStorage.removeItem(ACCESS_TOKEN);
-  localStorage.removeItem(USERNAME);
+  localStorage.removeItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN);
+  localStorage.removeItem(LOCALS_STORAGE_KEY_USERNAME);
 };
 
 const authHeaderInterceptor = (requestConfig: InternalAxiosRequestConfig) => {
   if (isUserLoggedIn()) {
-    requestConfig.headers.Authorization = `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`;
+    requestConfig.headers.Authorization = `Bearer ${localStorage.getItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN)}`;
   }
   return requestConfig;
 };
@@ -47,7 +46,7 @@ const authHeaderInterceptor = (requestConfig: InternalAxiosRequestConfig) => {
 authRequest.interceptors.request.use(authHeaderInterceptor);
 
 export const getUserInfo = () => {
-  const usernameInStorage = localStorage.getItem(USERNAME);
+  const usernameInStorage = localStorage.getItem(LOCALS_STORAGE_KEY_USERNAME);
 
   return {
     username: usernameInStorage != null ? usernameInStorage : "",
@@ -55,7 +54,7 @@ export const getUserInfo = () => {
 };
 
 export const setUserInfo = (username: string) => {
-  localStorage.setItem(USERNAME, username);
+  localStorage.setItem(LOCALS_STORAGE_KEY_USERNAME, username);
 };
 
 export const isUserLoggedIn = () => {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { User } from "../../../services/user.ts";
+import { User, UserApi } from "../../../services/user.ts";
 import { SubmissionState } from "../../../utils/submission.ts";
 import { useAuthStore } from "../../../stores/auth.ts";
 import { authRequest } from "../../../services/auth.ts";
@@ -11,6 +11,7 @@ import { setValidationStatus } from "../../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const userApi = new UserApi(authRequest);
 
 const { callAndLogoutIfUnauthorized, logout } = useAuthStore();
 
@@ -31,10 +32,10 @@ async function submitForm() {
   }
 
   try {
-    await callAndLogoutIfUnauthorized(authRequest.delete)("/api/user", {
-      data: { password: user.value.currentPassword },
-    });
-
+    // await callAndLogoutIfUnauthorized(authRequest.delete)("/api/user", {
+    //   data: { password: user.value.currentPassword },
+    // });
+    await callAndLogoutIfUnauthorized(userApi.delete)(user.value);
     user.value.reset();
     submissionState.value.setSuccess("Account deleted successfully deleted. Logging out...");
     setTimeout(() => {

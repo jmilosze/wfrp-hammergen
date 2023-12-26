@@ -2,13 +2,13 @@ import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { isUserLoggedIn, loginUser, logoutUser, getUserInfo, setUserInfo } from "../services/auth";
-import { AxiosResponse, isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 
 export const useAuthStore = defineStore("auth", () => {
   const loggedIn = ref(isUserLoggedIn());
   const router = useRouter();
 
-  function callAndLogoutIfUnauthorized(apiCall: (...args: any[]) => Promise<AxiosResponse<any, any>>) {
+  function callAndLogoutIfUnauthorized(apiCall: (...args: any[]) => Promise<any>) {
     return async (...args: any[]) => {
       try {
         return await apiCall(...args);

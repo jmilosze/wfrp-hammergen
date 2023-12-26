@@ -69,23 +69,83 @@ export class User {
   }
 }
 
-// export class UserApi {
-//   create: (user: User, token: string) => Promise<void>;
-//   resetPassword: (user: User, token: string) => Promise<void>;
-//   sendResetPassword: (user: User, token: string) => Promise<void>;
-//   updateEmail: (user: User) => Promise<void>;
-//   updatePassword: (user: User) => Promise<void>;
-//   deleter: (user: User) => Promise<void>;
-//   get: () => Promise<User>;
-//   checkIfExists: (email: string) => Promise<boolean>;
-//
-//   constructor(axios: AxiosInstance) {
-//     this.create = async (user: User, token: string) => {
-//       await axios.post("/api/user", {
-//         username: user.email.toLowerCase(),
-//         password: user.newPassword,
-//         captcha: token,
-//       });
-//     };
-//   }
-// }
+export class UserApi {
+  create: (user: User, token: string) => Promise<void>;
+  sendResetPassword: (user: User, token: string) => Promise<void>;
+  resetPassword: (user: User, token: string) => Promise<void>;
+  updateEmail: (user: User) => Promise<void>;
+  updatePassword: (user: User) => Promise<void>;
+  delete: (user: User) => Promise<void>;
+  get: () => Promise<User>;
+  checkIfExists: (email: string) => Promise<boolean>;
+
+  constructor(axios: AxiosInstance) {
+    this.create = async (user: User, token: string) => {
+      await axios.post("/api/user", {
+        username: user.email.toLowerCase(),
+        password: user.newPassword,
+        captcha: token,
+      });
+    };
+
+    this.sendResetPassword = async (user: User, token: string) => {
+      await axios.post("/api/user/sendResetPassword", {
+        username: user.email.toLowerCase(),
+        captcha: token,
+      });
+    };
+
+    this.resetPassword = async (user: User, token: string) => {
+      await axios.post("/api/user/resetPassword", {
+        password: user.newPassword,
+        token: token,
+      });
+    };
+
+    this.updateEmail = async (user: User) => {
+      await axios.put("/api/user/credentials", {
+        username: user.email.toLowerCase(),
+        password: user.currentPassword,
+        currentPassword: user.currentPassword,
+      });
+    };
+
+    this.updatePassword = async (user: User) => {
+      await axios.put("/api/user/credentials", {
+        username: user.email.toLowerCase(),
+        password: user.newPassword,
+        currentPassword: user.currentPassword,
+      });
+    };
+
+    this.delete = async (user: User) => {
+      await axios.delete("/api/user", {
+        data: { password: user.currentPassword },
+      });
+    };
+
+    this.get = async () => {
+      const resp = await axios.get("/api/user");
+      const user = new User();
+
+      if ("data" in resp) {
+        user.sharedAccounts = resp.data.data.sharedAccounts.sort();
+        user.email = resp.data.data.username;
+
+        return user;
+      } else {
+        throw Error("Invalid server response.");
+      }
+    };
+
+    this.checkIfExists = async (email: string) => {
+      const resp = await axios.get(`/api/user/exists/${email}`);
+
+      if ("data" in resp) {
+        return resp.data.data.exists;
+      } else {
+        throw Error("Invalid server response.");
+      }
+    };
+  }
+}
