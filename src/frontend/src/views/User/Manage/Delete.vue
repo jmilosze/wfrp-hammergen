@@ -11,11 +11,11 @@ import SubmitButton from "../../../components/SubmitButton.vue";
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
+const { callAndLogoutIfUnauthorized, logout } = useAuthStore();
+
 const validCurrentPassword = computed(
   () => submissionState.value.notStartedOrSubmitted() || user.value.validateCurrentPassword(),
 );
-
-const { callAndLogoutIfUnauthorized, logout } = useAuthStore();
 
 async function submitForm() {
   submissionState.value.setInProgress();
