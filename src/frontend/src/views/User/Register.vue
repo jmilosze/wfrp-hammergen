@@ -13,12 +13,12 @@ import { invalidEmailMsg, invalidPasswordMsg, passwordDoNotMatchMsg, User } from
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 
+const router = useRouter();
+const recaptcha = useReCaptcha();
+
 const validEmail = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validateEmail());
 const validPassword = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.validatePassword());
 const passwordMatch = computed(() => submissionState.value.notStartedOrSubmitted() || user.value.passwordMatch());
-
-const router = useRouter();
-const recaptcha = useReCaptcha();
 
 onMounted(() => {
   recaptcha?.instance.value?.showBadge();
