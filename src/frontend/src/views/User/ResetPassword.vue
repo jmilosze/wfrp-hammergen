@@ -5,7 +5,7 @@ import FormStringInput from "../../components/FormStringInput.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import router from "../../router.ts";
 import { anonRequest } from "../../services/auth.ts";
-import { User } from "../../services/user.ts";
+import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { setValidationStatus } from "../../services/validation.ts";
@@ -21,6 +21,7 @@ const props = withDefaults(
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const userApi = new UserApi(anonRequest);
 
 const validPassword = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -47,10 +48,7 @@ async function submitForm() {
   }
 
   try {
-    await anonRequest.post("/api/user/resetPassword", {
-      password: user.value.newPassword,
-      token: props.token,
-    });
+    await userApi.resetPassword(user.value, props.token);
     user.value.reset();
     submissionState.value.setSuccess("Password reset successful, redirecting to login...");
 

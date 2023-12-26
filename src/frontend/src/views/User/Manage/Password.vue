@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from "../../../services/user.ts";
+import { User, UserApi } from "../../../services/user.ts";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormStringInput from "../../../components/FormStringInput.vue";
 import SubmitButton from "../../../components/SubmitButton.vue";
@@ -11,6 +11,7 @@ import { setValidationStatus } from "../../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const userApi = new UserApi(authRequest);
 
 const { getLoggedUserInfo, callAndLogoutIfUnauthorized } = useAuthStore();
 
@@ -47,11 +48,8 @@ async function submitForm() {
   }
 
   try {
-    await callAndLogoutIfUnauthorized(authRequest.put)("/api/user/credentials", {
-      username: getLoggedUserInfo().username.toLowerCase(),
-      password: user.value.newPassword,
-      currentPassword: user.value.currentPassword,
-    });
+    user.value.email = getLoggedUserInfo().username.toLowerCase();
+    await callAndLogoutIfUnauthorized(userApi.updatePassword)(user.value);
 
     user.value.reset();
     submissionState.value.setSuccess("Password updated successfully.");

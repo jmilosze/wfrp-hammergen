@@ -2,19 +2,20 @@
 import Header from "../../components/PageHeader.vue";
 import TextLink from "../../components/TextLink.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { useReCaptcha } from "vue-recaptcha-v3";
+import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
 import FormStringInput from "../../components/FormStringInput.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import { anonRequest } from "../../services/auth.ts";
-import { User } from "../../services/user.ts";
+import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { setValidationStatus } from "../../services/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const userApi = new UserApi(anonRequest);
 
-const recaptcha = useReCaptcha();
+const recaptcha = useReCaptcha() as IReCaptchaComposition;
 
 const validEmail = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -25,11 +26,11 @@ const validEmail = computed(() => {
 });
 
 onMounted(() => {
-  recaptcha?.instance.value?.showBadge();
+  recaptcha.instance.value?.showBadge();
 });
 
 onUnmounted(() => {
-  recaptcha?.instance.value?.hideBadge();
+  recaptcha.instance.value?.hideBadge();
 });
 
 async function submitForm() {
@@ -40,19 +41,16 @@ async function submitForm() {
     return;
   }
 
-  let token;
+  let token: string;
   if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
     token = "success";
   } else {
-    await recaptcha?.recaptchaLoaded();
-    token = await recaptcha?.executeRecaptcha("register");
+    await recaptcha.recaptchaLoaded();
+    token = await recaptcha.executeRecaptcha("register");
   }
 
   try {
-    await anonRequest.post("/api/user/sendResetPassword", {
-      username: user.value.email.toLowerCase(),
-      captcha: token,
-    });
+    await userApi.sendResetPassword(user.value, token);
     user.value.reset();
     submissionState.value.setSuccess("To reset you password please check your email and follow instructions.");
   } catch (error) {
