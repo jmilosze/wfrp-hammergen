@@ -1,6 +1,6 @@
 import * as c from "./characterConstants";
 
-export interface RacialAttributes {
+export interface Attributes {
   WS: number;
   BS: number;
   S: number;
@@ -13,7 +13,7 @@ export interface RacialAttributes {
   Fel: number;
 }
 
-export const racialAttributes: Record<string, RacialAttributes> = {
+export const racialAttributes: Record<string, Attributes> = {
   none: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   human: { WS: 20, BS: 20, S: 20, T: 20, I: 20, Ag: 20, Dex: 20, Int: 20, WP: 20, Fel: 20 },
   halfling: { WS: 10, BS: 30, S: 10, T: 20, I: 20, Ag: 20, Dex: 30, Int: 20, WP: 30, Fel: 30 },
@@ -23,7 +23,7 @@ export const racialAttributes: Record<string, RacialAttributes> = {
   ogre: { WS: 20, BS: 10, S: 35, T: 35, I: 0, Ag: 15, Dex: 10, Int: 10, WP: 20, Fel: 10 },
 };
 
-export const getAttributes = (speciesWithRegion = ""): RacialAttributes => {
+export const getAttributes = (speciesWithRegion = ""): Attributes => {
   if (c.HUMAN_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.human));
   } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
@@ -42,3 +42,20 @@ export const getAttributes = (speciesWithRegion = ""): RacialAttributes => {
     return JSON.parse(JSON.stringify(racialAttributes.none));
   }
 };
+
+export function sumAndMultiplyAttributes(attsAndMults: { multiplier: number; attributes: Attributes }[]): Attributes {
+  const returnAtts = JSON.parse(JSON.stringify(racialAttributes.none));
+  for (const attAndMult of attsAndMults) {
+    returnAtts.WS += attAndMult.multiplier * attAndMult.attributes.WS;
+    returnAtts.BS += attAndMult.multiplier * attAndMult.attributes.BS;
+    returnAtts.S += attAndMult.multiplier * attAndMult.attributes.S;
+    returnAtts.T += attAndMult.multiplier * attAndMult.attributes.T;
+    returnAtts.I += attAndMult.multiplier * attAndMult.attributes.I;
+    returnAtts.Ag += attAndMult.multiplier * attAndMult.attributes.Ag;
+    returnAtts.Dex += attAndMult.multiplier * attAndMult.attributes.Dex;
+    returnAtts.Int += attAndMult.multiplier * attAndMult.attributes.Int;
+    returnAtts.WP += attAndMult.multiplier * attAndMult.attributes.WP;
+    returnAtts.Fel += attAndMult.multiplier * attAndMult.attributes.Fel;
+  }
+  return returnAtts;
+}
