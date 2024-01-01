@@ -48,6 +48,7 @@ export class WhSpell implements Wh {
 
   newSpell(canEdit: boolean) {
     const spell = new WhSpell();
+    spell.name = "New spell";
     spell.canEdit = canEdit;
     spell.shared = true;
     spell.source = defaultSource();
