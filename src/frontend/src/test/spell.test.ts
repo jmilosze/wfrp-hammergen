@@ -1,8 +1,8 @@
 import { test, describe, expect } from "vitest";
-import { apiResponseToModel, modelToApi, WhSpell, WhSpellApiData } from "../services/wh/spell.ts";
-import { WhApiResponse, WhSource } from "../services/wh/common.ts";
+import { apiResponseToModel, modelToApi, Spell, SpellApiData } from "../services/wh/spell.ts";
+import { ApiResponse, Source } from "../services/wh/common.ts";
 
-const spellApiData: WhSpellApiData = {
+const spellApiData: SpellApiData = {
   name: "spell",
   cn: 1,
   range: "range",
@@ -13,14 +13,14 @@ const spellApiData: WhSpellApiData = {
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
-const spellApiResponse: WhApiResponse<WhSpellApiData> = {
+const spellApiResponse: ApiResponse<SpellApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
   object: spellApiData,
 };
 
-const spell = new WhSpell();
+const spell = new Spell();
 spell.id = "id";
 spell.canEdit = true;
 spell.name = "spell";
@@ -111,7 +111,7 @@ describe("isEqualTo returns false", () => {
     expect(spell.isEqualTo(otherSpell)).toBe(false);
   }
 
-  test.each<{ diff: string; source: WhSource }>([
+  test.each<{ diff: string; source: Source }>([
     { diff: "fewer sources", source: { 1: "page 2" } },
     { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
     { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
