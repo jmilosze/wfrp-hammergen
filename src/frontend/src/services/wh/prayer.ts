@@ -1,4 +1,4 @@
-import { compareWhSources, defaultSource, Wh, WhApiResponse, WhSource } from "./common.ts";
+import { compareWhSources, defaultSource, WhProperty, ApiResponse, Source } from "./common.ts";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -10,17 +10,17 @@ import { AxiosInstance } from "axios";
 
 const API_BASE_PATH = "/api/wh/prayer";
 
-export interface WhPrayerApiData {
+export interface PrayerApiData {
   name: string;
   description: string;
   range: string;
   duration: string;
   shared: boolean;
   target: string;
-  source: WhSource;
+  source: Source;
 }
 
-export class WhPrayer implements Wh {
+export class Prayer implements WhProperty {
   id: string;
   canEdit: boolean;
   name: string;
@@ -29,7 +29,7 @@ export class WhPrayer implements Wh {
   duration: string;
   shared: boolean;
   target: string;
-  source: WhSource;
+  source: Source;
 
   constructor() {
     this.id = "";
@@ -44,7 +44,7 @@ export class WhPrayer implements Wh {
   }
 
   newPrayer(canEdit: boolean) {
-    const prayer = new WhPrayer();
+    const prayer = new Prayer();
     prayer.name = "New prayer";
     prayer.canEdit = canEdit;
     prayer.shared = true;
@@ -53,7 +53,7 @@ export class WhPrayer implements Wh {
   }
 
   copy() {
-    const newPrayer = new WhPrayer();
+    const newPrayer = new Prayer();
     newPrayer.id = this.id;
     newPrayer.name = this.name;
     newPrayer.range = this.range;
@@ -67,7 +67,7 @@ export class WhPrayer implements Wh {
     return newPrayer;
   }
 
-  isEqualTo(otherPrayer: WhPrayer): boolean {
+  isEqualTo(otherPrayer: Prayer): boolean {
     if (
       this.id != otherPrayer.id ||
       this.canEdit != otherPrayer.canEdit ||
@@ -85,38 +85,38 @@ export class WhPrayer implements Wh {
   }
 }
 
-export function apiResponseToModel(whPrayerApi: WhApiResponse<WhPrayerApiData>): WhPrayer {
-  const prayer = new WhPrayer();
-  prayer.id = whPrayerApi.id;
-  prayer.canEdit = whPrayerApi.canEdit;
-  prayer.name = whPrayerApi.object.name;
-  prayer.range = whPrayerApi.object.range;
-  prayer.target = whPrayerApi.object.target;
-  prayer.duration = whPrayerApi.object.duration;
-  prayer.description = whPrayerApi.object.description;
-  prayer.shared = whPrayerApi.object.shared;
-  prayer.source = whPrayerApi.object.source;
+export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Prayer {
+  const prayer = new Prayer();
+  prayer.id = prayerApi.id;
+  prayer.canEdit = prayerApi.canEdit;
+  prayer.name = prayerApi.object.name;
+  prayer.range = prayerApi.object.range;
+  prayer.target = prayerApi.object.target;
+  prayer.duration = prayerApi.object.duration;
+  prayer.description = prayerApi.object.description;
+  prayer.shared = prayerApi.object.shared;
+  prayer.source = prayerApi.object.source;
 
   return prayer;
 }
 
-export function modelToApi(whPrayer: WhPrayer): WhPrayerApiData {
+export function modelToApi(prayer: Prayer): PrayerApiData {
   return {
-    name: whPrayer.name,
-    range: whPrayer.range,
-    target: whPrayer.target,
-    duration: whPrayer.duration,
-    description: whPrayer.description,
-    shared: whPrayer.shared,
-    source: whPrayer.source,
+    name: prayer.name,
+    range: prayer.range,
+    target: prayer.target,
+    duration: prayer.duration,
+    description: prayer.description,
+    shared: prayer.shared,
+    source: prayer.source,
   };
 }
 
-export class WhPrayerApi {
-  getElement: (id: string) => Promise<WhPrayer>;
-  listElements: (id: string) => Promise<WhPrayer[]>;
-  createElement: (wh: WhPrayer) => Promise<WhApiResponse<WhPrayerApiData>>;
-  updateElement: (wh: WhPrayer) => Promise<WhApiResponse<WhPrayerApiData>>;
+export class PrayerApi {
+  getElement: (id: string) => Promise<Prayer>;
+  listElements: (id: string) => Promise<Prayer[]>;
+  createElement: (wh: Prayer) => Promise<ApiResponse<PrayerApiData>>;
+  updateElement: (wh: Prayer) => Promise<ApiResponse<PrayerApiData>>;
   deleteElement: (id: string) => Promise<void>;
 
   constructor(axiosInstance: AxiosInstance) {

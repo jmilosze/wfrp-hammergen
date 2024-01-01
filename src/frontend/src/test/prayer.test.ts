@@ -1,8 +1,8 @@
 import { test, describe, expect } from "vitest";
-import { apiResponseToModel, modelToApi, WhPrayer, WhPrayerApiData } from "../services/wh/prayer.ts";
-import { WhApiResponse, WhSource } from "../services/wh/common.ts";
+import { apiResponseToModel, modelToApi, Prayer, PrayerApiData } from "../services/wh/prayer.ts";
+import { ApiResponse, Source } from "../services/wh/common.ts";
 
-const prayerApiData: WhPrayerApiData = {
+const prayerApiData: PrayerApiData = {
   name: "prayer",
   range: "range",
   target: "target",
@@ -12,14 +12,14 @@ const prayerApiData: WhPrayerApiData = {
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
-const prayerApiResponse: WhApiResponse<WhPrayerApiData> = {
+const prayerApiResponse: ApiResponse<PrayerApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
   object: prayerApiData,
 };
 
-const prayer = new WhPrayer();
+const prayer = new Prayer();
 prayer.id = "id";
 prayer.canEdit = true;
 prayer.name = "prayer";
@@ -102,7 +102,7 @@ describe("isEqualTo returns false", () => {
     expect(prayer.isEqualTo(otherPrayer)).toBe(false);
   }
 
-  test.each<{ diff: string; source: WhSource }>([
+  test.each<{ diff: string; source: Source }>([
     { diff: "fewer sources", source: { 1: "page 2" } },
     { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
     { diff: "different source values", source: { 1: "zxc", 3: "asd" } },

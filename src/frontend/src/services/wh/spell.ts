@@ -1,4 +1,4 @@
-import { compareWhSources, defaultSource, Wh, WhApiResponse, WhSource } from "./common.ts";
+import { compareWhSources, defaultSource, WhProperty, ApiResponse, Source } from "./common.ts";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -10,7 +10,7 @@ import { AxiosInstance } from "axios";
 
 const API_BASE_PATH = "/api/wh/spell";
 
-export interface WhSpellApiData {
+export interface SpellApiData {
   name: string;
   description: string;
   cn: number;
@@ -18,10 +18,10 @@ export interface WhSpellApiData {
   duration: string;
   shared: boolean;
   target: string;
-  source: WhSource;
+  source: Source;
 }
 
-export class WhSpell implements Wh {
+export class Spell implements WhProperty {
   id: string;
   canEdit: boolean;
   name: string;
@@ -31,7 +31,7 @@ export class WhSpell implements Wh {
   duration: string;
   shared: boolean;
   target: string;
-  source: WhSource;
+  source: Source;
 
   constructor() {
     this.id = "";
@@ -47,7 +47,7 @@ export class WhSpell implements Wh {
   }
 
   newSpell(canEdit: boolean) {
-    const spell = new WhSpell();
+    const spell = new Spell();
     spell.name = "New spell";
     spell.canEdit = canEdit;
     spell.shared = true;
@@ -56,7 +56,7 @@ export class WhSpell implements Wh {
   }
 
   copy() {
-    const newSpell = new WhSpell();
+    const newSpell = new Spell();
     newSpell.id = this.id;
     newSpell.name = this.name;
     newSpell.cn = this.cn;
@@ -71,7 +71,7 @@ export class WhSpell implements Wh {
     return newSpell;
   }
 
-  isEqualTo(otherSpell: WhSpell): boolean {
+  isEqualTo(otherSpell: Spell): boolean {
     if (
       this.id != otherSpell.id ||
       this.canEdit != otherSpell.canEdit ||
@@ -90,40 +90,40 @@ export class WhSpell implements Wh {
   }
 }
 
-export function apiResponseToModel(whSpellApi: WhApiResponse<WhSpellApiData>): WhSpell {
-  const spell = new WhSpell();
-  spell.id = whSpellApi.id;
-  spell.canEdit = whSpellApi.canEdit;
-  spell.name = whSpellApi.object.name;
-  spell.cn = whSpellApi.object.cn;
-  spell.range = whSpellApi.object.range;
-  spell.target = whSpellApi.object.target;
-  spell.duration = whSpellApi.object.duration;
-  spell.description = whSpellApi.object.description;
-  spell.shared = whSpellApi.object.shared;
-  spell.source = whSpellApi.object.source;
+export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
+  const spell = new Spell();
+  spell.id = spellApi.id;
+  spell.canEdit = spellApi.canEdit;
+  spell.name = spellApi.object.name;
+  spell.cn = spellApi.object.cn;
+  spell.range = spellApi.object.range;
+  spell.target = spellApi.object.target;
+  spell.duration = spellApi.object.duration;
+  spell.description = spellApi.object.description;
+  spell.shared = spellApi.object.shared;
+  spell.source = spellApi.object.source;
 
   return spell;
 }
 
-export function modelToApi(whSpell: WhSpell): WhSpellApiData {
+export function modelToApi(spell: Spell): SpellApiData {
   return {
-    name: whSpell.name,
-    cn: whSpell.cn,
-    range: whSpell.range,
-    target: whSpell.target,
-    duration: whSpell.duration,
-    description: whSpell.description,
-    shared: whSpell.shared,
-    source: whSpell.source,
+    name: spell.name,
+    cn: spell.cn,
+    range: spell.range,
+    target: spell.target,
+    duration: spell.duration,
+    description: spell.description,
+    shared: spell.shared,
+    source: spell.source,
   };
 }
 
-export class WhSpellApi {
-  getElement: (id: string) => Promise<WhSpell>;
-  listElements: (id: string) => Promise<WhSpell[]>;
-  createElement: (wh: WhSpell) => Promise<WhApiResponse<WhSpellApiData>>;
-  updateElement: (wh: WhSpell) => Promise<WhApiResponse<WhSpellApiData>>;
+export class SpellApi {
+  getElement: (id: string) => Promise<Spell>;
+  listElements: (id: string) => Promise<Spell[]>;
+  createElement: (wh: Spell) => Promise<ApiResponse<SpellApiData>>;
+  updateElement: (wh: Spell) => Promise<ApiResponse<SpellApiData>>;
   deleteElement: (id: string) => Promise<void>;
 
   constructor(axiosInstance: AxiosInstance) {

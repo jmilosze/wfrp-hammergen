@@ -1,27 +1,27 @@
-export interface Wh {
+export interface WhProperty {
   id: string;
   canEdit: boolean;
 }
 
-export interface WhApiResponse<WhApiData> {
+export interface ApiResponse<WhApiData> {
   id: string;
   canEdit: boolean;
   ownerId: string;
   object: WhApiData;
 }
 
-export type WhSource = Record<string, string>;
+export type Source = Record<string, string>;
 
-export function defaultSource(): WhSource {
+export function defaultSource(): Source {
   return { 0: "" };
 }
-export function compareWhSources(whSource1: WhSource, whSource2: WhSource) {
-  if (Object.keys(whSource1).length != Object.keys(whSource2).length) {
+export function compareWhSources(source1: Source, source2: Source) {
+  if (Object.keys(source1).length != Object.keys(source2).length) {
     return false;
   }
 
-  for (const [key, val] of Object.entries(whSource1)) {
-    if (whSource2[key] != val) {
+  for (const [key, val] of Object.entries(source1)) {
+    if (source2[key] != val) {
       return false;
     }
   }
