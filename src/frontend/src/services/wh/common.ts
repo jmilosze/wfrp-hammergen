@@ -3,11 +3,11 @@ export interface Wh {
   canEdit: boolean;
 }
 
-export interface WhApiResponse<WhApi> {
+export interface WhApiResponse<WhApiData> {
   id: string;
   canEdit: boolean;
   ownerId: string;
-  object: WhApi;
+  object: WhApiData;
 }
 
 export type WhSource = Record<string, string>;

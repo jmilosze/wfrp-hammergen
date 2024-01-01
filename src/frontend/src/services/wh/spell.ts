@@ -10,7 +10,7 @@ import { AxiosInstance } from "axios";
 
 const API_BASE_PATH = "/api/wh/spell";
 
-interface WhSpellApi {
+export interface WhSpellApiData {
   name: string;
   description: string;
   cn: number;
@@ -53,9 +53,25 @@ export class WhSpell implements Wh {
     spell.source = defaultSource();
     return spell;
   }
+
+  isEqualTo(otherSpell: WhSpell): boolean {
+    if (
+      this.name != otherSpell.name ||
+      this.cn != otherSpell.cn ||
+      this.range != otherSpell.range ||
+      this.target != otherSpell.target ||
+      this.duration != otherSpell.duration ||
+      this.description != otherSpell.description ||
+      this.shared != otherSpell.shared
+    ) {
+      return false;
+    }
+
+    return compareWhSources(this.source, otherSpell.source);
+  }
 }
 
-function apiResponseToModel(whSpellApi: WhApiResponse<WhSpellApi>): WhSpell {
+export function apiResponseToModel(whSpellApi: WhApiResponse<WhSpellApiData>): WhSpell {
   const spell = new WhSpell();
   spell.id = whSpellApi.id;
   spell.canEdit = whSpellApi.canEdit;
@@ -71,7 +87,7 @@ function apiResponseToModel(whSpellApi: WhApiResponse<WhSpellApi>): WhSpell {
   return spell;
 }
 
-function modelToApi(whSpell: WhSpell): WhSpellApi {
+export function modelToApi(whSpell: WhSpell): WhSpellApiData {
   return {
     name: whSpell.name,
     cn: whSpell.cn,
@@ -84,11 +100,11 @@ function modelToApi(whSpell: WhSpell): WhSpellApi {
   };
 }
 
-export class SpellApi {
+export class WhSpellApi {
   getElement: (id: string) => Promise<WhSpell>;
   listElements: (id: string) => Promise<WhSpell[]>;
-  createElement: (wh: WhSpell) => Promise<WhApiResponse<WhSpellApi>>;
-  updateElement: (wh: WhSpell) => Promise<WhApiResponse<WhSpellApi>>;
+  createElement: (wh: WhSpell) => Promise<WhApiResponse<WhSpellApiData>>;
+  updateElement: (wh: WhSpell) => Promise<WhApiResponse<WhSpellApiData>>;
   deleteElement: (id: string) => Promise<void>;
 
   constructor(axiosInstance: AxiosInstance) {
@@ -99,19 +115,3 @@ export class SpellApi {
     this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
   }
 }
-
-export const compareSpell = (spell1: WhSpell, spell2: WhSpell) => {
-  if (
-    spell1.name != spell2.name ||
-    spell1.cn != spell2.cn ||
-    spell1.range != spell2.range ||
-    spell1.target != spell2.target ||
-    spell1.duration != spell2.duration ||
-    spell1.description != spell2.description ||
-    spell1.shared != spell2.shared
-  ) {
-    return false;
-  }
-
-  return compareWhSources(spell1.source, spell2.source);
-};

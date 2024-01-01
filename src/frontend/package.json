@@ -7,7 +7,8 @@
     "dev": "vite",
     "lint": "vue-tsc",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "dependencies": {
     "@vueuse/core": "^10.7.0",
