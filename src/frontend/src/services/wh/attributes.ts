@@ -1,6 +1,6 @@
 import * as c from "./characterConstants";
 
-export interface Attributes {
+export interface Attributes extends Record<string, number> {
   WS: number;
   BS: number;
   S: number;
@@ -43,19 +43,18 @@ export const getAttributes = (speciesWithRegion = ""): Attributes => {
   }
 };
 
-export function sumAndMultiplyAttributes(attsAndMults: { multiplier: number; attributes: Attributes }[]): Attributes {
+export function sumAttributes(attributes1: Attributes, attributes2: Attributes): Attributes {
   const returnAtts = JSON.parse(JSON.stringify(racialAttributes.none));
-  for (const attAndMult of attsAndMults) {
-    returnAtts.WS += attAndMult.multiplier * attAndMult.attributes.WS;
-    returnAtts.BS += attAndMult.multiplier * attAndMult.attributes.BS;
-    returnAtts.S += attAndMult.multiplier * attAndMult.attributes.S;
-    returnAtts.T += attAndMult.multiplier * attAndMult.attributes.T;
-    returnAtts.I += attAndMult.multiplier * attAndMult.attributes.I;
-    returnAtts.Ag += attAndMult.multiplier * attAndMult.attributes.Ag;
-    returnAtts.Dex += attAndMult.multiplier * attAndMult.attributes.Dex;
-    returnAtts.Int += attAndMult.multiplier * attAndMult.attributes.Int;
-    returnAtts.WP += attAndMult.multiplier * attAndMult.attributes.WP;
-    returnAtts.Fel += attAndMult.multiplier * attAndMult.attributes.Fel;
+  for (let key of Object.keys(returnAtts)) {
+    returnAtts[key] = attributes1[key] + attributes2[key];
+  }
+  return returnAtts;
+}
+
+export function multiplyAttributes(multiplier: number, attributes: Attributes): Attributes {
+  const returnAtts = JSON.parse(JSON.stringify(attributes));
+  for (let key of Object.keys(returnAtts)) {
+    returnAtts[key] = multiplier * attributes[key];
   }
   return returnAtts;
 }
