@@ -1,12 +1,14 @@
-import { compareWhSources, defaultSource, WhProperty, ApiResponse, Source } from "./common.ts";
 import {
+  ApiResponse,
   createElementFunc,
   deleteElementFunc,
   getElementFunc,
   listElementsFunc,
   updateElementFunc,
+  WhProperty,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
+import { compareWhSources, defaultSource, Source } from "./source.ts";
 
 const API_BASE_PATH = "/api/wh/spell";
 

@@ -1,6 +1,7 @@
 import { test, describe, expect } from "vitest";
 import { apiResponseToModel, modelToApi, Prayer, PrayerApiData } from "../services/wh/prayer.ts";
-import { ApiResponse, Source } from "../services/wh/common.ts";
+import { Source } from "../services/wh/source.ts";
+import { ApiResponse } from "../services/wh/crudGenerator.ts";
 
 const prayerApiData: PrayerApiData = {
   name: "prayer",

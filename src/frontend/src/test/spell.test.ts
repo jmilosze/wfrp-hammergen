@@ -1,6 +1,7 @@
 import { test, describe, expect } from "vitest";
 import { apiResponseToModel, modelToApi, Spell, SpellApiData } from "../services/wh/spell.ts";
-import { ApiResponse, Source } from "../services/wh/common.ts";
+import { Source } from "../services/wh/source.ts";
+import { ApiResponse } from "../services/wh/crudGenerator.ts";
 
 const spellApiData: SpellApiData = {
   name: "spell",

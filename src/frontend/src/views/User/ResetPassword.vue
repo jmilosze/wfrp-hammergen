@@ -8,7 +8,7 @@ import { anonRequest } from "../../services/auth.ts";
 import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
-import { setValidationStatus } from "../../services/validation.ts";
+import { setValidationStatus } from "../../utils/validation.ts";
 
 const props = withDefaults(
   defineProps<{

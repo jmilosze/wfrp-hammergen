@@ -1,4 +1,4 @@
-import { setValidationStatus, ValidationStatus } from "./validation.ts";
+import { setValidationStatus, ValidationStatus } from "../utils/validation.ts";
 import { AxiosInstance } from "axios";
 
 const EMAIL_REGEX =

@@ -9,7 +9,7 @@ import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { User, UserApi } from "../../services/user.ts";
-import { setValidationStatus } from "../../services/validation.ts";
+import { setValidationStatus } from "../../utils/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());

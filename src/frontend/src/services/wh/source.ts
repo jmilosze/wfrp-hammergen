@@ -1,20 +1,9 @@
-export interface WhProperty {
-  id: string;
-  canEdit: boolean;
-}
-
-export interface ApiResponse<WhApiData> {
-  id: string;
-  canEdit: boolean;
-  ownerId: string;
-  object: WhApiData;
-}
-
 export type Source = Record<string, string>;
 
 export function defaultSource(): Source {
   return { 0: "" };
 }
+
 export function compareWhSources(source1: Source, source2: Source) {
   if (Object.keys(source1).length != Object.keys(source2).length) {
     return false;
