@@ -54,8 +54,26 @@ export class WhSpell implements Wh {
     return spell;
   }
 
+  copy() {
+    const newSpell = new WhSpell();
+    newSpell.id = this.id;
+    newSpell.name = this.name;
+    newSpell.cn = this.cn;
+    newSpell.range = this.range;
+    newSpell.target = this.target;
+    newSpell.duration = this.duration;
+    newSpell.description = this.description;
+    newSpell.canEdit = this.canEdit;
+    newSpell.shared = this.shared;
+    newSpell.source = JSON.parse(JSON.stringify(this.source));
+
+    return newSpell;
+  }
+
   isEqualTo(otherSpell: WhSpell): boolean {
     if (
+      this.id != otherSpell.id ||
+      this.canEdit != otherSpell.canEdit ||
       this.name != otherSpell.name ||
       this.cn != otherSpell.cn ||
       this.range != otherSpell.range ||
