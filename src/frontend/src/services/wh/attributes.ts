@@ -45,7 +45,7 @@ export const getAttributes = (speciesWithRegion = ""): Attributes => {
 
 export function sumAttributes(attributes1: Attributes, attributes2: Attributes): Attributes {
   const returnAtts = JSON.parse(JSON.stringify(racialAttributes.none));
-  for (let key of Object.keys(returnAtts)) {
+  for (const key of Object.keys(returnAtts)) {
     returnAtts[key] = attributes1[key] + attributes2[key];
   }
   return returnAtts;
@@ -53,7 +53,7 @@ export function sumAttributes(attributes1: Attributes, attributes2: Attributes):
 
 export function multiplyAttributes(multiplier: number, attributes: Attributes): Attributes {
   const returnAtts = JSON.parse(JSON.stringify(attributes));
-  for (let key of Object.keys(returnAtts)) {
+  for (const key of Object.keys(returnAtts)) {
     returnAtts[key] = multiplier * attributes[key];
   }
   return returnAtts;
