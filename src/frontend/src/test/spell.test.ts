@@ -48,22 +48,68 @@ describe("isEqualTo returns true", () => {
 });
 
 describe("isEqualTo returns false", () => {
-  test.each([
-    { field: "id", value: "otherId" },
-    { field: "name", value: "otherName" },
-    { field: "cn", value: 3 },
-    { field: "range", value: "otherRange" },
-    { field: "target", value: "otherTarget" },
-    { field: "duration", value: "otherDuration" },
-    { field: "description", value: "otherDescription" },
-    { field: "canEdit", value: false },
-    { field: "shared", value: false },
-  ])("when other spell has different value of $field", (t) => {
-    let otherSpell = spell.copy();
-    // @ts-ignore
-    otherSpell[t.field] = t.value;
+  test("when other spell has different value of id");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.id = "otherId";
     expect(spell.isEqualTo(otherSpell)).toBe(false);
-  });
+  }
+
+  test("when other spell has different value of name");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.name = "otherName";
+    expect(spell.isEqualTo(otherSpell)).toBe(false);
+  }
+
+  test("when other spell has different value of cn");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.cn = 3;
+    expect(spell.isEqualTo(otherSpell)).toBe(false);
+  }
+
+  test("when other spell has different value of range");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.range = "otherRange";
+    expect(spell.isEqualTo(otherSpell)).toBe(false);
+  }
+
+  test("when other spell has different value of target");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.target = "otherTarget";
+    expect(spell.isEqualTo(otherSpell)).toBe(false);
+  }
+
+  test("when other spell has different value of duration");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.duration = "otherDuration";
+    expect(spell.isEqualTo(otherSpell)).toBe(false);
+  }
+
+  test("when other spell has different value of description");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.description = "otherDescription";
+    expect(spell.isEqualTo(otherSpell)).toBe(false);
+  }
+
+  test("when other spell has different value of canEdit");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.canEdit = false;
+    expect(spell.isEqualTo(otherSpell)).toBe(false);
+  }
+
+  test("when other spell has different value of shared");
+  {
+    const otherSpell = spell.copy();
+    otherSpell.shared = false;
+    expect(spell.isEqualTo(otherSpell)).toBe(false);
+  }
 
   test.each<{ diff: string; source: WhSource }>([
     { diff: "fewer sources", source: { 1: "page 2" } },
@@ -71,7 +117,7 @@ describe("isEqualTo returns false", () => {
     { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
     { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
   ])("when other spell has $diff", (t) => {
-    let otherSpell = spell.copy();
+    const otherSpell = spell.copy();
     otherSpell.source = t.source;
     expect(spell.isEqualTo(otherSpell)).toBe(false);
   });
