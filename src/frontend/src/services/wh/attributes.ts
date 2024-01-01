@@ -23,20 +23,7 @@ export const racialAttributes: Record<string, RacialAttributes> = {
   ogre: { WS: 20, BS: 10, S: 35, T: 35, I: 0, Ag: 15, Dex: 10, Int: 10, WP: 20, Fel: 10 },
 };
 
-export const attributes = {
-  1: "WS",
-  2: "BS",
-  3: "S",
-  4: "T",
-  5: "I",
-  6: "Ag",
-  7: "Dex",
-  8: "Int",
-  9: "WP",
-  10: "Fel",
-};
-
-export const getAttributes = (speciesWithRegion = "") => {
+export const getAttributes = (speciesWithRegion = ""): RacialAttributes => {
   if (c.HUMAN_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.human));
   } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
@@ -55,13 +42,3 @@ export const getAttributes = (speciesWithRegion = "") => {
     return JSON.parse(JSON.stringify(racialAttributes.none));
   }
 };
-
-export function sumAndMultAttr(listOfAttrAndMultipliers) {
-  let returnAttr = JSON.parse(JSON.stringify(racialAttributes.none));
-  for (let attrName of Object.keys(returnAttr)) {
-    for (let attAndMultiplier of listOfAttrAndMultipliers) {
-      returnAttr[attrName] += attAndMultiplier["multiplier"] * attAndMultiplier["attributes"][attrName];
-    }
-  }
-  return returnAttr;
-}
