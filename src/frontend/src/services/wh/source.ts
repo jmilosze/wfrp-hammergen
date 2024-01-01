@@ -5,12 +5,12 @@ export function defaultSource(): Source {
 }
 
 export function compareWhSources(source1: Source, source2: Source) {
-  if (Object.keys(source1).length != Object.keys(source2).length) {
+  if (Object.keys(source1).length !== Object.keys(source2).length) {
     return false;
   }
 
   for (const [key, val] of Object.entries(source1)) {
-    if (source2[key] != val) {
+    if (source2[key] !== val) {
       return false;
     }
   }

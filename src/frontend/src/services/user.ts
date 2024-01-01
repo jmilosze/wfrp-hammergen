@@ -49,7 +49,7 @@ export class User {
   }
 
   validatePasswordMatch(): ValidationStatus {
-    return setValidationStatus(this.newPassword == this.confirmNewPassword, "Passwords do not match.");
+    return setValidationStatus(this.newPassword === this.confirmNewPassword, "Passwords do not match.");
   }
 
   validateNewSharedAccount(newSharedAccount: string): ValidationStatus {
@@ -57,7 +57,7 @@ export class User {
       return setValidationStatus(false, "Please specify username.");
     }
 
-    if (newSharedAccount == this.email) {
+    if (newSharedAccount === this.email) {
       return setValidationStatus(false, "You cannot add your own username.");
     }
 

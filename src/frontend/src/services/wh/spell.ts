@@ -75,15 +75,15 @@ export class Spell implements WhProperty {
 
   isEqualTo(otherSpell: Spell): boolean {
     if (
-      this.id != otherSpell.id ||
-      this.canEdit != otherSpell.canEdit ||
-      this.name != otherSpell.name ||
-      this.cn != otherSpell.cn ||
-      this.range != otherSpell.range ||
-      this.target != otherSpell.target ||
-      this.duration != otherSpell.duration ||
-      this.description != otherSpell.description ||
-      this.shared != otherSpell.shared
+      this.id !== otherSpell.id ||
+      this.canEdit !== otherSpell.canEdit ||
+      this.name !== otherSpell.name ||
+      this.cn !== otherSpell.cn ||
+      this.range !== otherSpell.range ||
+      this.target !== otherSpell.target ||
+      this.duration !== otherSpell.duration ||
+      this.description !== otherSpell.description ||
+      this.shared !== otherSpell.shared
     ) {
       return false;
     }
