@@ -49,7 +49,7 @@ export const getUserInfo = () => {
   const usernameInStorage = localStorage.getItem(LOCALS_STORAGE_KEY_USERNAME);
 
   return {
-    username: usernameInStorage != null ? usernameInStorage : "",
+    username: usernameInStorage !== null ? usernameInStorage : "",
   };
 };
 
@@ -58,5 +58,5 @@ export const setUserInfo = (username: string) => {
 };
 
 export const isUserLoggedIn = () => {
-  return getUserInfo().username != "";
+  return getUserInfo().username !== "";
 };

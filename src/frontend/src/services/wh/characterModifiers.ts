@@ -12,11 +12,11 @@ export class CharacterModifiers {
   }
 
   checkModifiers(): boolean {
-    if (this.size != 0 || this.movement != 0) {
+    if (this.size !== 0 || this.movement !== 0) {
       return true;
     } else {
       for (const att of Object.values(this.attributes)) {
-        if (att != 0) {
+        if (att !== 0) {
           return true;
         }
       }
@@ -25,11 +25,11 @@ export class CharacterModifiers {
   }
 
   isEqualTo(otherCharacterModifiers: CharacterModifiers) {
-    if (this.size != otherCharacterModifiers.size || this.movement != otherCharacterModifiers.movement) {
+    if (this.size !== otherCharacterModifiers.size || this.movement !== otherCharacterModifiers.movement) {
       return false;
     }
-    for (let key of Object.keys(this.attributes)) {
-      if (this.attributes[key] != otherCharacterModifiers.attributes[key]) {
+    for (const key of Object.keys(this.attributes)) {
+      if (this.attributes[key] !== otherCharacterModifiers.attributes[key]) {
         return false;
       }
     }

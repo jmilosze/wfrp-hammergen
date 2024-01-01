@@ -71,14 +71,14 @@ export class Prayer implements WhProperty {
 
   isEqualTo(otherPrayer: Prayer): boolean {
     if (
-      this.id != otherPrayer.id ||
-      this.canEdit != otherPrayer.canEdit ||
-      this.name != otherPrayer.name ||
-      this.range != otherPrayer.range ||
-      this.target != otherPrayer.target ||
-      this.duration != otherPrayer.duration ||
-      this.description != otherPrayer.description ||
-      this.shared != otherPrayer.shared
+      this.id !== otherPrayer.id ||
+      this.canEdit !== otherPrayer.canEdit ||
+      this.name !== otherPrayer.name ||
+      this.range !== otherPrayer.range ||
+      this.target !== otherPrayer.target ||
+      this.duration !== otherPrayer.duration ||
+      this.description !== otherPrayer.description ||
+      this.shared !== otherPrayer.shared
     ) {
       return false;
     }
