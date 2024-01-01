@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { ValidationStatus } from "../services/validation.ts";
+import { ValidationStatus } from "../utils/validation.ts";
 
 const props = defineProps<{
   type: "text" | "password";

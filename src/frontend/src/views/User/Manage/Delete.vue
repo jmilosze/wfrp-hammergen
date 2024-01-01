@@ -7,7 +7,7 @@ import { authRequest } from "../../../services/auth.ts";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormStringInput from "../../../components/FormStringInput.vue";
 import SubmitButton from "../../../components/SubmitButton.vue";
-import { setValidationStatus } from "../../../services/validation.ts";
+import { setValidationStatus } from "../../../utils/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());

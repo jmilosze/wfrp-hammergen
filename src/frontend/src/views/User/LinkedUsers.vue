@@ -9,7 +9,7 @@ import { authRequest } from "../../services/auth.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { User, UserApi } from "../../services/user.ts";
-import { setValidationStatus } from "../../services/validation.ts";
+import { setValidationStatus } from "../../utils/validation.ts";
 
 const submissionState = ref(new SubmissionState());
 const newSharedAccount = ref("");

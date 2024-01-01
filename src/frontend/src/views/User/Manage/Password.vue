@@ -7,7 +7,7 @@ import { computed, ref } from "vue";
 import { SubmissionState } from "../../../utils/submission.ts";
 import { useAuthStore } from "../../../stores/auth.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { setValidationStatus } from "../../../services/validation.ts";
+import { setValidationStatus } from "../../../utils/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());

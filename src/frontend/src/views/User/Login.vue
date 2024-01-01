@@ -8,7 +8,7 @@ import TextLink from "../../components/TextLink.vue";
 import { User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
-import { setValidationStatus } from "../../services/validation.ts";
+import { setValidationStatus } from "../../utils/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
