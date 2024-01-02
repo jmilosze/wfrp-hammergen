@@ -8,7 +8,7 @@ import {
   WhProperty,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { compareWhSources, Source } from "./source.ts";
+import { sourcesAreEqual, copySource, Source } from "./source.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
 
@@ -65,25 +65,22 @@ export class Prayer implements WhProperty {
       description: this.description,
       canEdit: this.canEdit,
       shared: this.shared,
-      source: JSON.parse(JSON.stringify(this.source)),
+      source: copySource(this.source),
     });
   }
 
   isEqualTo(otherPrayer: Prayer): boolean {
-    if (
-      this.id !== otherPrayer.id ||
-      this.canEdit !== otherPrayer.canEdit ||
-      this.name !== otherPrayer.name ||
-      this.range !== otherPrayer.range ||
-      this.target !== otherPrayer.target ||
-      this.duration !== otherPrayer.duration ||
-      this.description !== otherPrayer.description ||
-      this.shared !== otherPrayer.shared
-    ) {
-      return false;
-    }
-
-    return compareWhSources(this.source, otherPrayer.source);
+    return (
+      this.id === otherPrayer.id &&
+      this.canEdit === otherPrayer.canEdit &&
+      this.name === otherPrayer.name &&
+      this.range === otherPrayer.range &&
+      this.target === otherPrayer.target &&
+      this.duration === otherPrayer.duration &&
+      this.description === otherPrayer.description &&
+      this.shared === otherPrayer.shared &&
+      sourcesAreEqual(this.source, otherPrayer.source)
+    );
   }
 }
 

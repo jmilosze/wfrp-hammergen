@@ -8,7 +8,7 @@ import {
   WhProperty,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { compareWhSources, Source } from "./source.ts";
+import { sourcesAreEqual, copySource, Source } from "./source.ts";
 
 const API_BASE_PATH = "/api/wh/spell";
 
@@ -70,26 +70,23 @@ export class Spell implements WhProperty {
       description: this.description,
       canEdit: this.canEdit,
       shared: this.shared,
-      source: JSON.parse(JSON.stringify(this.source)),
+      source: copySource(this.source),
     });
   }
 
   isEqualTo(otherSpell: Spell): boolean {
-    if (
-      this.id !== otherSpell.id ||
-      this.canEdit !== otherSpell.canEdit ||
-      this.name !== otherSpell.name ||
-      this.cn !== otherSpell.cn ||
-      this.range !== otherSpell.range ||
-      this.target !== otherSpell.target ||
-      this.duration !== otherSpell.duration ||
-      this.description !== otherSpell.description ||
-      this.shared !== otherSpell.shared
-    ) {
-      return false;
-    }
-
-    return compareWhSources(this.source, otherSpell.source);
+    return (
+      this.id === otherSpell.id &&
+      this.canEdit === otherSpell.canEdit &&
+      this.name === otherSpell.name &&
+      this.cn === otherSpell.cn &&
+      this.range === otherSpell.range &&
+      this.target === otherSpell.target &&
+      this.duration === otherSpell.duration &&
+      this.description === otherSpell.description &&
+      this.shared === otherSpell.shared &&
+      sourcesAreEqual(this.source, otherSpell.source)
+    );
   }
 }
 
