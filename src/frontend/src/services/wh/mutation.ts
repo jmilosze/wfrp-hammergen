@@ -1,15 +1,24 @@
 import { sourcesAreEqual, copySource, Source } from "./source.ts";
-import { CharacterModifiers } from "./characterModifiers.ts";
-import { WhProperty } from "./crudGenerator.ts";
+import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
+import {
+  ApiResponse,
+  createElementFunc,
+  deleteElementFunc,
+  getElementFunc,
+  listElementsFunc,
+  updateElementFunc,
+  WhProperty,
+} from "./crudGenerator.ts";
+import { AxiosInstance } from "axios";
 
-// const API_BASE_PATH = "/api/wh/mutation";
+const API_BASE_PATH = "/api/wh/mutation";
 
-type MutationType = 0 | 1;
+export type MutationType = 0 | 1;
 export interface MutationApiData {
   name: string;
   description: string;
   type: MutationType;
-  modifiers: CharacterModifiers;
+  modifiers: CharacterModifiersData;
   shared: boolean;
   source: Source;
 }
@@ -68,5 +77,45 @@ export class Mutation implements WhProperty {
       this.modifiers.isEqualTo(otherMutation.modifiers) &&
       sourcesAreEqual(this.source, otherMutation.source)
     );
+  }
+}
+
+export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): Mutation {
+  return new Mutation({
+    id: mutationApi.id,
+    canEdit: mutationApi.canEdit,
+    name: mutationApi.object.name,
+    description: mutationApi.object.description,
+    type: mutationApi.object.type,
+    modifiers: new CharacterModifiers(mutationApi.object.modifiers),
+    shared: mutationApi.object.shared,
+    source: copySource(mutationApi.object.source),
+  });
+}
+
+export function modelToApi(mutation: Mutation): MutationApiData {
+  return {
+    name: mutation.name,
+    description: mutation.description,
+    type: mutation.type,
+    modifiers: mutation.modifiers.copy(),
+    shared: mutation.shared,
+    source: copySource(mutation.source),
+  };
+}
+
+export class MutationApi {
+  getElement: (id: string) => Promise<Mutation>;
+  listElements: (id: string) => Promise<Mutation[]>;
+  createElement: (wh: Mutation) => Promise<ApiResponse<MutationApiData>>;
+  updateElement: (wh: Mutation) => Promise<ApiResponse<MutationApiData>>;
+  deleteElement: (id: string) => Promise<void>;
+
+  constructor(axiosInstance: AxiosInstance) {
+    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
+    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
+    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
+    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
+    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
   }
 }
