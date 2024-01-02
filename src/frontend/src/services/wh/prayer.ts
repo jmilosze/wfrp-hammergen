@@ -8,7 +8,7 @@ import {
   WhProperty,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { compareWhSources, defaultSource, Source } from "./source.ts";
+import { compareWhSources, Source } from "./source.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
 
@@ -33,25 +33,38 @@ export class Prayer implements WhProperty {
   target: string;
   source: Source;
 
-  constructor() {
-    this.id = "";
-    this.name = "name";
-    this.range = "";
-    this.target = "";
-    this.duration = "";
-    this.description = "";
-    this.canEdit = false;
-    this.shared = false;
-    this.source = {};
-  }
-
-  newPrayer(canEdit: boolean) {
-    const prayer = new Prayer();
-    prayer.name = "New prayer";
-    prayer.canEdit = canEdit;
-    prayer.shared = true;
-    prayer.source = defaultSource();
-    return prayer;
+  constructor(
+    prayer: {
+      id: string;
+      canEdit: boolean;
+      name: string;
+      description: string;
+      range: string;
+      duration: string;
+      shared: boolean;
+      target: string;
+      source: Source;
+    } = {
+      id: "",
+      name: "name",
+      range: "",
+      target: "",
+      duration: "",
+      description: "",
+      canEdit: false,
+      shared: false,
+      source: {},
+    },
+  ) {
+    this.id = prayer.id;
+    this.name = prayer.name;
+    this.range = prayer.range;
+    this.target = prayer.target;
+    this.duration = prayer.duration;
+    this.description = prayer.description;
+    this.canEdit = prayer.canEdit;
+    this.shared = prayer.shared;
+    this.source = prayer.source;
   }
 
   copy() {

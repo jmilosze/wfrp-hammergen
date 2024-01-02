@@ -21,17 +21,18 @@ const spellApiResponse: ApiResponse<SpellApiData> = {
   object: spellApiData,
 };
 
-const spell = new Spell();
-spell.id = "id";
-spell.canEdit = true;
-spell.name = "spell";
-spell.cn = 1;
-spell.range = "range";
-spell.target = "target";
-spell.duration = "duration";
-spell.description = "desc";
-spell.shared = true;
-spell.source = { 1: "page 2", 3: "page 5-10" };
+const spell = new Spell({
+  id: "id",
+  canEdit: true,
+  name: "spell",
+  cn: 1,
+  range: "range",
+  target: "target",
+  duration: "duration",
+  description: "desc",
+  shared: true,
+  source: { 1: "page 2", 3: "page 5-10" },
+});
 
 test("apiResponseToModel returns expected spell", () => {
   expect(apiResponseToModel(spellApiResponse)).toMatchObject(spell);
