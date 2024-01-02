@@ -36,6 +36,14 @@ export class CharacterModifiers {
     return true;
   }
 
+  copy() {
+    return new CharacterModifiers({
+      size: this.size,
+      movement: this.movement,
+      attributes: JSON.parse(JSON.stringify(this.attributes)),
+    });
+  }
+
   add(otherCharacterModifiers: CharacterModifiers) {
     this.size += otherCharacterModifiers.size;
     this.movement += otherCharacterModifiers.movement;

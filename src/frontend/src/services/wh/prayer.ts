@@ -56,18 +56,17 @@ export class Prayer implements WhProperty {
   }
 
   copy() {
-    const newPrayer = new Prayer();
-    newPrayer.id = this.id;
-    newPrayer.name = this.name;
-    newPrayer.range = this.range;
-    newPrayer.target = this.target;
-    newPrayer.duration = this.duration;
-    newPrayer.description = this.description;
-    newPrayer.canEdit = this.canEdit;
-    newPrayer.shared = this.shared;
-    newPrayer.source = JSON.parse(JSON.stringify(this.source));
-
-    return newPrayer;
+    return new Prayer({
+      id: this.id,
+      name: this.name,
+      range: this.range,
+      target: this.target,
+      duration: this.duration,
+      description: this.description,
+      canEdit: this.canEdit,
+      shared: this.shared,
+      source: JSON.parse(JSON.stringify(this.source)),
+    });
   }
 
   isEqualTo(otherPrayer: Prayer): boolean {
