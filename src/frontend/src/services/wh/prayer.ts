@@ -33,38 +33,26 @@ export class Prayer implements WhProperty {
   target: string;
   source: Source;
 
-  constructor(
-    prayer: {
-      id: string;
-      canEdit: boolean;
-      name: string;
-      description: string;
-      range: string;
-      duration: string;
-      shared: boolean;
-      target: string;
-      source: Source;
-    } = {
-      id: "",
-      name: "name",
-      range: "",
-      target: "",
-      duration: "",
-      description: "",
-      canEdit: false,
-      shared: false,
-      source: {},
-    },
-  ) {
-    this.id = prayer.id;
-    this.name = prayer.name;
-    this.range = prayer.range;
-    this.target = prayer.target;
-    this.duration = prayer.duration;
-    this.description = prayer.description;
-    this.canEdit = prayer.canEdit;
-    this.shared = prayer.shared;
-    this.source = prayer.source;
+  constructor({
+    id = "",
+    name = "name",
+    range = "",
+    target = "",
+    duration = "",
+    description = "",
+    canEdit = false,
+    shared = false,
+    source = {},
+  } = {}) {
+    this.id = id;
+    this.name = name;
+    this.range = range;
+    this.target = target;
+    this.duration = duration;
+    this.description = description;
+    this.canEdit = canEdit;
+    this.shared = shared;
+    this.source = source;
   }
 
   copy() {

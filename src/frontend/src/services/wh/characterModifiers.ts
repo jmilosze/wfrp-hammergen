@@ -5,19 +5,13 @@ export class CharacterModifiers {
   movement: number;
   attributes: Attributes;
 
-  constructor(
-    modifiers: { size: number; movement: number; attributes: Attributes } = {
-      size: 0,
-      movement: 0,
-      attributes: getAttributes(),
-    },
-  ) {
-    this.size = modifiers.size;
-    this.movement = modifiers.movement;
-    this.attributes = modifiers.attributes;
+  constructor({ size = 0, movement = 0, attributes = getAttributes() } = {}) {
+    this.size = size;
+    this.movement = movement;
+    this.attributes = attributes;
   }
 
-  checkModifiers(): boolean {
+  isNonZero(): boolean {
     if (this.size !== 0 || this.movement !== 0) {
       return true;
     } else {

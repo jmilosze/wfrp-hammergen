@@ -35,41 +35,28 @@ export class Spell implements WhProperty {
   target: string;
   source: Source;
 
-  constructor(
-    spell: {
-      id: string;
-      canEdit: boolean;
-      name: string;
-      description: string;
-      cn: number;
-      range: string;
-      duration: string;
-      shared: boolean;
-      target: string;
-      source: Source;
-    } = {
-      id: "",
-      name: "name",
-      cn: 0,
-      range: "",
-      target: "",
-      duration: "",
-      description: "",
-      canEdit: false,
-      shared: false,
-      source: {},
-    },
-  ) {
-    this.id = spell.id;
-    this.name = spell.name;
-    this.cn = spell.cn;
-    this.range = spell.range;
-    this.target = spell.target;
-    this.duration = spell.duration;
-    this.description = spell.description;
-    this.canEdit = spell.canEdit;
-    this.shared = spell.shared;
-    this.source = spell.source;
+  constructor({
+    id = "",
+    name = "name",
+    cn = 0,
+    range = "",
+    target = "",
+    duration = "",
+    description = "",
+    canEdit = false,
+    shared = false,
+    source = {},
+  } = {}) {
+    this.id = id;
+    this.name = name;
+    this.cn = cn;
+    this.range = range;
+    this.target = target;
+    this.duration = duration;
+    this.description = description;
+    this.canEdit = canEdit;
+    this.shared = shared;
+    this.source = source;
   }
 
   copy() {
