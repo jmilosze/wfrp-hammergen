@@ -60,19 +60,18 @@ export class Spell implements WhProperty {
   }
 
   copy() {
-    const newSpell = new Spell();
-    newSpell.id = this.id;
-    newSpell.name = this.name;
-    newSpell.cn = this.cn;
-    newSpell.range = this.range;
-    newSpell.target = this.target;
-    newSpell.duration = this.duration;
-    newSpell.description = this.description;
-    newSpell.canEdit = this.canEdit;
-    newSpell.shared = this.shared;
-    newSpell.source = JSON.parse(JSON.stringify(this.source));
-
-    return newSpell;
+    return new Spell({
+      id: this.id,
+      name: this.name,
+      cn: this.cn,
+      range: this.range,
+      target: this.target,
+      duration: this.duration,
+      description: this.description,
+      canEdit: this.canEdit,
+      shared: this.shared,
+      source: JSON.parse(JSON.stringify(this.source)),
+    });
   }
 
   isEqualTo(otherSpell: Spell): boolean {
