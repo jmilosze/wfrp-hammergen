@@ -37,7 +37,7 @@ export class Spell implements WhProperty {
 
   constructor({
     id = "",
-    name = "name",
+    name = "",
     cn = 0,
     range = "",
     target = "",
