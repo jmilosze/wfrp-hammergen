@@ -1,4 +1,4 @@
-import { Source } from "./source.ts";
+import { sourcesAreEqual, copySource, Source } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { WhProperty } from "./crudGenerator.ts";
 
@@ -53,7 +53,20 @@ export class Mutation implements WhProperty {
       type: this.type,
       modifiers: this.modifiers.copy(),
       shared: this.shared,
-      source: JSON.parse(JSON.stringify(this.source)),
+      source: copySource(this.source),
     });
+  }
+
+  isEqualTo(otherMutation: Mutation): boolean {
+    return (
+      this.id === otherMutation.id &&
+      this.canEdit === otherMutation.canEdit &&
+      this.name === otherMutation.name &&
+      this.description === otherMutation.description &&
+      this.type === otherMutation.type &&
+      this.shared === otherMutation.shared &&
+      this.modifiers.isEqualTo(otherMutation.modifiers) &&
+      sourcesAreEqual(this.source, otherMutation.source)
+    );
   }
 }
