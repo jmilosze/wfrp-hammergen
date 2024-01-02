@@ -35,7 +35,7 @@ export class Prayer implements WhProperty {
 
   constructor({
     id = "",
-    name = "name",
+    name = "",
     range = "",
     target = "",
     duration = "",
