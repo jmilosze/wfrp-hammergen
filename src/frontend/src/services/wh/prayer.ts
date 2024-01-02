@@ -8,7 +8,7 @@ import {
   WhProperty,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { sourcesAreEqual, copySource, Source } from "./source.ts";
+import { copySource, Source, sourcesAreEqual } from "./source.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
 
@@ -85,18 +85,17 @@ export class Prayer implements WhProperty {
 }
 
 export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Prayer {
-  const prayer = new Prayer();
-  prayer.id = prayerApi.id;
-  prayer.canEdit = prayerApi.canEdit;
-  prayer.name = prayerApi.object.name;
-  prayer.range = prayerApi.object.range;
-  prayer.target = prayerApi.object.target;
-  prayer.duration = prayerApi.object.duration;
-  prayer.description = prayerApi.object.description;
-  prayer.shared = prayerApi.object.shared;
-  prayer.source = prayerApi.object.source;
-
-  return prayer;
+  return new Prayer({
+    id: prayerApi.id,
+    canEdit: prayerApi.canEdit,
+    name: prayerApi.object.name,
+    range: prayerApi.object.range,
+    target: prayerApi.object.target,
+    duration: prayerApi.object.duration,
+    description: prayerApi.object.description,
+    shared: prayerApi.object.shared,
+    source: prayerApi.object.source,
+  });
 }
 
 export function modelToApi(prayer: Prayer): PrayerApiData {

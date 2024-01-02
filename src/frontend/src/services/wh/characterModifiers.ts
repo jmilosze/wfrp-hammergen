@@ -1,5 +1,11 @@
 import { Attributes, getAttributes, multiplyAttributes, sumAttributes } from "./attributes";
 
+export interface CharacterModifiersData {
+  size: number;
+  movement: number;
+  attributes: Attributes;
+}
+
 export class CharacterModifiers {
   size: number;
   movement: number;

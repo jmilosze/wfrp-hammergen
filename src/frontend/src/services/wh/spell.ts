@@ -8,7 +8,7 @@ import {
   WhProperty,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { sourcesAreEqual, copySource, Source } from "./source.ts";
+import { copySource, Source, sourcesAreEqual } from "./source.ts";
 
 const API_BASE_PATH = "/api/wh/spell";
 
@@ -91,19 +91,18 @@ export class Spell implements WhProperty {
 }
 
 export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
-  const spell = new Spell();
-  spell.id = spellApi.id;
-  spell.canEdit = spellApi.canEdit;
-  spell.name = spellApi.object.name;
-  spell.cn = spellApi.object.cn;
-  spell.range = spellApi.object.range;
-  spell.target = spellApi.object.target;
-  spell.duration = spellApi.object.duration;
-  spell.description = spellApi.object.description;
-  spell.shared = spellApi.object.shared;
-  spell.source = spellApi.object.source;
-
-  return spell;
+  return new Spell({
+    id: spellApi.id,
+    canEdit: spellApi.canEdit,
+    name: spellApi.object.name,
+    cn: spellApi.object.cn,
+    range: spellApi.object.range,
+    target: spellApi.object.target,
+    duration: spellApi.object.duration,
+    description: spellApi.object.description,
+    shared: spellApi.object.shared,
+    source: spellApi.object.source,
+  });
 }
 
 export function modelToApi(spell: Spell): SpellApiData {
