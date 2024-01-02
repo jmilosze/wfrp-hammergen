@@ -20,16 +20,17 @@ const prayerApiResponse: ApiResponse<PrayerApiData> = {
   object: prayerApiData,
 };
 
-const prayer = new Prayer();
-prayer.id = "id";
-prayer.canEdit = true;
-prayer.name = "prayer";
-prayer.range = "range";
-prayer.target = "target";
-prayer.duration = "duration";
-prayer.description = "desc";
-prayer.shared = true;
-prayer.source = { 1: "page 2", 3: "page 5-10" };
+const prayer = new Prayer({
+  id: "id",
+  canEdit: true,
+  name: "prayer",
+  range: "range",
+  target: "target",
+  duration: "duration",
+  description: "desc",
+  shared: true,
+  source: { 1: "page 2", 3: "page 5-10" },
+});
 
 test("apiResponseToModel returns expected prayer", () => {
   expect(apiResponseToModel(prayerApiResponse)).toMatchObject(prayer);

@@ -5,10 +5,16 @@ export class CharacterModifiers {
   movement: number;
   attributes: Attributes;
 
-  constructor() {
-    this.size = 0;
-    this.movement = 0;
-    this.attributes = getAttributes();
+  constructor(
+    modifiers: { size: number; movement: number; attributes: Attributes } = {
+      size: 0,
+      movement: 0,
+      attributes: getAttributes(),
+    },
+  ) {
+    this.size = modifiers.size;
+    this.movement = modifiers.movement;
+    this.attributes = modifiers.attributes;
   }
 
   checkModifiers(): boolean {
@@ -40,11 +46,15 @@ export class CharacterModifiers {
     this.size += otherCharacterModifiers.size;
     this.movement += otherCharacterModifiers.movement;
     this.attributes = sumAttributes(this.attributes, otherCharacterModifiers.attributes);
+
+    return this;
   }
 
   multiply(multiplier: number) {
     this.size *= multiplier;
     this.movement *= multiplier;
     this.attributes = multiplyAttributes(multiplier, this.attributes);
+
+    return this;
   }
 }
