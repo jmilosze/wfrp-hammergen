@@ -17,7 +17,6 @@ export interface MutationApiData {
 export class Mutation implements WhProperty {
   id: string;
   canEdit: boolean;
-  hasModifiers: boolean;
   name: string;
   description: string;
   type: MutationType;
@@ -28,7 +27,6 @@ export class Mutation implements WhProperty {
   constructor({
     id = "",
     canEdit = false,
-    hasModifiers = false,
     name = "",
     description = "",
     type = 0 as MutationType,
@@ -37,7 +35,6 @@ export class Mutation implements WhProperty {
     source = {},
   } = {}) {
     this.id = id;
-    this.hasModifiers = hasModifiers;
     this.canEdit = canEdit;
     this.name = name;
     this.description = description;
@@ -47,5 +44,16 @@ export class Mutation implements WhProperty {
     this.source = source;
   }
 
-  copy() {}
+  copy() {
+    return new Mutation({
+      id: this.id,
+      canEdit: this.canEdit,
+      name: this.name,
+      description: this.description,
+      type: this.type,
+      modifiers: this.modifiers.copy(),
+      shared: this.shared,
+      source: JSON.parse(JSON.stringify(this.source)),
+    });
+  }
 }
