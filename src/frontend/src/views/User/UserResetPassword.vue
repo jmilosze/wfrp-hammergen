@@ -76,23 +76,23 @@ async function submitForm() {
   <div>
     <Header title="Reset password">Create a new password.</Header>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submissionState="submissionState" />
+      <AfterSubmit :submission-state="submissionState" />
 
       <FormStringInput
+        v-model="user.newPassword"
         type="password"
         class="mt-3"
-        v-model="user.newPassword"
         title="Password"
-        :validationStatus="validPassword"
+        :validation-status="validPassword"
       />
       <FormStringInput
+        v-model="user.confirmNewPassword"
         type="password"
         class="mt-3"
-        v-model="user.confirmNewPassword"
         title="Confirm Password"
-        :validationStatus="passwordMatch"
+        :validation-status="passwordMatch"
       />
-      <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Submit</SubmitButton>
+      <SubmitButton class="mt-3" :submission-state="submissionState" @click="submitForm">Submit</SubmitButton>
     </div>
   </div>
 </template>

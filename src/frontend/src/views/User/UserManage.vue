@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
-import Username from "./Manage/Username.vue";
-import Password from "./Manage/Password.vue";
-import Delete from "./Manage/Delete.vue";
+import Username from "./Manage/ManageUsername.vue";
+import Password from "./Manage/ManagePassword.vue";
+import Delete from "./Manage/ManageDelete.vue";
 </script>
 
 <template>

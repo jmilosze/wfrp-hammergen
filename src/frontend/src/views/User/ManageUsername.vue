@@ -67,16 +67,16 @@ async function submitForm() {
   <div class="mt-5 pb-2 pl-2 border-b-2 border-neutral-200">
     <div class="text-xl">Change username (email)</div>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submissionState="submissionState" />
-      <FormStringInput type="text" class="mt-1" v-model="user.email" title="Email" :validationStatus="validEmail" />
+      <AfterSubmit :submission-state="submissionState" />
+      <FormStringInput v-model="user.email" type="text" class="mt-1" title="Email" :validation-status="validEmail" />
       <FormStringInput
+        v-model="user.currentPassword"
         type="password"
         class="mt-3"
-        v-model="user.currentPassword"
         title="Current password"
-        :validationStatus="validCurrentPassword"
+        :validation-status="validCurrentPassword"
       />
-      <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Update email</SubmitButton>
+      <SubmitButton class="mt-3" :submission-state="submissionState" @click="submitForm">Update email</SubmitButton>
     </div>
   </div>
 </template>

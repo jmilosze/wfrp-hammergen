@@ -117,19 +117,19 @@ async function submitForm() {
     </div>
   </div>
   <div class="pt-2 md:w-96">
-    <AfterSubmit class="mt-2" :submissionState="submissionState" />
+    <AfterSubmit class="mt-2" :submission-state="submissionState" />
     <FormStringInput
+      v-model="newSharedAccount"
       type="text"
       class="mt-3"
-      v-model="newSharedAccount"
       title="Add new user (email)"
-      :validationStatus="validNewSharedAccount"
+      :validation-status="validNewSharedAccount"
     >
-      <SubmitButton variant="normal" class="ml-3" :submissionState="submissionState" @click="addUsername"
+      <SubmitButton variant="normal" class="ml-3" :submission-state="submissionState" @click="addUsername"
         >Add</SubmitButton
       >
     </FormStringInput>
-    <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Apply changes</SubmitButton>
+    <SubmitButton class="mt-3" :submission-state="submissionState" @click="submitForm">Apply changes</SubmitButton>
   </div>
 </template>
 
