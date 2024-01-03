@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { User, UserApi } from "../../../services/user.ts";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
-import FormStringInput from "../../../components/FormStringInput.vue";
-import SubmitButton from "../../../components/SubmitButton.vue";
+import { User, UserApi } from "../../services/user.ts";
+import AfterSubmit from "../../components/AfterSubmit.vue";
+import FormStringInput from "../../components/FormStringInput.vue";
+import SubmitButton from "../../components/SubmitButton.vue";
 import { computed, ref } from "vue";
-import { SubmissionState } from "../../../utils/submission.ts";
-import { useAuthStore } from "../../../stores/auth.ts";
-import { authRequest } from "../../../services/auth.ts";
-import { setValidationStatus } from "../../../utils/validation.ts";
+import { SubmissionState } from "../../utils/submission.ts";
+import { useAuthStore } from "../../stores/auth.ts";
+import { authRequest } from "../../services/auth.ts";
+import { setValidationStatus } from "../../utils/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
