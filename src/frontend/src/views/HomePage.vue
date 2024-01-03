@@ -39,7 +39,7 @@ import TextLink from "../components/TextLink.vue";
     <p>
       Hammergen has almost all trappings, careers, skills, talents, mutations, spells, and qualities from WFRP 4th ed
       Rulebook and all other 4th ed books published. Full list of included source books can be fond in
-      <TextLink route-name="about">About</TextLink>
+      <TextLink routeName="about">About</TextLink>
       section. Each of them has a reference to the source book and page they are from. Some examples of what you can use
       filters for are:
     </p>
@@ -50,7 +50,7 @@ import TextLink from "../components/TextLink.vue";
     </ul>
     <p>
       You can see example characters (even without registering) by going to
-      <TextLink route-name="placeholder">Characters</TextLink>
+      <TextLink routeName="placeholder">Characters</TextLink>
       in the side navigation bar.
     </p>
     <div class="text-2xl font-semibold mt-5">How do I use it?</div>
@@ -69,12 +69,12 @@ import TextLink from "../components/TextLink.vue";
     <p>
       You can share any custom property (character, skill, trapping, etc.) you made with other players! When a property
       is marked as <span class="font-bold">Public</span>, anyone you give your username to, can see that item in
-      read-only mode. Sharing is explained in the <TextLink route-name="linkedusers">Linked Users</TextLink> tab
+      read-only mode. Sharing is explained in the <TextLink routeName="linkedusers">Linked Users</TextLink> tab
       available after logging in.
     </p>
     <p>
       More in-depth description of how to use Hammergen features can be found in
-      <TextLink route-name="howto">How to use Hammergen</TextLink>.
+      <TextLink routeName="howto">How to use Hammergen</TextLink>.
     </p>
     <div class="text-2xl font-semibold mt-5">About</div>
     <p>
