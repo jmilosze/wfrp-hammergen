@@ -69,29 +69,29 @@ async function submitForm() {
   <div class="mt-5 pb-2 pl-2 border-b-2 border-neutral-200">
     <div class="text-xl">Change password</div>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submission-state="submissionState" />
+      <AfterSubmit :submissionState="submissionState" />
       <FormStringInput
         v-model="user.newPassword"
         type="password"
         class="mt-1"
         title="New password"
-        :validation-status="validPassword"
+        :validationStatus="validPassword"
       />
       <FormStringInput
         v-model="user.confirmNewPassword"
         type="password"
         class="mt-3"
         title="Confirm new password"
-        :validation-status="passwordMatch"
+        :validationStatus="passwordMatch"
       />
       <FormStringInput
         v-model="user.currentPassword"
         type="password"
         class="mt-3"
         title="Current password"
-        :validation-status="validCurrentPassword"
+        :validationStatus="validCurrentPassword"
       />
-      <SubmitButton class="mt-3" :submission-state="submissionState" @click="submitForm">Update password</SubmitButton>
+      <SubmitButton class="mt-3" :submissionState="submissionState" @click="submitForm">Update password</SubmitButton>
     </div>
   </div>
 </template>

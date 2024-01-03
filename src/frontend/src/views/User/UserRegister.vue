@@ -100,24 +100,24 @@ async function submitForm() {
       </p>
     </Header>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submission-state="submissionState" />
-      <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validation-status="validEmail" />
+      <AfterSubmit :submissionState="submissionState" />
+      <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validationStatus="validEmail" />
       <FormStringInput
         v-model="user.newPassword"
         type="password"
         class="mt-3"
         title="Password"
-        :validation-status="validPassword"
+        :validationStatus="validPassword"
       />
       <FormStringInput
         v-model="user.confirmNewPassword"
         type="password"
         class="mt-3"
         title="Confirm Password"
-        :validation-status="passwordMatch"
+        :validationStatus="passwordMatch"
       />
     </div>
-    <SubmitButton class="mt-3" :submission-state="submissionState" @click="submitForm">Register</SubmitButton>
+    <SubmitButton class="mt-3" :submissionState="submissionState" @click="submitForm">Register</SubmitButton>
   </div>
 </template>
 

@@ -44,9 +44,9 @@ import TextLink from "../components/TextLink.vue";
   <p>
     Any character of property you make, you can share with other Hammergen users. In order for them to use it, you must
     mark your character/property as "public". Next, they will need to add you to "linked users". It can be done in
-    <TextLink route-name="linkedusers">Linked Users</TextLink> tab visible in the left-hand navigation menu after
-    logging in. Every shared character and property are in read-only mode. It means that only the original owner can
-    modify or delete it.
+    <TextLink routeName="linkedusers">Linked Users</TextLink> tab visible in the left-hand navigation menu after logging
+    in. Every shared character and property are in read-only mode. It means that only the original owner can modify or
+    delete it.
   </p>
 </template>
 

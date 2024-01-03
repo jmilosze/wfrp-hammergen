@@ -9,7 +9,8 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "@typescript-eslint/no-explicit-any": "off",
-    "vue/max-attributes-per-line": "off"
+    "vue/max-attributes-per-line": "off",
+    "vue/attribute-hyphenation": [1, "never"]
   },
   root: true,
 };

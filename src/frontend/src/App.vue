@@ -41,12 +41,12 @@ onMounted(async () => {
           </svg>
         </button>
         <div v-if="authStore.loggedIn" class="hidden md:flex items-center">
-          <NavLink route-name="manage" variant="top" class="mx-5 whitespace-nowrap">Manage Account</NavLink>
+          <NavLink routeName="manage" variant="top" class="mx-5 whitespace-nowrap">Manage Account</NavLink>
           <NavLink class="ml-5" variant="top" @click="authStore.logout">Logout</NavLink>
         </div>
         <div v-else class="hidden md:flex justify-center">
-          <NavLink route-name="register" variant="top" class="mx-5">Register</NavLink>
-          <NavLink route-name="login" variant="top" class="ml-5">Login</NavLink>
+          <NavLink routeName="register" variant="top" class="mx-5">Register</NavLink>
+          <NavLink routeName="login" variant="top" class="ml-5">Login</NavLink>
         </div>
       </div>
     </div>
@@ -57,7 +57,7 @@ onMounted(async () => {
     :class="!screenSizeMd && !showSideBar ? '-translate-x-64' : ''"
   >
     <div class="pl-1 md:p-0 mt-2 mb-8 flex items-center justify-between md:justify-center md:ml-0">
-      <NavLink route-name="home" variant="side" class="text-3xl font-hammergen">Hammergen</NavLink>
+      <NavLink routeName="home" variant="side" class="text-3xl font-hammergen">Hammergen</NavLink>
       <button
         v-if="!screenSizeMd && showSideBar"
         class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
@@ -72,30 +72,30 @@ onMounted(async () => {
     </div>
     <div class="pl-3 pr-3 divide-y divide-neutral-700">
       <div class="text-xl pb-2">
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Characters</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Characters</NavLink>
       </div>
       <div class="py-2">
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Careers</NavLink>
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Mutations</NavLink>
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Prayers</NavLink>
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Qualities and Runes</NavLink>
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Skills</NavLink>
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Spells</NavLink>
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Talents</NavLink>
-        <NavLink route-name="placeholder" variant="side" @click="showSideBar = false">Trappings</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Careers</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Mutations</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Prayers</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Qualities and Runes</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Skills</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Spells</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Talents</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Trappings</NavLink>
       </div>
       <div v-if="authStore.loggedIn" class="py-2">
-        <NavLink route-name="linkedusers" variant="side" @click="showSideBar = false">Linked Users</NavLink>
-        <NavLink route-name="manage" variant="side" @click="showSideBar = false">Manage Account</NavLink>
+        <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked Users</NavLink>
+        <NavLink routeName="manage" variant="side" @click="showSideBar = false">Manage Account</NavLink>
         <NavLink variant="side" @click="authStore.logout">Logout</NavLink>
       </div>
       <div v-else class="py-2">
-        <NavLink route-name="register" variant="side" @click="showSideBar = false">Register</NavLink>
-        <NavLink route-name="login" variant="side" @click="showSideBar = false">Login</NavLink>
+        <NavLink routeName="register" variant="side" @click="showSideBar = false">Register</NavLink>
+        <NavLink routeName="login" variant="side" @click="showSideBar = false">Login</NavLink>
       </div>
       <div class="pt-2">
-        <NavLink route-name="howto" variant="side" @click="showSideBar = false">How to use Hammergen</NavLink>
-        <NavLink route-name="about" variant="side" @click="showSideBar = false">About</NavLink>
+        <NavLink routeName="howto" variant="side" @click="showSideBar = false">How to use Hammergen</NavLink>
+        <NavLink routeName="about" variant="side" @click="showSideBar = false">About</NavLink>
       </div>
     </div>
   </div>

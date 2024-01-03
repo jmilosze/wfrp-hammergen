@@ -88,10 +88,10 @@ async function submitForm() {
     </div>
   </div>
   <div class="pt-2 md:w-96">
-    <AfterSubmit :submission-state="submissionState" />
-    <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validation-status="validEmail" />
+    <AfterSubmit :submissionState="submissionState" />
+    <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validationStatus="validEmail" />
   </div>
-  <SubmitButton class="mt-3" :submission-state="submissionState" @click="submitForm">Submit</SubmitButton>
+  <SubmitButton class="mt-3" :submissionState="submissionState" @click="submitForm">Submit</SubmitButton>
 </template>
 
 <style scoped></style>
