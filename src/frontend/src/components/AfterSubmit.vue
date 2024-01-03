@@ -9,10 +9,10 @@ defineProps<{
 
 <template>
   <div>
-    <AlertBlock alertType="red" :visible="submissionState.status == 'failure' && submissionState.message != ''">
+    <AlertBlock alert-type="red" :visible="submissionState.status == 'failure' && submissionState.message != ''">
       {{ submissionState.message }}
     </AlertBlock>
-    <AlertBlock alertType="green" :visible="submissionState.status == 'success' && submissionState.message != ''">
+    <AlertBlock alert-type="green" :visible="submissionState.status == 'success' && submissionState.message != ''">
       {{ submissionState.message }}
     </AlertBlock>
   </div>

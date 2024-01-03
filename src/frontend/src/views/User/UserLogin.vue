@@ -62,28 +62,28 @@ async function submitForm() {
   <div>
     <Header title="Log in"> </Header>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submissionState="submissionState" />
+      <AfterSubmit :submission-state="submissionState" />
       <FormStringInput
+        v-model="user.email"
         type="text"
         class="mt-3"
-        v-model="user.email"
         title="Username (email)"
-        :validationStatus="validEmail"
+        :validation-status="validEmail"
       />
       <FormStringInput
+        v-model="user.currentPassword"
         type="password"
         class="mt-3"
-        v-model="user.currentPassword"
         title="Password"
-        :validationStatus="validCurrentPassword"
+        :validation-status="validCurrentPassword"
       />
     </div>
-    <SubmitButton class="mt-3" @click="submitForm" :submissionState="submissionState">Log in</SubmitButton>
+    <SubmitButton class="mt-3" :submission-state="submissionState" @click="submitForm">Log in</SubmitButton>
     <div class="mt-5">
-      <TextLink routeName="forgotpassword">Forgot your password?</TextLink>
+      <TextLink route-name="forgotpassword">Forgot your password?</TextLink>
     </div>
     <div class="mt-3">
-      <TextLink routeName="register">Register as a new user.</TextLink>
+      <TextLink route-name="register">Register as a new user.</TextLink>
     </div>
   </div>
 </template>

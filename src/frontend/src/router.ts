@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "./views/Home.vue";
-import About from "./views/About.vue";
-import Howto from "./views/Howto.vue";
-import Register from "./views/User/Register.vue";
-import Login from "./views/User/Login.vue";
-import ForgotPassword from "./views/User/ForgotPassword.vue";
-import ResetPassword from "./views/User/ResetPassword.vue";
-import Manage from "./views/User/Manage.vue";
-import LinkedUsers from "./views/User/LinkedUsers.vue";
+import Home from "./views/HomePage.vue";
+import About from "./views/AboutHammergen.vue";
+import Howto from "./views/HowTo.vue";
+import Register from "./views/User/UserRegister.vue";
+import Login from "./views/User/UserLogin.vue";
+import ForgotPassword from "./views/User/UserForgotPassword.vue";
+import ResetPassword from "./views/User/UserResetPassword.vue";
+import Manage from "./views/User/UserManage.vue";
+import LinkedUsers from "./views/User/UserLinkedUsers.vue";
 
 export default createRouter({
   history: createWebHistory(),
