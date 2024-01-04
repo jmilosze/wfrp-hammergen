@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { isUserLoggedIn, loginUser, logoutUser, getUserInfo, setUserInfo } from "../services/auth";
+import { isUserLoggedIn, loginUser, logoutUser, getUserInfo, setUserInfo } from "../services/auth.ts";
 import { isAxiosError } from "axios";
 
 export const useAuthStore = defineStore("auth", () => {

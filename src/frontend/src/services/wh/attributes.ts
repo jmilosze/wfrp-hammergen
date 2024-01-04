@@ -1,4 +1,4 @@
-import * as c from "./characterConstants";
+import * as c from "./characterConstants.ts";
 
 export interface Attributes extends Record<string, number> {
   WS: number;
