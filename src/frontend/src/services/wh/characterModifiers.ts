@@ -1,4 +1,4 @@
-import { Attributes, getAttributes, multiplyAttributes, sumAttributes } from "./attributes";
+import { Attributes, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
 
 export interface CharacterModifiersData {
   size: number;
