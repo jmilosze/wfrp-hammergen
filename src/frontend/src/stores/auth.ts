@@ -1,8 +1,8 @@
+import { getUserInfo, isUserLoggedIn, loginUser, logoutUser, setUserInfo } from "../services/auth.ts";
 import { defineStore } from "pinia";
-import { useRouter } from "vue-router";
-import { ref } from "vue";
-import { isUserLoggedIn, loginUser, logoutUser, getUserInfo, setUserInfo } from "../services/auth.ts";
 import { isAxiosError } from "axios";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 export const useAuthStore = defineStore("auth", () => {
   const loggedIn = ref(isUserLoggedIn());

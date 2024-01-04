@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "./views/HomePage.vue";
-import About from "./views/AboutHammergen.vue";
-import Howto from "./views/HowTo.vue";
-import Register from "./views/User/UserRegister.vue";
-import Login from "./views/User/UserLogin.vue";
-import ForgotPassword from "./views/User/UserForgotPassword.vue";
-import ResetPassword from "./views/User/UserResetPassword.vue";
-import Manage from "./views/User/UserManage.vue";
-import LinkedUsers from "./views/User/UserLinkedUsers.vue";
+import AboutHammergen from "./views/AboutHammergen.vue";
+import HomePage from "./views/HomePage.vue";
+import HowTo from "./views/HowTo.vue";
+import UserForgotPassword from "./views/User/UserForgotPassword.vue";
+import UserLinkedUsers from "./views/User/UserLinkedUsers.vue";
+import UserLogin from "./views/User/UserLogin.vue";
+import UserManage from "./views/User/UserManage.vue";
+import UserRegister from "./views/User/UserRegister.vue";
+import UserResetPassword from "./views/User/UserResetPassword.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -15,53 +15,53 @@ export default createRouter({
     {
       path: "/",
       name: "home",
-      component: Home,
+      component: HomePage,
     },
     {
       path: "/",
       name: "placeholder",
-      component: Home,
+      component: HomePage,
     },
     {
       path: "/about",
       name: "about",
-      component: About,
+      component: AboutHammergen,
     },
     {
       path: "/howto",
       name: "howto",
-      component: Howto,
+      component: HowTo,
     },
     {
       path: "/register",
       name: "register",
-      component: Register,
+      component: UserRegister,
     },
     {
       path: "/login",
       name: "login",
-      component: Login,
+      component: UserLogin,
     },
     {
       path: "/forgotpassword",
       name: "forgotpassword",
-      component: ForgotPassword,
+      component: UserForgotPassword,
     },
     {
       path: "/resetpassword/:token",
       name: "resetpassword",
-      component: ResetPassword,
+      component: UserResetPassword,
       props: true,
     },
     {
       path: "/manage",
       name: "manage",
-      component: Manage,
+      component: UserManage,
     },
     {
       path: "/linkedusers",
       name: "linkedusers",
-      component: LinkedUsers,
+      component: UserLinkedUsers,
     },
   ],
 });

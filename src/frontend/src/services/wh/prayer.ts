@@ -1,14 +1,14 @@
 import {
   ApiResponse,
+  WhProperty,
   createElementFunc,
   deleteElementFunc,
   getElementFunc,
   listElementsFunc,
   updateElementFunc,
-  WhProperty,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { copySource, Source, sourcesAreEqual } from "./source.ts";
+import { Source, copySource, sourcesAreEqual } from "./source.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
 

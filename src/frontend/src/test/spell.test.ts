@@ -1,5 +1,5 @@
-import { test, describe, expect } from "vitest";
-import { apiResponseToModel, modelToApi, Spell, SpellApiData } from "../services/wh/spell.ts";
+import { describe, expect, test } from "vitest";
+import { Spell, SpellApiData, apiResponseToModel, modelToApi } from "../services/wh/spell.ts";
 import { Source } from "../services/wh/source.ts";
 import { ApiResponse } from "../services/wh/crudGenerator.ts";
 
