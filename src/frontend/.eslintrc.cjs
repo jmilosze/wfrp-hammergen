@@ -11,7 +11,6 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "off",
     "vue/attribute-hyphenation": [1, "never"],
     "vue/v-on-event-hyphenation": [1, "never"],
-    "sort-imports": "warn"
   },
   root: true,
 };
