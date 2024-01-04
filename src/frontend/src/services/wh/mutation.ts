@@ -1,13 +1,13 @@
-import { sourcesAreEqual, copySource, Source } from "./source.ts";
+import { Source, copySource, sourcesAreEqual } from "./source.ts";
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import {
   ApiResponse,
+  WhProperty,
   createElementFunc,
   deleteElementFunc,
   getElementFunc,
   listElementsFunc,
   updateElementFunc,
-  WhProperty,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 

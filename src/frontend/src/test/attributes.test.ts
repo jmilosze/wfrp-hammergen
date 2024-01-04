@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getAttributes, sumAttributes, multiplyAttributes } from "../services/wh/attributes.ts";
+import { getAttributes, multiplyAttributes, sumAttributes } from "../services/wh/attributes.ts";
 import * as c from "../services/wh/characterConstants.ts";
 
 test("sumAttributes adds attributes correctly", () => {

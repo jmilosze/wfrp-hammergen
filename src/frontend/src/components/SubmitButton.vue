@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { SubmissionState } from "../utils/submission.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
+import { SubmissionState } from "../utils/submission.ts";
 
 const props = defineProps<{
   submissionState: SubmissionState;

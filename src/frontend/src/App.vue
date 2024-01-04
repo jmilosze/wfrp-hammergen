@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { useScreen } from "./composables/screen.ts";
 import NavLink from "./components/NavLink.vue";
-import { useAuthStore } from "./stores/auth.ts";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
+import { useAuthStore } from "./stores/auth.ts";
+import { useScreen } from "./composables/screen.ts";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
