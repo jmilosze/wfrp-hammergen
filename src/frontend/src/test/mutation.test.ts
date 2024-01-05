@@ -39,11 +39,11 @@ const mutation = new Mutation({
   source: { 1: "page 2", 3: "page 5-10" },
 });
 
-test("apiResponseToModel returns expected prayer", () => {
+test("apiResponseToModel returns expected mutation", () => {
   expect(apiResponseToModel(mutationApiResponse)).toMatchObject(mutation);
 });
 
-test("modelToApi returns expected api prayer data", () => {
+test("modelToApi returns expected api mutation data", () => {
   expect(modelToApi(mutation)).toMatchObject(mutationApiData);
 });
 
