@@ -1,4 +1,4 @@
-import { CharacterModifiers } from "./characterModifiers.ts";
+import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import { copySource, Source, sourcesAreEqual } from "./source.ts";
 import {
   ApiResponse,
@@ -12,7 +12,7 @@ import {
 import { compareArrayIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
 
-enum TalentAttribute {
+export enum TalentAttribute {
   None = 0,
   WS,
   BS,
@@ -37,7 +37,7 @@ export interface TalentApiData {
   attribute: number;
   isGroup: boolean;
   group: string[];
-  modifiers: CharacterModifiers;
+  modifiers: CharacterModifiersData;
   shared: boolean;
   source: Source;
 }
@@ -65,7 +65,7 @@ export class Talent implements WhProperty {
     maxRank = 0,
     attribute = TalentAttribute.None.valueOf(),
     isGroup = false,
-    group = [],
+    group = [] as string[],
     modifiers = new CharacterModifiers(),
     shared = false,
     source = {},
