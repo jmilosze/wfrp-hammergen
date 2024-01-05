@@ -17,7 +17,7 @@ export function compareIdNumber(x: { id: string; number: number }, y: { id: stri
   }
 }
 
-export function compareArrayIgnoreOrder<T>(array1: T[], array2: T[], compareFunc = defaultCompare) {
+export function arraysAreEqualIgnoreOrder<T>(array1: T[], array2: T[], compareFunc = defaultCompare) {
   if (array1.length !== array2.length) {
     return false;
   }

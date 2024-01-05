@@ -1,4 +1,3 @@
-import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import { copySource, Source, sourcesAreEqual } from "./source.ts";
 import {
   ApiResponse,
@@ -12,9 +11,21 @@ import {
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
 
-export enum TalentAttribute {
-  None = 0,
-  WS,
+export enum SkillIndividualAttribute {
+  WS = 1,
+  BS,
+  S,
+  T,
+  I,
+  Ag,
+  Dex,
+  Int,
+  WP,
+  Fel,
+}
+
+export enum SkillGroupAttribute {
+  WS = 1,
   BS,
   S,
   T,
@@ -27,32 +38,41 @@ export enum TalentAttribute {
   Various,
 }
 
-const API_BASE_PATH = "/api/wh/talent";
+export enum SkillGroupType {
+  Basic = 0,
+  Advanced,
+  Mixed,
+}
 
-export interface TalentApiData {
+export enum SkillIndividualType {
+  Basic = 0,
+  Advanced,
+}
+
+const API_BASE_PATH = "/api/wh/skill";
+
+export interface SkillApiData {
   name: string;
   description: string;
-  tests: string;
-  maxRank: number;
   attribute: number;
+  type: number;
+  displayZero: boolean;
   isGroup: boolean;
   group: string[];
-  modifiers: CharacterModifiersData;
   shared: boolean;
   source: Source;
 }
 
-export class Talent implements WhProperty {
+export class Skill implements WhProperty {
   id: string;
   canEdit: boolean;
   name: string;
   description: string;
-  tests: string;
-  maxRank: number;
   attribute: number;
+  type: number;
+  displayZero: boolean;
   isGroup: boolean;
   group: string[];
-  modifiers: CharacterModifiers;
   shared: boolean;
   source: Source;
 
@@ -61,12 +81,11 @@ export class Talent implements WhProperty {
     canEdit = false,
     name = "",
     description = "",
-    tests = "",
-    maxRank = 0,
-    attribute = TalentAttribute.None.valueOf(),
+    attribute = SkillIndividualAttribute.Ag.valueOf(),
+    type = SkillIndividualType.Basic.valueOf(),
+    displayZero = false,
     isGroup = false,
     group = [] as string[],
-    modifiers = new CharacterModifiers(),
     shared = false,
     source = {},
   } = {}) {
@@ -74,103 +93,83 @@ export class Talent implements WhProperty {
     this.canEdit = canEdit;
     this.name = name;
     this.description = description;
-    this.tests = tests;
-    this.maxRank = maxRank;
     this.attribute = attribute;
+    this.type = type;
+    this.displayZero = displayZero;
     this.isGroup = isGroup;
     this.group = JSON.parse(JSON.stringify(group));
-    this.modifiers = modifiers;
     this.shared = shared;
     this.source = source;
   }
 
   copy() {
-    return new Talent({
+    return new Skill({
       id: this.id,
       canEdit: this.canEdit,
       name: this.name,
       description: this.description,
-      tests: this.tests,
-      maxRank: this.maxRank,
       attribute: this.attribute,
+      type: this.type,
+      displayZero: this.displayZero,
       isGroup: this.isGroup,
       group: JSON.parse(JSON.stringify(this.group)),
-      modifiers: this.modifiers.copy(),
       shared: this.shared,
       source: copySource(this.source),
     });
   }
 
-  isEqualTo(otherTalent: Talent): boolean {
-    if (
-      this.id !== otherTalent.id ||
-      this.canEdit !== otherTalent.canEdit ||
-      this.name !== otherTalent.name ||
-      this.description !== otherTalent.description ||
-      this.isGroup !== otherTalent.isGroup ||
-      this.shared !== otherTalent.shared ||
-      !sourcesAreEqual(this.source, otherTalent.source)
-    ) {
-      return false;
-    }
-
-    if (this.isGroup) {
-      return true;
-    }
-
-    if (
-      this.tests !== otherTalent.tests ||
-      this.maxRank !== otherTalent.maxRank ||
-      this.attribute !== otherTalent.attribute
-    ) {
-      return false;
-    }
-
-    if (!arraysAreEqualIgnoreOrder(this.group, otherTalent.group)) {
-      return false;
-    }
-
-    return this.modifiers.isEqualTo(otherTalent.modifiers);
+  isEqualTo(otherSkill: Skill): boolean {
+    return (
+      this.id === otherSkill.id &&
+      this.canEdit === otherSkill.canEdit &&
+      this.name === otherSkill.name &&
+      this.description === otherSkill.description &&
+      this.attribute === otherSkill.attribute &&
+      this.type === otherSkill.type &&
+      this.displayZero === otherSkill.displayZero &&
+      this.isGroup === otherSkill.isGroup &&
+      this.shared === otherSkill.shared &&
+      sourcesAreEqual(this.source, otherSkill.source) &&
+      arraysAreEqualIgnoreOrder(this.group, otherSkill.group)
+    );
   }
 }
 
-export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talent {
-  return new Talent({
+export function apiResponseToModel(talentApi: ApiResponse<SkillApiData>): Skill {
+  return new Skill({
     id: talentApi.id,
     canEdit: talentApi.canEdit,
     name: talentApi.object.name,
     description: talentApi.object.description,
-    tests: talentApi.object.tests,
-    maxRank: talentApi.object.maxRank,
     attribute: talentApi.object.attribute,
+    type: talentApi.object.type,
+    displayZero: talentApi.object.displayZero,
     isGroup: talentApi.object.isGroup,
     group: JSON.parse(JSON.stringify(talentApi.object.group)),
-    modifiers: new CharacterModifiers(talentApi.object.modifiers),
     shared: talentApi.object.shared,
     source: copySource(talentApi.object.source),
   });
 }
 
-export function modelToApi(talent: Talent): TalentApiData {
+export function modelToApi(skill: Skill): SkillApiData {
   return {
-    name: talent.name,
-    description: talent.description,
-    tests: talent.tests,
-    maxRank: talent.maxRank,
-    attribute: talent.attribute,
-    isGroup: talent.isGroup,
-    group: JSON.parse(JSON.stringify(talent.group)),
-    modifiers: talent.modifiers.copy(),
-    shared: talent.shared,
-    source: copySource(talent.source),
+    name: skill.name,
+    description: skill.description,
+    attribute: skill.attribute,
+    type: skill.type,
+    displayZero: skill.displayZero,
+    isGroup: skill.isGroup,
+    group: JSON.parse(JSON.stringify(skill.group)),
+    shared: skill.shared,
+    source: copySource(skill.source),
   };
 }
 
 export class TalentApi {
-  getElement: (id: string) => Promise<Talent>;
-  listElements: (id: string) => Promise<Talent[]>;
-  createElement: (wh: Talent) => Promise<ApiResponse<TalentApiData>>;
-  updateElement: (wh: Talent) => Promise<ApiResponse<TalentApiData>>;
+  getElement: (id: string) => Promise<Skill>;
+  listElements: (id: string) => Promise<Skill[]>;
+  createElement: (wh: Skill) => Promise<ApiResponse<SkillApiData>>;
+  updateElement: (wh: Skill) => Promise<ApiResponse<SkillApiData>>;
   deleteElement: (id: string) => Promise<void>;
 
   constructor(axiosInstance: AxiosInstance) {
