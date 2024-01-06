@@ -10,7 +10,7 @@ import { describe, expect, test } from "vitest";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { Source } from "../services/wh/source.ts";
 
-const talentGroupApiData1 = {
+const talentGroupApiData = {
   name: "talent1",
   description: "desc1",
   tests: "qwe",
@@ -31,7 +31,7 @@ const talentGroupApiResponse: ApiResponse<TalentApiData> = {
   id: "id1",
   canEdit: true,
   ownerId: "owner",
-  object: talentGroupApiData1,
+  object: talentGroupApiData,
 };
 
 const talentGroup = new Talent({
@@ -77,7 +77,7 @@ test("apiResponseToModel returns expected talent", () => {
 });
 
 test("modelToApi returns expected api talent data", () => {
-  expect(modelToApi(talentGroup)).toMatchObject(talentGroupApiData1);
+  expect(modelToApi(talentGroup)).toMatchObject(talentGroupApiData);
 });
 
 describe("isEqualTo returns true", () => {
