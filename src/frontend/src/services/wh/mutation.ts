@@ -1,4 +1,4 @@
-import { Source, copySource, sourcesAreEqual } from "./source.ts";
+import { Source, copySource } from "./source.ts";
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import {
   ApiResponse,
@@ -10,6 +10,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
+import { objectsAreEqual } from "../../utils/objectUtils.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
 
@@ -76,7 +77,7 @@ export class Mutation implements WhProperty {
       this.type === otherMutation.type &&
       this.shared === otherMutation.shared &&
       this.modifiers.isEqualTo(otherMutation.modifiers) &&
-      sourcesAreEqual(this.source, otherMutation.source)
+      objectsAreEqual(this.source, otherMutation.source)
     );
   }
 }
