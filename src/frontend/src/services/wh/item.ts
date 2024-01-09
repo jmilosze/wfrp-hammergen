@@ -236,4 +236,17 @@ export class Item implements WhProperty {
       source: copySource(this.source),
     });
   }
+
+  // isEqualTo(otherItem: Item): boolean {
+  //   if (
+  //     this.id !== otherItem.id ||
+  //     this.canEdit !== otherItem.canEdit ||
+  //     this.name !== otherItem.name ||
+  //     this.description !== otherItem.description ||
+  //     this.shared !== otherItem.shared ||
+  //     !sourcesAreEqual(this.source, otherItem.source)
+  //   ) {
+  //     return false;
+  //   }
+  // }
 }

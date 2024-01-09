@@ -8,7 +8,8 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { Source, copySource, sourcesAreEqual } from "./source.ts";
+import { Source, copySource } from "./source.ts";
+import { objectsAreEqual } from "../../utils/objectUtils.ts";
 
 const API_BASE_PATH = "/api/wh/spell";
 
@@ -85,7 +86,7 @@ export class Spell implements WhProperty {
       this.duration === otherSpell.duration &&
       this.description === otherSpell.description &&
       this.shared === otherSpell.shared &&
-      sourcesAreEqual(this.source, otherSpell.source)
+      objectsAreEqual(this.source, otherSpell.source)
     );
   }
 }

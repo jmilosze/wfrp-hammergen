@@ -1,5 +1,5 @@
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
-import { copySource, Source, sourcesAreEqual } from "./source.ts";
+import { copySource, Source } from "./source.ts";
 import {
   ApiResponse,
   createElementFunc,
@@ -11,6 +11,7 @@ import {
 } from "./crudGenerator.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
+import { objectsAreEqual } from "../../utils/objectUtils.ts";
 
 export enum TalentAttribute {
   None = 0,
@@ -109,7 +110,7 @@ export class Talent implements WhProperty {
       this.description !== otherTalent.description ||
       this.isGroup !== otherTalent.isGroup ||
       this.shared !== otherTalent.shared ||
-      !sourcesAreEqual(this.source, otherTalent.source)
+      !objectsAreEqual(this.source, otherTalent.source)
     ) {
       return false;
     }

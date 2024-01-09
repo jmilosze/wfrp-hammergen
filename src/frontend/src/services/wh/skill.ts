@@ -1,4 +1,4 @@
-import { copySource, Source, sourcesAreEqual } from "./source.ts";
+import { copySource, Source } from "./source.ts";
 import {
   ApiResponse,
   createElementFunc,
@@ -10,6 +10,7 @@ import {
 } from "./crudGenerator.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
+import { objectsAreEqual } from "../../utils/objectUtils.ts";
 
 export enum SkillIndividualAttribute {
   WS = 1,
@@ -129,7 +130,7 @@ export class Skill implements WhProperty {
       this.displayZero === otherSkill.displayZero &&
       this.isGroup === otherSkill.isGroup &&
       this.shared === otherSkill.shared &&
-      sourcesAreEqual(this.source, otherSkill.source) &&
+      objectsAreEqual(this.source, otherSkill.source) &&
       arraysAreEqualIgnoreOrder(this.group, otherSkill.group)
     );
   }

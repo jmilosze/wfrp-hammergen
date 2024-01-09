@@ -8,7 +8,8 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { Source, copySource, sourcesAreEqual } from "./source.ts";
+import { Source, copySource } from "./source.ts";
+import { objectsAreEqual } from "../../utils/objectUtils.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
 
@@ -79,7 +80,7 @@ export class Prayer implements WhProperty {
       this.duration === otherPrayer.duration &&
       this.description === otherPrayer.description &&
       this.shared === otherPrayer.shared &&
-      sourcesAreEqual(this.source, otherPrayer.source)
+      objectsAreEqual(this.source, otherPrayer.source)
     );
   }
 }
