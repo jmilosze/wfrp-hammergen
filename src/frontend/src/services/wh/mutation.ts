@@ -14,6 +14,7 @@ import { AxiosInstance } from "axios";
 const API_BASE_PATH = "/api/wh/mutation";
 
 export type MutationType = 0 | 1;
+
 export interface MutationApiData {
   name: string;
   description: string;
