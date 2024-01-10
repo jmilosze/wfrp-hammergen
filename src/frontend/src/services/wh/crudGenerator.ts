@@ -1,16 +1,5 @@
 import { AxiosInstance, AxiosResponse } from "axios";
-
-export interface WhProperty {
-  id: string;
-  canEdit: boolean;
-}
-
-export interface ApiResponse<WhApiData> {
-  id: string;
-  canEdit: boolean;
-  ownerId: string;
-  object: WhApiData;
-}
+import { ApiResponse, WhProperty } from "./common.ts";
 
 export function getElementFunc<WhApiData, WhModel extends WhProperty>(
   apiBasePath: string,

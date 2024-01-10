@@ -1,16 +1,15 @@
 import { copySource, Source } from "./source.ts";
 import {
-  ApiResponse,
   createElementFunc,
   deleteElementFunc,
   getElementFunc,
   listElementsFunc,
   updateElementFunc,
-  WhProperty,
 } from "./crudGenerator.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
+import { ApiResponse, WhProperty } from "./common.ts";
 
 export enum SkillIndividualAttribute {
   WS = 1,

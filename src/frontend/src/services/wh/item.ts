@@ -1,16 +1,15 @@
 import { copySource, Source } from "./source.ts";
 import {
-  ApiResponse,
   createElementFunc,
   deleteElementFunc,
   getElementFunc,
   listElementsFunc,
   updateElementFunc,
-  WhProperty,
 } from "./crudGenerator.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
+import { ApiResponse, WhProperty } from "./common.ts";
 
 export enum ItemType {
   Melee = 0,
@@ -248,7 +247,7 @@ export class Item implements WhProperty {
     });
   }
 
-  isEqualTo(otherItem: Item): boolean {
+  isEqualTo(otherItem: this): boolean {
     if (
       this.id !== otherItem.id ||
       this.canEdit !== otherItem.canEdit ||

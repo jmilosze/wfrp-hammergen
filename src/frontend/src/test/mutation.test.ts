@@ -1,8 +1,8 @@
-import { ApiResponse } from "../services/wh/crudGenerator.ts";
 import { Mutation, MutationApiData, MutationType, apiResponseToModel, modelToApi } from "../services/wh/mutation.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { describe, expect, test } from "vitest";
 import { Source } from "../services/wh/source.ts";
+import { ApiResponse } from "../services/wh/common.ts";
 
 const mutationApiData = {
   name: "mutation",

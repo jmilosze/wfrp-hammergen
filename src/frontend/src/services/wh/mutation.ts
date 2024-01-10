@@ -1,8 +1,6 @@
 import { Source, copySource } from "./source.ts";
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import {
-  ApiResponse,
-  WhProperty,
   createElementFunc,
   deleteElementFunc,
   getElementFunc,
@@ -11,6 +9,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
+import { ApiResponse, WhProperty } from "./common.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
 
