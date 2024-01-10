@@ -3,6 +3,7 @@ import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { describe, expect, test } from "vitest";
 import { Source } from "../services/wh/source.ts";
 import { ApiResponse } from "../services/wh/common.ts";
+import { testIsEqualCommonProperties } from "./helpers.ts";
 
 const mutationApiData = {
   name: "mutation",
@@ -47,12 +48,7 @@ test("modelToApi returns expected api mutation data", () => {
   expect(modelToApi(mutation)).toMatchObject(mutationApiData);
 });
 
-describe("isEqualTo returns true", () => {
-  const otherMutation = mutation.copy();
-  test("when mutations are the same", () => {
-    expect(mutation.isEqualTo(otherMutation)).toBe(true);
-  });
-});
+testIsEqualCommonProperties("mutation", mutation);
 
 describe("isEqualTo returns false", () => {
   test("when other mutation has different value of id");
