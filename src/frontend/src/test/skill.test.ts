@@ -1,4 +1,3 @@
-import { ApiResponse } from "../services/wh/crudGenerator.ts";
 import {
   Skill,
   SkillApiData,
@@ -9,6 +8,7 @@ import {
 } from "../services/wh/skill.ts";
 import { describe, expect, test } from "vitest";
 import { Source } from "../services/wh/source.ts";
+import { ApiResponse } from "../services/wh/common.ts";
 
 const skillApiData = {
   name: "skill",

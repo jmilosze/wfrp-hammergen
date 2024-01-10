@@ -1,6 +1,4 @@
 import {
-  ApiResponse,
-  WhProperty,
   createElementFunc,
   deleteElementFunc,
   getElementFunc,
@@ -10,6 +8,7 @@ import {
 import { AxiosInstance } from "axios";
 import { Source, copySource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
+import { ApiResponse, WhProperty } from "./common.ts";
 
 const API_BASE_PATH = "/api/wh/spell";
 
