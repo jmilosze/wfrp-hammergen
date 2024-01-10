@@ -7,7 +7,8 @@ export interface WhProperty {
   description: string;
   shared: boolean;
   source: Source;
-  isEqualTo(otherWhProperty: this): boolean;
+  isEqualTo(otherWhProperty: WhProperty): boolean;
+  copy(): WhProperty;
 }
 
 export interface ApiResponse<WhApiData> {

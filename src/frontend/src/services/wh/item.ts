@@ -247,7 +247,7 @@ export class Item implements WhProperty {
     });
   }
 
-  isEqualTo(otherItem: this): boolean {
+  isEqualTo(otherItem: Item): boolean {
     if (
       this.id !== otherItem.id ||
       this.canEdit !== otherItem.canEdit ||
