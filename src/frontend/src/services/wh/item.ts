@@ -1,5 +1,16 @@
 import { copySource, Source } from "./source.ts";
-import { WhProperty } from "./crudGenerator.ts";
+import {
+  ApiResponse,
+  createElementFunc,
+  deleteElementFunc,
+  getElementFunc,
+  listElementsFunc,
+  updateElementFunc,
+  WhProperty,
+} from "./crudGenerator.ts";
+import { objectsAreEqual } from "../../utils/objectUtils.ts";
+import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
+import { AxiosInstance } from "axios";
 
 export enum ItemType {
   Melee = 0,
@@ -89,7 +100,7 @@ export enum CarryType {
   "Not carriable and not wearable",
 }
 
-// const API_BASE_PATH = "/api/wh/item";
+const API_BASE_PATH = "/api/wh/item";
 
 export type MeleeType = {
   hands: number;
@@ -224,6 +235,7 @@ export class Item implements WhProperty {
       enc: this.enc,
       availability: this.availability,
       properties: JSON.parse(JSON.stringify(this.properties)),
+      type: this.type,
       melee: JSON.parse(JSON.stringify(this.melee)),
       ranged: JSON.parse(JSON.stringify(this.ranged)),
       ammunition: JSON.parse(JSON.stringify(this.ammunition)),
@@ -231,22 +243,109 @@ export class Item implements WhProperty {
       grimoire: JSON.parse(JSON.stringify(this.grimoire)),
       container: JSON.parse(JSON.stringify(this.container)),
       other: JSON.parse(JSON.stringify(this.other)),
-      type: this.type,
       shared: this.shared,
       source: copySource(this.source),
     });
   }
 
-  // isEqualTo(otherItem: Item): boolean {
-  //   if (
-  //     this.id !== otherItem.id ||
-  //     this.canEdit !== otherItem.canEdit ||
-  //     this.name !== otherItem.name ||
-  //     this.description !== otherItem.description ||
-  //     this.shared !== otherItem.shared ||
-  //     !sourcesAreEqual(this.source, otherItem.source)
-  //   ) {
-  //     return false;
-  //   }
-  // }
+  isEqualTo(otherItem: Item): boolean {
+    if (
+      this.id !== otherItem.id ||
+      this.canEdit !== otherItem.canEdit ||
+      this.name !== otherItem.name ||
+      this.description !== otherItem.description ||
+      this.price !== otherItem.price ||
+      this.enc !== otherItem.enc ||
+      this.availability !== otherItem.availability ||
+      !arraysAreEqualIgnoreOrder(this.properties, otherItem.properties) ||
+      this.shared !== otherItem.shared ||
+      !objectsAreEqual(this.source, otherItem.source)
+    ) {
+      return false;
+    }
+
+    if (this.type === ItemType.Melee) {
+      return objectsAreEqual(this.melee, otherItem.melee);
+    }
+    if (this.type === ItemType.Ranged) {
+      return objectsAreEqual(this.ranged, otherItem.ranged);
+    }
+    if (this.type === ItemType.Ammunition) {
+      return objectsAreEqual(this.ammunition, otherItem.ammunition);
+    }
+    if (this.type === ItemType.Armour) {
+      return objectsAreEqual(this.armour, otherItem.armour);
+    }
+    if (this.type === ItemType.Container) {
+      return objectsAreEqual(this.container, otherItem.container);
+    }
+    if (this.type === ItemType.Other) {
+      return objectsAreEqual(this.other, otherItem.other);
+    }
+    if (this.type === ItemType.Grimoire) {
+      return objectsAreEqual(this.grimoire, otherItem.grimoire);
+    }
+
+    return true;
+  }
+}
+
+export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
+  return new Item({
+    id: itemApi.id,
+    canEdit: itemApi.canEdit,
+    name: itemApi.object.name,
+    description: itemApi.object.description,
+    price: itemApi.object.price,
+    enc: itemApi.object.enc,
+    availability: itemApi.object.availability,
+    properties: JSON.parse(JSON.stringify(itemApi.object.properties)),
+    type: itemApi.object.type,
+    melee: JSON.parse(JSON.stringify(itemApi.object.melee)),
+    ranged: JSON.parse(JSON.stringify(itemApi.object.ranged)),
+    ammunition: JSON.parse(JSON.stringify(itemApi.object.ammunition)),
+    armour: JSON.parse(JSON.stringify(itemApi.object.armour)),
+    grimoire: JSON.parse(JSON.stringify(itemApi.object.grimoire)),
+    container: JSON.parse(JSON.stringify(itemApi.object.container)),
+    other: JSON.parse(JSON.stringify(itemApi.object.other)),
+    shared: itemApi.object.shared,
+    source: copySource(itemApi.object.source),
+  });
+}
+
+export function modelToApi(item: Item): ItemApiData {
+  return {
+    name: item.name,
+    description: item.description,
+    price: item.price,
+    enc: item.enc,
+    availability: item.availability,
+    properties: JSON.parse(JSON.stringify(item.properties)),
+    type: item.type,
+    melee: JSON.parse(JSON.stringify(item.melee)),
+    ranged: JSON.parse(JSON.stringify(item.ranged)),
+    ammunition: JSON.parse(JSON.stringify(item.ammunition)),
+    armour: JSON.parse(JSON.stringify(item.armour)),
+    grimoire: JSON.parse(JSON.stringify(item.grimoire)),
+    container: JSON.parse(JSON.stringify(item.container)),
+    other: JSON.parse(JSON.stringify(item.other)),
+    shared: item.shared,
+    source: copySource(item.source),
+  };
+}
+
+export class MutationApi {
+  getElement: (id: string) => Promise<Item>;
+  listElements: (id: string) => Promise<Item[]>;
+  createElement: (wh: Item) => Promise<ApiResponse<ItemApiData>>;
+  updateElement: (wh: Item) => Promise<ApiResponse<ItemApiData>>;
+  deleteElement: (id: string) => Promise<void>;
+
+  constructor(axiosInstance: AxiosInstance) {
+    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
+    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
+    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
+    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
+    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
+  }
 }
