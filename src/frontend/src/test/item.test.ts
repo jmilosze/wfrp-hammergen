@@ -199,5 +199,29 @@ describe("isEqualTo returns false", () => {
       otherItem.melee.hands = WeaponHands["Two-Handed"].valueOf();
       expect(melee.isEqualTo(otherItem)).toBe(false);
     });
+
+    test("when other item has different value of dmg", () => {
+      const otherItem = melee.copy();
+      otherItem.melee.dmg = 100;
+      expect(melee.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of sbMult", () => {
+      const otherItem = melee.copy();
+      otherItem.melee.dmgSbMult = 100;
+      expect(melee.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of reach", () => {
+      const otherItem = melee.copy();
+      otherItem.melee.reach = MeleeReach.Personal.valueOf();
+      expect(melee.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of group", () => {
+      const otherItem = melee.copy();
+      otherItem.melee.group = MeleeGroup.Fencing.valueOf();
+      expect(melee.isEqualTo(otherItem)).toBe(false);
+    });
   });
 });
