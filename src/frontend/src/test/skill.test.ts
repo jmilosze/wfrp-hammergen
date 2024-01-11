@@ -62,26 +62,23 @@ describe("isEqualTo returns true", () => {
 });
 
 describe("isEqualTo returns false", () => {
-  test("when other skill has different value of isGroup");
-  {
+  test("when other skill has different value of isGroup", () => {
     const otherSkill = skill.copy();
     otherSkill.isGroup = false;
     expect(skill.isEqualTo(otherSkill)).toBe(false);
-  }
+  });
 
-  test("when other skill has different value of attribute");
-  {
+  test("when other skill has different value of attribute", () => {
     const otherSkill = skill.copy();
     otherSkill.attribute = Att.Int.valueOf();
     expect(skill.isEqualTo(otherSkill)).toBe(false);
-  }
+  });
 
-  test("when other skill has different value of type");
-  {
+  test("when other skill has different value of type", () => {
     const otherSkill = skill.copy();
     otherSkill.type = SkillType.Advanced.valueOf();
     expect(skill.isEqualTo(otherSkill)).toBe(false);
-  }
+  });
 
   test("when other skill has group field that is a subset", () => {
     const otherSkill = skill.copy();

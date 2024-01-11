@@ -10,9 +10,10 @@ import {
   RangedGroup,
   apiResponseToModel,
   modelToApi,
+  MeleeReach,
 } from "../services/wh/item.ts";
 import { ApiResponse } from "../services/wh/common.ts";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
 const itemApiData = {
@@ -25,11 +26,11 @@ const itemApiData = {
   availability: Availability.Exotic.valueOf(),
   properties: ["prop1", "prop2"],
   type: ItemType.Ranged.valueOf(),
-  melee: { hands: 1, dmg: 1, dmgSbMult: 4, reach: 7, group: MeleeGroup.Basic.valueOf() },
+  melee: { hands: 1, dmg: 1, dmgSbMult: 4, reach: MeleeReach.Average.valueOf(), group: MeleeGroup.Basic.valueOf() },
   ranged: { hands: 1, dmg: 2, dmgSbMult: 5, rng: 8, rngSbMult: 9, group: RangedGroup.Blackpowder.valueOf() },
   ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow.valueOf() },
   armour: {
-    points: 0,
+    points: 1,
     location: [ArmourLocation.Arms.valueOf(), ArmourLocation.Head.valueOf()],
     group: ArmourGroup.Plate.valueOf(),
   },
@@ -57,11 +58,11 @@ const item = new Item({
   availability: Availability.Exotic.valueOf(),
   properties: ["prop1", "prop2"],
   type: ItemType.Ranged.valueOf(),
-  melee: { hands: 1, dmg: 1, dmgSbMult: 4, reach: 7, group: MeleeGroup.Basic.valueOf() },
+  melee: { hands: 1, dmg: 1, dmgSbMult: 4, reach: MeleeReach.Average.valueOf(), group: MeleeGroup.Basic.valueOf() },
   ranged: { hands: 1, dmg: 2, dmgSbMult: 5, rng: 8, rngSbMult: 9, group: RangedGroup.Blackpowder.valueOf() },
   ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow.valueOf() },
   armour: {
-    points: 0,
+    points: 1,
     location: [ArmourLocation.Arms.valueOf(), ArmourLocation.Head.valueOf()],
     group: ArmourGroup.Plate.valueOf(),
   },
@@ -79,3 +80,70 @@ test("modelToApi returns expected api item data", () => {
 });
 
 testIsEqualCommonProperties("item", item);
+
+describe("isEqualTo returns true", () => {
+  test("when other item has property field with elements in different order", () => {
+    const otherItem = item.copy();
+    otherItem.melee = {
+      hands: 10,
+      dmg: 10,
+      dmgSbMult: 40,
+      reach: MeleeReach["Very long"].valueOf(),
+      group: MeleeGroup.Basic.valueOf(),
+    };
+    otherItem.ammunition = { dmg: 2, rng: 34, rngMult: 6, group: AmmoGroup.Bow.valueOf() };
+    otherItem.armour = {
+      points: 0,
+      location: [],
+      group: ArmourGroup.Plate.valueOf(),
+    };
+    otherItem.grimoire = { spells: [] };
+    otherItem.container = { capacity: 2, carryType: 1 };
+    otherItem.other = { carryType: 0 };
+    expect(item.isEqualTo(otherItem)).toBe(true);
+  });
+
+  test("when other item has different stats for types other than itself", () => {
+    const otherItem = item.copy();
+    otherItem.properties = ["prop2", "prop1"];
+    expect(item.isEqualTo(otherItem)).toBe(true);
+  });
+});
+
+describe("isEqualTo returns false", () => {
+  test("when other item has different value of price", () => {
+    const otherItem = item.copy();
+    otherItem.price = 5;
+    expect(item.isEqualTo(otherItem)).toBe(false);
+  });
+
+  test("when other item has different value of enc", () => {
+    const otherItem = item.copy();
+    otherItem.enc = 3;
+    expect(item.isEqualTo(otherItem)).toBe(false);
+  });
+
+  test("when other item has different value of availability", () => {
+    const otherItem = item.copy();
+    otherItem.availability = Availability.Common.valueOf();
+    expect(item.isEqualTo(otherItem)).toBe(false);
+  });
+
+  test("when other item has different value of type", () => {
+    const otherItem = item.copy();
+    otherItem.type = ItemType.Container.valueOf();
+    expect(item.isEqualTo(otherItem)).toBe(false);
+  });
+
+  test("when other item has properties field that is a subset", () => {
+    const otherItem = item.copy();
+    otherItem.properties = ["prop1"];
+    expect(item.isEqualTo(otherItem)).toBe(false);
+  });
+
+  test("when other item has group properties of the same length but different values", () => {
+    const otherItem = item.copy();
+    otherItem.properties = ["prop3", "prop4"];
+    expect(item.isEqualTo(otherItem)).toBe(false);
+  });
+});
