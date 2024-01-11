@@ -106,33 +106,29 @@ describe("isEqualTo returns true", () => {
 });
 
 describe("isEqualTo returns false", () => {
-  test("when other talent has different value of isGroup");
-  {
+  test("when other talent has different value of isGroup", () => {
     const otherTalentIndividual = talentIndividual.copy();
     otherTalentIndividual.isGroup = true;
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
+  });
 
-  test("when other talent is individual and has different value of tests");
-  {
+  test("when other talent is individual and has different value of tests", () => {
     const otherTalentIndividual = talentIndividual.copy();
     otherTalentIndividual.tests = "otherTest";
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
+  });
 
-  test("when other talent is individual and has different value of maxRank");
-  {
+  test("when other talent is individual and has different value of maxRank", () => {
     const otherTalentIndividual = talentIndividual.copy();
     otherTalentIndividual.maxRank = 5;
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
+  });
 
-  test("when other talent is individual and has different value of attribute");
-  {
+  test("when other talent is individual and has different value of attribute", () => {
     const otherTalentIndividual = talentIndividual.copy();
     otherTalentIndividual.attribute = Att.Dex.valueOf();
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
+  });
 
   test("when talent is individual and other talent has group field that is a subset", () => {
     const otherTalentIndividual = talentIndividual.copy();

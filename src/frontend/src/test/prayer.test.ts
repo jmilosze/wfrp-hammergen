@@ -43,24 +43,21 @@ test("modelToApi returns expected api prayer data", () => {
 testIsEqualCommonProperties("prayer", prayer);
 
 describe("isEqualTo returns false", () => {
-  test("when other prayer has different value of range");
-  {
+  test("when other prayer has different value of range", () => {
     const otherPrayer = prayer.copy();
     otherPrayer.range = "otherRange";
     expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  }
+  });
 
-  test("when other prayer has different value of target");
-  {
+  test("when other prayer has different value of target", () => {
     const otherPrayer = prayer.copy();
     otherPrayer.target = "otherTarget";
     expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  }
+  });
 
-  test("when other prayer has different value of duration");
-  {
+  test("when other prayer has different value of duration", () => {
     const otherPrayer = prayer.copy();
     otherPrayer.duration = "otherDuration";
     expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  }
+  });
 });

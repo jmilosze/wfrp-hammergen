@@ -256,6 +256,7 @@ export class Item implements WhProperty {
       this.price !== otherItem.price ||
       this.enc !== otherItem.enc ||
       this.availability !== otherItem.availability ||
+      this.type !== otherItem.type ||
       !arraysAreEqualIgnoreOrder(this.properties, otherItem.properties) ||
       this.shared !== otherItem.shared ||
       !objectsAreEqual(this.source, otherItem.source)

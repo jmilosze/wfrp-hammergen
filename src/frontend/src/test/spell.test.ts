@@ -52,24 +52,21 @@ describe("isEqualTo returns false", () => {
     expect(spell.isEqualTo(otherSpell)).toBe(false);
   }
 
-  test("when other spell has different value of range");
-  {
+  test("when other spell has different value of range", () => {
     const otherSpell = spell.copy();
     otherSpell.range = "otherRange";
     expect(spell.isEqualTo(otherSpell)).toBe(false);
-  }
+  });
 
-  test("when other spell has different value of target");
-  {
+  test("when other spell has different value of target", () => {
     const otherSpell = spell.copy();
     otherSpell.target = "otherTarget";
     expect(spell.isEqualTo(otherSpell)).toBe(false);
-  }
+  });
 
-  test("when other spell has different value of duration");
-  {
+  test("when other spell has different value of duration", () => {
     const otherSpell = spell.copy();
     otherSpell.duration = "otherDuration";
     expect(spell.isEqualTo(otherSpell)).toBe(false);
-  }
+  });
 });
