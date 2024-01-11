@@ -12,6 +12,7 @@ import {
   modelToApi,
   MeleeReach,
   WeaponHands,
+  CarryType,
 } from "../services/wh/item.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -49,8 +50,8 @@ const itemApiData = {
     group: ArmourGroup.Plate.valueOf(),
   },
   grimoire: { spells: ["spell1", "spell2"] },
-  container: { capacity: 1, carryType: 0 },
-  other: { carryType: 1 },
+  container: { capacity: 1, carryType: CarryType["Carriable and not wearable"] },
+  other: { carryType: CarryType["Carriable and wearable"] },
 };
 
 const itemApiResponse: ApiResponse<ItemApiData> = {
@@ -94,8 +95,8 @@ const item = new Item({
     group: ArmourGroup.Plate.valueOf(),
   },
   grimoire: { spells: ["spell1", "spell2"] },
-  container: { capacity: 1, carryType: 0 },
-  other: { carryType: 1 },
+  container: { capacity: 1, carryType: CarryType["Carriable and not wearable"] },
+  other: { carryType: CarryType["Carriable and wearable"] },
 });
 
 test("apiResponseToModel returns expected item", () => {
@@ -314,10 +315,55 @@ describe("isEqualTo returns false", () => {
       expect(armour.isEqualTo(otherItem)).toBe(false);
     });
 
-    test("when other skill has group field of the same length but different values", () => {
+    test("when other skill has location field of the same length but different values", () => {
       const otherItem = armour.copy();
       otherItem.armour.location = [ArmourLocation.Legs.valueOf(), ArmourLocation.Arms.valueOf()];
       expect(armour.isEqualTo(otherItem)).toBe(false);
+    });
+  });
+
+  describe("when item is grimoire", () => {
+    const grimoire = item.copy();
+    grimoire.type = ItemType.Grimoire.valueOf();
+
+    test("when other item has spells field that is a subset", () => {
+      const otherItem = grimoire.copy();
+      otherItem.grimoire.spells = ["spell1"];
+      expect(grimoire.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other skill has spells field of the same length but different values", () => {
+      const otherItem = grimoire.copy();
+      otherItem.grimoire.spells = ["spell1", "spell3"];
+      expect(grimoire.isEqualTo(otherItem)).toBe(false);
+    });
+  });
+
+  describe("when item is container", () => {
+    const container = item.copy();
+    container.type = ItemType.Container.valueOf();
+
+    test("when other item has different value of capacity", () => {
+      const otherItem = container.copy();
+      otherItem.container.capacity = 100;
+      expect(container.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of carryType", () => {
+      const otherItem = container.copy();
+      otherItem.container.carryType = CarryType["Carriable and wearable"];
+      expect(container.isEqualTo(otherItem)).toBe(false);
+    });
+  });
+
+  describe("when item is other", () => {
+    const other = item.copy();
+    other.type = ItemType.Other.valueOf();
+
+    test("when other item has different value of carryType", () => {
+      const otherItem = other.copy();
+      otherItem.other.carryType = CarryType["Not carriable and not wearable"];
+      expect(other.isEqualTo(otherItem)).toBe(false);
     });
   });
 });
