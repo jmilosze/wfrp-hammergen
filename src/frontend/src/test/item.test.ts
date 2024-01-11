@@ -224,4 +224,100 @@ describe("isEqualTo returns false", () => {
       expect(melee.isEqualTo(otherItem)).toBe(false);
     });
   });
+
+  describe("when item is ranged", () => {
+    test("when other item has different value of hands", () => {
+      const otherItem = item.copy();
+      otherItem.ranged.hands = WeaponHands["Two-Handed"].valueOf();
+      expect(item.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of dmg", () => {
+      const otherItem = item.copy();
+      otherItem.ranged.dmg = 100;
+      expect(item.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of sbMult", () => {
+      const otherItem = item.copy();
+      otherItem.ranged.dmgSbMult = 100;
+      expect(item.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of range", () => {
+      const otherItem = item.copy();
+      otherItem.ranged.rng = 100;
+      expect(item.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of rngSbMult", () => {
+      const otherItem = item.copy();
+      otherItem.ranged.dmgSbMult = 100;
+      expect(item.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of group", () => {
+      const otherItem = item.copy();
+      otherItem.ranged.group = RangedGroup.Crossbow.valueOf();
+      expect(item.isEqualTo(otherItem)).toBe(false);
+    });
+  });
+
+  describe("when item is ammunition", () => {
+    const ammo = item.copy();
+    ammo.type = ItemType.Ammunition.valueOf();
+
+    test("when other item has different value of dmg", () => {
+      const otherItem = ammo.copy();
+      otherItem.ammunition.dmg = 100;
+      expect(ammo.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of range", () => {
+      const otherItem = ammo.copy();
+      otherItem.ammunition.rng = 100;
+      expect(ammo.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of rngMult", () => {
+      const otherItem = ammo.copy();
+      otherItem.ammunition.rngMult = 100;
+      expect(ammo.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of group", () => {
+      const otherItem = ammo.copy();
+      otherItem.ammunition.group = AmmoGroup.Blowpipe.valueOf();
+      expect(ammo.isEqualTo(otherItem)).toBe(false);
+    });
+  });
+
+  describe("when item is armour", () => {
+    const armour = item.copy();
+    armour.type = ItemType.Armour.valueOf();
+
+    test("when other item has different value of points", () => {
+      const otherItem = armour.copy();
+      otherItem.armour.points = 100;
+      expect(armour.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has different value of group", () => {
+      const otherItem = armour.copy();
+      otherItem.armour.group = AmmoGroup.Blowpipe.valueOf();
+      expect(armour.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other item has location field that is a subset", () => {
+      const otherItem = armour.copy();
+      otherItem.armour.location = [ArmourLocation.Arms.valueOf()];
+      expect(armour.isEqualTo(otherItem)).toBe(false);
+    });
+
+    test("when other skill has group field of the same length but different values", () => {
+      const otherItem = armour.copy();
+      otherItem.armour.location = [ArmourLocation.Legs.valueOf(), ArmourLocation.Arms.valueOf()];
+      expect(armour.isEqualTo(otherItem)).toBe(false);
+    });
+  });
 });
