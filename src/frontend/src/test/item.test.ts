@@ -11,6 +11,7 @@ import {
   apiResponseToModel,
   modelToApi,
   MeleeReach,
+  WeaponHands,
 } from "../services/wh/item.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -26,8 +27,21 @@ const itemApiData = {
   availability: Availability.Exotic.valueOf(),
   properties: ["prop1", "prop2"],
   type: ItemType.Ranged.valueOf(),
-  melee: { hands: 1, dmg: 1, dmgSbMult: 4, reach: MeleeReach.Average.valueOf(), group: MeleeGroup.Basic.valueOf() },
-  ranged: { hands: 1, dmg: 2, dmgSbMult: 5, rng: 8, rngSbMult: 9, group: RangedGroup.Blackpowder.valueOf() },
+  melee: {
+    hands: WeaponHands["One-Handed"].valueOf(),
+    dmg: 1,
+    dmgSbMult: 4,
+    reach: MeleeReach.Average.valueOf(),
+    group: MeleeGroup.Basic.valueOf(),
+  },
+  ranged: {
+    hands: WeaponHands["One-Handed"].valueOf(),
+    dmg: 2,
+    dmgSbMult: 5,
+    rng: 8,
+    rngSbMult: 9,
+    group: RangedGroup.Blackpowder.valueOf(),
+  },
   ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow.valueOf() },
   armour: {
     points: 1,
@@ -58,8 +72,21 @@ const item = new Item({
   availability: Availability.Exotic.valueOf(),
   properties: ["prop1", "prop2"],
   type: ItemType.Ranged.valueOf(),
-  melee: { hands: 1, dmg: 1, dmgSbMult: 4, reach: MeleeReach.Average.valueOf(), group: MeleeGroup.Basic.valueOf() },
-  ranged: { hands: 1, dmg: 2, dmgSbMult: 5, rng: 8, rngSbMult: 9, group: RangedGroup.Blackpowder.valueOf() },
+  melee: {
+    hands: WeaponHands["One-Handed"].valueOf(),
+    dmg: 1,
+    dmgSbMult: 4,
+    reach: MeleeReach.Average.valueOf(),
+    group: MeleeGroup.Basic.valueOf(),
+  },
+  ranged: {
+    hands: WeaponHands["One-Handed"].valueOf(),
+    dmg: 2,
+    dmgSbMult: 5,
+    rng: 8,
+    rngSbMult: 9,
+    group: RangedGroup.Blackpowder.valueOf(),
+  },
   ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow.valueOf() },
   armour: {
     points: 1,
@@ -112,17 +139,17 @@ describe("isEqualTo returns true", () => {
   test("when item is grimoire and other item has spells in different order", () => {
     const grimoire = item.copy();
     grimoire.type = ItemType.Grimoire.valueOf();
-    const otherItem = item.copy();
+    const otherItem = grimoire.copy();
     otherItem.grimoire.spells = ["spell2", "spell1"];
-    expect(item.isEqualTo(otherItem)).toBe(true);
+    expect(grimoire.isEqualTo(otherItem)).toBe(true);
   });
 
   test("when item is armour and other item has location in different order", () => {
     const armour = item.copy();
     armour.type = ItemType.Armour.valueOf();
-    const otherItem = item.copy();
+    const otherItem = armour.copy();
     otherItem.armour.location = [ArmourLocation.Head.valueOf(), ArmourLocation.Arms.valueOf()];
-    expect(item.isEqualTo(otherItem)).toBe(true);
+    expect(armour.isEqualTo(otherItem)).toBe(true);
   });
 });
 
@@ -161,5 +188,16 @@ describe("isEqualTo returns false", () => {
     const otherItem = item.copy();
     otherItem.properties = ["prop3", "prop4"];
     expect(item.isEqualTo(otherItem)).toBe(false);
+  });
+
+  describe("when item is melee", () => {
+    const melee = item.copy();
+    melee.type = ItemType.Melee.valueOf();
+
+    test("when other item has different value of hands", () => {
+      const otherItem = melee.copy();
+      otherItem.melee.hands = WeaponHands["Two-Handed"].valueOf();
+      expect(melee.isEqualTo(otherItem)).toBe(false);
+    });
   });
 });
