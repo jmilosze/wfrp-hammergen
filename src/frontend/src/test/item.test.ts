@@ -82,7 +82,7 @@ test("modelToApi returns expected api item data", () => {
 testIsEqualCommonProperties("item", item);
 
 describe("isEqualTo returns true", () => {
-  test("when other item has property field with elements in different order", () => {
+  test("when other item has different stats for types other than itself", () => {
     const otherItem = item.copy();
     otherItem.melee = {
       hands: 10,
@@ -103,9 +103,25 @@ describe("isEqualTo returns true", () => {
     expect(item.isEqualTo(otherItem)).toBe(true);
   });
 
-  test("when other item has different stats for types other than itself", () => {
+  test("when other item has property field with elements in different order", () => {
     const otherItem = item.copy();
     otherItem.properties = ["prop2", "prop1"];
+    expect(item.isEqualTo(otherItem)).toBe(true);
+  });
+
+  test("when item is grimoire and other item has spells in different order", () => {
+    const grimoire = item.copy();
+    grimoire.type = ItemType.Grimoire.valueOf();
+    const otherItem = item.copy();
+    otherItem.grimoire.spells = ["spell2", "spell1"];
+    expect(item.isEqualTo(otherItem)).toBe(true);
+  });
+
+  test("when item is armour and other item has location in different order", () => {
+    const armour = item.copy();
+    armour.type = ItemType.Armour.valueOf();
+    const otherItem = item.copy();
+    otherItem.armour.location = [ArmourLocation.Head.valueOf(), ArmourLocation.Arms.valueOf()];
     expect(item.isEqualTo(otherItem)).toBe(true);
   });
 });
