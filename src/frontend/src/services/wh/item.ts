@@ -274,7 +274,11 @@ export class Item implements WhProperty {
       return objectsAreEqual(this.ammunition, otherItem.ammunition);
     }
     if (this.type === ItemType.Armour) {
-      return objectsAreEqual(this.armour, otherItem.armour);
+      return (
+        this.armour.group === otherItem.armour.group &&
+        this.armour.points === otherItem.armour.points &&
+        arraysAreEqualIgnoreOrder(this.armour.location, otherItem.armour.location)
+      );
     }
     if (this.type === ItemType.Container) {
       return objectsAreEqual(this.container, otherItem.container);
@@ -283,7 +287,7 @@ export class Item implements WhProperty {
       return objectsAreEqual(this.other, otherItem.other);
     }
     if (this.type === ItemType.Grimoire) {
-      return objectsAreEqual(this.grimoire, otherItem.grimoire);
+      return arraysAreEqualIgnoreOrder(this.grimoire.spells, otherItem.grimoire.spells);
     }
 
     return true;
