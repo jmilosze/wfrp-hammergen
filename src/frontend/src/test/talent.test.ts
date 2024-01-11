@@ -7,8 +7,8 @@ import {
 } from "../services/wh/talent.ts";
 import { describe, expect, test } from "vitest";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
-import { Source } from "../services/wh/source.ts";
 import { ApiResponse } from "../services/wh/common.ts";
+import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "./commonTests.ts";
 
 const talentGroupApiData = {
   name: "talent1",
@@ -80,12 +80,11 @@ test("modelToApi returns expected api talent data", () => {
   expect(modelToApi(talentGroup)).toMatchObject(talentGroupApiData);
 });
 
-describe("isEqualTo returns true", () => {
-  test("when other talent is exactly the same", () => {
-    const otherTalentIndividual = talentIndividual.copy();
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(true);
-  });
+testIsEqualCommonProperties("talent", talentIndividual);
 
+testIsEqualCharacterModifiers("talent", talentIndividual);
+
+describe("isEqualTo returns true", () => {
   test("when other talent has group field with elements in different order", () => {
     const otherTalentGroup = talentGroup.copy();
     otherTalentGroup.group = ["b", "a"];
@@ -107,57 +106,12 @@ describe("isEqualTo returns true", () => {
 });
 
 describe("isEqualTo returns false", () => {
-  test("when other talent has different value of id");
-  {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.id = "otherId";
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
-  test("when other talent has different value of name");
-  {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.name = "otherName";
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
-
-  test("when other talent has different value of description");
-  {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.description = "otherDescription";
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
-
-  test("when other talent has different value of canEdit");
-  {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.canEdit = false;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
-
   test("when other talent has different value of isGroup");
   {
     const otherTalentIndividual = talentIndividual.copy();
     otherTalentIndividual.isGroup = true;
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
   }
-
-  test("when other talent has different value of shared");
-  {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.shared = false;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
-
-  test.each<{ diff: string; source: Source }>([
-    { diff: "fewer sources", source: { 1: "page 2" } },
-    { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
-    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
-    { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
-  ])("when other talent has $diff", (t) => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.source = t.source;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
 
   test("when other talent is individual and has different value of tests");
   {
@@ -191,35 +145,4 @@ describe("isEqualTo returns false", () => {
     otherTalentIndividual.group = ["c", "d"];
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
   });
-
-  test.each([
-    { field: "WS", value: 10 },
-    { field: "BS", value: 10 },
-    { field: "S", value: 10 },
-    { field: "T", value: 10 },
-    { field: "I", value: 10 },
-    { field: "Ag", value: 10 },
-    { field: "Dex", value: 10 },
-    { field: "Int", value: 10 },
-    { field: "WP", value: 10 },
-    { field: "Fel", value: 10 },
-  ])("when talent is individual and other talent has different value of modifier $field", (t) => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.modifiers.attributes[t.field] = t.value;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
-
-  test("when talent is individual and other talent has different value of modifier size");
-  {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.modifiers.size = 1;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
-
-  test("when talent is individual and other talent has different value of modifier movement");
-  {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.modifiers.movement = -1;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  }
 });
