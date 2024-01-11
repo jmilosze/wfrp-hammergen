@@ -4,7 +4,7 @@ import { Source } from "../services/wh/source.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 
 export const testIsEqualCommonProperties = (name: string, whProperty: WhProperty) => {
-  describe("isEqualTo (common properties) returns true", () => {
+  describe("isEqualTo returns true (common properties)", () => {
     test(`when ${name} are the same`, () => {
       const whProperty1 = whProperty.copy();
       const whProperty2 = whProperty.copy();
@@ -12,7 +12,7 @@ export const testIsEqualCommonProperties = (name: string, whProperty: WhProperty
     });
   });
 
-  describe("isEqualTo (common properties) returns false", () => {
+  describe("isEqualTo returns false (common properties)", () => {
     test(`when other ${name} has different value of id`, () => {
       const whProperty1 = whProperty.copy();
       const whProperty2 = whProperty.copy();
@@ -73,7 +73,7 @@ interface WhPropertyWithModifiers extends WhProperty {
 }
 
 export const testIsEqualCharacterModifiers = (name: string, whProperty: WhPropertyWithModifiers) => {
-  describe("isEqualTo (character modifiers) returns false", () => {
+  describe("isEqualTo returns false (character modifiers)", () => {
     test.each([
       { field: "WS", value: 10 },
       { field: "BS", value: 10 },
@@ -86,10 +86,29 @@ export const testIsEqualCharacterModifiers = (name: string, whProperty: WhProper
       { field: "WP", value: 10 },
       { field: "Fel", value: 10 },
     ])(`when other ${name} has different value of modifier $field`, (t) => {
-      const whProperty1 = whProperty.copy();
-      const whProperty2 = whProperty.copy();
+      const whProperty1 = whProperty.copy() as WhPropertyWithModifiers;
+      const whProperty2 = whProperty.copy() as WhPropertyWithModifiers;
+      whProperty1.modifiers.attributes = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 0 };
       whProperty2.modifiers.attributes[t.field] = t.value;
       expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
     });
+
+    test(`when other ${name}  has different value of modifier size`);
+    {
+      const whProperty1 = whProperty.copy() as WhPropertyWithModifiers;
+      const whProperty2 = whProperty.copy() as WhPropertyWithModifiers;
+      whProperty1.modifiers.size = 1;
+      whProperty2.modifiers.size = 2;
+      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
+    }
+
+    test(`when other ${name}  has different value of modifier movement`);
+    {
+      const whProperty1 = whProperty.copy() as WhPropertyWithModifiers;
+      const whProperty2 = whProperty.copy() as WhPropertyWithModifiers;
+      whProperty1.modifiers.movement = 1;
+      whProperty2.modifiers.movement = 2;
+      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
+    }
   });
 };
