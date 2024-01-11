@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { Prayer, PrayerApiData, apiResponseToModel, modelToApi } from "../services/wh/prayer.ts";
-import { Source } from "../services/wh/source.ts";
 import { ApiResponse } from "../services/wh/common.ts";
+import { testIsEqualCommonProperties } from "./commonTests.ts";
 
 const prayerApiData: PrayerApiData = {
   name: "prayer",
@@ -40,28 +40,9 @@ test("modelToApi returns expected api prayer data", () => {
   expect(modelToApi(prayer)).toMatchObject(prayerApiData);
 });
 
-describe("isEqualTo returns true", () => {
-  const otherPrayer = prayer.copy();
-  test("when prayers are the same", () => {
-    expect(prayer.isEqualTo(otherPrayer)).toBe(true);
-  });
-});
+testIsEqualCommonProperties("prayer", prayer);
 
 describe("isEqualTo returns false", () => {
-  test("when other prayer has different value of id");
-  {
-    const otherPrayer = prayer.copy();
-    otherPrayer.id = "otherId";
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  }
-
-  test("when other prayer has different value of name");
-  {
-    const otherPrayer = prayer.copy();
-    otherPrayer.name = "otherName";
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  }
-
   test("when other prayer has different value of range");
   {
     const otherPrayer = prayer.copy();
@@ -82,36 +63,4 @@ describe("isEqualTo returns false", () => {
     otherPrayer.duration = "otherDuration";
     expect(prayer.isEqualTo(otherPrayer)).toBe(false);
   }
-
-  test("when other prayer has different value of description");
-  {
-    const otherPrayer = prayer.copy();
-    otherPrayer.description = "otherDescription";
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  }
-
-  test("when other prayer has different value of canEdit");
-  {
-    const otherPrayer = prayer.copy();
-    otherPrayer.canEdit = false;
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  }
-
-  test("when other prayer has different value of shared");
-  {
-    const otherPrayer = prayer.copy();
-    otherPrayer.shared = false;
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  }
-
-  test.each<{ diff: string; source: Source }>([
-    { diff: "fewer sources", source: { 1: "page 2" } },
-    { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
-    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
-    { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
-  ])("when other prayer has $diff", (t) => {
-    const otherPrayer = prayer.copy();
-    otherPrayer.source = t.source;
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  });
 });
