@@ -1,9 +1,8 @@
 import { Mutation, MutationApiData, MutationType, apiResponseToModel, modelToApi } from "../services/wh/mutation.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { describe, expect, test } from "vitest";
-import { Source } from "../services/wh/source.ts";
 import { ApiResponse } from "../services/wh/common.ts";
-import { testIsEqualCommonProperties } from "./helpers.ts";
+import { testIsEqualCommonProperties } from "./commonTests.ts";
 
 const mutationApiData = {
   name: "mutation",
@@ -51,58 +50,12 @@ test("modelToApi returns expected api mutation data", () => {
 testIsEqualCommonProperties("mutation", mutation);
 
 describe("isEqualTo returns false", () => {
-  test("when other mutation has different value of id");
-  {
-    const otherMutation = mutation.copy();
-    otherMutation.id = "otherId";
-    expect(mutation.isEqualTo(otherMutation)).toBe(false);
-  }
-
-  test("when other mutation has different value of name");
-  {
-    const otherMutation = mutation.copy();
-    otherMutation.name = "otherName";
-    expect(mutation.isEqualTo(otherMutation)).toBe(false);
-  }
-
-  test("when other mutation has different value of description");
-  {
-    const otherMutation = mutation.copy();
-    otherMutation.description = "otherDesc";
-    expect(mutation.isEqualTo(otherMutation)).toBe(false);
-  }
-
-  test("when other mutation has different value of canEdit");
-  {
-    const otherMutation = mutation.copy();
-    otherMutation.canEdit = false;
-    expect(mutation.isEqualTo(otherMutation)).toBe(false);
-  }
-
   test("when other mutation has different value of type");
   {
     const otherMutation = mutation.copy();
     otherMutation.type = 1;
     expect(mutation.isEqualTo(otherMutation)).toBe(false);
   }
-
-  test("when other mutation has different value of shared");
-  {
-    const otherMutation = mutation.copy();
-    otherMutation.shared = false;
-    expect(mutation.isEqualTo(otherMutation)).toBe(false);
-  }
-
-  test.each<{ diff: string; source: Source }>([
-    { diff: "fewer sources", source: { 1: "page 2" } },
-    { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
-    { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
-    { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
-  ])("when other mutation has $diff", (t) => {
-    const otherMutation = mutation.copy();
-    otherMutation.source = t.source;
-    expect(mutation.isEqualTo(otherMutation)).toBe(false);
-  });
 
   test.each([
     { field: "WS", value: 10 },
