@@ -11,7 +11,7 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
 import { ApiResponse, WhProperty } from "./common.ts";
 
-export enum ItemType {
+export const enum ItemType {
   Melee = 0,
   Ranged,
   Ammunition,
@@ -21,7 +21,7 @@ export enum ItemType {
   Grimoire,
 }
 
-export enum MeleeGroup {
+export const enum MeleeGroup {
   Basic = 0,
   Cavalry,
   Fencing,
@@ -32,7 +32,7 @@ export enum MeleeGroup {
   "Two-Handed",
 }
 
-export enum RangedGroup {
+export const enum RangedGroup {
   Blackpowder = 0,
   Bow,
   Crossbow,
@@ -44,7 +44,7 @@ export enum RangedGroup {
   Blowpipe,
 }
 
-export enum AmmoGroup {
+export const enum AmmoGroup {
   "Blackpowder and engineering" = 0,
   Bow,
   Crossbow,
@@ -53,7 +53,7 @@ export enum AmmoGroup {
   Blowpipe,
 }
 
-export enum ArmourGroup {
+export const enum ArmourGroup {
   "Soft leather" = 0,
   "Boiled leather",
   Mail,
@@ -62,7 +62,7 @@ export enum ArmourGroup {
   Brigandine,
 }
 
-export enum ArmourLocation {
+export const enum ArmourLocation {
   Arms = 0,
   Body,
   Short,
@@ -70,7 +70,7 @@ export enum ArmourLocation {
   Head,
 }
 
-export enum MeleeReach {
+export const enum MeleeReach {
   Personal = 0,
   "Very short",
   Short,
@@ -80,20 +80,20 @@ export enum MeleeReach {
   Massive,
 }
 
-export enum WeaponHands {
+export const enum WeaponHands {
   Any = 0,
   "One-Handed",
   "Two-Handed",
 }
 
-export enum Availability {
+export const enum Availability {
   Common = 0,
   Scarce,
   Rare,
   Exotic,
 }
 
-export enum CarryType {
+export const enum CarryType {
   "Carriable and wearable" = 0,
   "Carriable and not wearable",
   "Not carriable and not wearable",
@@ -102,42 +102,42 @@ export enum CarryType {
 const API_BASE_PATH = "/api/wh/item";
 
 export type MeleeType = {
-  hands: number;
+  hands: WeaponHands;
   dmg: number;
   dmgSbMult: number;
-  reach: number;
-  group: number;
+  reach: MeleeReach;
+  group: MeleeGroup;
 };
 
 export type RangedType = {
-  hands: number;
+  hands: WeaponHands;
   dmg: number;
   dmgSbMult: number;
   rng: number;
   rngSbMult: number;
-  group: number;
+  group: RangedGroup;
 };
 
 export type AmmoType = {
   dmg: number;
   rng: number;
   rngMult: number;
-  group: number;
+  group: AmmoGroup;
 };
 
 export type ArmourType = {
   points: number;
-  location: number[];
-  group: number;
+  location: ArmourLocation[];
+  group: ArmourGroup;
 };
 
 export type ContainerType = {
   capacity: number;
-  carryType: number;
+  carryType: CarryType;
 };
 
 export type OtherType = {
-  carryType: number;
+  carryType: CarryType;
 };
 
 export type GrimoireType = {
@@ -149,9 +149,9 @@ export interface ItemApiData {
   description: string;
   price: number;
   enc: number;
-  availability: number;
+  availability: Availability;
   properties: string[];
-  type: number;
+  type: ItemType;
   melee: MeleeType;
   ranged: RangedType;
   ammunition: AmmoType;
@@ -170,9 +170,9 @@ export class Item implements WhProperty {
   description: string;
   price: number;
   enc: number;
-  availability: number;
+  availability: Availability;
   properties: string[];
-  type: number;
+  type: ItemType;
   melee: MeleeType;
   ranged: RangedType;
   ammunition: AmmoType;
@@ -190,9 +190,9 @@ export class Item implements WhProperty {
     description = "",
     price = 0,
     enc = 0,
-    availability = 0,
+    availability = Availability.Common,
     properties = [] as string[],
-    type = 0,
+    type = ItemType.Melee,
     melee = { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 } as MeleeType,
     ranged = { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 } as RangedType,
     ammunition = { dmg: 0, rng: 0, rngMult: 0, group: 0 } as AmmoType,

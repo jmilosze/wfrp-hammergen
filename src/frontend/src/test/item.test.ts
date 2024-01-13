@@ -1,18 +1,18 @@
 import {
   AmmoGroup,
+  apiResponseToModel,
   ArmourGroup,
   ArmourLocation,
   Availability,
+  CarryType,
   Item,
   ItemApiData,
   ItemType,
   MeleeGroup,
-  RangedGroup,
-  apiResponseToModel,
-  modelToApi,
   MeleeReach,
+  modelToApi,
+  RangedGroup,
   WeaponHands,
-  CarryType,
 } from "../services/wh/item.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -25,29 +25,29 @@ const itemApiData = {
   source: { 1: "page 2", 3: "page 5-10" },
   price: 12,
   enc: 2,
-  availability: Availability.Exotic.valueOf(),
+  availability: Availability.Exotic,
   properties: ["prop1", "prop2"],
-  type: ItemType.Ranged.valueOf(),
+  type: ItemType.Ranged,
   melee: {
-    hands: WeaponHands["One-Handed"].valueOf(),
+    hands: WeaponHands["One-Handed"],
     dmg: 1,
     dmgSbMult: 4,
-    reach: MeleeReach.Average.valueOf(),
-    group: MeleeGroup.Basic.valueOf(),
+    reach: MeleeReach.Average,
+    group: MeleeGroup.Basic,
   },
   ranged: {
-    hands: WeaponHands["One-Handed"].valueOf(),
+    hands: WeaponHands["One-Handed"],
     dmg: 2,
     dmgSbMult: 5,
     rng: 8,
     rngSbMult: 9,
-    group: RangedGroup.Blackpowder.valueOf(),
+    group: RangedGroup.Blackpowder,
   },
-  ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow.valueOf() },
+  ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow },
   armour: {
     points: 1,
-    location: [ArmourLocation.Arms.valueOf(), ArmourLocation.Head.valueOf()],
-    group: ArmourGroup.Plate.valueOf(),
+    location: [ArmourLocation.Arms, ArmourLocation.Head],
+    group: ArmourGroup.Plate,
   },
   grimoire: { spells: ["spell1", "spell2"] },
   container: { capacity: 1, carryType: CarryType["Carriable and not wearable"] },
@@ -70,29 +70,29 @@ const item = new Item({
   source: { 1: "page 2", 3: "page 5-10" },
   price: 12,
   enc: 2,
-  availability: Availability.Exotic.valueOf(),
+  availability: Availability.Exotic,
   properties: ["prop1", "prop2"],
-  type: ItemType.Ranged.valueOf(),
+  type: ItemType.Ranged,
   melee: {
-    hands: WeaponHands["One-Handed"].valueOf(),
+    hands: WeaponHands["One-Handed"],
     dmg: 1,
     dmgSbMult: 4,
-    reach: MeleeReach.Average.valueOf(),
-    group: MeleeGroup.Basic.valueOf(),
+    reach: MeleeReach.Average,
+    group: MeleeGroup.Basic,
   },
   ranged: {
-    hands: WeaponHands["One-Handed"].valueOf(),
+    hands: WeaponHands["One-Handed"],
     dmg: 2,
     dmgSbMult: 5,
     rng: 8,
     rngSbMult: 9,
-    group: RangedGroup.Blackpowder.valueOf(),
+    group: RangedGroup.Blackpowder,
   },
-  ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow.valueOf() },
+  ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow },
   armour: {
     points: 1,
-    location: [ArmourLocation.Arms.valueOf(), ArmourLocation.Head.valueOf()],
-    group: ArmourGroup.Plate.valueOf(),
+    location: [ArmourLocation.Arms, ArmourLocation.Head],
+    group: ArmourGroup.Plate,
   },
   grimoire: { spells: ["spell1", "spell2"] },
   container: { capacity: 1, carryType: CarryType["Carriable and not wearable"] },
@@ -113,17 +113,17 @@ describe("isEqualTo returns true", () => {
   test("when other item has different stats for types other than itself", () => {
     const otherItem = item.copy();
     otherItem.melee = {
-      hands: 10,
+      hands: WeaponHands.Any,
       dmg: 10,
       dmgSbMult: 40,
-      reach: MeleeReach["Very long"].valueOf(),
-      group: MeleeGroup.Basic.valueOf(),
+      reach: MeleeReach["Very long"],
+      group: MeleeGroup.Basic,
     };
-    otherItem.ammunition = { dmg: 2, rng: 34, rngMult: 6, group: AmmoGroup.Bow.valueOf() };
+    otherItem.ammunition = { dmg: 2, rng: 34, rngMult: 6, group: AmmoGroup.Bow };
     otherItem.armour = {
       points: 0,
       location: [],
-      group: ArmourGroup.Plate.valueOf(),
+      group: ArmourGroup.Plate,
     };
     otherItem.grimoire = { spells: [] };
     otherItem.container = { capacity: 2, carryType: 1 };
@@ -139,7 +139,7 @@ describe("isEqualTo returns true", () => {
 
   test("when item is grimoire and other item has spells in different order", () => {
     const grimoire = item.copy();
-    grimoire.type = ItemType.Grimoire.valueOf();
+    grimoire.type = ItemType.Grimoire;
     const otherItem = grimoire.copy();
     otherItem.grimoire.spells = ["spell2", "spell1"];
     expect(grimoire.isEqualTo(otherItem)).toBe(true);
@@ -147,9 +147,9 @@ describe("isEqualTo returns true", () => {
 
   test("when item is armour and other item has location in different order", () => {
     const armour = item.copy();
-    armour.type = ItemType.Armour.valueOf();
+    armour.type = ItemType.Armour;
     const otherItem = armour.copy();
-    otherItem.armour.location = [ArmourLocation.Head.valueOf(), ArmourLocation.Arms.valueOf()];
+    otherItem.armour.location = [ArmourLocation.Head, ArmourLocation.Arms];
     expect(armour.isEqualTo(otherItem)).toBe(true);
   });
 });
@@ -169,13 +169,13 @@ describe("isEqualTo returns false", () => {
 
   test("when other item has different value of availability", () => {
     const otherItem = item.copy();
-    otherItem.availability = Availability.Common.valueOf();
+    otherItem.availability = Availability.Common;
     expect(item.isEqualTo(otherItem)).toBe(false);
   });
 
   test("when other item has different value of type", () => {
     const otherItem = item.copy();
-    otherItem.type = ItemType.Container.valueOf();
+    otherItem.type = ItemType.Container;
     expect(item.isEqualTo(otherItem)).toBe(false);
   });
 
@@ -193,11 +193,11 @@ describe("isEqualTo returns false", () => {
 
   describe("when item is melee", () => {
     const melee = item.copy();
-    melee.type = ItemType.Melee.valueOf();
+    melee.type = ItemType.Melee;
 
     test("when other item has different value of hands", () => {
       const otherItem = melee.copy();
-      otherItem.melee.hands = WeaponHands["Two-Handed"].valueOf();
+      otherItem.melee.hands = WeaponHands["Two-Handed"];
       expect(melee.isEqualTo(otherItem)).toBe(false);
     });
 
@@ -215,13 +215,13 @@ describe("isEqualTo returns false", () => {
 
     test("when other item has different value of reach", () => {
       const otherItem = melee.copy();
-      otherItem.melee.reach = MeleeReach.Personal.valueOf();
+      otherItem.melee.reach = MeleeReach.Personal;
       expect(melee.isEqualTo(otherItem)).toBe(false);
     });
 
     test("when other item has different value of group", () => {
       const otherItem = melee.copy();
-      otherItem.melee.group = MeleeGroup.Fencing.valueOf();
+      otherItem.melee.group = MeleeGroup.Fencing;
       expect(melee.isEqualTo(otherItem)).toBe(false);
     });
   });
@@ -229,7 +229,7 @@ describe("isEqualTo returns false", () => {
   describe("when item is ranged", () => {
     test("when other item has different value of hands", () => {
       const otherItem = item.copy();
-      otherItem.ranged.hands = WeaponHands["Two-Handed"].valueOf();
+      otherItem.ranged.hands = WeaponHands["Two-Handed"];
       expect(item.isEqualTo(otherItem)).toBe(false);
     });
 
@@ -259,14 +259,14 @@ describe("isEqualTo returns false", () => {
 
     test("when other item has different value of group", () => {
       const otherItem = item.copy();
-      otherItem.ranged.group = RangedGroup.Crossbow.valueOf();
+      otherItem.ranged.group = RangedGroup.Crossbow;
       expect(item.isEqualTo(otherItem)).toBe(false);
     });
   });
 
   describe("when item is ammunition", () => {
     const ammo = item.copy();
-    ammo.type = ItemType.Ammunition.valueOf();
+    ammo.type = ItemType.Ammunition;
 
     test("when other item has different value of dmg", () => {
       const otherItem = ammo.copy();
@@ -288,14 +288,14 @@ describe("isEqualTo returns false", () => {
 
     test("when other item has different value of group", () => {
       const otherItem = ammo.copy();
-      otherItem.ammunition.group = AmmoGroup.Blowpipe.valueOf();
+      otherItem.ammunition.group = AmmoGroup.Blowpipe;
       expect(ammo.isEqualTo(otherItem)).toBe(false);
     });
   });
 
   describe("when item is armour", () => {
     const armour = item.copy();
-    armour.type = ItemType.Armour.valueOf();
+    armour.type = ItemType.Armour;
 
     test("when other item has different value of points", () => {
       const otherItem = armour.copy();
@@ -305,26 +305,26 @@ describe("isEqualTo returns false", () => {
 
     test("when other item has different value of group", () => {
       const otherItem = armour.copy();
-      otherItem.armour.group = AmmoGroup.Blowpipe.valueOf();
+      otherItem.armour.group = ArmourGroup.Mail;
       expect(armour.isEqualTo(otherItem)).toBe(false);
     });
 
     test("when other item has location field that is a subset", () => {
       const otherItem = armour.copy();
-      otherItem.armour.location = [ArmourLocation.Arms.valueOf()];
+      otherItem.armour.location = [ArmourLocation.Arms];
       expect(armour.isEqualTo(otherItem)).toBe(false);
     });
 
     test("when other skill has location field of the same length but different values", () => {
       const otherItem = armour.copy();
-      otherItem.armour.location = [ArmourLocation.Legs.valueOf(), ArmourLocation.Arms.valueOf()];
+      otherItem.armour.location = [ArmourLocation.Legs, ArmourLocation.Arms];
       expect(armour.isEqualTo(otherItem)).toBe(false);
     });
   });
 
   describe("when item is grimoire", () => {
     const grimoire = item.copy();
-    grimoire.type = ItemType.Grimoire.valueOf();
+    grimoire.type = ItemType.Grimoire;
 
     test("when other item has spells field that is a subset", () => {
       const otherItem = grimoire.copy();
@@ -341,7 +341,7 @@ describe("isEqualTo returns false", () => {
 
   describe("when item is container", () => {
     const container = item.copy();
-    container.type = ItemType.Container.valueOf();
+    container.type = ItemType.Container;
 
     test("when other item has different value of capacity", () => {
       const otherItem = container.copy();
@@ -358,7 +358,7 @@ describe("isEqualTo returns false", () => {
 
   describe("when item is other", () => {
     const other = item.copy();
-    other.type = ItemType.Other.valueOf();
+    other.type = ItemType.Other;
 
     test("when other item has different value of carryType", () => {
       const otherItem = other.copy();
