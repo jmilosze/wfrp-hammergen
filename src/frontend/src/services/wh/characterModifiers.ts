@@ -1,4 +1,4 @@
-import { Attributes, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
+import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
 
 export interface CharacterModifiersData {
   size: number;
@@ -34,12 +34,7 @@ export class CharacterModifiers {
     if (this.size !== otherCharacterModifiers.size || this.movement !== otherCharacterModifiers.movement) {
       return false;
     }
-    for (const key of Object.keys(this.attributes)) {
-      if (this.attributes[key] !== otherCharacterModifiers.attributes[key]) {
-        return false;
-      }
-    }
-    return true;
+    return attributesAreEqual(this.attributes, otherCharacterModifiers.attributes);
   }
 
   copy() {
