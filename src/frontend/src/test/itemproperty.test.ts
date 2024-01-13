@@ -13,8 +13,8 @@ import { testIsEqualCommonProperties } from "./commonTests.ts";
 const itemPropertyApiData = {
   name: "itemProperty",
   description: "desc",
-  type: ItemPropertyType.Quality.valueOf(),
-  applicableTo: [ItemType.Melee.valueOf(), ItemType.Armour.valueOf()],
+  type: ItemPropertyType.Quality,
+  applicableTo: [ItemType.Melee, ItemType.Armour],
   shared: true,
   source: { 1: "page 2", 3: "page 5-10" },
 };
@@ -31,8 +31,8 @@ const itemProperty = new ItemProperty({
   canEdit: true,
   name: "itemProperty",
   description: "desc",
-  type: ItemPropertyType.Quality.valueOf(),
-  applicableTo: [ItemType.Melee.valueOf(), ItemType.Armour.valueOf()],
+  type: ItemPropertyType.Quality,
+  applicableTo: [ItemType.Melee, ItemType.Armour],
   shared: true,
   source: { 1: "page 2", 3: "page 5-10" },
 });
@@ -50,7 +50,7 @@ testIsEqualCommonProperties("item property", itemProperty);
 describe("isEqualTo returns true", () => {
   test("when other item property has applicableTo field with elements in different order", () => {
     const otherItemProperty = itemProperty.copy();
-    otherItemProperty.applicableTo = [ItemType.Armour.valueOf(), ItemType.Melee.valueOf()];
+    otherItemProperty.applicableTo = [ItemType.Armour, ItemType.Melee];
     expect(itemProperty.isEqualTo(otherItemProperty)).toBe(true);
   });
 });
@@ -58,19 +58,19 @@ describe("isEqualTo returns true", () => {
 describe("isEqualTo returns false", () => {
   test("when other skill has different value of type", () => {
     const otherItemProperty = itemProperty.copy();
-    otherItemProperty.type = ItemPropertyType["Dwarf Rune"].valueOf();
+    otherItemProperty.type = ItemPropertyType["Dwarf Rune"];
     expect(itemProperty.isEqualTo(otherItemProperty)).toBe(false);
   });
 
   test("when other item property has applicableTo field that is a subset", () => {
     const otherItemProperty = itemProperty.copy();
-    otherItemProperty.applicableTo = [ItemType.Armour.valueOf()];
+    otherItemProperty.applicableTo = [ItemType.Armour];
     expect(itemProperty.isEqualTo(otherItemProperty)).toBe(false);
   });
 
   test("when other item property has applicableTo field of the same length but different values", () => {
     const otherItemProperty = itemProperty.copy();
-    otherItemProperty.applicableTo = [ItemType.Armour.valueOf(), ItemType.Other.valueOf()];
+    otherItemProperty.applicableTo = [ItemType.Armour, ItemType.Other];
     expect(itemProperty.isEqualTo(otherItemProperty)).toBe(false);
   });
 });
