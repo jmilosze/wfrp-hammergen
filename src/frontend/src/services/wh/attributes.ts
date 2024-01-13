@@ -58,3 +58,12 @@ export function multiplyAttributes(multiplier: number, attributes: Attributes): 
   }
   return returnAtts;
 }
+
+export function attributesAreEqual(att1: Attributes, att2: Attributes): boolean {
+  for (const key of Object.keys(att1)) {
+    if (att1[key] !== att2[key]) {
+      return false;
+    }
+  }
+  return true;
+}
