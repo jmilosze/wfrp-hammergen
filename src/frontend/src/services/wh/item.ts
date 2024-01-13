@@ -200,7 +200,6 @@ export class Item implements WhProperty {
     grimoire = { spells: [] } as GrimoireType,
     container = { capacity: 1, carryType: 0 } as ContainerType,
     other = { carryType: 0 } as OtherType,
-
     shared = false,
     source = {},
   } = {}) {
