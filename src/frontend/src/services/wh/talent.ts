@@ -12,7 +12,7 @@ import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
 import { ApiResponse, WhProperty } from "./common.ts";
 
-export enum TalentAttribute {
+export const enum TalentAttribute {
   None = 0,
   WS,
   BS,
@@ -34,7 +34,7 @@ export interface TalentApiData {
   description: string;
   tests: string;
   maxRank: number;
-  attribute: number;
+  attribute: TalentAttribute;
   isGroup: boolean;
   group: string[];
   modifiers: CharacterModifiersData;
@@ -49,7 +49,7 @@ export class Talent implements WhProperty {
   description: string;
   tests: string;
   maxRank: number;
-  attribute: number;
+  attribute: TalentAttribute;
   isGroup: boolean;
   group: string[];
   modifiers: CharacterModifiers;
@@ -63,7 +63,7 @@ export class Talent implements WhProperty {
     description = "",
     tests = "",
     maxRank = 0,
-    attribute = TalentAttribute.None.valueOf(),
+    attribute = TalentAttribute.None,
     isGroup = false,
     group = [] as string[],
     modifiers = new CharacterModifiers(),

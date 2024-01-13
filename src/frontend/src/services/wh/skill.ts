@@ -11,20 +11,7 @@ import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
 import { ApiResponse, WhProperty } from "./common.ts";
 
-export enum SkillIndividualAttribute {
-  WS = 1,
-  BS,
-  S,
-  T,
-  I,
-  Ag,
-  Dex,
-  Int,
-  WP,
-  Fel,
-}
-
-export enum SkillGroupAttribute {
+export const enum SkillAttribute {
   WS = 1,
   BS,
   S,
@@ -38,15 +25,10 @@ export enum SkillGroupAttribute {
   Various,
 }
 
-export enum SkillGroupType {
+export const enum SkillType {
   Basic = 0,
   Advanced,
   Mixed,
-}
-
-export enum SkillIndividualType {
-  Basic = 0,
-  Advanced,
 }
 
 const API_BASE_PATH = "/api/wh/skill";
@@ -54,8 +36,8 @@ const API_BASE_PATH = "/api/wh/skill";
 export interface SkillApiData {
   name: string;
   description: string;
-  attribute: number;
-  type: number;
+  attribute: SkillAttribute;
+  type: SkillType;
   displayZero: boolean;
   isGroup: boolean;
   group: string[];
@@ -68,7 +50,7 @@ export class Skill implements WhProperty {
   canEdit: boolean;
   name: string;
   description: string;
-  attribute: number;
+  attribute: SkillAttribute;
   type: number;
   displayZero: boolean;
   isGroup: boolean;
@@ -81,8 +63,8 @@ export class Skill implements WhProperty {
     canEdit = false,
     name = "",
     description = "",
-    attribute = SkillIndividualAttribute.Ag.valueOf(),
-    type = SkillIndividualType.Basic.valueOf(),
+    attribute = SkillAttribute.Ag,
+    type = SkillType.Basic,
     displayZero = false,
     isGroup = false,
     group = [] as string[],

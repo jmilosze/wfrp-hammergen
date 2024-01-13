@@ -3,8 +3,8 @@ import {
   SkillApiData,
   apiResponseToModel,
   modelToApi,
-  SkillIndividualAttribute as Att,
-  SkillIndividualType as SkillType,
+  SkillAttribute as Att,
+  SkillType as SkillType,
 } from "../services/wh/skill.ts";
 import { describe, expect, test } from "vitest";
 import { ApiResponse } from "../services/wh/common.ts";
@@ -70,13 +70,13 @@ describe("isEqualTo returns false", () => {
 
   test("when other skill has different value of attribute", () => {
     const otherSkill = skill.copy();
-    otherSkill.attribute = Att.Int.valueOf();
+    otherSkill.attribute = Att.Int;
     expect(skill.isEqualTo(otherSkill)).toBe(false);
   });
 
   test("when other skill has different value of type", () => {
     const otherSkill = skill.copy();
-    otherSkill.type = SkillType.Advanced.valueOf();
+    otherSkill.type = SkillType.Advanced;
     expect(skill.isEqualTo(otherSkill)).toBe(false);
   });
 
