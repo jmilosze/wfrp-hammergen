@@ -10,8 +10,9 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator.ts";
+import { ItemType } from "./item.ts";
 
-export enum ItemPropertyType {
+export const enum ItemPropertyType {
   Quality = 0,
   Flaw,
   "Dwarf Rune",
@@ -22,8 +23,8 @@ const API_BASE_PATH = "/api/wh/property";
 export interface ItemPropertyApiData {
   name: string;
   description: string;
-  type: number;
-  applicableTo: number[];
+  type: ItemPropertyType;
+  applicableTo: ItemType[];
   shared: boolean;
   source: Source;
 }
@@ -33,8 +34,8 @@ export class ItemProperty implements WhProperty {
   canEdit: boolean;
   name: string;
   description: string;
-  type: number;
-  applicableTo: number[];
+  type: ItemPropertyType;
+  applicableTo: ItemType[];
   shared: boolean;
   source: Source;
 
@@ -43,8 +44,8 @@ export class ItemProperty implements WhProperty {
     canEdit = false,
     name = "",
     description = "",
-    type = ItemPropertyType.Quality.valueOf(),
-    applicableTo = [] as number[],
+    type = ItemPropertyType.Quality,
+    applicableTo = [] as ItemType[],
     shared = false,
     source = {},
   } = {}) {
