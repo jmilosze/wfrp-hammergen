@@ -109,7 +109,7 @@ export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
   };
 }
 
-export class MutationApi {
+export class ItemPropertyApi {
   getElement: (id: string) => Promise<ItemProperty>;
   listElements: (id: string) => Promise<ItemProperty[]>;
   createElement: (wh: ItemProperty) => Promise<ApiResponse<ItemPropertyApiData>>;

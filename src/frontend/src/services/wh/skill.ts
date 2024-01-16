@@ -147,7 +147,7 @@ export function modelToApi(skill: Skill): SkillApiData {
   };
 }
 
-export class TalentApi {
+export class SkillApi {
   getElement: (id: string) => Promise<Skill>;
   listElements: (id: string) => Promise<Skill[]>;
   createElement: (wh: Skill) => Promise<ApiResponse<SkillApiData>>;
