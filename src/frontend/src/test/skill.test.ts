@@ -4,7 +4,7 @@ import { ApiResponse } from "../services/wh/common.ts";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
 
-const skillApiData = {
+const skillApiData: SkillApiData = {
   name: "skill",
   description: "desc",
   attribute: AttributeName.Ag,

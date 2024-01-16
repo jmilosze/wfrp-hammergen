@@ -1,24 +1,31 @@
 import {
   AmmoGroup,
+  AmmoType,
   apiResponseToModel,
   ArmourGroup,
   ArmourLocation,
+  ArmourType,
   Availability,
   CarryType,
+  ContainerType,
+  GrimoireType,
   Item,
   ItemApiData,
   ItemType,
   MeleeGroup,
   MeleeReach,
+  MeleeType,
   modelToApi,
+  OtherType,
   RangedGroup,
+  RangedType,
   WeaponHands,
 } from "../services/wh/item.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
-const itemApiData = {
+const itemApiData: ItemApiData = {
   name: "item",
   description: "desc",
   shared: true,
@@ -34,7 +41,7 @@ const itemApiData = {
     dmgSbMult: 4,
     reach: MeleeReach.Average,
     group: MeleeGroup.Basic,
-  },
+  } as MeleeType,
   ranged: {
     hands: WeaponHands.OneHanded,
     dmg: 2,
@@ -42,16 +49,16 @@ const itemApiData = {
     rng: 8,
     rngSbMult: 9,
     group: RangedGroup.Blackpowder,
-  },
-  ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow },
+  } as RangedType,
+  ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow } as AmmoType,
   armour: {
     points: 1,
     location: [ArmourLocation.Arms, ArmourLocation.Head],
     group: ArmourGroup.Plate,
-  },
-  grimoire: { spells: ["spell1", "spell2"] },
-  container: { capacity: 1, carryType: CarryType.CarriableAndNotWearable },
-  other: { carryType: CarryType.CarriableAndWearable },
+  } as ArmourType,
+  grimoire: { spells: ["spell1", "spell2"] } as GrimoireType,
+  container: { capacity: 1, carryType: CarryType.CarriableAndNotWearable } as ContainerType,
+  other: { carryType: CarryType.CarriableAndWearable } as OtherType,
 };
 
 const itemApiResponse: ApiResponse<ItemApiData> = {
@@ -79,7 +86,7 @@ const item = new Item({
     dmgSbMult: 4,
     reach: MeleeReach.Average,
     group: MeleeGroup.Basic,
-  },
+  } as MeleeType,
   ranged: {
     hands: WeaponHands.OneHanded,
     dmg: 2,
@@ -87,16 +94,16 @@ const item = new Item({
     rng: 8,
     rngSbMult: 9,
     group: RangedGroup.Blackpowder,
-  },
-  ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow },
+  } as RangedType,
+  ammunition: { dmg: 0, rng: 3, rngMult: 6, group: AmmoGroup.Bow } as AmmoType,
   armour: {
     points: 1,
     location: [ArmourLocation.Arms, ArmourLocation.Head],
     group: ArmourGroup.Plate,
-  },
-  grimoire: { spells: ["spell1", "spell2"] },
-  container: { capacity: 1, carryType: CarryType.CarriableAndNotWearable },
-  other: { carryType: CarryType.CarriableAndWearable },
+  } as ArmourType,
+  grimoire: { spells: ["spell1", "spell2"] } as GrimoireType,
+  container: { capacity: 1, carryType: CarryType.CarriableAndNotWearable } as ContainerType,
+  other: { carryType: CarryType.CarriableAndWearable } as OtherType,
 });
 
 test("apiResponseToModel returns expected item", () => {

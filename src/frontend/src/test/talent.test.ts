@@ -6,7 +6,7 @@ import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "./co
 
 import { AttributeName as Att } from "../services/wh/attributes.ts";
 
-const talentGroupApiData = {
+const talentGroupApiData: TalentApiData = {
   name: "talent1",
   description: "desc1",
   tests: "qwe",

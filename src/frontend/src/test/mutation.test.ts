@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import { ApiResponse } from "../services/wh/common.ts";
 import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "./commonTests.ts";
 
-const mutationApiData = {
+const mutationApiData: MutationApiData = {
   name: "mutation",
   description: "desc",
   type: MutationType.Physical,
