@@ -10,7 +10,7 @@ import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
-const itemPropertyApiData = {
+const itemPropertyApiData: ItemPropertyApiData = {
   name: "itemProperty",
   description: "desc",
   type: ItemPropertyType.Quality,
