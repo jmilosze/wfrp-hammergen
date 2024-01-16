@@ -1,26 +1,20 @@
-import {
-  Skill,
-  SkillApiData,
-  apiResponseToModel,
-  modelToApi,
-  SkillAttribute as Att,
-  SkillType as SkillType,
-} from "../services/wh/skill.ts";
+import { Skill, SkillApiData, apiResponseToModel, modelToApi, SkillType } from "../services/wh/skill.ts";
 import { describe, expect, test } from "vitest";
 import { ApiResponse } from "../services/wh/common.ts";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
+import { AttributeName } from "../services/wh/attributes.ts";
 
 const skillApiData = {
   name: "skill",
   description: "desc",
-  attribute: 1,
-  type: 0,
+  attribute: AttributeName.Ag,
+  type: SkillType.Basic,
   displayZero: true,
   isGroup: true,
   group: ["a", "b"],
   shared: true,
   source: { 1: "page 2", 3: "page 5-10" },
-};
+} as SkillApiData;
 
 const skillApiResponse: ApiResponse<SkillApiData> = {
   id: "id",
@@ -34,8 +28,8 @@ const skill = new Skill({
   canEdit: true,
   name: "skill",
   description: "desc",
-  attribute: 1,
-  type: 0,
+  attribute: AttributeName.Ag,
+  type: SkillType.Basic,
   displayZero: true,
   isGroup: true,
   group: ["a", "b"],
@@ -70,7 +64,7 @@ describe("isEqualTo returns false", () => {
 
   test("when other skill has different value of attribute", () => {
     const otherSkill = skill.copy();
-    otherSkill.attribute = Att.Int;
+    otherSkill.attribute = AttributeName.Int;
     expect(skill.isEqualTo(otherSkill)).toBe(false);
   });
 

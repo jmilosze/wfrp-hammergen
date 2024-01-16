@@ -1,14 +1,10 @@
-import {
-  Talent,
-  TalentApiData,
-  apiResponseToModel,
-  modelToApi,
-  TalentAttribute as Att,
-} from "../services/wh/talent.ts";
+import { Talent, TalentApiData, apiResponseToModel, modelToApi } from "../services/wh/talent.ts";
 import { describe, expect, test } from "vitest";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "./commonTests.ts";
+
+import { AttributeName as Att } from "../services/wh/attributes.ts";
 
 const talentGroupApiData = {
   name: "talent1",

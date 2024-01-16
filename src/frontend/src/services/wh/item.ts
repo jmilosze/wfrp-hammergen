@@ -29,7 +29,7 @@ export const enum MeleeGroup {
   Flail,
   Parry,
   Polearm,
-  "Two-Handed",
+  TwoHanded,
 }
 
 export const enum RangedGroup {
@@ -45,7 +45,7 @@ export const enum RangedGroup {
 }
 
 export const enum AmmoGroup {
-  "Blackpowder and engineering" = 0,
+  BlackpowderAndEngineering = 0,
   Bow,
   Crossbow,
   Sling,
@@ -54,11 +54,11 @@ export const enum AmmoGroup {
 }
 
 export const enum ArmourGroup {
-  "Soft leather" = 0,
-  "Boiled leather",
+  SoftLeather = 0,
+  BoiledLeather,
   Mail,
   Plate,
-  "Soft kit",
+  SoftKit,
   Brigandine,
 }
 
@@ -72,18 +72,18 @@ export const enum ArmourLocation {
 
 export const enum MeleeReach {
   Personal = 0,
-  "Very short",
+  VeryShort,
   Short,
   Average,
   Long,
-  "Very long",
+  VeryLong,
   Massive,
 }
 
 export const enum WeaponHands {
   Any = 0,
-  "One-Handed",
-  "Two-Handed",
+  OneHanded,
+  TwoHanded,
 }
 
 export const enum Availability {
@@ -94,9 +94,9 @@ export const enum Availability {
 }
 
 export const enum CarryType {
-  "Carriable and wearable" = 0,
-  "Carriable and not wearable",
-  "Not carriable and not wearable",
+  CarriableAndWearable = 0,
+  CarriableAndNotWearable,
+  NotCarriableAndNotWearable,
 }
 
 const API_BASE_PATH = "/api/wh/item";
@@ -193,13 +193,26 @@ export class Item implements WhProperty {
     availability = Availability.Common,
     properties = [] as string[],
     type = ItemType.Melee,
-    melee = { hands: 1, dmg: 0, dmgSbMult: 0, reach: 0, group: 0 } as MeleeType,
-    ranged = { hands: 1, dmg: 0, dmgSbMult: 0, rng: 0, rngSbMult: 0, group: 0 } as RangedType,
-    ammunition = { dmg: 0, rng: 0, rngMult: 0, group: 0 } as AmmoType,
-    armour = { points: 0, location: [], group: 0 } as ArmourType,
+    melee = {
+      hands: WeaponHands.OneHanded,
+      dmg: 0,
+      dmgSbMult: 0,
+      reach: MeleeReach.Personal,
+      group: MeleeGroup.Basic,
+    } as MeleeType,
+    ranged = {
+      hands: WeaponHands.OneHanded,
+      dmg: 0,
+      dmgSbMult: 0,
+      rng: 0,
+      rngSbMult: 0,
+      group: RangedGroup.Bow,
+    } as RangedType,
+    ammunition = { dmg: 0, rng: 0, rngMult: 0, group: AmmoGroup.Bow } as AmmoType,
+    armour = { points: 0, location: [], group: ArmourGroup.SoftLeather } as ArmourType,
     grimoire = { spells: [] } as GrimoireType,
-    container = { capacity: 1, carryType: 0 } as ContainerType,
-    other = { carryType: 0 } as OtherType,
+    container = { capacity: 1, carryType: CarryType.NotCarriableAndNotWearable } as ContainerType,
+    other = { carryType: CarryType.NotCarriableAndNotWearable } as OtherType,
     shared = false,
     source = {},
   } = {}) {

@@ -1,4 +1,4 @@
-import { Attributes, attributesAreEqual, racialAttributes } from "./attributes.ts";
+import { AttributeName, racialAttributes } from "./attributes.ts";
 import { copySource, Source } from "./source.ts";
 import { ApiResponse, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
@@ -24,7 +24,7 @@ export const enum CareerClass {
   Seafarer,
 }
 
-const enum StatusTier {
+export const enum StatusTier {
   Brass = 0,
   Silver,
   Gold,
@@ -36,9 +36,9 @@ export enum Species {
   Human = 0,
   Halfling,
   Dwarf,
-  "High Elf",
-  "Wood Elf",
-  Glone,
+  HighElf,
+  WoodElf,
+  Gnome,
   Ogre,
 }
 
@@ -46,7 +46,7 @@ export type CareerLevel = {
   name: string;
   status: StatusTier;
   standing: StatusStanding;
-  attributes: Attributes;
+  attributes: AttributeName[];
   skills: string[];
   talents: string[];
   items: string;
@@ -77,15 +77,15 @@ const zeroCareerLevel: CareerLevel = {
   items: "",
 };
 
-const careerLevelEqual = (careerLevel1: CareerLevel, careerLevel2: CareerLevel): boolean => {
+const careerLevelEqual = (careerLevel: CareerLevel, OtherCareerLevel: CareerLevel): boolean => {
   return (
-    careerLevel1.name === careerLevel2.name &&
-    careerLevel1.status === careerLevel2.status &&
-    careerLevel1.standing === careerLevel2.standing &&
-    attributesAreEqual(careerLevel1.attributes, careerLevel2.attributes) &&
-    arraysAreEqualIgnoreOrder(careerLevel1.skills, careerLevel2.skills) &&
-    arraysAreEqualIgnoreOrder(careerLevel1.talents, careerLevel2.talents) &&
-    careerLevel1.items === careerLevel2.items
+    careerLevel.name === OtherCareerLevel.name &&
+    careerLevel.status === OtherCareerLevel.status &&
+    careerLevel.standing === OtherCareerLevel.standing &&
+    arraysAreEqualIgnoreOrder(careerLevel.attributes, OtherCareerLevel.attributes) &&
+    arraysAreEqualIgnoreOrder(careerLevel.skills, OtherCareerLevel.skills) &&
+    arraysAreEqualIgnoreOrder(careerLevel.talents, OtherCareerLevel.talents) &&
+    careerLevel.items === OtherCareerLevel.items
   );
 };
 
