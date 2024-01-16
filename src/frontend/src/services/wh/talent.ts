@@ -11,21 +11,7 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
 import { ApiResponse, WhProperty } from "./common.ts";
-
-export const enum TalentAttribute {
-  None = 0,
-  WS,
-  BS,
-  S,
-  T,
-  I,
-  Ag,
-  Dex,
-  Int,
-  WP,
-  Fel,
-  Various,
-}
+import { AttributeName } from "./attributes.ts";
 
 const API_BASE_PATH = "/api/wh/talent";
 
@@ -34,7 +20,7 @@ export interface TalentApiData {
   description: string;
   tests: string;
   maxRank: number;
-  attribute: TalentAttribute;
+  attribute: AttributeName;
   isGroup: boolean;
   group: string[];
   modifiers: CharacterModifiersData;
@@ -49,7 +35,7 @@ export class Talent implements WhProperty {
   description: string;
   tests: string;
   maxRank: number;
-  attribute: TalentAttribute;
+  attribute: AttributeName;
   isGroup: boolean;
   group: string[];
   modifiers: CharacterModifiers;
@@ -63,7 +49,7 @@ export class Talent implements WhProperty {
     description = "",
     tests = "",
     maxRank = 0,
-    attribute = TalentAttribute.None,
+    attribute = AttributeName.None,
     isGroup = false,
     group = [] as string[],
     modifiers = new CharacterModifiers(),

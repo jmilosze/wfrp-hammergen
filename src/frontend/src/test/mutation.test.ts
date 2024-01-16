@@ -7,7 +7,7 @@ import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "./co
 const mutationApiData = {
   name: "mutation",
   description: "desc",
-  type: 0 as MutationType,
+  type: MutationType.Physical,
   modifiers: {
     size: 0,
     movement: 1,
@@ -29,7 +29,7 @@ const mutation = new Mutation({
   canEdit: true,
   name: "mutation",
   description: "desc",
-  type: 0,
+  type: MutationType.Physical,
   modifiers: new CharacterModifiers({
     size: 0,
     movement: 1,

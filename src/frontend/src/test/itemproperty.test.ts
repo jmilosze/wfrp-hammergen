@@ -58,7 +58,7 @@ describe("isEqualTo returns true", () => {
 describe("isEqualTo returns false", () => {
   test("when other skill has different value of type", () => {
     const otherItemProperty = itemProperty.copy();
-    otherItemProperty.type = ItemPropertyType["Dwarf Rune"];
+    otherItemProperty.type = ItemPropertyType.DwarfRune;
     expect(itemProperty.isEqualTo(otherItemProperty)).toBe(false);
   });
 

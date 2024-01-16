@@ -29,14 +29,14 @@ const itemApiData = {
   properties: ["prop1", "prop2"],
   type: ItemType.Ranged,
   melee: {
-    hands: WeaponHands["One-Handed"],
+    hands: WeaponHands.OneHanded,
     dmg: 1,
     dmgSbMult: 4,
     reach: MeleeReach.Average,
     group: MeleeGroup.Basic,
   },
   ranged: {
-    hands: WeaponHands["One-Handed"],
+    hands: WeaponHands.OneHanded,
     dmg: 2,
     dmgSbMult: 5,
     rng: 8,
@@ -50,8 +50,8 @@ const itemApiData = {
     group: ArmourGroup.Plate,
   },
   grimoire: { spells: ["spell1", "spell2"] },
-  container: { capacity: 1, carryType: CarryType["Carriable and not wearable"] },
-  other: { carryType: CarryType["Carriable and wearable"] },
+  container: { capacity: 1, carryType: CarryType.CarriableAndNotWearable },
+  other: { carryType: CarryType.CarriableAndWearable },
 };
 
 const itemApiResponse: ApiResponse<ItemApiData> = {
@@ -74,14 +74,14 @@ const item = new Item({
   properties: ["prop1", "prop2"],
   type: ItemType.Ranged,
   melee: {
-    hands: WeaponHands["One-Handed"],
+    hands: WeaponHands.OneHanded,
     dmg: 1,
     dmgSbMult: 4,
     reach: MeleeReach.Average,
     group: MeleeGroup.Basic,
   },
   ranged: {
-    hands: WeaponHands["One-Handed"],
+    hands: WeaponHands.OneHanded,
     dmg: 2,
     dmgSbMult: 5,
     rng: 8,
@@ -95,8 +95,8 @@ const item = new Item({
     group: ArmourGroup.Plate,
   },
   grimoire: { spells: ["spell1", "spell2"] },
-  container: { capacity: 1, carryType: CarryType["Carriable and not wearable"] },
-  other: { carryType: CarryType["Carriable and wearable"] },
+  container: { capacity: 1, carryType: CarryType.CarriableAndNotWearable },
+  other: { carryType: CarryType.CarriableAndWearable },
 });
 
 test("apiResponseToModel returns expected item", () => {
@@ -116,7 +116,7 @@ describe("isEqualTo returns true", () => {
       hands: WeaponHands.Any,
       dmg: 10,
       dmgSbMult: 40,
-      reach: MeleeReach["Very long"],
+      reach: MeleeReach.VeryLong,
       group: MeleeGroup.Basic,
     };
     otherItem.ammunition = { dmg: 2, rng: 34, rngMult: 6, group: AmmoGroup.Bow };
@@ -197,7 +197,7 @@ describe("isEqualTo returns false", () => {
 
     test("when other item has different value of hands", () => {
       const otherItem = melee.copy();
-      otherItem.melee.hands = WeaponHands["Two-Handed"];
+      otherItem.melee.hands = WeaponHands.TwoHanded;
       expect(melee.isEqualTo(otherItem)).toBe(false);
     });
 
@@ -229,7 +229,7 @@ describe("isEqualTo returns false", () => {
   describe("when item is ranged", () => {
     test("when other item has different value of hands", () => {
       const otherItem = item.copy();
-      otherItem.ranged.hands = WeaponHands["Two-Handed"];
+      otherItem.ranged.hands = WeaponHands.TwoHanded;
       expect(item.isEqualTo(otherItem)).toBe(false);
     });
 
@@ -351,7 +351,7 @@ describe("isEqualTo returns false", () => {
 
     test("when other item has different value of carryType", () => {
       const otherItem = container.copy();
-      otherItem.container.carryType = CarryType["Carriable and wearable"];
+      otherItem.container.carryType = CarryType.CarriableAndWearable;
       expect(container.isEqualTo(otherItem)).toBe(false);
     });
   });
@@ -362,7 +362,7 @@ describe("isEqualTo returns false", () => {
 
     test("when other item has different value of carryType", () => {
       const otherItem = other.copy();
-      otherItem.other.carryType = CarryType["Not carriable and not wearable"];
+      otherItem.other.carryType = CarryType.NotCarriableAndNotWearable;
       expect(other.isEqualTo(otherItem)).toBe(false);
     });
   });

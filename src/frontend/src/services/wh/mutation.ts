@@ -13,7 +13,10 @@ import { ApiResponse, WhProperty } from "./common.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
 
-export type MutationType = 0 | 1;
+export const enum MutationType {
+  Physical = 0,
+  Mental,
+}
 
 export interface MutationApiData {
   name: string;
@@ -39,7 +42,7 @@ export class Mutation implements WhProperty {
     canEdit = false,
     name = "",
     description = "",
-    type = 0 as MutationType,
+    type = MutationType.Physical,
     modifiers = new CharacterModifiers(),
     shared = false,
     source = {},

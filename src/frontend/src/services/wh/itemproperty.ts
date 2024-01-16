@@ -15,7 +15,7 @@ import { ItemType } from "./item.ts";
 export const enum ItemPropertyType {
   Quality = 0,
   Flaw,
-  "Dwarf Rune",
+  DwarfRune,
 }
 
 const API_BASE_PATH = "/api/wh/property";

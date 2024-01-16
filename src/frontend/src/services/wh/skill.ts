@@ -10,20 +10,7 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
 import { ApiResponse, WhProperty } from "./common.ts";
-
-export const enum SkillAttribute {
-  WS = 1,
-  BS,
-  S,
-  T,
-  I,
-  Ag,
-  Dex,
-  Int,
-  WP,
-  Fel,
-  Various,
-}
+import { AttributeName } from "./attributes.ts";
 
 export const enum SkillType {
   Basic = 0,
@@ -36,7 +23,7 @@ const API_BASE_PATH = "/api/wh/skill";
 export interface SkillApiData {
   name: string;
   description: string;
-  attribute: SkillAttribute;
+  attribute: AttributeName;
   type: SkillType;
   displayZero: boolean;
   isGroup: boolean;
@@ -50,7 +37,7 @@ export class Skill implements WhProperty {
   canEdit: boolean;
   name: string;
   description: string;
-  attribute: SkillAttribute;
+  attribute: AttributeName;
   type: number;
   displayZero: boolean;
   isGroup: boolean;
@@ -63,7 +50,7 @@ export class Skill implements WhProperty {
     canEdit = false,
     name = "",
     description = "",
-    attribute = SkillAttribute.Ag,
+    attribute = AttributeName.Ag,
     type = SkillType.Basic,
     displayZero = false,
     isGroup = false,
