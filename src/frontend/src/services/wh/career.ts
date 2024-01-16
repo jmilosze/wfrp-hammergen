@@ -198,7 +198,7 @@ export function modelToApi(career: Career): CareerApiData {
   };
 }
 
-export class MutationApi {
+export class CareerApi {
   getElement: (id: string) => Promise<Career>;
   listElements: (id: string) => Promise<Career[]>;
   createElement: (wh: Career) => Promise<ApiResponse<CareerApiData>>;
