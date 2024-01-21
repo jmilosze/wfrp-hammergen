@@ -33,27 +33,27 @@ const careerApiData: CareerApiData = {
     name: "l2",
     status: StatusTier.Silver,
     standing: 2,
-    attributes: [AttributeName.T],
+    attributes: [AttributeName.T, AttributeName.Dex],
     skills: ["skill21", "skill22"],
     talents: ["talent21", "talent22"],
     items: "items2",
   } as CareerLevel,
   level3: {
     name: "l3",
-    status: StatusTier.Gold,
+    status: StatusTier.Silver,
     standing: 4,
-    attributes: [AttributeName.Int],
-    skills: ["skill3"],
-    talents: ["talent3"],
+    attributes: [AttributeName.Int, AttributeName.Fel],
+    skills: ["skill31", "skill32"],
+    talents: ["talent31", "talent32"],
     items: "items3",
   } as CareerLevel,
   level4: {
     name: "l4",
-    status: StatusTier.Gold,
+    status: StatusTier.Silver,
     standing: 5,
-    attributes: [AttributeName.S],
-    skills: [],
-    talents: [],
+    attributes: [AttributeName.S, AttributeName.BS],
+    skills: ["skill41", "skill42"],
+    talents: ["talent41", "talent42"],
     items: "items4",
   } as CareerLevel,
 };
@@ -87,27 +87,27 @@ const career = new Career({
     name: "l2",
     status: StatusTier.Silver,
     standing: 2,
-    attributes: [AttributeName.T],
+    attributes: [AttributeName.T, AttributeName.Dex],
     skills: ["skill21", "skill22"],
     talents: ["talent21", "talent22"],
     items: "items2",
   } as CareerLevel,
   level3: {
     name: "l3",
-    status: StatusTier.Gold,
+    status: StatusTier.Silver,
     standing: 4,
-    attributes: [AttributeName.Int],
-    skills: ["skill3"],
-    talents: ["talent3"],
+    attributes: [AttributeName.Int, AttributeName.Fel],
+    skills: ["skill31", "skill32"],
+    talents: ["talent31", "talent32"],
     items: "items3",
   } as CareerLevel,
   level4: {
     name: "l4",
-    status: StatusTier.Gold,
+    status: StatusTier.Silver,
     standing: 5,
-    attributes: [AttributeName.S],
-    skills: [],
-    talents: [],
+    attributes: [AttributeName.S, AttributeName.BS],
+    skills: ["skill41", "skill42"],
+    talents: ["talent41", "talent42"],
     items: "items4",
   } as CareerLevel,
 });
@@ -135,5 +135,116 @@ describe("isEqualTo returns false", () => {
     const otherCareer = career.copy();
     otherCareer.careerClass = CareerClass.Courtier;
     expect(career.isEqualTo(otherCareer)).toBe(false);
+  });
+});
+
+describe("isEqualTo returns true", () => {
+  const otherCareer = career.copy();
+  describe.each([
+    { name: "level1", level: otherCareer.level1 },
+    { name: "level2", level: otherCareer.level2 },
+    { name: "level3", level: otherCareer.level3 },
+    { name: "level4", level: otherCareer.level4 },
+  ])(`when other career has different $name`, (t) => {
+    test("attributes are in different order", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.attributes));
+      t.level.attributes.reverse();
+      expect(career.isEqualTo(otherCareer)).toBe(true);
+      t.level.attributes = currentValue;
+    });
+
+    test("skills are in different order", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.skills));
+      t.level.skills.reverse();
+      expect(career.isEqualTo(otherCareer)).toBe(true);
+      t.level.skills = currentValue;
+    });
+
+    test("talents are in different order", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.talents));
+      t.level.talents.reverse();
+      expect(career.isEqualTo(otherCareer)).toBe(true);
+      t.level.talents = currentValue;
+    });
+  });
+});
+
+describe("isEqualTo returns false", () => {
+  const otherCareer = career.copy();
+  describe.each([
+    { name: "level1", level: otherCareer.level1 },
+    { name: "level2", level: otherCareer.level2 },
+    { name: "level3", level: otherCareer.level3 },
+    { name: "level4", level: otherCareer.level4 },
+  ])(`when other career has different $name`, (t) => {
+    test("the difference is name", () => {
+      const currentValue = t.level.name;
+      t.level.name = "otherLevelName";
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.name = currentValue;
+    });
+
+    test("the difference is status", () => {
+      const currentValue = t.level.status;
+      t.level.status = StatusTier.Gold;
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.status = currentValue;
+    });
+
+    test("the difference is standing", () => {
+      const currentValue = t.level.standing;
+      t.level.standing = 6;
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.standing = currentValue;
+    });
+
+    test("the difference is items", () => {
+      const currentValue = t.level.items;
+      t.level.items = "otherItems";
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.items = currentValue;
+    });
+
+    test("attributes is subset", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.attributes));
+      t.level.attributes.pop();
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.attributes = currentValue;
+    });
+
+    test("attributes is same length but different elements", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.attributes));
+      t.level.attributes[1] = AttributeName.None;
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.attributes = currentValue;
+    });
+
+    test("skills is subset", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.skills));
+      t.level.skills.pop();
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.skills = currentValue;
+    });
+
+    test("skills is same length but different elements", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.skills));
+      t.level.skills[1] = "someOtherSkill";
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.skills = currentValue;
+    });
+
+    test("talents is subset", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.talents));
+      t.level.talents.pop();
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.talents = currentValue;
+    });
+
+    test("talents is same length but different elements", () => {
+      const currentValue = JSON.parse(JSON.stringify(t.level.talents));
+      t.level.talents[1] = "someOtherTalent";
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.talents = currentValue;
+    });
   });
 });
