@@ -17,3 +17,8 @@ export interface ApiResponse<WhApiData> {
   ownerId: string;
   object: WhApiData;
 }
+
+export interface IdNumber {
+  id: string;
+  number: number;
+}

@@ -1,4 +1,5 @@
 import * as c from "./characterConstants.ts";
+import { SpeciesWithRegion } from "./characterConstants.ts";
 
 export interface Attributes extends Record<string, number> {
   WS: number;
@@ -38,7 +39,7 @@ export const racialAttributes: Record<string, Attributes> = {
   ogre: { WS: 20, BS: 10, S: 35, T: 35, I: 0, Ag: 15, Dex: 10, Int: 10, WP: 20, Fel: 10 },
 };
 
-export const getAttributes = (speciesWithRegion = ""): Attributes => {
+export const getAttributes = (speciesWithRegion = SpeciesWithRegion.None): Attributes => {
   if (c.HUMAN_LIST.includes(speciesWithRegion)) {
     return JSON.parse(JSON.stringify(racialAttributes.human));
   } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
