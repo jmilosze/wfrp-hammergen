@@ -1,11 +1,14 @@
 import { SpeciesWithRegion } from "./characterConstants.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
-import { Attributes, getAttributes } from "./attributes.ts";
+import { Attributes, attributesAreEqual, getAttributes } from "./attributes.ts";
 import { IdNumber, WhProperty } from "./common.ts";
 import { Source } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
+import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
+import { compareIdNumber } from "./common.ts";
+import { objectsAreEqual } from "../../utils/objectUtils.ts";
 
-const API_BASE_PATH = "/api/wh/character";
+// const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
   name: string;
@@ -146,5 +149,47 @@ export class Character implements WhProperty {
     this.shared = shared;
     this.source = source;
     this.modifiers = modifiers;
+  }
+
+  isEqualTo(otherCharacter: Character): boolean {
+    return (
+      this.id === otherCharacter.id &&
+      this.canEdit === otherCharacter.canEdit &&
+      this.name === otherCharacter.name &&
+      this.description === otherCharacter.description &&
+      this.notes === otherCharacter.notes &&
+      this.career === otherCharacter.career &&
+      this.species === otherCharacter.species &&
+      this.fate === otherCharacter.fate &&
+      this.fortune === otherCharacter.fortune &&
+      this.resilience === otherCharacter.resilience &&
+      this.resolve === otherCharacter.resolve &&
+      this.brass === otherCharacter.brass &&
+      this.silver === otherCharacter.silver &&
+      this.gold === otherCharacter.gold &&
+      this.spentExp === otherCharacter.spentExp &&
+      this.currentExp === otherCharacter.currentExp &&
+      this.sin === otherCharacter.sin &&
+      this.corruption === otherCharacter.corruption &&
+      this.status === otherCharacter.status &&
+      this.standing === otherCharacter.standing &&
+      attributesAreEqual(this.attributeRolls, otherCharacter.attributeRolls) &&
+      attributesAreEqual(this.attributeAdvances, otherCharacter.attributeAdvances) &&
+      arraysAreEqualIgnoreOrder(this.skills, otherCharacter.skills, compareIdNumber) &&
+      arraysAreEqualIgnoreOrder(this.talents, otherCharacter.talents, compareIdNumber) &&
+      arraysAreEqualIgnoreOrder(this.equippedItems, otherCharacter.equippedItems, compareIdNumber) &&
+      arraysAreEqualIgnoreOrder(this.carriedItems, otherCharacter.carriedItems, compareIdNumber) &&
+      arraysAreEqualIgnoreOrder(this.storedItems, otherCharacter.storedItems, compareIdNumber) &&
+      arraysAreEqualIgnoreOrder(this.careerPath, otherCharacter.careerPath, compareIdNumber) &&
+      arraysAreEqualIgnoreOrder(this.spells, otherCharacter.spells) &&
+      arraysAreEqualIgnoreOrder(this.prayers, otherCharacter.prayers) &&
+      arraysAreEqualIgnoreOrder(this.mutations, otherCharacter.mutations) &&
+      this.shared === otherCharacter.shared &&
+      objectsAreEqual(this.source, otherCharacter.source)
+    );
+  }
+
+  copy(): Character {
+    return new Character();
   }
 }
