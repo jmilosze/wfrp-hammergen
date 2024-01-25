@@ -37,6 +37,7 @@ export interface CharacterApiData {
   corruption: number;
   status: StatusTier;
   standing: StatusStanding;
+  career: IdNumber;
   baseAttributes: Attributes;
   attributeAdvances: Attributes;
   skills: IdNumber[];
@@ -47,7 +48,6 @@ export interface CharacterApiData {
   spells: string[];
   prayers: string[];
   mutations: string[];
-  career: string;
   careerPath: IdNumber[];
   shared: boolean;
 }
@@ -58,7 +58,6 @@ export class Character implements WhProperty {
   name: string;
   description: string;
   notes: string;
-  career: string;
   species: SpeciesWithRegion;
   fate: number;
   fortune: number;
@@ -73,6 +72,7 @@ export class Character implements WhProperty {
   corruption: number;
   status: StatusTier;
   standing: StatusStanding;
+  career: IdNumber;
   attributeRolls: Attributes;
   attributeAdvances: Attributes;
   skills: IdNumber[];
@@ -94,7 +94,6 @@ export class Character implements WhProperty {
     name = "",
     description = "",
     notes = "",
-    career = "",
     species = SpeciesWithRegion.None,
     fate = 0,
     fortune = 0,
@@ -109,6 +108,7 @@ export class Character implements WhProperty {
     corruption = 0,
     status = StatusTier.Brass,
     standing = 0 as StatusStanding,
+    career = { id: "", number: 0 } as IdNumber,
     attributeRolls = getAttributes(),
     attributeAdvances = getAttributes(),
     skills = [] as IdNumber[],
@@ -129,7 +129,6 @@ export class Character implements WhProperty {
     this.name = name;
     this.description = description;
     this.notes = notes;
-    this.career = career;
     this.species = species;
     this.fate = fate;
     this.fortune = fortune;
@@ -144,6 +143,7 @@ export class Character implements WhProperty {
     this.corruption = corruption;
     this.status = status;
     this.standing = standing;
+    this.career = career;
     this.attributeRolls = attributeRolls;
     this.attributeAdvances = attributeAdvances;
     this.skills = skills;
@@ -167,7 +167,6 @@ export class Character implements WhProperty {
       this.name === otherCharacter.name &&
       this.description === otherCharacter.description &&
       this.notes === otherCharacter.notes &&
-      this.career === otherCharacter.career &&
       this.species === otherCharacter.species &&
       this.fate === otherCharacter.fate &&
       this.fortune === otherCharacter.fortune &&
@@ -182,6 +181,7 @@ export class Character implements WhProperty {
       this.corruption === otherCharacter.corruption &&
       this.status === otherCharacter.status &&
       this.standing === otherCharacter.standing &&
+      compareIdNumber(this.career, otherCharacter.career) === 0 &&
       attributesAreEqual(this.attributeRolls, otherCharacter.attributeRolls) &&
       attributesAreEqual(this.attributeAdvances, otherCharacter.attributeAdvances) &&
       arraysAreEqualIgnoreOrder(this.skills, otherCharacter.skills, compareIdNumber) &&
@@ -205,7 +205,6 @@ export class Character implements WhProperty {
       name: this.name,
       description: this.description,
       notes: this.notes,
-      career: this.career,
       species: this.species,
       fate: this.fate,
       fortune: this.fortune,
@@ -220,6 +219,7 @@ export class Character implements WhProperty {
       corruption: this.corruption,
       status: this.status,
       standing: this.standing,
+      career: JSON.parse(JSON.stringify(this.career)),
       attributeRolls: JSON.parse(JSON.stringify(this.attributeRolls)),
       attributeAdvances: JSON.parse(JSON.stringify(this.attributeAdvances)),
       skills: JSON.parse(JSON.stringify(this.skills)),
@@ -261,7 +261,6 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     name: characterApi.object.name,
     description: characterApi.object.description,
     notes: characterApi.object.notes,
-    career: characterApi.object.career,
     species: characterApi.object.species,
     fate: characterApi.object.fate,
     fortune: characterApi.object.fortune,
@@ -276,6 +275,7 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     corruption: characterApi.object.corruption,
     status: characterApi.object.status,
     standing: characterApi.object.standing,
+    career: characterApi.object.career,
     attributeRolls: sumAttributes(
       characterApi.object.baseAttributes,
       multiplyAttributes(-1, getAttributes(characterApi.object.species)),
@@ -301,7 +301,6 @@ export function modelToApi(character: Character): CharacterApiData {
     name: character.name,
     description: character.description,
     notes: character.notes,
-    career: character.career,
     species: character.species,
     fate: character.fate,
     fortune: character.fortune,
@@ -316,6 +315,7 @@ export function modelToApi(character: Character): CharacterApiData {
     corruption: character.corruption,
     status: character.status,
     standing: character.standing,
+    career: character.career,
     baseAttributes: character.getBaseAttributes(),
     attributeAdvances: JSON.parse(JSON.stringify(character.attributeAdvances)),
     skills: JSON.parse(JSON.stringify(character.skills)),
