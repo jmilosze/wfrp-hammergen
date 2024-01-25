@@ -1,14 +1,23 @@
 import { SpeciesWithRegion } from "./characterConstants.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
-import { Attributes, attributesAreEqual, getAttributes } from "./attributes.ts";
-import { IdNumber, WhProperty } from "./common.ts";
-import { Source } from "./source.ts";
+import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
+import { ApiResponse, IdNumber, WhProperty } from "./common.ts";
+import { copySource, Source } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { compareIdNumber } from "./common.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
+import { getMovementFormula } from "./characterFormulas.ts";
+import { AxiosInstance } from "axios";
+import {
+  createElementFunc,
+  deleteElementFunc,
+  getElementFunc,
+  listElementsFunc,
+  updateElementFunc,
+} from "./crudGenerator.ts";
 
-// const API_BASE_PATH = "/api/wh/character";
+const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
   name: string;
@@ -190,6 +199,150 @@ export class Character implements WhProperty {
   }
 
   copy(): Character {
-    return new Character();
+    return new Character({
+      id: this.id,
+      canEdit: this.canEdit,
+      name: this.name,
+      description: this.description,
+      notes: this.notes,
+      career: this.career,
+      species: this.species,
+      fate: this.fate,
+      fortune: this.fortune,
+      resilience: this.resilience,
+      resolve: this.resolve,
+      brass: this.brass,
+      silver: this.silver,
+      gold: this.gold,
+      spentExp: this.spentExp,
+      currentExp: this.currentExp,
+      sin: this.sin,
+      corruption: this.corruption,
+      status: this.status,
+      standing: this.standing,
+      attributeRolls: JSON.parse(JSON.stringify(this.attributeRolls)),
+      attributeAdvances: JSON.parse(JSON.stringify(this.attributeAdvances)),
+      skills: JSON.parse(JSON.stringify(this.skills)),
+      talents: JSON.parse(JSON.stringify(this.talents)),
+      equippedItems: JSON.parse(JSON.stringify(this.equippedItems)),
+      carriedItems: JSON.parse(JSON.stringify(this.carriedItems)),
+      storedItems: JSON.parse(JSON.stringify(this.storedItems)),
+      careerPath: JSON.parse(JSON.stringify(this.careerPath)),
+      spells: JSON.parse(JSON.stringify(this.spells)),
+      prayers: JSON.parse(JSON.stringify(this.prayers)),
+      mutations: JSON.parse(JSON.stringify(this.mutations)),
+      shared: this.shared,
+      source: copySource(this.source),
+      modifiers: this.modifiers.copy(),
+    });
+  }
+
+  getMovement(): number {
+    return getMovementFormula(this.species) + this.modifiers.movement;
+  }
+
+  getRacialAttributes(): Attributes {
+    return getAttributes(this.species);
+  }
+
+  getBaseAttributes(): Attributes {
+    return sumAttributes(this.getRacialAttributes(), this.attributeRolls);
+  }
+
+  getTotalAttributes(): Attributes {
+    return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.modifiers.attributes);
+  }
+}
+
+export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>): Character {
+  return new Character({
+    id: characterApi.id,
+    canEdit: characterApi.canEdit,
+    name: characterApi.object.name,
+    description: characterApi.object.description,
+    notes: characterApi.object.notes,
+    career: characterApi.object.career,
+    species: characterApi.object.species,
+    fate: characterApi.object.fate,
+    fortune: characterApi.object.fortune,
+    resilience: characterApi.object.resilience,
+    resolve: characterApi.object.resolve,
+    brass: characterApi.object.brass,
+    silver: characterApi.object.silver,
+    gold: characterApi.object.gold,
+    spentExp: characterApi.object.spentExp,
+    currentExp: characterApi.object.currentExp,
+    sin: characterApi.object.sin,
+    corruption: characterApi.object.corruption,
+    status: characterApi.object.status,
+    standing: characterApi.object.standing,
+    attributeRolls: sumAttributes(
+      characterApi.object.baseAttributes,
+      multiplyAttributes(-1, getAttributes(characterApi.object.species)),
+    ),
+    attributeAdvances: JSON.parse(JSON.stringify(characterApi.object.attributeAdvances)),
+    skills: JSON.parse(JSON.stringify(characterApi.object.skills)),
+    talents: JSON.parse(JSON.stringify(characterApi.object.talents)),
+    equippedItems: JSON.parse(JSON.stringify(characterApi.object.equippedItems)),
+    carriedItems: JSON.parse(JSON.stringify(characterApi.object.carriedItems)),
+    storedItems: JSON.parse(JSON.stringify(characterApi.object.storedItems)),
+    careerPath: JSON.parse(JSON.stringify(characterApi.object.careerPath)),
+    spells: JSON.parse(JSON.stringify(characterApi.object.spells)),
+    prayers: JSON.parse(JSON.stringify(characterApi.object.prayers)),
+    mutations: JSON.parse(JSON.stringify(characterApi.object.mutations)),
+    shared: characterApi.object.shared,
+    source: {},
+    modifiers: new CharacterModifiers(),
+  });
+}
+
+export function modelToApi(character: Character): CharacterApiData {
+  return {
+    name: character.name,
+    description: character.description,
+    notes: character.notes,
+    career: character.career,
+    species: character.species,
+    fate: character.fate,
+    fortune: character.fortune,
+    resilience: character.resilience,
+    resolve: character.resolve,
+    brass: character.brass,
+    silver: character.silver,
+    gold: character.gold,
+    spentExp: character.spentExp,
+    currentExp: character.currentExp,
+    sin: character.sin,
+    corruption: character.corruption,
+    status: character.status,
+    standing: character.standing,
+    baseAttributes: character.getBaseAttributes(),
+    attributeAdvances: JSON.parse(JSON.stringify(character.attributeAdvances)),
+    skills: JSON.parse(JSON.stringify(character.skills)),
+    talents: JSON.parse(JSON.stringify(character.talents)),
+    equippedItems: JSON.parse(JSON.stringify(character.equippedItems)),
+    carriedItems: JSON.parse(JSON.stringify(character.carriedItems)),
+    storedItems: JSON.parse(JSON.stringify(character.storedItems)),
+    careerPath: JSON.parse(JSON.stringify(character.careerPath)),
+    spells: JSON.parse(JSON.stringify(character.spells)),
+    prayers: JSON.parse(JSON.stringify(character.prayers)),
+    mutations: JSON.parse(JSON.stringify(character.mutations)),
+    shared: character.shared,
+  };
+}
+
+export class CharacterApi {
+  getElement: (id: string) => Promise<Character>;
+  listElements: (id: string) => Promise<Character[]>;
+  createElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;
+  updateElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;
+  deleteElement: (id: string) => Promise<void>;
+
+  constructor(axiosInstance: AxiosInstance) {
+    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
+    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
+    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
+    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
+    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
   }
 }
