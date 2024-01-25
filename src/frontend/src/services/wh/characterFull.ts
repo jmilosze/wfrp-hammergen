@@ -8,7 +8,6 @@ import { ItemApiData } from "./item.ts";
 import { SpellApiData } from "./spell.ts";
 import { PrayerApiData } from "./prayer.ts";
 import { MutationApiData } from "./mutation.ts";
-import { Character, CharacterApiData } from "./character.ts";
 
 export interface CharacterFullApiData {
   name: string;
