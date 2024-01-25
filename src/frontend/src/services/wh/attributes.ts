@@ -39,20 +39,20 @@ export const racialAttributes: Record<string, Attributes> = {
   ogre: { WS: 20, BS: 10, S: 35, T: 35, I: 0, Ag: 15, Dex: 10, Int: 10, WP: 20, Fel: 10 },
 };
 
-export const getAttributes = (speciesWithRegion = SpeciesWithRegion.None): Attributes => {
-  if (c.HUMAN_LIST.includes(speciesWithRegion)) {
+export const getAttributes = (species = SpeciesWithRegion.None): Attributes => {
+  if (c.HUMAN_LIST.includes(species)) {
     return JSON.parse(JSON.stringify(racialAttributes.human));
-  } else if (c.HALFLING_LIST.includes(speciesWithRegion)) {
+  } else if (c.HALFLING_LIST.includes(species)) {
     return JSON.parse(JSON.stringify(racialAttributes.halfling));
-  } else if (c.DWARF_LIST.includes(speciesWithRegion)) {
+  } else if (c.DWARF_LIST.includes(species)) {
     return JSON.parse(JSON.stringify(racialAttributes.dwarf));
-  } else if (c.HIGH_ELF_LIST.includes(speciesWithRegion)) {
+  } else if (c.HIGH_ELF_LIST.includes(species)) {
     return JSON.parse(JSON.stringify(racialAttributes.elf));
-  } else if (c.WOOD_ELF_LIST.includes(speciesWithRegion)) {
+  } else if (c.WOOD_ELF_LIST.includes(species)) {
     return JSON.parse(JSON.stringify(racialAttributes.elf));
-  } else if (c.GNOME_LIST.includes(speciesWithRegion)) {
+  } else if (c.GNOME_LIST.includes(species)) {
     return JSON.parse(JSON.stringify(racialAttributes.gnome));
-  } else if (c.OGRE_LIST.includes(speciesWithRegion)) {
+  } else if (c.OGRE_LIST.includes(species)) {
     return JSON.parse(JSON.stringify(racialAttributes.ogre));
   } else {
     return JSON.parse(JSON.stringify(racialAttributes.none));
