@@ -1,4 +1,4 @@
-import { SpeciesWithRegion } from "./characterConstants.ts";
+import { getMovementFormula, SpeciesWithRegion } from "./characterUtils.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
 import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
 import { ApiResponse, IdNumber, WhProperty } from "./common.ts";
@@ -7,7 +7,6 @@ import { CharacterModifiers } from "./characterModifiers.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { compareIdNumber } from "./common.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
-import { getMovementFormula } from "./characterFormulas.ts";
 import { AxiosInstance } from "axios";
 import {
   createElementFunc,

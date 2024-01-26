@@ -1,5 +1,5 @@
-import * as c from "./characterConstants.ts";
-import { SpeciesWithRegion } from "./characterConstants.ts";
+import * as c from "./characterUtils.ts";
+import { SpeciesWithRegion } from "./characterUtils.ts";
 
 export interface Attributes extends Record<string, number> {
   WS: number;
