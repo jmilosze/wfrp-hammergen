@@ -150,12 +150,23 @@ export interface CharacterFull {
   encCarried: number;
 }
 
-function getCareerName(fullCharacterApi: ApiResponse<CharacterFullApiData>) {
-  return`${fullCharacterApi.object.career.wh.object.name} ${fullCharacterApi.object.career.number}`
+function getCareerName(fullCharacterApi: ApiResponse<CharacterFullApiData>): string {
+  return `${fullCharacterApi.object.career.wh.object.name} ${fullCharacterApi.object.career.number}`;
 }
 
-function getCareerLevel(fullCharacterApi: ApiResponse<CharacterFullApiData>) {
-  return`${fullCharacterApi.object.career.wh.object.name} ${fullCharacterApi.object.career.number}`
+function getCareerLevel(fullCharacterApi: ApiResponse<CharacterFullApiData>): string {
+  switch (fullCharacterApi.object.career.number) {
+    case 1:
+      return fullCharacterApi.object.career.wh.object.level1.name;
+    case 2:
+      return fullCharacterApi.object.career.wh.object.level2.name;
+    case 3:
+      return fullCharacterApi.object.career.wh.object.level3.name;
+    case 4:
+      return fullCharacterApi.object.career.wh.object.level4.name;
+    default:
+      return "";
+  }
 }
 
 export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<CharacterFullApiData>): CharacterFull {
@@ -182,6 +193,6 @@ export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<Charact
     standing: fullCharacterApi.object.standing,
 
     careerName: getCareerName(fullCharacterApi),
-    careerLevelName:
+    careerLevelName: getCareerLevel(fullCharacterApi),
   };
 }
