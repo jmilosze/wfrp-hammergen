@@ -29,6 +29,7 @@ export interface CharacterFullApiData {
   standing: StatusStanding;
   baseAttributes: Attributes;
   attributeAdvances: Attributes;
+  career: { number: number; wh: ApiResponse<CareerApiData> };
   skills: { number: number; wh: ApiResponse<SkillApiData> }[];
   talents: { number: number; wh: ApiResponse<TalentApiData> }[];
   equippedItems: { number: number; wh: ApiResponse<ItemApiData> }[];
@@ -37,7 +38,6 @@ export interface CharacterFullApiData {
   spells: ApiResponse<SpellApiData>[];
   prayers: ApiResponse<PrayerApiData>[];
   mutations: ApiResponse<MutationApiData>[];
-  career: { number: number; wh: ApiResponse<CareerApiData> };
   careerPath: { number: number; wh: ApiResponse<CareerApiData> }[];
   shared: boolean;
 }
@@ -150,6 +150,14 @@ export interface CharacterFull {
   encCarried: number;
 }
 
+function getCareerName(fullCharacterApi: ApiResponse<CharacterFullApiData>) {
+  return`${fullCharacterApi.object.career.wh.object.name} ${fullCharacterApi.object.career.number}`
+}
+
+function getCareerLevel(fullCharacterApi: ApiResponse<CharacterFullApiData>) {
+  return`${fullCharacterApi.object.career.wh.object.name} ${fullCharacterApi.object.career.number}`
+}
+
 export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<CharacterFullApiData>): CharacterFull {
   return {
     id: fullCharacterApi.id,
@@ -172,5 +180,8 @@ export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<Charact
     corruption: fullCharacterApi.object.corruption,
     status: printStatusTier(fullCharacterApi.object.status),
     standing: fullCharacterApi.object.standing,
+
+    careerName: getCareerName(fullCharacterApi),
+    careerLevelName:
   };
 }
