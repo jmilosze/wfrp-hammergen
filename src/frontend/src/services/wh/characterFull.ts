@@ -1,5 +1,5 @@
 import { printSpecies, SpeciesWithRegion } from "./characterUtils.ts";
-import { CareerApiData, StatusStanding, StatusTier } from "./career.ts";
+import { CareerApiData, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
 import { Attributes } from "./attributes.ts";
 import { ApiResponse } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
@@ -170,5 +170,7 @@ export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<Charact
     currentExp: fullCharacterApi.object.currentExp,
     sin: fullCharacterApi.object.sin,
     corruption: fullCharacterApi.object.corruption,
+    status: printStatusTier(fullCharacterApi.object.status),
+    standing: fullCharacterApi.object.standing,
   };
 }
