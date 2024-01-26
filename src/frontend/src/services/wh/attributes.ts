@@ -59,11 +59,12 @@ export const getAttributes = (species = SpeciesWithRegion.None): Attributes => {
   }
 };
 
-export function sumAttributes(attributes1: Attributes, attributes2: Attributes): Attributes {
+export function sumAttributes(...args: Attributes[]): Attributes {
   const returnAtts = JSON.parse(JSON.stringify(racialAttributes.none));
-  for (const key of Object.keys(returnAtts)) {
-    returnAtts[key] = attributes1[key] + attributes2[key];
-  }
+  for (const attributes of args)
+    for (const key of Object.keys(returnAtts)) {
+      returnAtts[key] += attributes[key];
+    }
   return returnAtts;
 }
 

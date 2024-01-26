@@ -45,11 +45,12 @@ export class CharacterModifiers {
     });
   }
 
-  add(otherCharacterModifiers: CharacterModifiers) {
-    this.size += otherCharacterModifiers.size;
-    this.movement += otherCharacterModifiers.movement;
-    this.attributes = sumAttributes(this.attributes, otherCharacterModifiers.attributes);
-
+  add(...args: CharacterModifiers[]) {
+    for (const characterModifiers of args) {
+      this.size += characterModifiers.size;
+      this.movement += characterModifiers.movement;
+      this.attributes = sumAttributes(this.attributes, characterModifiers.attributes);
+    }
     return this;
   }
 
