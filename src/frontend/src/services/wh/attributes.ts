@@ -29,6 +29,64 @@ export const enum AttributeName {
   Various,
 }
 
+export function printAttributeName(attributeName: AttributeName) {
+  switch (attributeName) {
+    case AttributeName.None:
+      return "None";
+    case AttributeName.WS:
+      return "WS";
+    case AttributeName.BS:
+      return "BS";
+    case AttributeName.S:
+      return "S";
+    case AttributeName.T:
+      return "T";
+    case AttributeName.I:
+      return "I";
+    case AttributeName.Ag:
+      return "Ag";
+    case AttributeName.Dex:
+      return "Dex";
+    case AttributeName.Int:
+      return "Int";
+    case AttributeName.WP:
+      return "WP";
+    case AttributeName.Fel:
+      return "Fel";
+    case AttributeName.Various:
+      return "Various";
+    default:
+      return "None";
+  }
+}
+
+export function getAttributeValue(attributeName: AttributeName, attributes: Attributes): number {
+  switch (attributeName) {
+    case AttributeName.WS:
+      return attributes.WS;
+    case AttributeName.BS:
+      return attributes.BS;
+    case AttributeName.S:
+      return attributes.S;
+    case AttributeName.T:
+      return attributes.T;
+    case AttributeName.I:
+      return attributes.I;
+    case AttributeName.Ag:
+      return attributes.Ag;
+    case AttributeName.Dex:
+      return attributes.Dex;
+    case AttributeName.Int:
+      return attributes.Int;
+    case AttributeName.WP:
+      return attributes.WP;
+    case AttributeName.Fel:
+      return attributes.Fel;
+    default:
+      return 0;
+  }
+}
+
 export const racialAttributes: Record<string, Attributes> = {
   none: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   human: { WS: 20, BS: 20, S: 20, T: 20, I: 20, Ag: 20, Dex: 20, Int: 20, WP: 20, Fel: 20 },

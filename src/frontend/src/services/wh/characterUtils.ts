@@ -188,3 +188,37 @@ export function getMovementFormula(species: SpeciesWithRegion) {
     return 0;
   }
 }
+
+const enum Size {
+  Tiny = 0,
+  Little,
+  Small,
+  Average,
+  Large,
+  Enormous,
+  Monstrous,
+}
+
+export const DEFAULT_SIZE = Size.Average;
+
+export function getWoundsFormula(size: number, T: number, WP: number, S: number): number {
+  const TB = Math.floor(T / 10);
+  const WPB = Math.floor(WP / 10);
+  const SB = Math.floor(S / 10);
+
+  if (size <= Size.Tiny) {
+    return 1;
+  } else if (size === Size.Little) {
+    return TB;
+  } else if (size === Size.Small) {
+    return 2 * TB + WPB;
+  } else if (size === Size.Average) {
+    return SB + 2 * TB + WPB;
+  } else if (size === Size.Large) {
+    return (SB + 2 * TB + WPB) * 2;
+  } else if (size === Size.Enormous) {
+    return (SB + 2 * TB + WPB) * 4;
+  } else {
+    return (SB + 2 * TB + WPB) * 8;
+  }
+}
