@@ -24,6 +24,31 @@ export const enum CareerClass {
   Seafarer,
 }
 
+export function printClassName(careerClass: CareerClass) {
+  switch (careerClass) {
+    case CareerClass.Academic:
+      return "Academic";
+    case CareerClass.Burghers:
+      return "Burghers";
+    case CareerClass.Courtier:
+      return "Courtier";
+    case CareerClass.Peasant:
+      return "Peasant";
+    case CareerClass.Ranger:
+      return "Ranger";
+    case CareerClass.Riverfolk:
+      return "Riverfolk";
+    case CareerClass.Rougue:
+      return "Rougue";
+    case CareerClass.Warrior:
+      return "Warrior";
+    case CareerClass.Seafarer:
+      return "Seafarer";
+    default:
+      return "None";
+  }
+}
+
 export const enum StatusTier {
   Brass = 0,
   Silver,

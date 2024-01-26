@@ -1,5 +1,5 @@
 import { printSpecies, SpeciesWithRegion } from "./characterUtils.ts";
-import { CareerApiData, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
+import { Career, CareerApiData, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
 import { Attributes } from "./attributes.ts";
 import { ApiResponse } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
@@ -150,20 +150,20 @@ export interface CharacterFull {
   encCarried: number;
 }
 
-function getCareerName(fullCharacterApi: ApiResponse<CharacterFullApiData>): string {
-  return `${fullCharacterApi.object.career.wh.object.name} ${fullCharacterApi.object.career.number}`;
+function getCareerName(career: { number: number; wh: ApiResponse<CareerApiData> }): string {
+  return `${career.wh.object.name} ${career.number}`;
 }
 
-function getCareerLevel(fullCharacterApi: ApiResponse<CharacterFullApiData>): string {
-  switch (fullCharacterApi.object.career.number) {
+function getCareerLevel(career: { number: number; wh: ApiResponse<CareerApiData> }): string {
+  switch (career.number) {
     case 1:
-      return fullCharacterApi.object.career.wh.object.level1.name;
+      return career.wh.object.level1.name;
     case 2:
-      return fullCharacterApi.object.career.wh.object.level2.name;
+      return career.wh.object.level2.name;
     case 3:
-      return fullCharacterApi.object.career.wh.object.level3.name;
+      return career.wh.object.level3.name;
     case 4:
-      return fullCharacterApi.object.career.wh.object.level4.name;
+      return career.wh.object.level4.name;
     default:
       return "";
   }
@@ -192,7 +192,11 @@ export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<Charact
     status: printStatusTier(fullCharacterApi.object.status),
     standing: fullCharacterApi.object.standing,
 
-    careerName: getCareerName(fullCharacterApi),
-    careerLevelName: getCareerLevel(fullCharacterApi),
+    careerName: getCareerName(fullCharacterApi.object.career),
+    careerLevelName: getCareerLevel(fullCharacterApi.object.career),
+    className: printClassName(fullCharacterApi.object.career.wh.object.class),
+    pastCareers: fullCharacterApi.object.careerPath.map((x) => `${getCareerName(x)}`),
+
+    baseAttributes: fullCharacterApi.object.baseAttributes,
   };
 }
