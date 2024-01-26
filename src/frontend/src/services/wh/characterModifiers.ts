@@ -45,7 +45,7 @@ export class CharacterModifiers {
     });
   }
 
-  add(...args: CharacterModifiers[]) {
+  add(...args: CharacterModifiers[] | CharacterModifiersData[]) {
     for (const characterModifiers of args) {
       this.size += characterModifiers.size;
       this.movement += characterModifiers.movement;

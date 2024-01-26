@@ -1,4 +1,4 @@
-function defaultCompare<T>(x: T, y: T): number {
+function defaultCompare<T>(x: T, y: T): -1 | 0 | 1 {
   if (x === y) {
     return 0;
   } else {
@@ -9,7 +9,7 @@ function defaultCompare<T>(x: T, y: T): number {
 export function arraysAreEqualIgnoreOrder<T>(
   array1: T[],
   array2: T[],
-  compareFunc: (x: T, y: T) => number = defaultCompare,
+  compareFunc: (x: T, y: T) => -1 | 0 | 1 = defaultCompare,
 ): boolean {
   if (array1.length !== array2.length) {
     return false;

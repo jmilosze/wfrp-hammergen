@@ -1,6 +1,12 @@
-import { printSpecies, SpeciesWithRegion } from "./characterUtils.ts";
-import { Career, CareerApiData, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
-import { Attributes } from "./attributes.ts";
+import {
+  DEFAULT_SIZE,
+  getMovementFormula,
+  getWoundsFormula,
+  printSpecies,
+  SpeciesWithRegion,
+} from "./characterUtils.ts";
+import { CareerApiData, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
+import { Attributes, getAttributeValue, printAttributeName, sumAttributes } from "./attributes.ts";
 import { ApiResponse } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
 import { TalentApiData } from "./talent.ts";
@@ -8,6 +14,7 @@ import { ItemApiData } from "./item.ts";
 import { SpellApiData } from "./spell.ts";
 import { PrayerApiData } from "./prayer.ts";
 import { MutationApiData } from "./mutation.ts";
+import { CharacterModifiers } from "./characterModifiers.ts";
 
 export interface CharacterFullApiData {
   name: string;
@@ -121,8 +128,8 @@ export interface CharacterFull {
   pastCareers: string[];
 
   baseAttributes: Attributes;
-  otherAttributes: Attributes;
   attributeAdvances: Attributes;
+  otherAttributes: Attributes;
   attributes: Attributes;
 
   movement: number;
@@ -150,26 +157,24 @@ export interface CharacterFull {
   encCarried: number;
 }
 
-function getCareerName(career: { number: number; wh: ApiResponse<CareerApiData> }): string {
-  return `${career.wh.object.name} ${career.number}`;
-}
-
-function getCareerLevel(career: { number: number; wh: ApiResponse<CareerApiData> }): string {
-  switch (career.number) {
-    case 1:
-      return career.wh.object.level1.name;
-    case 2:
-      return career.wh.object.level2.name;
-    case 3:
-      return career.wh.object.level3.name;
-    case 4:
-      return career.wh.object.level4.name;
-    default:
-      return "";
-  }
-}
-
 export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<CharacterFullApiData>): CharacterFull {
+  const totalModifiers = new CharacterModifiers();
+  const mutationModifiers = fullCharacterApi.object.mutations.map((x) => x.object.modifiers);
+  const talentModifiers = fullCharacterApi.object.talents.map((x) => x.wh.object.modifiers);
+  totalModifiers.add(...mutationModifiers, ...talentModifiers);
+
+  const otherAttributes = totalModifiers.attributes;
+  const attributes = sumAttributes(
+    fullCharacterApi.object.baseAttributes,
+    fullCharacterApi.object.attributeAdvances,
+    totalModifiers.attributes,
+  );
+
+  const sizeModifier = totalModifiers.size;
+  const movementModifier = totalModifiers.movement;
+
+  const [basicSkills, advancedSkills] = getSkills(fullCharacterApi.object.skills, attributes);
+
   return {
     id: fullCharacterApi.id,
     canEdit: fullCharacterApi.canEdit,
@@ -198,5 +203,66 @@ export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<Charact
     pastCareers: fullCharacterApi.object.careerPath.map((x) => `${getCareerName(x)}`),
 
     baseAttributes: fullCharacterApi.object.baseAttributes,
+    attributeAdvances: fullCharacterApi.object.attributeAdvances,
+    otherAttributes: otherAttributes,
+    attributes: attributes,
+
+    movement: getMovementFormula(fullCharacterApi.object.species) + movementModifier,
+    walk: 2 * (getMovementFormula(fullCharacterApi.object.species) + movementModifier),
+    run: 4 * (getMovementFormula(fullCharacterApi.object.species) + movementModifier),
+    wounds: getWoundsFormula(DEFAULT_SIZE + sizeModifier, attributes.T, attributes.WP, attributes.S),
+
+    talents: fullCharacterApi.object.talents.map((x) => ({ name: x.wh.object.name, rank: x.number })),
+    basicSkills: basicSkills,
+    advancedSkills: advancedSkills,
   };
+}
+
+function getCareerName(career: { number: number; wh: ApiResponse<CareerApiData> }): string {
+  return `${career.wh.object.name} ${career.number}`;
+}
+
+function getCareerLevel(career: { number: number; wh: ApiResponse<CareerApiData> }): string {
+  switch (career.number) {
+    case 1:
+      return career.wh.object.level1.name;
+    case 2:
+      return career.wh.object.level2.name;
+    case 3:
+      return career.wh.object.level3.name;
+    case 4:
+      return career.wh.object.level4.name;
+    default:
+      return "";
+  }
+}
+
+function getSkills(characterSkills: { number: number; wh: ApiResponse<SkillApiData> }[], attributes: Attributes) {
+  const basicSkills = [] as CharacterFullSkill[];
+  const advancedSkills = [] as CharacterFullSkill[];
+
+  for (const skill of characterSkills) {
+    const formattedSkill = skillForDisplay(skill.wh, skill.number, attributes);
+    if (skill.wh.object.type === 0) {
+      basicSkills.push(formattedSkill);
+    } else {
+      advancedSkills.push(formattedSkill);
+    }
+  }
+
+  return [basicSkills.sort(sortByName), advancedSkills.sort(sortByName)];
+}
+
+function skillForDisplay(rawSkill: ApiResponse<SkillApiData>, skillRank: number, attributes: Attributes) {
+  return {
+    name: rawSkill.object.isGroup ? `${rawSkill.object.name} (Any)` : rawSkill.object.name,
+    attributeName: printAttributeName(rawSkill.object.attribute),
+    attributeValue: getAttributeValue(rawSkill.object.attribute, attributes),
+    advances: skillRank,
+    skill: getAttributeValue(rawSkill.object.attribute, attributes) + skillRank,
+  };
+}
+
+function sortByName(x: { name: string }, y: { name: string }): -1 | 0 | 1 {
+  return x.name === y.name ? 0 : x.name < y.name ? -1 : 1;
 }

@@ -23,7 +23,7 @@ export interface IdNumber {
   number: number;
 }
 
-export function compareIdNumber(x: IdNumber, y: IdNumber): number {
+export function compareIdNumber(x: IdNumber, y: IdNumber): -1 | 0 | 1 {
   const xIdNumber = `${x.id}_${x.number}`;
   const yIdNumber = `${y.id}_${y.number}`;
 
