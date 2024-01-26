@@ -30,6 +30,19 @@ export const enum StatusTier {
   Gold,
 }
 
+export function printStatusTier(statusTier: StatusTier) {
+  switch (statusTier) {
+    case StatusTier.Brass:
+      return "Brass";
+    case StatusTier.Silver:
+      return "Silver";
+    case StatusTier.Gold:
+      return "Gold";
+    default:
+      return "None";
+  }
+}
+
 export type StatusStanding = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export enum Species {
