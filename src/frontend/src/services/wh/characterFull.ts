@@ -1,4 +1,4 @@
-import { SpeciesWithRegion } from "./characterConstants.ts";
+import { printSpecies, SpeciesWithRegion } from "./characterUtils.ts";
 import { CareerApiData, StatusStanding, StatusTier } from "./career.ts";
 import { Attributes } from "./attributes.ts";
 import { ApiResponse } from "./common.ts";
@@ -150,4 +150,25 @@ export interface CharacterFull {
   encCarried: number;
 }
 
-export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<CharacterFullApiData>): CharacterFull {}
+export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<CharacterFullApiData>): CharacterFull {
+  return {
+    id: fullCharacterApi.id,
+    canEdit: fullCharacterApi.canEdit,
+    shared: fullCharacterApi.object.shared,
+    name: fullCharacterApi.object.name,
+    description: fullCharacterApi.object.description,
+    notes: fullCharacterApi.object.description,
+    species: printSpecies(fullCharacterApi.object.species),
+    fate: fullCharacterApi.object.fate,
+    fortune: fullCharacterApi.object.fortune,
+    resilience: fullCharacterApi.object.resilience,
+    resolve: fullCharacterApi.object.resolve,
+    brass: fullCharacterApi.object.brass,
+    silver: fullCharacterApi.object.silver,
+    gold: fullCharacterApi.object.gold,
+    spentExp: fullCharacterApi.object.spentExp,
+    currentExp: fullCharacterApi.object.currentExp,
+    sin: fullCharacterApi.object.sin,
+    corruption: fullCharacterApi.object.corruption,
+  };
+}

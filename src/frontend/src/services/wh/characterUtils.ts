@@ -38,6 +38,87 @@ export enum SpeciesWithRegion {
   None = "9999",
 }
 
+export function printSpecies(species: SpeciesWithRegion) {
+  switch (species) {
+    case SpeciesWithRegion.HumanDefault:
+      return "Human";
+    case SpeciesWithRegion.HumanReikland:
+      return "Human (Reikland)";
+    case SpeciesWithRegion.HumanAltdorfSouthBank:
+      return "Human (Altdorf South Bank)";
+    case SpeciesWithRegion.HumanAltdorfEastend:
+      return "Human (Altdorf Eastend)";
+    case SpeciesWithRegion.AltdorfHexxerbezrik:
+      return "Human (Altdorf Hexxerbezrik)";
+    case SpeciesWithRegion.HumanAltdorfDocklands:
+      return "Human (Altdorf Docklands)";
+    case SpeciesWithRegion.HumanMiddenheim:
+      return "Human (Middenheim)";
+    case SpeciesWithRegion.HumanMiddenland:
+      return "Human (Middenland)";
+    case SpeciesWithRegion.HumanNordland:
+      return "Human (Nordland)";
+    case SpeciesWithRegion.HumanSalzenmund:
+      return "Human (Salzenmund)";
+    case SpeciesWithRegion.HumanTilea:
+      return "Human (Tilea)";
+    case SpeciesWithRegion.HumanNorseBjornling:
+      return "Human (Norse Bjornling)";
+    case SpeciesWithRegion.HumanNorseSarl:
+      return "Human (Norse Sarl)";
+    case SpeciesWithRegion.HumanNorseSkaeling:
+      return "Human (Norse Skaeling)";
+    case SpeciesWithRegion.HalflingDefault:
+      return "Halfling";
+    case SpeciesWithRegion.HalflingAshfield:
+      return "Halfling (Ashfield)";
+    case SpeciesWithRegion.HalflingBrambledown:
+      return "Halfling (Brambledown)";
+    case SpeciesWithRegion.HalflingBrandysnap:
+      return "Halfling (Brandysnap)";
+    case SpeciesWithRegion.HalflingHayfoot:
+      return "Halfling (Hayfoot)";
+    case SpeciesWithRegion.HalflingHollyfoot:
+      return "Halfling (Hollyfoot)";
+    case SpeciesWithRegion.HalflingHayfootHollyfoot:
+      return "Halfling (Hayfoot-Hollyfoot)";
+    case SpeciesWithRegion.HalflingLostpockets:
+      return "Halfling (Lostpockets)";
+    case SpeciesWithRegion.HalflingLowhaven:
+      return "Halfling (Lowhaven)";
+    case SpeciesWithRegion.HalflingRumster:
+      return "Halfling (Rumster)";
+    case SpeciesWithRegion.HalflingSkelfsider:
+      return "Halfling (Skelfsider)";
+    case SpeciesWithRegion.HalflingThorncobble:
+      return "Halfling (Thorncobble)";
+    case SpeciesWithRegion.HalflingTumbleberry:
+      return "Halfling (Tumbleberry)";
+    case SpeciesWithRegion.DwarfDefault:
+      return "Dwarf";
+    case SpeciesWithRegion.DwarfAtldorf:
+      return "Dwarf (Atldorf)";
+    case SpeciesWithRegion.DwarfCragforgeClan:
+      return "Dwarf (Cragforge Clan)";
+    case SpeciesWithRegion.DwarfGrumssonClan:
+      return "Dwarf (Grumsson Clan)";
+    case SpeciesWithRegion.DwarfNorse:
+      return "Dwarf (Norse)";
+    case SpeciesWithRegion.HighElfDefault:
+      return "High Elf";
+    case SpeciesWithRegion.WoodElfDefault:
+      return "Wood Elf";
+    case SpeciesWithRegion.GnomeDefault:
+      return "Gnome";
+    case SpeciesWithRegion.OgreDefault:
+      return "Ogre";
+    case SpeciesWithRegion.None:
+      return "None";
+    default:
+      return "None";
+  }
+}
+
 export const HUMAN_LIST = [
   SpeciesWithRegion.HumanDefault,
   SpeciesWithRegion.HumanReikland,
@@ -92,4 +173,18 @@ export const OGRE_LIST = [SpeciesWithRegion.OgreDefault];
 export enum Sex {
   Male = 0,
   Female,
+}
+
+export function getMovementFormula(species: SpeciesWithRegion) {
+  if (HALFLING_LIST.includes(species) || DWARF_LIST.includes(species) || GNOME_LIST.includes(species)) {
+    return 3;
+  } else if (HUMAN_LIST.includes(species)) {
+    return 4;
+  } else if (OGRE_LIST.includes(species)) {
+    return 6;
+  } else if (HIGH_ELF_LIST.includes(species) || WOOD_ELF_LIST.includes(species)) {
+    return 5;
+  } else {
+    return 0;
+  }
 }
