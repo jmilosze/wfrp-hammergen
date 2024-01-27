@@ -115,7 +115,7 @@ export function printSpecies(species: SpeciesWithRegion) {
     case SpeciesWithRegion.None:
       return "None";
     default:
-      return "None";
+      return "";
   }
 }
 

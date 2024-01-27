@@ -21,6 +21,27 @@ export const enum ItemType {
   Grimoire,
 }
 
+export function printItemType(itemType: ItemType) {
+  switch (itemType) {
+    case ItemType.Melee:
+      return "Melee";
+    case ItemType.Ranged:
+      return "Ranged";
+    case ItemType.Ammunition:
+      return "Ammunition";
+    case ItemType.Armour:
+      return "Armour";
+    case ItemType.Container:
+      return "Container";
+    case ItemType.Other:
+      return "Other";
+    case ItemType.Grimoire:
+      return "Grimoire";
+    default:
+      return "";
+  }
+}
+
 export const enum MeleeGroup {
   Basic = 0,
   Cavalry,
