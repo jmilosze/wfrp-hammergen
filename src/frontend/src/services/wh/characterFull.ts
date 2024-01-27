@@ -53,6 +53,11 @@ export interface ItemFullApiData {
   source: Source;
 }
 
+export interface WhNumber<WhApiData> {
+  wh: ApiResponse<WhApiData>;
+  number: number;
+}
+
 export interface CharacterFullApiData {
   name: string;
   description: string;
@@ -73,16 +78,16 @@ export interface CharacterFullApiData {
   standing: StatusStanding;
   baseAttributes: Attributes;
   attributeAdvances: Attributes;
-  career: { number: number; wh: ApiResponse<CareerApiData> };
-  skills: { number: number; wh: ApiResponse<SkillApiData> }[];
-  talents: { number: number; wh: ApiResponse<TalentApiData> }[];
-  equippedItems: { number: number; wh: ApiResponse<ItemFullApiData> }[];
-  carriedItems: { number: number; wh: ApiResponse<ItemFullApiData> }[];
-  storedItems: { number: number; wh: ApiResponse<ItemFullApiData> }[];
+  career: WhNumber<CareerApiData>;
+  skills: WhNumber<SkillApiData>[];
+  talents: WhNumber<TalentApiData>[];
+  equippedItems: WhNumber<ItemFullApiData>[];
+  carriedItems: WhNumber<ItemFullApiData>[];
+  storedItems: WhNumber<ItemFullApiData>[];
   spells: ApiResponse<SpellApiData>[];
   prayers: ApiResponse<PrayerApiData>[];
   mutations: ApiResponse<MutationApiData>[];
-  careerPath: { number: number; wh: ApiResponse<CareerApiData> }[];
+  careerPath: WhNumber<CareerApiData>[];
   shared: boolean;
 }
 
@@ -283,11 +288,11 @@ export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<Charact
   };
 }
 
-function getCareerName(career: { number: number; wh: ApiResponse<CareerApiData> }): string {
+function getCareerName(career: WhNumber<CareerApiData>): string {
   return `${career.wh.object.name} ${career.number}`;
 }
 
-function getCareerLevel(career: { number: number; wh: ApiResponse<CareerApiData> }): string {
+function getCareerLevel(career: WhNumber<CareerApiData>): string {
   switch (career.number) {
     case 1:
       return career.wh.object.level1.name;
@@ -302,7 +307,7 @@ function getCareerLevel(career: { number: number; wh: ApiResponse<CareerApiData>
   }
 }
 
-function getSkills(characterSkills: { number: number; wh: ApiResponse<SkillApiData> }[], attributes: Attributes) {
+function getSkills(characterSkills: WhNumber<SkillApiData>[], attributes: Attributes) {
   const basicSkills = [] as CharacterFullSkill[];
   const advancedSkills = [] as CharacterFullSkill[];
 
@@ -332,7 +337,7 @@ function sortByName(x: { name: string }, y: { name: string }): -1 | 0 | 1 {
   return x.name === y.name ? 0 : x.name < y.name ? -1 : 1;
 }
 
-function getItems(characterItems: { number: number; wh: ApiResponse<ItemFullApiData> }[], attributes: Attributes) {
+function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attributes) {
   const SB = Math.floor(attributes.S / 10);
   const items = [] as CharacterFullItem[];
 
