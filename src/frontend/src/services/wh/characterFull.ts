@@ -18,6 +18,9 @@ import {
   ItemType,
   MeleeType,
   OtherType,
+  printAmmoGroup,
+  printArmourGroup,
+  printArmourLocation,
   printItemType,
   printMeleeGroup,
   printMeleeReach,
@@ -26,7 +29,7 @@ import {
 } from "./item.ts";
 import { SpellApiData } from "./spell.ts";
 import { PrayerApiData } from "./prayer.ts";
-import { MutationApiData } from "./mutation.ts";
+import { MutationApiData, printMutationType } from "./mutation.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { Source } from "./source.ts";
 import { ItemPropertyApiData } from "./itemproperty.ts";
@@ -128,8 +131,8 @@ export interface CharacterFullItem {
   type: string;
 
   group?: string;
-  rng?: string | number;
-  dmg?: number;
+  rng?: string;
+  dmg?: string;
   locations?: string[];
   ap?: number;
   spells?: CharacterFullSpell[];
@@ -210,6 +213,14 @@ export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<Charact
 
   const [basicSkills, advancedSkills] = getSkills(fullCharacterApi.object.skills, attributes);
 
+  const equippedArmor = fullCharacterApi.object.equippedItems.filter((x) => x.wh.object.type === ItemType.Armour);
+  const equippedWeapon = fullCharacterApi.object.equippedItems.filter((x) =>
+    [ItemType.Melee, ItemType.Ranged, ItemType.Ammunition].includes(x.wh.object.type),
+  );
+  const equippedOther = fullCharacterApi.object.equippedItems.filter((x) =>
+    [ItemType.Container, ItemType.Other].includes(x.wh.object.type),
+  );
+
   return {
     id: fullCharacterApi.id,
     canEdit: fullCharacterApi.canEdit,
@@ -250,6 +261,25 @@ export function apiResponseToFullCharacter(fullCharacterApi: ApiResponse<Charact
     talents: fullCharacterApi.object.talents.map((x) => ({ name: x.wh.object.name, rank: x.number })),
     basicSkills: basicSkills,
     advancedSkills: advancedSkills,
+
+    equippedArmor: getItems(equippedArmor, attributes),
+    equippedWeapon: getItems(equippedWeapon, attributes),
+    equippedOther: getItems(equippedOther, attributes),
+    carried: getItems(fullCharacterApi.object.carriedItems, attributes),
+    stored: getItems(fullCharacterApi.object.storedItems, attributes),
+
+    spells: getSpells(fullCharacterApi.object.spells),
+    prayers: getPrayers(fullCharacterApi.object.prayers),
+    mutations: getMutations(fullCharacterApi.object.mutations),
+
+    encWeapon: equippedWeapon.map((x) => x.wh.object.enc * x.number).reduce((x, y) => x + y, 0),
+    encArmor: equippedArmor
+      .map((x) => (x.wh.object.enc > 0 ? x.wh.object.enc - 1 : 0) * x.number)
+      .reduce((x, y) => x + y, 0),
+    encOther: equippedOther
+      .map((x) => (x.wh.object.enc > 0 ? x.wh.object.enc - 1 : 0) * x.number)
+      .reduce((x, y) => x + y, 0),
+    encCarried: fullCharacterApi.object.carriedItems.map((x) => x.wh.object.enc).reduce((x, y) => x + y, 0),
   };
 }
 
@@ -319,43 +349,74 @@ function getItems(characterItems: { number: number; wh: ApiResponse<ItemFullApiD
     if (charItem.wh.object.type === ItemType.Melee) {
       item.group = printMeleeGroup(charItem.wh.object.melee.group);
       item.rng = printMeleeReach(charItem.wh.object.melee.reach);
-      item.dmg = charItem.wh.object.melee.dmg + charItem.wh.object.melee.dmgSbMult * SB;
+      item.dmg = (charItem.wh.object.melee.dmg + charItem.wh.object.melee.dmgSbMult * SB).toString();
     } else if (charItem.wh.object.type === ItemType.Ranged) {
       item.group = printRangedGroup(charItem.wh.object.ranged.group);
-      item.rng = charItem.wh.object.ranged.rng + charItem.wh.object.ranged.rngSbMult * SB;
-      item.dmg = charItem.wh.object.ranged.dmg + charItem.wh.object.ranged.dmgSbMult * SB;
-    } else if (charItem.wh.object.type === 2) {
+      item.rng = (charItem.wh.object.ranged.rng + charItem.wh.object.ranged.rngSbMult * SB).toString();
+      item.dmg = (charItem.wh.object.ranged.dmg + charItem.wh.object.ranged.dmgSbMult * SB).toString();
+    } else if (charItem.wh.object.type === ItemType.Ammunition) {
       let range =
         charItem.wh.object.ammunition.rngMult !== 1 ? `Weapon x${charItem.wh.object.ammunition.rngMult}` : "Weapon";
       if (charItem.wh.object.ammunition.rng > 0) {
-        range += `+${parseInt(charItem.wh.object.ammunition.rng)}`;
+        range += `+${charItem.wh.object.ammunition.rng.toString()}`;
       } else if (charItem.wh.object.ammunition.rng < 0) {
-        range += `${parseInt(charItem.wh.object.ammunition.rng)}`;
+        range += `${charItem.wh.object.ammunition.rng.toString()}`;
       }
 
       let damage = "Weapon";
       if (charItem.wh.object.ammunition.dmg > 0) {
-        damage += `+${parseInt(charItem.wh.object.ammunition.dmg)}`;
+        damage += `+${charItem.wh.object.ammunition.dmg.toString()}`;
       } else if (charItem.wh.object.ammunition.rng < 0) {
-        damage += `${parseInt(charItem.wh.object.ammunition.dmg)}`;
+        damage += `${charItem.wh.object.ammunition.dmg.toString()}`;
       }
 
-      item.group = ammunitionGroups[charItem.wh.object.ammunition.group];
+      item.group = printAmmoGroup(charItem.wh.object.ammunition.group);
       item.rng = range;
       item.dmg = damage;
-    } else if (charItem.wh.object.type === 3) {
-      item.group = armorGroups[charItem.wh.object.armour.group];
-      item.locations = charItem.wh.object.armour.location.map((x) => armorLocations[x]);
+    } else if (charItem.wh.object.type === ItemType.Armour) {
+      item.group = printArmourGroup(charItem.wh.object.armour.group);
+      item.locations = charItem.wh.object.armour.location.map((x) => printArmourLocation(x));
       item.ap = charItem.wh.object.armour.points;
-    } else if (charItem.wh.object.type === 6) {
-      item.spells = formatSpells(charItem.wh.object.grimoire.spells);
+    } else if (charItem.wh.object.type === ItemType.Grimoire) {
+      item.spells = getSpells(charItem.wh.object.grimoire.spells);
     } else {
-      item.desc =
-        (charItem.wh.object.type === 4 ? `(Capacity ${charItem.wh.object.container.capacity}) ` : "") +
+      item.description =
+        (charItem.wh.object.type === ItemType.Container ? `(Capacity ${charItem.wh.object.container.capacity}) ` : "") +
         charItem.wh.object.description;
     }
     items.push(item);
   }
 
   return items;
+}
+
+function getSpells(spells: ApiResponse<SpellApiData>[]) {
+  return spells.map((x) => ({
+    name: x.object.name,
+    range: x.object.range,
+    target: x.object.target,
+    duration: x.object.duration,
+    description: x.object.description,
+    cn: x.object.cn,
+  }));
+}
+
+function getPrayers(prayers: ApiResponse<PrayerApiData>[]) {
+  return prayers.map((x) => ({
+    name: x.object.name,
+    range: x.object.range,
+    target: x.object.target,
+    duration: x.object.duration,
+    description: x.object.description,
+  }));
+}
+
+function getMutations(mutations: ApiResponse<MutationApiData>[]) {
+  return mutations.map((x) => {
+    return {
+      name: x.object.name,
+      type: printMutationType(x.object.type),
+      description: x.object.description,
+    };
+  });
 }
