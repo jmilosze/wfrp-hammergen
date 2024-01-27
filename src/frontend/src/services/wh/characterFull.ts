@@ -19,6 +19,9 @@ import {
   MeleeType,
   OtherType,
   printItemType,
+  printMeleeGroup,
+  printMeleeReach,
+  printRangedGroup,
   RangedType,
 } from "./item.ts";
 import { SpellApiData } from "./spell.ts";
@@ -314,11 +317,11 @@ function getItems(characterItems: { number: number; wh: ApiResponse<ItemFullApiD
     } as CharacterFullItem;
 
     if (charItem.wh.object.type === ItemType.Melee) {
-      item.group = meleeGroups[charItem.wh.object.melee.group];
-      item.rng = meleeReach[charItem.wh.object.melee.reach];
+      item.group = printMeleeGroup(charItem.wh.object.melee.group);
+      item.rng = printMeleeReach(charItem.wh.object.melee.reach);
       item.dmg = charItem.wh.object.melee.dmg + charItem.wh.object.melee.dmgSbMult * SB;
-    } else if (charItem.wh.object.type === 1) {
-      item.group = rangedGroups[charItem.wh.object.ranged.group];
+    } else if (charItem.wh.object.type === ItemType.Ranged) {
+      item.group = printRangedGroup(charItem.wh.object.ranged.group);
       item.rng = charItem.wh.object.ranged.rng + charItem.wh.object.ranged.rngSbMult * SB;
       item.dmg = charItem.wh.object.ranged.dmg + charItem.wh.object.ranged.dmgSbMult * SB;
     } else if (charItem.wh.object.type === 2) {

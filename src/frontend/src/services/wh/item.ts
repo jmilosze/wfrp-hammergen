@@ -53,6 +53,29 @@ export const enum MeleeGroup {
   TwoHanded,
 }
 
+export function printMeleeGroup(meleeGroup: MeleeGroup) {
+  switch (meleeGroup) {
+    case MeleeGroup.Basic:
+      return "Basic";
+    case MeleeGroup.Cavalry:
+      return "Cavalry";
+    case MeleeGroup.Fencing:
+      return "Fencing";
+    case MeleeGroup.Brawling:
+      return "Brawling";
+    case MeleeGroup.Flail:
+      return "Flail";
+    case MeleeGroup.Parry:
+      return "Parry";
+    case MeleeGroup.Polearm:
+      return "Polearm";
+    case MeleeGroup.TwoHanded:
+      return "Two-Handed";
+    default:
+      return "";
+  }
+}
+
 export const enum RangedGroup {
   Blackpowder = 0,
   Bow,
@@ -63,6 +86,31 @@ export const enum RangedGroup {
   Sling,
   Throwing,
   Blowpipe,
+}
+
+export function printRangedGroup(rangedGroup: RangedGroup) {
+  switch (rangedGroup) {
+    case RangedGroup.Blackpowder:
+      return "Blackpowder";
+    case RangedGroup.Bow:
+      return "Bow";
+    case RangedGroup.Crossbow:
+      return "Crossbow";
+    case RangedGroup.Engineering:
+      return "Engineering";
+    case RangedGroup.Entangling:
+      return "Entangling";
+    case RangedGroup.Explosives:
+      return "Explosives";
+    case RangedGroup.Sling:
+      return "Sling";
+    case RangedGroup.Throwing:
+      return "Throwing";
+    case RangedGroup.Blowpipe:
+      return "Blowpipe";
+    default:
+      return "";
+  }
 }
 
 export const enum AmmoGroup {
@@ -99,6 +147,27 @@ export const enum MeleeReach {
   Long,
   VeryLong,
   Massive,
+}
+
+export function printMeleeReach(meleeReach: MeleeReach) {
+  switch (meleeReach) {
+    case MeleeReach.Personal:
+      return "Personal";
+    case MeleeReach.VeryShort:
+      return "Very Short";
+    case MeleeReach.Short:
+      return "Short";
+    case MeleeReach.Average:
+      return "Average";
+    case MeleeReach.Long:
+      return "Long";
+    case MeleeReach.VeryLong:
+      return "VeryLong";
+    case MeleeReach.Massive:
+      return "Massive";
+    default:
+      return "";
+  }
 }
 
 export const enum WeaponHands {
