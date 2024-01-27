@@ -10,11 +10,42 @@ import { Attributes, getAttributeValue, printAttributeName, sumAttributes } from
 import { ApiResponse } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
 import { TalentApiData } from "./talent.ts";
-import { ItemApiData } from "./item.ts";
+import {
+  AmmoType,
+  ArmourType,
+  Availability,
+  ContainerType,
+  ItemType,
+  MeleeType,
+  OtherType,
+  printItemType,
+  RangedType,
+} from "./item.ts";
 import { SpellApiData } from "./spell.ts";
 import { PrayerApiData } from "./prayer.ts";
 import { MutationApiData } from "./mutation.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
+import { Source } from "./source.ts";
+import { ItemPropertyApiData } from "./itemproperty.ts";
+
+export interface ItemFullApiData {
+  name: string;
+  description: string;
+  price: number;
+  enc: number;
+  availability: Availability;
+  properties: ApiResponse<ItemPropertyApiData>[];
+  type: ItemType;
+  melee: MeleeType;
+  ranged: RangedType;
+  ammunition: AmmoType;
+  armour: ArmourType;
+  grimoire: { spells: ApiResponse<SpellApiData>[] };
+  container: ContainerType;
+  other: OtherType;
+  shared: boolean;
+  source: Source;
+}
 
 export interface CharacterFullApiData {
   name: string;
@@ -39,9 +70,9 @@ export interface CharacterFullApiData {
   career: { number: number; wh: ApiResponse<CareerApiData> };
   skills: { number: number; wh: ApiResponse<SkillApiData> }[];
   talents: { number: number; wh: ApiResponse<TalentApiData> }[];
-  equippedItems: { number: number; wh: ApiResponse<ItemApiData> }[];
-  carriedItems: { number: number; wh: ApiResponse<ItemApiData> }[];
-  storedItems: { number: number; wh: ApiResponse<ItemApiData> }[];
+  equippedItems: { number: number; wh: ApiResponse<ItemFullApiData> }[];
+  carriedItems: { number: number; wh: ApiResponse<ItemFullApiData> }[];
+  storedItems: { number: number; wh: ApiResponse<ItemFullApiData> }[];
   spells: ApiResponse<SpellApiData>[];
   prayers: ApiResponse<PrayerApiData>[];
   mutations: ApiResponse<MutationApiData>[];
@@ -88,9 +119,10 @@ export interface CharacterFullMutation {
 export interface CharacterFullItem {
   name: string;
   enc: number;
-  qualitiesFlawsRunes: string;
+  qualitiesFlawsRunes: string[];
   number: number;
   description: string;
+  type: string;
 
   group?: string;
   rng?: string | number;
@@ -265,4 +297,62 @@ function skillForDisplay(rawSkill: ApiResponse<SkillApiData>, skillRank: number,
 
 function sortByName(x: { name: string }, y: { name: string }): -1 | 0 | 1 {
   return x.name === y.name ? 0 : x.name < y.name ? -1 : 1;
+}
+
+function getItems(characterItems: { number: number; wh: ApiResponse<ItemFullApiData> }[], attributes: Attributes) {
+  const SB = Math.floor(attributes.S / 10);
+  const items = [] as CharacterFullItem[];
+
+  for (const charItem of characterItems) {
+    const item = {
+      name: charItem.wh.object.name,
+      enc: charItem.wh.object.enc,
+      qualitiesFlawsRunes: charItem.wh.object.properties.map((x) => x.object.name),
+      number: charItem.number,
+      description: charItem.wh.object.description,
+      type: printItemType(charItem.wh.object.type),
+    } as CharacterFullItem;
+
+    if (charItem.wh.object.type === ItemType.Melee) {
+      item.group = meleeGroups[charItem.wh.object.melee.group];
+      item.rng = meleeReach[charItem.wh.object.melee.reach];
+      item.dmg = charItem.wh.object.melee.dmg + charItem.wh.object.melee.dmgSbMult * SB;
+    } else if (charItem.wh.object.type === 1) {
+      item.group = rangedGroups[charItem.wh.object.ranged.group];
+      item.rng = charItem.wh.object.ranged.rng + charItem.wh.object.ranged.rngSbMult * SB;
+      item.dmg = charItem.wh.object.ranged.dmg + charItem.wh.object.ranged.dmgSbMult * SB;
+    } else if (charItem.wh.object.type === 2) {
+      let range =
+        charItem.wh.object.ammunition.rngMult !== 1 ? `Weapon x${charItem.wh.object.ammunition.rngMult}` : "Weapon";
+      if (charItem.wh.object.ammunition.rng > 0) {
+        range += `+${parseInt(charItem.wh.object.ammunition.rng)}`;
+      } else if (charItem.wh.object.ammunition.rng < 0) {
+        range += `${parseInt(charItem.wh.object.ammunition.rng)}`;
+      }
+
+      let damage = "Weapon";
+      if (charItem.wh.object.ammunition.dmg > 0) {
+        damage += `+${parseInt(charItem.wh.object.ammunition.dmg)}`;
+      } else if (charItem.wh.object.ammunition.rng < 0) {
+        damage += `${parseInt(charItem.wh.object.ammunition.dmg)}`;
+      }
+
+      item.group = ammunitionGroups[charItem.wh.object.ammunition.group];
+      item.rng = range;
+      item.dmg = damage;
+    } else if (charItem.wh.object.type === 3) {
+      item.group = armorGroups[charItem.wh.object.armour.group];
+      item.locations = charItem.wh.object.armour.location.map((x) => armorLocations[x]);
+      item.ap = charItem.wh.object.armour.points;
+    } else if (charItem.wh.object.type === 6) {
+      item.spells = formatSpells(charItem.wh.object.grimoire.spells);
+    } else {
+      item.desc =
+        (charItem.wh.object.type === 4 ? `(Capacity ${charItem.wh.object.container.capacity}) ` : "") +
+        charItem.wh.object.description;
+    }
+    items.push(item);
+  }
+
+  return items;
 }

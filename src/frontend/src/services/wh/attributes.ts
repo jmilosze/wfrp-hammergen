@@ -56,7 +56,7 @@ export function printAttributeName(attributeName: AttributeName) {
     case AttributeName.Various:
       return "Various";
     default:
-      return "None";
+      return "";
   }
 }
 

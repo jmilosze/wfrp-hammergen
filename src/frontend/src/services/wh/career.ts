@@ -45,7 +45,7 @@ export function printClassName(careerClass: CareerClass) {
     case CareerClass.Seafarer:
       return "Seafarer";
     default:
-      return "None";
+      return "";
   }
 }
 
@@ -64,7 +64,7 @@ export function printStatusTier(statusTier: StatusTier) {
     case StatusTier.Gold:
       return "Gold";
     default:
-      return "None";
+      return "";
   }
 }
 
