@@ -18,6 +18,17 @@ export const enum MutationType {
   Mental,
 }
 
+export function printMutationType(mutationType: MutationType) {
+  switch (mutationType) {
+    case MutationType.Physical:
+      return "Physical";
+    case MutationType.Mental:
+      return "Mental";
+    default:
+      return "";
+  }
+}
+
 export interface MutationApiData {
   name: string;
   description: string;

@@ -122,6 +122,25 @@ export const enum AmmoGroup {
   Blowpipe,
 }
 
+export function printAmmoGroup(ammoGroup: AmmoGroup) {
+  switch (ammoGroup) {
+    case AmmoGroup.BlackpowderAndEngineering:
+      return "Blackpowder and engineering";
+    case AmmoGroup.Bow:
+      return "Bow";
+    case AmmoGroup.Crossbow:
+      return "Crossbow";
+    case AmmoGroup.Sling:
+      return "Sling";
+    case AmmoGroup.Entangling:
+      return "Entangling";
+    case AmmoGroup.Blowpipe:
+      return "Blowpipe";
+    default:
+      return "";
+  }
+}
+
 export const enum ArmourGroup {
   SoftLeather = 0,
   BoiledLeather,
@@ -131,12 +150,45 @@ export const enum ArmourGroup {
   Brigandine,
 }
 
+export function printArmourGroup(armourGroup: ArmourGroup) {
+  switch (armourGroup) {
+    case ArmourGroup.SoftLeather:
+      return "Soft leather";
+    case ArmourGroup.BoiledLeather:
+      return "Boiled leather";
+    case ArmourGroup.Mail:
+      return "Mail";
+    case ArmourGroup.Plate:
+      return "Plate";
+    case ArmourGroup.SoftKit:
+      return "Soft kit";
+    case ArmourGroup.Brigandine:
+      return "Brigandine";
+    default:
+      return "";
+  }
+}
+
 export const enum ArmourLocation {
   Arms = 0,
   Body,
-  Short,
   Legs,
   Head,
+}
+
+export function printArmourLocation(armourLocation: ArmourLocation) {
+  switch (armourLocation) {
+    case ArmourLocation.Arms:
+      return "Arms";
+    case ArmourLocation.Body:
+      return "Body";
+    case ArmourLocation.Legs:
+      return "Legs";
+    case ArmourLocation.Head:
+      return "Head";
+    default:
+      return "";
+  }
 }
 
 export const enum MeleeReach {
