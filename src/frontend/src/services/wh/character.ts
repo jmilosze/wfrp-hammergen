@@ -1,4 +1,4 @@
-import { getMovementFormula, SpeciesWithRegion } from "./characterUtils.ts";
+import { DEFAULT_SIZE, getMovementFormula, getWoundsFormula, SpeciesWithRegion } from "./characterUtils.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
 import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
 import { ApiResponse, IdNumber, WhProperty } from "./common.ts";
@@ -251,6 +251,11 @@ export class Character implements WhProperty {
 
   getTotalAttributes(): Attributes {
     return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.modifiers.attributes);
+  }
+
+  getWounds() {
+    const attributeTotal = this.getTotalAttributes();
+    return getWoundsFormula(DEFAULT_SIZE + this.modifiers.size, attributeTotal.T, attributeTotal.WP, attributeTotal.S);
   }
 }
 

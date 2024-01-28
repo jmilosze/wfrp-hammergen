@@ -128,6 +128,89 @@ test("modelToApi returns expected api item data", () => {
 
 testIsEqualCommonProperties("character", character);
 
+describe("isEqualTo returns true", () => {
+  test("when characters have different modifiers", () => {
+    const otherCharacter = character.copy();
+    otherCharacter.modifiers.size = 1;
+    otherCharacter.modifiers.movement = 1;
+    otherCharacter.modifiers.attributes.WP = 10;
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  });
+  test("when elements of careerPath are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.careerPath = [
+      { id: "careerId2", number: 2 },
+      { id: "careerId1", number: 1 },
+    ];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+  test("when elements of skills are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.skills = [
+      { id: "skillId2", number: 5 },
+      { id: "skillId1", number: 4 },
+    ];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+  test("when elements of talents are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.talents = [
+      { id: "talentId2", number: 2 },
+      { id: "talentId1", number: 1 },
+    ];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+  test("when elements of equippedItems are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.equippedItems = [
+      { id: "eItemId2", number: 7 },
+      { id: "eItemId1", number: 7 },
+    ];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+  test("when elements of carriedItems are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.carriedItems = [
+      { id: "cItemId3", number: 10 },
+      { id: "cItemId1", number: 8 },
+      { id: "cItemId2", number: 9 },
+    ];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+  test("when elements of storedItems are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.storedItems = [
+      { id: "sItemId2", number: 3 },
+      { id: "sItemId1", number: 2 },
+    ];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+  test("when elements of spells are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.spells = ["spellId2", "spellId1"];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+  test("when elements of prayers are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.prayers = ["prayerId2", "prayerId1"];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+  test("when elements of mutations are in different order");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.mutations = ["mutationId2", "mutationId1"];
+    expect(character.isEqualTo(otherCharacter)).toBe(true);
+  }
+});
+
 describe("isEqualTo returns false", () => {
   test("when other character has different value of species");
   {
@@ -431,4 +514,25 @@ describe("isEqualTo returns false", () => {
     otherCharacter.mutations = t.value;
     expect(character.isEqualTo(otherCharacter)).toBe(false);
   });
+});
+
+test("getWounds returns correct value", () => {
+  const char = character.copy();
+
+  char.attributeRolls.T = 5;
+  char.attributeAdvances.T = 3;
+  char.modifiers.attributes.T = 2;
+
+  char.attributeRolls.WP = 6;
+  char.attributeAdvances.WP = 5;
+  char.modifiers.attributes.WP = 2;
+
+  char.attributeRolls.S = 10;
+  char.attributeAdvances.S = 0;
+  char.modifiers.attributes.S = 2;
+
+  // Halfling T 30, WP 43, S 22
+  char.species = 1;
+  char.modifiers.size = -1;
+  expect(char.getWounds()).toEqual(2 * 3 + 4);
 });
