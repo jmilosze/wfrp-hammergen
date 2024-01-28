@@ -5,9 +5,10 @@ export function getElementFunc<WhApiData, WhModel extends WhProperty>(
   apiBasePath: string,
   axiosInstance: AxiosInstance,
   apiResponseToModel: (whApiResp: ApiResponse<WhApiData>) => WhModel,
+  apiSuffix: string = "",
 ) {
   return async (id: string) => {
-    const serverResp = await axiosInstance.get(`${apiBasePath}/${id}`);
+    const serverResp = await axiosInstance.get(`${apiBasePath}/${id}${apiSuffix}`);
     return apiResponseToModel((serverResp as AxiosResponse<{ data: ApiResponse<WhApiData> }, any>).data.data);
   };
 }

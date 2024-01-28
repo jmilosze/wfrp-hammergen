@@ -1,9 +1,19 @@
-import { WhProperty } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { Source } from "../services/wh/source.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 
-export const testIsEqualCommonProperties = (name: string, whProperty: WhProperty) => {
+export interface WhPropertyExtended {
+  id: string;
+  canEdit: boolean;
+  name: string;
+  description: string;
+  shared: boolean;
+  source: Source;
+  isEqualTo(otherWhProperty: WhPropertyExtended): boolean;
+  copy(): WhPropertyExtended;
+}
+
+export const testIsEqualCommonProperties = (name: string, whProperty: WhPropertyExtended) => {
   describe("isEqualTo returns true (common properties)", () => {
     test(`when ${name} are the same`, () => {
       const whProperty1 = whProperty.copy();
@@ -68,7 +78,7 @@ export const testIsEqualCommonProperties = (name: string, whProperty: WhProperty
   });
 };
 
-interface WhPropertyWithModifiers extends WhProperty {
+interface WhPropertyWithModifiers extends WhPropertyExtended {
   modifiers: CharacterModifiers;
 }
 
