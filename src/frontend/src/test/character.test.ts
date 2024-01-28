@@ -636,3 +636,249 @@ test("getRacialAttributes returns correct value", () => {
     Fel: 10,
   });
 });
+
+describe("getBaseAttributes returns correct value", () => {
+  const char = character.copy();
+  char.attributeRolls = { WS: 12, BS: 1, S: 2, T: 1, I: 2, Ag: 1, Dex: 2, Int: 1, WP: 2, Fel: 0 };
+  test.each([
+    {
+      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      speciesWithRegion: SpeciesWithRegion.HumanReikland,
+      expected: {
+        WS: 20 + 12,
+        BS: 20 + 1,
+        S: 20 + 2,
+        T: 20 + 1,
+        I: 20 + 2,
+        Ag: 20 + 1,
+        Dex: 20 + 2,
+        Int: 20 + 1,
+        WP: 20 + 2,
+        Fel: 20,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.HalflingDefault),
+      speciesWithRegion: SpeciesWithRegion.HalflingDefault,
+      expected: {
+        WS: 10 + 12,
+        BS: 30 + 1,
+        S: 10 + 2,
+        T: 20 + 1,
+        I: 20 + 2,
+        Ag: 20 + 1,
+        Dex: 30 + 2,
+        Int: 20 + 1,
+        WP: 30 + 2,
+        Fel: 30,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.DwarfDefault),
+      speciesWithRegion: SpeciesWithRegion.DwarfDefault,
+      expected: {
+        WS: 30 + 12,
+        BS: 20 + 1,
+        S: 20 + 2,
+        T: 30 + 1,
+        I: 20 + 2,
+        Ag: 10 + 1,
+        Dex: 30 + 2,
+        Int: 20 + 1,
+        WP: 40 + 2,
+        Fel: 10,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.HighElfDefault),
+      speciesWithRegion: SpeciesWithRegion.HighElfDefault,
+      expected: {
+        WS: 30 + 12,
+        BS: 30 + 1,
+        S: 20 + 2,
+        T: 20 + 1,
+        I: 40 + 2,
+        Ag: 30 + 1,
+        Dex: 30 + 2,
+        Int: 30 + 1,
+        WP: 30 + 2,
+        Fel: 20,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.WoodElfDefault),
+      speciesWithRegion: SpeciesWithRegion.WoodElfDefault,
+      expected: {
+        WS: 30 + 12,
+        BS: 30 + 1,
+        S: 20 + 2,
+        T: 20 + 1,
+        I: 40 + 2,
+        Ag: 30 + 1,
+        Dex: 30 + 2,
+        Int: 30 + 1,
+        WP: 30 + 2,
+        Fel: 20,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.GnomeDefault),
+      speciesWithRegion: SpeciesWithRegion.GnomeDefault,
+      expected: {
+        WS: 20 + 12,
+        BS: 10 + 1,
+        S: 10 + 2,
+        T: 15 + 1,
+        I: 30 + 2,
+        Ag: 30 + 1,
+        Dex: 30 + 2,
+        Int: 30 + 1,
+        WP: 40 + 2,
+        Fel: 15,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.OgreDefault),
+      speciesWithRegion: SpeciesWithRegion.OgreDefault,
+      expected: {
+        WS: 20 + 12,
+        BS: 10 + 1,
+        S: 35 + 2,
+        T: 35 + 1,
+        I: 0 + 2,
+        Ag: 15 + 1,
+        Dex: 10 + 2,
+        Int: 10 + 1,
+        WP: 20 + 2,
+        Fel: 10,
+      },
+    },
+  ])("for $name", (t) => {
+    char.species = t.speciesWithRegion;
+    expect(char.getBaseAttributes()).toEqual(t.expected);
+  });
+});
+
+describe("getTotalAttributes returns correct value", () => {
+  const char = character.copy();
+  char.attributeRolls = { WS: 12, BS: 1, S: 2, T: 1, I: 2, Ag: 1, Dex: 2, Int: 1, WP: 2, Fel: 0 };
+  char.modifiers.attributes = { WS: 3, BS: 4, S: 3, T: 4, I: 3, Ag: 4, Dex: 3, Int: 4, WP: 3, Fel: 1 };
+  char.attributeAdvances = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 10 };
+  test.each([
+    {
+      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      speciesWithRegion: SpeciesWithRegion.HumanReikland,
+      expected: {
+        WS: 20 + 16,
+        BS: 20 + 7,
+        S: 20 + 8,
+        T: 20 + 9,
+        I: 20 + 10,
+        Ag: 20 + 11,
+        Dex: 20 + 12,
+        Int: 20 + 13,
+        WP: 20 + 14,
+        Fel: 20 + 11,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.HalflingDefault),
+      speciesWithRegion: SpeciesWithRegion.HalflingDefault,
+      expected: {
+        WS: 10 + 16,
+        BS: 30 + 7,
+        S: 10 + 8,
+        T: 20 + 9,
+        I: 20 + 10,
+        Ag: 20 + 11,
+        Dex: 30 + 12,
+        Int: 20 + 13,
+        WP: 30 + 14,
+        Fel: 30 + 11,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.DwarfDefault),
+      speciesWithRegion: SpeciesWithRegion.DwarfDefault,
+      expected: {
+        WS: 30 + 16,
+        BS: 20 + 7,
+        S: 20 + 8,
+        T: 30 + 9,
+        I: 20 + 10,
+        Ag: 10 + 11,
+        Dex: 30 + 12,
+        Int: 20 + 13,
+        WP: 40 + 14,
+        Fel: 10 + 11,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.HighElfDefault),
+      speciesWithRegion: SpeciesWithRegion.HighElfDefault,
+      expected: {
+        WS: 30 + 16,
+        BS: 30 + 7,
+        S: 20 + 8,
+        T: 20 + 9,
+        I: 40 + 10,
+        Ag: 30 + 11,
+        Dex: 30 + 12,
+        Int: 30 + 13,
+        WP: 30 + 14,
+        Fel: 20 + 11,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.WoodElfDefault),
+      speciesWithRegion: SpeciesWithRegion.WoodElfDefault,
+      expected: {
+        WS: 30 + 16,
+        BS: 30 + 7,
+        S: 20 + 8,
+        T: 20 + 9,
+        I: 40 + 10,
+        Ag: 30 + 11,
+        Dex: 30 + 12,
+        Int: 30 + 13,
+        WP: 30 + 14,
+        Fel: 20 + 11,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.GnomeDefault),
+      speciesWithRegion: SpeciesWithRegion.GnomeDefault,
+      expected: {
+        WS: 20 + 16,
+        BS: 10 + 7,
+        S: 10 + 8,
+        T: 15 + 9,
+        I: 30 + 10,
+        Ag: 30 + 11,
+        Dex: 30 + 12,
+        Int: 30 + 13,
+        WP: 40 + 14,
+        Fel: 15 + 11,
+      },
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.OgreDefault),
+      speciesWithRegion: SpeciesWithRegion.OgreDefault,
+      expected: {
+        WS: 20 + 16,
+        BS: 10 + 7,
+        S: 35 + 8,
+        T: 35 + 9,
+        I: 0 + 10,
+        Ag: 15 + 11,
+        Dex: 10 + 12,
+        Int: 10 + 13,
+        WP: 20 + 14,
+        Fel: 10 + 11,
+      },
+    },
+  ])("for $name", (t) => {
+    char.species = t.speciesWithRegion;
+    expect(char.getTotalAttributes()).toEqual(t.expected);
+  });
+});
