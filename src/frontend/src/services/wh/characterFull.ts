@@ -203,9 +203,16 @@ export interface CharacterFull extends WhProperty {
 
 export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<CharacterFullApiData>): CharacterFull {
   const totalModifiers = new CharacterModifiers();
-  const mutationModifiers = fullCharacterApi.object.mutations.map((x) => x.object.modifiers);
-  const talentModifiers = fullCharacterApi.object.talents.map((x) => x.wh.object.modifiers);
-  totalModifiers.add(...mutationModifiers, ...talentModifiers);
+
+  for (const mutation of fullCharacterApi.object.mutations) {
+    totalModifiers.add(mutation.object.modifiers);
+  }
+
+  for (const talent of fullCharacterApi.object.talents) {
+    const talentModifiers = new CharacterModifiers();
+    talentModifiers.add(talent.wh.object.modifiers).multiply(talent.number);
+    totalModifiers.add(talentModifiers);
+  }
 
   const otherAttributes = totalModifiers.attributes;
   const attributes = sumAttributes(
@@ -233,7 +240,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     shared: fullCharacterApi.object.shared,
     name: fullCharacterApi.object.name,
     description: fullCharacterApi.object.description,
-    notes: fullCharacterApi.object.description,
+    notes: fullCharacterApi.object.notes,
     species: printSpecies(fullCharacterApi.object.species),
     fate: fullCharacterApi.object.fate,
     fortune: fullCharacterApi.object.fortune,
