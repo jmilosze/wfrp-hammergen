@@ -1,5 +1,5 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
-import { SpeciesWithRegion } from "../services/wh/characterUtils.ts";
+import { getWoundsFormula, printSpecies, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -516,6 +516,24 @@ describe("isEqualTo returns false", () => {
   });
 });
 
+describe("getWoundsFormula returns correct value", () => {
+  test.each([
+    { size: 3, T: 10, WP: 10, S: 10, expected: 4 }, // 1 + (2 * 1) + 1
+    { size: 3, T: 12, WP: 17, S: 20, expected: 5 }, // 2 + (2 * 1) + 1
+    { size: 3, T: 21, WP: 26, S: 10, expected: 7 }, // 1 + (2 * 2) + 2
+    { size: 2, T: 20, WP: 10, S: 10, expected: 5 }, // (2 * 2) + 1
+    { size: 1, T: 20, WP: 10, S: 10, expected: 2 }, // 2
+    { size: 0, T: 20, WP: 10, S: 10, expected: 1 }, // 1
+    { size: -1, T: 20, WP: 10, S: 10, expected: 1 }, // 1
+    { size: 4, T: 20, WP: 10, S: 10, expected: 12 }, // 2 * (1 + (2 * 2) + 1)
+    { size: 5, T: 20, WP: 10, S: 10, expected: 24 }, // 4 * (1 + (2 * 2) + 1)
+    { size: 6, T: 20, WP: 10, S: 10, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
+    { size: 7, T: 20, WP: 10, S: 10, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
+  ])("when size = $size, T = $T, WP = $WP, S = $S", (t) => {
+    expect(getWoundsFormula(t.size, t.T, t.WP, t.S)).toEqual(t.expected);
+  });
+});
+
 test("getWounds returns correct value", () => {
   const char = character.copy();
 
@@ -535,4 +553,86 @@ test("getWounds returns correct value", () => {
   char.species = SpeciesWithRegion.HalflingDefault;
   char.modifiers.size = -1;
   expect(char.getWounds()).toEqual(2 * 3 + 4);
+});
+
+describe("getMovement returns correct value", () => {
+  test.each([
+    {
+      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      speciesWithRegion: SpeciesWithRegion.HumanReikland,
+      modifier: 0,
+      expected: 4,
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      speciesWithRegion: SpeciesWithRegion.HumanReikland,
+      modifier: -1,
+      expected: 3,
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      speciesWithRegion: SpeciesWithRegion.HumanReikland,
+      modifier: 1,
+      expected: 5,
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.HalflingDefault),
+      speciesWithRegion: SpeciesWithRegion.HalflingDefault,
+      modifier: 0,
+      expected: 3,
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.DwarfDefault),
+      speciesWithRegion: SpeciesWithRegion.DwarfDefault,
+      modifier: 0,
+      expected: 3,
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.HighElfDefault),
+      speciesWithRegion: SpeciesWithRegion.HighElfDefault,
+      modifier: 0,
+      expected: 5,
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.WoodElfDefault),
+      speciesWithRegion: SpeciesWithRegion.WoodElfDefault,
+      modifier: 0,
+      expected: 5,
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.GnomeDefault),
+      speciesWithRegion: SpeciesWithRegion.GnomeDefault,
+      modifier: 0,
+      expected: 3,
+    },
+    {
+      name: printSpecies(SpeciesWithRegion.OgreDefault),
+      speciesWithRegion: SpeciesWithRegion.OgreDefault,
+      modifier: 0,
+      expected: 6,
+    },
+  ])("when speciesWithRegion is $name and modifier is $modifier", (t) => {
+    const char = character.copy();
+    char.species = t.speciesWithRegion;
+    char.modifiers.movement = t.modifier;
+    expect(char.getMovement()).toEqual(t.expected);
+  });
+});
+
+test("getRacialAttributes returns correct value", () => {
+  const char = character.copy();
+  // Dwarf
+  char.species = SpeciesWithRegion.DwarfDefault;
+  expect(char.getRacialAttributes()).toEqual({
+    WS: 30,
+    BS: 20,
+    S: 20,
+    T: 30,
+    I: 20,
+    Ag: 10,
+    Dex: 30,
+    Int: 20,
+    WP: 40,
+    Fel: 10,
+  });
 });
