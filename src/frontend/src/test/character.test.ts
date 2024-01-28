@@ -1,8 +1,8 @@
-import { Character, CharacterApiData, apiResponseToModel, modelToApi } from "../services/wh/character.ts";
+import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
 import { SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
 import { ApiResponse } from "../services/wh/common.ts";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
 const characterApiData: CharacterApiData = {
@@ -127,3 +127,114 @@ test("modelToApi returns expected api item data", () => {
 });
 
 testIsEqualCommonProperties("character", character);
+
+describe("isEqualTo returns false", () => {
+  test("when other character has different value of species");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.species = SpeciesWithRegion.HumanAltdorfDocklands;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of fate");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.fate = 5;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of fortune");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.fortune = 5;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of resilience");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.resilience = 5;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of resolve");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.resolve = 5;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of brass");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.brass = 100;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of silver");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.silver = 100;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of gold");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.gold = 100;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of spentExp");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.spentExp = 100;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of currentExp");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.currentExp = 100;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of sin");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.sin = 100;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of corruption");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.corruption = 100;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of status");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.status = StatusTier.Gold;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of standing");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.standing = 5;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+
+  const otherCharacter = character.copy();
+  describe.each([
+    { name: "attributeRolls", atts: otherCharacter.attributeRolls },
+    { name: "attributeAdvances", atts: otherCharacter.attributeAdvances },
+  ])(`when other character has different $name`, (t1) => {
+    test.each([
+      { field: "WS", value: 11 },
+      { field: "BS", value: 11 },
+      { field: "S", value: 11 },
+      { field: "T", value: 11 },
+      { field: "I", value: 11 },
+      { field: "Ag", value: 11 },
+      { field: "Dex", value: 11 },
+      { field: "Int", value: 11 },
+      { field: "WP", value: 11 },
+      { field: "Fel", value: 11 },
+    ])(`the difference is in $field`, (t2) => {
+      const currentValue = t1.atts[t2.field];
+      t1.atts[t2.field] = t2.value;
+      expect(character.isEqualTo(otherCharacter)).toBe(false);
+      t1.atts[t2.field] = currentValue;
+    });
+  });
+});
