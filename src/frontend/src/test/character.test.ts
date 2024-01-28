@@ -213,6 +213,18 @@ describe("isEqualTo returns false", () => {
     otherCharacter.standing = 5;
     expect(character.isEqualTo(otherCharacter)).toBe(false);
   }
+  test("when other character has different value of career level");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.career.number = 1;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has different value of career id");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.career.id = "otherId";
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
 
   const otherCharacter = character.copy();
   describe.each([
@@ -236,5 +248,187 @@ describe("isEqualTo returns false", () => {
       expect(character.isEqualTo(otherCharacter)).toBe(false);
       t1.atts[t2.field] = currentValue;
     });
+  });
+
+  test.each([
+    {
+      name: "different id",
+      value: [
+        { id: "skillId1", number: 4 },
+        { id: "otherId", number: 5 },
+      ],
+    },
+    {
+      name: "different number",
+      value: [
+        { id: "skillId1", number: 4 },
+        { id: "skillId2", number: 7 },
+      ],
+    },
+    {
+      name: "different number of elements",
+      value: [{ id: "skillId1", number: 4 }],
+    },
+  ])("when other character has a different value of skills ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.skills = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    {
+      name: "different id",
+      value: [
+        { id: "talentId1", number: 1 },
+        { id: "otherId", number: 2 },
+      ],
+    },
+    {
+      name: "different number",
+      value: [
+        { id: "talentId1", number: 3 },
+        { id: "talentId2", number: 2 },
+      ],
+    },
+    {
+      name: "different number of elements",
+      value: [{ id: "talentId1", number: 1 }],
+    },
+  ])("when other character has a different value of talents ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.talents = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    {
+      name: "different id",
+      value: [
+        { id: "careerId1", number: 1 },
+        { id: "otherId", number: 2 },
+      ],
+    },
+    {
+      name: "different number",
+      value: [
+        { id: "careerId1", number: 3 },
+        { id: "careerId2", number: 2 },
+      ],
+    },
+    {
+      name: "different number of elements",
+      value: [{ id: "careerId1", number: 1 }],
+    },
+  ])("when other character has a different value of careerPath ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.careerPath = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    {
+      name: "different id",
+      value: [
+        { id: "eItemId1", number: 7 },
+        { id: "otherID", number: 7 },
+      ],
+    },
+    {
+      name: "different number",
+      value: [
+        { id: "eItemId1", number: 7 },
+        { id: "eItemId2", number: 8 },
+      ],
+    },
+    {
+      name: "different number of elements",
+      value: [{ id: "eItemId1", number: 7 }],
+    },
+  ])("when other character has a different value of equippedItems ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.equippedItems = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    {
+      name: "different id",
+      value: [
+        { id: "cItemId1", number: 8 },
+        { id: "cItemId2", number: 9 },
+        { id: "otherId", number: 10 },
+      ],
+    },
+    {
+      name: "different number",
+      value: [
+        { id: "cItemId1", number: 9 },
+        { id: "cItemId2", number: 9 },
+        { id: "cItemId3", number: 10 },
+      ],
+    },
+    {
+      name: "different number of elements",
+      value: [
+        { id: "cItemId1", number: 8 },
+        { id: "cItemId2", number: 9 },
+      ],
+    },
+  ])("when other character has a different value of carriedItems ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.carriedItems = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    {
+      name: "different id",
+      value: [
+        { id: "sItemId1", number: 2 },
+        { id: "otherId", number: 3 },
+      ],
+    },
+    {
+      name: "different number",
+      value: [
+        { id: "sItemId1", number: 5 },
+        { id: "sItemId2", number: 3 },
+      ],
+    },
+    {
+      name: "different number of elements",
+      value: [{ id: "sItemId1", number: 2 }],
+    },
+  ])("when other character has a different value of storedItems ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.storedItems = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    { name: "different value", value: ["spellId1", "otherId"] },
+    { name: "different number of elements", value: ["spellId1"] },
+  ])("when other character has a different value of spells ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.spells = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    { name: "different value", value: ["prayerId1", "otherId"] },
+    { name: "different number of elements", value: ["prayerId1"] },
+  ])("when other character has a different value of prayers ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.prayers = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    { name: "different value", value: ["mutationId1", "otherId"] },
+    { name: "different number of elements", value: ["mutationId1"] },
+  ])("when other character has a different value of mutations ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.mutations = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
   });
 });
