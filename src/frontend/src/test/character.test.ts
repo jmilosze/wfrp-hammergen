@@ -532,7 +532,7 @@ test("getWounds returns correct value", () => {
   char.modifiers.attributes.S = 2;
 
   // Halfling T 30, WP 43, S 22
-  char.species = 1;
+  char.species = SpeciesWithRegion.HalflingDefault;
   char.modifiers.size = -1;
   expect(char.getWounds()).toEqual(2 * 3 + 4);
 });
