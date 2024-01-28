@@ -15,6 +15,7 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator.ts";
+import { apiResponseToCharacterFull, CharacterFull } from "./characterFull.ts";
 
 const API_BASE_PATH = "/api/wh/character";
 
@@ -336,6 +337,7 @@ export class CharacterApi {
   createElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;
   updateElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;
   deleteElement: (id: string) => Promise<void>;
+  getElementForDisplay: (id: string) => Promise<CharacterFull>;
 
   constructor(axiosInstance: AxiosInstance) {
     this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
@@ -343,5 +345,6 @@ export class CharacterApi {
     this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
     this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
     this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
+    this.getElementForDisplay = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToCharacterFull, "?full=true");
   }
 }
