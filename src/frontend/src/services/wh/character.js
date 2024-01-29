@@ -306,6 +306,7 @@ class CharacterApi {
       gold: rawCharacter.object.gold,
       spentExp: rawCharacter.object.spentExp,
       currentExp: rawCharacter.object.currentExp,
+      totalExp: rawCharacter.object.spentExp + rawCharacter.object.currentExp,
       status: statusTiers[rawCharacter.object.status],
       standing: rawCharacter.object.standing,
       description: rawCharacter.object.description,
@@ -415,7 +416,7 @@ function getWounds(character) {
     defaultSize + character.modifiers.size,
     attributeTotal.T,
     attributeTotal.WP,
-    attributeTotal.S
+    attributeTotal.S,
   );
 }
 

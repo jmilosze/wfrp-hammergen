@@ -1251,6 +1251,7 @@ test("getElementDisplay returns correct value", async () => {
     gold: 1,
     spentExp: 1000,
     currentExp: 230,
+    totalExp: 1230,
     status: "Silver",
     standing: 2,
     description: "character display",
