@@ -15,7 +15,7 @@ export function generateAdv(careerAtts, attPoints, currentAdv) {
   let cost = 0;
   for (let i = 0; i < attPoints; ++i) {
     let advAtt = careerAtts[diceRoll(careerAtts.length, 1) - 1];
-    cost += attCost(currentAdv[attributes[advAtt]]);
+    cost += attCost(adv[attributes[advAtt]]);
     adv[attributes[advAtt]] += 1;
   }
   return [adv, cost];
@@ -28,7 +28,7 @@ export function fillUpAdv(careerAtts, fillUpTo, currentAdv, currentCost) {
   for (let advAtt of careerAtts) {
     while (adv[attributes[advAtt]] < fillUpTo) {
       adv[attributes[advAtt]] += 1;
-      cost += attCost(currentAdv[attributes[advAtt]]);
+      cost += attCost(adv[attributes[advAtt]]);
     }
   }
 

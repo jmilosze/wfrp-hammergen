@@ -52,7 +52,6 @@
           <li>Auto-generate new level 1 characters using rulebook character creation rules</li>
           <li>Auto-generate high level characters</li>
           <li>Create custom Skills, Talents, Careers, Trappings, Qualities, Spells, and Mutations</li>
-          <li>Create custom Skills, Talents, Careers, Trappings, Qualities, Spells, and Mutations</li>
           <li>Share everything you create with other players.</li>
           <li>Generate names and physical descriptions using rulebook rules</li>
           <li>
