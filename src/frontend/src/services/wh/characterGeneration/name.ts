@@ -1086,7 +1086,7 @@ const ELF_ELEMENT_2 = ["a", "ath", "dia", "en", "for", "lor", "mar", "ol", "sor"
 const HIGH_ELF_ENDINGS = ["andril", "anel", "ellion", "fin", "il", "irian", "mor", "nil", "ric", "wing"];
 const WOOD_ELF_ENDINGS = ["arha", "anhu", "dda", "han", "loc", "noc", "oth", "ryn", "stra", "wyth"];
 
-function generateHumanEmpireName(sex: Sex) {
+function generateHumanEmpireName(sex: Sex): string {
   let forename;
   if (sex === Sex.Male) {
     forename = selectRandom(HUMAN_EMPIRE_MALE_FORENAMES);
@@ -1096,7 +1096,7 @@ function generateHumanEmpireName(sex: Sex) {
   return forename + " " + selectRandom(HUMAN_EMPIRE_SURNAMES);
 }
 
-function generateHumanTileaName(sex: Sex) {
+function generateHumanTileaName(sex: Sex): string {
   let forename;
   if (sex === Sex.Male) {
     forename = selectRandom(HUMAN_TILEA_MALE_FORENAMES);
@@ -1106,7 +1106,7 @@ function generateHumanTileaName(sex: Sex) {
   return forename + " " + selectRandom(HUMAN_TILEA_SURNAMES);
 }
 
-function generateHumanNorscaName(sex: Sex) {
+function generateHumanNorscaName(sex: Sex): string {
   let forename;
   if (sex === Sex.Male) {
     forename = selectRandom(HUMAN_NORSCA_MALE_FORENAMES);
@@ -1126,7 +1126,7 @@ function generateHumanNorscaName(sex: Sex) {
   return forename + " " + surname;
 }
 
-function generateHalflingName(sex: Sex) {
+function generateHalflingName(sex: Sex): string {
   let forename;
   if (sex === Sex.Male) {
     forename = selectRandom(HALFLING_MALE_FORENAMES);
@@ -1136,17 +1136,17 @@ function generateHalflingName(sex: Sex) {
   return forename + " " + selectRandom(HALFLING_SURNAMES);
 }
 
-function generateHighElfName() {
+function generateHighElfName(): string {
   const forename = selectRandom(ELF_ELEMENT_1) + selectRandom(ELF_ELEMENT_2) + selectRandom(HIGH_ELF_ENDINGS);
   return forename + " " + selectRandom(HIGH_ELF_SURNAMES);
 }
 
-function generateWoodElfName() {
+function generateWoodElfName(): string {
   const forename = selectRandom(ELF_ELEMENT_1) + selectRandom(ELF_ELEMENT_2) + selectRandom(WOOD_ELF_ENDINGS);
   return forename + " " + selectRandom(WOOD_ELF_SURNAMES);
 }
 
-function generateDwarfName(sex: Sex) {
+function generateDwarfName(sex: Sex): string {
   let forename;
   if (sex === Sex.Male) {
     forename = selectRandom(DWARF_ELEMENT_1) + selectRandom(DWARF_ELEMENT_MALE);
@@ -1173,7 +1173,7 @@ function generateDwarfName(sex: Sex) {
   return forename + " " + surname;
 }
 
-function generateGnomeName(sex: Sex) {
+function generateGnomeName(sex: Sex): string {
   let forename;
   if (sex === Sex.Male) {
     forename = selectRandom(GNOME_MALE_FORENAMES);
@@ -1190,7 +1190,7 @@ function generateGnomeName(sex: Sex) {
   }
 }
 
-function generateOgreName() {
+function generateOgreName(): string {
   const forename = selectRandom(OGRE_ELEMENT_1) + selectRandom(OGRE_ELEMENT_2);
   const clan = selectRandom(OGRE_CLANS);
 
@@ -1201,7 +1201,7 @@ function generateOgreName() {
   }
 }
 
-export default function generateName(species: SpeciesWithRegion, sex?: Sex) {
+export default function generateName(species: SpeciesWithRegion, sex?: Sex): string {
   let selectedSex: Sex;
   if (typeof sex === "undefined") {
     selectedSex = selectRandom([Sex.Male, Sex.Female]);
