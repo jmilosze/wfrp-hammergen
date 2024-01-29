@@ -87,6 +87,43 @@ export function getAttributeValue(attributeName: AttributeName, attributes: Attr
   }
 }
 
+export function setAttributeValue(attributeName: AttributeName, attributeValue: number, attributes: Attributes) {
+  switch (attributeName) {
+    case AttributeName.WS:
+      attributes.WS = attributeValue;
+      return;
+    case AttributeName.BS:
+      attributes.BS = attributeValue;
+      return;
+    case AttributeName.S:
+      attributes.S = attributeValue;
+      return;
+    case AttributeName.T:
+      attributes.T = attributeValue;
+      return;
+    case AttributeName.I:
+      attributes.I = attributeValue;
+      return;
+    case AttributeName.Ag:
+      attributes.Ag = attributeValue;
+      return;
+    case AttributeName.Dex:
+      attributes.Dex = attributeValue;
+      return;
+    case AttributeName.Int:
+      attributes.Int = attributeValue;
+      return;
+    case AttributeName.WP:
+      attributes.WP = attributeValue;
+      return;
+    case AttributeName.Fel:
+      attributes.Fel = attributeValue;
+      return;
+    default:
+      return;
+  }
+}
+
 export const racialAttributes: Record<string, Attributes> = {
   none: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   human: { WS: 20, BS: 20, S: 20, T: 20, I: 20, Ag: 20, Dex: 20, Int: 20, WP: 20, Fel: 20 },
@@ -141,4 +178,8 @@ export function attributesAreEqual(att1: Attributes, att2: Attributes): boolean 
     }
   }
   return true;
+}
+
+export function copyAttributes(attributes: Attributes) {
+  return JSON.parse(JSON.stringify(attributes));
 }
