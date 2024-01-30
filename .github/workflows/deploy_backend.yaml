@@ -31,11 +31,10 @@ jobs:
         run: gcloud auth configure-docker ${{ vars.AR_REGISTRY }} --quiet
 
       - name: Build image
-        run: cd ./src && docker build -t ${{ vars.AR_REGISTRY }}/hammergen-337809/main/hammergen:${{ inputs.environment }} .
+        run: cd ./src && docker build -t ${{ vars.AR_REGISTRY }}/${{ vars.PROJECT_ID }}/main/hammergen:${{ inputs.environment }} .
 
       - name: Push image
-        run: cd ./src && docker push ${{ vars.AR_REGISTRY }}/hammergen-337809/main/hammergen:${{ inputs.environment }}
+        run: cd ./src && docker push ${{ vars.AR_REGISTRY }}/${{ vars.PROJECT_ID }}/main/hammergen:${{ inputs.environment }}
 
       - name: Deploy to cloud run
-        run: gcloud run deploy hammergen-${{ inputs.environment }} --region=${{ vars.REGION }} --project=hammergen-337809 --image=${{ vars.AR_REGISTRY }}/hammergen-337809/main/hammergen:${{ inputs.environment }} --allow-unauthenticated --concurrency=${{ vars.CONCURRENCY }}
-
+        run: gcloud run deploy hammergen-${{ inputs.environment }} --region=${{ vars.REGION }} --project=${{ vars.PROJECT_ID }} --image=${{ vars.AR_REGISTRY }}/${{ vars.PROJECT_ID }}/main/hammergen:${{ inputs.environment }} --allow-unauthenticated --concurrency=${{ vars.CONCURRENCY }}
