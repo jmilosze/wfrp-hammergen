@@ -18,7 +18,7 @@ def build_new_static(env):
     os.mkdir("dist")
 
     if env == "production":
-        build = "build_gcp_prod"
+        build = "build_gcp_production"
     else:
         build = "build_gcp_staging"
 

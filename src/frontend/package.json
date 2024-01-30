@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vite --mode development",
-    "build_gcp_prod": "vite build --mode gcp_prod",
+    "build_gcp_production": "vite build --mode gcp_prod",
     "build_gcp_staging": "vite build --mode gcp_staging",
-    "build_container_prod": "vite build --mode container_prod",
+    "build_container_production": "vite build --mode container_prod",
     "build_container_staging": "vite build --mode --mode container_staging",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "test": "vitest"
