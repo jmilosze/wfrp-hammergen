@@ -27,5 +27,11 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Use gcloud CLI
-        run: gcloud info
+      - name: Setup Docker
+        run: gcloud auth configure-docker ${{ vars.AR_REGISTRY }} --quiet
+
+      - name: Build image
+        run: cd ./src && docker build -t ${{ vars.AR_REGISTRY }}/hammergen-337809/main/hammergen:${{ inputs.environment }} .
+
+      - name: Push image
+        run: cd ./src && docker push ${{ vars.AR_REGISTRY }}/hammergen-337809/main/hammergen:${{ inputs.environment }}
