@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node 18
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
       - name: Build dist
         run: cd ./src/frontend && npm install && npm run-script build_gcp_${{ inputs.environment }} && mv ./dist ..
       - name: Create .firebaserc file
@@ -27,8 +27,8 @@ jobs:
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAMMERGEN_337809 }}'
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAMMERGEN_337809 }}
           channelId: live
           target: ${{ inputs.environment }}
           entryPoint: ./src

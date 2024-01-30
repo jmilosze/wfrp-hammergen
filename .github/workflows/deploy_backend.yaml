@@ -22,7 +22,7 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           project_id: hammergen-337809
-          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAMMERGEN_337809 }}'
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAMMERGEN_337809 }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
