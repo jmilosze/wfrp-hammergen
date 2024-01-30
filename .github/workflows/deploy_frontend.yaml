@@ -1,35 +1,35 @@
-  name: deploy-frontend
-  on:
-    workflow_dispatch:
-      inputs:
-        environment:
-          description: Environment to deploy to
-          required: true
-          default: staging
-          type: choice
-          options:
-            - staging
-            - production
-  jobs:
-    build_and_deploy:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-        - name: Setup Node 18
-          uses: actions/setup-node@v3
-          with:
-            node-version: '18'
-        - name: Build dist
-          run: cd ./src/frontend && npm install && npm run-script build_gcp_${{ inputs.environment }} && mv ./dist ..
-        - name: Create .firebaserc file
-          run: echo '${{ vars.FIREBASERC }}' > ./src/.firebaserc
-        - name: Deploy to Firebase
-          uses: FirebaseExtended/action-hosting-deploy@v0
-          with:
-            repoToken: '${{ secrets.GITHUB_TOKEN }}'
-            firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAMMERGEN_337809 }}'
-            channelId: live
-            target: ${{ inputs.environment }}
-            entryPoint: ./src
-            projectId: hammergen-337809
+name: deploy-frontend
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to deploy to
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Build dist
+        run: cd ./src/frontend && npm install && npm run-script build_gcp_${{ inputs.environment }} && mv ./dist ..
+      - name: Create .firebaserc file
+        run: echo '${{ vars.FIREBASERC }}' > ./src/.firebaserc
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAMMERGEN_337809 }}'
+          channelId: live
+          target: ${{ inputs.environment }}
+          entryPoint: ./src
+          projectId: hammergen-337809
