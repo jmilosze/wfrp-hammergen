@@ -32,4 +32,4 @@ jobs:
           channelId: live
           target: ${{ inputs.environment }}
           entryPoint: ./src
-          projectId: hammergen-337809
+          projectId: ${{ vars.PROJECT_ID }}
