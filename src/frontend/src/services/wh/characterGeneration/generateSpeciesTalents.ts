@@ -1,20 +1,24 @@
 import { IdNumber } from "../common.ts";
-import { rollInTable, selectRandom } from "../../../utils/randomUtils.ts";
 
 const RANDOM_TALENTS_ROLL = 100;
 
-type RandomTalents = Array<{
+export type RandomTalents = Array<{
   id: string;
   minRoll: number;
   maxRoll: number;
 }>;
-type GroupTalents = Record<string, string[]>;
-type SpeciesTalents = string[];
+export type GroupTalents = Record<string, string[]>;
+export type SpeciesTalents = string[];
+
+type SelectRandomFn = <T>(array: T[]) => T;
+type RollInTableFn = <T>(sides: number, rolls: number, table: [T, number, number][]) => T;
 
 export function generateSpeciesTalents(
   speciesTalents: SpeciesTalents,
   groupTalents: GroupTalents,
   randomTalents: RandomTalents,
+  selectRandomFn: SelectRandomFn,
+  rollInTableFn: RollInTableFn,
 ): IdNumber[] {
   if (!randomTalentsValid(randomTalents)) {
     throw new Error("invalid random talents table");
@@ -25,12 +29,12 @@ export function generateSpeciesTalents(
   }
 
   const talents = [] as string[];
-  const groupTalentPicker = new GroupTalentPicker(groupTalents);
-  const randomTalentPicker = new RandomTalentPicker(RANDOM_TALENTS_ROLL, randomTalents);
+  const groupTalentPicker = new GroupTalentPicker(groupTalents, selectRandomFn);
+  const randomTalentPicker = new RandomTalentPicker(RANDOM_TALENTS_ROLL, randomTalents, rollInTableFn);
 
   for (const speciesTalent of speciesTalents) {
     const newTalents = speciesTalent.split(",");
-    const newTalent = newTalents.length > 1 ? speciesTalent : selectRandom(newTalents);
+    const newTalent = newTalents.length === 1 ? newTalents[0] : selectRandomFn(newTalents);
     if (newTalent === "random") {
       selectRandomTalent(randomTalentPicker, talents, groupTalentPicker);
     } else {
@@ -80,9 +84,11 @@ function convertToIdNumberArray(talents: string[]): IdNumber[] {
 
 class GroupTalentPicker {
   groupTalents: Record<string, string[]>;
+  selectRandomFn: SelectRandomFn;
 
-  constructor(groupTalents: Record<string, string[]>) {
+  constructor(groupTalents: Record<string, string[]>, selectRandomFn: SelectRandomFn) {
     this.groupTalents = JSON.parse(JSON.stringify(groupTalents));
+    this.selectRandomFn = selectRandomFn;
   }
 
   isGroupTalent(talent: string): boolean {
@@ -95,7 +101,7 @@ class GroupTalentPicker {
     }
 
     while (this.groupTalents[group].length > 0) {
-      const pickedTalent = selectRandom(this.groupTalents[group]);
+      const pickedTalent = this.selectRandomFn(this.groupTalents[group]);
       removeFromTalentGroup(this.groupTalents[group], pickedTalent);
       if (!selectedTalents.includes(pickedTalent)) {
         return pickedTalent;
@@ -113,18 +119,20 @@ function removeFromTalentGroup(talentGroup: string[], talentToRemove: string) {
 class RandomTalentPicker {
   maxRandomRoll: number;
   randomTalents: [string, number, number][];
+  rollInTableFn: RollInTableFn;
 
-  constructor(initialMaxRandomRoll: number, randomTalents: RandomTalents) {
+  constructor(initialMaxRandomRoll: number, randomTalents: RandomTalents, rollInTableFn: RollInTableFn) {
     this.maxRandomRoll = initialMaxRandomRoll;
     this.randomTalents = [];
     for (const talent of randomTalents) {
       this.randomTalents.push([talent.id, talent.minRoll, talent.maxRoll]);
     }
+    this.rollInTableFn = rollInTableFn;
   }
 
   pickFromRandom(selectedTalents: string[], groupTalentPicker: GroupTalentPicker): string | null {
     while (this.randomTalents.length > 0) {
-      const newRandom = rollInTable(this.maxRandomRoll, 1, this.randomTalents);
+      const newRandom = this.rollInTableFn(this.maxRandomRoll, 1, this.randomTalents);
       const shiftMaxRandomRoll = removeTalentFromRandomTalents(this.randomTalents, newRandom);
       this.maxRandomRoll -= shiftMaxRandomRoll;
       if (groupTalentPicker.isGroupTalent(newRandom)) {

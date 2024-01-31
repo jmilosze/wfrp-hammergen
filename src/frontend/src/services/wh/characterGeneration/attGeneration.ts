@@ -1,4 +1,4 @@
-import { diceRoll } from "../../../utils/randomUtils";
+import { rollDice } from "../../../utils/randomUtils";
 import { attCost } from "./expCost";
 import {
   Attributes,
@@ -14,7 +14,7 @@ const MAX_FILL_UP_TO = 1000;
 export function generateRolls(): Attributes {
   const rolls = getAttributes();
   for (const key of Object.keys(rolls)) {
-    rolls[key] = diceRoll(10, 2);
+    rolls[key] = rollDice(10, 2);
   }
   return rolls;
 }
@@ -28,7 +28,7 @@ export function generateAdv(
   let cost = 0;
 
   for (let i = 0; i < attPoints; ++i) {
-    const randomAttName = attNames[diceRoll(attNames.length, 1) - 1];
+    const randomAttName = attNames[rollDice(attNames.length, 1) - 1];
     const randomAttValue = getAttributeValue(randomAttName, updatedAttAdvances);
     cost += attCost(randomAttValue);
     setAttributeValue(randomAttName, randomAttValue + 1, updatedAttAdvances);

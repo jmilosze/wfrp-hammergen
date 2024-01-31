@@ -1,4 +1,4 @@
-import { diceRoll, rollInTable } from "../../../utils/randomUtils";
+import { rollDice, rollInTable } from "../../../utils/randomUtils";
 import {
   DWARF_LIST,
   GNOME_LIST,
@@ -194,19 +194,19 @@ const OGRE_HAIR_ROLLS: [string, number, number][] = [
 
 function generateAge(species: SpeciesWithRegion): number {
   if (HUMAN_LIST.includes(species)) {
-    return 15 + diceRoll(10, 1);
+    return 15 + rollDice(10, 1);
   } else if (HALFLING_LIST.includes(species)) {
-    return 15 + diceRoll(10, 5);
+    return 15 + rollDice(10, 5);
   } else if (DWARF_LIST.includes(species)) {
-    return 15 + diceRoll(10, 10);
+    return 15 + rollDice(10, 10);
   } else if (HIGH_ELF_LIST.includes(species)) {
-    return 30 + diceRoll(10, 10);
+    return 30 + rollDice(10, 10);
   } else if (WOOD_ELF_LIST.includes(species)) {
-    return 30 + diceRoll(10, 10);
+    return 30 + rollDice(10, 10);
   } else if (GNOME_LIST.includes(species)) {
-    return 20 + diceRoll(10, 10);
+    return 20 + rollDice(10, 10);
   } else if (OGRE_LIST.includes(species)) {
-    return 15 + diceRoll(10, 5);
+    return 15 + rollDice(10, 5);
   }
 
   return 0;
@@ -215,19 +215,19 @@ function generateAge(species: SpeciesWithRegion): number {
 function generateHeight(species: SpeciesWithRegion): number[] {
   let heightInches;
   if (HUMAN_LIST.includes(species)) {
-    heightInches = 57 + diceRoll(10, 2);
+    heightInches = 57 + rollDice(10, 2);
   } else if (HALFLING_LIST.includes(species)) {
-    heightInches = 37 + diceRoll(10, 1);
+    heightInches = 37 + rollDice(10, 1);
   } else if (DWARF_LIST.includes(species)) {
-    heightInches = 51 + diceRoll(10, 1);
+    heightInches = 51 + rollDice(10, 1);
   } else if (HIGH_ELF_LIST.includes(species)) {
-    heightInches = 71 + diceRoll(10, 1);
+    heightInches = 71 + rollDice(10, 1);
   } else if (WOOD_ELF_LIST.includes(species)) {
-    heightInches = 71 + diceRoll(10, 1);
+    heightInches = 71 + rollDice(10, 1);
   } else if (GNOME_LIST.includes(species)) {
-    heightInches = 40 + diceRoll(10, 1);
+    heightInches = 40 + rollDice(10, 1);
   } else if (OGRE_LIST.includes(species)) {
-    heightInches = 91 + diceRoll(10, 1);
+    heightInches = 91 + rollDice(10, 1);
   } else {
     heightInches = 0;
   }
@@ -243,7 +243,7 @@ function generateEyes(species: SpeciesWithRegion): string {
     return rollInTable(10, 2, DWARF_EYE_ROLLS);
   } else if (HIGH_ELF_LIST.includes(species)) {
     const color1 = rollInTable(10, 2, HIGH_ELF_EYE_ROLLS);
-    if (diceRoll(2, 1) === 1) {
+    if (rollDice(2, 1) === 1) {
       let color2 = color1;
       while (color1 === color2) {
         color2 = rollInTable(10, 2, HIGH_ELF_EYE_ROLLS);
@@ -254,7 +254,7 @@ function generateEyes(species: SpeciesWithRegion): string {
     }
   } else if (WOOD_ELF_LIST.includes(species)) {
     const color1 = rollInTable(10, 2, WOOD_ELF_EYE_ROLLS);
-    if (diceRoll(2, 1) === 1) {
+    if (rollDice(2, 1) === 1) {
       let color2 = color1;
       while (color1 === color2) {
         color2 = rollInTable(10, 2, WOOD_ELF_EYE_ROLLS);
