@@ -236,37 +236,37 @@ function generateHeight(species: SpeciesWithRegion): number[] {
 
 function generateEyes(species: SpeciesWithRegion): string {
   if (HUMAN_LIST.includes(species)) {
-    return rollInTable(10, 2, HUMAN_EYE_ROLLS) as string;
+    return rollInTable(10, 2, HUMAN_EYE_ROLLS);
   } else if (HALFLING_LIST.includes(species)) {
-    return rollInTable(10, 2, HALFLING_EYE_ROLLS) as string;
+    return rollInTable(10, 2, HALFLING_EYE_ROLLS);
   } else if (DWARF_LIST.includes(species)) {
-    return rollInTable(10, 2, DWARF_EYE_ROLLS) as string;
+    return rollInTable(10, 2, DWARF_EYE_ROLLS);
   } else if (HIGH_ELF_LIST.includes(species)) {
-    const color1 = rollInTable(10, 2, HIGH_ELF_EYE_ROLLS) as string;
+    const color1 = rollInTable(10, 2, HIGH_ELF_EYE_ROLLS);
     if (diceRoll(2, 1) === 1) {
       let color2 = color1;
       while (color1 === color2) {
-        color2 = rollInTable(10, 2, HIGH_ELF_EYE_ROLLS) as string;
+        color2 = rollInTable(10, 2, HIGH_ELF_EYE_ROLLS);
       }
       return color1 + " and " + color2;
     } else {
       return color1;
     }
   } else if (WOOD_ELF_LIST.includes(species)) {
-    const color1 = rollInTable(10, 2, WOOD_ELF_EYE_ROLLS) as string;
+    const color1 = rollInTable(10, 2, WOOD_ELF_EYE_ROLLS);
     if (diceRoll(2, 1) === 1) {
       let color2 = color1;
       while (color1 === color2) {
-        color2 = rollInTable(10, 2, WOOD_ELF_EYE_ROLLS) as string;
+        color2 = rollInTable(10, 2, WOOD_ELF_EYE_ROLLS);
       }
       return color1 + " and " + color2;
     } else {
       return color1;
     }
   } else if (GNOME_LIST.includes(species)) {
-    return rollInTable(10, 2, GNOME_EYE_ROLLS) as string;
+    return rollInTable(10, 2, GNOME_EYE_ROLLS);
   } else if (OGRE_LIST.includes(species)) {
-    return rollInTable(10, 2, OGRE_EYE_ROLLS) as string;
+    return rollInTable(10, 2, OGRE_EYE_ROLLS);
   }
 
   return "";
@@ -274,19 +274,19 @@ function generateEyes(species: SpeciesWithRegion): string {
 
 function generateHair(species: SpeciesWithRegion): string {
   if (HUMAN_LIST.includes(species)) {
-    return rollInTable(10, 2, HUMAN_HAIR_ROLLS) as string;
+    return rollInTable(10, 2, HUMAN_HAIR_ROLLS);
   } else if (HALFLING_LIST.includes(species)) {
-    return rollInTable(10, 2, HALFLING_HAIR_ROLLS) as string;
+    return rollInTable(10, 2, HALFLING_HAIR_ROLLS);
   } else if (DWARF_LIST.includes(species)) {
-    return rollInTable(10, 2, DWARF_HAIR_ROLLS) as string;
+    return rollInTable(10, 2, DWARF_HAIR_ROLLS);
   } else if (HIGH_ELF_LIST.includes(species)) {
-    return rollInTable(10, 2, HIGH_ELF_HAIR_ROLLS) as string;
+    return rollInTable(10, 2, HIGH_ELF_HAIR_ROLLS);
   } else if (WOOD_ELF_LIST.includes(species)) {
-    return rollInTable(10, 2, WOOD_ELF_HAIR_ROLLS) as string;
+    return rollInTable(10, 2, WOOD_ELF_HAIR_ROLLS);
   } else if (GNOME_LIST.includes(species)) {
-    return rollInTable(10, 2, GNOME_HAIR_ROLLS) as string;
+    return rollInTable(10, 2, GNOME_HAIR_ROLLS);
   } else if (OGRE_LIST.includes(species)) {
-    return rollInTable(10, 2, OGRE_HAIR_ROLLS) as string;
+    return rollInTable(10, 2, OGRE_HAIR_ROLLS);
   }
 
   return "";

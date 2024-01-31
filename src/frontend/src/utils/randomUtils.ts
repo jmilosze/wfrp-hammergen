@@ -10,11 +10,12 @@ export function diceRoll(sides: number, rolls: number): number {
   return sumOfRolls;
 }
 
-export function rollInTable<T>(sides: number, rolls: number, table: [T, number, number][]): T | undefined {
+export function rollInTable<T>(sides: number, rolls: number, table: [T, number, number][]): T {
   const roll = diceRoll(sides, rolls);
   for (const element of table) {
     if (roll >= element[1] && roll < element[2]) {
       return element[0];
     }
   }
+  throw new Error(`invalid table ${table}`);
 }
