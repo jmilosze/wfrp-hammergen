@@ -9,6 +9,8 @@ import {
   setAttributeValue,
 } from "../attributes";
 
+const MAX_FILL_UP_TO = 1000;
+
 export function generateRolls(): Attributes {
   const rolls = getAttributes();
   for (const key of Object.keys(rolls)) {
@@ -43,15 +45,18 @@ export function fillUpAdv(
   const updatedAttAdvances = copyAttributes(currentAttAdvances);
   let cost = currentCost;
 
-  if (fillUpTo > 10000) {
-    throw new Error(`fillUpTo to cannot exceed 10000, value used: ${fillUpTo}`);
-  }
-
   for (const attName of attNames) {
-    while (getAttributeValue(attName, updatedAttAdvances) < fillUpTo) {
+    let i: number;
+    for (i = 0; i < MAX_FILL_UP_TO; ++i) {
       const careerAttValue = getAttributeValue(attName, updatedAttAdvances);
+      if (careerAttValue >= fillUpTo) {
+        break;
+      }
       cost += attCost(careerAttValue);
       setAttributeValue(attName, careerAttValue + 1, updatedAttAdvances);
+    }
+    if (i === MAX_FILL_UP_TO - 1) {
+      throw new Error(`fillUpTo to cannot exceed ${MAX_FILL_UP_TO}, value used: ${fillUpTo}`);
     }
   }
   return [updatedAttAdvances, cost];
