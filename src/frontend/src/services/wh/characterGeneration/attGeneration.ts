@@ -45,18 +45,18 @@ export function fillUpAdv(
   const updatedAttAdvances = copyAttributes(currentAttAdvances);
   let cost = currentCost;
 
+  if (fillUpTo > MAX_FILL_UP_TO) {
+    throw new Error(`fillUpTo to cannot exceed ${MAX_FILL_UP_TO}, value used: ${fillUpTo}`);
+  }
+
   for (const attName of attNames) {
-    let i: number;
-    for (i = 0; i < MAX_FILL_UP_TO; ++i) {
+    for (let i = 0; i < fillUpTo; ++i) {
       const careerAttValue = getAttributeValue(attName, updatedAttAdvances);
       if (careerAttValue >= fillUpTo) {
         break;
       }
       cost += attCost(careerAttValue);
       setAttributeValue(attName, careerAttValue + 1, updatedAttAdvances);
-    }
-    if (i === MAX_FILL_UP_TO - 1) {
-      throw new Error(`fillUpTo to cannot exceed ${MAX_FILL_UP_TO}, value used: ${fillUpTo}`);
     }
   }
   return [updatedAttAdvances, cost];
