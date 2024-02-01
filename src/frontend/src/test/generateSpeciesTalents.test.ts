@@ -8,10 +8,18 @@ import {
 import { compareIdNumber, IdNumber } from "../services/wh/common.ts";
 import { arraysAreEqualIgnoreOrder } from "../utils/arrayUtils.ts";
 
-function getRollInTableTest(roll: number): <T>(_: number, __: number, table: [T, number, number][]) => T {
+function getRollInTableTest(...rolls: number[]): <T>(_: number, __: number, table: [T, number, number][]) => T {
+  let expectedRolls = [] as number[];
+  let currentRoll = 0;
+  expectedRolls = JSON.parse(JSON.stringify(rolls));
+
   return function <T>(_: number, __: number, table: [T, number, number][]) {
+    const roll =
+      currentRoll < expectedRolls.length ? expectedRolls[currentRoll] : expectedRolls[expectedRolls.length - 1];
     for (const element of table) {
       if (roll >= element[1] && roll < element[2]) {
+        currentRoll += 1;
+        console.log(`Rolled ${roll}`);
         return element[0];
       }
     }
@@ -65,93 +73,119 @@ describe("generateSpeciesTalents returns expected talents", () => {
     expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
   });
 
-  // test("group talents, no multiple talents belonging to the same group", () => {
-  //   const speciesTalents = ["id1", "id2,id3"];
-  //   const talentGroups = { id1: ["id11", "id12"], id2: ["id21", "id22"], id3: ["id31", "id32"] };
-  //   const randomTalents = [];
-  //
-  //   const expected = [
-  //     { id: "id11", number: 1 },
-  //     { id: "id21", number: 1 },
-  //   ];
-  //   const actual = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents);
-  //   expect(compareArrayIgnoreOrder(actual, expected, compareStringNumber)).true;
-  // });
-  //
-  // test("group talents, multiple talents belonging to the same group, group has enough elements", () => {
-  //   const speciesTalents = ["id11", "id1", "id1", "id1,id2"];
-  //   const talentGroups = { id1: ["id11", "id12", "id13", "id14"] };
-  //   const randomTalents = [];
-  //
-  //   const expected = [
-  //     { id: "id11", number: 1 },
-  //     { id: "id12", number: 1 },
-  //     { id: "id13", number: 1 },
-  //     { id: "id14", number: 1 },
-  //   ];
-  //   const actual = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents);
-  //   expect(compareArrayIgnoreOrder(actual, expected, compareStringNumber)).true;
-  // });
-  //
-  // test("single and multi talents, random with no groups in random table", () => {
-  //   const speciesTalents = ["random", "random", "random,id4"];
-  //   const talentGroups = {};
-  //   const randomTalents = [
-  //     { id: "id1", minRoll: 1, maxRoll: 25 },
-  //     { id: "id2", minRoll: 25, maxRoll: 51 },
-  //     { id: "id3", minRoll: 51, maxRoll: 101 },
-  //   ];
-  //
-  //   const expected = [
-  //     { id: "id3", number: 1 },
-  //     { id: "id2", number: 1 },
-  //     { id: "id1", number: 1 },
-  //   ];
-  //   const actual = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents);
-  //   expect(compareArrayIgnoreOrder(actual, expected, compareStringNumber)).true;
-  // });
-  //
-  // test("single and multi talents, random with no groups in random table, randomRoll selects in 2,3,1 order", () => {
-  //   rollInTable
-  //     .mockImplementationOnce(getRollInTableMock(30))
-  //     .mockImplementationOnce(getRollInTableMock(60))
-  //     .mockImplementationOnce(getRollInTableMock(20));
-  //   const speciesTalents = ["random", "random", "random,id4"];
-  //   const talentGroups = {};
-  //   const randomTalents = [
-  //     { id: "id1", minRoll: 1, maxRoll: 25 },
-  //     { id: "id2", minRoll: 25, maxRoll: 51 },
-  //     { id: "id3", minRoll: 51, maxRoll: 101 },
-  //   ];
-  //
-  //   const expected = [
-  //     { id: "id3", number: 1 },
-  //     { id: "id2", number: 1 },
-  //     { id: "id1", number: 1 },
-  //   ];
-  //   const actual = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents);
-  //   expect(compareArrayIgnoreOrder(actual, expected, compareStringNumber)).true;
-  // });
-  //
-  // test("single and multi talents, random with groups in random table", () => {
-  //   const speciesTalents = ["id11", "random", "id21", "id22", "random,id4"];
-  //   const talentGroups = { id1: ["id11", "id12"], id2: ["id21", "id22"] };
-  //   const randomTalents = [
-  //     { id: "id1", minRoll: 1, maxRoll: 25 },
-  //     { id: "id2", minRoll: 25, maxRoll: 51 },
-  //     { id: "id3", minRoll: 51, maxRoll: 101 },
-  //   ];
-  //
-  //   const expected = [
-  //     { id: "id11", number: 1 },
-  //     { id: "id12", number: 1 },
-  //     { id: "id21", number: 1 },
-  //     { id: "id22", number: 1 },
-  //     { id: "id3", number: 1 },
-  //   ];
-  //   const actual = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents);
-  //   expect(compareArrayIgnoreOrder(actual, expected, compareStringNumber)).true;
-  // });
+  test("group talents, no multiple talents belonging to the same group", () => {
+    const speciesTalents = ["id1", "id2,id3"] as SpeciesTalents;
+    const talentGroups = { id1: ["id11", "id12"], id2: ["id21", "id22"], id3: ["id31", "id32"] } as GroupTalents;
+    const randomTalents = [] as RandomTalents;
+
+    const expected = [
+      { id: "id11", number: 1 },
+      { id: "id21", number: 1 },
+    ];
+    const actual = generateSpeciesTalents(
+      speciesTalents,
+      talentGroups,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollInTableTest(20),
+    );
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+  });
+
+  test("group talents, multiple talents belonging to the same group, group has enough elements", () => {
+    const speciesTalents = ["id11", "id1", "id1", "id1,id2"] as SpeciesTalents;
+    const talentGroups = { id1: ["id11", "id12", "id13", "id14"] } as GroupTalents;
+    const randomTalents = [] as RandomTalents;
+
+    const expected = [
+      { id: "id11", number: 1 },
+      { id: "id12", number: 1 },
+      { id: "id13", number: 1 },
+      { id: "id14", number: 1 },
+    ];
+    const actual = generateSpeciesTalents(
+      speciesTalents,
+      talentGroups,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollInTableTest(20),
+    );
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+  });
+
+  test("single and multi talents, random with no groups in random table", () => {
+    const speciesTalents = ["random", "random", "random,id4"] as SpeciesTalents;
+    const talentGroups = {} as GroupTalents;
+    const randomTalents = [
+      { id: "id1", minRoll: 1, maxRoll: 25 },
+      { id: "id2", minRoll: 25, maxRoll: 51 },
+      { id: "id3", minRoll: 51, maxRoll: 101 },
+    ] as RandomTalents;
+
+    const expected = [
+      { id: "id3", number: 1 },
+      { id: "id2", number: 1 },
+      { id: "id1", number: 1 },
+    ];
+    const actual = generateSpeciesTalents(
+      speciesTalents,
+      talentGroups,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollInTableTest(20),
+    );
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+  });
+
+  test("single and multi talents, random with no groups in random table, randomRoll selects in 2,3,1 order", () => {
+    const speciesTalents = ["random", "random", "random,id4"] as SpeciesTalents;
+    const talentGroups = {} as GroupTalents;
+    const randomTalents = [
+      { id: "id1", minRoll: 1, maxRoll: 25 },
+      { id: "id2", minRoll: 25, maxRoll: 51 },
+      { id: "id3", minRoll: 51, maxRoll: 101 },
+    ] as RandomTalents;
+
+    const expected = [
+      { id: "id3", number: 1 },
+      { id: "id2", number: 1 },
+      { id: "id1", number: 1 },
+    ];
+    const actual = generateSpeciesTalents(
+      speciesTalents,
+      talentGroups,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollInTableTest(30, 60, 20),
+    );
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+  });
+
+  test("single and multi talents, random with groups in random table", () => {
+    const speciesTalents = ["id11", "random", "id21", "id22", "random,id4"] as SpeciesTalents;
+    const talentGroups = { id1: ["id11", "id12"], id2: ["id21", "id22"] } as GroupTalents;
+    const randomTalents = [
+      { id: "id1", minRoll: 1, maxRoll: 25 },
+      { id: "id2", minRoll: 25, maxRoll: 51 },
+      { id: "id3", minRoll: 51, maxRoll: 101 },
+    ] as RandomTalents;
+
+    const expected = [
+      { id: "id11", number: 1 },
+      { id: "id12", number: 1 },
+      { id: "id21", number: 1 },
+      { id: "id22", number: 1 },
+      { id: "id3", number: 1 },
+    ];
+    const actual = generateSpeciesTalents(
+      speciesTalents,
+      talentGroups,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollInTableTest(20),
+    );
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+  });
 });
 
 // describe("generateSpeciesTalents throws exception if not not enough talents to pick", () => {
