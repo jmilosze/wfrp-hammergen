@@ -109,7 +109,7 @@ class GroupTalentPicker {
   }
 }
 
-function removeFromTalentGroup(talentGroup: string[], talentToRemove: string) {
+function removeFromTalentGroup(talentGroup: string[], talentToRemove: string): void {
   const indexToRemove = talentGroup.indexOf(talentToRemove);
   talentGroup.splice(indexToRemove, 1);
 }
@@ -187,7 +187,7 @@ function selectRandomTalent(
   }
 }
 
-function selectTalent(newTalent: string, selectedTalents: string[], groupTalentPicker: GroupTalentPicker) {
+function selectTalent(newTalent: string, selectedTalents: string[], groupTalentPicker: GroupTalentPicker): void {
   if (groupTalentPicker.isGroupTalent(newTalent)) {
     const newSelectedTalent = groupTalentPicker.pickFromGroup(newTalent, selectedTalents);
     if (newSelectedTalent !== null) {
