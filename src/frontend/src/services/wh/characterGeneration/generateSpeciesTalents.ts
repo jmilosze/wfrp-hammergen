@@ -1,4 +1,5 @@
 import { IdNumber } from "../common.ts";
+import { RollInTableFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
 
 const RANDOM_TALENTS_ROLL = 100;
 
@@ -9,9 +10,6 @@ export type RandomTalents = Array<{
 }>;
 export type GroupTalents = Record<string, string[]>;
 export type SpeciesTalents = string[];
-
-type SelectRandomFn = <T>(array: T[]) => T;
-type RollInTableFn = <T>(sides: number, rolls: number, table: [T, number, number][]) => T;
 
 export function generateSpeciesTalents(
   speciesTalents: SpeciesTalents,
