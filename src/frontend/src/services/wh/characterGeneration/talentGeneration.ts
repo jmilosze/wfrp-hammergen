@@ -129,7 +129,7 @@ export function getTalentAtts(selectedTalents: IdNumber[], listOfWhTalents: Tale
   return attributes;
 }
 
-function getMaxRank(talent: Talent, atts: Attributes): number {
+export function getMaxRank(talent: Talent, atts: Attributes): number {
   if (talent.attribute !== AttributeName.None && talent.attribute !== AttributeName.Various) {
     return talent.maxRank + Math.floor(getAttributeValue(talent.attribute, atts) / 10);
   } else {
@@ -137,7 +137,7 @@ function getMaxRank(talent: Talent, atts: Attributes): number {
   }
 }
 
-function generateAvailableTalents(
+export function generateAvailableTalents(
   talents: string[],
   talentGroups: Record<string, string[]>,
   selectRandomFn: SelectRandomFn,
@@ -161,7 +161,7 @@ function generateAvailableTalents(
   return [...new Set(availTalents)];
 }
 
-function generateLevelTalent(
+export function generateLevelTalent(
   previousTalents: IdNumber[],
   availTalents: string[],
   talentsRank: Record<string, number>,
