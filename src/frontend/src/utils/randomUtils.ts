@@ -15,7 +15,7 @@ export function rollInTable<T>(sides: number, rolls: number, table: [T, number, 
   throw new Error(`invalid table ${table}`);
 }
 
-function rollDice(sides: number, rolls: number): number {
+export function rollDice(sides: number, rolls: number): number {
   let sumOfRolls = 0;
   for (let i = 0; i < rolls; ++i) {
     sumOfRolls += Math.floor(Math.random() * sides) + 1;
