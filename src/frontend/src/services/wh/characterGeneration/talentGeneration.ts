@@ -114,12 +114,15 @@ export function getAllTalentsMaxRank(
 }
 
 export function getTalentAtts(selectedTalents: IdNumber[], listOfWhTalents: Talent[]): Attributes {
-  const attributes = getAttributes();
+  let attributes = getAttributes();
 
   for (const talent of listOfWhTalents) {
     for (const idNumber of selectedTalents) {
       if (talent.id === idNumber.id) {
-        sumAttributes(attributes, multiplyAttributes(idNumber.number, copyAttributes(talent.modifiers.attributes)));
+        attributes = sumAttributes(
+          attributes,
+          multiplyAttributes(idNumber.number, copyAttributes(talent.modifiers.attributes)),
+        );
       }
     }
   }
