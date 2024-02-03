@@ -10,9 +10,9 @@ export function generateRolls() {
   return rolls;
 }
 
-export function generateAdv(careerAtts, attPoints, currentAdv) {
+export function generateAdv(careerAtts, attPoints, currentAdv, currentCost) {
   let adv = JSON.parse(JSON.stringify(currentAdv));
-  let cost = 0;
+  let cost = currentCost;
   for (let i = 0; i < attPoints; ++i) {
     let advAtt = careerAtts[diceRoll(careerAtts.length, 1) - 1];
     cost += attCost(adv[attributes[advAtt]]);
