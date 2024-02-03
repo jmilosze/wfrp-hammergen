@@ -1,5 +1,6 @@
 export type SelectRandomFn = <T>(array: T[]) => T;
 export type RollInTableFn = <T>(sides: number, rolls: number, table: [T, number, number][]) => T;
+export type RollDiceFn = (sides: number, rolls: number) => number;
 
 export function selectRandom<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];

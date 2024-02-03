@@ -8,8 +8,9 @@ import {
   SpeciesWithRegion,
   WOOD_ELF_LIST,
 } from "../characterUtils.ts";
-import { rollDice } from "../../../utils/randomUtils.ts";
 import { StatusStanding, StatusTier } from "../career.ts";
+import { RollDiceFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { IdNumber } from "../common.ts";
 
 export function generateCharacter(
   genSpeciesWithRegion,
@@ -92,7 +93,7 @@ export function generateCharacter(
   return character;
 }
 
-export function generateFateAndResilience(species: SpeciesWithRegion) {
+export function generateFateAndResilience(species: SpeciesWithRegion, rollDiceFn: RollDiceFn) {
   let fate;
   let resilience;
   let extra;
@@ -128,27 +129,31 @@ export function generateFateAndResilience(species: SpeciesWithRegion) {
   }
 
   for (let pt = 0; pt < extra; pt++) {
-    const roll = rollDice(2, 1);
+    const roll = rollDiceFn(2, 1);
     fate += roll % 2;
     resilience += Math.floor(roll / 2);
   }
   return [fate, resilience];
 }
 
-function generateCoins(status: StatusTier, standing: StatusStanding): [number, number, number] {
+function generateCoins(status: StatusTier, standing: StatusStanding, rollDiceFn: RollDiceFn): [number, number, number] {
   if (status === StatusTier.Brass) {
-    return [rollDice(10, 2 * standing), 0, 0];
+    return [rollDiceFn(10, 2 * standing), 0, 0];
   } else if (status === StatusTier.Silver) {
-    return [0, rollDice(10, standing), 0];
+    return [0, rollDiceFn(10, standing), 0];
   } else {
     return [0, 0, standing];
   }
 }
 
-export function generateClassItems(classItems) {
+export function generateClassItems(
+  classItems: { equipped: IdNumber[]; carried: IdNumber[] },
+  rollDiceFn: RollDiceFn,
+  selectRandomFn: SelectRandomFn,
+): { equipped: IdNumber[]; carried: IdNumber[] } {
   const items = { equipped: [], carried: [] };
-  for (let itemType of Object.keys(items)) {
-    for (let [itemIds, itemNumber] of Object.entries(classItems[itemType])) {
+  for (const itemType of Object.keys(items)) {
+    for (const [itemIds, itemNumber] of Object.entries(classItems[itemType])) {
       let id = "";
       let number = "";
 
@@ -156,14 +161,14 @@ export function generateClassItems(classItems) {
       if (itemIdsList.length === 1) {
         id = itemIdsList[0];
       } else {
-        id = selectRandom(itemIdsList);
+        id = selectRandomFn(itemIdsList);
       }
 
       if (isIntegerString(itemNumber)) {
         number = parseInt(itemNumber);
       } else {
         let roll = itemNumber.split("d");
-        number = diceRoll(parseInt(roll[1]), parseInt(roll[0]));
+        number = rollDiceFn(parseInt(roll[1]), parseInt(roll[0]));
       }
       items[itemType].push({ id: id, number: number });
     }
