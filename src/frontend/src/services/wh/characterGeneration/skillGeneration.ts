@@ -1,11 +1,55 @@
 import { Skill } from "../skill.ts";
 import { SelectRandomFn } from "../../../utils/randomUtils.ts";
 import { skillCost } from "./expCost.ts";
+import { IdNumber } from "../common.ts";
 
 const SKILL_ADV = [40, 30, 20, 10];
 const LEVEL_1_MAX_ADV_PER_SKILL = 10;
 const SKILL_FILL_UP_SKILLS = 8;
 const SKILL_FILL_UP_PER_LVL = 5;
+
+export function generateSkills(
+  speciesSkills: string[],
+  careerSkills: [string[], string[], string[], string[]],
+  listOfWhSkills: Skill[],
+  level: number,
+  selectRandomFn: SelectRandomFn,
+) {
+  const resolvedSkillGroups = resolveSkillGroups(listOfWhSkills);
+  let skills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandomFn);
+  const availSkills = genAvailSkills(resolvedSkillGroups, careerSkills, selectRandomFn);
+  skills = genLvlSkill(skills, availSkills[0], SKILL_ADV[0], LEVEL_1_MAX_ADV_PER_SKILL, 0, selectRandomFn)[0];
+
+  let expSpent = 0;
+  let allAvailSkills = availSkills[0];
+  for (let tmpLvl = 2; tmpLvl <= level; ++tmpLvl) {
+    const fillUpTo = (tmpLvl - 1) * SKILL_FILL_UP_PER_LVL;
+    [skills, expSpent] = fillUpLvlSkill(
+      skills,
+      allAvailSkills,
+      fillUpTo,
+      SKILL_FILL_UP_SKILLS,
+      expSpent,
+      selectRandomFn,
+    );
+    allAvailSkills = allAvailSkills.concat(availSkills[tmpLvl - 1]);
+    [skills, expSpent] = genLvlSkill(
+      skills,
+      availSkills[tmpLvl - 1],
+      SKILL_ADV[tmpLvl - 1],
+      100,
+      expSpent,
+      selectRandomFn,
+    );
+  }
+
+  const generatedSkills: IdNumber[] = [];
+  for (const [id, number] of Object.entries(skills)) {
+    generatedSkills.push({ id: id, number: number });
+  }
+
+  return [generatedSkills, expSpent];
+}
 
 export function resolveSkillGroups(listOfWhSkills: Skill[]): Record<string, string[]> {
   const resolvedGroups: Record<string, string[]> = {};
@@ -127,7 +171,8 @@ function genLvlSkill(
   advNumber: number,
   maxAdvPerSkill: number,
   currentCost: number,
-) {
+  selectRandomFn: SelectRandomFn,
+): [Record<string, number>, number] {
   const skills: Record<string, number> = JSON.parse(JSON.stringify(previousSkills));
   const availSkillArray: string[] = [...new Set(availSkills)];
   const advCounter: Record<string, number> = {};
@@ -138,9 +183,8 @@ function genLvlSkill(
       break;
     }
 
-    let skill = selectRandom(availSkillArray);
-
-    if (Object.hasOwn(skills, skill)) {
+    const skill = selectRandomFn(availSkillArray);
+    if (skill in skills) {
       cost += skillCost(skills[skill]);
       skills[skill] += 1;
     } else {
@@ -148,15 +192,14 @@ function genLvlSkill(
       skills[skill] = 1;
     }
 
-    if (Object.hasOwn(advCounter, skill)) {
+    if (skill in advCounter) {
       advCounter[skill] += 1;
     } else {
       advCounter[skill] = 1;
     }
 
     if (advCounter[skill] === maxAdvPerSkill) {
-      let indexToRemove = availSkillArray.indexOf(skill);
-      availSkillArray.splice(indexToRemove, 1);
+      availSkillArray.splice(availSkillArray.indexOf(skill), 1);
     }
   }
 
