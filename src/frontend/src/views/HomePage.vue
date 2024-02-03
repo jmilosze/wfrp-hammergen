@@ -1,0 +1,115 @@
+<script setup lang="ts">
+import TextLink from "../components/TextLink.vue";
+import AlertBlock from "../components/AlertBlock.vue";
+import { ref } from "vue";
+
+const showAlert = ref(true);
+</script>
+
+<template>
+  <div class="">
+    <div class="text-center mt-5 font-hammergen text-6xl md:text-8xl">Hammergen</div>
+    <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
+    <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
+      <p class="text-2xl">New look!</p>
+      <p class="mt-2">
+        We are very happy to announce that, after intense 5 months of work, Hammergen has a new look on both desktop and
+        mobile. We updated the colour scheme and made navigation easier, especially on smaller screens.
+      </p>
+      <p>
+        At this time there are no functional changes, all changes are purely visual, and users do not need to take any
+        action.
+      </p>
+      <p class="mt-2">
+        Even though the changes are visual only, we have made significant changes to the code behind Hammergen. As usual
+        with such changes, we might have introduced a bug or two. If you find something that does not work as expected
+        please drop us an email at <TextLink href="mailto:admin@hammergen.net">admin@hammergen.net</TextLink>.
+      </p>
+      <p class="mt-2">
+        If you're enjoying using Hammergen please consider supporting at with donation at
+        <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>.
+      </p>
+    </AlertBlock>
+    <div class="text-2xl font-semibold mt-10">What is Hammergen?</div>
+    <p>
+      Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th Edition character generator. It lets you create,
+      store, and manage characters as well as custom character properties such as skills, talents, etc. You can share
+      everything you create with other players!
+    </p>
+    <p>
+      Hammergen includes all trappings, careers, skills, talents, mutations, spells, and qualities from WFRP 4th ed
+      Rulebook and almost all other 4th ed books published by
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy">Cubicle 7</TextLink>.
+      <span class="font-semibold">
+        Please keep in mind that descriptions of those items are often incomplete, abbreviated, and cannot replace
+        original descriptions from the source books.
+      </span>
+    </p>
+    <div class="text-2xl font-semibold mt-5">What exactly can I do here?</div>
+    <p class="mt-1 text-xl">Generate characters</p>
+    <ul class="list-disc ml-6 mt-1">
+      <li>Auto-generate new characters using rulebook character creation rules</li>
+      <li>Create custom skills, talents, careers, trappings, qualities, spells, and mutations</li>
+      <li>Share everything you created with other players.</li>
+      <li>Generate names and physical descriptions using rulebook rules.</li>
+      <li>
+        Generate random attribute rolls with one press of a button, appropriate racial bonuses are added automatically.
+      </li>
+      <li>Save your character and edit it later at any time.</li>
+      <li>View your character in a clear printable format.</li>
+      <li>Download your character in spreadsheet format or as JSON file.</li>
+    </ul>
+    <p class="mt-1 text-xl">Warhammer database</p>
+    <p>
+      Hammergen has almost all trappings, careers, skills, talents, mutations, spells, and qualities from WFRP 4th ed
+      Rulebook and all other 4th ed books published. Full list of included source books can be fond in
+      <TextLink routeName="about">About</TextLink>
+      section. Each of them has a reference to the source book and page they are from. Some examples of what you can use
+      filters for are:
+    </p>
+    <ul class="list-disc ml-6 mt-1">
+      <li>Find all new trappings from Up in Arms.</li>
+      <li>Find which source book contains Chantyman career.</li>
+      <li>List all melee weapons from Fencing group.</li>
+    </ul>
+    <p>
+      You can see example characters (even without registering) by going to
+      <TextLink routeName="characters">Characters</TextLink>
+      in the side navigation bar.
+    </p>
+    <div class="text-2xl font-semibold mt-5">How do I use it?</div>
+    <p>
+      To use it as Warhammer database you don't have to signup or login. Just head up to the relevant section and start
+      browsing!
+    </p>
+    <p>
+      To start making characters you need to create an account using email address as login name. We do not verify the
+      email addresses so you can use a fake email, but if you do, the password reset functionality will not work.
+    </p>
+    <p>
+      After registering and logging in, all you need to do is go to Characters (in top navigation bar), and click Create
+      New button.
+    </p>
+    <p>
+      You can share any custom property (character, skill, trapping, etc.) you made with other players! When a property
+      is marked as <span class="font-bold">Public</span>, anyone you give your username to, can see that item in
+      read-only mode. Sharing is explained in the <TextLink routeName="linkedusers">Linked Users</TextLink> tab
+      available after logging in.
+    </p>
+    <p>
+      More in-depth description of how to use Hammergen features can be found in
+      <TextLink routeName="howto">How to use Hammergen</TextLink>.
+    </p>
+    <div class="text-2xl font-semibold mt-5">About</div>
+    <p>
+      Hi there! Hammergen is a non-commercial hobby project run by an overworked middle-aged man. If you have any
+      comments, discovered bugs, or have any suggestions on how to improve Hammergen, you can contact me by email:
+      <TextLink href="mailto:admin@hammergen.net">admin@hammergen.net</TextLink>. I try to answer emails/fix bugs on the
+      same or next day but sometimes life gets in the way so please be patient.
+    </p>
+    <p>
+      If you enjoy using Hammergen, please consider supporting me on
+      <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>. Any donations will help to cover hosting costs.
+    </p>
+  </div>
+</template>
