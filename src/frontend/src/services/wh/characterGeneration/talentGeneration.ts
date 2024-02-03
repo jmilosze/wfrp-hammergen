@@ -9,7 +9,77 @@ import {
   sumAttributes,
 } from "../attributes.ts";
 import { IdNumber } from "../common.ts";
-import { SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { RollInTableFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { generateSpeciesTalents, RandomTalents, SpeciesTalents } from "./generateSpeciesTalents.ts";
+import { fillUpAdv, generateAdv } from "./attGeneration.ts";
+
+const LEVEL_1_TALENTS = 1;
+const LEVEL_N_TALENTS = 2;
+const LEVEL_1_ATTS = 5;
+const LEVEL_N_ATTS = 5;
+
+export function genTalentsAndAdvances(
+  speciesTalents: SpeciesTalents,
+  randomTalents: RandomTalents,
+  careerTalents: [string[], string[], string[], string[]],
+  baseAtts: Attributes,
+  listOfWhTalents: Talent[],
+  careerAtts: [AttributeName[], AttributeName[], AttributeName[], AttributeName[]],
+  level: number,
+  selectRandomFn: SelectRandomFn,
+  rollInTableFn: RollInTableFn,
+): [IdNumber[], Attributes, number] {
+  const talentGroups = getTalentGroups(listOfWhTalents);
+
+  let advances = getAttributes();
+  if (careerAtts[0].length > 0) {
+    advances = generateAdv(careerAtts[0], LEVEL_1_ATTS, advances, 0)[0];
+  }
+
+  let talents = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents, selectRandomFn, rollInTableFn);
+  let talentsRank = getAllTalentsMaxRank(talents, listOfWhTalents, baseAtts, advances);
+  let availTalents = generateAvailableTalents(careerTalents[0], talentGroups, selectRandomFn);
+  talents = generateLevelTalent(talents, availTalents, talentsRank, LEVEL_1_TALENTS, 0, selectRandomFn)[0];
+
+  let expSpent = 0;
+
+  if (level > 1) {
+    talentsRank = getAllTalentsMaxRank(talents, listOfWhTalents, baseAtts, advances);
+    availTalents = generateAvailableTalents(careerTalents[0], talentGroups, selectRandomFn);
+    [talents, expSpent] = generateLevelTalent(
+      talents,
+      availTalents,
+      talentsRank,
+      LEVEL_1_TALENTS,
+      expSpent,
+      selectRandomFn,
+    );
+  }
+
+  let allCareerAtts = careerAtts[0];
+  for (let tmpLvl = 2; tmpLvl <= level; ++tmpLvl) {
+    const fillUpAtt = 5 * (tmpLvl - 1);
+    [advances, expSpent] = fillUpAdv(allCareerAtts, fillUpAtt, advances, expSpent);
+
+    allCareerAtts = allCareerAtts.concat(careerAtts[tmpLvl - 1]);
+    if (allCareerAtts.length > 0) {
+      [advances, expSpent] = generateAdv(allCareerAtts, LEVEL_N_ATTS, advances, expSpent);
+    }
+
+    talentsRank = getAllTalentsMaxRank(talents, listOfWhTalents, baseAtts, advances);
+    const availTalents = generateAvailableTalents(careerTalents[tmpLvl - 1], talentGroups, selectRandomFn);
+    [talents, expSpent] = generateLevelTalent(
+      talents,
+      availTalents,
+      talentsRank,
+      LEVEL_N_TALENTS,
+      expSpent,
+      selectRandomFn,
+    );
+  }
+
+  return [talents, advances, expSpent];
+}
 
 export function getTalentGroups(listOfWhTalents: Talent[]): Record<string, string[]> {
   const resolvedGroups: Record<string, string[]> = {};
@@ -33,7 +103,7 @@ export function getAllTalentsMaxRank(
   listOfWhTalents: Talent[],
   baseAtts: Attributes,
   advances: Attributes,
-) {
+): Record<string, number> {
   const attributes = sumAttributes(baseAtts, advances, getTalentAtts(selectedTalents, listOfWhTalents));
 
   const talentsRank: Record<string, number> = {};
@@ -86,4 +156,58 @@ function generateAvailableTalents(
   }
 
   return [...new Set(availTalents)];
+}
+
+function generateLevelTalent(
+  previousTalents: IdNumber[],
+  availTalents: string[],
+  talentsRank: Record<string, number>,
+  talentNumber: number,
+  currentCost: number,
+  selectRandomFn: SelectRandomFn,
+): [IdNumber[], number] {
+  const selectedTalents: Record<string, number> = {};
+  for (const talent of previousTalents) {
+    selectedTalents[talent.id] = talent.number;
+    if (availTalents.includes(talent.id) && talent.number >= talentsRank[talent.id]) {
+      availTalents.splice(availTalents.indexOf(talent.id), 1);
+    }
+  }
+
+  let cost = currentCost;
+  for (let adv = 0; adv < talentNumber; ++adv) {
+    let selectionSuccessful = false;
+    while (!selectionSuccessful) {
+      if (availTalents.length < 1) {
+        break;
+      }
+
+      const newSelected = selectRandomFn(availTalents);
+      let rank;
+      if (newSelected in selectedTalents) {
+        rank = selectedTalents[newSelected] + 1;
+      } else {
+        rank = 1;
+      }
+
+      if (rank >= talentsRank[newSelected]) {
+        availTalents.splice(availTalents.indexOf(newSelected), 1);
+      }
+
+      if (rank <= talentsRank[newSelected]) {
+        selectionSuccessful = true;
+        selectedTalents[newSelected] = rank;
+        cost += 100 * selectedTalents[newSelected];
+      }
+    }
+  }
+
+  const generatedTalents: IdNumber[] = [];
+  for (const [id, number] of Object.entries(selectedTalents)) {
+    if (number > 0) {
+      generatedTalents.push({ id: id, number: number });
+    }
+  }
+
+  return [generatedTalents, cost];
 }

@@ -23,9 +23,10 @@ export function generateAdv(
   attNames: AttributeName[],
   attPoints: number,
   currentAttAdvances: Attributes,
+  currentCost: number,
 ): [Attributes, number] {
   const updatedAttAdvances = copyAttributes(currentAttAdvances);
-  let cost = 0;
+  let cost = currentCost;
 
   for (let i = 0; i < attPoints; ++i) {
     const randomAttName = attNames[rollDice(attNames.length, 1) - 1];
