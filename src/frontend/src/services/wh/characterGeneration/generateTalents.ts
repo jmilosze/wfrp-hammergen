@@ -25,7 +25,7 @@ export function genTalentsAndAdvances(
   baseAtts: Attributes,
   listOfWhTalents: Talent[],
   careerAtts: [AttributeName[], AttributeName[], AttributeName[], AttributeName[]],
-  level: number,
+  level: 1 | 2 | 3 | 4,
   selectRandomFn: SelectRandomFn,
   rollInTableFn: RollInTableFn,
 ): [IdNumber[], Attributes, number] {
