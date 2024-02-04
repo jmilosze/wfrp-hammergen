@@ -14,13 +14,13 @@ import { IdNumber } from "../common.ts";
 import { RandomTalents } from "./generateSpeciesTalents.ts";
 import { Talent } from "../talent.ts";
 import { Skill } from "../skill.ts";
-import generateName from "./nameGeneration.ts";
+import generateName from "./generateName.ts";
 import { Character } from "../character.ts";
-import generateDescription from "./descriptionGeneration.ts";
-import { generateRolls } from "./attGeneration.ts";
-import { generateSkills } from "./skillGeneration.ts";
+import generateDescription from "./generateDescription.ts";
+import { generateRolls } from "./generateAttributes.ts";
+import { generateSkills } from "./generateSkills.ts";
 import { getAttributes, sumAttributes } from "../attributes.ts";
-import { genTalentsAndAdvances } from "./talentGeneration.ts";
+import { genTalentsAndAdvances } from "./generateTalents.ts";
 
 interface GenerationProps {
   classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];

@@ -1,5 +1,5 @@
-import { rollDice } from "../../../utils/randomUtils";
-import { attCost } from "./expCost";
+import { rollDice } from "../../../utils/randomUtils.ts";
+import { attCost } from "./calculateExperience.ts";
 import {
   Attributes,
   getAttributes,
@@ -7,7 +7,7 @@ import {
   copyAttributes,
   getAttributeValue,
   setAttributeValue,
-} from "../attributes";
+} from "../attributes.ts";
 
 const MAX_FILL_UP_TO = 1000;
 

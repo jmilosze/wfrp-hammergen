@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { getAllTalentsMaxRank, getTalentAtts } from "../services/wh/characterGeneration/talentGeneration.ts";
+import { getAllTalentsMaxRank, getTalentAtts } from "../services/wh/characterGeneration/generateTalents.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { getAttributes } from "../services/wh/attributes.ts";

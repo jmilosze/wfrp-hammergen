@@ -1,6 +1,6 @@
 import { Skill } from "../skill.ts";
 import { SelectRandomFn } from "../../../utils/randomUtils.ts";
-import { skillCost } from "./expCost.ts";
+import { skillCost } from "./calculateExperience.ts";
 import { IdNumber } from "../common.ts";
 
 const SKILL_ADV = [40, 30, 20, 10];

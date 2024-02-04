@@ -11,7 +11,7 @@ import {
 import { IdNumber } from "../common.ts";
 import { RollInTableFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
 import { generateSpeciesTalents, RandomTalents, SpeciesTalents } from "./generateSpeciesTalents.ts";
-import { fillUpAdv, generateAdv } from "./attGeneration.ts";
+import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
 
 const LEVEL_1_TALENTS = 1;
 const LEVEL_N_TALENTS = 2;
