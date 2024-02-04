@@ -202,6 +202,21 @@ export class Career implements WhProperty {
       objectsAreEqual(this.source, otherCareer.source)
     );
   }
+
+  getLevel(level: 1 | 2 | 3 | 4): CareerLevel {
+    switch (level) {
+      case 1:
+        return this.level1;
+      case 2:
+        return this.level2;
+      case 3:
+        return this.level3;
+      case 4:
+        return this.level4;
+      default:
+        return zeroCareerLevel;
+    }
+  }
 }
 
 export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Career {

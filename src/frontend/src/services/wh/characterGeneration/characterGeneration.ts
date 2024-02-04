@@ -9,11 +9,15 @@ import {
   WOOD_ELF_LIST,
 } from "../characterUtils.ts";
 import { Career, StatusStanding, StatusTier } from "../career.ts";
-import { RollDiceFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../utils/randomUtils.ts";
 import { IdNumber } from "../common.ts";
 import { RandomTalents } from "./generateSpeciesTalents.ts";
 import { Talent } from "../talent.ts";
 import { Skill } from "../skill.ts";
+import generateName from "./nameGeneration.ts";
+import { Character } from "../character.ts";
+import generateDescription from "./descriptionGeneration.ts";
+import { generateRolls } from "./attGeneration.ts";
 
 interface GenerationProps {
   classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];
@@ -28,32 +32,39 @@ export function generateCharacter(
   listOfWhSkills: Skill[],
   listOfWhTalents: Talent[],
   generationProps: GenerationProps,
-  level: number,
+  level: 1 | 2 | 3 | 4,
 ) {
-  const character = {};
+  const character = new Character();
 
   const exp = 50; // From random characteristics
-  const items = generateClassItems(generationProps.classItems[career.class]);
 
-  character.name = generateName(speciesWithRegion, 2);
-  character.speciesWithRegion = speciesWithRegion;
-  character.career = { id: career.id, number: level };
+  let classItems: { equipped: IdNumber[]; carried: IdNumber[] }
+  if (whCareer.careerClass in generationProps.classItems) {
+    classItems = generateClassItems(generationProps.classItems[whCareer.careerClass], rollDice, selectRandom);
+  } else {
+    classItems = { equipped: [], carried: [] }
+  }
+
+
+  character.name = generateName(species);
+  character.species = species;
+  character.career = { id: whCareer.id, number: level };
   character.careerPath = [];
   for (let i = 1; i < level; ++i) {
-    character.careerPath.push({ id: career.id, number: i });
+    character.careerPath.push({ id: whCareer.id, number: i });
   }
-  character.description = generateDescription(speciesWithRegion);
+  character.description = generateDescription(species);
   character.notes = "";
-  [character.fate, character.resilience] = generateFateAndResilience(speciesWithRegion);
+  [character.fate, character.resilience] = generateFateAndResilience(species, rollDice);
   character.fortune = character.fate;
   character.resolve = character.resilience;
-  character.status = career[levelName].status;
-  character.standing = career[levelName].standing;
-  [character.brass, character.silver, character.gold] = generateCoins(character.status, character.standing);
+  character.status = whCareer.getLevel(level).status;
+  character.standing = whCareer.getLevel(level).standing;
+  [character.brass, character.silver, character.gold] = generateCoins(character.status, character.standing, rollDice);
   character.attributeRolls = generateRolls();
   character.storedItems = [];
-  character.equippedItems = items.equipped;
-  character.carriedItems = items.carried;
+  character.equippedItems = classItems.equipped;
+  character.carriedItems = classItems.carried;
 
   let lvl1 = career.levelOne;
   let lvl2 = career.levelTwo;
