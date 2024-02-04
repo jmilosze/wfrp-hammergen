@@ -8,28 +8,32 @@ import {
   SpeciesWithRegion,
   WOOD_ELF_LIST,
 } from "../characterUtils.ts";
-import { StatusStanding, StatusTier } from "../career.ts";
+import { Career, StatusStanding, StatusTier } from "../career.ts";
 import { RollDiceFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
 import { IdNumber } from "../common.ts";
+import { RandomTalents } from "./generateSpeciesTalents.ts";
+import { Talent } from "../talent.ts";
+import { Skill } from "../skill.ts";
+
+interface GenerationProps {
+  classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];
+  randomTalents: RandomTalents;
+  speciesTalents: string[][];
+  speciesSkills: string[][];
+}
 
 export function generateCharacter(
-  genSpeciesWithRegion,
-  genCareer,
-  listOfCareers,
-  listOfSkills,
-  listOfTalents,
-  generationProps,
-  level,
+  species: SpeciesWithRegion,
+  whCareer: Career,
+  listOfWhSkills: Skill[],
+  listOfWhTalents: Talent[],
+  generationProps: GenerationProps,
+  level: number,
 ) {
-  const careerLevels = { 1: "levelOne", 2: "levelTwo", 3: "levelThree", 4: "levelFour" };
-  const levelName = careerLevels[level];
-  let character = {};
+  const character = {};
 
-  let exp = 50; // From random characteristics
-  let career = listOfCareers[genCareer];
-  let speciesWithRegion = genSpeciesWithRegion;
-
-  let items = generateClassItems(generationProps.classItems[career.class]);
+  const exp = 50; // From random characteristics
+  const items = generateClassItems(generationProps.classItems[career.class]);
 
   character.name = generateName(speciesWithRegion, 2);
   character.speciesWithRegion = speciesWithRegion;
@@ -61,7 +65,7 @@ export function generateCharacter(
     speciesWithRegion,
     generationProps.speciesSkills,
     [lvl1.skills, lvl2.skills, lvl3.skills, lvl4.skills],
-    listOfSkills,
+    listOfWhSkills: Skill[],
     level,
   );
 
@@ -76,7 +80,7 @@ export function generateCharacter(
     generationProps.randomTalents,
     [lvl1.talents, lvl2.talents, lvl3.talents, lvl4.talents],
     baseAttributes,
-    listOfTalents,
+    listOfWhTalents,
     [lvl1.attributes, lvl2.attributes, lvl3.attributes, lvl4.attributes],
     level,
   );
@@ -93,7 +97,7 @@ export function generateCharacter(
   return character;
 }
 
-export function generateFateAndResilience(species: SpeciesWithRegion, rollDiceFn: RollDiceFn) {
+export function generateFateAndResilience(species: SpeciesWithRegion, rollDiceFn: RollDiceFn): [number, number] {
   let fate;
   let resilience;
   let extra;
@@ -147,33 +151,34 @@ function generateCoins(status: StatusTier, standing: StatusStanding, rollDiceFn:
 }
 
 export function generateClassItems(
-  classItems: { equipped: IdNumber[]; carried: IdNumber[] },
+  classItems: { equipped: Record<string, string>; carried: Record<string, string> },
   rollDiceFn: RollDiceFn,
   selectRandomFn: SelectRandomFn,
 ): { equipped: IdNumber[]; carried: IdNumber[] } {
-  const items = { equipped: [], carried: [] };
-  for (const itemType of Object.keys(items)) {
-    for (const [itemIds, itemNumber] of Object.entries(classItems[itemType])) {
-      let id = "";
-      let number = "";
+  const items: { equipped: IdNumber[]; carried: IdNumber[] } = { equipped: [], carried: [] };
 
-      const itemIdsList = itemIds.split(",");
-      if (itemIdsList.length === 1) {
-        id = itemIdsList[0];
-      } else {
-        id = selectRandomFn(itemIdsList);
-      }
-
-      if (isIntegerString(itemNumber)) {
-        number = parseInt(itemNumber);
-      } else {
-        let roll = itemNumber.split("d");
-        number = rollDiceFn(parseInt(roll[1]), parseInt(roll[0]));
-      }
-      items[itemType].push({ id: id, number: number });
-    }
+  for (const [itemIds, itemNumber] of Object.entries(classItems.equipped)) {
+    const id = getIdFromCommaSeparatedIds(itemIds, selectRandomFn);
+    const number = getNumberFromDiceRollString(itemNumber, rollDiceFn);
+    items.equipped.push({ id: id, number: number });
   }
+
+  for (const [itemIds, itemNumber] of Object.entries(classItems.carried)) {
+    const id = getIdFromCommaSeparatedIds(itemIds, selectRandomFn);
+    const number = getNumberFromDiceRollString(itemNumber, rollDiceFn);
+    items.equipped.push({ id: id, number: number });
+  }
+
   return items;
+}
+
+function getIdFromCommaSeparatedIds(itemIds: string, selectRandomFn: <T>(array: T[]) => T) {
+  const itemIdsList = itemIds.split(",");
+  if (itemIdsList.length === 1) {
+    return itemIdsList[0];
+  } else {
+    return selectRandomFn(itemIdsList);
+  }
 }
 
 function isIntegerString(str: string) {
@@ -181,4 +186,13 @@ function isIntegerString(str: string) {
   // If the result is not NaN and the string is equal to its string representation,
   // then the input is a valid integer string.
   return !isNaN(parseInt(str)) && String(parseInt(str)) === str;
+}
+
+function getNumberFromDiceRollString(roll: string, rollDiceFn: (sides: number, rolls: number) => number) {
+  if (isIntegerString(roll)) {
+    return parseInt(roll);
+  } else {
+    const rollParameters = roll.split("d");
+    return rollDiceFn(parseInt(rollParameters[1]), parseInt(rollParameters[0]));
+  }
 }
