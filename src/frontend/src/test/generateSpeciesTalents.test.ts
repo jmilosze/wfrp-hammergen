@@ -7,30 +7,7 @@ import {
 } from "../services/wh/characterGeneration/generateSpeciesTalents.ts";
 import { compareIdNumber, IdNumber } from "../services/wh/common.ts";
 import { arraysAreEqualIgnoreOrder } from "../utils/arrayUtils.ts";
-
-function getRollInTableTest(...rolls: number[]): <T>(_: number, __: number, table: [T, number, number][]) => T {
-  let expectedRolls = [] as number[];
-  let currentRoll = 0;
-  expectedRolls = JSON.parse(JSON.stringify(rolls));
-
-  return function <T>(_: number, __: number, table: [T, number, number][]) {
-    const roll =
-      currentRoll < expectedRolls.length ? expectedRolls[currentRoll] : expectedRolls[expectedRolls.length - 1];
-    for (const element of table) {
-      if (roll >= element[1] && roll < element[2]) {
-        currentRoll += 1;
-        return element[0];
-      }
-    }
-    throw new Error(`invalid table ${table}`);
-  };
-}
-
-function getSelectRandomTest(pickNumber: number): <T>(array: T[]) => T {
-  return function <T>(array: T[]) {
-    return array[pickNumber];
-  };
-}
+import { getRollInTableTest, getSelectRandomTest } from "./commonTests.ts";
 
 describe("generateSpeciesTalents returns expected talents", () => {
   test("non-group non-random single talents", () => {

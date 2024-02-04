@@ -1,8 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { getAllTalentsMaxRank, getTalentGroups } from "../services/wh/characterGeneration/generateTalents.ts";
+import {
+  generateAvailableTalents,
+  getAllTalentsMaxRank,
+  getTalentGroups,
+} from "../services/wh/characterGeneration/generateTalents.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
+import { getSelectRandomTest } from "./commonTests.ts";
 
 const listOfWhTalents: Talent[] = [
   new Talent({
@@ -100,5 +105,16 @@ test("getTalentGroups generates expected talent groups", () => {
   expect(generatedGroups).toEqual({
     id4: ["id0"],
     id3: ["id0", "id1"],
+  });
+});
+
+describe("generateAvailableTalents generates expected talents", () => {
+  const talentGroups = {
+    id4: ["id0"],
+    id3: ["id0", "id1"],
+  };
+
+  test("when talents list is empty", () => {
+    expect(generateAvailableTalents([], talentGroups, getSelectRandomTest(0))).toEqual([]);
   });
 });

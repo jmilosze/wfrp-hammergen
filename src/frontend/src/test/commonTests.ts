@@ -13,6 +13,30 @@ export interface WhPropertyExtended {
   copy(): WhPropertyExtended;
 }
 
+export function getRollInTableTest(...rolls: number[]): <T>(_: number, __: number, table: [T, number, number][]) => T {
+  let expectedRolls = [] as number[];
+  let currentRoll = 0;
+  expectedRolls = JSON.parse(JSON.stringify(rolls));
+
+  return function <T>(_: number, __: number, table: [T, number, number][]) {
+    const roll =
+      currentRoll < expectedRolls.length ? expectedRolls[currentRoll] : expectedRolls[expectedRolls.length - 1];
+    for (const element of table) {
+      if (roll >= element[1] && roll < element[2]) {
+        currentRoll += 1;
+        return element[0];
+      }
+    }
+    throw new Error(`invalid table ${table}`);
+  };
+}
+
+export function getSelectRandomTest(pickNumber: number): <T>(array: T[]) => T {
+  return function <T>(array: T[]) {
+    return array[pickNumber];
+  };
+}
+
 export const testIsEqualCommonProperties = (name: string, whProperty: WhPropertyExtended) => {
   describe("isEqualTo returns true (common properties)", () => {
     test(`when ${name} are the same`, () => {
