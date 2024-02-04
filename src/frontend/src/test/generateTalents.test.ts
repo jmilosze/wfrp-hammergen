@@ -110,11 +110,31 @@ test("getTalentGroups generates expected talent groups", () => {
 
 describe("generateAvailableTalents generates expected talents", () => {
   const talentGroups = {
-    id4: ["id0"],
-    id3: ["id0", "id1"],
+    groupId1: ["id0"],
+    groupId2: ["id0", "id1", "id2"],
   };
 
   test("when talents list is empty", () => {
     expect(generateAvailableTalents([], talentGroups, getSelectRandomTest(0))).toEqual([]);
+  });
+
+  test("when talents list contains does not contain group", () => {
+    const availTalents = generateAvailableTalents(["id1", "id2", "id0"], talentGroups, getSelectRandomTest(1));
+    expect(availTalents.sort()).toEqual(["id0", "id1", "id2"]);
+  });
+
+  test("when talents list contains a group talent", () => {
+    const availTalents = generateAvailableTalents(["groupId2"], talentGroups, getSelectRandomTest(1));
+    expect(availTalents).toEqual(["id1"]);
+  });
+
+  test("when talents list contains contains repetitions", () => {
+    const availTalents = generateAvailableTalents(["id1", "id1", "id0"], talentGroups, getSelectRandomTest(1));
+    expect(availTalents.sort()).toEqual(["id0", "id1"]);
+  });
+
+  test("when talents list contains contains repetitions in group", () => {
+    const availTalents = generateAvailableTalents(["id1", "groupId2", "id0"], talentGroups, getSelectRandomTest(1));
+    expect(availTalents.sort()).toEqual(["id0", "id1"]);
   });
 });
