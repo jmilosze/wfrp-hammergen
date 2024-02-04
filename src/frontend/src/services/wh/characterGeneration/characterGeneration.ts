@@ -9,7 +9,7 @@ import {
   WOOD_ELF_LIST,
 } from "../characterUtils.ts";
 import { Career, StatusStanding, StatusTier } from "../career.ts";
-import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { rollDice, RollDiceFn, rollInTable, selectRandom, SelectRandomFn } from "../../../utils/randomUtils.ts";
 import { IdNumber } from "../common.ts";
 import { RandomTalents } from "./generateSpeciesTalents.ts";
 import { Talent } from "../talent.ts";
@@ -18,12 +18,15 @@ import generateName from "./nameGeneration.ts";
 import { Character } from "../character.ts";
 import generateDescription from "./descriptionGeneration.ts";
 import { generateRolls } from "./attGeneration.ts";
+import { generateSkills } from "./skillGeneration.ts";
+import { getAttributes, sumAttributes } from "../attributes.ts";
+import { genTalentsAndAdvances } from "./talentGeneration.ts";
 
 interface GenerationProps {
   classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];
   randomTalents: RandomTalents;
-  speciesTalents: string[][];
-  speciesSkills: string[][];
+  speciesTalents: Record<string, string[]>;
+  speciesSkills: Record<string, string[]>;
 }
 
 export function generateCharacter(
@@ -38,13 +41,12 @@ export function generateCharacter(
 
   const exp = 50; // From random characteristics
 
-  let classItems: { equipped: IdNumber[]; carried: IdNumber[] }
+  let classItems: { equipped: IdNumber[]; carried: IdNumber[] };
   if (whCareer.careerClass in generationProps.classItems) {
     classItems = generateClassItems(generationProps.classItems[whCareer.careerClass], rollDice, selectRandom);
   } else {
-    classItems = { equipped: [], carried: [] }
+    classItems = { equipped: [], carried: [] };
   }
-
 
   character.name = generateName(species);
   character.species = species;
@@ -66,37 +68,35 @@ export function generateCharacter(
   character.equippedItems = classItems.equipped;
   character.carriedItems = classItems.carried;
 
-  let lvl1 = career.levelOne;
-  let lvl2 = career.levelTwo;
-  let lvl3 = career.levelThree;
-  let lvl4 = career.levelFour;
+  let skillExpSpent = 0;
+  if (species in generationProps.speciesSkills) {
+    [character.skills, skillExpSpent] = generateSkills(
+      generationProps.speciesSkills[species],
+      [whCareer.level1.skills, whCareer.level2.skills, whCareer.level3.skills, whCareer.level4.skills],
+      listOfWhSkills,
+      level,
+      selectRandom,
+    );
+  }
 
-  let skillExpSpent;
-  [character.skills, skillExpSpent] = generateSkills(
-    speciesWithRegion,
-    generationProps.speciesSkills,
-    [lvl1.skills, lvl2.skills, lvl3.skills, lvl4.skills],
-    listOfWhSkills: Skill[],
-    level,
-  );
+  const baseAttributes = sumAttributes(getAttributes(species), character.attributeRolls);
 
-  let baseAttributes = sumAndMultAttr([
-    { multiplier: 1, attributes: getAttributes(speciesWithRegion) },
-    { multiplier: 1, attributes: character.attributeRolls },
-  ]);
+  let talentAndAttExpSpent = 0;
+  if (species in generationProps.speciesTalents) {
+    [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
+      generationProps.speciesTalents[species],
+      generationProps.randomTalents,
+      [whCareer.level1.talents, whCareer.level2.talents, whCareer.level3.talents, whCareer.level4.talents],
+      baseAttributes,
+      listOfWhTalents,
+      [whCareer.level1.attributes, whCareer.level2.attributes, whCareer.level3.attributes, whCareer.level4.attributes],
+      level,
+      selectRandom,
+      rollInTable,
+    );
+  }
 
-  let talentAndAttExpSpent;
-  [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
-    generationProps.speciesTalents[speciesWithRegion],
-    generationProps.randomTalents,
-    [lvl1.talents, lvl2.talents, lvl3.talents, lvl4.talents],
-    baseAttributes,
-    listOfWhTalents,
-    [lvl1.attributes, lvl2.attributes, lvl3.attributes, lvl4.attributes],
-    level,
-  );
-
-  let totalExSpent = skillExpSpent + talentAndAttExpSpent + 100 * (level - 1);
+  const totalExSpent = skillExpSpent + talentAndAttExpSpent + 100 * (level - 1);
   character.currentExp = exp - totalExSpent > 0 ? exp - totalExSpent : 0;
   character.spentExp = totalExSpent;
 

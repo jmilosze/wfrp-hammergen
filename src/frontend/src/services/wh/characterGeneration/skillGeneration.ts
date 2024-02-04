@@ -14,7 +14,7 @@ export function generateSkills(
   listOfWhSkills: Skill[],
   level: number,
   selectRandomFn: SelectRandomFn,
-) {
+): [IdNumber[], number] {
   const resolvedSkillGroups = resolveSkillGroups(listOfWhSkills);
   let skills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandomFn);
   const availSkills = genAvailSkills(resolvedSkillGroups, careerSkills, selectRandomFn);
