@@ -31,9 +31,15 @@ export function getRollInTableTest(...rolls: number[]): <T>(_: number, __: numbe
   };
 }
 
-export function getSelectRandomTest(pickNumber: number): <T>(array: T[]) => T {
+export function getSelectRandomTest(...selections: number[]): <T>(array: T[]) => T {
+  let expectedSel = [] as number[];
+  let currentSel = 0;
+  expectedSel = JSON.parse(JSON.stringify(selections));
+
   return function <T>(array: T[]) {
-    return array[pickNumber];
+    const selection = currentSel < expectedSel.length ? expectedSel[currentSel] : expectedSel[expectedSel.length - 1];
+    currentSel += 1;
+    return array[selection];
   };
 }
 

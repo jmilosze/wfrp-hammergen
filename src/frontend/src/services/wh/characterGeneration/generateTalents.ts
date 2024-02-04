@@ -170,6 +170,13 @@ export function generateLevelTalent(
   selectRandomFn: SelectRandomFn,
 ): [IdNumber[], number] {
   const selectedTalents: Record<string, number> = {};
+
+  for (const talent of availTalents) {
+    if (!(talent in talentsRank)) {
+      availTalents.splice(availTalents.indexOf(talent), 1);
+    }
+  }
+
   for (const talent of previousTalents) {
     selectedTalents[talent.id] = talent.number;
     if (availTalents.includes(talent.id) && talent.number >= talentsRank[talent.id]) {

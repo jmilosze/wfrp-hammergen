@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   generateAvailableTalents,
+  generateLevelTalent,
   getAllTalentsMaxRank,
   getTalentGroups,
 } from "../services/wh/characterGeneration/generateTalents.ts";
@@ -136,5 +137,151 @@ describe("generateAvailableTalents generates expected talents", () => {
   test("when talents list contains contains repetitions in group", () => {
     const availTalents = generateAvailableTalents(["id1", "groupId2", "id0"], talentGroups, getSelectRandomTest(1));
     expect(availTalents.sort()).toEqual(["id0", "id1"]);
+  });
+});
+
+describe("generateLevelTalent generates expected talents", () => {
+  const previousTalents = [
+    { id: "selected1", number: 1 },
+    { id: "selected2", number: 2 },
+  ];
+
+  test("when availTalents empty", () => {
+    const [talents, cost] = generateLevelTalent(
+      previousTalents,
+      [],
+      { selected1: 4, selected2: 5 },
+      5,
+      100,
+      getSelectRandomTest(0),
+    );
+    expect(talents).toEqual(previousTalents);
+    expect(cost).toEqual(100);
+  });
+
+  test("when previousTalents has talent not listed in talentsRank", () => {
+    const [talents, cost] = generateLevelTalent(
+      previousTalents,
+      ["available1"],
+      { selected1: 4, available1: 2 },
+      1,
+      100,
+      getSelectRandomTest(0),
+    );
+
+    expect(talents).toEqual([
+      { id: "selected1", number: 1 },
+      { id: "selected2", number: 2 },
+      { id: "available1", number: 1 },
+    ]);
+    expect(cost).toEqual(200);
+  });
+
+  test("when availTalents has talents not listed in talentsRank", () => {
+    const [talents, cost] = generateLevelTalent(
+      previousTalents,
+      ["available1"],
+      { selected1: 4, selected2: 5 },
+      1,
+      100,
+      getSelectRandomTest(0),
+    );
+
+    expect(talents).toEqual([
+      { id: "selected1", number: 1 },
+      { id: "selected2", number: 2 },
+    ]);
+    expect(cost).toEqual(100);
+  });
+
+  test("when availTalents has none of the selected talents", () => {
+    const [talents, cost] = generateLevelTalent(
+      previousTalents,
+      ["available1"],
+      { selected1: 4, selected2: 5, available1: 2 },
+      2,
+      100,
+      getSelectRandomTest(0),
+    );
+
+    expect(talents).toEqual([
+      { id: "selected1", number: 1 },
+      { id: "selected2", number: 2 },
+      { id: "available1", number: 2 },
+    ]);
+    expect(cost).toEqual(400);
+  });
+
+  test("when availTalents has one of the selected talents", () => {
+    const [talents, cost] = generateLevelTalent(
+      previousTalents,
+      ["selected1"],
+      { selected1: 4, selected2: 5 },
+      2,
+      100,
+      getSelectRandomTest(0),
+    );
+
+    expect(talents).toEqual([
+      { id: "selected1", number: 3 },
+      { id: "selected2", number: 2 },
+    ]);
+    expect(cost).toEqual(600);
+  });
+
+  test("when availTalents has talent that reaches max rank", () => {
+    const [talents, cost] = generateLevelTalent(
+      previousTalents,
+      ["available1", "available2"],
+      { selected1: 4, selected2: 5, available1: 1, available2: 3 },
+      2,
+      100,
+      getSelectRandomTest(0),
+    );
+
+    expect(talents).toEqual([
+      { id: "selected1", number: 1 },
+      { id: "selected2", number: 2 },
+      { id: "available1", number: 1 },
+      { id: "available2", number: 1 },
+    ]);
+    expect(cost).toEqual(300);
+  });
+
+  test("when all availTalents reach max rank before getting talentNumber advances", () => {
+    const [talents, cost] = generateLevelTalent(
+      previousTalents,
+      ["available1", "available2"],
+      { selected1: 4, selected2: 5, available1: 1, available2: 1 },
+      3,
+      100,
+      getSelectRandomTest(0),
+    );
+
+    expect(talents).toEqual([
+      { id: "selected1", number: 1 },
+      { id: "selected2", number: 2 },
+      { id: "available1", number: 1 },
+      { id: "available2", number: 1 },
+    ]);
+    expect(cost).toEqual(300);
+  });
+
+  test("when availTalents has selected talent that reaches max rank", () => {
+    const [talents, cost] = generateLevelTalent(
+      previousTalents,
+      ["selected1", "available1"],
+      { selected1: 1, selected2: 5, available1: 5 },
+      2,
+      100,
+      getSelectRandomTest(0),
+    );
+
+    expect(talents).toEqual([
+      { id: "selected1", number: 1 },
+      { id: "selected2", number: 2 },
+      { id: "available1", number: 2 },
+    ]);
+    expect(cost).toEqual(400);
   });
 });
