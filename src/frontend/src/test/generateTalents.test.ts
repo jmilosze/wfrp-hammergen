@@ -1,8 +1,8 @@
-import { expect, test } from "vitest";
-import { getAllTalentsMaxRank, getTalentAtts } from "../services/wh/characterGeneration/generateTalents.ts";
+import { describe, expect, test } from "vitest";
+import { getAllTalentsMaxRank } from "../services/wh/characterGeneration/generateTalents.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
-import { getAttributes } from "../services/wh/attributes.ts";
+import { AttributeName } from "../services/wh/attributes.ts";
 
 const listOfWhTalents: Talent[] = [
   new Talent({
@@ -11,7 +11,7 @@ const listOfWhTalents: Talent[] = [
       attributes: { WS: 10, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     }),
     maxRank: 0,
-    attribute: 1,
+    attribute: AttributeName.WS,
   }),
   new Talent({
     id: "id1",
@@ -19,7 +19,7 @@ const listOfWhTalents: Talent[] = [
       attributes: { WS: 0, BS: 20, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     }),
     maxRank: 1,
-    attribute: 3,
+    attribute: AttributeName.S,
   }),
   new Talent({
     id: "id2",
@@ -27,44 +27,45 @@ const listOfWhTalents: Talent[] = [
       attributes: { WS: 0, BS: 0, S: 30, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     }),
     maxRank: 2,
-    attribute: 6,
+    attribute: AttributeName.Ag,
   }),
 ];
 
-test("getTalentAtts returns empty atts when selected talents is empty", () => {
-  expect(getTalentAtts([], listOfWhTalents)).toEqual(getAttributes());
-});
+const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 15, Dex: 0, Int: 0, WP: 0, Fel: 0 };
+const advances = { WS: 10, BS: 10, S: 10, T: 10, I: 10, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
 
-test("getTalentAtts returns correct atts", () => {
-  expect(
-    getTalentAtts(
-      [
-        { id: "id0", number: 0 },
-        { id: "id1", number: 1 },
-        { id: "id2", number: 2 },
-      ],
-      listOfWhTalents,
-    ),
-  ).toEqual({ WS: 0, BS: 20, S: 60, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 });
-});
+describe("getAllTalentsMaxRank return correct max ranks", () => {
+  test("with 0 selected talents", () => {
+    expect(getAllTalentsMaxRank([], listOfWhTalents, baseAtts, advances)).toEqual({
+      id0: 2, // expected = 0 + WS(20)/10
+      id1: 3, // expected = 1 + S(20)/10
+      id2: 4, // expected = 2 + Ag(25)/10
+    });
+  });
 
-test("getAllTalentsMaxRank return correct max ranks", () => {
-  const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 };
-  const advances = { WS: 10, BS: 10, S: 10, T: 10, I: 10, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
-  expect(
-    getAllTalentsMaxRank(
-      [
-        { id: "id0", number: 0 },
-        { id: "id1", number: 1 },
-        { id: "id2", number: 2 },
-      ],
-      listOfWhTalents,
-      baseAtts,
-      advances, // total: { WS:20, BS: 40, S: 80, T: 20, I: 10, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 }
-    ),
-  ).toEqual({
-    id0: 2, // expected = 0 + WS/10
-    id1: 9, // expected = 1 + S/10
-    id2: 3, // expected = 2 + 10/10
+  test("with 2 selected talents", () => {
+    expect(
+      getAllTalentsMaxRank(
+        [
+          { id: "id1", number: 1 },
+          { id: "id2", number: 2 },
+        ],
+        listOfWhTalents,
+        baseAtts,
+        advances,
+      ),
+    ).toEqual({
+      id0: 2, // expected = 0 + WS(20)/10
+      id1: 9, // expected = 1 + S(80)/10
+      id2: 4, // expected = 2 + Ag(25)/10
+    });
+  });
+
+  test("with selected talent not among whTalents", () => {
+    expect(getAllTalentsMaxRank([{ id: "otherId", number: 1 }], listOfWhTalents, baseAtts, advances)).toEqual({
+      id0: 2, // expected = 0 + WS(20)/10
+      id1: 3, // expected = 1 + S(20)/10
+      id2: 4, // expected = 2 + Ag(25)/10
+    });
   });
 });
