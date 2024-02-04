@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getAllTalentsMaxRank } from "../services/wh/characterGeneration/generateTalents.ts";
+import { getAllTalentsMaxRank, getTalentGroups } from "../services/wh/characterGeneration/generateTalents.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
@@ -11,6 +11,7 @@ const listOfWhTalents: Talent[] = [
       attributes: { WS: 10, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     }),
     maxRank: 0,
+    group: ["id3", "id4"],
     attribute: AttributeName.WS,
   }),
   new Talent({
@@ -19,6 +20,7 @@ const listOfWhTalents: Talent[] = [
       attributes: { WS: 0, BS: 20, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     }),
     maxRank: 1,
+    group: ["id3"],
     attribute: AttributeName.S,
   }),
   new Talent({
@@ -28,6 +30,20 @@ const listOfWhTalents: Talent[] = [
     }),
     maxRank: 2,
     attribute: AttributeName.Ag,
+  }),
+  new Talent({
+    id: "id3",
+    modifiers: new CharacterModifiers(),
+    maxRank: 1,
+    attribute: AttributeName.None,
+    isGroup: true,
+  }),
+  new Talent({
+    id: "id4",
+    modifiers: new CharacterModifiers(),
+    maxRank: 1,
+    attribute: AttributeName.Various,
+    isGroup: true,
   }),
 ];
 
@@ -40,6 +56,8 @@ describe("getAllTalentsMaxRank return correct max ranks", () => {
       id0: 2, // expected = 0 + WS(20)/10
       id1: 3, // expected = 1 + S(20)/10
       id2: 4, // expected = 2 + Ag(25)/10
+      id3: 1, // expected = 1 + None
+      id4: 1, // expected = 1 + None
     });
   });
 
@@ -58,6 +76,8 @@ describe("getAllTalentsMaxRank return correct max ranks", () => {
       id0: 2, // expected = 0 + WS(20)/10
       id1: 9, // expected = 1 + S(80)/10
       id2: 4, // expected = 2 + Ag(25)/10
+      id3: 1, // expected = 1 + None
+      id4: 1, // expected = 1 + None
     });
   });
 
@@ -66,6 +86,19 @@ describe("getAllTalentsMaxRank return correct max ranks", () => {
       id0: 2, // expected = 0 + WS(20)/10
       id1: 3, // expected = 1 + S(20)/10
       id2: 4, // expected = 2 + Ag(25)/10
+      id3: 1, // expected = 1 + None
+      id4: 1, // expected = 1 + None
     });
+  });
+});
+
+test("getTalentGroups generates expected talent groups", () => {
+  const generatedGroups = getTalentGroups(listOfWhTalents);
+  for (const membersIds of Object.values(generatedGroups)) {
+    membersIds.sort();
+  }
+  expect(generatedGroups).toEqual({
+    id4: ["id0"],
+    id3: ["id0", "id1"],
   });
 });
