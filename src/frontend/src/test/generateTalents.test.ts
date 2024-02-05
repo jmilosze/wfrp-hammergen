@@ -379,7 +379,7 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
       [AttributeName.WP],
     ];
 
-    const talentsAndAdvances = genTalentsAndAdvances(
+    const [talents, advances, cost] = genTalentsAndAdvances(
       speciesTalents,
       randomTalents,
       careerTalents,
@@ -390,6 +390,27 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
       getSelectRandomTest(0),
       getRollInTableTest(75),
     );
-    console.log(talentsAndAdvances);
+
+    expect(talents).toEqual([
+      { id: "i0", number: 1 },
+      { id: "i1", number: 1 },
+      { id: "r1", number: 1 },
+      { id: "g0m0", number: 1 },
+    ]);
+
+    expect(advances).toEqual({
+      Ag: 0,
+      BS: 0,
+      Dex: 0,
+      Fel: 0,
+      I: 0,
+      Int: 0,
+      S: 5,
+      T: 0,
+      WP: 0,
+      WS: 0,
+    });
+
+    expect(cost).toEqual(0);
   });
 });
