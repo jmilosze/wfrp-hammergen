@@ -63,7 +63,7 @@ export function generateCharacter(
   character.status = whCareer.getLevel(level).status;
   character.standing = whCareer.getLevel(level).standing;
   [character.brass, character.silver, character.gold] = generateCoins(character.status, character.standing, rollDice);
-  character.attributeRolls = generateRolls();
+  character.attributeRolls = generateRolls(rollDice);
   character.storedItems = [];
   character.equippedItems = classItems.equipped;
   character.carriedItems = classItems.carried;
