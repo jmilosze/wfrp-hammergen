@@ -2,13 +2,18 @@ import { describe, expect, test } from "vitest";
 import {
   generateAvailableTalents,
   generateLevelTalent,
+  genTalentsAndAdvances,
   getAllTalentsMaxRank,
   getTalentGroups,
 } from "../services/wh/characterGeneration/generateTalents.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
-import { getSelectRandomTest } from "./commonTests.ts";
+import { getRollInTableTest, getSelectRandomTest } from "./commonTests.ts";
+import { RandomTalents, SpeciesTalents } from "../services/wh/characterGeneration/generateSpeciesTalents.ts";
+
+const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 15, Dex: 0, Int: 0, WP: 0, Fel: 0 };
+const advances = { WS: 10, BS: 10, S: 10, T: 10, I: 10, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
 
 const listOfWhTalents: Talent[] = [
   new Talent({
@@ -39,22 +44,15 @@ const listOfWhTalents: Talent[] = [
   }),
   new Talent({
     id: "id3",
-    modifiers: new CharacterModifiers(),
-    maxRank: 1,
     attribute: AttributeName.None,
     isGroup: true,
   }),
   new Talent({
     id: "id4",
-    modifiers: new CharacterModifiers(),
-    maxRank: 1,
     attribute: AttributeName.Various,
     isGroup: true,
   }),
 ];
-
-const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 15, Dex: 0, Int: 0, WP: 0, Fel: 0 };
-const advances = { WS: 10, BS: 10, S: 10, T: 10, I: 10, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
 
 describe("getAllTalentsMaxRank return correct max ranks", () => {
   test("with 0 selected talents", () => {
@@ -62,8 +60,8 @@ describe("getAllTalentsMaxRank return correct max ranks", () => {
       id0: 2, // expected = 0 + WS(20)/10
       id1: 3, // expected = 1 + S(20)/10
       id2: 4, // expected = 2 + Ag(25)/10
-      id3: 1, // expected = 1 + None
-      id4: 1, // expected = 1 + None
+      id3: 0, // expected = 0 + None
+      id4: 0, // expected = 0 + None
     });
   });
 
@@ -82,8 +80,8 @@ describe("getAllTalentsMaxRank return correct max ranks", () => {
       id0: 2, // expected = 0 + WS(20)/10
       id1: 9, // expected = 1 + S(80)/10
       id2: 4, // expected = 2 + Ag(25)/10
-      id3: 1, // expected = 1 + None
-      id4: 1, // expected = 1 + None
+      id3: 0, // expected = 0 + None
+      id4: 0, // expected = 0 + None
     });
   });
 
@@ -92,8 +90,8 @@ describe("getAllTalentsMaxRank return correct max ranks", () => {
       id0: 2, // expected = 0 + WS(20)/10
       id1: 3, // expected = 1 + S(20)/10
       id2: 4, // expected = 2 + Ag(25)/10
-      id3: 1, // expected = 1 + None
-      id4: 1, // expected = 1 + None
+      id3: 0, // expected = 0 + None
+      id4: 0, // expected = 0 + None
     });
   });
 });
@@ -283,5 +281,115 @@ describe("generateLevelTalent generates expected talents", () => {
       { id: "available1", number: 2 },
     ]);
     expect(cost).toEqual(400);
+  });
+});
+
+describe("genTalentsAndAdvances generates expected talents and advances", () => {
+  test("for level 1 character", () => {
+    const group0 = new Talent({ id: "g0", isGroup: true });
+    const group1 = new Talent({ id: "g1", isGroup: true });
+    const group2 = new Talent({ id: "g1", isGroup: true });
+
+    const group0members = [] as Talent[];
+    const group1members = [] as Talent[];
+    const group2members = [] as Talent[];
+    for (let i = 0; i < 3; i++) {
+      group0members.push(new Talent({ id: `g0m${i}`, attribute: AttributeName.S, group: ["g0"] }));
+      group1members.push(new Talent({ id: `g1m${i}`, attribute: AttributeName.WS, group: ["g1"] }));
+      group2members.push(new Talent({ id: `g2m${i}`, attribute: AttributeName.BS, group: ["g2"] }));
+    }
+
+    const individual0 = new Talent({
+      id: "i0",
+      modifiers: new CharacterModifiers({
+        attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 30, Int: 0, WP: 0, Fel: 0 },
+      }),
+      maxRank: 2,
+      attribute: AttributeName.Dex,
+    });
+
+    const individual1 = new Talent({
+      id: "i1",
+      modifiers: new CharacterModifiers({
+        attributes: { WS: 10, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+      }),
+      maxRank: 0,
+      attribute: AttributeName.WS,
+    });
+
+    const individual2 = new Talent({
+      id: "i2",
+      maxRank: 1,
+      attribute: AttributeName.Ag,
+    });
+
+    const individual3 = new Talent({
+      id: "i3",
+      maxRank: 1,
+      attribute: AttributeName.Ag,
+    });
+
+    const random0 = new Talent({
+      id: "r0",
+      maxRank: 1,
+      attribute: AttributeName.Ag,
+    });
+
+    const random1 = new Talent({
+      id: "r1",
+      maxRank: 1,
+      attribute: AttributeName.Ag,
+    });
+
+    const listOfWhTalents: Talent[] = [
+      group0,
+      group1,
+      group2,
+      ...group0members,
+      ...group1members,
+      ...group2members,
+      individual0,
+      individual1,
+      individual2,
+      individual3,
+      random0,
+      random1,
+    ];
+
+    const speciesTalents = ["i0", "i1,i2", "random"] as SpeciesTalents;
+
+    const randomTalents = [
+      { id: "r0", minRoll: 1, maxRoll: 51 },
+      { id: "r1", minRoll: 51, maxRoll: 101 },
+    ] as RandomTalents;
+
+    const careerTalents: [string[], string[], string[], string[]] = [
+      ["g0", "i3"],
+      ["g0m1", "g0m2"],
+      ["g1", "g1m1"],
+      ["g2", "g2m1"],
+    ];
+
+    const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
+
+    const careerAtts: [AttributeName[], AttributeName[], AttributeName[], AttributeName[]] = [
+      [AttributeName.S, AttributeName.WS, AttributeName.Dex],
+      [AttributeName.I],
+      [AttributeName.Int],
+      [AttributeName.WP],
+    ];
+
+    const talentsAndAdvances = genTalentsAndAdvances(
+      speciesTalents,
+      randomTalents,
+      careerTalents,
+      baseAtts,
+      listOfWhTalents,
+      careerAtts,
+      1,
+      getSelectRandomTest(0),
+      getRollInTableTest(75),
+    );
+    console.log(talentsAndAdvances);
   });
 });

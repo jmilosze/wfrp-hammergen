@@ -1,4 +1,3 @@
-import { rollDice } from "../../../utils/randomUtils.ts";
 import { attCost } from "./calculateExperience.ts";
 import {
   Attributes,
@@ -8,13 +7,14 @@ import {
   getAttributeValue,
   setAttributeValue,
 } from "../attributes.ts";
+import { RollDiceFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
 
 const MAX_FILL_UP_TO = 1000;
 
-export function generateRolls(): Attributes {
+export function generateRolls(rollDiceFn: RollDiceFn): Attributes {
   const rolls = getAttributes();
   for (const key of Object.keys(rolls)) {
-    rolls[key] = rollDice(10, 2);
+    rolls[key] = rollDiceFn(10, 2);
   }
   return rolls;
 }
@@ -24,12 +24,13 @@ export function generateAdv(
   attPoints: number,
   currentAttAdvances: Attributes,
   currentCost: number,
+  selectRandomFn: SelectRandomFn,
 ): [Attributes, number] {
   const updatedAttAdvances = copyAttributes(currentAttAdvances);
   let cost = currentCost;
 
   for (let i = 0; i < attPoints; ++i) {
-    const randomAttName = attNames[rollDice(attNames.length, 1) - 1];
+    const randomAttName = selectRandomFn(attNames);
     const randomAttValue = getAttributeValue(randomAttName, updatedAttAdvances);
     cost += attCost(randomAttValue);
     setAttributeValue(randomAttName, randomAttValue + 1, updatedAttAdvances);

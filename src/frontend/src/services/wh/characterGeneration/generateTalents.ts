@@ -33,7 +33,7 @@ export function genTalentsAndAdvances(
 
   let advances = getAttributes();
   if (careerAtts[0].length > 0) {
-    advances = generateAdv(careerAtts[0], LEVEL_1_ATTS, advances, 0)[0];
+    advances = generateAdv(careerAtts[0], LEVEL_1_ATTS, advances, 0, selectRandomFn)[0];
   }
 
   let talents = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents, selectRandomFn, rollInTableFn);
@@ -63,7 +63,7 @@ export function genTalentsAndAdvances(
 
     allCareerAtts = allCareerAtts.concat(careerAtts[tmpLvl - 1]);
     if (allCareerAtts.length > 0) {
-      [advances, expSpent] = generateAdv(allCareerAtts, LEVEL_N_ATTS, advances, expSpent);
+      [advances, expSpent] = generateAdv(allCareerAtts, LEVEL_N_ATTS, advances, expSpent, selectRandomFn);
     }
 
     talentsRank = getAllTalentsMaxRank(talents, listOfWhTalents, baseAtts, advances);
