@@ -77,7 +77,7 @@ onMounted(async () => {
       <div class="py-2">
         <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Careers</NavLink>
         <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Mutations</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Prayers</NavLink>
+        <NavLink routeName="prayers" variant="side" @click="showSideBar = false">Prayers</NavLink>
         <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Qualities and Runes</NavLink>
         <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Skills</NavLink>
         <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Spells</NavLink>

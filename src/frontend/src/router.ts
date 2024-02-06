@@ -8,6 +8,7 @@ import UserLogin from "./views/User/UserLogin.vue";
 import UserManage from "./views/User/UserManage.vue";
 import UserRegister from "./views/User/UserRegister.vue";
 import UserResetPassword from "./views/User/UserResetPassword.vue";
+import ListPrayers from "./views/Warhammer/ListPrayers.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -62,6 +63,11 @@ export default createRouter({
       path: "/linkedusers",
       name: "linkedusers",
       component: UserLinkedUsers,
+    },
+    {
+      path: "/prayers",
+      name: "prayers",
+      component: ListPrayers,
     },
   ],
 });
