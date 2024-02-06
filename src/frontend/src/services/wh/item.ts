@@ -9,7 +9,7 @@ import {
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 
 export const enum ItemType {
   Melee = 0,
@@ -492,7 +492,7 @@ export function modelToApi(item: Item): ItemApiData {
   };
 }
 
-export class ItemApi {
+export class ItemApi implements WhApi<Item, ItemApiData> {
   getElement: (id: string) => Promise<Item>;
   listElements: (id: string) => Promise<Item[]>;
   createElement: (wh: Item) => Promise<ApiResponse<ItemApiData>>;

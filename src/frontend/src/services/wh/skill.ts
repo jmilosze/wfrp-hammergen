@@ -9,7 +9,7 @@ import {
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 import { AttributeName } from "./attributes.ts";
 
 export const enum SkillType {
@@ -134,7 +134,7 @@ export function modelToApi(skill: Skill): SkillApiData {
   };
 }
 
-export class SkillApi {
+export class SkillApi implements WhApi<Skill, SkillApiData> {
   getElement: (id: string) => Promise<Skill>;
   listElements: (id: string) => Promise<Skill[]>;
   createElement: (wh: Skill) => Promise<ApiResponse<SkillApiData>>;

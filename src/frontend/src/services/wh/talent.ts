@@ -10,7 +10,7 @@ import {
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 import { AttributeName } from "./attributes.ts";
 
 const API_BASE_PATH = "/api/wh/talent";
@@ -152,7 +152,7 @@ export function modelToApi(talent: Talent): TalentApiData {
   };
 }
 
-export class TalentApi {
+export class TalentApi implements WhApi<Talent, TalentApiData> {
   getElement: (id: string) => Promise<Talent>;
   listElements: (id: string) => Promise<Talent[]>;
   createElement: (wh: Talent) => Promise<ApiResponse<TalentApiData>>;

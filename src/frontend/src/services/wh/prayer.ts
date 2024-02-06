@@ -8,7 +8,7 @@ import {
 import { AxiosInstance } from "axios";
 import { Source, copySource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
 
@@ -110,7 +110,7 @@ export function modelToApi(prayer: Prayer): PrayerApiData {
   };
 }
 
-export class PrayerApi {
+export class PrayerApi implements WhApi<Prayer, PrayerApiData> {
   getElement: (id: string) => Promise<Prayer>;
   listElements: (id: string) => Promise<Prayer[]>;
   createElement: (wh: Prayer) => Promise<ApiResponse<PrayerApiData>>;

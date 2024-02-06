@@ -8,7 +8,7 @@ import {
 import { AxiosInstance } from "axios";
 import { Source, copySource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 
 const API_BASE_PATH = "/api/wh/spell";
 
@@ -118,7 +118,7 @@ export function modelToApi(spell: Spell): SpellApiData {
   };
 }
 
-export class SpellApi {
+export class SpellApi implements WhApi<Spell, SpellApiData> {
   getElement: (id: string) => Promise<Spell>;
   listElements: (id: string) => Promise<Spell[]>;
   createElement: (wh: Spell) => Promise<ApiResponse<SpellApiData>>;

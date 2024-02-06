@@ -1,5 +1,5 @@
 import { copySource, Source } from "./source.ts";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
@@ -109,7 +109,7 @@ export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
   };
 }
 
-export class ItemPropertyApi {
+export class ItemPropertyApi implements WhApi<ItemProperty, ItemPropertyApiData> {
   getElement: (id: string) => Promise<ItemProperty>;
   listElements: (id: string) => Promise<ItemProperty[]>;
   createElement: (wh: ItemProperty) => Promise<ApiResponse<ItemPropertyApiData>>;

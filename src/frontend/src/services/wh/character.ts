@@ -1,7 +1,7 @@
 import { DEFAULT_SIZE, getMovementFormula, getWoundsFormula, SpeciesWithRegion } from "./characterUtils.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
 import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
-import { ApiResponse, IdNumber, WhProperty } from "./common.ts";
+import { ApiResponse, IdNumber, WhApi, WhProperty } from "./common.ts";
 import { copySource, Source } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
@@ -336,7 +336,7 @@ export function modelToApi(character: Character): CharacterApiData {
   };
 }
 
-export class CharacterApi {
+export class CharacterApi implements WhApi<Character, CharacterApiData> {
   getElement: (id: string) => Promise<Character>;
   listElements: (id: string) => Promise<Character[]>;
   createElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;

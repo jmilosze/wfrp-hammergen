@@ -9,6 +9,14 @@ export interface WhProperty {
   source: Source;
 }
 
+export interface WhApi<T, TApiData> {
+  getElement: (id: string) => Promise<T>;
+  listElements: (id: string) => Promise<T[]>;
+  createElement: (wh: T) => Promise<ApiResponse<TApiData>>;
+  updateElement: (wh: T) => Promise<ApiResponse<TApiData>>;
+  deleteElement: (id: string) => Promise<void>;
+}
+
 export interface ApiResponse<WhApiData> {
   id: string;
   canEdit: boolean;

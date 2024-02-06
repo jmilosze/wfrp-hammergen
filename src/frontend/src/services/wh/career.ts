@@ -1,6 +1,6 @@
 import { AttributeName, racialAttributes } from "./attributes.ts";
 import { copySource, Source } from "./source.ts";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/objectUtils.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
 import { AxiosInstance } from "axios";
@@ -251,7 +251,7 @@ export function modelToApi(career: Career): CareerApiData {
   };
 }
 
-export class CareerApi {
+export class CareerApi implements WhApi<Career, CareerApiData> {
   getElement: (id: string) => Promise<Career>;
   listElements: (id: string) => Promise<Career[]>;
   createElement: (wh: Career) => Promise<ApiResponse<CareerApiData>>;
