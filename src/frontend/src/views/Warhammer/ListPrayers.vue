@@ -13,6 +13,8 @@ const columns = [
   { name: "col4", displayName: "Column Four" },
 ];
 
+const items = [{ col1: 11, col2: "Hello you!", col3: 13, col4: 14 }, { col1: 21, col3: 23, col4: 24 }, { col1: 31 }];
+
 await whListUtils.loadWhList();
 for (const prayer of whListUtils.whList.value.values()) {
   console.log(JSON.stringify(prayer));
@@ -21,7 +23,7 @@ for (const prayer of whListUtils.whList.value.values()) {
 
 <template>
   <Header title="Prayers"> </Header>
-  <TableWithSearch :fields="columns"></TableWithSearch>
+  <TableWithSearch :fields="columns" :items="items"></TableWithSearch>
 </template>
 
 <style scoped></style>
