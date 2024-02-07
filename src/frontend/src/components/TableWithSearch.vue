@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getRows, TableField, TableItem } from "../utils/tableUtils.ts";
+import { TableField, TableItem } from "../utils/tableUtils.ts";
 
 const DEFAULT_PER_PAGE = 100;
 
@@ -9,7 +9,7 @@ const props = defineProps<{
   perPage?: number;
 }>();
 
-const rows = getRows(props.fields, props.items);
+// const rows = getRows(props.fields, props.items);
 
 const numberOfitems = props.items.length;
 </script>
@@ -27,9 +27,9 @@ const numberOfitems = props.items.length;
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in rows" :key="row.id" class="bg-white hover:bg-neutral-200">
-            <td v-for="col in row.value" :key="col.id" class="py-2 px-5 border-b border-neutral-200">
-              {{ col.value }}
+          <tr v-for="item in items" :key="item.id" class="bg-white hover:bg-neutral-200">
+            <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-200">
+              {{ item[field.name] }}
             </td>
           </tr>
         </tbody>
