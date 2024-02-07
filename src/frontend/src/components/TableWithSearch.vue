@@ -1,47 +1,22 @@
 <script setup lang="ts">
-type ArrayWithId<T> = Array<{ id: string; value: T }>;
-type StringOrNumber = string | number;
+import { getRows, TableField, TableItem } from "../utils/tableUtils.ts";
+
+const DEFAULT_PER_PAGE = 100;
 
 const props = defineProps<{
-  fields: { name: string; displayName: string }[];
-  items: Record<string, StringOrNumber>[];
+  fields: TableField[];
+  items: TableItem[];
+  perPage?: number;
 }>();
 
-const fieldDict: Record<string, number> = {};
-let numberOfFields: number = 0;
-for (const [fieldNumber, field] of props.fields.entries()) {
-  fieldDict[field.name] = fieldNumber;
-  numberOfFields++;
-}
+const rows = getRows(props.fields, props.items);
 
-const rows: ArrayWithId<ArrayWithId<StringOrNumber>> = [];
-
-let rowId = 0;
-for (const item of props.items) {
-  const newRow = {
-    id: `${rowId}`,
-    value: Array(numberOfFields) as ArrayWithId<StringOrNumber>,
-  };
-
-  let colId = 0;
-  for (let i = 0; i < numberOfFields; i++) {
-    newRow.value[i] = { id: `${rowId}${colId}`, value: "" };
-    colId++;
-  }
-
-  for (const [name, value] of Object.entries(item)) {
-    if (name in fieldDict) {
-      newRow.value[fieldDict[name]].value = value;
-    }
-  }
-
-  rows.push(newRow);
-  rowId++;
-}
+const numberOfitems = props.items.length;
 </script>
 
 <template>
   <div class="pt-2 overflow-x-auto select-none">
+    <p>Results {{ numberOfitems }}</p>
     <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-200">
       <table class="w-full">
         <thead>
