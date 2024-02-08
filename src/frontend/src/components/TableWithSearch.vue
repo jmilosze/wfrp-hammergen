@@ -11,12 +11,12 @@ const props = defineProps<{
 
 // const rows = getRows(props.fields, props.items);
 
-const numberOfitems = props.items.length;
+const numberOfItems = props.items.length;
 </script>
 
 <template>
   <div class="pt-2 overflow-x-auto select-none">
-    <p>Results {{ numberOfitems }}</p>
+    <p>Results {{ numberOfItems }}</p>
     <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-200">
       <table class="w-full">
         <thead>
