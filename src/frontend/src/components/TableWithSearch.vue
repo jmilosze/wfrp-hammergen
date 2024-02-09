@@ -17,10 +17,18 @@ const filteredItems = computed(() => {
   return props.items.slice(startRow.value, startRow.value + rowsPerPage);
 });
 
-function movePage(direction: -1 | 1): void {
+function moveToNextPage(direction: -1 | 1): void {
   let newStartRow = startRow.value + direction * rowsPerPage;
   if (newStartRow >= 0 && newStartRow < props.items.length) {
     startRow.value = newStartRow;
+  }
+}
+
+function moveToLastPage(direction: -1 | 1): void {
+  if (direction === -1) {
+    startRow.value = 0;
+  } else {
+    startRow.value = Math.floor(props.items.length / rowsPerPage) * rowsPerPage;
   }
 }
 </script>
@@ -47,9 +55,11 @@ function movePage(direction: -1 | 1): void {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <button @click="movePage(-1)">Back</button>
+    <button @click="moveToLastPage(-1)">First</button>
+    <button @click="moveToNextPage(-1)">Back</button>
     <p>{{ startRow / rowsPerPage + 1 }} out of {{ Math.ceil(items.length / rowsPerPage) }}</p>
-    <button @click="movePage(1)">Next</button>
+    <button @click="moveToNextPage(1)">Next</button>
+    <button @click="moveToLastPage(1)">Last</button>
   </div>
 </template>
 

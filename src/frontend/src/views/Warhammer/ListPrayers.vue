@@ -27,6 +27,7 @@ const items = [
   { col1: 111, col2: 42, col3: 43, col4: 44 },
   { col1: 121, col2: 42, col3: 43, col4: 44 },
   { col1: 131, col2: 42, col3: 43, col4: 44 },
+  { col1: 141, col2: 42, col3: 43, col4: 44 },
 ];
 
 await whListUtils.loadWhList();
