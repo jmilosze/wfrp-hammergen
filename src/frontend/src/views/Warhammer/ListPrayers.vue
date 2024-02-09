@@ -18,14 +18,15 @@ const items = [
   { col1: 21, col3: 23, col4: 24 },
   { col1: 31 },
   { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
+  { col1: 51, col2: 42, col3: 43, col4: 44 },
+  { col1: 61, col2: 42, col3: 43, col4: 44 },
+  { col1: 71, col2: 42, col3: 43, col4: 44 },
+  { col1: 81, col2: 42, col3: 43, col4: 44 },
+  { col1: 91, col2: 42, col3: 43, col4: 44 },
+  { col1: 101, col2: 42, col3: 43, col4: 44 },
+  { col1: 111, col2: 42, col3: 43, col4: 44 },
+  { col1: 121, col2: 42, col3: 43, col4: 44 },
+  { col1: 131, col2: 42, col3: 43, col4: 44 },
 ];
 
 await whListUtils.loadWhList();
@@ -36,7 +37,7 @@ for (const prayer of whListUtils.whList.value.values()) {
 
 <template>
   <Header title="Prayers"> </Header>
-  <TableWithSearch :fields="columns" :items="items"></TableWithSearch>
+  <TableWithSearch :fields="columns" :items="items" :perPage="3"></TableWithSearch>
 </template>
 
 <style scoped></style>
