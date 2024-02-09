@@ -38,7 +38,7 @@ for (const prayer of whListUtils.whList.value.values()) {
 
 <template>
   <Header title="Prayers"> </Header>
-  <TableWithSearch :fields="columns" :items="items" :perPage="3"></TableWithSearch>
+  <TableWithSearch :fields="columns" :items="items" :perPage="100"></TableWithSearch>
 </template>
 
 <style scoped></style>

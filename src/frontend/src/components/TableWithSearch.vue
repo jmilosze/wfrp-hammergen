@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TableField, TableItem } from "../utils/tableUtils.ts";
 import { computed, ref, Ref } from "vue";
+import TablePagination from "./TablePagination.vue";
 
 const DEFAULT_PER_PAGE = 100;
 
@@ -16,27 +17,12 @@ const startRow: Ref<number> = ref(0);
 const filteredItems = computed(() => {
   return props.items.slice(startRow.value, startRow.value + rowsPerPage);
 });
-
-function moveToNextPage(direction: -1 | 1): void {
-  let newStartRow = startRow.value + direction * rowsPerPage;
-  if (newStartRow >= 0 && newStartRow < props.items.length) {
-    startRow.value = newStartRow;
-  }
-}
-
-function moveToLastPage(direction: -1 | 1): void {
-  if (direction === -1) {
-    startRow.value = 0;
-  } else {
-    startRow.value = Math.floor(props.items.length / rowsPerPage) * rowsPerPage;
-  }
-}
 </script>
 
 <template>
-  <div class="pt-2 overflow-x-auto select-none">
-    <p>Results {{ filteredItems.length }}</p>
-    <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-200">
+  <TablePagination v-model="startRow" :totalRows="items.length" :rowsPerPage="rowsPerPage" class="mt-3" />
+  <div class="overflow-x-auto select-none">
+    <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-200 min-w-fit">
       <table class="w-full">
         <thead>
           <tr class="text-left">
@@ -55,11 +41,7 @@ function moveToLastPage(direction: -1 | 1): void {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <button @click="moveToLastPage(-1)">First</button>
-    <button @click="moveToNextPage(-1)">Back</button>
-    <p>{{ startRow / rowsPerPage + 1 }} out of {{ Math.ceil(items.length / rowsPerPage) }}</p>
-    <button @click="moveToNextPage(1)">Next</button>
-    <button @click="moveToLastPage(1)">Last</button>
+    <TablePagination v-model="startRow" :totalRows="items.length" :rowsPerPage="rowsPerPage" class="mt-3" />
   </div>
 </template>
 
