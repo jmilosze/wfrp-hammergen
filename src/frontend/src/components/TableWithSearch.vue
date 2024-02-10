@@ -11,14 +11,23 @@ const props = defineProps<{
   perPage?: number;
 }>();
 
+const searchTerm: Ref<string> = ref("");
+
 const rowsPerPage: number = props.perPage ? props.perPage : DEFAULT_PER_PAGE;
 const startRow: Ref<number> = ref(0);
-
-const filteredItems = computed(() => {
+const needToScroll: Ref<"top" | "bottom" | "no"> = ref("no");
+const itemsOnPage = computed(() => {
   return props.items.slice(startRow.value, startRow.value + rowsPerPage);
 });
 
-const needToScroll: Ref<"top" | "bottom" | "no"> = ref("no");
+function searchInRow(row: TableRow): boolean {
+  for (const column of props.fields) {
+    if (String(row[column.name]).includes(searchTerm.value)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 onUpdated(() => {
   if (needToScroll.value === "top") {
@@ -36,6 +45,12 @@ onUpdated(() => {
 </script>
 
 <template>
+  <input
+    v-model="searchTerm"
+    type="text"
+    placeholder="Type to Search"
+    class="border-2 border-neutral-200 rounded w-full h-10 px-2 focus:border-neutral-700 transition-colors duration-200"
+  />
   <TablePagination
     v-model="startRow"
     :totalRows="items.length"
@@ -54,7 +69,7 @@ onUpdated(() => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in filteredItems" :key="item.id" class="bg-white hover:bg-neutral-200">
+          <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
             <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-200">
               {{ item[field.name] }}
             </td>

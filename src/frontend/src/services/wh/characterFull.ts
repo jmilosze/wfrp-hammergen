@@ -437,7 +437,7 @@ function getMutations(mutations: ApiResponse<MutationApiData>[]) {
   });
 }
 
-function CharacterFullToCsv(characterFull: CharacterFull): string {
+export function CharacterFullToCsv(characterFull: CharacterFull): string {
   let csv = "Name,Species,Career,Class,Status,,,,,,\n";
   csv += csvStr(characterFull.name) + ",";
   csv += csvStr(characterFull.species) + ",";
