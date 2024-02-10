@@ -5,10 +5,11 @@ import { authRequest } from "../../services/auth.ts";
 import TableWithSearch from "../../components/TableWithSearch.vue";
 import Header from "../../components/PageHeader.vue";
 import { addSpaces } from "../../utils/stringUtils.ts";
-import { printSourceBook } from "../../services/wh/source.ts";
+import { source } from "../../services/wh/source.ts";
 import { TableRow } from "../../utils/tableUtils.ts";
 
 const MAX_CHARS = 15;
+const PER_PAGE = 25;
 
 interface PrayerRow extends TableRow {
   name: string;
@@ -31,8 +32,8 @@ const columns = [
 function formatPrayerRow(prayer: Prayer): PrayerRow {
   return {
     name: addSpaces(prayer.name, MAX_CHARS),
-    source: Object.entries(prayer.source)
-      .map((x) => printSourceBook(x[1]))
+    source: Object.keys(prayer.source)
+      .map((x) => source[x])
       .join(", "),
     description: prayer.description,
     canEdit: prayer.canEdit,
@@ -45,7 +46,7 @@ const items = whListUtils.whList.value.map((x) => formatPrayerRow(x));
 
 <template>
   <Header title="Prayers"> </Header>
-  <TableWithSearch :fields="columns" :items="items" :perPage="100"></TableWithSearch>
+  <TableWithSearch :fields="columns" :items="items" :perPage="PER_PAGE"></TableWithSearch>
 </template>
 
 <style scoped></style>
