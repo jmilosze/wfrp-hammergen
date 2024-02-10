@@ -38,31 +38,31 @@ function moveToLastPage(direction: -1 | 1): void {
 
 <template>
   <div class="flex flex-wrap">
-    <div
-      class="bg-neutral-50 py-1 px-2 border border-neutral-200 hover:bg-neutral-200 rounded-l-md"
+    <button
+      class="bg-neutral-50 py-1 px-2 border border-neutral-200 hover:bg-neutral-200 rounded-l-md select-none"
       @click="moveToLastPage(-1)"
     >
       {{ "<<" }}
-    </div>
-    <div
-      class="bg-neutral-50 py-1 px-2 border-r border-t border-b border-neutral-200 hover:bg-neutral-200"
+    </button>
+    <button
+      class="bg-neutral-50 py-1 px-2 border-r border-t border-b border-neutral-200 hover:bg-neutral-200 select-none"
       @click="moveToNextPage(-1)"
     >
       {{ "<" }}
-    </div>
+    </button>
 
-    <div
-      class="bg-neutral-50 py-1 px-2 border-t border-b border-neutral-200 hover:bg-neutral-200"
+    <button
+      class="bg-neutral-50 py-1 px-2 border-t border-b border-neutral-200 hover:bg-neutral-200 select-none"
       @click="moveToNextPage(1)"
     >
       {{ ">" }}
-    </div>
-    <div
-      class="bg-neutral-50 py-1 px-2 border border-neutral-200 hover:bg-neutral-200 rounded-r-md"
+    </button>
+    <button
+      class="bg-neutral-50 py-1 px-2 border border-neutral-200 hover:bg-neutral-200 rounded-r-md select-none"
       @click="moveToLastPage(1)"
     >
       {{ ">>" }}
-    </div>
+    </button>
     <div class="pl-2 py-1">
       Results {{ startRow + 1 }} - {{ Math.min(startRow + rowsPerPage, totalRows) }} out of {{ totalRows }}
     </div>

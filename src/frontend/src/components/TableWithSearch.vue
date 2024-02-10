@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TableField, TableItem } from "../utils/tableUtils.ts";
+import { TableField, TableRow } from "../utils/tableUtils.ts";
 import { computed, ref, Ref } from "vue";
 import TablePagination from "./TablePagination.vue";
 
@@ -7,7 +7,7 @@ const DEFAULT_PER_PAGE = 100;
 
 const props = defineProps<{
   fields: TableField[];
-  items: TableItem[];
+  items: TableRow[];
   perPage?: number;
 }>();
 
@@ -41,8 +41,8 @@ const filteredItems = computed(() => {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <TablePagination v-model="startRow" :totalRows="items.length" :rowsPerPage="rowsPerPage" class="mt-3" />
   </div>
+  <TablePagination v-model="startRow" :totalRows="items.length" :rowsPerPage="rowsPerPage" class="mt-3" />
 </template>
 
 <style scoped></style>

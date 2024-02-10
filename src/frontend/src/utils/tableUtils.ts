@@ -1,6 +1,6 @@
-export interface TableItem {
+export interface TableRow {
   id: string;
-  [k: string]: StringOrNumber;
+  [k: string]: TableItem;
 }
-export type StringOrNumber = string | number;
+export type TableItem = string | number | boolean;
 export type TableField = { name: string; displayName: string };

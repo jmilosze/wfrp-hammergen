@@ -1,39 +1,46 @@
 <script setup lang="ts">
 import { useWhListUtils } from "../../composables/whListUtils.ts";
-import { PrayerApi } from "../../services/wh/prayer.ts";
+import { Prayer, PrayerApi } from "../../services/wh/prayer.ts";
 import { authRequest } from "../../services/auth.ts";
 import TableWithSearch from "../../components/TableWithSearch.vue";
 import Header from "../../components/PageHeader.vue";
+import { addSpaces } from "../../utils/stringUtils.ts";
+import { printSourceBook } from "../../services/wh/source.ts";
+import { TableRow } from "../../utils/tableUtils.ts";
+
+const MAX_CHARS = 15;
+
+interface PrayerRow extends TableRow {
+  name: string;
+  source: string;
+  description: string;
+  canEdit: boolean;
+  id: string;
+}
 
 const whListUtils = useWhListUtils(new PrayerApi(authRequest));
-const columns = [
-  { name: "col1", displayName: "Column One" },
-  { name: "col2", displayName: "Column Two" },
-  { name: "col3", displayName: "Column Three" },
-  { name: "col4", displayName: "Column Four" },
-];
-
-const items = [
-  { col1: 11, col2: "Hello you!", col3: 13, col4: 14 },
-  { col1: 21, col3: 23, col4: 24 },
-  { col1: 31 },
-  { col1: 41, col2: 42, col3: 43, col4: 44 },
-  { col1: 51, col2: 42, col3: 43, col4: 44 },
-  { col1: 61, col2: 42, col3: 43, col4: 44 },
-  { col1: 71, col2: 42, col3: 43, col4: 44 },
-  { col1: 81, col2: 42, col3: 43, col4: 44 },
-  { col1: 91, col2: 42, col3: 43, col4: 44 },
-  { col1: 101, col2: 42, col3: 43, col4: 44 },
-  { col1: 111, col2: 42, col3: 43, col4: 44 },
-  { col1: 121, col2: 42, col3: 43, col4: 44 },
-  { col1: 131, col2: 42, col3: 43, col4: 44 },
-  { col1: 141, col2: 42, col3: 43, col4: 44 },
-];
-
 await whListUtils.loadWhList();
-for (const prayer of whListUtils.whList.value.values()) {
-  console.log(JSON.stringify(prayer));
+
+const columns = [
+  { name: "name", displayName: "Name" },
+  { name: "description", displayName: "Description" },
+  { name: "source", displayName: "Source" },
+  { name: "actions", displayName: "Actions" },
+];
+
+function formatPrayerRow(prayer: Prayer): PrayerRow {
+  return {
+    name: addSpaces(prayer.name, MAX_CHARS),
+    source: Object.entries(prayer.source)
+      .map((x) => printSourceBook(x[1]))
+      .join(", "),
+    description: prayer.description,
+    canEdit: prayer.canEdit,
+    id: prayer.id,
+  };
 }
+
+const items = whListUtils.whList.value.map((x) => formatPrayerRow(x));
 </script>
 
 <template>
