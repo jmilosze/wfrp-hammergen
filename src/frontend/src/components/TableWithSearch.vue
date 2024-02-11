@@ -91,7 +91,23 @@ onUpdated(() => {
           </tr>
         </tbody>
       </table>
-      <table v-else class="w-full"></table>
+      <table v-else class="w-full">
+        <thead>
+          <tr class="text-left">
+            <th class="border-b border-neutral-200 py-2 px-5"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
+            <td class="text-sm">
+              <div v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-200">
+                {{ field.displayName }}: {{ item[field.name] }}
+              </div>
+              <div class="border-b-4 border-neutral-400"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
   </div>

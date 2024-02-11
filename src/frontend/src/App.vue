@@ -11,7 +11,7 @@ import { ViewSize } from "./utils/viewSize.ts";
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
 
-const { isEqualOrGreater } = useScreenSize(ViewSize.md);
+const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
 const authStore = useAuthStore();
 
 watch(isEqualOrGreater, () => {
@@ -29,11 +29,11 @@ onMounted(async () => {
 
 <template>
   <!-- Top NavBar -->
-  <div class="fixed md:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
+  <div class="fixed lg:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
     <div class="flex-auto max-w-7xl px-4 flex items-center">
       <div class="flex-auto flex items-center justify-between">
         <NavLink href="https://ko-fi.com/Q5Q12E0KB" variant="top" class="mx-5"> Support Hammergen </NavLink>
-        <button class="text-amber-300 md:hidden" @click="showSideBar = true">
+        <button class="text-amber-300 lg:hidden" @click="showSideBar = true">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
             <path
               fill-rule="evenodd"
@@ -41,11 +41,11 @@ onMounted(async () => {
             ></path>
           </svg>
         </button>
-        <div v-if="authStore.loggedIn" class="hidden md:flex items-center">
+        <div v-if="authStore.loggedIn" class="hidden lg:flex items-center">
           <NavLink routeName="manage" variant="top" class="mx-5 whitespace-nowrap">Manage Account</NavLink>
           <NavLink class="ml-5" variant="top" @click="authStore.logout">Logout</NavLink>
         </div>
-        <div v-else class="hidden md:flex justify-center">
+        <div v-else class="hidden lg:flex justify-center">
           <NavLink routeName="register" variant="top" class="mx-5">Register</NavLink>
           <NavLink routeName="login" variant="top" class="ml-5">Login</NavLink>
         </div>
@@ -57,7 +57,7 @@ onMounted(async () => {
     class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 transition-transform ease-in-out duration-150 border-r border-neutral-400 text-neutral-900"
     :class="!isEqualOrGreater && !showSideBar ? '-translate-x-64' : ''"
   >
-    <div class="pl-1 md:p-0 mt-2 mb-8 flex items-center justify-between md:justify-center md:ml-0">
+    <div class="pl-1 lg:p-0 mt-2 mb-8 flex items-center justify-between lg:justify-center lg:ml-0">
       <NavLink routeName="home" variant="side" class="text-3xl font-hammergen">Hammergen</NavLink>
       <button
         v-if="!isEqualOrGreater && showSideBar"
@@ -101,7 +101,7 @@ onMounted(async () => {
     </div>
   </div>
   <!-- Content and footer-->
-  <div class="md:pl-64 pt-16 h-screen">
+  <div class="lg:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
       <div class="flex-auto p-9 max-w-7xl w-full">
         <RouterView v-slot="{ Component }">
