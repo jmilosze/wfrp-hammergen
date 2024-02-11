@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TableField, TableRow } from "../utils/tableUtils.ts";
-import { computed, onUpdated, ref, Ref } from "vue";
+import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
 
@@ -21,6 +21,10 @@ const searchedItems = computed(() => {
   } else {
     return props.items.filter((row) => searchInRow(row));
   }
+});
+
+watch(searchedItems, () => {
+  startRow.value = 0;
 });
 
 const rowsPerPage: number = props.perPage ? props.perPage : DEFAULT_PER_PAGE;
