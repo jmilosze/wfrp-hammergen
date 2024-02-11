@@ -101,7 +101,8 @@ onUpdated(() => {
           <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
             <td class="text-sm">
               <div v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-200">
-                {{ field.displayName }}: {{ item[field.name] }}
+                <span class="font-bold">{{ field.displayName }}</span
+                >: <span class="ml-1">{{ item[field.name] }}</span>
               </div>
               <div class="border-b-4 border-neutral-400"></div>
             </td>
