@@ -5,16 +5,16 @@ import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
 import { useAuthStore } from "./stores/auth.ts";
-import { useScreen } from "./composables/screen.ts";
+import { ViewSize, useScreen } from "./composables/screen.ts";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
 
-const { screenSizeMd } = useScreen();
+const { isEqualOrGreater } = useScreen(ViewSize.md);
 const authStore = useAuthStore();
 
-watch(screenSizeMd, () => {
-  if (screenSizeMd) {
+watch(isEqualOrGreater, () => {
+  if (isEqualOrGreater) {
     showSideBar.value = false;
   }
 });
@@ -54,12 +54,12 @@ onMounted(async () => {
   <!-- SideBar -->
   <div
     class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 transition-transform ease-in-out duration-150 border-r border-neutral-400 text-neutral-900"
-    :class="!screenSizeMd && !showSideBar ? '-translate-x-64' : ''"
+    :class="!isEqualOrGreater && !showSideBar ? '-translate-x-64' : ''"
   >
     <div class="pl-1 md:p-0 mt-2 mb-8 flex items-center justify-between md:justify-center md:ml-0">
       <NavLink routeName="home" variant="side" class="text-3xl font-hammergen">Hammergen</NavLink>
       <button
-        v-if="!screenSizeMd && showSideBar"
+        v-if="!isEqualOrGreater && showSideBar"
         class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
         @click="showSideBar = false"
       >
@@ -129,7 +129,7 @@ onMounted(async () => {
   <!-- Out of focus -->
   <div
     class="top-0 w-screen h-screen z-20 bg-zinc-500 transition-opacity ease-in-out duration-150"
-    :class="!screenSizeMd && showSideBar ? ['fixed', 'opacity-40'] : ['hidden', 'opacity-0']"
+    :class="!isEqualOrGreater && showSideBar ? ['fixed', 'opacity-40'] : ['hidden', 'opacity-0']"
     @click="showSideBar = false"
   ></div>
 </template>

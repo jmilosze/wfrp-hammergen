@@ -7,9 +7,12 @@ import Header from "../../components/PageHeader.vue";
 import { addSpaces } from "../../utils/stringUtils.ts";
 import { source } from "../../services/wh/source.ts";
 import { TableRow } from "../../utils/tableUtils.ts";
+import { computed, ref } from "vue";
+import { useElementSize } from "@vueuse/core";
+import { ViewSize } from "../../composables/screen.ts";
 
 const MAX_CHARS = 15;
-const PER_PAGE = 25;
+const PER_PAGE = 1;
 
 interface PrayerRow extends TableRow {
   name: string;
@@ -21,6 +24,10 @@ interface PrayerRow extends TableRow {
 
 const whListUtils = useWhListUtils(new PrayerApi(authRequest));
 await whListUtils.loadWhList();
+
+const el = ref(null);
+const { width } = useElementSize(el);
+const stackTable = ref({ previousWidth: width.value, stack: false });
 
 const columns = [
   { name: "name", displayName: "Name" },
@@ -45,8 +52,16 @@ const items = whListUtils.whList.value.map((x) => formatPrayerRow(x));
 </script>
 
 <template>
-  <Header title="Prayers"> </Header>
-  <TableWithSearch :fields="columns" :items="items" :perPage="PER_PAGE"></TableWithSearch>
+  <div ref="el">
+    width: {{ width }}
+    <Header title="Prayers"> </Header>
+    <TableWithSearch
+      :fields="columns"
+      :items="items"
+      :perPage="PER_PAGE"
+      :stacked="width < ViewSize.md"
+    ></TableWithSearch>
+  </div>
 </template>
 
 <style scoped></style>
