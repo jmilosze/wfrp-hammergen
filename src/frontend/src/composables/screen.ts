@@ -11,11 +11,16 @@ export const enum ViewSize {
 }
 
 const screenSize = useWindowSize().width;
+const screenSizeWithoutScrollbar = useWindowSize({ includeScrollbar: false }).width;
 
-export function useScreen(size: ViewSize) {
+export function useScreen(size: ViewSize = ViewSize.zero) {
   const isEqualOrGreater = computed(() => {
     return screenSize.value >= size;
   });
 
-  return { isEqualOrGreater };
+  const scrollWidth = computed(() => {
+    return screenSize.value - screenSizeWithoutScrollbar.value;
+  });
+
+  return { isEqualOrGreater, scrollWidth };
 }

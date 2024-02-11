@@ -7,12 +7,12 @@ import Header from "../../components/PageHeader.vue";
 import { addSpaces } from "../../utils/stringUtils.ts";
 import { source } from "../../services/wh/source.ts";
 import { TableRow } from "../../utils/tableUtils.ts";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useElementSize } from "@vueuse/core";
-import { ViewSize } from "../../composables/screen.ts";
+import { useScreen, ViewSize } from "../../composables/screen.ts";
 
 const MAX_CHARS = 15;
-const PER_PAGE = 1;
+const PER_PAGE = 25;
 
 interface PrayerRow extends TableRow {
   name: string;
@@ -26,8 +26,8 @@ const whListUtils = useWhListUtils(new PrayerApi(authRequest));
 await whListUtils.loadWhList();
 
 const el = ref(null);
-const { width } = useElementSize(el);
-const stackTable = ref({ previousWidth: width.value, stack: false });
+const elementSize = useElementSize(el);
+const { scrollWidth } = useScreen();
 
 const columns = [
   { name: "name", displayName: "Name" },
@@ -53,13 +53,13 @@ const items = whListUtils.whList.value.map((x) => formatPrayerRow(x));
 
 <template>
   <div ref="el">
-    width: {{ width }}
+    ElementWidth: {{ elementSize.width }} ScrollBarWidth: {{ scrollWidth }}
     <Header title="Prayers"> </Header>
     <TableWithSearch
       :fields="columns"
       :items="items"
       :perPage="PER_PAGE"
-      :stacked="width < ViewSize.md"
+      :stacked="elementSize.width.value + scrollWidth < ViewSize.md"
     ></TableWithSearch>
   </div>
 </template>
