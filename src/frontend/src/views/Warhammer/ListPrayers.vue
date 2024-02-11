@@ -4,12 +4,12 @@ import { Prayer, PrayerApi } from "../../services/wh/prayer.ts";
 import { authRequest } from "../../services/auth.ts";
 import TableWithSearch from "../../components/TableWithSearch.vue";
 import Header from "../../components/PageHeader.vue";
-import { addSpaces } from "../../utils/stringUtils.ts";
+import { addSpaces } from "../../utils/string.ts";
 import { source } from "../../services/wh/source.ts";
-import { TableRow } from "../../utils/tableUtils.ts";
+import { TableRow } from "../../utils/table.ts";
 import { ref } from "vue";
-import { useElementSize } from "@vueuse/core";
-import { useScreen, ViewSize } from "../../composables/screen.ts";
+import { useElSize } from "../../composables/sizeUtils.ts";
+import { ViewSize } from "../../utils/viewSize.ts";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -26,8 +26,7 @@ const whListUtils = useWhListUtils(new PrayerApi(authRequest));
 await whListUtils.loadWhList();
 
 const el = ref(null);
-const elementSize = useElementSize(el);
-const { scrollWidth } = useScreen();
+const { isEqualOrGreater } = useElSize(ViewSize.md, el);
 
 const columns = [
   { name: "name", displayName: "Name" },
@@ -53,13 +52,12 @@ const items = whListUtils.whList.value.map((x) => formatPrayerRow(x));
 
 <template>
   <div ref="el">
-    ElementWidth: {{ elementSize.width }} ScrollBarWidth: {{ scrollWidth }}
     <Header title="Prayers"> </Header>
     <TableWithSearch
       :fields="columns"
       :items="items"
       :perPage="PER_PAGE"
-      :stacked="elementSize.width.value + scrollWidth < ViewSize.md"
+      :stacked="!isEqualOrGreater"
     ></TableWithSearch>
   </div>
 </template>

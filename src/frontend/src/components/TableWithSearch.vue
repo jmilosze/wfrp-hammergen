@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TableField, TableRow } from "../utils/tableUtils.ts";
+import { TableField, TableRow } from "../utils/table.ts";
 import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
@@ -91,6 +91,7 @@ onUpdated(() => {
           </tr>
         </tbody>
       </table>
+      <table v-else class="w-full"></table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
   </div>

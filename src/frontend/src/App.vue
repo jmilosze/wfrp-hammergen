@@ -5,12 +5,13 @@ import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
 import { useAuthStore } from "./stores/auth.ts";
-import { ViewSize, useScreen } from "./composables/screen.ts";
+import { useScreenSize } from "./composables/sizeUtils.ts";
+import { ViewSize } from "./utils/viewSize.ts";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
 
-const { isEqualOrGreater } = useScreen(ViewSize.md);
+const { isEqualOrGreater } = useScreenSize(ViewSize.md);
 const authStore = useAuthStore();
 
 watch(isEqualOrGreater, () => {

@@ -6,7 +6,7 @@ import {
   SpeciesTalents,
 } from "../services/wh/characterGeneration/generateSpeciesTalents.ts";
 import { compareIdNumber, IdNumber } from "../services/wh/common.ts";
-import { arraysAreEqualIgnoreOrder } from "../utils/arrayUtils.ts";
+import { arraysAreEqualIgnoreOrder } from "../utils/array.ts";
 import { getRollInTableTest, getSelectRandomTest } from "./commonTests.ts";
 
 describe("generateSpeciesTalents returns expected talents", () => {
