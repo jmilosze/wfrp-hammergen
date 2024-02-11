@@ -2,8 +2,10 @@
 import { TableField, TableRow } from "../utils/tableUtils.ts";
 import { computed, onUpdated, ref, Ref } from "vue";
 import TablePagination from "./TablePagination.vue";
+import { refDebounced } from "@vueuse/core";
 
 const DEFAULT_PER_PAGE = 100;
+const SEARCH_DEBOUNCE_MS = 250;
 
 const props = defineProps<{
   fields: TableField[];
@@ -12,17 +14,25 @@ const props = defineProps<{
 }>();
 
 const searchTerm: Ref<string> = ref("");
+const searchTermDebounced = refDebounced(searchTerm, SEARCH_DEBOUNCE_MS);
+const searchedItems = computed(() => {
+  if (!searchTerm.value) {
+    return props.items;
+  } else {
+    return props.items.filter((row) => searchInRow(row));
+  }
+});
 
 const rowsPerPage: number = props.perPage ? props.perPage : DEFAULT_PER_PAGE;
 const startRow: Ref<number> = ref(0);
 const needToScroll: Ref<"top" | "bottom" | "no"> = ref("no");
 const itemsOnPage = computed(() => {
-  return props.items.slice(startRow.value, startRow.value + rowsPerPage);
+  return searchedItems.value.slice(startRow.value, startRow.value + rowsPerPage);
 });
 
 function searchInRow(row: TableRow): boolean {
   for (const column of props.fields) {
-    if (String(row[column.name]).includes(searchTerm.value)) {
+    if (String(row[column.name]).includes(searchTermDebounced.value)) {
       return true;
     }
   }
@@ -53,7 +63,7 @@ onUpdated(() => {
   />
   <TablePagination
     v-model="startRow"
-    :totalRows="items.length"
+    :totalRows="searchedItems.length"
     :rowsPerPage="rowsPerPage"
     class="mt-3"
     @update:modelValue="needToScroll = 'top'"
@@ -81,7 +91,7 @@ onUpdated(() => {
   </div>
   <TablePagination
     v-model="startRow"
-    :totalRows="items.length"
+    :totalRows="searchedItems.length"
     :rowsPerPage="rowsPerPage"
     class="mt-3"
     @update:modelValue="needToScroll = 'bottom'"
