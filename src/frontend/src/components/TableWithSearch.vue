@@ -86,7 +86,7 @@ onUpdated(() => {
         <tbody>
           <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
             <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-200">
-              {{ item[field.name] }}
+              <slot :name="field.name" v-bind="item">{{ item[field.name] }}</slot>
             </td>
           </tr>
         </tbody>
