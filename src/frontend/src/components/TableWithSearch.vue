@@ -102,7 +102,10 @@ onUpdated(() => {
             <td class="text-sm">
               <div v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-200">
                 <span class="font-bold">{{ field.displayName }}</span
-                >: <span class="ml-1">{{ item[field.name] }}</span>
+                >:
+                <span class="ml-1">
+                  <slot :name="field.name" v-bind="item">{{ item[field.name] }}</slot></span
+                >
               </div>
               <div class="border-b-4 border-neutral-400"></div>
             </td>

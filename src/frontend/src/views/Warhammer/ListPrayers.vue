@@ -10,7 +10,7 @@ import { TableRow } from "../../utils/table.ts";
 import { ref } from "vue";
 import { useElSize } from "../../composables/sizeUtils.ts";
 import { ViewSize } from "../../utils/viewSize.ts";
-import ActionButton from "../../components/ActionButton.vue";
+import ListWhButtons from "../../components/ListWhButtons.vue";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -56,7 +56,7 @@ const items = whListUtils.whList.value.map((x) => formatPrayerRow(x));
     <Header title="Prayers"> </Header>
     <TableWithSearch :fields="columns" :items="items" :perPage="PER_PAGE" :stacked="!isEqualOrGreater">
       <template #actions="{ id }">
-        <ActionButton> View/Edit </ActionButton>
+        <ListWhButtons> View/Edit </ListWhButtons>
       </template>
     </TableWithSearch>
   </div>
