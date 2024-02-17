@@ -1,5 +1,5 @@
 import { Skill } from "../skill.ts";
-import { SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { SelectRandomFn } from "../../../utils/random.ts";
 import { skillCost } from "./calculateExperience.ts";
 import { IdNumber } from "../common.ts";
 

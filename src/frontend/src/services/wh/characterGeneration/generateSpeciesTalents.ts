@@ -1,5 +1,5 @@
 import { IdNumber } from "../common.ts";
-import { RollInTableFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { RollInTableFn, SelectRandomFn } from "../../../utils/random.ts";
 
 const RANDOM_TALENTS_ROLL = 100;
 

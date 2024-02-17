@@ -1,5 +1,6 @@
 export interface TableRow {
   id: string;
+  canEdit: boolean;
   [k: string]: TableItem;
 }
 

@@ -9,7 +9,7 @@ import {
   WOOD_ELF_LIST,
 } from "../characterUtils.ts";
 import { Career, StatusStanding, StatusTier } from "../career.ts";
-import { rollDice, RollDiceFn, rollInTable, selectRandom, SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { rollDice, RollDiceFn, rollInTable, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { IdNumber } from "../common.ts";
 import { RandomTalents } from "./generateSpeciesTalents.ts";
 import { Talent } from "../talent.ts";

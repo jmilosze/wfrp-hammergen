@@ -7,7 +7,7 @@ import {
   getAttributeValue,
   setAttributeValue,
 } from "../attributes.ts";
-import { RollDiceFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { RollDiceFn, SelectRandomFn } from "../../../utils/random.ts";
 
 const MAX_FILL_UP_TO = 1000;
 

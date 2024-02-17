@@ -1,4 +1,4 @@
-import { selectRandom } from "../../../utils/randomUtils.ts";
+import { selectRandom } from "../../../utils/random.ts";
 import {
   DWARF_LIST,
   GNOME_LIST,

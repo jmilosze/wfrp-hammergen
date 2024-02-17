@@ -48,5 +48,5 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     }
   }
 
-  return { loaded, errors, whList, loadWhList };
+  return { loaded, errors, whList, loadWhList, copyWh };
 }

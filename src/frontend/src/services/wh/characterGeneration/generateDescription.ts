@@ -1,4 +1,4 @@
-import { rollDice, rollInTable } from "../../../utils/randomUtils.ts";
+import { rollDice, rollInTable } from "../../../utils/random.ts";
 import {
   DWARF_LIST,
   GNOME_LIST,

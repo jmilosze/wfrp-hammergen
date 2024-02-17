@@ -9,7 +9,7 @@ import {
   sumAttributes,
 } from "../attributes.ts";
 import { IdNumber } from "../common.ts";
-import { RollInTableFn, SelectRandomFn } from "../../../utils/randomUtils.ts";
+import { RollInTableFn, SelectRandomFn } from "../../../utils/random.ts";
 import { generateSpeciesTalents, RandomTalents, SpeciesTalents } from "./generateSpeciesTalents.ts";
 import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
 
