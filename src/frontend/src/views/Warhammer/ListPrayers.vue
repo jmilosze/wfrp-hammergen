@@ -7,7 +7,7 @@ import Header from "../../components/PageHeader.vue";
 import { addSpaces } from "../../utils/string.ts";
 import { source } from "../../services/wh/source.ts";
 import { TableRow } from "../../utils/table.ts";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useElSize } from "../../composables/sizeUtils.ts";
 import { ViewSize } from "../../utils/viewSize.ts";
 import ListWhButtons from "../../components/ListWhButtons.vue";
@@ -48,7 +48,9 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
   };
 }
 
-const items = whListUtils.whList.value.map((x) => formatPrayerRow(x)).sort((a, b) => (a.name > b.name ? 1 : -1));
+const items = computed(() => {
+  return whListUtils.whList.value.map((x) => formatPrayerRow(x)).sort((a, b) => (a.name > b.name ? 1 : -1));
+});
 </script>
 
 <template>
@@ -56,7 +58,7 @@ const items = whListUtils.whList.value.map((x) => formatPrayerRow(x)).sort((a, b
     <Header title="Prayers"> </Header>
     <TableWithSearch :fields="columns" :items="items" :perPage="PER_PAGE" :stacked="!isEqualOrGreater">
       <template #actions="{ canEdit, id }">
-        <ListWhButtons :id="id" :canEdit="canEdit" />
+        <ListWhButtons :id="id" :canEdit="canEdit" @copy="(copiedId) => whListUtils.copyWh(copiedId)" />
       </template>
     </TableWithSearch>
   </div>
