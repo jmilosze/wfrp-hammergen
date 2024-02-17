@@ -135,6 +135,7 @@ onMounted(async () => {
     :class="!isEqualOrGreater && showSideBar ? ['fixed'] : ['hidden']"
     @click="showSideBar = false"
   ></div>
+  <!-- Modal with its own out of focus -->
   <div
     class="top-0 w-full h-screen z-40 bg-zinc-500 bg-opacity-40 flex justify-center"
     :class="modal.show.value ? ['fixed'] : ['hidden']"
