@@ -7,12 +7,14 @@ import { authRequest } from "./services/auth.ts";
 import { useAuthStore } from "./stores/auth.ts";
 import { useScreenSize } from "./composables/sizeUtils.ts";
 import { ViewSize } from "./utils/viewSize.ts";
+import { useModal } from "./composables/modal.ts";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
 
 const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
 const authStore = useAuthStore();
+const modal = useModal();
 
 watch(isEqualOrGreater, () => {
   if (isEqualOrGreater) {
@@ -129,10 +131,16 @@ onMounted(async () => {
   </div>
   <!-- Out of focus -->
   <div
-    class="top-0 w-screen h-screen z-20 bg-zinc-500 transition-opacity ease-in-out duration-150"
-    :class="!isEqualOrGreater && showSideBar ? ['fixed', 'opacity-40'] : ['hidden', 'opacity-0']"
+    class="top-0 w-screen h-screen z-20 bg-zinc-500 opacity-40"
+    :class="!isEqualOrGreater && showSideBar ? ['fixed'] : ['hidden']"
     @click="showSideBar = false"
   ></div>
+  <div
+    class="top-0 w-screen h-screen z-40 bg-zinc-500 bg-opacity-40"
+    :class="modal.show.value ? ['fixed'] : ['hidden']"
+  >
+    <div id="modal"></div>
+  </div>
 </template>
 
 <style></style>

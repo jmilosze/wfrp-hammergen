@@ -11,6 +11,8 @@ import { computed, ref } from "vue";
 import { useElSize } from "../../composables/sizeUtils.ts";
 import { ViewSize } from "../../utils/viewSize.ts";
 import ListWhButtons from "../../components/ListWhButtons.vue";
+import ModalWindow from "../../components/ModalWindow.vue";
+import { useModal } from "../../composables/modal.ts";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -25,6 +27,8 @@ interface PrayerRow extends TableRow {
 
 const whListUtils = useWhListUtils(new PrayerApi(authRequest));
 await whListUtils.loadWhList();
+
+const modal = useModal();
 
 const el = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, el);
@@ -58,10 +62,16 @@ const items = computed(() => {
     <Header title="Prayers"> </Header>
     <TableWithSearch :fields="columns" :items="items" :perPage="PER_PAGE" :stacked="!isEqualOrGreater">
       <template #actions="{ canEdit, id }">
-        <ListWhButtons :id="id" :canEdit="canEdit" @copy="(copiedId) => whListUtils.copyWh(copiedId)" />
+        <ListWhButtons
+          :id="id"
+          :canEdit="canEdit"
+          @copy="(copiedId) => whListUtils.copyWh(copiedId)"
+          @delete="modal.showModal()"
+        />
       </template>
     </TableWithSearch>
   </div>
+  <ModalWindow></ModalWindow>
 </template>
 
 <style scoped></style>
