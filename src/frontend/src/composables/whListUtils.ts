@@ -1,4 +1,4 @@
-import { SHORT_DESC_REGEX, validNameFn, WhApi, WhProperty } from "../services/wh/common.ts";
+import { SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
 import { useAuthStore } from "../stores/auth.ts";
 import { ref } from "vue";
 
@@ -24,7 +24,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     try {
       const whCopy: T = await authStore.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
       whCopy.name = whCopy.name + " - copy";
-      if (!validNameFn(whCopy.name).valid) {
+      if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(-SHORT_DESC_REGEX);
       }
       const createdId = await authStore.callAndLogoutIfUnauthorized(elementApi.createElement)(whCopy);

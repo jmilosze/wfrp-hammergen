@@ -1,5 +1,5 @@
 import { copySource, Source } from "./source.ts";
-import { ApiResponse, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
@@ -11,6 +11,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { ItemType } from "./item.ts";
+import { ValidationStatus } from "../../utils/validation.ts";
 
 export const enum ItemPropertyType {
   Quality = 0,
@@ -71,6 +72,15 @@ export class ItemProperty implements WhProperty {
       source: copySource(this.source),
     });
   }
+
+  validateName(): ValidationStatus {
+    return validNameFn(this.name);
+  }
+
+  validateDescription(): ValidationStatus {
+    return validNameFn(this.description);
+  }
+
   isEqualTo(otherItemProperty: ItemProperty): boolean {
     return (
       this.id === otherItemProperty.id &&

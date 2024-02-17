@@ -9,7 +9,8 @@ import {
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
-import { ApiResponse, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
+import { ValidationStatus } from "../../utils/validation.ts";
 
 export const enum ItemType {
   Melee = 0,
@@ -399,6 +400,14 @@ export class Item implements WhProperty {
       shared: this.shared,
       source: copySource(this.source),
     });
+  }
+
+  validateName(): ValidationStatus {
+    return validNameFn(this.name);
+  }
+
+  validateDescription(): ValidationStatus {
+    return validNameFn(this.description);
   }
 
   isEqualTo(otherItem: Item): boolean {

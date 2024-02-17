@@ -8,7 +8,8 @@ import {
 import { AxiosInstance } from "axios";
 import { Source, copySource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
+import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/spell";
 
@@ -72,6 +73,14 @@ export class Spell implements WhProperty {
       shared: this.shared,
       source: copySource(this.source),
     });
+  }
+
+  validateName(): ValidationStatus {
+    return validNameFn(this.name);
+  }
+
+  validateDescription(): ValidationStatus {
+    return validNameFn(this.description);
   }
 
   isEqualTo(otherSpell: Spell): boolean {

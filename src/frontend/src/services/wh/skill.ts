@@ -9,8 +9,9 @@ import {
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName } from "./attributes.ts";
+import { ValidationStatus } from "../../utils/validation.ts";
 
 export const enum SkillType {
   Basic = 0,
@@ -85,6 +86,14 @@ export class Skill implements WhProperty {
       shared: this.shared,
       source: copySource(this.source),
     });
+  }
+
+  validateName(): ValidationStatus {
+    return validNameFn(this.name);
+  }
+
+  validateDescription(): ValidationStatus {
+    return validNameFn(this.description);
   }
 
   isEqualTo(otherSkill: Skill): boolean {

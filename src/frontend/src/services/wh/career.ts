@@ -1,6 +1,6 @@
 import { AttributeName, racialAttributes } from "./attributes.ts";
 import { copySource, Source } from "./source.ts";
-import { ApiResponse, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
@@ -11,6 +11,7 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator.ts";
+import { ValidationStatus } from "../../utils/validation.ts";
 
 export const enum CareerClass {
   Academic = 0,
@@ -184,6 +185,14 @@ export class Career implements WhProperty {
       shared: this.shared,
       source: copySource(this.source),
     });
+  }
+
+  validateName(): ValidationStatus {
+    return validNameFn(this.name);
+  }
+
+  validateDescription(): ValidationStatus {
+    return validNameFn(this.description);
   }
 
   isEqualTo(otherCareer: Career): boolean {

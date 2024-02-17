@@ -10,8 +10,9 @@ import {
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName } from "./attributes.ts";
+import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/talent";
 
@@ -85,6 +86,14 @@ export class Talent implements WhProperty {
       shared: this.shared,
       source: copySource(this.source),
     });
+  }
+
+  validateName(): ValidationStatus {
+    return validNameFn(this.name);
+  }
+
+  validateDescription(): ValidationStatus {
+    return validNameFn(this.description);
   }
 
   isEqualTo(otherTalent: Talent): boolean {

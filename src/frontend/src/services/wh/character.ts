@@ -1,7 +1,7 @@
 import { DEFAULT_SIZE, getMovementFormula, getWoundsFormula, SpeciesWithRegion } from "./characterUtils.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
 import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
-import { ApiResponse, IdNumber, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, IdNumber, validNameFn, WhApi, WhProperty } from "./common.ts";
 import { copySource, Source } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
@@ -16,6 +16,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { apiResponseToCharacterFull, CharacterFull } from "./characterFull.ts";
+import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/character";
 
@@ -235,6 +236,14 @@ export class Character implements WhProperty {
       source: copySource(this.source),
       modifiers: this.modifiers.copy(),
     });
+  }
+
+  validateName(): ValidationStatus {
+    return validNameFn(this.name);
+  }
+
+  validateDescription(): ValidationStatus {
+    return validNameFn(this.description);
   }
 
   getMovement(): number {

@@ -10,6 +10,8 @@ export interface WhProperty {
   source: Source;
 
   copy: () => WhProperty;
+  validateName: () => ValidationStatus;
+  validateDescription: () => ValidationStatus;
 }
 
 export interface WhApi<T, TApiData> {
