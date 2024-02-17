@@ -8,6 +8,8 @@ export interface WhProperty {
   description: string;
   shared: boolean;
   source: Source;
+
+  copy: () => WhProperty;
 }
 
 export interface WhApi<T, TApiData> {
