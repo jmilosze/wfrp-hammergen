@@ -4,9 +4,9 @@ import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumA
 import { ApiResponse, IdNumber, WhApi, WhProperty } from "./common.ts";
 import { copySource, Source } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
+import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { compareIdNumber } from "./common.ts";
-import { objectsAreEqual } from "../../utils/objectUtils.ts";
+import { objectsAreEqual } from "../../utils/object.ts";
 import { AxiosInstance } from "axios";
 import {
   createElementFunc,

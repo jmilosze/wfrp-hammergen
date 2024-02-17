@@ -7,7 +7,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { Source, copySource } from "./source.ts";
-import { objectsAreEqual } from "../../utils/objectUtils.ts";
+import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 
 const API_BASE_PATH = "/api/wh/spell";

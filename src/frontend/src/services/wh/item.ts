@@ -6,8 +6,8 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator.ts";
-import { objectsAreEqual } from "../../utils/objectUtils.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
+import { objectsAreEqual } from "../../utils/object.ts";
+import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import { ApiResponse, WhApi, WhProperty } from "./common.ts";
 

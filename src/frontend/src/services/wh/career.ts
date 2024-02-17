@@ -1,8 +1,8 @@
 import { AttributeName, racialAttributes } from "./attributes.ts";
 import { copySource, Source } from "./source.ts";
 import { ApiResponse, WhApi, WhProperty } from "./common.ts";
-import { objectsAreEqual } from "../../utils/objectUtils.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/arrayUtils.ts";
+import { objectsAreEqual } from "../../utils/object.ts";
+import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import {
   createElementFunc,

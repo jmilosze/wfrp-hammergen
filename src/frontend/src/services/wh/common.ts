@@ -1,4 +1,5 @@
 import { Source } from "./source.ts";
+import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 
 export interface WhProperty {
   id: string;
@@ -27,6 +28,22 @@ export interface ApiResponse<WhApiData> {
 export interface IdNumber {
   id: string;
   number: number;
+}
+
+export const SHORT_DESC_REGEX: RegExp = /^[^<>]{0,200}$/;
+
+export function validNameFn(name: string): ValidationStatus {
+  return setValidationStatus(
+    SHORT_DESC_REGEX.test(name),
+    "Name has to be shorter than 200 characters and cannot use <> symbols.",
+  );
+}
+
+export function validDescFn(name: string): ValidationStatus {
+  return setValidationStatus(
+    SHORT_DESC_REGEX.test(name),
+    "Description has to be shorter than 10,000 characters characters and cannot use <> symbols.",
+  );
 }
 
 export function compareIdNumber(x: IdNumber, y: IdNumber): -1 | 0 | 1 {
