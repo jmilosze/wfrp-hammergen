@@ -1,7 +1,7 @@
 import { AxiosInstance, AxiosResponse } from "axios";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse } from "./common.ts";
 
-export function getElementFunc<WhApiData, WhModel extends WhProperty>(
+export function getElementFunc<WhApiData, WhModel>(
   apiBasePath: string,
   axiosInstance: AxiosInstance,
   apiResponseToModel: (whApiResp: ApiResponse<WhApiData>) => WhModel,
@@ -13,7 +13,7 @@ export function getElementFunc<WhApiData, WhModel extends WhProperty>(
   };
 }
 
-export function listElementsFunc<WhApiData, WhModel extends WhProperty>(
+export function listElementsFunc<WhApiData, WhModel>(
   apiBasePath: string,
   axiosInstance: AxiosInstance,
   apiResponseToModel: (whApiResp: ApiResponse<WhApiData>) => WhModel,
@@ -25,7 +25,7 @@ export function listElementsFunc<WhApiData, WhModel extends WhProperty>(
   };
 }
 
-export function createElementFunc<WhApiData, WhModel extends WhProperty>(
+export function createElementFunc<WhApiData, WhModel>(
   apiBasePath: string,
   axiosInstance: AxiosInstance,
   convertModelToApiData: (wh: WhModel) => WhApiData,
@@ -36,7 +36,7 @@ export function createElementFunc<WhApiData, WhModel extends WhProperty>(
   };
 }
 
-export function updateElementFunc<WhApiData, WhModel extends WhProperty>(
+export function updateElementFunc<WhApiData, WhModel extends { id: string }>(
   apiBasePath: string,
   axiosInstance: AxiosInstance,
   convertModelToApiData: (wh: WhModel) => WhApiData,

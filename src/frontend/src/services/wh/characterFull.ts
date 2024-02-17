@@ -7,7 +7,7 @@ import {
 } from "./characterUtils.ts";
 import { CareerApiData, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
 import { Attributes, getAttributeValue, printAttributeName, sumAttributes } from "./attributes.ts";
-import { ApiResponse, WhProperty } from "./common.ts";
+import { ApiResponse } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
 import { TalentApiData } from "./talent.ts";
 import {
@@ -143,7 +143,7 @@ export interface CharacterFullItem {
   spells?: CharacterFullSpell[];
 }
 
-export interface CharacterFull extends WhProperty {
+export interface CharacterFull {
   id: string;
   canEdit: boolean;
   shared: boolean;
@@ -294,8 +294,6 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
       .map((x) => (x.wh.object.enc > 0 ? x.wh.object.enc - 1 : 0) * x.number)
       .reduce((x, y) => x + y, 0),
     encCarried: fullCharacterApi.object.carriedItems.map((x) => x.wh.object.enc).reduce((x, y) => x + y, 0),
-
-    source: {},
   };
 }
 
