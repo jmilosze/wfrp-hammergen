@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import NavLink from "./components/NavLink.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
@@ -15,6 +15,10 @@ const userApi = new UserApi(authRequest);
 const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
 const authStore = useAuthStore();
 const modal = useModal();
+
+const hideScrollBar = computed(() => {
+  return (!isEqualOrGreater.value && showSideBar.value) || modal.show.value;
+});
 
 watch(isEqualOrGreater, () => {
   if (isEqualOrGreater) {
@@ -103,7 +107,7 @@ onMounted(async () => {
     </div>
   </div>
   <!-- Content and footer-->
-  <div class="lg:pl-64 pt-16 h-screen">
+  <div class="lg:pl-64 pt-16 h-screen" :class="hideScrollBar ? ['overflow-hidden'] : ['']">
     <div class="h-full flex flex-col justify-between items-center">
       <div class="flex-auto p-9 max-w-7xl w-full">
         <RouterView v-slot="{ Component }">
@@ -141,7 +145,7 @@ onMounted(async () => {
     :class="modal.show.value ? ['fixed'] : ['hidden']"
     @click="modal.hideModal()"
   >
-    <div id="modal" class="mt-5" @click.stop></div>
+    <div id="modal" class="mt-5 h-fit" @click.stop></div>
   </div>
 </template>
 
