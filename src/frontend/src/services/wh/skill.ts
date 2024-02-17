@@ -71,7 +71,7 @@ export class Skill implements WhProperty {
     this.source = source;
   }
 
-  copy() {
+  copy(): Skill {
     return new Skill({
       id: this.id,
       canEdit: this.canEdit,

@@ -59,7 +59,7 @@ export class ItemProperty implements WhProperty {
     this.source = source;
   }
 
-  copy() {
+  copy(): ItemProperty {
     return new ItemProperty({
       id: this.id,
       canEdit: this.canEdit,

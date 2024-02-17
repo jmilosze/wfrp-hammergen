@@ -68,7 +68,7 @@ export class Mutation implements WhProperty {
     this.source = source;
   }
 
-  copy() {
+  copy(): Mutation {
     return new Mutation({
       id: this.id,
       canEdit: this.canEdit,

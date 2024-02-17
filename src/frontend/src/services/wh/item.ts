@@ -378,7 +378,7 @@ export class Item implements WhProperty {
     this.source = source;
   }
 
-  copy() {
+  copy(): Item {
     return new Item({
       id: this.id,
       canEdit: this.canEdit,

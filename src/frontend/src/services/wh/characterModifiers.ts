@@ -37,7 +37,7 @@ export class CharacterModifiers {
     return attributesAreEqual(this.attributes, otherCharacterModifiers.attributes);
   }
 
-  copy() {
+  copy(): CharacterModifiers {
     return new CharacterModifiers({
       size: this.size,
       movement: this.movement,

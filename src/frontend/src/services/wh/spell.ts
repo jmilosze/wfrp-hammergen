@@ -59,7 +59,7 @@ export class Spell implements WhProperty {
     this.source = source;
   }
 
-  copy() {
+  copy(): Spell {
     return new Spell({
       id: this.id,
       name: this.name,

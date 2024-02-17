@@ -70,7 +70,7 @@ export class Talent implements WhProperty {
     this.source = source;
   }
 
-  copy() {
+  copy(): Talent {
     return new Talent({
       id: this.id,
       canEdit: this.canEdit,

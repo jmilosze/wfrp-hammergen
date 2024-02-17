@@ -55,7 +55,7 @@ export class Prayer implements WhProperty {
     this.source = source;
   }
 
-  copy() {
+  copy(): Prayer {
     return new Prayer({
       id: this.id,
       name: this.name,
