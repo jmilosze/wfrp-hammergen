@@ -48,15 +48,15 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
   };
 }
 
-const items = whListUtils.whList.value.map((x) => formatPrayerRow(x));
+const items = whListUtils.whList.value.map((x) => formatPrayerRow(x)).sort((a, b) => (a.name > b.name ? 1 : -1));
 </script>
 
 <template>
   <div ref="el">
     <Header title="Prayers"> </Header>
     <TableWithSearch :fields="columns" :items="items" :perPage="PER_PAGE" :stacked="!isEqualOrGreater">
-      <template #actions="{ id }">
-        <ListWhButtons> View/Edit </ListWhButtons>
+      <template #actions="{ canEdit, id }">
+        <ListWhButtons :id="id" :canEdit="canEdit" />
       </template>
     </TableWithSearch>
   </div>
