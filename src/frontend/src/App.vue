@@ -136,11 +136,11 @@ onMounted(async () => {
     @click="showSideBar = false"
   ></div>
   <div
-    class="top-0 w-screen h-screen z-40 bg-zinc-500 bg-opacity-40"
+    class="top-0 w-full h-screen z-40 bg-zinc-500 opacity-40"
     :class="modal.show.value ? ['fixed'] : ['hidden']"
-  >
-    <div id="modal"></div>
-  </div>
+    @click="modal.hideModal()"
+  ></div>
+  <div id="modal" class="top-0 z-50" :class="modal.show.value ? ['fixed'] : ['hidden']"></div>
 </template>
 
 <style></style>

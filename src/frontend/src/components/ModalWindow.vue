@@ -2,7 +2,7 @@
 
 <template>
   <Teleport to="#modal">
-    <div>Hello world!</div>
+    <div class="bg-neutral-200">Hello world!</div>
   </Teleport>
 </template>
 
