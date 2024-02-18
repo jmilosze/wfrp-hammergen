@@ -66,12 +66,12 @@ const items = computed(() => {
           :id="id"
           :canEdit="canEdit"
           @copy="(copiedId) => whListUtils.copyWh(copiedId)"
-          @delete="modal.showModal()"
+          @delete="modal.showModal('deleteModal')"
         />
       </template>
     </TableWithSearch>
   </div>
-  <ModalWindow></ModalWindow>
+  <ModalWindow id="deleteModal"></ModalWindow>
 </template>
 
 <style scoped></style>
