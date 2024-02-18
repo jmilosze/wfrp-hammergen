@@ -5,7 +5,7 @@ import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
 import { useAuthStore } from "./stores/auth.ts";
-import { useScreenSize } from "./composables/sizeUtils.ts";
+import { useScreenSize } from "./composables/viewSize.ts";
 import { ViewSize } from "./utils/viewSize.ts";
 import { useModal } from "./composables/modal.ts";
 

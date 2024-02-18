@@ -48,5 +48,20 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     }
   }
 
-  return { loaded, errors, whList, loadWhList, copyWh };
+  async function deleteWh(whId: string) {
+    try {
+      await authStore.callAndLogoutIfUnauthorized(elementApi.deleteElement)(whId);
+      for (let i = 0; i < whList.value.length; i++) {
+        if (whList.value[i]["id"] === whId) {
+          whList.value.splice(i, 1);
+          break;
+        }
+      }
+    } catch (error) {
+      errors.value.push("Server Error.");
+      throw error;
+    }
+  }
+
+  return { loaded, errors, whList, loadWhList, copyWh, deleteWh };
 }
