@@ -12,9 +12,21 @@ const props = defineProps<{
   items: TableRow[];
   perPage?: number;
   stacked: boolean;
+  modelValue: string;
 }>();
 
-const searchTerm: Ref<string> = ref("");
+const emit = defineEmits<{
+  (e: "update:modelValue", modelValue: string): void;
+}>();
+
+const searchTerm: Ref<string> = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit("update:modelValue", value);
+  },
+});
 const searchTermDebounced = refDebounced(searchTerm, SEARCH_DEBOUNCE_MS);
 const searchedItems = computed(() => {
   if (!searchTerm.value) {

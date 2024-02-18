@@ -7,13 +7,15 @@ import Header from "../../components/PageHeader.vue";
 import { addSpaces } from "../../utils/string.ts";
 import { source } from "../../services/wh/source.ts";
 import { TableRow } from "../../utils/table.ts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useElSize } from "../../composables/viewSize.ts";
 import { ViewSize } from "../../utils/viewSize.ts";
 import ListWhButtons from "../../components/ListWhButtons.vue";
 import ModalWindow from "../../components/ModalWindow.vue";
 import { useModal } from "../../composables/modal.ts";
 import ActionButton from "../../components/ActionButton.vue";
+import { useRoute } from "vue-router";
+import { hasValue } from "../../utils/other.ts";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -34,6 +36,12 @@ const modal = useModal();
 const el = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, el);
 const elementToDelete = ref({ id: "", name: "" });
+const route = useRoute();
+const searchTerm = ref(hasValue(route.query.search) ? route.query.search : "");
+
+watch(searchTerm, () => {
+  console.log(searchTerm.value);
+});
 
 const columns = [
   { name: "name", displayName: "Name" },
@@ -72,7 +80,13 @@ function deleteElement() {
 <template>
   <div ref="el">
     <Header title="Prayers"> </Header>
-    <TableWithSearch :fields="columns" :items="items" :perPage="PER_PAGE" :stacked="!isEqualOrGreater">
+    <TableWithSearch
+      v-model="searchTerm"
+      :fields="columns"
+      :items="items"
+      :perPage="PER_PAGE"
+      :stacked="!isEqualOrGreater"
+    >
       <template #actions="{ name, id, canEdit }">
         <ListWhButtons
           :id="id"

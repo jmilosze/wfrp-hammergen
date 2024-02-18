@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useModal } from "../composables/modal.ts";
-import ActionButton from "./ActionButton.vue";
 
 defineProps<{
   id: string;
