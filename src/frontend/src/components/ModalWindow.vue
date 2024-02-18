@@ -10,8 +10,10 @@ const modal = useModal();
 
 <template>
   <Teleport v-if="id === modal.modalId.value" to="#modal">
-    <div class="bg-white rounded-lg shadow p-3 m-3">
-      <slot></slot>
+    <div class="flex justify-center">
+      <div class="bg-white rounded-lg shadow p-3 m-5 w-fit" @click.stop>
+        <slot></slot>
+      </div>
     </div>
   </Teleport>
 </template>

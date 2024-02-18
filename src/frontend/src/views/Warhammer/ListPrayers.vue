@@ -72,6 +72,7 @@ const items = computed(() => {
     </TableWithSearch>
   </div>
   <ModalWindow id="deleteModal">
+    <div>zxc</div>
     <div>
       He secured his second world title at the 1971 World Championship in Sydney, Australia, defeating Warren Simpson
       37–29 in the final to become the first player to win the world title at a knockout event staged overseas. He
