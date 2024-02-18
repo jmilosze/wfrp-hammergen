@@ -71,7 +71,30 @@ const items = computed(() => {
       </template>
     </TableWithSearch>
   </div>
-  <ModalWindow id="deleteModal"></ModalWindow>
+  <ModalWindow id="deleteModal">
+    <div>
+      He secured his second world title at the 1971 World Championship in Sydney, Australia, defeating Warren Simpson
+      37–29 in the final to become the first player to win the world title at a knockout event staged overseas. He
+      reached the final again in 1972 but lost 31–37 to Alex Higgins. He won his third world title in 1977, beating
+      Cliff Thorburn 25–21 in the final to become the first player to win the World Championship at Sheffield's Crucible
+      Theatre, where the tournament has been staged annually ever since. Spencer's other notable victories include the
+      inaugural Masters in 1975, where he defeated Reardon on a re-spotted black in the deciding frame of the final, the
+      inaugural Irish Masters in 1978, and three editions of the BBC's Pot Black series. In 1979, he became the first
+      player to compile a maximum break at a professional tournament, although it was not recorded as an official
+      maximum because the pockets on the table had not been measured against the required specifications.
+    </div>
+    <div>
+      He secured his second world title at the 1971 World Championship in Sydney, Australia, defeating Warren Simpson
+      37–29 in the final to become the first player to win the world title at a knockout event staged overseas. He
+      reached the final again in 1972 but lost 31–37 to Alex Higgins. He won his third world title in 1977, beating
+      Cliff Thorburn 25–21 in the final to become the first player to win the World Championship at Sheffield's Crucible
+      Theatre, where the tournament has been staged annually ever since. Spencer's other notable victories include the
+      inaugural Masters in 1975, where he defeated Reardon on a re-spotted black in the deciding frame of the final, the
+      inaugural Irish Masters in 1978, and three editions of the BBC's Pot Black series. In 1979, he became the first
+      player to compile a maximum break at a professional tournament, although it was not recorded as an official
+      maximum because the pockets on the table had not been measured against the required specifications.
+    </div>
+  </ModalWindow>
 </template>
 
 <style scoped></style>

@@ -141,11 +141,11 @@ onMounted(async () => {
   ></div>
   <!-- Modal with its own out of focus -->
   <div
-    class="top-0 w-full h-screen z-40 bg-zinc-500 bg-opacity-40 flex justify-center items-center"
+    class="top-0 w-full h-full z-40 bg-zinc-500 bg-opacity-40"
     :class="modal.show.value ? ['fixed'] : ['hidden']"
     @click="modal.hideModal()"
   >
-    <div id="modal" class="mt-5 h-fit" @click.stop></div>
+    <div id="modal" class="relative overflow-auto h-full" @click.stop></div>
   </div>
 </template>
 
