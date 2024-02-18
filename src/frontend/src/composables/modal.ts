@@ -13,7 +13,6 @@ export function useModal() {
     },
     hideModal: () => {
       show.value = false;
-      modalId.value = "";
     },
   };
 }

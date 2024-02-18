@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import NavLink from "./components/NavLink.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
@@ -15,10 +15,6 @@ const userApi = new UserApi(authRequest);
 const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
 const authStore = useAuthStore();
 const modal = useModal();
-
-const hideScrollBar = computed(() => {
-  return (!isEqualOrGreater.value && showSideBar.value) || modal.show.value;
-});
 
 watch(isEqualOrGreater, () => {
   if (isEqualOrGreater) {
@@ -60,7 +56,7 @@ onMounted(async () => {
   </div>
   <!-- SideBar -->
   <div
-    class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 transition-transform ease-in-out duration-150 border-r border-neutral-400 text-neutral-900"
+    class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 transition-transform border-r border-neutral-400 text-neutral-900"
     :class="!isEqualOrGreater && !showSideBar ? '-translate-x-64' : ''"
   >
     <div class="pl-1 lg:p-0 mt-2 mb-8 flex items-center justify-between lg:justify-center lg:ml-0">
@@ -107,7 +103,7 @@ onMounted(async () => {
     </div>
   </div>
   <!-- Content and footer-->
-  <div class="lg:pl-64 pt-16 h-screen" :class="hideScrollBar ? ['overflow-hidden'] : ['']">
+  <div class="lg:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
       <div class="flex-auto p-9 max-w-7xl w-full">
         <RouterView v-slot="{ Component }">
@@ -134,15 +130,29 @@ onMounted(async () => {
     </div>
   </div>
   <!-- Out of focus -->
-  <div
-    class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-40"
-    :class="showSideBar && !isEqualOrGreater ? [''] : ['hidden']"
-    @click="showSideBar = false"
-  ></div>
+  <Transition name="fade">
+    <div
+      v-show="showSideBar && !isEqualOrGreater"
+      class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-40"
+      @click="showSideBar = false"
+    ></div>
+  </Transition>
   <!-- Modal with its own out of focus -->
-  <div class="fixed top-0 w-full h-full z-40 bg-zinc-500 bg-opacity-40" :class="modal.show.value ? [''] : ['hidden']">
-    <div id="modal" class="relative overflow-auto h-full" @click="modal.hideModal()"></div>
-  </div>
+  <Transition name="fade">
+    <div v-show="modal.show.value" class="fixed top-0 w-full h-full z-40 bg-zinc-500 bg-opacity-40 transition">
+      <div id="modal" class="relative overflow-auto h-full" @click="modal.hideModal()"></div>
+    </div>
+  </Transition>
 </template>
 
-<style></style>
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
