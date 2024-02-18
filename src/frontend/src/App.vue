@@ -135,12 +135,12 @@ onMounted(async () => {
   </div>
   <!-- Out of focus -->
   <div
-    class="top-0 w-screen h-screen z-20 bg-zinc-500 opacity-40"
-    :class="!isEqualOrGreater && showSideBar ? ['fixed'] : ['hidden']"
+    class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-40"
+    :class="showSideBar && !isEqualOrGreater ? [''] : ['hidden']"
     @click="showSideBar = false"
   ></div>
   <!-- Modal with its own out of focus -->
-  <div class="top-0 w-full h-full z-40 bg-zinc-500 bg-opacity-40" :class="modal.show.value ? ['fixed'] : ['hidden']">
+  <div class="fixed top-0 w-full h-full z-40 bg-zinc-500 bg-opacity-40" :class="modal.show.value ? [''] : ['hidden']">
     <div id="modal" class="relative overflow-auto h-full" @click="modal.hideModal()"></div>
   </div>
 </template>
