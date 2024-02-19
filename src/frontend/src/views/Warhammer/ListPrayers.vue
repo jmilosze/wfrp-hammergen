@@ -43,7 +43,7 @@ const searchTerm = ref(
 
 watch(searchTerm, (newValue) => {
   const newParams = newValue !== "" ? { search: newValue } : {};
-  router.replace({ query: newParams });
+  // router.replace({ query: newParams });
 });
 
 const columns = [

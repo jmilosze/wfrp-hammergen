@@ -8,6 +8,7 @@ import { useAuthStore } from "./stores/auth.ts";
 import { useScreenSize } from "./composables/viewSize.ts";
 import { ViewSize } from "./utils/viewSize.ts";
 import { useModal } from "./composables/modal.ts";
+import { useRouter } from "vue-router";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
@@ -15,6 +16,7 @@ const userApi = new UserApi(authRequest);
 const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
 const authStore = useAuthStore();
 const modal = useModal();
+const router = useRouter();
 
 watch(isEqualOrGreater, () => {
   if (isEqualOrGreater) {
@@ -106,7 +108,7 @@ onMounted(async () => {
   <div class="lg:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
       <div class="flex-auto p-9 max-w-7xl w-full">
-        <RouterView v-slot="{ Component }">
+        <RouterView v-slot="{ Component }" :key="router.currentRoute.value.fullPath">
           <template v-if="Component">
             <Suspense>
               <!-- main content -->
