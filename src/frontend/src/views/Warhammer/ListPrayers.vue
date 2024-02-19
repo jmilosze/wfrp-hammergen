@@ -14,9 +14,8 @@ import ListWhButtons from "../../components/ListWhButtons.vue";
 import ModalWindow from "../../components/ModalWindow.vue";
 import { useModal } from "../../composables/modal.ts";
 import ActionButton from "../../components/ActionButton.vue";
-import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { hasValue } from "../../utils/other.ts";
-import { addParamsToPath } from "../../utils/navigation.ts";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -37,12 +36,14 @@ const modal = useModal();
 const el = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, el);
 const elementToDelete = ref({ id: "", name: "" });
-const route = useRoute();
-const searchTerm = ref(hasValue(route.query.search) ? (route.query.search as string) : "");
+const router = useRouter();
+const searchTerm = ref(
+  hasValue(router.currentRoute.value.query.search) ? (router.currentRoute.value.query.search as string) : "",
+);
 
 watch(searchTerm, (newValue) => {
-  const newParams = { search: newValue };
-  addParamsToPath(route.path, newParams);
+  const newParams = newValue !== "" ? { search: newValue } : {};
+  router.replace({ query: newParams });
 });
 
 const columns = [
