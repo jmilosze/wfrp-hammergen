@@ -35,7 +35,7 @@ onMounted(async () => {
   }
 });
 
-function onMenuItemClick() {
+function onListWhClick() {
   showSideBar.value = false;
   reRenderContentCounter.value += 1;
 }
@@ -87,17 +87,17 @@ function onMenuItemClick() {
     </div>
     <div class="pl-3 pr-3 divide-y divide-neutral-700">
       <div class="text-xl pb-2">
-        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Characters</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Characters</NavLink>
       </div>
       <div class="py-2">
-        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Careers</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Mutations</NavLink>
-        <NavLink routeName="prayers" variant="side" @click="onMenuItemClick()">Prayers</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Qualities and Runes</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Skills</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Spells</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Talents</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Trappings</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Careers</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Mutations</NavLink>
+        <NavLink routeName="prayers" variant="side" @click="onListWhClick()">Prayers</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Qualities and Runes</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Skills</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Spells</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Talents</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Trappings</NavLink>
       </div>
       <div v-if="authStore.loggedIn" class="py-2">
         <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked Users</NavLink>
