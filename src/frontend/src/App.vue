@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import NavLink from "./components/NavLink.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
@@ -28,6 +28,11 @@ onMounted(async () => {
   if (authStore.loggedIn) {
     await authStore.callAndLogoutIfUnauthorized(userApi.get, false)();
   }
+});
+
+const routerViewKey = computed(() => {
+  // const hasQuery = Object.keys(router.currentRoute.value.query).length !== 0;
+  return router.currentRoute.value.path;
 });
 </script>
 
@@ -108,7 +113,7 @@ onMounted(async () => {
   <div class="lg:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
       <div class="flex-auto p-9 max-w-7xl w-full">
-        <RouterView v-slot="{ Component }" :key="router.currentRoute.value.fullPath">
+        <RouterView v-slot="{ Component }" :key="routerViewKey">
           <template v-if="Component">
             <Suspense>
               <!-- main content -->

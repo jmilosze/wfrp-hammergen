@@ -63,9 +63,10 @@ function moveToLastPage(direction: -1 | 1): void {
     >
       {{ ">>" }}
     </button>
-    <div class="pl-2 py-1">
+    <div v-if="totalRows > 0" class="pl-2 py-1">
       Results {{ startRow + 1 }} - {{ Math.min(startRow + rowsPerPage, totalRows) }} out of {{ totalRows }}
     </div>
+    <div v-else class="pl-2 py-1">Results 0</div>
   </div>
 </template>
 

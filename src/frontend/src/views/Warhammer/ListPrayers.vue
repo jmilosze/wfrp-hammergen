@@ -44,8 +44,7 @@ const searchTerm = ref(
 
 watch(searchTerm, (newValue) => {
   const newParams = newValue !== "" ? { search: newValue } : ({} as Record<string, string>);
-  // router.replace({ query: newParams });
-  addParamsToPath(router.currentRoute.value.path, newParams);
+  router.replace({ query: newParams });
 });
 
 const columns = [
