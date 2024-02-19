@@ -16,6 +16,7 @@ import { useModal } from "../../composables/modal.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import { useRouter } from "vue-router";
 import { hasValue } from "../../utils/other.ts";
+import { addParamsToPath } from "../../utils/navigation.ts";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -42,8 +43,9 @@ const searchTerm = ref(
 );
 
 watch(searchTerm, (newValue) => {
-  const newParams = newValue !== "" ? { search: newValue } : {};
+  const newParams = newValue !== "" ? { search: newValue } : ({} as Record<string, string>);
   // router.replace({ query: newParams });
+  addParamsToPath(router.currentRoute.value.path, newParams);
 });
 
 const columns = [
