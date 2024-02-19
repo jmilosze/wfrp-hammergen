@@ -3,6 +3,7 @@ import { TableField, TableRow } from "../utils/table.ts";
 import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
+import ActionButton from "./ActionButton.vue";
 
 const DEFAULT_PER_PAGE = 100;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -13,6 +14,7 @@ const props = defineProps<{
   perPage?: number;
   stacked: boolean;
   modelValue: string;
+  createNew: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -72,12 +74,15 @@ onUpdated(() => {
 </script>
 
 <template>
-  <input
-    v-model="searchTerm"
-    type="text"
-    placeholder="Type to Search"
-    class="border-2 border-neutral-200 rounded w-full h-10 px-2 focus:border-neutral-700 transition-colors duration-200"
-  />
+  <div class="flex justify-stretch flex-wrap items-stretch">
+    <ActionButton v-if="createNew" class="mr-2 mb-2 shrink-0">Create New</ActionButton>
+    <input
+      v-model="searchTerm"
+      type="text"
+      placeholder="Type to Search"
+      class="border-2 border-neutral-200 rounded h-10 px-2 focus:border-neutral-700 transition-colors duration-200 grow"
+    />
+  </div>
   <TablePagination
     v-model="startRow"
     :totalRows="searchedItems.length"

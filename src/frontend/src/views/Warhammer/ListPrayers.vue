@@ -16,7 +16,6 @@ import { useModal } from "../../composables/modal.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import { useRouter } from "vue-router";
 import { hasValue } from "../../utils/other.ts";
-import { addParamsToPath } from "../../utils/navigation.ts";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -90,6 +89,7 @@ function deleteElement() {
       :items="items"
       :perPage="PER_PAGE"
       :stacked="!isEqualOrGreater"
+      :createNew="true"
     >
       <template #actions="{ name, id, canEdit }">
         <ListWhButtons
