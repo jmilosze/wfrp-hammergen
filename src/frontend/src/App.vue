@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import NavLink from "./components/NavLink.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
@@ -18,6 +18,11 @@ const authStore = useAuthStore();
 const modal = useModal();
 const router = useRouter();
 
+const reRenderContentCounter = ref(0);
+const reRenderContent = computed(() => {
+  return router.currentRoute.value.path + "_counter_" + reRenderContentCounter.value.toString();
+});
+
 watch(isEqualOrGreater, () => {
   if (isEqualOrGreater) {
     showSideBar.value = false;
@@ -29,6 +34,11 @@ onMounted(async () => {
     await authStore.callAndLogoutIfUnauthorized(userApi.get, false)();
   }
 });
+
+function onMenuItemClick() {
+  showSideBar.value = false;
+  reRenderContentCounter.value += 1;
+}
 </script>
 
 <template>
@@ -77,17 +87,17 @@ onMounted(async () => {
     </div>
     <div class="pl-3 pr-3 divide-y divide-neutral-700">
       <div class="text-xl pb-2">
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Characters</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Characters</NavLink>
       </div>
       <div class="py-2">
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Careers</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Mutations</NavLink>
-        <NavLink routeName="prayers" variant="side" @click="showSideBar = false">Prayers</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Qualities and Runes</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Skills</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Spells</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Talents</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="showSideBar = false">Trappings</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Careers</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Mutations</NavLink>
+        <NavLink routeName="prayers" variant="side" @click="onMenuItemClick()">Prayers</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Qualities and Runes</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Skills</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Spells</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Talents</NavLink>
+        <NavLink routeName="placeholder" variant="side" @click="onMenuItemClick()">Trappings</NavLink>
       </div>
       <div v-if="authStore.loggedIn" class="py-2">
         <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked Users</NavLink>
@@ -108,7 +118,7 @@ onMounted(async () => {
   <div class="lg:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
       <div class="flex-auto p-9 max-w-7xl w-full">
-        <RouterView v-slot="{ Component }" :key="router.currentRoute.value.path">
+        <RouterView v-slot="{ Component }" :key="reRenderContent">
           <template v-if="Component">
             <Suspense>
               <!-- main content -->
