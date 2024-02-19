@@ -19,6 +19,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", modelValue: string): void;
+  (e: "createNew"): void;
 }>();
 
 const searchTerm: Ref<string> = computed({

@@ -16,6 +16,7 @@ import { useModal } from "../../composables/modal.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import { useRouter } from "vue-router";
 import { hasValue } from "../../utils/other.ts";
+import { useAuthStore } from "../../stores/auth.ts";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -35,11 +36,15 @@ const modal = useModal();
 
 const el = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, el);
+
 const elementToDelete = ref({ id: "", name: "" });
+
 const router = useRouter();
 const searchTerm = ref(
   hasValue(router.currentRoute.value.query.search) ? (router.currentRoute.value.query.search as string) : "",
 );
+
+const authStore = useAuthStore();
 
 watch(searchTerm, (newValue) => {
   const newParams = newValue !== "" ? { search: newValue } : ({} as Record<string, string>);
@@ -89,7 +94,7 @@ function deleteElement() {
       :items="items"
       :perPage="PER_PAGE"
       :stacked="!isEqualOrGreater"
-      :createNew="true"
+      :createNew="authStore.loggedIn"
     >
       <template #actions="{ name, id, canEdit }">
         <ListWhButtons
