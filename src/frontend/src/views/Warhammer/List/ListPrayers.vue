@@ -11,7 +11,6 @@ import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtons from "../../../components/ListWh/ActionButtons.vue";
 import { useRouter } from "vue-router";
-import { hasValue } from "../../../utils/other.ts";
 import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 
@@ -33,7 +32,7 @@ const elementToDelete = ref({ id: "", name: "" });
 
 const router = useRouter();
 const searchTerm = ref(
-  hasValue(router.currentRoute.value.query.search) ? (router.currentRoute.value.query.search as string) : "",
+  "search" in router.currentRoute.value.query ? (router.currentRoute.value.query.search as string) : "",
 );
 watch(searchTerm, (newValue) => {
   const newParams = newValue !== "" ? { search: newValue } : ({} as Record<string, string>);
