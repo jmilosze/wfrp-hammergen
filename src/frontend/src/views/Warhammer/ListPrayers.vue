@@ -10,12 +10,10 @@ import { TableRow } from "../../utils/table.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../utils/viewSize.ts";
 import ListWhButtons from "../../components/ListWhButtons.vue";
-import ModalWindow from "../../components/ModalWindow.vue";
-import { useModal } from "../../composables/modal.ts";
-import ActionButton from "../../components/ActionButton.vue";
 import { useRouter } from "vue-router";
 import { hasValue } from "../../utils/other.ts";
 import { useAuthStore } from "../../stores/auth.ts";
+import ListWhDelete from "../../components/ListWhDelete.vue";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -31,16 +29,7 @@ interface PrayerRow extends TableRow {
 const whList = useWhListUtils(new PrayerApi(authRequest));
 await whList.loadWhList();
 
-const modal = useModal();
 const elementToDelete = ref({ id: "", name: "" });
-function deleteElementModal(id: string, name: string) {
-  modal.showModal("deleteModal");
-  elementToDelete.value = { name: name, id: id };
-}
-function deleteElement() {
-  whList.deleteWh(elementToDelete.value.id);
-  modal.hideModal();
-}
 
 const router = useRouter();
 const searchTerm = ref(
@@ -92,21 +81,12 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="deleteElementModal(id, name)"
+        @delete="elementToDelete = { name: name, id: id }"
       />
     </template>
   </TableWithSearch>
 
-  <ModalWindow id="deleteModal">
-    <template #header> Delete Prayer </template>
-    <template #buttons>
-      <ActionButton variant="danger" @click="deleteElement()">Delete</ActionButton>
-      <ActionButton variant="normal" class="ml-3" @click="modal.hideModal()">Cancel</ActionButton>
-    </template>
-    <div>
-      Are you sure you want to delete <span class="font-semibold">{{ elementToDelete.name }}?</span>
-    </div>
-  </ModalWindow>
+  <ListWhDelete :elementToDelete="elementToDelete" @deleteConfirmed="whList.deleteWh(elementToDelete.id)" />
 </template>
 
 <style scoped></style>
