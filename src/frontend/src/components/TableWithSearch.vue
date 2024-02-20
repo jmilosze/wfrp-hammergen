@@ -82,7 +82,7 @@ onUpdated(() => {
 <template>
   <div ref="contentContainerRef">
     <div class="flex justify-stretch flex-wrap items-stretch">
-      <ActionButton v-if="createNew" class="mr-2 mb-2 shrink-0">Create New</ActionButton>
+      <ActionButton v-if="createNew" @click="emit('createNew')" class="mr-2 mb-2 shrink-0">Create New</ActionButton>
       <input
         v-model="searchTerm"
         type="text"

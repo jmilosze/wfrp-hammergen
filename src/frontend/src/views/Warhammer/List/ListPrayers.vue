@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { useWhListUtils } from "../../composables/whList.ts";
-import { Prayer, PrayerApi } from "../../services/wh/prayer.ts";
-import { authRequest } from "../../services/auth.ts";
-import TableWithSearch from "../../components/TableWithSearch.vue";
-import Header from "../../components/PageHeader.vue";
-import { addSpaces } from "../../utils/string.ts";
-import { source } from "../../services/wh/source.ts";
-import { TableRow } from "../../utils/table.ts";
+import { useWhListUtils } from "../../../composables/whList.ts";
+import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
+import { authRequest } from "../../../services/auth.ts";
+import TableWithSearch from "../../../components/TableWithSearch.vue";
+import Header from "../../../components/PageHeader.vue";
+import { addSpaces } from "../../../utils/string.ts";
+import { source } from "../../../services/wh/source.ts";
+import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch } from "vue";
-import { ViewSize } from "../../utils/viewSize.ts";
-import ActionButtons from "../../components/ListWh/ActionButtons.vue";
+import { ViewSize } from "../../../utils/viewSize.ts";
+import ActionButtons from "../../../components/ListWh/ActionButtons.vue";
 import { useRouter } from "vue-router";
-import { hasValue } from "../../utils/other.ts";
-import { useAuthStore } from "../../stores/auth.ts";
-import DeleteModal from "../../components/ListWh/DeleteModal.vue";
+import { hasValue } from "../../../utils/other.ts";
+import { useAuthStore } from "../../../stores/auth.ts";
+import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -75,6 +75,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
     :perPage="PER_PAGE"
     :stackedViewSize="ViewSize.md"
     :createNew="authStore.loggedIn"
+    @createNew="whList.viewOrModifyWh('prayer')"
   >
     <template #actions="{ name, id, canEdit }">
       <ActionButtons
@@ -82,6 +83,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="elementToDelete = { name: name, id: id }"
+        @edit="whList.viewOrModifyWh('prayer', id)"
       />
     </template>
   </TableWithSearch>
