@@ -34,8 +34,8 @@ await whList.loadWhList();
 
 const modal = useModal();
 
-const el = ref(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, el);
+const contentContainerRef = ref(null);
+const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const elementToDelete = ref({ id: "", name: "" });
 
@@ -43,13 +43,12 @@ const router = useRouter();
 const searchTerm = ref(
   hasValue(router.currentRoute.value.query.search) ? (router.currentRoute.value.query.search as string) : "",
 );
-
-const authStore = useAuthStore();
-
 watch(searchTerm, (newValue) => {
   const newParams = newValue !== "" ? { search: newValue } : ({} as Record<string, string>);
   router.replace({ query: newParams });
 });
+
+const authStore = useAuthStore();
 
 const columns = [
   { name: "name", displayName: "Name" },
@@ -86,7 +85,7 @@ function deleteElement() {
 </script>
 
 <template>
-  <div ref="el">
+  <div ref="contentContainerRef">
     <Header title="Prayers"> </Header>
     <TableWithSearch
       v-model="searchTerm"
