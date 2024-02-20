@@ -8,7 +8,6 @@ import { addSpaces } from "../../utils/string.ts";
 import { source } from "../../services/wh/source.ts";
 import { TableRow } from "../../utils/table.ts";
 import { computed, ref, watch } from "vue";
-import { useElSize } from "../../composables/viewSize.ts";
 import { ViewSize } from "../../utils/viewSize.ts";
 import ListWhButtons from "../../components/ListWhButtons.vue";
 import ModalWindow from "../../components/ModalWindow.vue";
@@ -33,11 +32,15 @@ const whList = useWhListUtils(new PrayerApi(authRequest));
 await whList.loadWhList();
 
 const modal = useModal();
-
-const contentContainerRef = ref(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
-
 const elementToDelete = ref({ id: "", name: "" });
+function deleteElementModal(id: string, name: string) {
+  modal.showModal("deleteModal");
+  elementToDelete.value = { name: name, id: id };
+}
+function deleteElement() {
+  whList.deleteWh(elementToDelete.value.id);
+  modal.hideModal();
+}
 
 const router = useRouter();
 const searchTerm = ref(
@@ -72,39 +75,28 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
     id: prayer.id,
   };
 }
-
-function deleteElementModal(id: string, name: string) {
-  modal.showModal("deleteModal");
-  elementToDelete.value = { name: name, id: id };
-}
-
-function deleteElement() {
-  whList.deleteWh(elementToDelete.value.id);
-  modal.hideModal();
-}
 </script>
 
 <template>
-  <div ref="contentContainerRef">
-    <Header title="Prayers"> </Header>
-    <TableWithSearch
-      v-model="searchTerm"
-      :fields="columns"
-      :items="items"
-      :perPage="PER_PAGE"
-      :stacked="!isEqualOrGreater"
-      :createNew="authStore.loggedIn"
-    >
-      <template #actions="{ name, id, canEdit }">
-        <ListWhButtons
-          :id="id"
-          :canEdit="canEdit"
-          @copy="(copiedId) => whList.copyWh(copiedId)"
-          @delete="deleteElementModal(id, name)"
-        />
-      </template>
-    </TableWithSearch>
-  </div>
+  <Header title="Prayers"> </Header>
+  <TableWithSearch
+    v-model="searchTerm"
+    :fields="columns"
+    :items="items"
+    :perPage="PER_PAGE"
+    :stackedViewSize="ViewSize.md"
+    :createNew="authStore.loggedIn"
+  >
+    <template #actions="{ name, id, canEdit }">
+      <ListWhButtons
+        :id="id"
+        :canEdit="canEdit"
+        @copy="(copiedId) => whList.copyWh(copiedId)"
+        @delete="deleteElementModal(id, name)"
+      />
+    </template>
+  </TableWithSearch>
+
   <ModalWindow id="deleteModal">
     <template #header> Delete Prayer </template>
     <template #buttons>
