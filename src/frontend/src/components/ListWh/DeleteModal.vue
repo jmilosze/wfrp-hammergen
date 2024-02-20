@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
-import ModalWindow from "./ModalWindow.vue";
-import { useModal } from "../composables/modal.ts";
+import ActionButton from "../ActionButton.vue";
+import ModalWindow from "../ModalWindow.vue";
+import { useModal } from "../../composables/modal.ts";
 import { watch } from "vue";
 
 const props = defineProps<{

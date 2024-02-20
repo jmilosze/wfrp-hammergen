@@ -9,11 +9,11 @@ import { source } from "../../services/wh/source.ts";
 import { TableRow } from "../../utils/table.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../utils/viewSize.ts";
-import ListWhButtons from "../../components/ListWhButtons.vue";
+import ActionButtons from "../../components/ListWh/ActionButtons.vue";
 import { useRouter } from "vue-router";
 import { hasValue } from "../../utils/other.ts";
 import { useAuthStore } from "../../stores/auth.ts";
-import ListWhDelete from "../../components/ListWhDelete.vue";
+import DeleteModal from "../../components/ListWh/DeleteModal.vue";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -77,7 +77,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
     :createNew="authStore.loggedIn"
   >
     <template #actions="{ name, id, canEdit }">
-      <ListWhButtons
+      <ActionButtons
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
@@ -86,7 +86,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
     </template>
   </TableWithSearch>
 
-  <ListWhDelete :elementToDelete="elementToDelete" @deleteConfirmed="whList.deleteWh(elementToDelete.id)" />
+  <DeleteModal :elementToDelete="elementToDelete" @deleteConfirmed="whList.deleteWh(elementToDelete.id)" />
 </template>
 
 <style scoped></style>
