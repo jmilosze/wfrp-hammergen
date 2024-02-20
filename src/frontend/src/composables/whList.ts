@@ -1,11 +1,9 @@
 import { SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
 import { useAuthStore } from "../stores/auth.ts";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 
 export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
   const authStore = useAuthStore();
-  const router = useRouter();
 
   const loaded = ref(false);
   const errors = ref([] as string[]);
@@ -65,10 +63,5 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     }
   }
 
-  async function viewOrModifyWh(whType: string, id = "create", viewOnly = false) {
-    const pushName = whType === "character" && viewOnly ? "viewCharacter" : whType;
-    await router.push({ name: pushName, params: { id: id } });
-  }
-
-  return { loaded, errors, whList, loadWhList, copyWh, deleteWh, viewOrModifyWh };
+  return { loaded, errors, whList, loadWhList, copyWh, deleteWh };
 }

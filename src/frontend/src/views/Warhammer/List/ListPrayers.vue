@@ -74,8 +74,8 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
     :items="items"
     :perPage="PER_PAGE"
     :stackedViewSize="ViewSize.md"
-    :createNew="authStore.loggedIn"
-    @createNew="whList.viewOrModifyWh('prayer')"
+    :addCreateNewBtn="authStore.loggedIn"
+    @createNew="router.push({ name: 'prayer', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }">
       <ActionButtons
@@ -83,7 +83,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="elementToDelete = { name: name, id: id }"
-        @edit="whList.viewOrModifyWh('prayer', id)"
+        @edit="router.push({ name: 'prayer', params: { id: id } })"
       />
     </template>
   </TableWithSearch>
