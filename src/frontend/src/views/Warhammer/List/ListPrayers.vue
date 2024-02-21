@@ -5,7 +5,7 @@ import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
-import { source, sourceOptions } from "../../../services/wh/source.ts";
+import { source } from "../../../services/wh/source.ts";
 import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch, Ref } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -33,7 +33,6 @@ await whList.loadWhList();
 const elementToDelete = ref({ id: "", name: "" });
 
 const router = useRouter();
-
 const queryParams = ref({ search: "", source: "" }) as Ref<SimpleQuery>;
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
@@ -72,7 +71,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
 
 <template>
   <Header title="Prayers"> </Header>
-  <SelectInput v-model="queryParams.source" :options="sourceOptions" />
+  <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" />
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"

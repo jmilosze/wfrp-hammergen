@@ -1,6 +1,7 @@
 import { SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
 import { useAuthStore } from "../stores/auth.ts";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { sourceOptions } from "../services/wh/source.ts";
 
 export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
   const authStore = useAuthStore();
@@ -63,5 +64,16 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     }
   }
 
-  return { loaded, errors, whList, loadWhList, copyWh, deleteWh };
+  const filteredSourceOptions = computed(() => {
+    const sourcesInData = new Set();
+    for (const wh of whList.value) {
+      for (const source of Object.keys(wh.source)) {
+        sourcesInData.add(source);
+      }
+    }
+
+    return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
+  });
+
+  return { loaded, errors, whList, loadWhList, copyWh, deleteWh, filteredSourceOptions };
 }
