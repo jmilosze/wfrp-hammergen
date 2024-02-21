@@ -19,14 +19,6 @@ import SelectInput from "../../../components/ListWh/SelectInput.vue";
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
 
-interface PrayerRow extends TableRow {
-  name: string;
-  source: string;
-  description: string;
-  canEdit: boolean;
-  id: string;
-}
-
 const whList = useWhListUtils(new PrayerApi(authRequest));
 await whList.loadWhList();
 
@@ -59,7 +51,7 @@ const items = computed(() => {
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
 
-function formatPrayerRow(prayer: Prayer): PrayerRow {
+function formatPrayerRow(prayer: Prayer): TableRow {
   return {
     name: addSpaces(prayer.name, MAX_CHARS),
     source: Object.keys(prayer.source)

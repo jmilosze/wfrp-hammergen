@@ -19,14 +19,6 @@ import SelectInput from "../../../components/ListWh/SelectInput.vue";
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
 
-interface SpellRow extends TableRow {
-  name: string;
-  source: string;
-  description: string;
-  canEdit: boolean;
-  id: string;
-}
-
 const whList = useWhListUtils(new SpellApi(authRequest));
 await whList.loadWhList();
 
@@ -60,7 +52,7 @@ const items = computed(() => {
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
 
-function formatSpellRow(spell: Spell): SpellRow {
+function formatSpellRow(spell: Spell): TableRow {
   return {
     name: addSpaces(spell.name, MAX_CHARS),
     source: Object.keys(spell.source)
