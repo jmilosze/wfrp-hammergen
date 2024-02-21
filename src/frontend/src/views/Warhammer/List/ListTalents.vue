@@ -83,6 +83,12 @@ function formatTalentRow(talent: Talent): TableRow {
         @edit="router.push({ name: 'talent', params: { id: id } })"
       />
     </template>
+
+    <template #maxRank="{ maxRank }">
+      <div class="text-nowrap">
+        {{ maxRank }}
+      </div>
+    </template>
   </TableWithSearch>
 
   <DeleteModal :elementToDelete="elementToDelete" @deleteConfirmed="whList.deleteWh(elementToDelete.id)" />
