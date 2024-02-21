@@ -7,12 +7,13 @@ import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { TableRow } from "../../../utils/table.ts";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, Ref } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtons from "../../../components/ListWh/ActionButtons.vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
+import { queryParamsFromRouterQuery, queryParamsToRouterQuery, SimpleQuery } from "../../../utils/queryParams.ts";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -31,13 +32,16 @@ await whList.loadWhList();
 const elementToDelete = ref({ id: "", name: "" });
 
 const router = useRouter();
-const searchTerm = ref(
-  "search" in router.currentRoute.value.query ? (router.currentRoute.value.query.search as string) : "",
+
+const queryParams = ref({ search: "" }) as Ref<SimpleQuery>;
+queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
+watch(
+  () => queryParams,
+  (newValue) => {
+    router.replace({ query: queryParamsToRouterQuery(newValue.value) });
+  },
+  { deep: true },
 );
-watch(searchTerm, (newValue) => {
-  const newParams = newValue !== "" ? { search: newValue } : ({} as Record<string, string>);
-  router.replace({ query: newParams });
-});
 
 const authStore = useAuthStore();
 
@@ -68,7 +72,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
 <template>
   <Header title="Prayers"> </Header>
   <TableWithSearch
-    v-model="searchTerm"
+    v-model="queryParams.search"
     :fields="columns"
     :items="items"
     :perPage="PER_PAGE"
