@@ -41,7 +41,7 @@ export function copySource(source: Source) {
 
 export const sourceOptions: { text: string; value: string }[] = new Array(Object.keys(source).length + 1);
 
-sourceOptions[0] = { text: "Any", value: "" };
+sourceOptions[0] = { text: "Any source", value: "" };
 let i = 1;
 for (const [key, value] of Object.entries(source)) {
   sourceOptions[i] = { text: value, value: key };

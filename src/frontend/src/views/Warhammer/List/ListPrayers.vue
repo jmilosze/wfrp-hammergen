@@ -72,7 +72,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
 
 <template>
   <Header title="Prayers"> </Header>
-  <SelectInput v-model="queryParams.source" :options="sourceOptions" title="Source" />
+  <SelectInput v-model="queryParams.source" :options="sourceOptions" />
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"
