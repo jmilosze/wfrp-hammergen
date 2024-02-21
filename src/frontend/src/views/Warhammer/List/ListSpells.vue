@@ -70,7 +70,7 @@ function formatSpellRow(spell: Spell): TableRow {
     v-model="queryParams.search"
     :fields="columns"
     :items="items"
-    :stackedViewSize="ViewSize.md"
+    :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="authStore.loggedIn"
     @createNew="router.push({ name: 'spell', params: { id: 'create' } })"
   >
