@@ -17,7 +17,7 @@ export function queryParamsFromRouterQuery(queryParams: SimpleQuery, routerQuery
 export function queryParamsToRouterQuery(queryParams: SimpleQuery): LocationQueryRaw {
   const newQuery = {} as LocationQueryRaw;
   for (const [key, value] of Object.entries(queryParams)) {
-    if (value !== "") {
+    if (value !== "" && value !== -1) {
       newQuery[key] = value;
     }
   }

@@ -5,7 +5,7 @@ import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
-import { source } from "../../../services/wh/source.ts";
+import { source, sourceOptions } from "../../../services/wh/source.ts";
 import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch, Ref } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -14,6 +14,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { queryParamsFromRouterQuery, queryParamsToRouterQuery, SimpleQuery } from "../../../utils/queryParams.ts";
+import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
 const MAX_CHARS = 15;
 const PER_PAGE = 25;
@@ -33,7 +34,7 @@ const elementToDelete = ref({ id: "", name: "" });
 
 const router = useRouter();
 
-const queryParams = ref({ search: "" }) as Ref<SimpleQuery>;
+const queryParams = ref({ search: "", source: "" }) as Ref<SimpleQuery>;
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
   () => queryParams,
@@ -71,6 +72,7 @@ function formatPrayerRow(prayer: Prayer): PrayerRow {
 
 <template>
   <Header title="Prayers"> </Header>
+  <SelectInput v-model="queryParams.source" :options="sourceOptions" title="Source" />
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"
