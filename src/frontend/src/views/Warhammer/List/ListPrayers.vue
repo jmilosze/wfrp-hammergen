@@ -16,9 +16,6 @@ import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { queryParamsFromRouterQuery, queryParamsToRouterQuery, SimpleQuery } from "../../../utils/queryParams.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
-const MAX_CHARS = 15;
-const PER_PAGE = 25;
-
 const whList = useWhListUtils(new PrayerApi(authRequest));
 await whList.loadWhList();
 
@@ -53,7 +50,7 @@ const items = computed(() => {
 
 function formatPrayerRow(prayer: Prayer): TableRow {
   return {
-    name: addSpaces(prayer.name, MAX_CHARS),
+    name: addSpaces(prayer.name),
     source: Object.keys(prayer.source)
       .map((x) => source[x])
       .join(", "),
@@ -71,7 +68,6 @@ function formatPrayerRow(prayer: Prayer): TableRow {
     v-model="queryParams.search"
     :fields="columns"
     :items="items"
-    :perPage="PER_PAGE"
     :stackedViewSize="ViewSize.md"
     :addCreateNewBtn="authStore.loggedIn"
     @createNew="router.push({ name: 'prayer', params: { id: 'create' } })"

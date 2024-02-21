@@ -16,9 +16,6 @@ import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { queryParamsFromRouterQuery, queryParamsToRouterQuery, SimpleQuery } from "../../../utils/queryParams.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
-const MAX_CHARS = 15;
-const PER_PAGE = 25;
-
 const whList = useWhListUtils(new SpellApi(authRequest));
 await whList.loadWhList();
 
@@ -54,7 +51,7 @@ const items = computed(() => {
 
 function formatSpellRow(spell: Spell): TableRow {
   return {
-    name: addSpaces(spell.name, MAX_CHARS),
+    name: addSpaces(spell.name),
     source: Object.keys(spell.source)
       .map((x) => source[x])
       .join(", "),
@@ -73,7 +70,6 @@ function formatSpellRow(spell: Spell): TableRow {
     v-model="queryParams.search"
     :fields="columns"
     :items="items"
-    :perPage="PER_PAGE"
     :stackedViewSize="ViewSize.md"
     :addCreateNewBtn="authStore.loggedIn"
     @createNew="router.push({ name: 'spell', params: { id: 'create' } })"
