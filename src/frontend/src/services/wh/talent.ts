@@ -11,7 +11,7 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
-import { AttributeName } from "./attributes.ts";
+import { AttributeName, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/talent";
@@ -126,6 +126,22 @@ export class Talent implements WhProperty {
     }
 
     return this.modifiers.isEqualTo(otherTalent.modifiers);
+  }
+
+  maxRankDisplay(): string {
+    if (this.isGroup) {
+      return "";
+    }
+
+    const constPart: string = this.maxRank > 0 ? this.maxRank.toString() : "";
+    const attName: string = printAttributeName(this.attribute);
+    const bonusPart: string = this.attribute !== AttributeName.None ? attName + " Bonus" : "";
+
+    if (constPart !== "" && bonusPart !== "") {
+      return constPart + " + " + bonusPart;
+    } else {
+      return constPart + bonusPart;
+    }
   }
 }
 

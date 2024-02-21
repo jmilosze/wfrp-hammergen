@@ -12,6 +12,8 @@ import ListPrayers from "./views/Warhammer/List/ListPrayers.vue";
 import CreatePrayer from "./views/Warhammer/Edit/CreatePrayer.vue";
 import ListSpells from "./views/Warhammer/List/ListSpells.vue";
 import CreateSpell from "./views/Warhammer/Edit/CreateSpell.vue";
+import CreateTalent from "./views/Warhammer/Edit/CreateTalent.vue";
+import ListTalents from "./views/Warhammer/List/ListTalents.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -87,6 +89,17 @@ export default createRouter({
       path: "/spell/:id",
       name: "spell",
       component: CreateSpell,
+      props: true,
+    },
+    {
+      path: "/talents",
+      name: "talents",
+      component: ListTalents,
+    },
+    {
+      path: "/talent/:id",
+      name: "talent",
+      component: CreateTalent,
       props: true,
     },
   ],
