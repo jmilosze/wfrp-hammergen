@@ -1,14 +1,14 @@
 import { SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
 import { useAuthStore } from "../stores/auth.ts";
-import { computed, ref } from "vue";
+import { computed, Ref, ref } from "vue";
 import { sourceOptions } from "../services/wh/source.ts";
 
 export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
   const authStore = useAuthStore();
 
   const loaded = ref(false);
-  const errors = ref([] as string[]);
-  const whList = ref([] as T[]);
+  const errors: Ref<string[]> = ref([]);
+  const whList: Ref<T[]> = ref([]);
 
   async function loadWhList(): Promise<void> {
     errors.value = [];
@@ -28,21 +28,11 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
       if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(-SHORT_DESC_REGEX);
       }
-      const createdId = await authStore.callAndLogoutIfUnauthorized(elementApi.createElement)(whCopy);
+      const { id } = await authStore.callAndLogoutIfUnauthorized(elementApi.createElement)(whCopy);
 
-      let newListEntry;
-      for (let i = 0; i < whList.value.length; i++) {
-        if (whList.value[i].id === whId) {
-          newListEntry = JSON.parse(JSON.stringify(whList.value[i]));
-          break;
-        }
-      }
-
-      newListEntry.name = whCopy.name;
-      newListEntry.id = createdId.id;
-      newListEntry.canEdit = true;
-
-      whList.value.push(newListEntry);
+      whCopy.id = id;
+      whCopy.canEdit = true;
+      whList.value.push(whCopy);
     } catch (error) {
       errors.value.push("Server Error.");
       throw error;
