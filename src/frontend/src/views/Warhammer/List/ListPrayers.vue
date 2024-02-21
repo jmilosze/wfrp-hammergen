@@ -53,7 +53,10 @@ const columns = [
 ];
 
 const items = computed(() => {
-  return whList.whList.value.map((x) => formatPrayerRow(x)).sort((a, b) => (a.name > b.name ? 1 : -1));
+  return whList.whList.value
+    .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
+    .map((x) => formatPrayerRow(x))
+    .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
 
 function formatPrayerRow(prayer: Prayer): PrayerRow {
