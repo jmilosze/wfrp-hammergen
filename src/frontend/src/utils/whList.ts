@@ -24,11 +24,12 @@ export function getOptions<T extends number>(
   allOptions: T[],
   whOptions: T[],
   printFn: (x: T) => string,
+  anyText: string,
 ): { text: string; value: string }[] {
   const setWhOptions = new Set(whOptions);
   const commonOptions = allOptions.filter((element) => setWhOptions.has(element));
 
-  const options: { text: string; value: string }[] = [{ text: "Any type", value: "" }];
+  const options: { text: string; value: string }[] = [{ text: anyText, value: "" }];
 
   for (const option of commonOptions) {
     options.push({ text: printFn(option), value: option.toString() });

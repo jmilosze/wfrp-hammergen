@@ -73,6 +73,7 @@ const filteredTypeOptions = computed(() => {
     mutationTypeList,
     whList.whList.value.map((wh) => wh.type),
     printMutationType,
+    "Any type",
   );
 });
 </script>
