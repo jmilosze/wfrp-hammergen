@@ -22,15 +22,17 @@ const value = computed({
 </script>
 
 <template>
-  <div v-if="title" class="mb-1">{{ title }}</div>
-  <select
-    v-model="value"
-    class="border-2 border-neutral-200 focus:border-neutral-700 rounded outline-0 h-10 px-2 w-full mb-3 bg-white"
-  >
-    <option v-for="option in options" :key="option.value" :value="option.value">
-      {{ option.text }}
-    </option>
-  </select>
+  <div>
+    <div v-if="title" class="mb-1">{{ title }}</div>
+    <select
+      v-model="value"
+      class="border-2 border-neutral-200 focus:border-neutral-700 rounded outline-0 h-10 px-2 w-full bg-white"
+    >
+      <option v-for="option in options" :key="option.value" :value="option.value">
+        {{ option.text }}
+      </option>
+    </select>
+  </div>
 </template>
 
 <style scoped></style>

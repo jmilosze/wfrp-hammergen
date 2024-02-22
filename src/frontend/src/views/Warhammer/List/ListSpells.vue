@@ -65,13 +65,14 @@ function formatSpellRow(spell: Spell): TableRow {
 
 <template>
   <Header title="Spells"> </Header>
-  <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" />
+  <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"
     :items="items"
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="authStore.loggedIn"
+    class="mx-1"
     @createNew="router.push({ name: 'spell', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }">

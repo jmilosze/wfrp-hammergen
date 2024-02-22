@@ -65,13 +65,14 @@ function formatTalentRow(talent: Talent): TableRow {
 
 <template>
   <Header title="Talents"> </Header>
-  <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" />
+  <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"
     :items="items"
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="authStore.loggedIn"
+    class="mx-1"
     @createNew="router.push({ name: 'talent', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }">

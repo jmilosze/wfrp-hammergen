@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhListUtils } from "../../../composables/whList.ts";
-import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
+import { Mutation, MutationApi, printMutationType } from "../../../services/wh/mutation.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -16,7 +16,7 @@ import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { queryParamsFromRouterQuery, queryParamsToRouterQuery, SimpleQuery } from "../../../utils/queryParams.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
-const whList = useWhListUtils(new PrayerApi(authRequest));
+const whList = useWhListUtils(new MutationApi(authRequest));
 await whList.loadWhList();
 
 const elementToDelete = ref({ id: "", name: "" });
@@ -36,6 +36,7 @@ const authStore = useAuthStore();
 
 const columns = [
   { name: "name", displayName: "Name" },
+  { name: "type", displayName: "Type" },
   { name: "description", displayName: "Description" },
   { name: "source", displayName: "Source" },
   { name: "actions", displayName: "Actions" },
@@ -44,26 +45,30 @@ const columns = [
 const items = computed(() => {
   return whList.whList.value
     .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
-    .map((x) => formatPrayerRow(x))
+    .map((x) => formatMutationRow(x))
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
 
-function formatPrayerRow(prayer: Prayer): TableRow {
+function formatMutationRow(mutation: Mutation): TableRow {
   return {
-    name: addSpaces(prayer.name),
-    source: Object.keys(prayer.source)
+    name: addSpaces(mutation.name),
+    type: printMutationType(mutation.type),
+    source: Object.keys(mutation.source)
       .map((x) => source[x])
       .join(", "),
-    description: prayer.description,
-    canEdit: prayer.canEdit,
-    id: prayer.id,
+    description: mutation.description,
+    canEdit: mutation.canEdit,
+    id: mutation.id,
   };
 }
 </script>
 
 <template>
-  <Header title="Prayers"> </Header>
-  <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
+  <Header title="Mutations"> </Header>
+  <div class="flex flex-wrap justify-between">
+    <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
+    <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
+  </div>
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"
@@ -71,7 +76,7 @@ function formatPrayerRow(prayer: Prayer): TableRow {
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="authStore.loggedIn"
     class="mx-1"
-    @createNew="router.push({ name: 'prayer', params: { id: 'create' } })"
+    @createNew="router.push({ name: 'mutation', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }">
       <ActionButtons
@@ -79,7 +84,7 @@ function formatPrayerRow(prayer: Prayer): TableRow {
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="elementToDelete = { name: name, id: id }"
-        @edit="router.push({ name: 'prayer', params: { id: id } })"
+        @edit="router.push({ name: 'mutation', params: { id: id } })"
       />
     </template>
   </TableWithSearch>

@@ -91,7 +91,7 @@ function onListWhClick() {
       </div>
       <div class="py-2">
         <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Careers</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Mutations</NavLink>
+        <NavLink routeName="mutations" variant="side" @click="onListWhClick()">Mutations</NavLink>
         <NavLink routeName="prayers" variant="side" @click="onListWhClick()">Prayers</NavLink>
         <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Qualities and Runes</NavLink>
         <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Skills</NavLink>
@@ -117,7 +117,7 @@ function onListWhClick() {
   <!-- Content and footer-->
   <div class="lg:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
-      <div class="flex-auto p-9 max-w-7xl w-full">
+      <div class="flex-auto p-5 max-w-7xl w-full">
         <RouterView v-slot="{ Component }" :key="reRenderContent">
           <template v-if="Component">
             <Suspense>
