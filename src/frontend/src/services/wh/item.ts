@@ -22,6 +22,16 @@ export const enum ItemType {
   Grimoire,
 }
 
+export const itemTypeList = [
+  ItemType.Melee,
+  ItemType.Ranged,
+  ItemType.Ammunition,
+  ItemType.Armour,
+  ItemType.Container,
+  ItemType.Other,
+  ItemType.Grimoire,
+];
+
 export function printItemType(itemType: ItemType) {
   switch (itemType) {
     case ItemType.Melee:

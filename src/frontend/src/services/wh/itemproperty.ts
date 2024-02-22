@@ -18,6 +18,20 @@ export const enum ItemPropertyType {
   Flaw,
   DwarfRune,
 }
+export const itemPropertyTypeList = [ItemPropertyType.Quality, ItemPropertyType.Flaw, ItemPropertyType.DwarfRune];
+
+export function printItemPropertyType(itemPropertyType: ItemPropertyType) {
+  switch (itemPropertyType) {
+    case ItemPropertyType.Quality:
+      return "Quality";
+    case ItemPropertyType.Flaw:
+      return "Flaw";
+    case ItemPropertyType.DwarfRune:
+      return "Dwarf rune";
+    default:
+      return "";
+  }
+}
 
 const API_BASE_PATH = "/api/wh/property";
 
