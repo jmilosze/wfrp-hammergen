@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("auth", () => {
   const loggedIn = ref(isUserLoggedIn());
   const router = useRouter();
 
-  function callAndLogoutIfUnauthorized(apiCall: (...args: any[]) => Promise<any>, redirectToLogin = true) {
+  function callAndLogoutIfUnauthorized<T>(apiCall: (...args: any[]) => Promise<T>, redirectToLogin = true) {
     return async (...args: any[]) => {
       try {
         return await apiCall(...args);

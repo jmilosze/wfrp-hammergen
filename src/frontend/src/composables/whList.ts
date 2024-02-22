@@ -1,4 +1,4 @@
-import { SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
+import { ApiResponse, SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
 import { useAuthStore } from "../stores/auth.ts";
 import { computed, Ref, ref } from "vue";
 import { sourceOptions } from "../services/wh/source.ts";
@@ -13,7 +13,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
   async function loadWhList(): Promise<void> {
     errors.value = [];
     try {
-      whList.value = await authStore.callAndLogoutIfUnauthorized(elementApi.listElements)();
+      whList.value = (await authStore.callAndLogoutIfUnauthorized(elementApi.listElements)()) as T[];
       loaded.value = true;
     } catch (error) {
       errors.value.push("Server Error.");
@@ -23,12 +23,14 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
 
   async function copyWh(whId: string): Promise<void> {
     try {
-      const whCopy: T = await authStore.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
+      const whCopy: T = (await authStore.callAndLogoutIfUnauthorized(elementApi.getElement)(whId)) as T;
       whCopy.name = whCopy.name + " - copy";
       if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(-SHORT_DESC_REGEX);
       }
-      const { id } = await authStore.callAndLogoutIfUnauthorized(elementApi.createElement)(whCopy);
+      const { id } = (await authStore.callAndLogoutIfUnauthorized(elementApi.createElement)(
+        whCopy,
+      )) as ApiResponse<TApiData>;
 
       whCopy.id = id;
       whCopy.canEdit = true;

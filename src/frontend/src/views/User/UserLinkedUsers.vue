@@ -27,7 +27,7 @@ const validNewSharedAccount = computed(() => {
 });
 
 try {
-  user.value = await callAndLogoutIfUnauthorized(userApi.get)();
+  user.value = (await callAndLogoutIfUnauthorized(userApi.get)()) as User;
 } catch (error) {
   submissionState.value.setFailureFromError(error, []);
 }
@@ -45,7 +45,7 @@ async function addUsername() {
   }
 
   try {
-    const userExists: boolean = await callAndLogoutIfUnauthorized(userApi.checkIfExists)(newSharedAccount.value);
+    const userExists = (await callAndLogoutIfUnauthorized(userApi.checkIfExists)(newSharedAccount.value)) as boolean;
     if (userExists) {
       user.value.addSharedAccount(newSharedAccount.value);
       newSharedAccount.value = "";
