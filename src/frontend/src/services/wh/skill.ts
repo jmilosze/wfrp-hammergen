@@ -19,6 +19,21 @@ export const enum SkillType {
   Mixed,
 }
 
+export const skillTypeList = [SkillType.Basic, SkillType.Advanced, SkillType.Mixed];
+
+export function printSkillType(skillType: SkillType) {
+  switch (skillType) {
+    case SkillType.Basic:
+      return "Basic";
+    case SkillType.Advanced:
+      return "Advanced";
+    case SkillType.Mixed:
+      return "Mixed";
+    default:
+      return "";
+  }
+}
+
 const API_BASE_PATH = "/api/wh/skill";
 
 export interface SkillApiData {

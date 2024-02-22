@@ -29,6 +29,21 @@ export const enum AttributeName {
   Various,
 }
 
+export const attributeNameList = [
+  AttributeName.None,
+  AttributeName.WS,
+  AttributeName.BS,
+  AttributeName.S,
+  AttributeName.T,
+  AttributeName.I,
+  AttributeName.Ag,
+  AttributeName.Dex,
+  AttributeName.Int,
+  AttributeName.WP,
+  AttributeName.Fel,
+  AttributeName.Various,
+];
+
 export function printAttributeName(attributeName: AttributeName) {
   switch (attributeName) {
     case AttributeName.None:

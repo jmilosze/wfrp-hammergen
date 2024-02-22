@@ -94,7 +94,7 @@ function onListWhClick() {
         <NavLink routeName="mutations" variant="side" @click="onListWhClick()">Mutations</NavLink>
         <NavLink routeName="prayers" variant="side" @click="onListWhClick()">Prayers</NavLink>
         <NavLink routeName="properties" variant="side" @click="onListWhClick()">Qualities and Runes</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Skills</NavLink>
+        <NavLink routeName="skills" variant="side" @click="onListWhClick()">Skills</NavLink>
         <NavLink routeName="spells" variant="side" @click="onListWhClick()">Spells</NavLink>
         <NavLink routeName="talents" variant="side" @click="onListWhClick()">Talents</NavLink>
         <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Trappings</NavLink>

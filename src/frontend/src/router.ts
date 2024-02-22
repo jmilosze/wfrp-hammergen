@@ -18,6 +18,8 @@ import CreateMutation from "./views/Warhammer/Edit/CreateMutation.vue";
 import ListMutations from "./views/Warhammer/List/ListMutations.vue";
 import CreateProperty from "./views/Warhammer/Edit/CreateProperty.vue";
 import ListProperties from "./views/Warhammer/List/ListProperties.vue";
+import CreateSkill from "./views/Warhammer/Edit/CreateSkill.vue";
+import ListSkills from "./views/Warhammer/List/ListSkills.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -126,6 +128,17 @@ export default createRouter({
       path: "/property/:id",
       name: "property",
       component: CreateProperty,
+      props: true,
+    },
+    {
+      path: "/skills",
+      name: "skills",
+      component: ListSkills,
+    },
+    {
+      path: "/skill/:id",
+      name: "skill",
+      component: CreateSkill,
       props: true,
     },
   ],
