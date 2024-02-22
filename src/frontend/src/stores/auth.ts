@@ -8,7 +8,10 @@ export const useAuthStore = defineStore("auth", () => {
   const loggedIn = ref(isUserLoggedIn());
   const router = useRouter();
 
-  function callAndLogoutIfUnauthorized<T>(apiCall: (...args: any[]) => Promise<T>, redirectToLogin = true) {
+  function callAndLogoutIfUnauthorized<T>(
+    apiCall: (...args: any[]) => Promise<T>,
+    redirectToLogin = true,
+  ): (...args: any[]) => Promise<T | undefined> {
     return async (...args: any[]) => {
       try {
         return await apiCall(...args);
@@ -27,7 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
     };
   }
 
-  async function logout() {
+  async function logout(): Promise<void> {
     logoutUser();
     loggedIn.value = false;
 
@@ -36,7 +39,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  async function login(username: string, password: string) {
+  async function login(username: string, password: string): Promise<void> {
     await loginUser(username, password);
     loggedIn.value = true;
 
@@ -45,11 +48,11 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  function getLoggedUserInfo() {
+  function getLoggedUserInfo(): { username: string } {
     return getUserInfo();
   }
 
-  function setLoggedUserInfo(username: string) {
+  function setLoggedUserInfo(username: string): void {
     return setUserInfo(username);
   }
 
