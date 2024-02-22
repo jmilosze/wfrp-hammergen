@@ -19,6 +19,8 @@ export const enum MutationType {
   Mental,
 }
 
+export const mutationTypeList = [MutationType.Physical, MutationType.Mental];
+
 export function printMutationType(mutationType: MutationType) {
   switch (mutationType) {
     case MutationType.Physical:

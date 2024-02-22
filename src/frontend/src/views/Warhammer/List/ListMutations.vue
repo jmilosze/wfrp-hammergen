@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhListUtils } from "../../../composables/whList.ts";
-import { Mutation, MutationApi, printMutationType } from "../../../services/wh/mutation.ts";
+import { Mutation, MutationApi, mutationTypeList, printMutationType } from "../../../services/wh/mutation.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -13,7 +13,12 @@ import ActionButtons from "../../../components/ListWh/ActionButtons.vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
-import { queryParamsFromRouterQuery, queryParamsToRouterQuery, SimpleQuery } from "../../../utils/queryParams.ts";
+import {
+  getOptions,
+  queryParamsFromRouterQuery,
+  queryParamsToRouterQuery,
+  SimpleQuery,
+} from "../../../utils/whList.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
 const whList = useWhListUtils(new MutationApi(authRequest));
@@ -22,7 +27,7 @@ await whList.loadWhList();
 const elementToDelete = ref({ id: "", name: "" });
 
 const router = useRouter();
-const queryParams = ref({ search: "", source: "" }) as Ref<SimpleQuery>;
+const queryParams = ref({ search: "", source: "", type: "" }) as Ref<SimpleQuery>;
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
   () => queryParams,
@@ -45,6 +50,7 @@ const columns = [
 const items = computed(() => {
   return whList.whList.value
     .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
+    .filter((wh) => queryParams.value.type === "" || queryParams.value.type === wh.type.toString())
     .map((x) => formatMutationRow(x))
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
@@ -61,13 +67,21 @@ function formatMutationRow(mutation: Mutation): TableRow {
     id: mutation.id,
   };
 }
+
+const filteredTypeOptions = computed(() => {
+  return getOptions(
+    mutationTypeList,
+    whList.whList.value.map((wh) => wh.type),
+    printMutationType,
+  );
+});
 </script>
 
 <template>
   <Header title="Mutations"> </Header>
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
-    <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
+    <SelectInput v-model="queryParams.type" :options="filteredTypeOptions" class="grow mb-2 mx-1" />
   </div>
   <TableWithSearch
     v-model="queryParams.search"

@@ -13,7 +13,7 @@ import ActionButtons from "../../../components/ListWh/ActionButtons.vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
-import { queryParamsFromRouterQuery, queryParamsToRouterQuery, SimpleQuery } from "../../../utils/queryParams.ts";
+import { queryParamsFromRouterQuery, queryParamsToRouterQuery, SimpleQuery } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
 const whList = useWhListUtils(new TalentApi(authRequest));

@@ -1,7 +1,16 @@
 import { ApiResponse, SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
 import { UnauthorizedError, useAuthStore } from "../stores/auth.ts";
 import { computed, Ref, ref } from "vue";
-import { sourceOptions } from "../services/wh/source.ts";
+import { source } from "../services/wh/source.ts";
+
+export const sourceOptions: { text: string; value: string }[] = new Array(Object.keys(source).length + 1);
+
+sourceOptions[0] = { text: "Any source", value: "" };
+let i = 1;
+for (const [key, value] of Object.entries(source)) {
+  sourceOptions[i] = { text: value, value: key };
+  ++i;
+}
 
 export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
   const authStore = useAuthStore();
@@ -67,7 +76,6 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
         sourcesInData.add(source);
       }
     }
-
     return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
   });
 
