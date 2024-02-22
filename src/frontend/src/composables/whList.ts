@@ -3,13 +3,9 @@ import { UnauthorizedError, useAuthStore } from "../stores/auth.ts";
 import { computed, Ref, ref } from "vue";
 import { source } from "../services/wh/source.ts";
 
-export const sourceOptions: { text: string; value: string }[] = new Array(Object.keys(source).length + 1);
-
-sourceOptions[0] = { text: "Any source", value: "" };
-let i = 1;
+const sourceOptions: { text: string; value: string }[] = [{ text: "Any source", value: "" }];
 for (const [key, value] of Object.entries(source)) {
-  sourceOptions[i] = { text: value, value: key };
-  ++i;
+  sourceOptions.push({ text: value, value: key });
 }
 
 export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
