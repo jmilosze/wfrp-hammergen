@@ -81,7 +81,7 @@ async function submitForm() {
         v-model="user.confirmNewPassword"
         type="password"
         class="mt-3"
-        title="Search"
+        title="Confirm new password"
         :validationStatus="passwordMatch"
       />
       <FormStringInput
