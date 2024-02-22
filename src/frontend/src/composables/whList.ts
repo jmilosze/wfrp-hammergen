@@ -61,7 +61,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
   }
 
   const filteredSourceOptions = computed(() => {
-    const sourcesInData = new Set();
+    const sourcesInData: Set<string> = new Set();
     for (const wh of whList.value) {
       for (const source of Object.keys(wh.source)) {
         sourcesInData.add(source);
