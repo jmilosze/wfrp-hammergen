@@ -44,7 +44,7 @@ const searchedItems = computed(() => {
   }
 });
 
-watch(searchedItems, () => {
+watch(searchTermDebounced, () => {
   startRow.value = 0;
 });
 
