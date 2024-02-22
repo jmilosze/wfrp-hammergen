@@ -4,7 +4,7 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 import SubmitButton from "../../components/SubmitButton.vue";
 import { computed, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
-import { useAuthStore } from "../../stores/auth.ts";
+import { UnauthorizedError, useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
@@ -27,9 +27,11 @@ const validNewSharedAccount = computed(() => {
 });
 
 try {
-  user.value = (await callAndLogoutIfUnauthorized(userApi.get)()) as User;
+  user.value = await callAndLogoutIfUnauthorized(userApi.get)();
 } catch (error) {
-  submissionState.value.setFailureFromError(error, []);
+  if (!(error instanceof UnauthorizedError)) {
+    submissionState.value.setFailureFromError(error, []);
+  }
 }
 
 function removeUsername(username: string) {
@@ -45,7 +47,7 @@ async function addUsername() {
   }
 
   try {
-    const userExists = (await callAndLogoutIfUnauthorized(userApi.checkIfExists)(newSharedAccount.value)) as boolean;
+    const userExists = await callAndLogoutIfUnauthorized(userApi.checkIfExists)(newSharedAccount.value);
     if (userExists) {
       user.value.addSharedAccount(newSharedAccount.value);
       newSharedAccount.value = "";
@@ -54,7 +56,9 @@ async function addUsername() {
       submissionState.value.setFailure(`User ${newSharedAccount.value} not found.`);
     }
   } catch (error) {
-    submissionState.value.setFailureFromError(error, []);
+    if (!(error instanceof UnauthorizedError)) {
+      submissionState.value.setFailureFromError(error, []);
+    }
   }
 }
 

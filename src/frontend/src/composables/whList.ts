@@ -1,5 +1,5 @@
 import { ApiResponse, SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
-import { useAuthStore } from "../stores/auth.ts";
+import { UnauthorizedError, useAuthStore } from "../stores/auth.ts";
 import { computed, Ref, ref } from "vue";
 import { sourceOptions } from "../services/wh/source.ts";
 
@@ -13,17 +13,19 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
   async function loadWhList(): Promise<void> {
     errors.value = [];
     try {
-      whList.value = (await authStore.callAndLogoutIfUnauthorized(elementApi.listElements)()) as T[];
+      whList.value = await authStore.callAndLogoutIfUnauthorized(elementApi.listElements)();
       loaded.value = true;
     } catch (error) {
-      errors.value.push("Server Error.");
-      throw error;
+      if (!(error instanceof UnauthorizedError)) {
+        errors.value.push("Server Error.");
+        throw error;
+      }
     }
   }
 
   async function copyWh(whId: string): Promise<void> {
     try {
-      const whCopy: T = (await authStore.callAndLogoutIfUnauthorized(elementApi.getElement)(whId)) as T;
+      const whCopy: T = await authStore.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
       whCopy.name = whCopy.name + " - copy";
       if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(-SHORT_DESC_REGEX);
@@ -51,8 +53,10 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
         }
       }
     } catch (error) {
-      errors.value.push("Server Error.");
-      throw error;
+      if (!(error instanceof UnauthorizedError)) {
+        errors.value.push("Server Error.");
+        throw error;
+      }
     }
   }
 

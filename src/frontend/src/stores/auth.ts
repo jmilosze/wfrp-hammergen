@@ -4,6 +4,13 @@ import { isAxiosError } from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+export class UnauthorizedError extends Error {
+  constructor() {
+    super();
+    this.name = "Unauthorized";
+  }
+}
+
 export const useAuthStore = defineStore("auth", () => {
   const loggedIn = ref(isUserLoggedIn());
   const router = useRouter();
@@ -11,7 +18,7 @@ export const useAuthStore = defineStore("auth", () => {
   function callAndLogoutIfUnauthorized<T>(
     apiCall: (...args: any[]) => Promise<T>,
     redirectToLogin = true,
-  ): (...args: any[]) => Promise<T | undefined> {
+  ): (...args: any[]) => Promise<T> {
     return async (...args: any[]) => {
       try {
         return await apiCall(...args);
@@ -23,6 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
           if (redirectToLogin && router.currentRoute.value.name !== "login") {
             await router.push({ name: "login" });
           }
+          throw new UnauthorizedError();
         } else {
           throw error;
         }
