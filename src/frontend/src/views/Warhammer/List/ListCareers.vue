@@ -14,18 +14,13 @@ import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { TableRow } from "../../../utils/table.ts";
-import { computed, ref, watch, Ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtons from "../../../components/ListWh/ActionButtons.vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
-import {
-  getOptions,
-  queryParamsFromRouterQuery,
-  queryParamsToRouterQuery,
-  SimpleQuery,
-} from "../../../utils/whList.ts";
+import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
 const whList = useWhListUtils(new CareerApi(authRequest));
@@ -34,7 +29,7 @@ await whList.loadWhList();
 const elementToDelete = ref({ id: "", name: "" });
 
 const router = useRouter();
-const queryParams = ref({ search: "", source: "", class: "", species: "" }) as Ref<SimpleQuery>;
+const queryParams = ref({ search: "", source: "", class: "", species: "" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
   () => queryParams,
