@@ -34,7 +34,7 @@ await whList.loadWhList();
 const elementToDelete = ref({ id: "", name: "" });
 
 const router = useRouter();
-const queryParams = ref({ search: "", source: "", type: "" }) as Ref<SimpleQuery>;
+const queryParams = ref({ search: "", source: "", class: "", species: "" }) as Ref<SimpleQuery>;
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
   () => queryParams,
@@ -57,6 +57,8 @@ const columns = [
 const items = computed(() => {
   return whList.whList.value
     .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
+    .filter((wh) => queryParams.value.class === "" || queryParams.value.class === wh.careerClass.toString())
+    .filter((wh) => queryParams.value.species === "" || wh.species.includes(Number(queryParams.value.species)))
     .map((x) => formatCareerRow(x))
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
@@ -91,12 +93,7 @@ const filteredClassOptions = computed(() => {
 });
 
 const filteredSpeciesOptions = computed(() => {
-  return getOptions(
-    speciesList,
-    whList.whList.value.map((wh) => wh.careerClass),
-    printClassName,
-    "Any class",
-  );
+  return getOptions(speciesList, whList.whList.value.map((wh) => wh.species).flat(), printSpeciesName, "Any species");
 });
 </script>
 
@@ -104,7 +101,8 @@ const filteredSpeciesOptions = computed(() => {
   <Header title="Careers"> </Header>
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
-    <!--    <SelectInput v-model="queryParams.type" :options="filteredTypeOptions" class="grow mb-2 mx-1" />-->
+    <SelectInput v-model="queryParams.class" :options="filteredClassOptions" class="grow mb-2 mx-1" />
+    <SelectInput v-model="queryParams.species" :options="filteredSpeciesOptions" class="grow mb-2 mx-1" />
   </div>
   <TableWithSearch
     v-model="queryParams.search"
