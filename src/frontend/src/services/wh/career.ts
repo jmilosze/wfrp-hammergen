@@ -25,6 +25,17 @@ export const enum CareerClass {
   Seafarer,
 }
 
+export const careerClassList = [
+  CareerClass.Academic,
+  CareerClass.Burghers,
+  CareerClass.Courtier,
+  CareerClass.Peasant,
+  CareerClass.Ranger,
+  CareerClass.Rougue,
+  CareerClass.Warrior,
+  CareerClass.Seafarer,
+];
+
 export function printClassName(careerClass: CareerClass) {
   switch (careerClass) {
     case CareerClass.Academic:
@@ -79,6 +90,37 @@ export enum Species {
   WoodElf,
   Gnome,
   Ogre,
+}
+
+export const speciesList = [
+  Species.Human,
+  Species.Halfling,
+  Species.Dwarf,
+  Species.HighElf,
+  Species.WoodElf,
+  Species.Gnome,
+  Species.Ogre,
+];
+
+export function printSpeciesName(species: Species) {
+  switch (species) {
+    case Species.Human:
+      return "Human";
+    case Species.Halfling:
+      return "Halfling";
+    case Species.Dwarf:
+      return "Dwarf";
+    case Species.HighElf:
+      return "High Elf";
+    case Species.WoodElf:
+      return "Wood Elf";
+    case Species.Gnome:
+      return "Gnome";
+    case Species.Ogre:
+      return "Ogre";
+    default:
+      return "";
+  }
 }
 
 export type CareerLevel = {

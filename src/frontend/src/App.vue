@@ -90,7 +90,7 @@ function onListWhClick() {
         <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Characters</NavLink>
       </div>
       <div class="py-2">
-        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Careers</NavLink>
+        <NavLink routeName="careers" variant="side" @click="onListWhClick()">Careers</NavLink>
         <NavLink routeName="mutations" variant="side" @click="onListWhClick()">Mutations</NavLink>
         <NavLink routeName="prayers" variant="side" @click="onListWhClick()">Prayers</NavLink>
         <NavLink routeName="properties" variant="side" @click="onListWhClick()">Qualities and Runes</NavLink>
