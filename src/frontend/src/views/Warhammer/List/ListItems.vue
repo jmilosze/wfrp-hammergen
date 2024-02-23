@@ -1,6 +1,20 @@
 <script setup lang="ts">
 import { useWhListUtils } from "../../../composables/whList.ts";
-import { Item, ItemApi, ItemType, itemTypeList, printItemType } from "../../../services/wh/item.ts";
+import {
+  Item,
+  ItemApi,
+  ItemType,
+  itemTypeList,
+  meleeGroupList,
+  printItemType,
+  printMeleeGroup,
+  printRangedGroup,
+  rangedGroupList,
+  ammoGroupList,
+  printAmmoGroup,
+  armourGroupList,
+  printArmourGroup,
+} from "../../../services/wh/item.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -44,9 +58,23 @@ const items = computed(() => {
   return whList.whList.value
     .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
     .filter((wh) => queryParams.value.type === "" || queryParams.value.type === wh.type.toString())
+    .filter((wh) => queryParams.value.group === "" || filterGroup(queryParams.value.type, queryParams.value.group, wh))
     .map((x) => formatItemRow(x))
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
+
+function filterGroup(type: string, group: string, wh: Item) {
+  if (type === ItemType.Melee.toString() && group === wh.melee.group.toString()) {
+    return true;
+  }
+  if (type === ItemType.Ranged.toString() && group === wh.ranged.group.toString()) {
+    return true;
+  }
+  if (type === ItemType.Ranged.toString() && group === wh.ranged.group.toString()) {
+    return true;
+  }
+  return type === ItemType.Armour.toString() && group === wh.armour.group.toString();
+}
 
 function formatItemRow(item: Item): TableRow {
   return {
@@ -83,11 +111,32 @@ const selectedTypeHasGroup = computed(() => {
 
 const filteredGroupOptions = computed(() => {
   if (selectedTypeHasGroup.value) {
-    return [{ text: "Any group", value: "" }];
+    const anyGroup = { text: "Any group", value: "" };
+    switch (queryParams.value.type) {
+      case ItemType.Melee.toString():
+        return [anyGroup, ...meleeGroupList.map((x) => ({ text: printMeleeGroup(x), value: x.toString() }))];
+      case ItemType.Ranged.toString():
+        return [anyGroup, ...rangedGroupList.map((x) => ({ text: printRangedGroup(x), value: x.toString() }))];
+      case ItemType.Ammunition.toString():
+        return [anyGroup, ...ammoGroupList.map((x) => ({ text: printAmmoGroup(x), value: x.toString() }))];
+      case ItemType.Armour.toString():
+        return [anyGroup, ...armourGroupList.map((x) => ({ text: printArmourGroup(x), value: x.toString() }))];
+      default:
+        return [anyGroup];
+    }
   } else {
     return [];
   }
 });
+
+watch(
+  () => selectedTypeHasGroup,
+  (newValue) => {
+    if (!newValue.value) {
+      queryParams.value.group = "";
+    }
+  },
+);
 </script>
 
 <template>
