@@ -97,7 +97,7 @@ function onListWhClick() {
         <NavLink routeName="skills" variant="side" @click="onListWhClick()">Skills</NavLink>
         <NavLink routeName="spells" variant="side" @click="onListWhClick()">Spells</NavLink>
         <NavLink routeName="talents" variant="side" @click="onListWhClick()">Talents</NavLink>
-        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Trappings</NavLink>
+        <NavLink routeName="items" variant="side" @click="onListWhClick()">Trappings</NavLink>
       </div>
       <div v-if="authStore.loggedIn" class="py-2">
         <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked Users</NavLink>

@@ -22,6 +22,8 @@ import CreateSkill from "./views/Warhammer/Edit/CreateSkill.vue";
 import ListSkills from "./views/Warhammer/List/ListSkills.vue";
 import ListCareers from "./views/Warhammer/List/ListCareers.vue";
 import CreateCareer from "./views/Warhammer/Edit/CreateCareer.vue";
+import CreateItem from "./views/Warhammer/Edit/CreateItem.vue";
+import ListItems from "./views/Warhammer/List/ListItems.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -152,6 +154,17 @@ export default createRouter({
       path: "/career/:id",
       name: "career",
       component: CreateCareer,
+      props: true,
+    },
+    {
+      path: "/items",
+      name: "items",
+      component: ListItems,
+    },
+    {
+      path: "/item/:id",
+      name: "item",
+      component: CreateItem,
       props: true,
     },
   ],
