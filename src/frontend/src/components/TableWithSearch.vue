@@ -92,7 +92,7 @@ onUpdated(() => {
         class="border border-neutral-300 rounded h-10 px-2 focus:border-neutral-700 focus:border-2 grow"
       />
     </div>
-    <div v-if="items.length > 0">
+    <div v-if="searchedItems.length > 0">
       <TablePagination
         v-model="startRow"
         :totalRows="searchedItems.length"
