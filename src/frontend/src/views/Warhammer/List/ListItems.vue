@@ -77,8 +77,12 @@ const itemsWithGroups: string[] = [
   ItemType.Armour.toString(),
 ];
 
+const selectedTypeHasGroup = computed(() => {
+  return queryParams.value.type in itemsWithGroups;
+});
+
 const filteredGroupOptions = computed(() => {
-  if (queryParams.value.type in itemsWithGroups) {
+  if (selectedTypeHasGroup.value) {
     return [{ text: "Any group", value: "" }];
   } else {
     return [];
@@ -94,7 +98,7 @@ const filteredGroupOptions = computed(() => {
     <SelectInput
       v-model="queryParams.group"
       :options="filteredGroupOptions"
-      :disabled="true"
+      :disabled="!selectedTypeHasGroup"
       class="grow mb-2 mx-1 w-10"
     />
   </div>

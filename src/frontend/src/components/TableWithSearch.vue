@@ -89,7 +89,7 @@ onUpdated(() => {
         v-model="searchTerm"
         type="text"
         placeholder="Type to Search"
-        class="border-2 border-neutral-200 rounded h-10 px-2 focus:border-neutral-700 transition-colors duration-200 grow"
+        class="border border-neutral-300 rounded h-10 px-2 focus:border-neutral-700 focus:border-2 grow"
       />
     </div>
     <TablePagination
@@ -100,18 +100,18 @@ onUpdated(() => {
       @update:modelValue="needToScroll = 'top'"
     />
     <div class="overflow-x-auto">
-      <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-200 min-w-fit">
+      <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
         <table v-if="isEqualOrGreater" class="w-full">
           <thead>
             <tr class="text-left">
-              <th v-for="field in fields" :key="field.name" class="border-b border-neutral-200 py-2 px-5">
+              <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
                 {{ field.displayName }}
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
-              <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-200">
+              <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
                 <slot :name="field.name" v-bind="item">{{ item[field.name] }}</slot>
               </td>
             </tr>
@@ -120,13 +120,13 @@ onUpdated(() => {
         <table v-else class="w-full">
           <thead>
             <tr class="text-left">
-              <th class="border-b border-neutral-200 py-2 px-5"></th>
+              <th class="border-b border-neutral-300 py-2 px-5"></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
               <td class="text-sm">
-                <div v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-200">
+                <div v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
                   <span class="font-bold">{{ field.displayName }}: </span>
                   <slot :name="field.name" v-bind="item">{{ item[field.name] }}</slot>
                 </div>

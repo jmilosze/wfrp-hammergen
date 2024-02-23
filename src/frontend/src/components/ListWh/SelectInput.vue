@@ -27,7 +27,7 @@ const value = computed({
     <div v-if="title" class="mb-1">{{ title }}</div>
     <select
       v-model="value"
-      class="border-2 border-neutral-200 focus:border-neutral-700 rounded outline-0 h-10 px-2 w-full bg-white disabled:bg-neutral-200"
+      class="border border-neutral-300 focus:border-neutral-700 focus:border-2 rounded outline-0 h-10 px-2 w-full bg-white disabled:bg-neutral-200"
       :disabled="disabled"
     >
       <option v-for="option in options" :key="option.value" :value="option.value">
