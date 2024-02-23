@@ -26,8 +26,6 @@ import SelectInput from "../../../components/ListWh/SelectInput.vue";
 const whList = useWhListUtils(new CareerApi(authRequest));
 await whList.loadWhList();
 
-const elementToDelete = ref({ id: "", name: "" });
-
 const router = useRouter();
 const queryParams = ref({ search: "", source: "", class: "", species: "" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
@@ -113,13 +111,13 @@ const filteredSpeciesOptions = computed(() => {
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="elementToDelete = { name: name, id: id }"
+        @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'career', params: { id: id } })"
       />
     </template>
   </TableWithSearch>
 
-  <DeleteModal :elementToDelete="elementToDelete" @deleteConfirmed="whList.deleteWh(elementToDelete.id)" />
+  <DeleteModal :elementToDelete="whList.whToDelete.value" @deleteConfirmed="whList.deleteWh()" />
 </template>
 
 <style scoped></style>

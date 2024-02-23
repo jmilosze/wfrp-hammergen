@@ -25,8 +25,6 @@ import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
 const whList = useWhListUtils(new ItemPropertyApi(authRequest));
 await whList.loadWhList();
 
-const elementToDelete = ref({ id: "", name: "" });
-
 const router = useRouter();
 const queryParams = ref({ search: "", source: "", type: "", applicableTo: "" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
@@ -121,13 +119,13 @@ const filteredApplicableToOptions = computed(() => {
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="elementToDelete = { name: name, id: id }"
+        @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'property', params: { id: id } })"
       />
     </template>
   </TableWithSearch>
 
-  <DeleteModal :elementToDelete="elementToDelete" @deleteConfirmed="whList.deleteWh(elementToDelete.id)" />
+  <DeleteModal :elementToDelete="whList.whToDelete.value" @deleteConfirmed="whList.deleteWh()" />
 </template>
 
 <style scoped></style>

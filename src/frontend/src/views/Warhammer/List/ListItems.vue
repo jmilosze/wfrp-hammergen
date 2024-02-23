@@ -19,8 +19,6 @@ import SelectInput from "../../../components/ListWh/SelectInput.vue";
 const whList = useWhListUtils(new ItemApi(authRequest));
 await whList.loadWhList();
 
-const elementToDelete = ref({ id: "", name: "" });
-
 const router = useRouter();
 const queryParams = ref({ search: "", source: "", type: "", group: "" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
@@ -93,13 +91,13 @@ const filteredTypeOptions = computed(() => {
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="elementToDelete = { name: name, id: id }"
+        @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'item', params: { id: id } })"
       />
     </template>
   </TableWithSearch>
 
-  <DeleteModal :elementToDelete="elementToDelete" @deleteConfirmed="whList.deleteWh(elementToDelete.id)" />
+  <DeleteModal :elementToDelete="whList.whToDelete.value" @deleteConfirmed="whList.deleteWh()" />
 </template>
 
 <style scoped></style>
