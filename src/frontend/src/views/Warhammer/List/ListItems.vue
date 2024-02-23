@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhListUtils } from "../../../composables/whList.ts";
-import { Item, ItemApi, itemTypeList, printItemType } from "../../../services/wh/item.ts";
+import { Item, ItemApi, ItemType, itemTypeList, printItemType } from "../../../services/wh/item.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -69,6 +69,21 @@ const filteredTypeOptions = computed(() => {
     "Any type",
   );
 });
+
+const itemsWithGroups: string[] = [
+  ItemType.Melee.toString(),
+  ItemType.Ranged.toString(),
+  ItemType.Ammunition.toString(),
+  ItemType.Armour.toString(),
+];
+
+const filteredGroupOptions = computed(() => {
+  if (queryParams.value.type in itemsWithGroups) {
+    return [{ text: "Any group", value: "" }];
+  } else {
+    return [];
+  }
+});
 </script>
 
 <template>
@@ -76,6 +91,12 @@ const filteredTypeOptions = computed(() => {
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
     <SelectInput v-model="queryParams.type" :options="filteredTypeOptions" class="grow mb-2 mx-1" />
+    <SelectInput
+      v-model="queryParams.group"
+      :options="filteredGroupOptions"
+      :disabled="true"
+      class="grow mb-2 mx-1 w-10"
+    />
   </div>
   <TableWithSearch
     v-model="queryParams.search"

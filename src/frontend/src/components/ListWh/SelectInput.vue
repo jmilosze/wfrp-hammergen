@@ -5,6 +5,7 @@ const props = defineProps<{
   modelValue: string | number;
   options: { text: string; value: string | number }[];
   title?: string;
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -26,7 +27,8 @@ const value = computed({
     <div v-if="title" class="mb-1">{{ title }}</div>
     <select
       v-model="value"
-      class="border-2 border-neutral-200 focus:border-neutral-700 rounded outline-0 h-10 px-2 w-full bg-white"
+      class="border-2 border-neutral-200 focus:border-neutral-700 rounded outline-0 h-10 px-2 w-full bg-white disabled:bg-neutral-200"
+      :disabled="disabled"
     >
       <option v-for="option in options" :key="option.value" :value="option.value">
         {{ option.text }}
