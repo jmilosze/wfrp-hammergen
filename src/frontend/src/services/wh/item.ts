@@ -64,6 +64,17 @@ export const enum MeleeGroup {
   TwoHanded,
 }
 
+export const meleeGroupList = [
+  MeleeGroup.Basic,
+  MeleeGroup.Cavalry,
+  MeleeGroup.Fencing,
+  MeleeGroup.Brawling,
+  MeleeGroup.Flail,
+  MeleeGroup.Parry,
+  MeleeGroup.Polearm,
+  MeleeGroup.TwoHanded,
+];
+
 export function printMeleeGroup(meleeGroup: MeleeGroup) {
   switch (meleeGroup) {
     case MeleeGroup.Basic:
@@ -99,6 +110,18 @@ export const enum RangedGroup {
   Blowpipe,
 }
 
+export const rangedGroupList = [
+  RangedGroup.Blackpowder,
+  RangedGroup.Bow,
+  RangedGroup.Crossbow,
+  RangedGroup.Engineering,
+  RangedGroup.Entangling,
+  RangedGroup.Explosives,
+  RangedGroup.Sling,
+  RangedGroup.Throwing,
+  RangedGroup.Blowpipe,
+];
+
 export function printRangedGroup(rangedGroup: RangedGroup) {
   switch (rangedGroup) {
     case RangedGroup.Blackpowder:
@@ -133,6 +156,15 @@ export const enum AmmoGroup {
   Blowpipe,
 }
 
+export const ammoGroupList = [
+  AmmoGroup.BlackpowderAndEngineering,
+  AmmoGroup.Bow,
+  AmmoGroup.Crossbow,
+  AmmoGroup.Sling,
+  AmmoGroup.Entangling,
+  AmmoGroup.Blowpipe,
+];
+
 export function printAmmoGroup(ammoGroup: AmmoGroup) {
   switch (ammoGroup) {
     case AmmoGroup.BlackpowderAndEngineering:
@@ -160,6 +192,15 @@ export const enum ArmourGroup {
   SoftKit,
   Brigandine,
 }
+
+export const armourGroupList = [
+  ArmourGroup.SoftLeather,
+  ArmourGroup.BoiledLeather,
+  ArmourGroup.Mail,
+  ArmourGroup.Plate,
+  ArmourGroup.SoftKit,
+  ArmourGroup.Brigandine,
+];
 
 export function printArmourGroup(armourGroup: ArmourGroup) {
   switch (armourGroup) {

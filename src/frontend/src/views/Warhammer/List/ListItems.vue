@@ -22,7 +22,7 @@ await whList.loadWhList();
 const elementToDelete = ref({ id: "", name: "" });
 
 const router = useRouter();
-const queryParams = ref({ search: "", source: "", type: "" });
+const queryParams = ref({ search: "", source: "", type: "", group: "" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
   () => queryParams,
