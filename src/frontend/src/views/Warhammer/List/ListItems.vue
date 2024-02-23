@@ -70,7 +70,7 @@ function filterGroup(type: string, group: string, wh: Item) {
   if (type === ItemType.Ranged.toString() && group === wh.ranged.group.toString()) {
     return true;
   }
-  if (type === ItemType.Ranged.toString() && group === wh.ranged.group.toString()) {
+  if (type === ItemType.Ammunition.toString() && group === wh.ammunition.group.toString()) {
     return true;
   }
   return type === ItemType.Armour.toString() && group === wh.armour.group.toString();
@@ -105,12 +105,8 @@ const itemsWithGroups: string[] = [
   ItemType.Armour.toString(),
 ];
 
-const selectedTypeHasGroup = computed(() => {
-  return queryParams.value.type in itemsWithGroups;
-});
-
 const filteredGroupOptions = computed(() => {
-  if (selectedTypeHasGroup.value) {
+  if (queryParams.value.type in itemsWithGroups) {
     const anyGroup = { text: "Any group", value: "" };
     switch (queryParams.value.type) {
       case ItemType.Melee.toString():
@@ -130,11 +126,9 @@ const filteredGroupOptions = computed(() => {
 });
 
 watch(
-  () => selectedTypeHasGroup,
-  (newValue) => {
-    if (!newValue.value) {
-      queryParams.value.group = "";
-    }
+  () => queryParams.value.type,
+  () => {
+    queryParams.value.group = "";
   },
 );
 </script>
@@ -147,8 +141,8 @@ watch(
     <SelectInput
       v-model="queryParams.group"
       :options="filteredGroupOptions"
-      :disabled="!selectedTypeHasGroup"
-      class="grow mb-2 mx-1 w-10"
+      :disabled="!(queryParams.type in itemsWithGroups)"
+      class="grow mb-2 mx-1 w-32"
     />
   </div>
   <TableWithSearch
