@@ -87,7 +87,7 @@ function onListWhClick() {
     </div>
     <div class="pl-3 pr-3 divide-y divide-neutral-700">
       <div class="text-xl pb-2">
-        <NavLink routeName="placeholder" variant="side" @click="onListWhClick()">Characters</NavLink>
+        <NavLink routeName="characters" variant="side" @click="onListWhClick()">Characters</NavLink>
       </div>
       <div class="py-2">
         <NavLink routeName="careers" variant="side" @click="onListWhClick()">Careers</NavLink>
