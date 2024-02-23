@@ -56,7 +56,6 @@ function formatCharacterRow(character: Character): TableRow {
 
 <template>
   <Header title="Characters"> </Header>
-  <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"
