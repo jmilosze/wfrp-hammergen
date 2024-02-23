@@ -9,7 +9,7 @@ import { source } from "../../../services/wh/source.ts";
 import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
-import ActionButtons from "../../../components/ListWh/ActionButtons.vue";
+import ActionButtonsNonCharacter from "../../../components/ListWh/ActionButtonsNonCharacter.vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
@@ -101,7 +101,7 @@ const filteredAttributeOptions = computed(() => {
     @createNew="router.push({ name: 'skill', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }">
-      <ActionButtons
+      <ActionButtonsNonCharacter
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"

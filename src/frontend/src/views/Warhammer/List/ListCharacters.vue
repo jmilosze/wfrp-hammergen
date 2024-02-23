@@ -8,12 +8,11 @@ import { addSpaces } from "../../../utils/string.ts";
 import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
-import ActionButtons from "../../../components/ListWh/ActionButtons.vue";
+import ActionButtonsCharacter from "../../../components/ListWh/ActionButtonsCharacter.vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
-import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
 const whList = useWhListUtils(new CharacterApi(authRequest));
 await whList.loadWhList();
@@ -66,12 +65,13 @@ function formatCharacterRow(character: Character): TableRow {
     @createNew="router.push({ name: 'character', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }">
-      <ActionButtons
+      <ActionButtonsCharacter
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'character', params: { id: id } })"
+        @view="router.push({ name: 'viewCharacter', params: { id: id } })"
       />
     </template>
   </TableWithSearch>
