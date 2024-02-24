@@ -32,8 +32,7 @@ async function loadCharacter() {
 
 <template>
   <Header title="Character details"> </Header>
-  <div v-if="id === 'create'">Viewcharacter.</div>
-  <div v-else>View character {{ id }}</div>
+  <div>View character {{ character.name }}</div>
 </template>
 
 <style scoped></style>
