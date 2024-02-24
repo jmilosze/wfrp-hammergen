@@ -4,11 +4,11 @@ import { SubmissionState } from "../utils/submission.ts";
 
 const props = defineProps<{
   submissionState: SubmissionState;
-  variant?: "normal" | "danger";
+  variant?: "normal" | "red";
 }>();
 
 function setClass() {
-  if (props.variant && props.variant == "danger") {
+  if (props.variant === "red") {
     return "bg-red-600 hover:bg-red-800 rounded text-neutral-50 px-3 py-2 active:outline outline-2 outline-red-400 select-none";
   } else {
     return "bg-neutral-600 hover:bg-neutral-800 rounded text-neutral-50 px-3 py-2 active:outline outline-2 outline-neutral-400 select-none";

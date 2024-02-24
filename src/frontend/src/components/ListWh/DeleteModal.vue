@@ -33,7 +33,7 @@ watch(
   <ModalWindow id="deleteModal">
     <template #header> Delete Prayer </template>
     <template #buttons>
-      <ActionButton variant="danger" @click="deleteElement()">Delete</ActionButton>
+      <ActionButton variant="red" @click="deleteElement()">Delete</ActionButton>
       <ActionButton variant="normal" class="ml-3" @click="modal.hideModal()">Cancel</ActionButton>
     </template>
     <div>

@@ -63,7 +63,7 @@ async function submitForm() {
         title="Current password"
         :validationStatus="validCurrentPassword"
       />
-      <SubmitButton class="mt-3" :submissionState="submissionState" :variant="'danger'" @click="submitForm"
+      <SubmitButton class="mt-3" :submissionState="submissionState" variant="red" @click="submitForm"
         >Delete account</SubmitButton
       >
     </div>
