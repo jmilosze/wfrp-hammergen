@@ -11,7 +11,8 @@ import FormStringInput from "../../components/FormStringInput.vue";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
 
-const submissionState = ref(new SubmissionState());
+const applyChangesSubmissionState = ref(new SubmissionState());
+const addUserSubmissionState = ref(new SubmissionState());
 const newSharedAccount = ref("");
 const user = ref(new User());
 const userApi = new UserApi(authRequest);
@@ -19,7 +20,7 @@ const userApi = new UserApi(authRequest);
 const { callAndLogoutIfUnauthorized } = useAuthStore();
 
 const validNewSharedAccount = computed(() => {
-  if (submissionState.value.notStartedOrSubmitted()) {
+  if (addUserSubmissionState.value.notStartedOrSubmitted()) {
     return setValidationStatus(true);
   } else {
     return user.value.validateNewSharedAccount(newSharedAccount.value);
@@ -30,7 +31,7 @@ try {
   user.value = await callAndLogoutIfUnauthorized(userApi.get)();
 } catch (error) {
   if (!(error instanceof UnauthorizedError)) {
-    submissionState.value.setFailureFromError(error, []);
+    applyChangesSubmissionState.value.setFailureFromError(error, []);
   }
 }
 
@@ -39,10 +40,10 @@ function removeUsername(username: string) {
 }
 
 async function addUsername() {
-  submissionState.value.setInProgress();
+  addUserSubmissionState.value.setInProgress();
 
   if (!validNewSharedAccount.value.valid) {
-    submissionState.value.setValidationError();
+    addUserSubmissionState.value.setValidationError();
     return;
   }
 
@@ -51,27 +52,27 @@ async function addUsername() {
     if (userExists) {
       user.value.addSharedAccount(newSharedAccount.value);
       newSharedAccount.value = "";
-      submissionState.value.setSuccess("");
+      addUserSubmissionState.value.setSuccess("");
     } else {
-      submissionState.value.setFailure(`User ${newSharedAccount.value} not found.`);
+      addUserSubmissionState.value.setFailure(`User ${newSharedAccount.value} not found.`);
     }
   } catch (error) {
     if (!(error instanceof UnauthorizedError)) {
-      submissionState.value.setFailureFromError(error, []);
+      addUserSubmissionState.value.setFailureFromError(error, []);
     }
   }
 }
 
 async function submitForm() {
-  submissionState.value.setInProgress();
+  applyChangesSubmissionState.value.setInProgress();
 
   try {
     await callAndLogoutIfUnauthorized(userApi.updateSharedAccounts)(user.value);
-    submissionState.value.setSuccess(
+    applyChangesSubmissionState.value.setSuccess(
       "Linked user list updated successfully! In order to be able to see content shared by newly added users please log out and then log back in.",
     );
   } catch (error) {
-    submissionState.value.setFailureFromError(error, []);
+    applyChangesSubmissionState.value.setFailureFromError(error, []);
   }
 }
 </script>
@@ -121,7 +122,8 @@ async function submitForm() {
     </div>
   </div>
   <div class="pt-2 md:w-96">
-    <AfterSubmit class="mt-2" :submissionState="submissionState" />
+    <AfterSubmit class="mt-2" :submissionState="applyChangesSubmissionState" />
+    <AfterSubmit class="mt-2" :submissionState="addUserSubmissionState" />
     <FormStringInput
       v-model="newSharedAccount"
       type="text"
@@ -129,11 +131,13 @@ async function submitForm() {
       title="Add new user (email)"
       :validationStatus="validNewSharedAccount"
     >
-      <SubmitButton variant="normal" class="ml-3" :submissionState="submissionState" @click="addUsername"
+      <SubmitButton variant="normal" class="ml-3" :submissionState="addUserSubmissionState" @click="addUsername"
         >Add</SubmitButton
       >
     </FormStringInput>
-    <SubmitButton class="mt-3" :submissionState="submissionState" @click="submitForm">Apply changes</SubmitButton>
+    <SubmitButton class="mt-3" :submissionState="applyChangesSubmissionState" @click="submitForm"
+      >Apply changes</SubmitButton
+    >
   </div>
 </template>
 
