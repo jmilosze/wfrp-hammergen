@@ -12,7 +12,6 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
   const authStore = useAuthStore();
 
   const whToDelete = ref({ id: "", name: "" });
-  const loaded = ref(false);
   const errors: Ref<string[]> = ref([]);
   const whList: Ref<T[]> = ref([]);
 
@@ -20,7 +19,6 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     errors.value = [];
     try {
       whList.value = await authStore.callAndLogoutIfUnauthorized(elementApi.listElements)();
-      loaded.value = true;
     } catch (error) {
       if (!(error instanceof UnauthorizedError)) {
         errors.value.push("Server Error.");
@@ -76,5 +74,5 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
   });
 
-  return { loaded, errors, whList, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
+  return { errors, whList, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
 }
