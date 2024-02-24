@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import SpinnerAnimation from "./SpinnerAnimation.vue";
 
 const props = defineProps<{
   variant?: "normal" | "red" | "amber";
   size?: "md" | "sm";
+  spinner?: boolean;
 }>();
 
 const btnClass = ref(["rounded", "active:outline", "outline-2", "outline-neutral-400", "select-none"]);
@@ -21,10 +23,21 @@ if (props.size === "sm") {
 } else {
   btnClass.value.push(...["px-3", "py-2"]);
 }
+
+const spinnerClass = computed(() => {
+  if (props.spinner) {
+    return ["w-4", "h-4", "ml-2"];
+  } else {
+    return ["w-4", "h-4", "ml-2", "hidden"];
+  }
+});
 </script>
 
 <template>
   <button :class="btnClass">
-    <slot></slot>
+    <span class="flex justify-between items-center">
+      <slot></slot>
+      <SpinnerAnimation class="w-4 h-4 ml-2" :class="spinnerClass" />
+    </span>
   </button>
 </template>
