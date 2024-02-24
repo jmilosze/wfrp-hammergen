@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from "../../stores/auth.ts";
-import ActionButton from "./ActionButton.vue";
+import ActionButton from "../ActionButton.vue";
 
 defineProps<{
   canEdit: boolean;
@@ -18,9 +18,11 @@ const authStore = useAuthStore();
 
 <template>
   <div class="flex">
-    <ActionButton @click="emit('edit', id)">{{ canEdit ? "View/Edit" : "View" }}</ActionButton>
-    <ActionButton v-if="authStore.loggedIn" :variant="'amber'" @click="emit('copy', id)">Copy</ActionButton>
-    <ActionButton v-if="canEdit" :variant="'danger'" @click="emit('delete', id)">Delete</ActionButton>
+    <ActionButton size="sm" class="mx-1" @click="emit('edit', id)">{{ canEdit ? "View/Edit" : "View" }}</ActionButton>
+    <ActionButton v-if="authStore.loggedIn" size="sm" variant="amber" class="mx-1" @click="emit('copy', id)"
+      >Copy</ActionButton
+    >
+    <ActionButton v-if="canEdit" size="sm" variant="red" class="mx-1" @click="emit('delete', id)">Delete</ActionButton>
   </div>
 </template>
 
