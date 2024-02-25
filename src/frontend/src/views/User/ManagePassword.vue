@@ -8,9 +8,11 @@ import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
 import ActionButton from "../../components/ActionButton.vue";
+import { useAfterSubmit } from "../../composables/afterSubmit.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const afterSubmit = useAfterSubmit();
 const userApi = new UserApi(authRequest);
 
 const { getLoggedUserInfo, callAndLogoutIfUnauthorized } = useAuthStore();
@@ -47,6 +49,8 @@ async function submitForm() {
     return;
   }
 
+  afterSubmit.showAfterSubmit();
+
   try {
     user.value.email = getLoggedUserInfo().username.toLowerCase();
     await callAndLogoutIfUnauthorized(userApi.updatePassword)(user.value);
@@ -69,7 +73,11 @@ async function submitForm() {
   <div class="mt-5 pb-2 pl-2 border-b-2 border-neutral-200">
     <div class="text-xl">Change password</div>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submissionState="submissionState" />
+      <AfterSubmit
+        v-if="afterSubmit.show.value"
+        :submissionState="submissionState"
+        @close="afterSubmit.hideAfterSubmit()"
+      />
       <FormStringInput
         v-model="user.newPassword"
         type="password"

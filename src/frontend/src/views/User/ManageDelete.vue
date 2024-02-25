@@ -8,9 +8,11 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
 import ActionButton from "../../components/ActionButton.vue";
+import { useAfterSubmit } from "../../composables/afterSubmit.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const afterSubmit = useAfterSubmit();
 const userApi = new UserApi(authRequest);
 
 const { callAndLogoutIfUnauthorized, logout } = useAuthStore();
@@ -30,6 +32,8 @@ async function submitForm() {
     submissionState.value.setValidationError();
     return;
   }
+
+  afterSubmit.showAfterSubmit();
 
   try {
     await callAndLogoutIfUnauthorized(userApi.delete)(user.value);
@@ -55,7 +59,11 @@ async function submitForm() {
     <div class="text-xl">Delete account</div>
     <p>The account and all its data will be deleted. It will be impossible to recover.</p>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submissionState="submissionState" />
+      <AfterSubmit
+        v-if="afterSubmit.show.value"
+        :submissionState="submissionState"
+        @close="afterSubmit.hideAfterSubmit()"
+      />
       <FormStringInput
         v-model="user.currentPassword"
         type="password"
