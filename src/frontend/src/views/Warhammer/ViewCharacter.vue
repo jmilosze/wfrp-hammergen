@@ -4,7 +4,7 @@ import { UnauthorizedError, useAuthStore } from "../../stores/auth.ts";
 import { ref, Ref } from "vue";
 import { CharacterApi } from "../../services/wh/character.ts";
 import { authRequest } from "../../services/auth.ts";
-import { newCharacterFull } from "../../services/wh/characterFull.ts";
+import { CharacterFullToCsv, newCharacterFull } from "../../services/wh/characterFull.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
 
@@ -37,14 +37,25 @@ function saveJson() {
   });
   saveAs(blob, `${character.value.name}.json`);
 }
+
+function saveCsv() {
+  const blob = new Blob([CharacterFullToCsv(character.value)], {
+    type: "text/plain;charset=utf-8",
+  });
+  saveAs(blob, `${character.value.name}.csv`);
+}
+
+function print() {
+  window.print();
+}
 </script>
 
 <template>
   <Header title="Character details"> </Header>
   <div class="flex flex-wrap">
-    <ActionButton :size="'sm'" class="m-1">Download CSV</ActionButton>
+    <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>
-    <ActionButton :size="'sm'" class="m-1">Print</ActionButton>
+    <ActionButton :size="'sm'" class="m-1" @click="print()">Print</ActionButton>
     <ActionButton v-if="character.canEdit" :size="'sm'" class="m-1">Edit</ActionButton>
     <ActionButton :size="'sm'" class="m-1">Back to list</ActionButton>
   </div>
