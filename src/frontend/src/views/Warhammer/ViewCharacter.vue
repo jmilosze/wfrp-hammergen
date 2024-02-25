@@ -46,7 +46,15 @@ function saveCsv() {
 }
 
 function print() {
-  window.print();
+  const divContents = document.getElementById("character")?.innerHTML as string;
+  const a = window.open("", "") as Window;
+  a.document.write("<html>");
+  a.document.write("<body >");
+  a.document.write(divContents);
+  a.document.write("</body></html>");
+  a.document.close();
+  a.print();
+  a.close();
 }
 </script>
 
@@ -59,6 +67,7 @@ function print() {
     <ActionButton v-if="character.canEdit" :size="'sm'" class="m-1">Edit</ActionButton>
     <ActionButton :size="'sm'" class="m-1">Back to list</ActionButton>
   </div>
+  <div id="character">Description of the character asd asd asd asda das asd asd</div>
 </template>
 
 <style scoped></style>
