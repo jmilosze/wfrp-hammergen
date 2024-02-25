@@ -103,7 +103,7 @@ async function submitForm() {
       </p>
     </Header>
     <div class="pt-2 md:w-96">
-      <AfterSubmit v-if="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
+      <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validationStatus="validEmail" />
       <FormStringInput
         v-model="user.newPassword"

@@ -132,15 +132,15 @@ async function submitForm() {
   </div>
   <div class="pt-2 md:w-96">
     <AfterSubmit
-      v-if="showApplyChangesAfterSubmit"
-      class="mt-2"
+      :visible="showApplyChangesAfterSubmit"
       :submissionState="applyChangesSubmissionState"
+      class="mt-2"
       @close="showApplyChangesAfterSubmit = false"
     />
     <AfterSubmit
-      v-if="showAddUserAfterSubmit"
-      class="mt-2"
+      :visible="showAddUserAfterSubmit"
       :submissionState="addUserSubmissionState"
+      class="mt-2"
       @close="showAddUserAfterSubmit = false"
     />
     <FormStringInput

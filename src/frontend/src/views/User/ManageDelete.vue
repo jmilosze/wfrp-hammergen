@@ -58,7 +58,7 @@ async function submitForm() {
     <div class="text-xl">Delete account</div>
     <p>The account and all its data will be deleted. It will be impossible to recover.</p>
     <div class="pt-2 md:w-96">
-      <AfterSubmit v-if="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
+      <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormStringInput
         v-model="user.currentPassword"
         type="password"

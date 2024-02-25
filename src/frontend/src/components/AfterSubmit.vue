@@ -4,6 +4,7 @@ import { SubmissionState } from "../utils/submission.ts";
 
 defineProps<{
   submissionState: SubmissionState;
+  visible: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -12,7 +13,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div>
+  <div v-if="visible">
     <AlertBlock
       v-if="submissionState.status === 'failure' && submissionState.message !== ''"
       alertType="red"

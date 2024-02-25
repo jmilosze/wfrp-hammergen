@@ -79,7 +79,7 @@ async function submitForm() {
   <div>
     <Header title="Reset password">Create a new password.</Header>
     <div class="pt-2 md:w-96">
-      <AfterSubmit v-if="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
+      <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
 
       <FormStringInput
         v-model="user.newPassword"

@@ -70,7 +70,7 @@ async function submitForm() {
   <div class="mt-5 pb-2 pl-2 border-b-2 border-neutral-200">
     <div class="text-xl">Change username (email)</div>
     <div class="pt-2 md:w-96">
-      <AfterSubmit v-if="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
+      <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormStringInput v-model="user.email" type="text" class="mt-1" title="Email" :validationStatus="validEmail" />
       <FormStringInput
         v-model="user.currentPassword"
