@@ -5,6 +5,10 @@ const props = defineProps<{
   alertType?: "green" | "red";
 }>();
 
+const emit = defineEmits<{
+  (e: "close"): void;
+}>();
+
 const blockClass = ref(["p-2", "rounded", "border", "flex", "justify-between"]);
 if (props.alertType === "red") {
   blockClass.value.push(...["bg-red-200", "text-red-800", "border-red-500"]);
@@ -25,7 +29,7 @@ if (props.alertType === "red") {
     <div class="my-1">
       <slot></slot>
     </div>
-    <button :class="btnClass">
+    <button :class="btnClass" @click="emit('close')">
       <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
         <path
           stroke="currentColor"

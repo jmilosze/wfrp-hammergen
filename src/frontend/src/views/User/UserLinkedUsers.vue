@@ -9,9 +9,12 @@ import ActionButton from "../../components/ActionButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
+import { useAfterSubmit } from "../../composables/afterSubmit.ts";
 
 const applyChangesSubmissionState = ref(new SubmissionState());
 const addUserSubmissionState = ref(new SubmissionState());
+const applyChangesAfterSubmit = useAfterSubmit();
+const addUserAfterSubmit = useAfterSubmit();
 const newSharedAccount = ref("");
 const user = ref(new User());
 const originalUser = ref(new User());
@@ -48,6 +51,8 @@ async function addUsername() {
     return;
   }
 
+  addUserAfterSubmit.showAfterSubmit();
+
   try {
     const userExists = await callAndLogoutIfUnauthorized(userApi.checkIfExists)(newSharedAccount.value);
     if (userExists) {
@@ -69,7 +74,7 @@ async function submitForm() {
     return;
   }
   applyChangesSubmissionState.value.setInProgress();
-
+  applyChangesAfterSubmit.showAfterSubmit();
   try {
     await callAndLogoutIfUnauthorized(userApi.updateSharedAccounts)(user.value);
     originalUser.value = user.value.copy();
@@ -127,8 +132,18 @@ async function submitForm() {
     </div>
   </div>
   <div class="pt-2 md:w-96">
-    <AfterSubmit class="mt-2" :submissionState="applyChangesSubmissionState" />
-    <AfterSubmit class="mt-2" :submissionState="addUserSubmissionState" />
+    <AfterSubmit
+      v-if="applyChangesAfterSubmit.show.value"
+      class="mt-2"
+      :submissionState="applyChangesSubmissionState"
+      @close="applyChangesAfterSubmit.hideAfterSubmit()"
+    />
+    <AfterSubmit
+      v-if="addUserAfterSubmit.show.value"
+      class="mt-2"
+      :submissionState="addUserSubmissionState"
+      @close="addUserAfterSubmit.hideAfterSubmit()"
+    />
     <FormStringInput
       v-model="newSharedAccount"
       type="text"

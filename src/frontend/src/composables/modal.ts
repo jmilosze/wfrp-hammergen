@@ -11,7 +11,7 @@ export function useModal() {
       show.value = true;
       modalId.value = id;
     },
-    hideModal: () => {
+    hideModal: (): void => {
       show.value = false;
     },
   };
