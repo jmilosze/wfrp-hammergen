@@ -21,6 +21,7 @@ const props = withDefaults(
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const showAfterSubmit = ref(false);
 const userApi = new UserApi(anonRequest);
 
 const validPassword = computed(() => {
@@ -46,6 +47,8 @@ async function submitForm() {
     submissionState.value.setValidationError();
     return;
   }
+
+  showAfterSubmit.value = true;
 
   try {
     await userApi.resetPassword(user.value, props.token);
@@ -76,7 +79,7 @@ async function submitForm() {
   <div>
     <Header title="Reset password">Create a new password.</Header>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submissionState="submissionState" />
+      <AfterSubmit v-if="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
 
       <FormStringInput
         v-model="user.newPassword"

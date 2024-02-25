@@ -13,6 +13,7 @@ import ActionButton from "../../components/ActionButton.vue";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const showAfterSubmit = ref(false);
 const userApi = new UserApi(anonRequest);
 
 const router = useRouter();
@@ -66,6 +67,8 @@ async function submitForm() {
     token = await recaptcha.executeRecaptcha("register");
   }
 
+  showAfterSubmit.value = true;
+
   try {
     await userApi.create(user.value, token);
     user.value.reset();
@@ -100,7 +103,7 @@ async function submitForm() {
       </p>
     </Header>
     <div class="pt-2 md:w-96">
-      <AfterSubmit :submissionState="submissionState" />
+      <AfterSubmit v-if="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validationStatus="validEmail" />
       <FormStringInput
         v-model="user.newPassword"

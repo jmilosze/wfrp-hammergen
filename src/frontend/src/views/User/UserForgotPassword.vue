@@ -13,6 +13,7 @@ import ActionButton from "../../components/ActionButton.vue";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
+const showAfterSubmit = ref(false);
 const userApi = new UserApi(anonRequest);
 
 const recaptcha = useReCaptcha() as IReCaptchaComposition;
@@ -48,6 +49,8 @@ async function submitForm() {
     await recaptcha.recaptchaLoaded();
     token = await recaptcha.executeRecaptcha("register");
   }
+
+  showAfterSubmit.value = true;
 
   try {
     await userApi.sendResetPassword(user.value, token);
@@ -88,7 +91,7 @@ async function submitForm() {
     </div>
   </div>
   <div class="pt-2 md:w-96">
-    <AfterSubmit :submissionState="submissionState" />
+    <AfterSubmit v-if="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
     <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validationStatus="validEmail" />
   </div>
   <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
