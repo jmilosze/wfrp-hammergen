@@ -1,31 +1,21 @@
 <script setup lang="ts">
-type AlertType = "green" | "red";
+import { ref } from "vue";
 
-const GREEN_SCHEME = ["bg-green-200", "text-green-800", "border-green-500", "p-2", "rounded", "border"];
-const RED_SCHEME = ["bg-red-200", "text-red-800", "border-red-500", "p-2", "rounded", "border"];
+const props = defineProps<{
+  alertType?: "green" | "red";
+}>();
 
-const props = withDefaults(
-  defineProps<{
-    alertType: AlertType;
-    visible: boolean;
-  }>(),
-  {
-    alertType: "red",
-    visible: true,
-  },
-);
+const blockClass = ref(["p-2", "rounded", "border"]);
 
-function setClass() {
-  if (props.alertType === "red") {
-    return RED_SCHEME;
-  } else {
-    return GREEN_SCHEME;
-  }
+if (props.alertType === "red") {
+  blockClass.value.push(...["bg-red-200", "text-red-800", "border-red-500"]);
+} else {
+  blockClass.value.push(...["bg-green-200", "text-green-800", "border-green-500"]);
 }
 </script>
 
 <template>
-  <div :class="[...setClass(), visible ? '' : 'hidden']">
+  <div :class="blockClass">
     <slot></slot>
   </div>
 </template>
