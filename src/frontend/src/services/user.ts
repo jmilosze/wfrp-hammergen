@@ -1,5 +1,6 @@
 import { ValidationStatus, setValidationStatus } from "../utils/validation.ts";
 import { AxiosInstance } from "axios";
+import { arraysAreEqualIgnoreOrder } from "../utils/array.ts";
 
 const EMAIL_REGEX =
   /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/;
@@ -12,12 +13,18 @@ export class User {
   confirmNewPassword: string;
   sharedAccounts: string[];
 
-  constructor() {
-    this.email = "";
-    this.currentPassword = "";
-    this.newPassword = "";
-    this.confirmNewPassword = "";
-    this.sharedAccounts = [];
+  constructor({
+    email = "",
+    currentPassword = "",
+    newPassword = "",
+    confirmNewPassword = "",
+    sharedAccounts = [] as string[],
+  } = {}) {
+    this.email = email;
+    this.currentPassword = currentPassword;
+    this.newPassword = newPassword;
+    this.confirmNewPassword = confirmNewPassword;
+    this.sharedAccounts = sharedAccounts;
   }
 
   reset() {
@@ -26,6 +33,27 @@ export class User {
     this.newPassword = "";
     this.confirmNewPassword = "";
     this.sharedAccounts = [];
+  }
+
+  copy(): User {
+    return new User({
+      email: this.email,
+      currentPassword: this.currentPassword,
+      newPassword: this.newPassword,
+      confirmNewPassword: this.confirmNewPassword,
+      sharedAccounts: JSON.parse(JSON.stringify(this.sharedAccounts)),
+    });
+  }
+
+  isEqualTo(otherUser: User): boolean {
+    return (
+      this.email === otherUser.email &&
+      this.currentPassword === otherUser.currentPassword &&
+      this.newPassword === otherUser.newPassword &&
+      this.newPassword === otherUser.newPassword &&
+      this.confirmNewPassword === otherUser.confirmNewPassword &&
+      arraysAreEqualIgnoreOrder(this.sharedAccounts, otherUser.sharedAccounts)
+    );
   }
 
   addSharedAccount(newSharedAccount: string) {

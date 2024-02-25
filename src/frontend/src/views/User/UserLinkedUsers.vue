@@ -14,6 +14,7 @@ const applyChangesSubmissionState = ref(new SubmissionState());
 const addUserSubmissionState = ref(new SubmissionState());
 const newSharedAccount = ref("");
 const user = ref(new User());
+const originalUser = ref(new User());
 const userApi = new UserApi(authRequest);
 
 const { callAndLogoutIfUnauthorized } = useAuthStore();
@@ -28,6 +29,7 @@ const validNewSharedAccount = computed(() => {
 
 try {
   user.value = await callAndLogoutIfUnauthorized(userApi.get)();
+  originalUser.value = user.value.copy();
 } catch (error) {
   if (!(error instanceof UnauthorizedError)) {
     applyChangesSubmissionState.value.setFailureFromError(error, []);
@@ -63,10 +65,14 @@ async function addUsername() {
 }
 
 async function submitForm() {
+  if (user.value.isEqualTo(originalUser.value)) {
+    return;
+  }
   applyChangesSubmissionState.value.setInProgress();
 
   try {
     await callAndLogoutIfUnauthorized(userApi.updateSharedAccounts)(user.value);
+    originalUser.value = user.value.copy();
     applyChangesSubmissionState.value.setSuccess(
       "Linked user list updated successfully! In order to be able to see content shared by newly added users please log out and then log back in.",
     );
