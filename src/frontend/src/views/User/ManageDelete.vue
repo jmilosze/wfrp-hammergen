@@ -26,7 +26,7 @@ const validCurrentPassword = computed(() => {
 async function submitForm() {
   submissionState.value.setInProgress();
 
-  if (!validCurrentPassword.value) {
+  if (!validCurrentPassword.value.valid) {
     submissionState.value.setValidationError();
     return;
   }
