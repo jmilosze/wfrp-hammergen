@@ -12,7 +12,7 @@ if (props.alertType === "red") {
   blockClass.value.push(...["bg-green-200", "text-green-800", "border-green-500"]);
 }
 
-const btnClass = ref(["p-2", "hover:text-gray-900", "rounded-lg", "h-8"]);
+const btnClass = ref(["p-2", "hover:text-gray-900", "rounded", "h-8"]);
 if (props.alertType === "red") {
   btnClass.value.push(...["text-red-800", "hover:bg-red-300"]);
 } else {
