@@ -2,12 +2,12 @@
 import { User, UserApi } from "../../services/user.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
-import SubmitButton from "../../components/SubmitButton.vue";
 import { computed, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
+import ActionButton from "../../components/ActionButton.vue";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -91,7 +91,9 @@ async function submitForm() {
         title="Current password"
         :validationStatus="validCurrentPassword"
       />
-      <SubmitButton class="mt-3" :submissionState="submissionState" @click="submitForm">Update password</SubmitButton>
+      <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
+        >Update password</ActionButton
+      >
     </div>
   </div>
 </template>

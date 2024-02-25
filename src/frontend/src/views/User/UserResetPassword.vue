@@ -2,13 +2,13 @@
 import Header from "../../components/PageHeader.vue";
 import { computed, ref } from "vue";
 import FormStringInput from "../../components/FormStringInput.vue";
-import SubmitButton from "../../components/SubmitButton.vue";
 import router from "../../router.ts";
 import { anonRequest } from "../../services/auth.ts";
 import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
+import ActionButton from "../../components/ActionButton.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -92,7 +92,9 @@ async function submitForm() {
         title="Confirm Password"
         :validationStatus="passwordMatch"
       />
-      <SubmitButton class="mt-3" :submissionState="submissionState" @click="submitForm">Submit</SubmitButton>
+      <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
+        >Submit</ActionButton
+      >
     </div>
   </div>
 </template>

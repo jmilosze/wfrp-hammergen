@@ -6,8 +6,8 @@ import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
-import SubmitButton from "../../components/SubmitButton.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
+import ActionButton from "../../components/ActionButton.vue";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -63,8 +63,8 @@ async function submitForm() {
         title="Current password"
         :validationStatus="validCurrentPassword"
       />
-      <SubmitButton class="mt-3" :submissionState="submissionState" variant="red" @click="submitForm"
-        >Delete account</SubmitButton
+      <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" variant="red" @click="submitForm"
+        >Delete account</ActionButton
       >
     </div>
   </div>

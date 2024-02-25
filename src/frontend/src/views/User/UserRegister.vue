@@ -2,7 +2,6 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import Header from "../../components/PageHeader.vue";
-import SubmitButton from "../../components/SubmitButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { anonRequest } from "../../services/auth";
 import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
@@ -10,6 +9,7 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
+import ActionButton from "../../components/ActionButton.vue";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -117,7 +117,9 @@ async function submitForm() {
         :validationStatus="passwordMatch"
       />
     </div>
-    <SubmitButton class="mt-3" :submissionState="submissionState" @click="submitForm">Register</SubmitButton>
+    <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
+      >Register</ActionButton
+    >
   </div>
 </template>
 

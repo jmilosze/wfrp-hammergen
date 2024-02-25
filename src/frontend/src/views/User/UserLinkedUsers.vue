@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
 import AfterSubmit from "../../components/AfterSubmit.vue";
-import SubmitButton from "../../components/SubmitButton.vue";
 import { computed, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { UnauthorizedError, useAuthStore } from "../../stores/auth.ts";
@@ -131,12 +130,12 @@ async function submitForm() {
       title="Add new user (email)"
       :validationStatus="validNewSharedAccount"
     >
-      <SubmitButton variant="normal" class="ml-3" :submissionState="addUserSubmissionState" @click="addUsername"
-        >Add</SubmitButton
+      <ActionButton class="ml-3" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername"
+        >Add</ActionButton
       >
     </FormStringInput>
-    <SubmitButton class="mt-3" :submissionState="applyChangesSubmissionState" @click="submitForm"
-      >Apply changes</SubmitButton
+    <ActionButton class="mt-3" :spinner="applyChangesSubmissionState.status === 'inProgress'" @click="submitForm"
+      >Apply changes</ActionButton
     >
   </div>
 </template>
