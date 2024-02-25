@@ -15,7 +15,7 @@ const modal = useModal();
         <div class="p-3 flex justify-between">
           <div class="text-xl font-semibold text-gray-900 dark:text-white"><slot name="header"></slot></div>
           <button
-            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+            class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm px-2"
             @click="modal.hideModal()"
           >
             <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
