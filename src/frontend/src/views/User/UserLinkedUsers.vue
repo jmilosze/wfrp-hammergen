@@ -9,12 +9,11 @@ import ActionButton from "../../components/ActionButton.vue";
 import FormStringInput from "../../components/FormStringInput.vue";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
-import { useAfterSubmit } from "../../composables/afterSubmit.ts";
 
 const applyChangesSubmissionState = ref(new SubmissionState());
 const addUserSubmissionState = ref(new SubmissionState());
-const applyChangesAfterSubmit = useAfterSubmit();
-const addUserAfterSubmit = useAfterSubmit();
+const showApplyChangesAfterSubmit = ref(false);
+const showAddUserAfterSubmit = ref(false);
 const newSharedAccount = ref("");
 const user = ref(new User());
 const originalUser = ref(new User());
@@ -51,7 +50,7 @@ async function addUsername() {
     return;
   }
 
-  addUserAfterSubmit.showAfterSubmit();
+  showAddUserAfterSubmit.value = true;
 
   try {
     const userExists = await callAndLogoutIfUnauthorized(userApi.checkIfExists)(newSharedAccount.value);
@@ -74,7 +73,7 @@ async function submitForm() {
     return;
   }
   applyChangesSubmissionState.value.setInProgress();
-  applyChangesAfterSubmit.showAfterSubmit();
+  showApplyChangesAfterSubmit.value = true;
   try {
     await callAndLogoutIfUnauthorized(userApi.updateSharedAccounts)(user.value);
     originalUser.value = user.value.copy();
@@ -133,16 +132,16 @@ async function submitForm() {
   </div>
   <div class="pt-2 md:w-96">
     <AfterSubmit
-      v-if="applyChangesAfterSubmit.show.value"
+      v-if="showApplyChangesAfterSubmit"
       class="mt-2"
       :submissionState="applyChangesSubmissionState"
-      @close="applyChangesAfterSubmit.hideAfterSubmit()"
+      @close="showApplyChangesAfterSubmit = false"
     />
     <AfterSubmit
-      v-if="addUserAfterSubmit.show.value"
+      v-if="showAddUserAfterSubmit"
       class="mt-2"
       :submissionState="addUserSubmissionState"
-      @close="addUserAfterSubmit.hideAfterSubmit()"
+      @close="showAddUserAfterSubmit = false"
     />
     <FormStringInput
       v-model="newSharedAccount"
