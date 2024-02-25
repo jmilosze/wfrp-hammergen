@@ -9,7 +9,11 @@ defineProps<{
 
 <template>
   <div>
-    <AlertBlock v-if="submissionState.status === 'failure' && submissionState.message !== ''" alertType="red">
+    <AlertBlock
+      v-if="submissionState.status === 'failure' && submissionState.message !== ''"
+      alertType="red"
+      @click="console.log('zxc')"
+    >
       {{ submissionState.message }}
     </AlertBlock>
     <AlertBlock v-if="submissionState.status === 'success' && submissionState.message !== ''" alertType="green">
