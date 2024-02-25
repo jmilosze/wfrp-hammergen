@@ -7,11 +7,13 @@ import { authRequest } from "../../services/auth.ts";
 import { CharacterFullToCsv, newCharacterFull } from "../../services/wh/characterFull.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
+import { useRouter } from "vue-router";
 
 const props = defineProps<{
   id: string;
 }>();
 
+const router = useRouter();
 const authStore = useAuthStore();
 const characterApi = new CharacterApi(authRequest);
 
@@ -64,8 +66,14 @@ function print() {
     <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="print()">Print</ActionButton>
-    <ActionButton v-if="character.canEdit" :size="'sm'" class="m-1">Edit</ActionButton>
-    <ActionButton :size="'sm'" class="m-1">Back to list</ActionButton>
+    <ActionButton
+      v-if="character.canEdit"
+      :size="'sm'"
+      class="m-1"
+      @click="router.push({ name: 'character', params: { id: id } })"
+      >Edit</ActionButton
+    >
+    <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
   <div id="character">Description of the character asd asd asd asda das asd asd</div>
 </template>
