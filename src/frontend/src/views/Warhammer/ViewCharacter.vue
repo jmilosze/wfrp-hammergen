@@ -8,6 +8,9 @@ import { CharacterFullToCsv, newCharacterFull } from "../../services/wh/characte
 import ActionButton from "../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";
+import { addSpaces } from "../../utils/string.ts";
+import { useElSize } from "../../composables/viewSize.ts";
+import { ViewSize } from "../../utils/viewSize.ts";
 
 const props = defineProps<{
   id: string;
@@ -58,11 +61,14 @@ function print() {
   a.print();
   a.close();
 }
+
+const contentContainerRef = ref(null);
+const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 </script>
 
 <template>
   <Header title="Character details"> </Header>
-  <div class="flex flex-wrap">
+  <div ref="contentContainerRef" class="flex flex-wrap">
     <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="print()">Print</ActionButton>
@@ -75,7 +81,72 @@ function print() {
     >
     <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
-  <div id="character">Description of the character asd asd asd asda das asd asd</div>
+  <div class="flex justify-between" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <div class="m-1">
+      <div class="mb-1">Basic</div>
+      <table class="border-collapse">
+        <tbody>
+          <tr>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Name</span>
+                <span class="mr-3"> {{ addSpaces(character.name) }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Species</span>
+                <span class="mr-3"> {{ addSpaces(character.species) }}</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Description</span>
+                <span class="mr-3"> {{ addSpaces(character.description) }}</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="m-1">
+      <div class="mb-1">Career</div>
+      <table class="border-collapse">
+        <tbody>
+          <tr>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Current</span>
+                <span class="mr-3"> {{ addSpaces(character.careerName) }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Class</span>
+                <span class="mr-3"> {{ addSpaces(character.className) }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Status</span>
+                <span class="mr-3"> {{ addSpaces(character.status + " " + character.standing) }}</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3" class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Past Careers</span>
+                <span class="mr-3"> {{ addSpaces(character.pastCareers.join(", ")) }}</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <style scoped></style>
