@@ -82,9 +82,9 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
     <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
   <div class="flex justify-between" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <div class="m-1">
+    <div class="m-1 grow">
       <div class="mb-1">Basic</div>
-      <table class="border-collapse">
+      <table class="border-collapse w-full">
         <tbody>
           <tr>
             <td class="border border-neutral-400 px-2">
@@ -111,9 +111,9 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
         </tbody>
       </table>
     </div>
-    <div class="m-1">
+    <div class="m-1 grow">
       <div class="mb-1">Career</div>
-      <table class="border-collapse">
+      <table class="border-collapse w-full">
         <tbody>
           <tr>
             <td class="border border-neutral-400 px-2">
