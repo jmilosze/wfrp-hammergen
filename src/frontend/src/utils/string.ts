@@ -1,4 +1,8 @@
-export function addSpaces(sentence: string, maxChars: number = 15): string {
+export function addSpaces(sentence: string | undefined, maxChars: number = 15): string {
+  if (sentence === undefined) {
+    return "";
+  }
+
   const words: string[] = sentence.split(" ");
   const wordsWithSpaces: string[] = new Array(words.length);
   const re = new RegExp(`(.{${maxChars}})`, "g");

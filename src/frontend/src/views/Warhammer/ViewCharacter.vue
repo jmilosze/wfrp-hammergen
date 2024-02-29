@@ -466,6 +466,58 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
       </table>
     </div>
   </div>
+  <div v-if="character.equippedArmor.length" class="text-left">
+    <div class="m-2">
+      <div class="mb-1">Equipped Armor</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold">Name</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Locations</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Enc</th>
+            <th class="border border-neutral-400 p-2 font-semibold">AP</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Qualities/Runes</th>
+          </tr>
+          <tr v-for="armour in character.equippedArmor" :key="armour.name">
+            <td class="border border-neutral-400 p-2">{{ addSpaces(armour.name) }}</td>
+            <td class="border border-neutral-400 p-2">{{ armour.locations?.map((x) => addSpaces(x)).join(", ") }}</td>
+            <td class="border border-neutral-400 p-2">{{ armour.enc }}</td>
+            <td class="border border-neutral-400 p-2">{{ armour.ap }}</td>
+            <td class="border border-neutral-400 p-2">
+              {{ armour.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", ") }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div v-if="character.equippedWeapon.length" class="text-left">
+    <div class="m-2">
+      <div class="mb-1">Equipped Weapon</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold">Name</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Group</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Enc</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Range/Reach</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Damage</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Qualities/Runes</th>
+          </tr>
+          <tr v-for="weapon in character.equippedWeapon" :key="weapon.name">
+            <td class="border border-neutral-400 p-2">{{ addSpaces(weapon.name) }}</td>
+            <td class="border border-neutral-400 p-2">{{ addSpaces(weapon.group) }}</td>
+            <td class="border border-neutral-400 p-2">{{ weapon.enc }}</td>
+            <td class="border border-neutral-400 p-2">{{ addSpaces(weapon.rng) }}</td>
+            <td class="border border-neutral-400 p-2">{{ addSpaces(weapon.dmg) }}</td>
+            <td class="border border-neutral-400 p-2">
+              {{ weapon.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", ") }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <style scoped></style>
