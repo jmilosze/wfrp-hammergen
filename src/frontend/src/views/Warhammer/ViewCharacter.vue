@@ -81,7 +81,7 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
     >
     <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
-  <div class="flex justify-between" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <div class="m-2 grow">
       <div class="mb-1">Basic</div>
       <table class="border-collapse w-full">
@@ -147,29 +147,25 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
       </table>
     </div>
   </div>
-  <div class="flex justify-between" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <div class="m-2 grow">
       <div class="mb-1">Movement</div>
       <table class="border-collapse w-full">
         <tbody>
           <tr>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">Base</span>
-                <span class="mr-3"> {{ character.movement }}</span>
-              </div>
+            <th class="border border-neutral-400 p-2 font-semibold">Base</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Walk</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Run</th>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2 mr-3">
+              {{ character.movement }}
             </td>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">Walk</span>
-                <span class="mr-3"> {{ character.walk }}</span>
-              </div>
+            <td class="border border-neutral-400 p-2 mr-3">
+              {{ character.walk }}
             </td>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">Run</span>
-                <span class="mr-3"> {{ character.run }}</span>
-              </div>
+            <td class="border border-neutral-400 p-2 mr-3">
+              {{ character.run }}
             </td>
           </tr>
         </tbody>
@@ -180,23 +176,19 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
       <table class="border-collapse w-full">
         <tbody>
           <tr>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">D</span>
-                <span class="mr-3"> {{ character.brass }}</span>
-              </div>
+            <th class="border border-neutral-400 p-2 font-semibold">D</th>
+            <th class="border border-neutral-400 p-2 font-semibold">SS</th>
+            <th class="border border-neutral-400 p-2 font-semibold">GC</th>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.brass }}
             </td>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">SS</span>
-                <span class="mr-3"> {{ character.silver }}</span>
-              </div>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.silver }}
             </td>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">GC</span>
-                <span class="mr-3"> {{ character.gold }}</span>
-              </div>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.gold }}
             </td>
           </tr>
         </tbody>
@@ -207,17 +199,15 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
       <table class="border-collapse w-full">
         <tbody>
           <tr>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">Fate</span>
-                <span class="mr-3"> {{ character.fate }}</span>
-              </div>
+            <th class="border border-neutral-400 p-2 font-semibold">Fate</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Fortune</th>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.fate }}
             </td>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">Fortune</span>
-                <span class="mr-3"> {{ character.fortune }}</span>
-              </div>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.fortune }}
             </td>
           </tr>
         </tbody>
@@ -228,17 +218,63 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
       <table class="border-collapse w-full">
         <tbody>
           <tr>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">Resilience</span>
-                <span class="mr-3"> {{ character.resilience }}</span>
-              </div>
+            <th class="border border-neutral-400 p-2 font-semibold">Resilience</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Resolve</th>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.resilience }}
             </td>
-            <td class="border border-neutral-400 p-2">
-              <div class="flex flex-wrap">
-                <span class="mr-3 font-semibold">Resolve</span>
-                <span class="mr-3"> {{ character.resolve }}</span>
-              </div>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.resolve }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <div class="m-2 grow">
+      <div class="mb-1">Other</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold">Wounds (unmodified by Hardy)</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Sin</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Corruption</th>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.wounds }}
+            </td>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.sin }}
+            </td>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.corruption }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="m-2 grow">
+      <div class="mb-1">Experience</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold">Current</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Spent</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Total</th>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.currentExp }}
+            </td>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.spentExp }}
+            </td>
+            <td class="border border-neutral-400 p-2 font-semibold">
+              {{ character.totalExp }}
             </td>
           </tr>
         </tbody>
