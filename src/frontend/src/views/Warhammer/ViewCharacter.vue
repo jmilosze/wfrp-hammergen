@@ -181,13 +181,13 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
             <th class="border border-neutral-400 p-2 font-semibold">GC</th>
           </tr>
           <tr>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.brass }}
             </td>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.silver }}
             </td>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.gold }}
             </td>
           </tr>
@@ -203,10 +203,10 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
             <th class="border border-neutral-400 p-2 font-semibold">Fortune</th>
           </tr>
           <tr>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.fate }}
             </td>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.fortune }}
             </td>
           </tr>
@@ -222,10 +222,10 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
             <th class="border border-neutral-400 p-2 font-semibold">Resolve</th>
           </tr>
           <tr>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.resilience }}
             </td>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.resolve }}
             </td>
           </tr>
@@ -244,13 +244,13 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
             <th class="border border-neutral-400 p-2 font-semibold">Corruption</th>
           </tr>
           <tr>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.wounds }}
             </td>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.sin }}
             </td>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.corruption }}
             </td>
           </tr>
@@ -267,15 +267,159 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
             <th class="border border-neutral-400 p-2 font-semibold">Total</th>
           </tr>
           <tr>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.currentExp }}
             </td>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.spentExp }}
             </td>
-            <td class="border border-neutral-400 p-2 font-semibold">
+            <td class="border border-neutral-400 p-2">
               {{ character.totalExp }}
             </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <div class="m-2 grow">
+      <div class="mb-1">Attributes 1</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold"></th>
+            <th class="border border-neutral-400 p-2 font-semibold">WS</th>
+            <th class="border border-neutral-400 p-2 font-semibold">BS</th>
+            <th class="border border-neutral-400 p-2 font-semibold">S</th>
+            <th class="border border-neutral-400 p-2 font-semibold">T</th>
+            <th class="border border-neutral-400 p-2 font-semibold">I</th>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2">Base</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.WS }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.BS }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.S }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.T }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.I }}</td>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2">Other</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.WS }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.BS }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.S }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.T }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.I }}</td>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2">Advances</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.WS }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.BS }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.S }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.T }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.I }}</td>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2">Total</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.WS }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.BS }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.S }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.T }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.I }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="m-2 grow">
+      <div class="mb-1">Attributes 2</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold"></th>
+            <th class="border border-neutral-400 p-2 font-semibold">Ag</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Dex</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Int</th>
+            <th class="border border-neutral-400 p-2 font-semibold">WP</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Fel</th>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2">Base</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.Ag }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.Dex }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.Int }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.WP }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.Fel }}</td>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2">Other</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.Ag }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.Dex }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.Int }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.WP }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.Fel }}</td>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2">Advances</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.Ag }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.Dex }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.Int }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.WP }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.Fel }}</td>
+          </tr>
+          <tr>
+            <td class="border border-neutral-400 p-2">Total</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.Ag }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.Dex }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.Int }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.WP }}</td>
+            <td class="border border-neutral-400 p-2">{{ character.attributes.Fel }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <div class="m-2 grow">
+      <div class="mb-1">Basic Skills 1</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold">Name</th>
+            <th colspan="2" class="border border-neutral-400 p-2 font-semibold">Attribute</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Adv</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Skill</th>
+          </tr>
+          <tr
+            v-for="skill in character.basicSkills.slice(0, Math.floor(character.basicSkills.length / 2))"
+            :key="skill.name"
+          >
+            <td class="border border-neutral-400 p-2">{{ addSpaces(skill.name) }}</td>
+            <td class="border border-neutral-400 p-2">{{ addSpaces(skill.attributeName) }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.attributeValue }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.advances }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.skill }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="m-2 grow">
+      <div class="mb-1">Basic Skills 2</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold">Name</th>
+            <th colspan="2" class="border border-neutral-400 p-2 font-semibold">Attribute</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Adv</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Skill</th>
+          </tr>
+          <tr
+            v-for="skill in character.basicSkills.slice(Math.floor(character.basicSkills.length / 2))"
+            :key="skill.name"
+          >
+            <td class="border border-neutral-400 p-2">{{ addSpaces(skill.name) }}</td>
+            <td class="border border-neutral-400 p-2">{{ addSpaces(skill.attributeName) }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.attributeValue }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.advances }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.skill }}</td>
           </tr>
         </tbody>
       </table>
