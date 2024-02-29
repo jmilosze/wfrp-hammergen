@@ -82,7 +82,7 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
     <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
   <div class="flex justify-between" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <div class="m-1 grow">
+    <div class="m-2 grow">
       <div class="mb-1">Basic</div>
       <table class="border-collapse w-full">
         <tbody>
@@ -111,7 +111,7 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
         </tbody>
       </table>
     </div>
-    <div class="m-1 grow">
+    <div class="m-2 grow">
       <div class="mb-1">Career</div>
       <table class="border-collapse w-full">
         <tbody>
@@ -140,6 +140,95 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Past Careers</span>
                 <span class="mr-3"> {{ addSpaces(character.pastCareers.join(", ")) }}</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="flex justify-between" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <div class="m-2 grow">
+      <div class="mb-1">Movement</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Base</span>
+                <span class="mr-3"> {{ character.movement }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Walk</span>
+                <span class="mr-3"> {{ character.walk }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Run</span>
+                <span class="mr-3"> {{ character.run }}</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="m-2 grow">
+      <div class="mb-1">Wealth</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">D</span>
+                <span class="mr-3"> {{ character.brass }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">SS</span>
+                <span class="mr-3"> {{ character.silver }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">GC</span>
+                <span class="mr-3"> {{ character.gold }}</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="m-2 grow">
+      <div class="mb-1">Fate and resilience</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Fate</span>
+                <span class="mr-3"> {{ character.fate }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Fortune</span>
+                <span class="mr-3"> {{ character.fortune }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Resilience</span>
+                <span class="mr-3"> {{ character.resilience }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 px-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Resolve</span>
+                <span class="mr-3"> {{ character.resolve }}</span>
               </div>
             </td>
           </tr>
