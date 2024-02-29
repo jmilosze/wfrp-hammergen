@@ -425,6 +425,47 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
       </table>
     </div>
   </div>
+  <div
+    v-if="character.advancedSkills.length || character.talents.length"
+    class="flex justify-between text-left"
+    :class="[isEqualOrGreater ? '' : 'flex-wrap']"
+  >
+    <div class="m-2 grow">
+      <div class="mb-1">Advanced Skills</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold">Name</th>
+            <th colspan="2" class="border border-neutral-400 p-2 font-semibold">Attribute</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Adv</th>
+            <th class="border border-neutral-400 p-2 font-semibold">Skill</th>
+          </tr>
+          <tr v-for="skill in character.advancedSkills" :key="skill.name">
+            <td class="border border-neutral-400 p-2">{{ addSpaces(skill.name) }}</td>
+            <td class="border border-neutral-400 p-2">{{ addSpaces(skill.attributeName) }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.attributeValue }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.advances }}</td>
+            <td class="border border-neutral-400 p-2">{{ skill.skill }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="m-2 grow">
+      <div class="mb-1">Talents</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <th class="border border-neutral-400 p-2 font-semibold">Name</th>
+            <th colspan="2" class="border border-neutral-400 p-2 font-semibold">Times taken</th>
+          </tr>
+          <tr v-for="talent in character.talents" :key="talent.name">
+            <td class="border border-neutral-400 p-2">{{ addSpaces(talent.name) }}</td>
+            <td class="border border-neutral-400 p-2">{{ talent.rank }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <style scoped></style>
