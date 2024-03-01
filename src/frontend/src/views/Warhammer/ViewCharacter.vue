@@ -83,6 +83,51 @@ const equippedArmourDisp = ref({
   })),
 });
 
+const displayBasicSkills = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "attributeName", displayName: "Attribute", colspan: 2 },
+    { name: "attributeValue", displayName: "Attribute", colspan: 0 },
+    { name: "advances", displayName: "Adv" },
+    { name: "skill", displayName: "Skill" },
+  ],
+  items: character.value.basicSkills.map((x) => ({
+    name: addSpaces(x.name),
+    attributeName: addSpaces(x.attributeName),
+    attributeValue: x.attributeValue,
+    advances: x.advances,
+    skill: x.skill,
+  })),
+});
+
+const displayAdvancedSkills = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "attributeName", displayName: "Attribute", colspan: 2 },
+    { name: "attributeValue", displayName: "Attribute", colspan: 0 },
+    { name: "advances", displayName: "Adv" },
+    { name: "skill", displayName: "Skill" },
+  ],
+  items: character.value.advancedSkills.map((x) => ({
+    name: addSpaces(x.name),
+    attributeName: addSpaces(x.attributeName),
+    attributeValue: x.attributeValue,
+    advances: x.advances,
+    skill: x.skill,
+  })),
+});
+
+const displayTalents = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "rank", displayName: "Times taken" },
+  ],
+  items: character.value.talents.map((x) => ({
+    name: addSpaces(x.name),
+    rank: x.rank,
+  })),
+});
+
 const equippedWeaponDisp = ref({
   fields: [
     { name: "name", displayName: "Name" },
@@ -417,99 +462,48 @@ const equippedWeaponDisp = ref({
       </div>
     </div>
     <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-      <div class="m-2 grow">
-        <div class="mb-1">Basic Skills 1</div>
-        <table class="border-collapse w-full">
-          <tbody>
-            <tr>
-              <th class="border border-neutral-400 p-2 font-semibold">Name</th>
-              <th colspan="2" class="border border-neutral-400 p-2 font-semibold">Attribute</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Adv</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Skill</th>
-            </tr>
-            <tr
-              v-for="skill in character.basicSkills.slice(0, Math.floor(character.basicSkills.length / 2))"
-              :key="skill.name"
-            >
-              <td class="border border-neutral-400 p-2">{{ addSpaces(skill.name) }}</td>
-              <td class="border border-neutral-400 p-2">{{ addSpaces(skill.attributeName) }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.attributeValue }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.advances }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.skill }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="m-2 grow">
-        <div class="mb-1">Basic Skills 2</div>
-        <table class="border-collapse w-full">
-          <tbody>
-            <tr>
-              <th class="border border-neutral-400 p-2 font-semibold">Name</th>
-              <th colspan="2" class="border border-neutral-400 p-2 font-semibold">Attribute</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Adv</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Skill</th>
-            </tr>
-            <tr
-              v-for="skill in character.basicSkills.slice(Math.floor(character.basicSkills.length / 2))"
-              :key="skill.name"
-            >
-              <td class="border border-neutral-400 p-2">{{ addSpaces(skill.name) }}</td>
-              <td class="border border-neutral-400 p-2">{{ addSpaces(skill.attributeName) }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.attributeValue }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.advances }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.skill }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <ViewCharacterTable
+        title="Basic Skills 1"
+        :items="displayBasicSkills.items.slice(0, Math.floor(character.basicSkills.length / 2))"
+        :fields="displayBasicSkills.fields"
+        class="m-2 grow"
+      >
+      </ViewCharacterTable>
+
+      <ViewCharacterTable
+        title="Basic Skills 2"
+        :items="displayBasicSkills.items.slice(Math.floor(character.basicSkills.length / 2))"
+        :fields="displayBasicSkills.fields"
+        class="m-2 grow"
+      >
+      </ViewCharacterTable>
     </div>
     <div
       v-if="character.advancedSkills.length || character.talents.length"
       class="flex justify-between text-left"
       :class="[isEqualOrGreater ? '' : 'flex-wrap']"
     >
-      <div class="m-2 grow">
-        <div class="mb-1">Advanced Skills</div>
-        <table class="border-collapse w-full">
-          <tbody>
-            <tr>
-              <th class="border border-neutral-400 p-2 font-semibold">Name</th>
-              <th colspan="2" class="border border-neutral-400 p-2 font-semibold">Attribute</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Adv</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Skill</th>
-            </tr>
-            <tr v-for="skill in character.advancedSkills" :key="skill.name">
-              <td class="border border-neutral-400 p-2">{{ addSpaces(skill.name) }}</td>
-              <td class="border border-neutral-400 p-2">{{ addSpaces(skill.attributeName) }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.attributeValue }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.advances }}</td>
-              <td class="border border-neutral-400 p-2">{{ skill.skill }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="m-2 grow">
-        <div class="mb-1">Talents</div>
-        <table class="border-collapse w-full">
-          <tbody>
-            <tr>
-              <th class="border border-neutral-400 p-2 font-semibold">Name</th>
-              <th colspan="2" class="border border-neutral-400 p-2 font-semibold">Times taken</th>
-            </tr>
-            <tr v-for="talent in character.talents" :key="talent.name">
-              <td class="border border-neutral-400 p-2">{{ addSpaces(talent.name) }}</td>
-              <td class="border border-neutral-400 p-2">{{ talent.rank }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <ViewCharacterTable
+        title="Advanced Skills"
+        :items="displayAdvancedSkills.items"
+        :fields="displayAdvancedSkills.fields"
+        class="m-2 grow"
+      >
+      </ViewCharacterTable>
+      <ViewCharacterTable
+        title="Talents"
+        :items="displayTalents.items"
+        :fields="displayTalents.fields"
+        class="m-2 grow"
+      >
+      </ViewCharacterTable>
     </div>
     <ViewCharacterTable
       title="Equipped Armor"
       :stack="!isEqualOrGreater"
       :items="equippedArmourDisp.items"
       :fields="equippedArmourDisp.fields"
+      class="m-2"
     >
     </ViewCharacterTable>
     <ViewCharacterTable
@@ -517,6 +511,7 @@ const equippedWeaponDisp = ref({
       :stack="!isEqualOrGreater"
       :items="equippedWeaponDisp.items"
       :fields="equippedWeaponDisp.fields"
+      class="m-2"
     >
     </ViewCharacterTable>
   </div>

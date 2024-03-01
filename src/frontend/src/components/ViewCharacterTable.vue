@@ -16,7 +16,12 @@ defineProps<{
       <table v-if="!stack" class="border-collapse w-full">
         <tbody>
           <tr>
-            <th v-for="field in fields" :key="field.name" class="border border-neutral-400 p-2 font-semibold">
+            <th
+              v-for="field in fields.filter((x) => x.colspan !== 0)"
+              :key="field.name"
+              class="border border-neutral-400 p-2 font-semibold"
+              :colspan="field.colspan ? field.colspan : 1"
+            >
               {{ field.displayName }}
             </th>
           </tr>
