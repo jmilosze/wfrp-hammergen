@@ -11,7 +11,7 @@ defineProps<{
 
 <template>
   <div v-if="items.length" class="text-left">
-    <div class="m-4">
+    <div class="m-1 my-3">
       <div class="mb-1">{{ title }}</div>
       <table v-if="!stack" class="border-collapse w-full">
         <tbody>

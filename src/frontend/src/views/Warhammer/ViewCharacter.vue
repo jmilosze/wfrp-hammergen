@@ -404,8 +404,8 @@ const grimoiresDisp = ref(
 </script>
 
 <template>
-  <Header :title="addSpaces(character.name)" class="mx-3"> </Header>
-  <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap ml-3">
+  <Header :title="addSpaces(character.name)"> </Header>
+  <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap">
     <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="print()">Print</ActionButton>
@@ -419,8 +419,8 @@ const grimoiresDisp = ref(
     <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
 
-  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <div class="m-4 grow">
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <div class="m-1 my-3 grow">
       <div class="mb-1">Basic</div>
       <table class="border-collapse w-full">
         <tbody>
@@ -449,7 +449,7 @@ const grimoiresDisp = ref(
         </tbody>
       </table>
     </div>
-    <div class="m-4 grow">
+    <div class="m-1 my-3 grow">
       <div class="mb-1">Career</div>
       <table class="border-collapse w-full">
         <tbody>
@@ -485,7 +485,7 @@ const grimoiresDisp = ref(
       </table>
     </div>
   </div>
-  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable title="Movement" :items="displayMovement.items" :fields="displayMovement.fields" class="grow" />
     <ViewCharacterTable title="Wealth" :items="displayWealth.items" :fields="displayWealth.fields" class="grow" />
     <ViewCharacterTable title="Fate" :items="displayFate.items" :fields="displayFate.fields" class="grow" />
@@ -496,7 +496,7 @@ const grimoiresDisp = ref(
       class="grow"
     />
   </div>
-  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable title="Other" :items="displayOther.items" :fields="displayOther.fields" class="grow" />
     <ViewCharacterTable
       title="Experience"
@@ -505,7 +505,7 @@ const grimoiresDisp = ref(
       class="grow"
     />
   </div>
-  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable
       title="Attributes 1"
       :items="displayAttributes1.items"
@@ -519,7 +519,7 @@ const grimoiresDisp = ref(
       class="grow"
     />
   </div>
-  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable
       title="Basic skills 1"
       :items="displayBasicSkills.items.slice(0, Math.floor(character.basicSkills.length / 2))"
@@ -533,7 +533,7 @@ const grimoiresDisp = ref(
       class="grow"
     />
   </div>
-  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable
       title="Advanced skills"
       :items="displayAdvancedSkills.items"
@@ -566,8 +566,8 @@ const grimoiresDisp = ref(
     :items="carriedDisp.items"
     :fields="carriedDisp.fields"
   />
-  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <ViewCharacterTable title="Stored" :items="storedDisp.items" :fields="storedDisp.fields" class="m-2 grow" />
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <ViewCharacterTable title="Stored" :items="storedDisp.items" :fields="storedDisp.fields" class="grow" />
     <ViewCharacterTable
       title="Encumbrance (Equipped and Carried)"
       :items="encDisp.items"
