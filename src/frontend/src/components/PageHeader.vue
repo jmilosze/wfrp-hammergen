@@ -5,9 +5,11 @@ defineProps<{
 </script>
 
 <template>
-  <div class="text-3xl font-semibold mt-5 pb-2 border-b-2 border-neutral-200">{{ title }}</div>
-  <div class="pt-2 text-justify">
-    <p><slot></slot></p>
+  <div>
+    <div class="text-3xl font-semibold mt-5 pb-2 border-b-2 border-neutral-200">{{ title }}</div>
+    <div class="pt-2 text-justify">
+      <p><slot></slot></p>
+    </div>
   </div>
 </template>
 

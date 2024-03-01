@@ -404,8 +404,8 @@ const grimoiresDisp = ref(
 </script>
 
 <template>
-  <Header :title="addSpaces(character.name)"> </Header>
-  <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap">
+  <Header :title="addSpaces(character.name)" class="mx-3"> </Header>
+  <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap ml-3">
     <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="print()">Print</ActionButton>
