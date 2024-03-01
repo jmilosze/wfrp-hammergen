@@ -13,29 +13,25 @@ const authStore = useAuthStore();
 
 const prayer = ref(new Prayer());
 const prayerOriginal = ref(new Prayer());
-const errors: Ref<string[]> = ref([]);
 
 const prayerApi = new PrayerApi(authRequest);
 
-await loadPrayer();
+if (props.id !== "create") {
+  await loadPrayer();
+}
 
 async function loadPrayer() {
-  errors.value = [];
   try {
     prayer.value = await authStore.callAndLogoutIfUnauthorized(prayerApi.getElement)(props.id);
+    prayerOriginal.value = prayer.value.copy();
   } catch (error) {
-    if (!(error instanceof UnauthorizedError)) {
-      errors.value.push("Server Error.");
-      console.log(error);
-    }
+    console.log(error);
   }
 }
 </script>
 
 <template>
   <Header :title="id === 'create' ? 'Create prayer' : 'Edit prayer'" />
-  <div v-if="id === 'create'">Create new prayer.</div>
-  <div v-else>Modify/View prayer {{ prayer.name }}</div>
 </template>
 
 <style scoped></style>

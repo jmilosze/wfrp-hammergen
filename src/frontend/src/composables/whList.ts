@@ -12,18 +12,13 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
   const authStore = useAuthStore();
 
   const whToDelete = ref({ id: "", name: "" });
-  const errors: Ref<string[]> = ref([]);
   const whList: Ref<T[]> = ref([]);
 
   async function loadWhList(): Promise<void> {
-    errors.value = [];
     try {
       whList.value = await authStore.callAndLogoutIfUnauthorized(elementApi.listElements)();
     } catch (error) {
-      if (!(error instanceof UnauthorizedError)) {
-        errors.value.push("Server Error.");
-        throw error;
-      }
+      console.log(error);
     }
   }
 
@@ -42,8 +37,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
       whCopy.canEdit = true;
       whList.value.push(whCopy);
     } catch (error) {
-      errors.value.push("Server Error.");
-      throw error;
+      console.log(error);
     }
   }
 
@@ -58,8 +52,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
       }
     } catch (error) {
       if (!(error instanceof UnauthorizedError)) {
-        errors.value.push("Server Error.");
-        throw error;
+        console.log(error);
       }
     }
   }
@@ -74,5 +67,5 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
   });
 
-  return { errors, whList, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
+  return { whList, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
 }

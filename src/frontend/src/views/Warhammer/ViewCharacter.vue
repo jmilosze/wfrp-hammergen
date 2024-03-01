@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
-import { UnauthorizedError, useAuthStore } from "../../stores/auth.ts";
-import { ref, Ref } from "vue";
+import { useAuthStore } from "../../stores/auth.ts";
+import { ref } from "vue";
 import { CharacterApi } from "../../services/wh/character.ts";
 import { authRequest } from "../../services/auth.ts";
 import {
@@ -29,19 +29,14 @@ const { print, printing } = usePrint();
 
 const characterApi = new CharacterApi(authRequest);
 
-const errors: Ref<string[]> = ref([]);
 const character = ref(newCharacterFull());
 await loadCharacter();
 
 async function loadCharacter() {
-  errors.value = [];
   try {
     character.value = await authStore.callAndLogoutIfUnauthorized(characterApi.getElementForDisplay)(props.id);
   } catch (error) {
-    if (!(error instanceof UnauthorizedError)) {
-      errors.value.push("Server Error.");
-      console.log(error);
-    }
+    console.log(error);
   }
 }
 
