@@ -147,6 +147,37 @@ const equippedWeaponDisp = ref({
     qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
   })),
 });
+
+const equippedOtherDisp = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "enc", displayName: "Enc" },
+    { name: "description", displayName: "Description" },
+  ],
+  items: character.value.equippedOther.map((x) => ({
+    name: addSpaces(x.name),
+    enc: x.enc,
+    description: addSpaces(x.description),
+  })),
+});
+
+const carriedDisp = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "enc", displayName: "Enc" },
+    { name: "description", displayName: "Description" },
+  ],
+  items: character.value.carried.map((x) => ({
+    name: addSpaces(x.name),
+    enc: x.enc,
+    description: addSpaces(x.description),
+  })),
+});
+
+const storedDisp = ref({
+  fields: [{ name: "items", displayName: "Items", colspan: 0 }],
+  items: [{ items: character.value.stored.map((x) => addSpaces(x.name)).join(", ") }],
+});
 </script>
 
 <template>
@@ -463,56 +494,63 @@ const equippedWeaponDisp = ref({
     </div>
     <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
       <ViewCharacterTable
-        title="Basic Skills 1"
+        title="Basic skills 1"
         :items="displayBasicSkills.items.slice(0, Math.floor(character.basicSkills.length / 2))"
         :fields="displayBasicSkills.fields"
         class="m-2 grow"
-      >
-      </ViewCharacterTable>
-
+      />
       <ViewCharacterTable
-        title="Basic Skills 2"
+        title="Basic skills 2"
         :items="displayBasicSkills.items.slice(Math.floor(character.basicSkills.length / 2))"
         :fields="displayBasicSkills.fields"
         class="m-2 grow"
-      >
-      </ViewCharacterTable>
+      />
     </div>
-    <div
-      v-if="character.advancedSkills.length || character.talents.length"
-      class="flex justify-between text-left"
-      :class="[isEqualOrGreater ? '' : 'flex-wrap']"
-    >
+    <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
       <ViewCharacterTable
-        title="Advanced Skills"
+        title="Advanced skills"
         :items="displayAdvancedSkills.items"
         :fields="displayAdvancedSkills.fields"
         class="m-2 grow"
-      >
-      </ViewCharacterTable>
+      />
       <ViewCharacterTable
         title="Talents"
         :items="displayTalents.items"
         :fields="displayTalents.fields"
         class="m-2 grow"
-      >
-      </ViewCharacterTable>
+      />
     </div>
     <ViewCharacterTable
-      title="Equipped Armor"
+      title="Equipped armour"
       :stack="!isEqualOrGreater"
       :items="equippedArmourDisp.items"
       :fields="equippedArmourDisp.fields"
       class="m-2"
-    >
-    </ViewCharacterTable>
+    />
     <ViewCharacterTable
-      title="Equipped Weapon"
+      title="Equipped weapon"
       :stack="!isEqualOrGreater"
       :items="equippedWeaponDisp.items"
       :fields="equippedWeaponDisp.fields"
       class="m-2"
-    >
+    />
+    <ViewCharacterTable
+      title="Other equipped"
+      :stack="!isEqualOrGreater"
+      :items="equippedOtherDisp.items"
+      :fields="equippedOtherDisp.fields"
+      class="m-2"
+    />
+    <ViewCharacterTable
+      title="Carried"
+      :stack="!isEqualOrGreater"
+      :items="carriedDisp.items"
+      :fields="carriedDisp.fields"
+      class="m-2"
+    />
+  </div>
+  <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <ViewCharacterTable title="Stored" :items="storedDisp.items" :fields="storedDisp.fields" class="m-2 grow">
     </ViewCharacterTable>
   </div>
 </template>
