@@ -11,6 +11,7 @@ import { useRouter } from "vue-router";
 import { addSpaces } from "../../utils/string.ts";
 import { useElSize } from "../../composables/viewSize.ts";
 import { ViewSize } from "../../utils/viewSize.ts";
+import ViewCharacterTable from "../../components/ViewCharacterTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -64,6 +65,43 @@ function print() {
 
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
+
+const equippedArmourDisp = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "locations", displayName: "Locations" },
+    { name: "enc", displayName: "Enc" },
+    { name: "ap", displayName: "AP" },
+    { name: "qualities", displayName: "Qualities and runes" },
+  ],
+  items: character.value.equippedArmor.map((x) => ({
+    name: addSpaces(x.name),
+    locations: x.locations?.map((x) => addSpaces(x)).join(", "),
+    enc: x.enc,
+    ap: x.ap,
+    qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
+  })),
+});
+
+const equippedWeaponDisp = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "group", displayName: "Group" },
+    { name: "enc", displayName: "Enc" },
+    { name: "rng", displayName: "Range / reach" },
+    { name: "dmg", displayName: "Damage" },
+    { name: "qualities", displayName: "Qualities and runes" },
+  ],
+  items: character.value.equippedWeapon.map((x) => ({
+    name: addSpaces(x.name),
+    group: addSpaces(x.group),
+    enc: x.enc,
+    ap: x.ap,
+    rng: addSpaces(x.rng),
+    dmg: addSpaces(x.dmg),
+    qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
+  })),
+});
 </script>
 
 <template>
@@ -467,86 +505,20 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
         </table>
       </div>
     </div>
-    <div v-if="character.equippedArmor.length" class="text-left">
-      <div class="m-2">
-        <div class="mb-1">Equipped Armor</div>
-        <table v-if="isEqualOrGreater" class="border-collapse w-full">
-          <tbody>
-            <tr>
-              <th class="border border-neutral-400 p-2 font-semibold">Name</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Locations</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Enc</th>
-              <th class="border border-neutral-400 p-2 font-semibold">AP</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Qualities or Runes</th>
-            </tr>
-            <tr v-for="armour in character.equippedArmor" :key="armour.name">
-              <td class="border border-neutral-400 p-2">{{ addSpaces(armour.name) }}</td>
-              <td class="border border-neutral-400 p-2">{{ armour.locations?.map((x) => addSpaces(x)).join(", ") }}</td>
-              <td class="border border-neutral-400 p-2">{{ armour.enc }}</td>
-              <td class="border border-neutral-400 p-2">{{ armour.ap }}</td>
-              <td class="border border-neutral-400 p-2">
-                {{ armour.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", ") }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <table v-else class="border-collapse w-full">
-          <tbody>
-            <tr v-for="armour in character.equippedArmor" :key="armour.name">
-              <td class="border border-neutral-400 p-2">
-                <div>
-                  <span class="font-semibold">Name: </span>
-                  <span>{{ addSpaces(armour.name) }}</span>
-                </div>
-                <div>
-                  <span class="font-semibold">Locations: </span>
-                  <span>{{ armour.locations?.map((x) => addSpaces(x)).join(", ") }}</span>
-                </div>
-                <div>
-                  <span class="font-semibold">Enc: </span>
-                  <span>{{ armour.enc }}</span>
-                </div>
-                <div>
-                  <span class="font-semibold">AP: </span>
-                  <span>{{ armour.ap }}</span>
-                </div>
-                <div>
-                  <span class="font-semibold">Qualities or Runes: </span>
-                  <span>{{ armour.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", ") }}</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div v-if="character.equippedWeapon.length" class="text-left">
-      <div class="m-2">
-        <div class="mb-1">Equipped Weapon</div>
-        <table class="border-collapse w-full">
-          <tbody>
-            <tr>
-              <th class="border border-neutral-400 p-2 font-semibold">Name</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Group</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Enc</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Range or reach</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Damage</th>
-              <th class="border border-neutral-400 p-2 font-semibold">Qualities or runes</th>
-            </tr>
-            <tr v-for="weapon in character.equippedWeapon" :key="weapon.name">
-              <td class="border border-neutral-400 p-2">{{ addSpaces(weapon.name) }}</td>
-              <td class="border border-neutral-400 p-2">{{ addSpaces(weapon.group) }}</td>
-              <td class="border border-neutral-400 p-2">{{ weapon.enc }}</td>
-              <td class="border border-neutral-400 p-2">{{ addSpaces(weapon.rng) }}</td>
-              <td class="border border-neutral-400 p-2">{{ addSpaces(weapon.dmg) }}</td>
-              <td class="border border-neutral-400 p-2">
-                {{ weapon.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", ") }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <ViewCharacterTable
+      title="Equipped Armor"
+      :stack="!isEqualOrGreater"
+      :items="equippedArmourDisp.items"
+      :fields="equippedArmourDisp.fields"
+    >
+    </ViewCharacterTable>
+    <ViewCharacterTable
+      title="Equipped Weapon"
+      :stack="!isEqualOrGreater"
+      :items="equippedWeaponDisp.items"
+      :fields="equippedWeaponDisp.fields"
+    >
+    </ViewCharacterTable>
   </div>
 </template>
 
