@@ -214,9 +214,9 @@ const equippedArmourDisp = ref({
   ],
   items: character.value.equippedArmor.map((x) => ({
     name: addSpaces(x.name),
-    locations: x.locations?.map((x) => addSpaces(x)).join(", "),
+    locations: x.locations ? x.locations.map((x) => addSpaces(x)).join(", ") : "",
     enc: x.enc,
-    ap: x.ap,
+    ap: x.ap ? x.ap : 0,
     qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
   })),
 });
@@ -279,7 +279,6 @@ const equippedWeaponDisp = ref({
     name: addSpaces(x.name),
     group: addSpaces(x.group),
     enc: x.enc,
-    ap: x.ap,
     rng: addSpaces(x.rng),
     dmg: addSpaces(x.dmg),
     qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
@@ -386,19 +385,19 @@ const prayerDisp = ref({
   })),
 });
 
-const grimoires: Ref<CharacterFullItem> = ref([]);
+const grimoires = ref([] as CharacterFullItem[]);
 
-for (const item: CharacterFullItem of [...character.value.carried, ...character.value.stored]) {
+for (const item of [...character.value.carried, ...character.value.stored]) {
   if (item.spells) {
     grimoires.value.push(item);
   }
 }
 
 const grimoiresDisp = ref(
-  grimoires.value.map((book) => ({
+  grimoires.value.map((book: CharacterFullItem) => ({
     name: book.name,
     fields: spellFields,
-    items: book.spells.map((spell) => formatSpell(spell)),
+    items: book.spells ? book.spells.map((spell) => formatSpell(spell)) : [],
   })),
 );
 </script>

@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { TableField, TableRow } from "../utils/table.ts";
-
 defineProps<{
   title: string;
-  fields: TableField[];
-  items: TableRow[];
+  fields: { name: string; displayName: string; colspan?: number }[];
+  items: Record<string, string | number>[];
   stack?: boolean;
 }>();
 </script>

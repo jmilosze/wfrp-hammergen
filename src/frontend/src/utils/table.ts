@@ -6,4 +6,4 @@ export interface TableRow {
 }
 
 export type TableItem = string | number | boolean;
-export type TableField = { name: string; displayName: string; colspan?: number };
+export type TableField = { name: string; displayName: string };
