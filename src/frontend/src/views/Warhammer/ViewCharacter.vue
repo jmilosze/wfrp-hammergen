@@ -62,6 +62,114 @@ function saveCsv() {
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
+const displayOther = ref({
+  fields: [
+    { name: "wounds", displayName: "Wounds (unmodified by Hardy)" },
+    { name: "sin", displayName: "Sin" },
+    { name: "corruption", displayName: "Corruption" },
+  ],
+  items: [{ wounds: character.value.wounds, sin: character.value.sin, corruption: character.value.corruption }],
+});
+
+const displayExperience = ref({
+  fields: [
+    { name: "current", displayName: "Current" },
+    { name: "spent", displayName: "Spent" },
+    { name: "total", displayName: "Total" },
+  ],
+  items: [{ current: character.value.currentExp, spent: character.value.spentExp, total: character.value.totalExp }],
+});
+
+const displayAttributes1 = ref({
+  fields: [
+    { name: "type", displayName: "" },
+    { name: "ws", displayName: "WS" },
+    { name: "bs", displayName: "BS" },
+    { name: "s", displayName: "S" },
+    { name: "t", displayName: "T" },
+    { name: "i", displayName: "I" },
+  ],
+  items: [
+    {
+      type: "Base",
+      ws: character.value.baseAttributes.WS,
+      bs: character.value.baseAttributes.BS,
+      s: character.value.baseAttributes.S,
+      t: character.value.baseAttributes.T,
+      i: character.value.baseAttributes.I,
+    },
+    {
+      type: "Other",
+      ws: character.value.otherAttributes.WS,
+      bs: character.value.otherAttributes.BS,
+      s: character.value.otherAttributes.S,
+      t: character.value.otherAttributes.T,
+      i: character.value.otherAttributes.I,
+    },
+    {
+      type: "Advances",
+      ws: character.value.attributeAdvances.WS,
+      bs: character.value.attributeAdvances.BS,
+      s: character.value.attributeAdvances.S,
+      t: character.value.attributeAdvances.T,
+      i: character.value.attributeAdvances.I,
+    },
+    {
+      type: "Total",
+      ws: character.value.attributes.WS,
+      bs: character.value.attributes.BS,
+      s: character.value.attributes.S,
+      t: character.value.attributes.T,
+      i: character.value.attributes.I,
+    },
+  ],
+});
+
+const displayAttributes2 = ref({
+  fields: [
+    { name: "type", displayName: "" },
+    { name: "ag", displayName: "Ag" },
+    { name: "dex", displayName: "Dex" },
+    { name: "int", displayName: "Int" },
+    { name: "wp", displayName: "WP" },
+    { name: "fel", displayName: "Fel" },
+  ],
+  items: [
+    {
+      type: "Base",
+      ag: character.value.baseAttributes.Ag,
+      dex: character.value.baseAttributes.Dex,
+      int: character.value.baseAttributes.Int,
+      wp: character.value.baseAttributes.WP,
+      fel: character.value.baseAttributes.Fel,
+    },
+    {
+      type: "Other",
+      ag: character.value.otherAttributes.Ag,
+      dex: character.value.otherAttributes.Dex,
+      int: character.value.otherAttributes.Int,
+      wp: character.value.otherAttributes.WP,
+      fel: character.value.otherAttributes.Fel,
+    },
+    {
+      type: "Advances",
+      ag: character.value.attributeAdvances.Ag,
+      dex: character.value.attributeAdvances.Dex,
+      int: character.value.attributeAdvances.Int,
+      wp: character.value.attributeAdvances.WP,
+      fel: character.value.attributeAdvances.Fel,
+    },
+    {
+      type: "Total",
+      ag: character.value.attributes.Ag,
+      dex: character.value.attributes.Dex,
+      int: character.value.attributes.Int,
+      wp: character.value.attributes.WP,
+      fel: character.value.attributes.Fel,
+    },
+  ],
+});
+
 const equippedArmourDisp = ref({
   fields: [
     { name: "name", displayName: "Name" },
@@ -430,148 +538,27 @@ const grimoiresDisp = ref(
     </div>
   </div>
   <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <div class="m-2 grow">
-      <div class="mb-1">Other</div>
-      <table class="border-collapse w-full">
-        <tbody>
-          <tr>
-            <th class="border border-neutral-400 p-2 font-semibold">Wounds (unmodified by Hardy)</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Sin</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Corruption</th>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">
-              {{ character.wounds }}
-            </td>
-            <td class="border border-neutral-400 p-2">
-              {{ character.sin }}
-            </td>
-            <td class="border border-neutral-400 p-2">
-              {{ character.corruption }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="m-2 grow">
-      <div class="mb-1">Experience</div>
-      <table class="border-collapse w-full">
-        <tbody>
-          <tr>
-            <th class="border border-neutral-400 p-2 font-semibold">Current</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Spent</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Total</th>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">
-              {{ character.currentExp }}
-            </td>
-            <td class="border border-neutral-400 p-2">
-              {{ character.spentExp }}
-            </td>
-            <td class="border border-neutral-400 p-2">
-              {{ character.totalExp }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ViewCharacterTable title="Other" :items="displayOther.items" :fields="displayOther.fields" class="m-2 grow" />
+    <ViewCharacterTable
+      title="Experience"
+      :items="displayExperience.items"
+      :fields="displayExperience.fields"
+      class="m-2 grow"
+    />
   </div>
   <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <div class="m-2 grow">
-      <div class="mb-1">Attributes 1</div>
-      <table class="border-collapse w-full">
-        <tbody>
-          <tr>
-            <th class="border border-neutral-400 p-2 font-semibold"></th>
-            <th class="border border-neutral-400 p-2 font-semibold">WS</th>
-            <th class="border border-neutral-400 p-2 font-semibold">BS</th>
-            <th class="border border-neutral-400 p-2 font-semibold">S</th>
-            <th class="border border-neutral-400 p-2 font-semibold">T</th>
-            <th class="border border-neutral-400 p-2 font-semibold">I</th>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">Base</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.WS }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.BS }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.S }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.T }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.I }}</td>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">Other</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.WS }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.BS }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.S }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.T }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.I }}</td>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">Advances</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.WS }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.BS }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.S }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.T }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.I }}</td>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">Total</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.WS }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.BS }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.S }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.T }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.I }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="m-2 grow">
-      <div class="mb-1">Attributes 2</div>
-      <table class="border-collapse w-full">
-        <tbody>
-          <tr>
-            <th class="border border-neutral-400 p-2 font-semibold"></th>
-            <th class="border border-neutral-400 p-2 font-semibold">Ag</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Dex</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Int</th>
-            <th class="border border-neutral-400 p-2 font-semibold">WP</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Fel</th>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">Base</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.Ag }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.Dex }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.Int }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.WP }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.baseAttributes.Fel }}</td>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">Other</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.Ag }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.Dex }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.Int }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.WP }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.otherAttributes.Fel }}</td>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">Advances</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.Ag }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.Dex }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.Int }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.WP }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributeAdvances.Fel }}</td>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">Total</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.Ag }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.Dex }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.Int }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.WP }}</td>
-            <td class="border border-neutral-400 p-2">{{ character.attributes.Fel }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ViewCharacterTable
+      title="Attributes 1"
+      :items="displayAttributes1.items"
+      :fields="displayAttributes1.fields"
+      class="m-2 grow"
+    />
+    <ViewCharacterTable
+      title="Attributes 2"
+      :items="displayAttributes2.items"
+      :fields="displayAttributes2.fields"
+      class="m-2 grow"
+    />
   </div>
   <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable
