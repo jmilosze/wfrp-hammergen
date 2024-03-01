@@ -9,6 +9,7 @@ import { useScreenSize } from "./composables/viewSize.ts";
 import { ViewSize } from "./utils/viewSize.ts";
 import { useModal } from "./composables/modal.ts";
 import { useRouter } from "vue-router";
+import { usePrint } from "./composables/print.ts";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
@@ -17,6 +18,7 @@ const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
 const authStore = useAuthStore();
 const modal = useModal();
 const router = useRouter();
+const { printing } = usePrint();
 
 const reRenderContentCounter = ref(0);
 const reRenderContent = computed(() => {
@@ -43,7 +45,7 @@ function onListWhClick() {
 
 <template>
   <!-- Top NavBar -->
-  <div class="fixed lg:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
+  <div v-if="!printing" class="fixed lg:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
     <div class="flex-auto max-w-7xl px-4 flex items-center">
       <div class="flex-auto flex items-center justify-between">
         <NavLink href="https://ko-fi.com/Q5Q12E0KB" variant="top" class="mx-5"> Support Hammergen </NavLink>
@@ -68,6 +70,7 @@ function onListWhClick() {
   </div>
   <!-- SideBar -->
   <div
+    v-if="!printing"
     class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 transition-transform border-r border-neutral-400 text-neutral-900"
     :class="!isEqualOrGreater && !showSideBar ? '-translate-x-64' : ''"
   >
@@ -117,6 +120,7 @@ function onListWhClick() {
   <!-- Content and footer-->
   <div class="lg:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
+      <!-- Content -->
       <div class="flex-auto p-5 max-w-7xl w-full">
         <RouterView v-slot="{ Component }" :key="reRenderContent">
           <template v-if="Component">
@@ -133,7 +137,8 @@ function onListWhClick() {
           </template>
         </RouterView>
       </div>
-      <div class="flex-none bg-neutral-700 w-full">
+      <!-- Footer -->
+      <div v-if="!printing" class="flex-none bg-neutral-700 w-full">
         <div class="text-center text-sm my-2 text-amber-300">
           Contact:
           <a class="hover:text-amber-100" href="mailto:admin@hammergen.net">admin@hammergen.net</a>
