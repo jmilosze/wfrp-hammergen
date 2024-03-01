@@ -4,7 +4,7 @@ import TextLink from "../components/TextLink.vue";
 </script>
 
 <template>
-  <Header title="About Hammergen"> </Header>
+  <Header title="About Hammergen" />
   <div class="text-2xl font-semibold mt-5">Source books</div>
   <p>Hammergen includes contents from the following source books:</p>
   <ul class="list-disc ml-6 mt-1">

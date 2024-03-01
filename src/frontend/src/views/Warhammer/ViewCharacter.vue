@@ -40,7 +40,7 @@ async function loadCharacter() {
   } catch (error) {
     if (!(error instanceof UnauthorizedError)) {
       errors.value.push("Server Error.");
-      throw error;
+      console.log(error);
     }
   }
 }
@@ -403,7 +403,7 @@ const grimoiresDisp = ref(
 </script>
 
 <template>
-  <Header :title="addSpaces(character.name)"> </Header>
+  <Header :title="addSpaces(character.name)" />
   <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap">
     <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>

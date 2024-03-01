@@ -54,7 +54,7 @@ function formatCharacterRow(character: Character): TableRow {
 </script>
 
 <template>
-  <Header title="Characters"> </Header>
+  <Header title="Characters" />
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"

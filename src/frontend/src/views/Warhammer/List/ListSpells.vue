@@ -62,7 +62,7 @@ function formatSpellRow(spell: Spell): TableRow {
 </script>
 
 <template>
-  <Header title="Spells"> </Header>
+  <Header title="Spells" />
   <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
   <TableWithSearch
     v-model="queryParams.search"

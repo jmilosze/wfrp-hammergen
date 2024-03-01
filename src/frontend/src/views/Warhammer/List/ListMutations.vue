@@ -72,7 +72,7 @@ const filteredTypeOptions = computed(() => {
 </script>
 
 <template>
-  <Header title="Mutations"> </Header>
+  <Header title="Mutations" />
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
     <SelectInput v-model="queryParams.type" :options="filteredTypeOptions" class="grow mb-2 mx-1" />

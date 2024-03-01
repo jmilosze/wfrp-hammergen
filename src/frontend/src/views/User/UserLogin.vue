@@ -63,7 +63,7 @@ async function submitForm() {
 
 <template>
   <div>
-    <Header title="Log in"> </Header>
+    <Header title="Log in" />
     <div class="pt-2 md:w-96">
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormStringInput

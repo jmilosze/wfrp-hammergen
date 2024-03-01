@@ -4,7 +4,7 @@ import TextLink from "../components/TextLink.vue";
 </script>
 
 <template>
-  <Header title="How to use Hammergen"> </Header>
+  <Header title="How to use Hammergen" />
   <p class="my-2 text-2xl">Warhammer 4th ed database</p>
   <p>
     The most basic was to use Hammergen is to treat it as a large online index of all skills, talents, trappings,

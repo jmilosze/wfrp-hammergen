@@ -60,7 +60,7 @@ function formatPrayerRow(prayer: Prayer): TableRow {
 </script>
 
 <template>
-  <Header title="Prayers"> </Header>
+  <Header title="Prayers" />
   <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
   <TableWithSearch
     v-model="queryParams.search"

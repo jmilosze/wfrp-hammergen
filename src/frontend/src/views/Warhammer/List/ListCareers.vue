@@ -91,7 +91,7 @@ const filteredSpeciesOptions = computed(() => {
 </script>
 
 <template>
-  <Header title="Careers"> </Header>
+  <Header title="Careers" />
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
     <SelectInput v-model="queryParams.class" :options="filteredClassOptions" class="grow mb-2 mx-1" />
