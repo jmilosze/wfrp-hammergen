@@ -62,6 +62,40 @@ function saveCsv() {
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
+const displayMovement = ref({
+  fields: [
+    { name: "base", displayName: "Base" },
+    { name: "walk", displayName: "Walk" },
+    { name: "run", displayName: "Run" },
+  ],
+  items: [{ base: character.value.movement, walk: character.value.walk, run: character.value.run }],
+});
+
+const displayWealth = ref({
+  fields: [
+    { name: "brass", displayName: "D" },
+    { name: "silver", displayName: "SS" },
+    { name: "gold", displayName: "GC" },
+  ],
+  items: [{ brass: character.value.brass, silver: character.value.silver, gold: character.value.gold }],
+});
+
+const displayFate = ref({
+  fields: [
+    { name: "fate", displayName: "Fate" },
+    { name: "fortune", displayName: "Fortune" },
+  ],
+  items: [{ fate: character.value.fate, fortune: character.value.fortune }],
+});
+
+const displayResilience = ref({
+  fields: [
+    { name: "resilience", displayName: "Resilience" },
+    { name: "resolve", displayName: "Resolve" },
+  ],
+  items: [{ resilience: character.value.resilience, resolve: character.value.resolve }],
+});
+
 const displayOther = ref({
   fields: [
     { name: "wounds", displayName: "Wounds (unmodified by Hardy)" },
@@ -452,90 +486,20 @@ const grimoiresDisp = ref(
     </div>
   </div>
   <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <div class="m-2 grow">
-      <div class="mb-1">Movement</div>
-      <table class="border-collapse w-full">
-        <tbody>
-          <tr>
-            <th class="border border-neutral-400 p-2 font-semibold">Base</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Walk</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Run</th>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2 mr-3">
-              {{ character.movement }}
-            </td>
-            <td class="border border-neutral-400 p-2 mr-3">
-              {{ character.walk }}
-            </td>
-            <td class="border border-neutral-400 p-2 mr-3">
-              {{ character.run }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="m-2 grow">
-      <div class="mb-1">Wealth</div>
-      <table class="border-collapse w-full">
-        <tbody>
-          <tr>
-            <th class="border border-neutral-400 p-2 font-semibold">D</th>
-            <th class="border border-neutral-400 p-2 font-semibold">SS</th>
-            <th class="border border-neutral-400 p-2 font-semibold">GC</th>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">
-              {{ character.brass }}
-            </td>
-            <td class="border border-neutral-400 p-2">
-              {{ character.silver }}
-            </td>
-            <td class="border border-neutral-400 p-2">
-              {{ character.gold }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="m-2 grow">
-      <div class="mb-1">Fate</div>
-      <table class="border-collapse w-full">
-        <tbody>
-          <tr>
-            <th class="border border-neutral-400 p-2 font-semibold">Fate</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Fortune</th>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">
-              {{ character.fate }}
-            </td>
-            <td class="border border-neutral-400 p-2">
-              {{ character.fortune }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="m-2 grow">
-      <div class="mb-1">Resilience</div>
-      <table class="border-collapse w-full">
-        <tbody>
-          <tr>
-            <th class="border border-neutral-400 p-2 font-semibold">Resilience</th>
-            <th class="border border-neutral-400 p-2 font-semibold">Resolve</th>
-          </tr>
-          <tr>
-            <td class="border border-neutral-400 p-2">
-              {{ character.resilience }}
-            </td>
-            <td class="border border-neutral-400 p-2">
-              {{ character.resolve }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ViewCharacterTable
+      title="Movement"
+      :items="displayMovement.items"
+      :fields="displayMovement.fields"
+      class="m-2 grow"
+    />
+    <ViewCharacterTable title="Wealth" :items="displayWealth.items" :fields="displayWealth.fields" class="m-2 grow" />
+    <ViewCharacterTable title="Fate" :items="displayFate.items" :fields="displayFate.fields" class="m-2 grow" />
+    <ViewCharacterTable
+      title="Resilience"
+      :items="displayResilience.items"
+      :fields="displayResilience.fields"
+      class="m-2 grow"
+    />
   </div>
   <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable title="Other" :items="displayOther.items" :fields="displayOther.fields" class="m-2 grow" />
