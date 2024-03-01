@@ -4,6 +4,9 @@ import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
 import { Ref, ref } from "vue";
 import { UnauthorizedError, useAuthStore } from "../../../stores/auth.ts";
 import { authRequest } from "../../../services/auth.ts";
+import { useElSize } from "../../../composables/viewSize.ts";
+import { ViewSize } from "../../../utils/viewSize.ts";
+import FormStringInput from "../../../components/FormStringInput.vue";
 
 const props = defineProps<{
   id: string;
@@ -28,10 +31,22 @@ async function loadPrayer() {
     console.log(error);
   }
 }
+
+const contentContainerRef = ref(null);
+const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 </script>
 
 <template>
   <Header :title="id === 'create' ? 'Create prayer' : 'Edit prayer'" />
+  <div
+    ref="contentContainerRef"
+    class="flex justify-between text-left gap-4"
+    :class="[isEqualOrGreater ? '' : 'flex-wrap']"
+  >
+    <div class="m-1 my-3 grow">
+      <FormStringInput title="Name" :modelValue="prayer.name" type="text" validation-status="" />
+    </div>
+  </div>
 </template>
 
 <style scoped></style>
