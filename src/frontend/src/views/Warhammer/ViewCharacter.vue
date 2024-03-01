@@ -543,25 +543,25 @@ const grimoiresDisp = ref(
   </div>
   <ViewCharacterTable
     title="Equipped armour"
-    :stack="!isEqualOrGreater"
+    :stack="!isEqualOrGreater && !printing"
     :items="equippedArmourDisp.items"
     :fields="equippedArmourDisp.fields"
   />
   <ViewCharacterTable
     title="Equipped weapon"
-    :stack="!isEqualOrGreater"
+    :stack="!isEqualOrGreater && !printing"
     :items="equippedWeaponDisp.items"
     :fields="equippedWeaponDisp.fields"
   />
   <ViewCharacterTable
     title="Other equipped"
-    :stack="!isEqualOrGreater"
+    :stack="!isEqualOrGreater && !printing"
     :items="equippedOtherDisp.items"
     :fields="equippedOtherDisp.fields"
   />
   <ViewCharacterTable
     title="Carried"
-    :stack="!isEqualOrGreater"
+    :stack="!isEqualOrGreater && !printing"
     :items="carriedDisp.items"
     :fields="carriedDisp.fields"
   />
@@ -576,19 +576,19 @@ const grimoiresDisp = ref(
   </div>
   <ViewCharacterTable
     title="Mutations"
-    :stack="!isEqualOrGreater"
+    :stack="!isEqualOrGreater && !printing"
     :items="mutationDisp.items"
     :fields="mutationDisp.fields"
   />
   <ViewCharacterTable
     title="Known spells"
-    :stack="!isEqualOrGreater"
+    :stack="!isEqualOrGreater && !printing"
     :items="spellsDisp.items"
     :fields="spellsDisp.fields"
   />
   <ViewCharacterTable
     title="Known prayers"
-    :stack="!isEqualOrGreater"
+    :stack="!isEqualOrGreater && !printing"
     :items="prayerDisp.items"
     :fields="prayerDisp.fields"
   />
@@ -596,7 +596,7 @@ const grimoiresDisp = ref(
     v-for="book in grimoiresDisp"
     :key="book.name"
     :title="'Spells in ' + addSpaces(book.name)"
-    :stack="!isEqualOrGreater"
+    :stack="!isEqualOrGreater && !printing"
     :items="book.items"
     :fields="book.fields"
   />
