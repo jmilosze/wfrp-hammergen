@@ -4,7 +4,12 @@ import { UnauthorizedError, useAuthStore } from "../../stores/auth.ts";
 import { ref, Ref } from "vue";
 import { CharacterApi } from "../../services/wh/character.ts";
 import { authRequest } from "../../services/auth.ts";
-import { CharacterFullToCsv, newCharacterFull } from "../../services/wh/characterFull.ts";
+import {
+  CharacterFullItem,
+  CharacterFullSpell,
+  CharacterFullToCsv,
+  newCharacterFull,
+} from "../../services/wh/characterFull.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";
@@ -86,8 +91,8 @@ const equippedArmourDisp = ref({
 const displayBasicSkills = ref({
   fields: [
     { name: "name", displayName: "Name" },
-    { name: "attributeName", displayName: "Attribute", colspan: 2 },
-    { name: "attributeValue", displayName: "Attribute", colspan: 0 },
+    { name: "attributeName", displayName: "Attr", colspan: 2 },
+    { name: "attributeValue", displayName: "Attr", colspan: 0 },
     { name: "advances", displayName: "Adv" },
     { name: "skill", displayName: "Skill" },
   ],
@@ -103,8 +108,8 @@ const displayBasicSkills = ref({
 const displayAdvancedSkills = ref({
   fields: [
     { name: "name", displayName: "Name" },
-    { name: "attributeName", displayName: "Attribute", colspan: 2 },
-    { name: "attributeValue", displayName: "Attribute", colspan: 0 },
+    { name: "attributeName", displayName: "Attr", colspan: 2 },
+    { name: "attributeValue", displayName: "Attr", colspan: 0 },
     { name: "advances", displayName: "Adv" },
     { name: "skill", displayName: "Skill" },
   ],
@@ -174,10 +179,95 @@ const carriedDisp = ref({
   })),
 });
 
+const storedItems = character.value.stored.map((x) => addSpaces(x.name)).join(", ");
 const storedDisp = ref({
   fields: [{ name: "items", displayName: "Items", colspan: 0 }],
-  items: [{ items: character.value.stored.map((x) => addSpaces(x.name)).join(", ") }],
+  items: storedItems !== "" ? [{ items: storedItems }] : [],
 });
+
+const encDisp = ref({
+  fields: [
+    { name: "armour", displayName: "Armour" },
+    { name: "weapon", displayName: "Weapon" },
+    { name: "other", displayName: "Other" },
+    { name: "carried", displayName: "Carried" },
+  ],
+  items: [
+    {
+      armour: character.value.encArmor,
+      weapon: character.value.encWeapon,
+      other: character.value.encOther,
+      carried: character.value.encCarried,
+    },
+  ],
+});
+
+const mutationDisp = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "type", displayName: "Type" },
+    { name: "description", displayName: "Description" },
+  ],
+  items: character.value.mutations.map((x) => ({
+    name: addSpaces(x.name),
+    type: x.type,
+    description: addSpaces(x.description),
+  })),
+});
+
+const spellFields = [
+  { name: "name", displayName: "Name" },
+  { name: "cn", displayName: "CN" },
+  { name: "range", displayName: "Range" },
+  { name: "target", displayName: "Target" },
+  { name: "duration", displayName: "Duration" },
+];
+
+function formatSpell(spell: CharacterFullSpell) {
+  return {
+    name: addSpaces(spell.name),
+    cn: spell.cn,
+    range: addSpaces(spell.range),
+    target: addSpaces(spell.target),
+    duration: addSpaces(spell.duration),
+  };
+}
+
+const spellsDisp = ref({
+  fields: spellFields,
+  items: character.value.spells.map((x) => formatSpell(x)),
+});
+
+const prayerDisp = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "range", displayName: "Range" },
+    { name: "target", displayName: "Target" },
+    { name: "duration", displayName: "Duration" },
+  ],
+  items: character.value.prayers.map((x) => ({
+    name: addSpaces(x.name),
+    range: addSpaces(x.range),
+    target: addSpaces(x.target),
+    duration: addSpaces(x.duration),
+  })),
+});
+
+const grimoires: Ref<CharacterFullItem> = ref([]);
+
+for (const item: CharacterFullItem of [...character.value.carried, ...character.value.stored]) {
+  if (item.spells) {
+    grimoires.value.push(item);
+  }
+}
+
+const grimoiresDisp = ref(
+  grimoires.value.map((book) => ({
+    name: book.name,
+    fields: spellFields,
+    items: book.spells.map((spell) => formatSpell(spell)),
+  })),
+);
 </script>
 
 <template>
@@ -550,9 +640,44 @@ const storedDisp = ref({
     />
   </div>
   <div class="flex justify-between text-left" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <ViewCharacterTable title="Stored" :items="storedDisp.items" :fields="storedDisp.fields" class="m-2 grow">
-    </ViewCharacterTable>
+    <ViewCharacterTable title="Stored" :items="storedDisp.items" :fields="storedDisp.fields" class="m-2 grow" />
+    <ViewCharacterTable
+      title="Encumbrance (Equipped and Carried)"
+      :items="encDisp.items"
+      :fields="encDisp.fields"
+      class="m-2 grow"
+    />
   </div>
+  <ViewCharacterTable
+    title="Mutations"
+    :stack="!isEqualOrGreater"
+    :items="mutationDisp.items"
+    :fields="mutationDisp.fields"
+    class="m-2"
+  />
+  <ViewCharacterTable
+    title="Known spells"
+    :stack="!isEqualOrGreater"
+    :items="spellsDisp.items"
+    :fields="spellsDisp.fields"
+    class="m-2"
+  />
+  <ViewCharacterTable
+    title="Known prayers"
+    :stack="!isEqualOrGreater"
+    :items="prayerDisp.items"
+    :fields="prayerDisp.fields"
+    class="m-2"
+  />
+  <ViewCharacterTable
+    v-for="book in grimoiresDisp"
+    :key="book.name"
+    :title="'Spells in ' + addSpaces(book.name)"
+    :stack="!isEqualOrGreater"
+    :items="book.items"
+    :fields="book.fields"
+    class="m-2"
+  />
 </template>
 
 <style scoped></style>
