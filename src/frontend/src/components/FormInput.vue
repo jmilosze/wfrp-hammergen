@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ValidationStatus } from "../utils/validation.ts";
 import { computed } from "vue";
+import { b } from "vitest/dist/reporters-O4LBziQ_";
 
 const props = defineProps<{
   type?: "text" | "password";
   title?: string;
+  disabled?: boolean;
   validationStatus: ValidationStatus;
   modelValue: string;
 }>();
@@ -32,6 +34,7 @@ const value = computed({
           v-model="value"
           :type="type ? type : 'text'"
           class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:outline-2"
+          :disabled="disabled ? disabled : false"
         />
       </div>
       <div>

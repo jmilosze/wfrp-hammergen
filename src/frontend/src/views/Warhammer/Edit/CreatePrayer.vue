@@ -52,15 +52,27 @@ const validDuration = computed(() => prayer.value.validateDuration());
   >
     <div class="m-1 my-3 flex-1">
       <div>
-        <FormInput v-model="prayer.name" title="Name" :validationStatus="validName" />
-        <FormTextarea v-model="prayer.description" title="Description" :validationStatus="validDesc" />
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="prayer.name" title="Name" :validationStatus="validName" :disabled="!prayer.canEdit" />
+          <FormTextarea
+            v-model="prayer.description"
+            title="Description"
+            :validationStatus="validDesc"
+            :disabled="!prayer.canEdit"
+          />
+        </div>
       </div>
     </div>
     <div class="m-1 my-3 flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="prayer.range" title="Range" :validationStatus="validRange" />
-        <FormInput v-model="prayer.target" title="Target" :validationStatus="validTarget" />
-        <FormInput v-model="prayer.duration" title="Duration" :validationStatus="validDuration" />
+        <FormInput v-model="prayer.range" title="Range" :validationStatus="validRange" :disabled="!prayer.canEdit" />
+        <FormInput v-model="prayer.target" title="Target" :validationStatus="validTarget" :disabled="!prayer.canEdit" />
+        <FormInput
+          v-model="prayer.duration"
+          title="Duration"
+          :validationStatus="validDuration"
+          :disabled="!prayer.canEdit"
+        />
       </div>
     </div>
   </div>
