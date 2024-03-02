@@ -9,7 +9,7 @@ import {
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
@@ -104,11 +104,11 @@ export class Skill implements WhProperty {
   }
 
   validateName(): ValidationStatus {
-    return validNameFn(this.name);
+    return validShortDescFn(this.name);
   }
 
   validateDescription(): ValidationStatus {
-    return validNameFn(this.description);
+    return validShortDescFn(this.description);
   }
 
   isEqualTo(otherSkill: Skill): boolean {

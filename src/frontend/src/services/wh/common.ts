@@ -36,17 +36,17 @@ export interface IdNumber {
 
 export const SHORT_DESC_REGEX: RegExp = /^[^<>]{0,200}$/;
 
-export function validNameFn(name: string): ValidationStatus {
+export function validShortDescFn(name: string): ValidationStatus {
   return setValidationStatus(
     SHORT_DESC_REGEX.test(name),
-    "Name has to be shorter than 200 characters and cannot use <> symbols.",
+    "This field has to be shorter than 200 characters and cannot use <> symbols.",
   );
 }
 
-export function validDescFn(name: string): ValidationStatus {
+export function validLongDescFn(name: string): ValidationStatus {
   return setValidationStatus(
     SHORT_DESC_REGEX.test(name),
-    "Description has to be shorter than 10,000 characters characters and cannot use <> symbols.",
+    "This field has to be shorter than 10,000 characters characters and cannot use <> symbols.",
   );
 }
 

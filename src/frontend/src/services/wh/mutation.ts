@@ -9,7 +9,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
@@ -85,11 +85,11 @@ export class Mutation implements WhProperty {
   }
 
   validateName(): ValidationStatus {
-    return validNameFn(this.name);
+    return validShortDescFn(this.name);
   }
 
   validateDescription(): ValidationStatus {
-    return validNameFn(this.description);
+    return validShortDescFn(this.description);
   }
 
   isEqualTo(otherMutation: Mutation): boolean {

@@ -1,6 +1,6 @@
 import { AttributeName, racialAttributes } from "./attributes.ts";
 import { copySource, Source } from "./source.ts";
-import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
@@ -230,11 +230,11 @@ export class Career implements WhProperty {
   }
 
   validateName(): ValidationStatus {
-    return validNameFn(this.name);
+    return validShortDescFn(this.name);
   }
 
   validateDescription(): ValidationStatus {
-    return validNameFn(this.description);
+    return validShortDescFn(this.description);
   }
 
   isEqualTo(otherCareer: Career): boolean {

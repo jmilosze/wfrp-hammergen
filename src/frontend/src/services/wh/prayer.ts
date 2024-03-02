@@ -8,7 +8,7 @@ import {
 import { AxiosInstance } from "axios";
 import { Source, copySource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
@@ -71,11 +71,15 @@ export class Prayer implements WhProperty {
   }
 
   validateName(): ValidationStatus {
-    return validNameFn(this.name);
+    return validShortDescFn(this.name);
   }
 
   validateDescription(): ValidationStatus {
-    return validNameFn(this.description);
+    return validShortDescFn(this.description);
+  }
+
+  validateRange(): ValidationStatus {
+    return validShortDescFn(this.range);
   }
 
   isEqualTo(otherPrayer: Prayer): boolean {

@@ -36,6 +36,8 @@ const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => prayer.value.validateName());
+const validDesc = computed(() => prayer.value.validateDescription());
+const validRange = computed(() => prayer.value.validateRange());
 </script>
 
 <template>
@@ -47,6 +49,9 @@ const validName = computed(() => prayer.value.validateName());
   >
     <div class="m-1 my-3 grow">
       <FormInput v-model="prayer.name" title="Name" :validationStatus="validName" />
+    </div>
+    <div class="m-1 my-3 grow">
+      <FormInput v-model="prayer.range" title="Range" :validationStatus="validRange" />
     </div>
   </div>
 </template>

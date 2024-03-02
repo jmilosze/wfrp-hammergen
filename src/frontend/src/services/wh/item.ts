@@ -9,7 +9,7 @@ import {
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
-import { ApiResponse, validNameFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 export const enum ItemType {
@@ -454,11 +454,11 @@ export class Item implements WhProperty {
   }
 
   validateName(): ValidationStatus {
-    return validNameFn(this.name);
+    return validShortDescFn(this.name);
   }
 
   validateDescription(): ValidationStatus {
-    return validNameFn(this.description);
+    return validShortDescFn(this.description);
   }
 
   isEqualTo(otherItem: Item): boolean {
