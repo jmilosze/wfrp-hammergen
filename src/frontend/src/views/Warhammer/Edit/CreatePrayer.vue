@@ -47,11 +47,11 @@ const validRange = computed(() => prayer.value.validateRange());
     class="flex justify-between text-left gap-4"
     :class="[isEqualOrGreater ? '' : 'flex-wrap']"
   >
-    <div class="m-1 my-3 grow">
-      <FormInput v-model="prayer.name" title="Name" :validationStatus="validName" />
+    <div class="m-1 my-3 flex-1">
+      <div class="min-w-80"><FormInput v-model="prayer.name" title="Name" :validationStatus="validName" /></div>
     </div>
-    <div class="m-1 my-3 grow">
-      <FormInput v-model="prayer.range" title="Range" :validationStatus="validRange" />
+    <div class="m-1 my-3 flex-1">
+      <div class="min-w-80"><FormInput v-model="prayer.range" title="Range" :validationStatus="validRange" /></div>
     </div>
   </div>
 </template>

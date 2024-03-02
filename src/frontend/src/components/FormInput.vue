@@ -31,7 +31,7 @@ const value = computed({
         <input
           v-model="value"
           :type="type ? type : 'text'"
-          class="border border-neutral-300 rounded w-full h-10 px-2 focus:border-neutral-700 focus:border-2"
+          class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:outline-2"
         />
       </div>
       <div>
