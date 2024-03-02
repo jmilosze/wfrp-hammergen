@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
 import { computed, ref } from "vue";
-import FormStringInput from "../../components/FormStringInput.vue";
+import FormInput from "../../components/FormInput.vue";
 import router from "../../router.ts";
 import { anonRequest } from "../../services/auth.ts";
 import { User, UserApi } from "../../services/user.ts";
@@ -81,19 +81,19 @@ async function submitForm() {
     <div class="pt-2 md:w-96">
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
 
-      <FormStringInput
+      <FormInput
         v-model="user.newPassword"
         type="password"
-        class="mt-3"
         title="Password"
         :validationStatus="validPassword"
+        class="mt-3"
       />
-      <FormStringInput
+      <FormInput
         v-model="user.confirmNewPassword"
         type="password"
-        class="mt-3"
         title="Confirm Password"
         :validationStatus="passwordMatch"
+        class="mt-3"
       />
       <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
         >Submit</ActionButton

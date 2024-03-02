@@ -3,8 +3,8 @@ import { ValidationStatus } from "../utils/validation.ts";
 import { computed } from "vue";
 
 const props = defineProps<{
-  type: "text" | "password";
-  title: string;
+  type?: "text" | "password";
+  title?: string;
   validationStatus: ValidationStatus;
   modelValue: string;
 }>();
@@ -25,12 +25,12 @@ const value = computed({
 
 <template>
   <div class="w-full">
-    <p class="mb-1">{{ title }}</p>
+    <p v-if="title" class="mb-1">{{ title }}</p>
     <div class="flex items-stretch justify-between">
       <div class="flex-auto">
         <input
           v-model="value"
-          :type="type"
+          :type="type ? type : 'text'"
           class="border border-neutral-300 rounded w-full h-10 px-2 focus:border-neutral-700 focus:border-2"
         />
       </div>

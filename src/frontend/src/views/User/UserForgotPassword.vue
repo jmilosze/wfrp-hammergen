@@ -3,7 +3,7 @@ import Header from "../../components/PageHeader.vue";
 import TextLink from "../../components/TextLink.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
-import FormStringInput from "../../components/FormStringInput.vue";
+import FormInput from "../../components/FormInput.vue";
 import { anonRequest } from "../../services/auth.ts";
 import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
@@ -92,7 +92,7 @@ async function submitForm() {
   </div>
   <div class="pt-2 md:w-96">
     <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-    <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validationStatus="validEmail" />
+    <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" class="mt-3" />
   </div>
   <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
     >Submit</ActionButton

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Header from "../../../components/PageHeader.vue";
 import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
-import { Ref, ref } from "vue";
-import { UnauthorizedError, useAuthStore } from "../../../stores/auth.ts";
+import { computed, ref } from "vue";
+import { useAuthStore } from "../../../stores/auth.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
-import FormStringInput from "../../../components/FormStringInput.vue";
+import FormInput from "../../../components/FormInput.vue";
 
 const props = defineProps<{
   id: string;
@@ -34,6 +34,8 @@ async function loadPrayer() {
 
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
+
+const validName = computed(() => prayer.value.validateName());
 </script>
 
 <template>
@@ -44,7 +46,7 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
     :class="[isEqualOrGreater ? '' : 'flex-wrap']"
   >
     <div class="m-1 my-3 grow">
-      <FormStringInput title="Name" :modelValue="prayer.name" type="text" validation-status="" />
+      <FormInput v-model="prayer.name" title="Name" :validationStatus="validName" />
     </div>
   </div>
 </template>

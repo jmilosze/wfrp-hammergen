@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import Header from "../../components/PageHeader.vue";
-import FormStringInput from "../../components/FormStringInput.vue";
+import FormInput from "../../components/FormInput.vue";
 import { anonRequest } from "../../services/auth";
 import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
 import AfterSubmit from "../../components/AfterSubmit.vue";
@@ -104,20 +104,20 @@ async function submitForm() {
     </Header>
     <div class="pt-2 md:w-96">
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-      <FormStringInput v-model="user.email" type="text" class="mt-3" title="Email" :validationStatus="validEmail" />
-      <FormStringInput
+      <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" class="mt-3" />
+      <FormInput
         v-model="user.newPassword"
         type="password"
-        class="mt-3"
         title="Password"
         :validationStatus="validPassword"
+        class="mt-3"
       />
-      <FormStringInput
+      <FormInput
         v-model="user.confirmNewPassword"
         type="password"
-        class="mt-3"
         title="Confirm Password"
         :validationStatus="passwordMatch"
+        class="mt-3"
       />
     </div>
     <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"

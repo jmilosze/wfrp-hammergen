@@ -6,7 +6,7 @@ import { SubmissionState } from "../../utils/submission.ts";
 import { UnauthorizedError, useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import ActionButton from "../../components/ActionButton.vue";
-import FormStringInput from "../../components/FormStringInput.vue";
+import FormInput from "../../components/FormInput.vue";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
 
@@ -143,17 +143,16 @@ async function submitForm() {
       class="mt-2"
       @close="showAddUserAfterSubmit = false"
     />
-    <FormStringInput
+    <FormInput
       v-model="newSharedAccount"
-      type="text"
-      class="mt-3"
       title="Add new user (email)"
       :validationStatus="validNewSharedAccount"
+      class="mt-3"
     >
       <ActionButton class="ml-3" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername"
         >Add</ActionButton
       >
-    </FormStringInput>
+    </FormInput>
     <ActionButton class="mt-3" :spinner="applyChangesSubmissionState.status === 'inProgress'" @click="submitForm"
       >Apply changes</ActionButton
     >

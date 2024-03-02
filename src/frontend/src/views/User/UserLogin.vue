@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
-import FormStringInput from "../../components/FormStringInput.vue";
+import FormInput from "../../components/FormInput.vue";
 import { computed, ref } from "vue";
 import { useAuthStore } from "../../stores/auth";
 import TextLink from "../../components/TextLink.vue";
@@ -66,19 +66,13 @@ async function submitForm() {
     <Header title="Log in" />
     <div class="pt-2 md:w-96">
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-      <FormStringInput
-        v-model="user.email"
-        type="text"
-        class="mt-3"
-        title="Username (email)"
-        :validationStatus="validEmail"
-      />
-      <FormStringInput
+      <FormInput v-model="user.email" title="Username (email)" :validationStatus="validEmail" class="mt-3" />
+      <FormInput
         v-model="user.currentPassword"
         type="password"
-        class="mt-3"
         title="Password"
         :validationStatus="validCurrentPassword"
+        class="mt-3"
       />
     </div>
     <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"

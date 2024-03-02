@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FormStringInput from "../../components/FormStringInput.vue";
+import FormInput from "../../components/FormInput.vue";
 import { computed, ref } from "vue";
 import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
@@ -71,13 +71,13 @@ async function submitForm() {
     <div class="text-xl">Change username (email)</div>
     <div class="pt-2 md:w-96">
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-      <FormStringInput v-model="user.email" type="text" class="mt-1" title="Email" :validationStatus="validEmail" />
-      <FormStringInput
+      <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" class="mt-1" />
+      <FormInput
         v-model="user.currentPassword"
         type="password"
-        class="mt-3"
         title="Current password"
         :validationStatus="validCurrentPassword"
+        class="mt-3"
       />
       <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
         >Update email</ActionButton

@@ -5,7 +5,7 @@ import { SubmissionState } from "../../utils/submission.ts";
 import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
-import FormStringInput from "../../components/FormStringInput.vue";
+import FormInput from "../../components/FormInput.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
 import ActionButton from "../../components/ActionButton.vue";
 
@@ -59,7 +59,7 @@ async function submitForm() {
     <p>The account and all its data will be deleted. It will be impossible to recover.</p>
     <div class="pt-2 md:w-96">
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-      <FormStringInput
+      <FormInput
         v-model="user.currentPassword"
         type="password"
         class="mt-3"
