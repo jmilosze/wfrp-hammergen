@@ -7,6 +7,7 @@ import { authRequest } from "../../../services/auth.ts";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
+import FormTextarea from "../../../components/FormTextarea.vue";
 
 const props = defineProps<{
   id: string;
@@ -50,7 +51,10 @@ const validDuration = computed(() => prayer.value.validateDuration());
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="m-1 my-3 flex-1">
-      <div><FormInput v-model="prayer.name" title="Name" :validationStatus="validName" /></div>
+      <div>
+        <FormInput v-model="prayer.name" title="Name" :validationStatus="validName" />
+        <FormTextarea v-model="prayer.description" title="Description" :validationStatus="validDesc" />
+      </div>
     </div>
     <div class="m-1 my-3 flex-1">
       <div class="flex flex-col gap-4">
