@@ -4,17 +4,17 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 import FormInput from "../../components/FormInput.vue";
 import { computed, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
-import { useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
 import ActionButton from "../../components/ActionButton.vue";
+import { useAuth } from "../../composables/auth.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 const showAfterSubmit = ref(false);
 const userApi = new UserApi(authRequest);
 
-const { getLoggedUserInfo, callAndLogoutIfUnauthorized } = useAuthStore();
+const { getLoggedUserInfo, callAndLogoutIfUnauthorized } = useAuth();
 
 const validPassword = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {

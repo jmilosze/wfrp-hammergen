@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
-import { useAuthStore } from "../../stores/auth.ts";
 import { ref } from "vue";
 import { CharacterApi } from "../../services/wh/character.ts";
 import { authRequest } from "../../services/auth.ts";
@@ -18,13 +17,14 @@ import { useElSize } from "../../composables/viewSize.ts";
 import { ViewSize } from "../../utils/viewSize.ts";
 import ViewCharacterTable from "../../components/ViewCharacterTable.vue";
 import { usePrint } from "../../composables/print.ts";
+import { useAuth } from "../../composables/auth.ts";
 
 const props = defineProps<{
   id: string;
 }>();
 
 const router = useRouter();
-const authStore = useAuthStore();
+const auth = useAuth();
 const { print, printing } = usePrint();
 
 const characterApi = new CharacterApi(authRequest);
@@ -34,7 +34,7 @@ await loadCharacter();
 
 async function loadCharacter() {
   try {
-    character.value = await authStore.callAndLogoutIfUnauthorized(characterApi.getElementForDisplay)(props.id);
+    character.value = await auth.callAndLogoutIfUnauthorized(characterApi.getElementForDisplay)(props.id);
   } catch (error) {
     console.log(error);
   }

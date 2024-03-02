@@ -4,18 +4,18 @@ import NavLink from "./components/NavLink.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
-import { useAuthStore } from "./stores/auth.ts";
 import { useScreenSize } from "./composables/viewSize.ts";
 import { ViewSize } from "./utils/viewSize.ts";
 import { useModal } from "./composables/modal.ts";
 import { useRouter } from "vue-router";
 import { usePrint } from "./composables/print.ts";
+import { useAuth } from "./composables/auth.ts";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
 
 const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
-const authStore = useAuthStore();
+const auth = useAuth();
 const modal = useModal();
 const router = useRouter();
 const { printing } = usePrint();
@@ -32,8 +32,8 @@ watch(isEqualOrGreater, () => {
 });
 
 onMounted(async () => {
-  if (authStore.loggedIn) {
-    await authStore.callAndLogoutIfUnauthorized(userApi.get, false)();
+  if (auth.loggedIn.value) {
+    await auth.callAndLogoutIfUnauthorized(userApi.get, false)();
   }
 });
 
@@ -57,9 +57,9 @@ function onListWhClick() {
             ></path>
           </svg>
         </button>
-        <div v-if="authStore.loggedIn" class="hidden lg:flex items-center">
+        <div v-if="auth.loggedIn.value" class="hidden lg:flex items-center">
           <NavLink routeName="manage" variant="top" class="mx-5 whitespace-nowrap">Manage Account</NavLink>
-          <NavLink class="ml-5" variant="top" @click="authStore.logout">Logout</NavLink>
+          <NavLink class="ml-5" variant="top" @click="auth.logout">Logout</NavLink>
         </div>
         <div v-else class="hidden lg:flex justify-center">
           <NavLink routeName="register" variant="top" class="mx-5">Register</NavLink>
@@ -102,10 +102,10 @@ function onListWhClick() {
         <NavLink routeName="talents" variant="side" @click="onListWhClick()">Talents</NavLink>
         <NavLink routeName="items" variant="side" @click="onListWhClick()">Trappings</NavLink>
       </div>
-      <div v-if="authStore.loggedIn" class="py-2">
+      <div v-if="auth.loggedIn.value" class="py-2">
         <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked Users</NavLink>
         <NavLink routeName="manage" variant="side" @click="showSideBar = false">Manage Account</NavLink>
-        <NavLink variant="side" @click="authStore.logout">Logout</NavLink>
+        <NavLink variant="side" @click="auth.logout">Logout</NavLink>
       </div>
       <div v-else class="py-2">
         <NavLink routeName="register" variant="side" @click="showSideBar = false">Register</NavLink>

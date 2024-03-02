@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ValidationStatus } from "../utils/validation.ts";
 import { computed } from "vue";
-import { b } from "vitest/dist/reporters-O4LBziQ_";
 
 const props = defineProps<{
   type?: "text" | "password";

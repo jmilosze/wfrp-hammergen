@@ -3,12 +3,12 @@ import Header from "../../components/PageHeader.vue";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { computed, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
-import { UnauthorizedError, useAuthStore } from "../../stores/auth.ts";
 import { authRequest } from "../../services/auth.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import FormInput from "../../components/FormInput.vue";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
+import { UnauthorizedError, useAuth } from "../../composables/auth.ts";
 
 const applyChangesSubmissionState = ref(new SubmissionState());
 const addUserSubmissionState = ref(new SubmissionState());
@@ -19,7 +19,7 @@ const user = ref(new User());
 const originalUser = ref(new User());
 const userApi = new UserApi(authRequest);
 
-const { callAndLogoutIfUnauthorized } = useAuthStore();
+const { callAndLogoutIfUnauthorized } = useAuth();
 
 const validNewSharedAccount = computed(() => {
   if (addUserSubmissionState.value.notStartedOrSubmitted()) {
@@ -35,6 +35,8 @@ try {
 } catch (error) {
   if (!(error instanceof UnauthorizedError)) {
     applyChangesSubmissionState.value.setFailureFromError(error, []);
+  } else {
+    console.log(error);
   }
 }
 

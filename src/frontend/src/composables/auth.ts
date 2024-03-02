@@ -1,5 +1,4 @@
 import { getUserInfo, isUserLoggedIn, loginUser, logoutUser, setUserInfo } from "../services/auth.ts";
-import { defineStore } from "pinia";
 import { isAxiosError } from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -11,10 +10,10 @@ export class UnauthorizedError extends Error {
   }
 }
 
-export const useAuthStore = defineStore("auth", () => {
-  const loggedIn = ref(isUserLoggedIn());
-  const router = useRouter();
+const loggedIn = ref(isUserLoggedIn());
 
+export function useAuth() {
+  const router = useRouter();
   function callAndLogoutIfUnauthorized<T>(
     apiCall: (...args: any[]) => Promise<T>,
     redirectToLogin = true,
@@ -65,4 +64,4 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   return { loggedIn, login, logout, callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo };
-});
+}

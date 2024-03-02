@@ -11,11 +11,12 @@ import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ListWh/ActionButtonsNonCharacter.vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../../../stores/auth.ts";
+
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 import { attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
+import { useAuth } from "../../../composables/auth.ts";
 
 const whList = useWhListUtils(new SkillApi(authRequest));
 await whList.loadWhList();
@@ -31,7 +32,7 @@ watch(
   { deep: true },
 );
 
-const authStore = useAuthStore();
+const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name" },
@@ -96,7 +97,7 @@ const filteredAttributeOptions = computed(() => {
     :fields="columns"
     :items="items"
     :stackedViewSize="ViewSize.lg"
-    :addCreateNewBtn="authStore.loggedIn"
+    :addCreateNewBtn="auth.loggedIn.value"
     class="mx-1"
     @createNew="router.push({ name: 'skill', params: { id: 'create' } })"
   >

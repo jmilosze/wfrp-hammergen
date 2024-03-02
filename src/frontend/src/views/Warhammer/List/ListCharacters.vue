@@ -10,9 +10,9 @@ import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsCharacter from "../../../components/ListWh/ActionButtonsCharacter.vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../../../stores/auth.ts";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
+import { useAuth } from "../../../composables/auth.ts";
 
 const whList = useWhListUtils(new CharacterApi(authRequest));
 await whList.loadWhList();
@@ -28,7 +28,7 @@ watch(
   { deep: true },
 );
 
-const authStore = useAuthStore();
+const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name" },
@@ -60,7 +60,7 @@ function formatCharacterRow(character: Character): TableRow {
     :fields="columns"
     :items="items"
     :stackedViewSize="ViewSize.lg"
-    :addCreateNewBtn="authStore.loggedIn"
+    :addCreateNewBtn="auth.loggedIn.value"
     class="mx-1"
     @createNew="router.push({ name: 'character', params: { id: 'create' } })"
   >

@@ -2,18 +2,18 @@
 import Header from "../../../components/PageHeader.vue";
 import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
 import { computed, ref } from "vue";
-import { useAuthStore } from "../../../stores/auth.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
+import { useAuth } from "../../../composables/auth.ts";
 
 const props = defineProps<{
   id: string;
 }>();
 
-const authStore = useAuthStore();
+const auth = useAuth();
 
 const prayer = ref(new Prayer());
 const prayerOriginal = ref(new Prayer());
@@ -26,7 +26,7 @@ if (props.id !== "create") {
 
 async function loadPrayer() {
   try {
-    prayer.value = await authStore.callAndLogoutIfUnauthorized(prayerApi.getElement)(props.id);
+    prayer.value = await auth.callAndLogoutIfUnauthorized(prayerApi.getElement)(props.id);
     prayerOriginal.value = prayer.value.copy();
   } catch (error) {
     console.log(error);

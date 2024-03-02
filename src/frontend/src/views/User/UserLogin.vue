@@ -2,19 +2,19 @@
 import Header from "../../components/PageHeader.vue";
 import FormInput from "../../components/FormInput.vue";
 import { computed, ref } from "vue";
-import { useAuthStore } from "../../stores/auth";
 import TextLink from "../../components/TextLink.vue";
 import { User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
 import ActionButton from "../../components/ActionButton.vue";
+import { useAuth } from "../../composables/auth.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 const showAfterSubmit = ref(false);
 
-const authStore = useAuthStore();
+const auth = useAuth();
 
 const validEmail = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -43,7 +43,7 @@ async function submitForm() {
   showAfterSubmit.value = true;
 
   try {
-    await authStore.login(user.value.email.toLowerCase(), user.value.currentPassword);
+    await auth.login(user.value.email.toLowerCase(), user.value.currentPassword);
   } catch (error) {
     submissionState.value.setFailureFromError(error, [
       {

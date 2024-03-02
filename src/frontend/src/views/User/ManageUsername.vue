@@ -5,16 +5,16 @@ import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { authRequest } from "../../services/auth.ts";
-import { useAuthStore } from "../../stores/auth.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
 import ActionButton from "../../components/ActionButton.vue";
+import { useAuth } from "../../composables/auth.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 const showAfterSubmit = ref(false);
 const userApi = new UserApi(authRequest);
 
-const { callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo } = useAuthStore();
+const { callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo } = useAuth();
 
 const validEmail = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {

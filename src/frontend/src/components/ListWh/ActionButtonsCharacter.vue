@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useAuthStore } from "../../stores/auth.ts";
 import ActionButton from "../ActionButton.vue";
+import { useAuth } from "../../composables/auth.ts";
 
 defineProps<{
   canEdit: boolean;
@@ -14,14 +14,14 @@ const emit = defineEmits<{
   (e: "delete", id: string): void;
 }>();
 
-const authStore = useAuthStore();
+const auth = useAuth();
 </script>
 
 <template>
   <div class="flex">
     <ActionButton size="sm" class="mx-1" @click="emit('view', id)">View</ActionButton>
     <ActionButton v-if="canEdit" size="sm" class="mx-1" @click="emit('edit', id)">Edit</ActionButton>
-    <ActionButton v-if="authStore.loggedIn" size="sm" variant="amber" class="mx-1" @click="emit('copy', id)"
+    <ActionButton v-if="auth.loggedIn" size="sm" variant="amber" class="mx-1" @click="emit('copy', id)"
       >Copy</ActionButton
     >
     <ActionButton v-if="canEdit" size="sm" variant="red" class="mx-1" @click="emit('delete', id)">Delete</ActionButton>
