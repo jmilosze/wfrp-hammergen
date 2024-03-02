@@ -8,6 +8,7 @@ import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import { useAuth } from "../../../composables/auth.ts";
+import ActionButton from "../../../components/ActionButton.vue";
 
 const props = defineProps<{
   id: string;
@@ -75,6 +76,10 @@ const validDuration = computed(() => prayer.value.validateDuration());
         />
       </div>
     </div>
+  </div>
+  <div class="mt-2 flex flex-wrap gap-4">
+    <ActionButton>Save</ActionButton>
+    <ActionButton>Back</ActionButton>
   </div>
 </template>
 
