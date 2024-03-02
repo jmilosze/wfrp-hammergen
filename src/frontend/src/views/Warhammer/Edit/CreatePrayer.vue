@@ -38,20 +38,26 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 const validName = computed(() => prayer.value.validateName());
 const validDesc = computed(() => prayer.value.validateDescription());
 const validRange = computed(() => prayer.value.validateRange());
+const validTarget = computed(() => prayer.value.validateTarget());
+const validDuration = computed(() => prayer.value.validateDuration());
 </script>
 
 <template>
   <Header :title="id === 'create' ? 'Create prayer' : 'Edit prayer'" />
   <div
     ref="contentContainerRef"
-    class="flex justify-between text-left gap-4"
-    :class="[isEqualOrGreater ? '' : 'flex-wrap']"
+    class="justify-between text-left gap-4"
+    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="m-1 my-3 flex-1">
-      <div class="min-w-80"><FormInput v-model="prayer.name" title="Name" :validationStatus="validName" /></div>
+      <div><FormInput v-model="prayer.name" title="Name" :validationStatus="validName" /></div>
     </div>
     <div class="m-1 my-3 flex-1">
-      <div class="min-w-80"><FormInput v-model="prayer.range" title="Range" :validationStatus="validRange" /></div>
+      <div class="flex flex-col gap-4">
+        <FormInput v-model="prayer.range" title="Range" :validationStatus="validRange" />
+        <FormInput v-model="prayer.target" title="Target" :validationStatus="validTarget" />
+        <FormInput v-model="prayer.duration" title="Duration" :validationStatus="validDuration" />
+      </div>
     </div>
   </div>
 </template>

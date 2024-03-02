@@ -82,6 +82,14 @@ export class Prayer implements WhProperty {
     return validShortDescFn(this.range);
   }
 
+  validateTarget(): ValidationStatus {
+    return validShortDescFn(this.target);
+  }
+
+  validateDuration(): ValidationStatus {
+    return validShortDescFn(this.duration);
+  }
+
   isEqualTo(otherPrayer: Prayer): boolean {
     return (
       this.id === otherPrayer.id &&
