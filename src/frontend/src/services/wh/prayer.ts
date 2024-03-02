@@ -90,6 +90,16 @@ export class Prayer implements WhProperty {
     return validShortDescFn(this.duration);
   }
 
+  isValid(): boolean {
+    return (
+      this.validateName().valid &&
+      this.validateDescription().valid &&
+      this.validateRange().valid &&
+      this.validateTarget().valid &&
+      this.validateDuration().valid
+    );
+  }
+
   isEqualTo(otherPrayer: Prayer): boolean {
     return (
       this.id === otherPrayer.id &&
