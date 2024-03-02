@@ -44,7 +44,7 @@ const validDuration = computed(() => prayer.value.validateDuration());
 </script>
 
 <template>
-  <Header :title="id === 'create' ? 'Create prayer' : 'Edit prayer'" />
+  <Header :title="id === 'create' ? 'Create prayer' : prayer.canEdit ? 'Edit prayer' : prayer.name" />
   <div
     ref="contentContainerRef"
     class="justify-between text-left gap-4"
