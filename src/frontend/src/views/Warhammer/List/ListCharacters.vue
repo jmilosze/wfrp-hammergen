@@ -13,6 +13,7 @@ import { useRouter } from "vue-router";
 import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
 import { useAuth } from "../../../composables/auth.ts";
+import AlertBlock from "../../../components/AlertBlock.vue";
 
 const whList = useWhListUtils(new CharacterApi(authRequest));
 await whList.loadWhList();
@@ -54,6 +55,15 @@ function formatCharacterRow(character: Character): TableRow {
 </script>
 
 <template>
+  <div class="flex justify-center">
+    <AlertBlock
+      v-if="whList.apiError.value && whList.showApiError.value"
+      alertType="red"
+      @click="whList.showApiError.value = false"
+    >
+      {{ whList.apiError.value }}
+    </AlertBlock>
+  </div>
   <Header title="Characters" />
   <TableWithSearch
     v-model="queryParams.search"

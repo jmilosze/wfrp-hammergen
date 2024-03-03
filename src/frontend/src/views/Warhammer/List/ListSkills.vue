@@ -17,6 +17,7 @@ import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 import { attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
 import { useAuth } from "../../../composables/auth.ts";
+import AlertBlock from "../../../components/AlertBlock.vue";
 
 const whList = useWhListUtils(new SkillApi(authRequest));
 await whList.loadWhList();
@@ -86,6 +87,15 @@ const filteredAttributeOptions = computed(() => {
 </script>
 
 <template>
+  <div class="flex justify-center">
+    <AlertBlock
+      v-if="whList.apiError.value && whList.showApiError.value"
+      alertType="red"
+      @click="whList.showApiError.value = false"
+    >
+      {{ whList.apiError.value }}
+    </AlertBlock>
+  </div>
   <Header title="Skills" />
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />

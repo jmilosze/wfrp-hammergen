@@ -15,6 +15,7 @@ import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
+import AlertBlock from "../../../components/AlertBlock.vue";
 
 const whList = useWhListUtils(new MutationApi(authRequest));
 await whList.loadWhList();
@@ -72,6 +73,15 @@ const filteredTypeOptions = computed(() => {
 </script>
 
 <template>
+  <div class="flex justify-center">
+    <AlertBlock
+      v-if="whList.apiError.value && whList.showApiError.value"
+      alertType="red"
+      @click="whList.showApiError.value = false"
+    >
+      {{ whList.apiError.value }}
+    </AlertBlock>
+  </div>
   <Header title="Mutations" />
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />

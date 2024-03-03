@@ -21,6 +21,7 @@ import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
 import { useAuth } from "../../../composables/auth.ts";
+import AlertBlock from "../../../components/AlertBlock.vue";
 
 const whList = useWhListUtils(new ItemPropertyApi(authRequest));
 await whList.loadWhList();
@@ -99,6 +100,15 @@ const filteredApplicableToOptions = computed(() => {
 </script>
 
 <template>
+  <div class="flex justify-center">
+    <AlertBlock
+      v-if="whList.apiError.value && whList.showApiError.value"
+      alertType="red"
+      @click="whList.showApiError.value = false"
+    >
+      {{ whList.apiError.value }}
+    </AlertBlock>
+  </div>
   <Header title="Qualities and Runes" />
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
