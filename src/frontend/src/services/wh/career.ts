@@ -237,7 +237,10 @@ export class Career implements WhProperty {
     return validShortDescFn(this.description);
   }
 
-  isEqualTo(otherCareer: Career): boolean {
+  isEqualTo(otherCareer: WhProperty): boolean {
+    if (!(otherCareer instanceof Career)) {
+      return false;
+    }
     return (
       this.id === otherCareer.id &&
       this.canEdit === otherCareer.canEdit &&

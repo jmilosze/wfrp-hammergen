@@ -461,7 +461,11 @@ export class Item implements WhProperty {
     return validShortDescFn(this.description);
   }
 
-  isEqualTo(otherItem: Item): boolean {
+  isEqualTo(otherItem: WhProperty): boolean {
+    if (!(otherItem instanceof Item)) {
+      return false;
+    }
+
     if (
       this.id !== otherItem.id ||
       this.canEdit !== otherItem.canEdit ||

@@ -1,4 +1,4 @@
-import { Ref, ref } from "vue";
+import { computed, Ref, ref } from "vue";
 import { useAuth } from "./auth.ts";
 import { WhApi, WhProperty } from "../services/wh/common.ts";
 
@@ -23,7 +23,9 @@ export function useWhEditUtils<T extends WhProperty, TApiData>(whInstance: T, el
     }
   }
 
+  const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
+
   async function submitForm(): Promise<void> {}
 
-  return { wh, whOriginal, apiError, showApiError, loadWh, submitForm };
+  return { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged };
 }

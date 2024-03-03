@@ -92,7 +92,10 @@ export class Mutation implements WhProperty {
     return validShortDescFn(this.description);
   }
 
-  isEqualTo(otherMutation: Mutation): boolean {
+  isEqualTo(otherMutation: WhProperty): boolean {
+    if (!(otherMutation instanceof Mutation)) {
+      return false;
+    }
     return (
       this.id === otherMutation.id &&
       this.canEdit === otherMutation.canEdit &&

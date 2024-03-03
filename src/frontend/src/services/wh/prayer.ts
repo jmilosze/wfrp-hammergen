@@ -100,7 +100,10 @@ export class Prayer implements WhProperty {
     );
   }
 
-  isEqualTo(otherPrayer: Prayer): boolean {
+  isEqualTo(otherPrayer: WhProperty): boolean {
+    if (!(otherPrayer instanceof Prayer)) {
+      return false;
+    }
     return (
       this.id === otherPrayer.id &&
       this.canEdit === otherPrayer.canEdit &&

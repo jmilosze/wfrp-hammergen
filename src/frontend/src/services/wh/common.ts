@@ -12,7 +12,7 @@ export interface WhProperty {
   copy: () => WhProperty;
   validateName: () => ValidationStatus;
   validateDescription: () => ValidationStatus;
-  // isEqualTo: (other: WhProperty) => boolean;
+  isEqualTo: (other: WhProperty) => boolean;
 }
 
 export interface WhApi<T, TApiData> {

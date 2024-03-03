@@ -83,7 +83,10 @@ export class Spell implements WhProperty {
     return validShortDescFn(this.description);
   }
 
-  isEqualTo(otherSpell: Spell): boolean {
+  isEqualTo(otherSpell: WhProperty): boolean {
+    if (!(otherSpell instanceof Spell)) {
+      return false;
+    }
     return (
       this.id === otherSpell.id &&
       this.canEdit === otherSpell.canEdit &&

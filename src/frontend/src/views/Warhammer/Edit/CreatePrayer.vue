@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const submissionState = ref(new SubmissionState());
 
-const { wh, whOriginal, apiError, showApiError, loadWh, submitForm } = useWhEditUtils(
+const { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged } = useWhEditUtils(
   new Prayer({ name: "New prayer", canEdit: true }),
   new PrayerApi(authRequest),
 );
@@ -37,7 +37,6 @@ const validDesc = computed(() => wh.value.validateDescription());
 const validRange = computed(() => wh.value.validateRange());
 const validTarget = computed(() => wh.value.validateTarget());
 const validDuration = computed(() => wh.value.validateDuration());
-const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
 
 function resetForm(): void {
   wh.value = new Prayer({ name: "New Prayer", canEdit: true });

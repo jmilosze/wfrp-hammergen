@@ -96,7 +96,10 @@ export class Talent implements WhProperty {
     return validShortDescFn(this.description);
   }
 
-  isEqualTo(otherTalent: Talent): boolean {
+  isEqualTo(otherTalent: WhProperty): boolean {
+    if (!(otherTalent instanceof Talent)) {
+      return false;
+    }
     if (
       this.id !== otherTalent.id ||
       this.canEdit !== otherTalent.canEdit ||

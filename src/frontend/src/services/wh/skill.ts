@@ -111,7 +111,10 @@ export class Skill implements WhProperty {
     return validShortDescFn(this.description);
   }
 
-  isEqualTo(otherSkill: Skill): boolean {
+  isEqualTo(otherSkill: WhProperty): boolean {
+    if (!(otherSkill instanceof Skill)) {
+      return false;
+    }
     return (
       this.id === otherSkill.id &&
       this.canEdit === otherSkill.canEdit &&

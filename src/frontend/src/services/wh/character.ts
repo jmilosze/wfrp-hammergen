@@ -161,7 +161,10 @@ export class Character implements WhProperty {
     this.modifiers = modifiers;
   }
 
-  isEqualTo(otherCharacter: Character): boolean {
+  isEqualTo(otherCharacter: WhProperty): boolean {
+    if (!(otherCharacter instanceof Character)) {
+      return false;
+    }
     return (
       this.id === otherCharacter.id &&
       this.canEdit === otherCharacter.canEdit &&
