@@ -27,6 +27,8 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 const whList = useWhListUtils(new CareerApi(authRequest));
 await whList.loadWhList();
 
+const showError = ref(true);
+
 const router = useRouter();
 const queryParams = ref({ search: "", source: "", class: "", species: "" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
@@ -93,7 +95,9 @@ const filteredSpeciesOptions = computed(() => {
 
 <template>
   <div class="flex justify-center">
-    <AlertBlock v-if="whList.apiError.value" alertType="red">{{ whList.apiError.value }}</AlertBlock>
+    <AlertBlock v-if="whList.apiError.value && showError" alertType="red" @click="showError = false">{{
+      whList.apiError.value
+    }}</AlertBlock>
   </div>
   <Header title="Careers" />
   <div class="flex flex-wrap justify-between">
