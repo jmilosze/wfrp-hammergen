@@ -14,8 +14,10 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
   const whToDelete = ref({ id: "", name: "" });
   const whList: Ref<T[]> = ref([]);
   const apiError = ref("");
+  const showApiError = ref(true);
 
   async function loadWhList(): Promise<void> {
+    showApiError.value = true;
     try {
       whList.value = await auth.callAndLogoutIfUnauthorized(elementApi.listElements)();
     } catch (error) {
@@ -25,6 +27,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
   }
 
   async function copyWh(whId: string): Promise<void> {
+    showApiError.value = true;
     try {
       const whCopy: T = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
       whCopy.name = whCopy.name + " - copy";
@@ -44,6 +47,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
   }
 
   async function deleteWh() {
+    showApiError.value = true;
     try {
       await auth.callAndLogoutIfUnauthorized(elementApi.deleteElement)(whToDelete.value.id);
       for (let i = 0; i < whList.value.length; i++) {
@@ -67,5 +71,5 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
   });
 
-  return { whList, apiError, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
+  return { whList, apiError, showApiError, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
 }
