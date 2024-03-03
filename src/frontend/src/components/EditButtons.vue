@@ -2,14 +2,20 @@
 import router from "../router.ts";
 import ActionButton from "./ActionButton.vue";
 import { onBeforeRouteLeave } from "vue-router";
-import { ref } from "vue";
-import { SubmissionState } from "../utils/submission.ts";
 
-onBeforeRouteLeave((to, from, next) => {
-  if (1 === 3) {
+const props = defineProps<{
+  confirmExit: boolean;
+  addAnother: boolean;
+  saving: boolean;
+  list: string;
+  submitForm: () => Promise<void>;
+}>();
+
+onBeforeRouteLeave((_, __, next) => {
+  if (!props.confirmExit) {
     next();
   } else {
-    const answer = window.confirm("zxc");
+    const answer = window.confirm("Changes that you made may not be saved.");
     if (answer) {
       next();
     } else {
@@ -18,14 +24,16 @@ onBeforeRouteLeave((to, from, next) => {
   }
 });
 
-const submissionState = ref(new SubmissionState());
-async function submitForm() {}
+async function onSave() {
+  await props.submitForm();
+  await router.push({ name: props.list });
+}
 </script>
 
 <template>
   <div class="ml-1 mt-2 flex flex-wrap gap-4">
-    <ActionButton :spinner="submissionState.status === 'inProgress'" @click="submitForm">Save</ActionButton>
-    <ActionButton @click="router.push({ name: 'prayers' })">Back to list</ActionButton>
+    <ActionButton :spinner="saving" @click="onSave">Save</ActionButton>
+    <ActionButton @click="router.push({ name: list })">Back to list</ActionButton>
   </div>
 </template>
 

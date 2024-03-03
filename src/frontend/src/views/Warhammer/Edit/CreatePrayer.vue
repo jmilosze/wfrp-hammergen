@@ -9,10 +9,13 @@ import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import EditButtons from "../../../components/EditButtons.vue";
+import { SubmissionState } from "../../../utils/submission.ts";
 
 const props = defineProps<{
   id: string;
 }>();
+
+const submissionState = ref(new SubmissionState());
 
 const auth = useAuth();
 
@@ -42,6 +45,8 @@ const validDesc = computed(() => prayer.value.validateDescription());
 const validRange = computed(() => prayer.value.validateRange());
 const validTarget = computed(() => prayer.value.validateTarget());
 const validDuration = computed(() => prayer.value.validateDuration());
+
+async function submitForm(): Promise<void> {}
 </script>
 
 <template>
@@ -77,7 +82,13 @@ const validDuration = computed(() => prayer.value.validateDuration());
       </div>
     </div>
   </div>
-  <EditButtons></EditButtons>
+  <EditButtons
+    :saving="submissionState.status === 'inProgress'"
+    list="prayers"
+    :addAnother="false"
+    :confirmExit="true"
+    :submitForm="submitForm"
+  ></EditButtons>
 </template>
 
 <style scoped></style>
