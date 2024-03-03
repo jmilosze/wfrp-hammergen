@@ -47,6 +47,10 @@ const validTarget = computed(() => prayer.value.validateTarget());
 const validDuration = computed(() => prayer.value.validateDuration());
 
 async function submitForm(): Promise<void> {}
+function resetForm(): void {
+  prayer.value = new Prayer({ name: "New Prayer", canEdit: true });
+  prayerOriginal.value = prayer.value.copy();
+}
 const hasChanged = computed(() => !prayer.value.isEqualTo(prayerOriginal.value));
 </script>
 
@@ -89,6 +93,7 @@ const hasChanged = computed(() => !prayer.value.isEqualTo(prayerOriginal.value))
     :allowAddAnother="id === 'create'"
     :confirmExit="hasChanged"
     :submitForm="submitForm"
+    :resetForm="resetForm"
     :disabled="!prayer.canEdit"
   ></EditControls>
 </template>

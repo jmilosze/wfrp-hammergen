@@ -11,10 +11,13 @@ const props = defineProps<{
   saving: boolean;
   list: string;
   submitForm: () => Promise<void>;
+  resetForm: () => void;
 }>();
 
+const saveClicked = ref(false);
+
 onBeforeRouteLeave((_, __, next) => {
-  if (props.disabled || !props.confirmExit) {
+  if (props.disabled || !props.confirmExit || saveClicked.value) {
     next();
   } else {
     const answer = window.confirm("Changes that you made may not be saved.");
@@ -26,12 +29,17 @@ onBeforeRouteLeave((_, __, next) => {
   }
 });
 
+const addAnother = ref(false);
+
 async function onSave() {
   await props.submitForm();
-  await router.push({ name: props.list });
+  if (addAnother.value) {
+    props.resetForm();
+  } else {
+    saving.value = true;
+    await router.push({ name: props.list });
+  }
 }
-
-const addAnother = ref(false);
 </script>
 
 <template>
