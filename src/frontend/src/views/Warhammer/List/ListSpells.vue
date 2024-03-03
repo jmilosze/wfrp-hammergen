@@ -63,15 +63,14 @@ function formatSpellRow(spell: Spell): TableRow {
 </script>
 
 <template>
-  <div class="flex justify-center">
-    <AlertBlock
-      v-if="whList.apiError.value && whList.showApiError.value"
-      alertType="red"
-      @click="whList.showApiError.value = false"
-    >
-      {{ whList.apiError.value }}
-    </AlertBlock>
-  </div>
+  <AlertBlock
+    v-if="whList.apiError.value && whList.showApiError.value"
+    alertType="red"
+    :centered="true"
+    @click="whList.showApiError.value = false"
+  >
+    {{ whList.apiError.value }}
+  </AlertBlock>
   <Header title="Spells" />
   <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
   <TableWithSearch

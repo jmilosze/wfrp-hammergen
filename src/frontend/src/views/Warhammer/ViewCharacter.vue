@@ -402,11 +402,9 @@ const grimoiresDisp = ref(
 </script>
 
 <template>
-  <div class="flex justify-center">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-  </div>
+  <AlertBlock v-if="apiError && showApiError" alertType="red" :centered="true" @click="showApiError = false">
+    {{ apiError }}
+  </AlertBlock>
   <Header :title="addSpaces(character.name)" />
   <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap">
     <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
