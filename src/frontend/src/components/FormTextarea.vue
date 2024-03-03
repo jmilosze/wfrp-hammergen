@@ -29,7 +29,7 @@ const value = computed({
     <p v-if="title" class="mb-1">{{ title }}</p>
     <textarea
       v-model="value"
-      class="border border-neutral-300 rounded w-full px-2 focus:outline-neutral-700 focus:outline-2 disabled:text-neutral-600"
+      class="border border-neutral-300 rounded w-full p-2 focus:outline-neutral-700 focus:outline-2 disabled:bg-neutral-200"
       :class="[minH ? 'h-' + minH : 'h-36']"
       :disabled="disabled ? disabled : false"
     />
