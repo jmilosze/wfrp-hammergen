@@ -36,7 +36,7 @@ async function onSave() {
   if (addAnother.value) {
     props.resetForm();
   } else {
-    saving.value = true;
+    saveClicked.value = true;
     await router.push({ name: props.list });
   }
 }
