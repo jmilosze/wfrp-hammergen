@@ -86,7 +86,7 @@ const hasChanged = computed(() => !prayer.value.isEqualTo(prayerOriginal.value))
   <EditControls
     :saving="submissionState.status === 'inProgress'"
     list="prayers"
-    :addAnother="false"
+    :allowAddAnother="true"
     :confirmExit="hasChanged"
     :submitForm="submitForm"
     :disabled="!prayer.canEdit"
