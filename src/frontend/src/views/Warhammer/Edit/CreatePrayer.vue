@@ -8,7 +8,7 @@ import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import { useAuth } from "../../../composables/auth.ts";
-import EditButtons from "../../../components/EditButtons.vue";
+import EditControls from "../../../components/EditControls.vue";
 import { SubmissionState } from "../../../utils/submission.ts";
 
 const props = defineProps<{
@@ -47,6 +47,7 @@ const validTarget = computed(() => prayer.value.validateTarget());
 const validDuration = computed(() => prayer.value.validateDuration());
 
 async function submitForm(): Promise<void> {}
+const hasChanged = computed(() => !prayer.value.isEqualTo(prayerOriginal.value));
 </script>
 
 <template>
@@ -82,14 +83,14 @@ async function submitForm(): Promise<void> {}
       </div>
     </div>
   </div>
-  <EditButtons
+  <EditControls
     :saving="submissionState.status === 'inProgress'"
     list="prayers"
     :addAnother="false"
-    :confirmExit="true"
+    :confirmExit="hasChanged"
     :submitForm="submitForm"
     :disabled="!prayer.canEdit"
-  ></EditButtons>
+  ></EditControls>
 </template>
 
 <style scoped></style>
