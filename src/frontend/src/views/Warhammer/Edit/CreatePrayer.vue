@@ -24,7 +24,9 @@ const { wh, whOriginal, apiError, showApiError, loadWh } = useWhEditUtils(
 );
 
 if (props.id !== "create") {
-  await loadWh(props.id);
+  if (!(await loadWh(props.id))) {
+    wh.value = new Prayer();
+  }
 }
 
 const contentContainerRef = ref(null);

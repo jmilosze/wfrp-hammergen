@@ -11,13 +11,15 @@ export function useWhEditUtils<T extends WhProperty, TApiData>(whInstance: T, el
   const apiError = ref("");
   const showApiError = ref(true);
 
-  async function loadWh(id: string): Promise<void> {
+  async function loadWh(id: string): Promise<boolean> {
     showApiError.value = true;
     try {
       wh.value = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(id);
       whOriginal.value = wh.value.copy() as T;
+      return true;
     } catch (error) {
       apiError.value = "Error. Could not pull data from server.";
+      return false;
     }
   }
 
