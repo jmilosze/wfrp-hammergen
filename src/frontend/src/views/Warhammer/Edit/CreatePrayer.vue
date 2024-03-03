@@ -7,9 +7,9 @@ import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import { useAuth } from "../../../composables/auth.ts";
 import EditControls from "../../../components/EditControls.vue";
 import { SubmissionState } from "../../../utils/submission.ts";
+import { useWhEditUtils } from "../../../composables/whEdit.ts";
 
 const props = defineProps<{
   id: string;
@@ -17,45 +17,31 @@ const props = defineProps<{
 
 const submissionState = ref(new SubmissionState());
 
-const auth = useAuth();
-
-const prayer = ref(new Prayer({ name: "New Prayer", canEdit: true }));
-const prayerOriginal = ref(prayer.value.copy());
-
-const prayerApi = new PrayerApi(authRequest);
+const { wh, whOriginal, loadWh } = useWhEditUtils(new Prayer(), new PrayerApi(authRequest));
 
 if (props.id !== "create") {
-  await loadPrayer();
-}
-
-async function loadPrayer() {
-  try {
-    prayer.value = await auth.callAndLogoutIfUnauthorized(prayerApi.getElement)(props.id);
-    prayerOriginal.value = prayer.value.copy();
-  } catch (error) {
-    console.log(error);
-  }
+  await loadWh(props.id);
 }
 
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
-const validName = computed(() => prayer.value.validateName());
-const validDesc = computed(() => prayer.value.validateDescription());
-const validRange = computed(() => prayer.value.validateRange());
-const validTarget = computed(() => prayer.value.validateTarget());
-const validDuration = computed(() => prayer.value.validateDuration());
+const validName = computed(() => wh.value.validateName());
+const validDesc = computed(() => wh.value.validateDescription());
+const validRange = computed(() => wh.value.validateRange());
+const validTarget = computed(() => wh.value.validateTarget());
+const validDuration = computed(() => wh.value.validateDuration());
 
 async function submitForm(): Promise<void> {}
 function resetForm(): void {
-  prayer.value = new Prayer({ name: "New Prayer", canEdit: true });
-  prayerOriginal.value = prayer.value.copy();
+  wh.value = new Prayer({ name: "New Prayer", canEdit: true });
+  whOriginal.value = wh.value.copy();
 }
-const hasChanged = computed(() => !prayer.value.isEqualTo(prayerOriginal.value));
+const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
 </script>
 
 <template>
-  <Header :title="id === 'create' ? 'Create prayer' : prayer.canEdit ? 'Edit prayer' : prayer.name" />
+  <Header :title="id === 'create' ? 'Create prayer' : wh.canEdit ? 'Edit prayer' : wh.name" />
   <div
     ref="contentContainerRef"
     class="justify-between text-left gap-4"
@@ -64,26 +50,21 @@ const hasChanged = computed(() => !prayer.value.isEqualTo(prayerOriginal.value))
     <div class="m-1 my-3 flex-1">
       <div>
         <div class="flex flex-col gap-4">
-          <FormInput v-model="prayer.name" title="Name" :validationStatus="validName" :disabled="!prayer.canEdit" />
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
           <FormTextarea
-            v-model="prayer.description"
+            v-model="wh.description"
             title="Description"
             :validationStatus="validDesc"
-            :disabled="!prayer.canEdit"
+            :disabled="!wh.canEdit"
           />
         </div>
       </div>
     </div>
     <div class="m-1 my-3 flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="prayer.range" title="Range" :validationStatus="validRange" :disabled="!prayer.canEdit" />
-        <FormInput v-model="prayer.target" title="Target" :validationStatus="validTarget" :disabled="!prayer.canEdit" />
-        <FormInput
-          v-model="prayer.duration"
-          title="Duration"
-          :validationStatus="validDuration"
-          :disabled="!prayer.canEdit"
-        />
+        <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!wh.canEdit" />
       </div>
     </div>
   </div>
@@ -94,7 +75,7 @@ const hasChanged = computed(() => !prayer.value.isEqualTo(prayerOriginal.value))
     :confirmExit="hasChanged"
     :submitForm="submitForm"
     :resetForm="resetForm"
-    :disabled="!prayer.canEdit"
+    :disabled="!wh.canEdit"
   ></EditControls>
 </template>
 
