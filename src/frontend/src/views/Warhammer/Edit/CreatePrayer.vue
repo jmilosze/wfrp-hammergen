@@ -18,7 +18,10 @@ const props = defineProps<{
 
 const submissionState = ref(new SubmissionState());
 
-const { wh, whOriginal, apiError, showApiError, loadWh } = useWhEditUtils(new Prayer(), new PrayerApi(authRequest));
+const { wh, whOriginal, apiError, showApiError, loadWh } = useWhEditUtils(
+  new Prayer({ name: "New prayer", canEdit: true }),
+  new PrayerApi(authRequest),
+);
 
 if (props.id !== "create") {
   await loadWh(props.id);
