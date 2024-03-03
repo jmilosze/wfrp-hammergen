@@ -407,210 +407,203 @@ const grimoiresDisp = ref(
       {{ apiError }}
     </AlertBlock>
   </div>
-  <div v-if="!apiError">
-    <Header :title="addSpaces(character.name)" />
-    <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap">
-      <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
-      <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>
-      <ActionButton :size="'sm'" class="m-1" @click="print()">Print</ActionButton>
-      <ActionButton
-        v-if="character.canEdit"
-        :size="'sm'"
-        class="m-1"
-        @click="router.push({ name: 'character', params: { id: id } })"
-        >Edit</ActionButton
-      >
-      <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
-    </div>
+  <Header :title="addSpaces(character.name)" />
+  <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap">
+    <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
+    <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>
+    <ActionButton :size="'sm'" class="m-1" @click="print()">Print</ActionButton>
+    <ActionButton
+      v-if="character.canEdit"
+      :size="'sm'"
+      class="m-1"
+      @click="router.push({ name: 'character', params: { id: id } })"
+      >Edit</ActionButton
+    >
+    <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
+  </div>
 
-    <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-      <div class="m-1 my-3 grow">
-        <div class="mb-1">Basic</div>
-        <table class="border-collapse w-full">
-          <tbody>
-            <tr>
-              <td class="border border-neutral-400 p-2">
-                <div class="flex flex-wrap">
-                  <span class="mr-3 font-semibold">Name</span>
-                  <span class="mr-3"> {{ addSpaces(character.name) }}</span>
-                </div>
-              </td>
-              <td class="border border-neutral-400 p-2">
-                <div class="flex flex-wrap">
-                  <span class="mr-3 font-semibold">Species</span>
-                  <span class="mr-3"> {{ addSpaces(character.species) }}</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2" class="border border-neutral-400 p-2">
-                <div class="flex flex-wrap">
-                  <span class="mr-3 font-semibold">Description</span>
-                  <span class="mr-3"> {{ addSpaces(character.description) }}</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="m-1 my-3 grow">
-        <div class="mb-1">Career</div>
-        <table class="border-collapse w-full">
-          <tbody>
-            <tr>
-              <td class="border border-neutral-400 p-2">
-                <div class="flex flex-wrap">
-                  <span class="mr-3 font-semibold">Current</span>
-                  <span class="mr-3"> {{ addSpaces(character.careerName) }}</span>
-                </div>
-              </td>
-              <td class="border border-neutral-400 p-2">
-                <div class="flex flex-wrap">
-                  <span class="mr-3 font-semibold">Class</span>
-                  <span class="mr-3"> {{ addSpaces(character.className) }}</span>
-                </div>
-              </td>
-              <td class="border border-neutral-400 p-2">
-                <div class="flex flex-wrap">
-                  <span class="mr-3 font-semibold">Status</span>
-                  <span class="mr-3"> {{ addSpaces(character.status + " " + character.standing) }}</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="3" class="border border-neutral-400 p-2">
-                <div class="flex flex-wrap">
-                  <span class="mr-3 font-semibold">Past Careers</span>
-                  <span class="mr-3"> {{ addSpaces(character.pastCareers.join(", ")) }}</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <div class="m-1 my-3 grow">
+      <div class="mb-1">Basic</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <td class="border border-neutral-400 p-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Name</span>
+                <span class="mr-3"> {{ addSpaces(character.name) }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 p-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Species</span>
+                <span class="mr-3"> {{ addSpaces(character.species) }}</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="border border-neutral-400 p-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Description</span>
+                <span class="mr-3"> {{ addSpaces(character.description) }}</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-      <ViewCharacterTable
-        title="Movement"
-        :items="displayMovement.items"
-        :fields="displayMovement.fields"
-        class="grow"
-      />
-      <ViewCharacterTable title="Wealth" :items="displayWealth.items" :fields="displayWealth.fields" class="grow" />
-      <ViewCharacterTable title="Fate" :items="displayFate.items" :fields="displayFate.fields" class="grow" />
-      <ViewCharacterTable
-        title="Resilience"
-        :items="displayResilience.items"
-        :fields="displayResilience.fields"
-        class="grow"
-      />
+    <div class="m-1 my-3 grow">
+      <div class="mb-1">Career</div>
+      <table class="border-collapse w-full">
+        <tbody>
+          <tr>
+            <td class="border border-neutral-400 p-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Current</span>
+                <span class="mr-3"> {{ addSpaces(character.careerName) }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 p-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Class</span>
+                <span class="mr-3"> {{ addSpaces(character.className) }}</span>
+              </div>
+            </td>
+            <td class="border border-neutral-400 p-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Status</span>
+                <span class="mr-3"> {{ addSpaces(character.status + " " + character.standing) }}</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3" class="border border-neutral-400 p-2">
+              <div class="flex flex-wrap">
+                <span class="mr-3 font-semibold">Past Careers</span>
+                <span class="mr-3"> {{ addSpaces(character.pastCareers.join(", ")) }}</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-      <ViewCharacterTable title="Other" :items="displayOther.items" :fields="displayOther.fields" class="grow" />
-      <ViewCharacterTable
-        title="Experience"
-        :items="displayExperience.items"
-        :fields="displayExperience.fields"
-        class="grow"
-      />
-    </div>
-    <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-      <ViewCharacterTable
-        title="Attributes 1"
-        :items="displayAttributes1.items"
-        :fields="displayAttributes1.fields"
-        class="grow"
-      />
-      <ViewCharacterTable
-        title="Attributes 2"
-        :items="displayAttributes2.items"
-        :fields="displayAttributes2.fields"
-        class="grow"
-      />
-    </div>
-    <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-      <ViewCharacterTable
-        title="Basic skills 1"
-        :items="displayBasicSkills.items.slice(0, Math.floor(character.basicSkills.length / 2))"
-        :fields="displayBasicSkills.fields"
-        class="grow"
-      />
-      <ViewCharacterTable
-        title="Basic skills 2"
-        :items="displayBasicSkills.items.slice(Math.floor(character.basicSkills.length / 2))"
-        :fields="displayBasicSkills.fields"
-        class="grow"
-      />
-    </div>
-    <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-      <ViewCharacterTable
-        title="Advanced skills"
-        :items="displayAdvancedSkills.items"
-        :fields="displayAdvancedSkills.fields"
-        class="grow"
-      />
-      <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow" />
-    </div>
+  </div>
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <ViewCharacterTable title="Movement" :items="displayMovement.items" :fields="displayMovement.fields" class="grow" />
+    <ViewCharacterTable title="Wealth" :items="displayWealth.items" :fields="displayWealth.fields" class="grow" />
+    <ViewCharacterTable title="Fate" :items="displayFate.items" :fields="displayFate.fields" class="grow" />
     <ViewCharacterTable
-      title="Equipped armour"
-      :stack="!isEqualOrGreater && !printing"
-      :items="equippedArmourDisp.items"
-      :fields="equippedArmourDisp.fields"
-    />
-    <ViewCharacterTable
-      title="Equipped weapon"
-      :stack="!isEqualOrGreater && !printing"
-      :items="equippedWeaponDisp.items"
-      :fields="equippedWeaponDisp.fields"
-    />
-    <ViewCharacterTable
-      title="Other equipped"
-      :stack="!isEqualOrGreater && !printing"
-      :items="equippedOtherDisp.items"
-      :fields="equippedOtherDisp.fields"
-    />
-    <ViewCharacterTable
-      title="Carried"
-      :stack="!isEqualOrGreater && !printing"
-      :items="carriedDisp.items"
-      :fields="carriedDisp.fields"
-    />
-    <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-      <ViewCharacterTable title="Stored" :items="storedDisp.items" :fields="storedDisp.fields" class="grow" />
-      <ViewCharacterTable
-        title="Encumbrance (Equipped and Carried)"
-        :items="encDisp.items"
-        :fields="encDisp.fields"
-        class="grow"
-      />
-    </div>
-    <ViewCharacterTable
-      title="Mutations"
-      :stack="!isEqualOrGreater && !printing"
-      :items="mutationDisp.items"
-      :fields="mutationDisp.fields"
-    />
-    <ViewCharacterTable
-      title="Known spells"
-      :stack="!isEqualOrGreater && !printing"
-      :items="spellsDisp.items"
-      :fields="spellsDisp.fields"
-    />
-    <ViewCharacterTable
-      title="Known prayers"
-      :stack="!isEqualOrGreater && !printing"
-      :items="prayerDisp.items"
-      :fields="prayerDisp.fields"
-    />
-    <ViewCharacterTable
-      v-for="book in grimoiresDisp"
-      :key="book.name"
-      :title="'Spells in ' + addSpaces(book.name)"
-      :stack="!isEqualOrGreater && !printing"
-      :items="book.items"
-      :fields="book.fields"
+      title="Resilience"
+      :items="displayResilience.items"
+      :fields="displayResilience.fields"
+      class="grow"
     />
   </div>
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <ViewCharacterTable title="Other" :items="displayOther.items" :fields="displayOther.fields" class="grow" />
+    <ViewCharacterTable
+      title="Experience"
+      :items="displayExperience.items"
+      :fields="displayExperience.fields"
+      class="grow"
+    />
+  </div>
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <ViewCharacterTable
+      title="Attributes 1"
+      :items="displayAttributes1.items"
+      :fields="displayAttributes1.fields"
+      class="grow"
+    />
+    <ViewCharacterTable
+      title="Attributes 2"
+      :items="displayAttributes2.items"
+      :fields="displayAttributes2.fields"
+      class="grow"
+    />
+  </div>
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <ViewCharacterTable
+      title="Basic skills 1"
+      :items="displayBasicSkills.items.slice(0, Math.floor(character.basicSkills.length / 2))"
+      :fields="displayBasicSkills.fields"
+      class="grow"
+    />
+    <ViewCharacterTable
+      title="Basic skills 2"
+      :items="displayBasicSkills.items.slice(Math.floor(character.basicSkills.length / 2))"
+      :fields="displayBasicSkills.fields"
+      class="grow"
+    />
+  </div>
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <ViewCharacterTable
+      title="Advanced skills"
+      :items="displayAdvancedSkills.items"
+      :fields="displayAdvancedSkills.fields"
+      class="grow"
+    />
+    <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow" />
+  </div>
+  <ViewCharacterTable
+    title="Equipped armour"
+    :stack="!isEqualOrGreater && !printing"
+    :items="equippedArmourDisp.items"
+    :fields="equippedArmourDisp.fields"
+  />
+  <ViewCharacterTable
+    title="Equipped weapon"
+    :stack="!isEqualOrGreater && !printing"
+    :items="equippedWeaponDisp.items"
+    :fields="equippedWeaponDisp.fields"
+  />
+  <ViewCharacterTable
+    title="Other equipped"
+    :stack="!isEqualOrGreater && !printing"
+    :items="equippedOtherDisp.items"
+    :fields="equippedOtherDisp.fields"
+  />
+  <ViewCharacterTable
+    title="Carried"
+    :stack="!isEqualOrGreater && !printing"
+    :items="carriedDisp.items"
+    :fields="carriedDisp.fields"
+  />
+  <div class="flex justify-between text-left gap-4" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
+    <ViewCharacterTable title="Stored" :items="storedDisp.items" :fields="storedDisp.fields" class="grow" />
+    <ViewCharacterTable
+      title="Encumbrance (Equipped and Carried)"
+      :items="encDisp.items"
+      :fields="encDisp.fields"
+      class="grow"
+    />
+  </div>
+  <ViewCharacterTable
+    title="Mutations"
+    :stack="!isEqualOrGreater && !printing"
+    :items="mutationDisp.items"
+    :fields="mutationDisp.fields"
+  />
+  <ViewCharacterTable
+    title="Known spells"
+    :stack="!isEqualOrGreater && !printing"
+    :items="spellsDisp.items"
+    :fields="spellsDisp.fields"
+  />
+  <ViewCharacterTable
+    title="Known prayers"
+    :stack="!isEqualOrGreater && !printing"
+    :items="prayerDisp.items"
+    :fields="prayerDisp.fields"
+  />
+  <ViewCharacterTable
+    v-for="book in grimoiresDisp"
+    :key="book.name"
+    :title="'Spells in ' + addSpaces(book.name)"
+    :stack="!isEqualOrGreater && !printing"
+    :items="book.items"
+    :fields="book.fields"
+  />
 </template>
 
 <style scoped></style>

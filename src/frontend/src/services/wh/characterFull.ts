@@ -208,7 +208,7 @@ export function newCharacterFull({
   name = "",
   description = "",
   notes = "",
-  species = SpeciesWithRegion.None,
+  species = printSpecies(SpeciesWithRegion.None),
   fate = 0,
   fortune = 0,
   resilience = 0,
