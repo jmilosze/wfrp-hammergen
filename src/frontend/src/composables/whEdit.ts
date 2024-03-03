@@ -2,11 +2,11 @@ import { Ref, ref } from "vue";
 import { useAuth } from "./auth.ts";
 import { WhApi, WhProperty } from "../services/wh/common.ts";
 
-export function useWhEditUtils<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
+export function useWhEditUtils<T extends WhProperty, TApiData>(makeZero: () => T, elementApi: WhApi<T, TApiData>) {
   const auth = useAuth();
 
-  // const wh: Ref<T | null> = ref(null);
-  // const whOriginal: Ref<T | null> = ref(null);
+  const wh: Ref<WhProperty> = ref(makeZero());
+  const whOriginal: Ref<WhProperty> = ref(makeZero());
 
   const apiError = ref("");
   const showApiError = ref(true);
@@ -15,11 +15,8 @@ export function useWhEditUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     showApiError.value = true;
     try {
       wh.value = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)();
-      if (wh.value !== null) {
-        whOriginal.value = wh.value?.copy() as T;
-      }
+      whOriginal.value = wh.value.copy();
     } catch (error) {
-      console.log(error);
       apiError.value = "Error. Could not pull data from server.";
     }
   }

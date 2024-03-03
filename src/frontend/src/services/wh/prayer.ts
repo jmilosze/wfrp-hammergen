@@ -156,3 +156,7 @@ export class PrayerApi implements WhApi<Prayer, PrayerApiData> {
     this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
   }
 }
+
+export function zeroPrayer(): Prayer {
+  return new Prayer();
+}
