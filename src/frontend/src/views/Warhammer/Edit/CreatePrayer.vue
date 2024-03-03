@@ -10,6 +10,7 @@ import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import { SubmissionState } from "../../../utils/submission.ts";
 import { useWhEditUtils } from "../../../composables/whEdit.ts";
+import AlertBlock from "../../../components/AlertBlock.vue";
 
 const props = defineProps<{
   id: string;
@@ -17,7 +18,7 @@ const props = defineProps<{
 
 const submissionState = ref(new SubmissionState());
 
-const { wh, whOriginal, loadWh } = useWhEditUtils(new Prayer(), new PrayerApi(authRequest));
+const { wh, whOriginal, apiError, showApiError, loadWh } = useWhEditUtils(new Prayer(), new PrayerApi(authRequest));
 
 if (props.id !== "create") {
   await loadWh(props.id);
@@ -41,6 +42,11 @@ const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
 </script>
 
 <template>
+  <div class="flex justify-center">
+    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
+      {{ apiError }}
+    </AlertBlock>
+  </div>
   <Header :title="id === 'create' ? 'Create prayer' : wh.canEdit ? 'Edit prayer' : wh.name" />
   <div
     ref="contentContainerRef"
