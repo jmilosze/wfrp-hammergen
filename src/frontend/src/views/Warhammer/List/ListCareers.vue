@@ -22,6 +22,7 @@ import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
 import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/ListWh/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
+import AlertBlock from "../../../components/AlertBlock.vue";
 
 const whList = useWhListUtils(new CareerApi(authRequest));
 await whList.loadWhList();
@@ -91,6 +92,9 @@ const filteredSpeciesOptions = computed(() => {
 </script>
 
 <template>
+  <div class="flex justify-center">
+    <AlertBlock v-if="whList.apiError.value" alertType="red">{{ whList.apiError.value }}</AlertBlock>
+  </div>
   <Header title="Careers" />
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />

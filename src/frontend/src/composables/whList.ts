@@ -13,12 +13,14 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
 
   const whToDelete = ref({ id: "", name: "" });
   const whList: Ref<T[]> = ref([]);
+  const apiError = ref("");
 
   async function loadWhList(): Promise<void> {
     try {
       whList.value = await auth.callAndLogoutIfUnauthorized(elementApi.listElements)();
     } catch (error) {
       console.log(error);
+      apiError.value = "Error. Could not pull data from server.";
     }
   }
 
@@ -37,7 +39,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
       whCopy.canEdit = true;
       whList.value.push(whCopy);
     } catch (error) {
-      console.log(error);
+      apiError.value = "Error. Could not upload data to server.";
     }
   }
 
@@ -51,7 +53,7 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
         }
       }
     } catch (error) {
-      console.log(error);
+      apiError.value = "Error. Could not delete data from server.";
     }
   }
 
@@ -65,5 +67,5 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
   });
 
-  return { whList, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
+  return { whList, apiError, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
 }

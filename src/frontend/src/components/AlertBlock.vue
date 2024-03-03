@@ -9,7 +9,7 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
-const blockClass = ref(["p-2", "rounded", "border", "flex", "justify-between"]);
+const blockClass = ref(["p-2", "rounded", "border", "flex", "justify-between", "gap-2"]);
 if (props.alertType === "red") {
   blockClass.value.push(...["bg-red-200", "text-red-800", "border-red-500"]);
 } else {
