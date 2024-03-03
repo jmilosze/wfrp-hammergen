@@ -4,6 +4,7 @@ import ActionButton from "./ActionButton.vue";
 import { onBeforeRouteLeave } from "vue-router";
 
 const props = defineProps<{
+  disabled: boolean;
   confirmExit: boolean;
   addAnother: boolean;
   saving: boolean;
@@ -12,7 +13,7 @@ const props = defineProps<{
 }>();
 
 onBeforeRouteLeave((_, __, next) => {
-  if (!props.confirmExit) {
+  if (props.disabled || !props.confirmExit) {
     next();
   } else {
     const answer = window.confirm("Changes that you made may not be saved.");
@@ -32,7 +33,7 @@ async function onSave() {
 
 <template>
   <div class="ml-1 mt-2 flex flex-wrap gap-4">
-    <ActionButton :spinner="saving" @click="onSave">Save</ActionButton>
+    <ActionButton v-if="!disabled" :spinner="saving" @click="onSave">Save</ActionButton>
     <ActionButton @click="router.push({ name: list })">Back to list</ActionButton>
   </div>
 </template>

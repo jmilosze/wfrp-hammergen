@@ -88,6 +88,7 @@ async function submitForm(): Promise<void> {}
     :addAnother="false"
     :confirmExit="true"
     :submitForm="submitForm"
+    :disabled="!prayer.canEdit"
   ></EditButtons>
 </template>
 
