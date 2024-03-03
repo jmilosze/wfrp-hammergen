@@ -21,7 +21,6 @@ export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi
     try {
       whList.value = await auth.callAndLogoutIfUnauthorized(elementApi.listElements)();
     } catch (error) {
-      console.log(error);
       apiError.value = "Error. Could not pull data from server.";
     }
   }
