@@ -35,13 +35,19 @@ const addAnother = ref(false);
 </script>
 
 <template>
-  <div class="ml-1 mt-2">
+  <div class="ml-1">
     <div v-if="allowAddAnother === true && !disabled" class="my-2">
       <div>Add another after saving?</div>
-      <input v-model="addAnother" type="radio" value="One" class="mr-2 mt-1" />
-      <span class="mr-5">Yes</span>
-      <input v-model="addAnother" type="radio" value="Two" class="mr-2" />
-      <span>No</span>
+      <div class="flex my-3">
+        <div class="flex items-center">
+          <input v-model="addAnother" type="radio" :value="true" class="mr-2 w-5 h-5 accent-neutral-600" />
+          <div class="mr-5">Yes</div>
+        </div>
+        <div class="flex items-center">
+          <input v-model="addAnother" type="radio" :value="false" class="mr-2 w-5 h-5 accent-neutral-600" />
+          <div>No</div>
+        </div>
+      </div>
     </div>
     <div class="flex flex-wrap gap-4">
       <ActionButton v-if="!disabled" :spinner="saving" @click="onSave">Save</ActionButton>

@@ -19,8 +19,8 @@ const submissionState = ref(new SubmissionState());
 
 const auth = useAuth();
 
-const prayer = ref(new Prayer());
-const prayerOriginal = ref(new Prayer());
+const prayer = ref(new Prayer({ name: "New Prayer", canEdit: true }));
+const prayerOriginal = ref(prayer.value.copy());
 
 const prayerApi = new PrayerApi(authRequest);
 
@@ -86,7 +86,7 @@ const hasChanged = computed(() => !prayer.value.isEqualTo(prayerOriginal.value))
   <EditControls
     :saving="submissionState.status === 'inProgress'"
     list="prayers"
-    :allowAddAnother="true"
+    :allowAddAnother="id === 'create'"
     :confirmExit="hasChanged"
     :submitForm="submitForm"
     :disabled="!prayer.canEdit"
