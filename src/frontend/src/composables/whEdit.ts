@@ -23,5 +23,7 @@ export function useWhEditUtils<T extends WhProperty, TApiData>(whInstance: T, el
     }
   }
 
-  return { wh, whOriginal, apiError, showApiError, loadWh };
+  async function submitForm(): Promise<void> {}
+
+  return { wh, whOriginal, apiError, showApiError, loadWh, submitForm };
 }
