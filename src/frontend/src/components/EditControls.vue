@@ -5,7 +5,7 @@ import { onBeforeRouteLeave } from "vue-router";
 import { ref } from "vue";
 
 const props = defineProps<{
-  disabled: boolean;
+  readOnly: boolean;
   confirmExit: boolean;
   allowAddAnother?: boolean;
   saving: boolean;
@@ -17,7 +17,7 @@ const props = defineProps<{
 const saveClicked = ref(false);
 
 onBeforeRouteLeave((_, __, next) => {
-  if (props.disabled || !props.confirmExit || saveClicked.value) {
+  if (props.readOnly || !props.confirmExit || saveClicked.value) {
     next();
   } else {
     const answer = window.confirm("Changes that you made may not be saved.");
@@ -46,7 +46,7 @@ async function onSave() {
 
 <template>
   <div class="ml-1">
-    <div v-if="allowAddAnother === true && !disabled" class="my-2">
+    <div v-if="allowAddAnother === true && !readOnly" class="my-2">
       <div>Add another after saving?</div>
       <div class="flex my-3">
         <div class="flex items-center">
@@ -60,7 +60,7 @@ async function onSave() {
       </div>
     </div>
     <div class="flex flex-wrap gap-4">
-      <ActionButton v-if="!disabled" :spinner="saving" @click="onSave">Save</ActionButton>
+      <ActionButton v-if="!readOnly" :spinner="saving" @click="onSave">Save</ActionButton>
       <ActionButton @click="router.push({ name: list })">Back to list</ActionButton>
     </div>
   </div>
