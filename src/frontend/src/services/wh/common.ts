@@ -10,6 +10,7 @@ export interface WhProperty {
   source: Source;
 
   copy: () => WhProperty;
+  isValid: () => boolean;
   validateName: () => ValidationStatus;
   validateDescription: () => ValidationStatus;
   isEqualTo: (other: WhProperty) => boolean;

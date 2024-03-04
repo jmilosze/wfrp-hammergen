@@ -461,6 +461,13 @@ export class Item implements WhProperty {
     return validShortDescFn(this.description);
   }
 
+  isValid(): boolean {
+    return (
+      this.validateName().valid && this.validateDescription().valid
+      // Finish implementation
+    );
+  }
+
   isEqualTo(otherItem: WhProperty): boolean {
     if (!(otherItem instanceof Item)) {
       return false;

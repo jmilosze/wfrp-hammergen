@@ -111,6 +111,13 @@ export class Skill implements WhProperty {
     return validShortDescFn(this.description);
   }
 
+  isValid(): boolean {
+    return (
+      this.validateName().valid && this.validateDescription().valid
+      // Finish implementation
+    );
+  }
+
   isEqualTo(otherSkill: WhProperty): boolean {
     if (!(otherSkill instanceof Skill)) {
       return false;

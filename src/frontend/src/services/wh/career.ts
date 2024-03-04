@@ -237,6 +237,13 @@ export class Career implements WhProperty {
     return validShortDescFn(this.description);
   }
 
+  isValid(): boolean {
+    return (
+      this.validateName().valid && this.validateDescription().valid
+      // Finish implementation
+    );
+  }
+
   isEqualTo(otherCareer: WhProperty): boolean {
     if (!(otherCareer instanceof Career)) {
       return false;

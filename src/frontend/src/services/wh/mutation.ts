@@ -92,6 +92,13 @@ export class Mutation implements WhProperty {
     return validShortDescFn(this.description);
   }
 
+  isValid(): boolean {
+    return (
+      this.validateName().valid && this.validateDescription().valid
+      // Finish implementation
+    );
+  }
+
   isEqualTo(otherMutation: WhProperty): boolean {
     if (!(otherMutation instanceof Mutation)) {
       return false;
