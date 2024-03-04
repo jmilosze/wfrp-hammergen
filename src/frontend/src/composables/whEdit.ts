@@ -6,8 +6,8 @@ import { SubmissionState } from "../utils/submission.ts";
 export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, elementApi: WhApi<T, TApiData>) {
   const auth = useAuth();
 
-  const wh = ref(whInstance) as Ref<T>;
-  const whOriginal = ref(whInstance) as Ref<T>;
+  const wh = ref(whInstance.copy()) as Ref<T>;
+  const whOriginal = ref(whInstance.copy()) as Ref<T>;
 
   const apiError = ref("");
   const showApiError = ref(true);
@@ -52,5 +52,10 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
     }
   }
 
-  return { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState };
+  function resetForm() {
+    wh.value = whInstance.copy() as T;
+    whOriginal.value = whInstance.copy() as T;
+  }
+
+  return { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm };
 }
