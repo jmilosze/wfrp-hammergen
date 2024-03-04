@@ -10,7 +10,7 @@ const props = defineProps<{
   allowAddAnother?: boolean;
   saving: boolean;
   list: string;
-  submitForm: () => Promise<void>;
+  submitForm: () => Promise<boolean>;
   resetForm: () => void;
 }>();
 
@@ -32,7 +32,9 @@ onBeforeRouteLeave((_, __, next) => {
 const addAnother = ref(false);
 
 async function onSave() {
-  await props.submitForm();
+  if (!(await props.submitForm())) {
+    return;
+  }
   if (addAnother.value) {
     props.resetForm();
   } else {

@@ -28,7 +28,29 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
 
   const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
 
-  async function submitForm(): Promise<void> {}
+  async function submitForm(id: string): Promise<boolean> {
+    submissionState.value.setInProgress();
+
+    if (!wh.value.isValid()) {
+      submissionState.value.setValidationError();
+      return false;
+    }
+
+    try {
+      if (id === "create") {
+        await auth.callAndLogoutIfUnauthorized(elementApi.createElement)(wh.value);
+        submissionState.value.setSuccess(`${wh.value.name} created successfully.`);
+        return true;
+      } else {
+        await auth.callAndLogoutIfUnauthorized(elementApi.updateElement)(wh.value);
+        submissionState.value.setSuccess(`${wh.value.name} updated successfully.`);
+        return true;
+      }
+    } catch (error) {
+      submissionState.value.setFailureFromError(error);
+      return false;
+    }
+  }
 
   return { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState };
 }

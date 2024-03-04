@@ -33,7 +33,7 @@ export class SubmissionState {
     this.message = "";
   }
 
-  setFailureFromError(error: any, errorMessages: { statusCode: number; details: string; message: string }[]) {
+  setFailureFromError(error: any, errorMessages: { statusCode: number; details: string; message: string }[] = []) {
     if (isAxiosError(error) && error.response) {
       for (const errMsg of errorMessages) {
         const detailsMatch =
