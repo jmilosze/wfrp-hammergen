@@ -1,8 +1,9 @@
 import { computed, Ref, ref } from "vue";
 import { useAuth } from "./auth.ts";
 import { WhApi, WhProperty } from "../services/wh/common.ts";
+import { SubmissionState } from "../utils/submission.ts";
 
-export function useWhEditUtils<T extends WhProperty, TApiData>(whInstance: T, elementApi: WhApi<T, TApiData>) {
+export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, elementApi: WhApi<T, TApiData>) {
   const auth = useAuth();
 
   const wh = ref(whInstance) as Ref<T>;
@@ -10,6 +11,8 @@ export function useWhEditUtils<T extends WhProperty, TApiData>(whInstance: T, el
 
   const apiError = ref("");
   const showApiError = ref(true);
+
+  const submissionState = ref(new SubmissionState());
 
   async function loadWh(id: string): Promise<boolean> {
     showApiError.value = true;
@@ -27,5 +30,5 @@ export function useWhEditUtils<T extends WhProperty, TApiData>(whInstance: T, el
 
   async function submitForm(): Promise<void> {}
 
-  return { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged };
+  return { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState };
 }

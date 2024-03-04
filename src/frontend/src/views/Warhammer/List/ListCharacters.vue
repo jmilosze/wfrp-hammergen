@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhListUtils } from "../../../composables/whList.ts";
+import { useWhList } from "../../../composables/whList.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
@@ -15,7 +15,7 @@ import { queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../u
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 
-const whList = useWhListUtils(new CharacterApi(authRequest));
+const whList = useWhList(new CharacterApi(authRequest));
 await whList.loadWhList();
 
 const router = useRouter();

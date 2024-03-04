@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhListUtils } from "../../../composables/whList.ts";
+import { useWhList } from "../../../composables/whList.ts";
 import {
   ItemProperty,
   ItemPropertyApi,
@@ -23,7 +23,7 @@ import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 
-const whList = useWhListUtils(new ItemPropertyApi(authRequest));
+const whList = useWhList(new ItemPropertyApi(authRequest));
 await whList.loadWhList();
 
 const router = useRouter();

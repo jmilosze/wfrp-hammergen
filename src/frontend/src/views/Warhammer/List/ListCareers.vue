@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhListUtils } from "../../../composables/whList.ts";
+import { useWhList } from "../../../composables/whList.ts";
 import {
   Career,
   CareerApi,
@@ -24,7 +24,7 @@ import SelectInput from "../../../components/ListWh/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 
-const whList = useWhListUtils(new CareerApi(authRequest));
+const whList = useWhList(new CareerApi(authRequest));
 await whList.loadWhList();
 
 const router = useRouter();

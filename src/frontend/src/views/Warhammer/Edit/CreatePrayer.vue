@@ -8,17 +8,14 @@ import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
-import { SubmissionState } from "../../../utils/submission.ts";
-import { useWhEditUtils } from "../../../composables/whEdit.ts";
+import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 
 const props = defineProps<{
   id: string;
 }>();
 
-const submissionState = ref(new SubmissionState());
-
-const { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged } = useWhEditUtils(
+const { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState } = useWhEdit(
   new Prayer({ name: "New prayer", canEdit: true }),
   new PrayerApi(authRequest),
 );

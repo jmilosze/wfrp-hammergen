@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhListUtils } from "../../../composables/whList.ts";
+import { useWhList } from "../../../composables/whList.ts";
 import { Spell, SpellApi } from "../../../services/wh/spell.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
@@ -17,7 +17,7 @@ import SelectInput from "../../../components/ListWh/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 
-const whList = useWhListUtils(new SpellApi(authRequest));
+const whList = useWhList(new SpellApi(authRequest));
 await whList.loadWhList();
 
 const router = useRouter();

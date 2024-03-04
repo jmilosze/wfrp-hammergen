@@ -8,7 +8,7 @@ for (const [key, value] of Object.entries(source)) {
   sourceOptions.push({ text: value, value: key });
 }
 
-export function useWhListUtils<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
+export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
   const auth = useAuth();
 
   const whToDelete = ref({ id: "", name: "" });

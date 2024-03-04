@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhListUtils } from "../../../composables/whList.ts";
+import { useWhList } from "../../../composables/whList.ts";
 import { Skill, SkillApi, skillTypeList, printSkillType } from "../../../services/wh/skill.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
@@ -19,7 +19,7 @@ import { attributeNameList, printAttributeName } from "../../../services/wh/attr
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 
-const whList = useWhListUtils(new SkillApi(authRequest));
+const whList = useWhList(new SkillApi(authRequest));
 await whList.loadWhList();
 
 const router = useRouter();
