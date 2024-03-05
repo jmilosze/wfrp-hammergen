@@ -72,6 +72,7 @@ const validDuration = computed(() => wh.value.validateDuration());
     :submissionState="submissionState"
     :centered="true"
     @close="showSubmissionStatus = false"
+    class="w-fit"
   />
 
   <EditControls
