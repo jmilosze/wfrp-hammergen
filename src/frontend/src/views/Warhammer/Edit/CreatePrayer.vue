@@ -16,7 +16,7 @@ const props = defineProps<{
 }>();
 
 const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm } = useWhEdit(
-  new Prayer({ name: "New prayer", canEdit: true }),
+  new Prayer({ name: "New prayer", canEdit: true, id: "create" }),
   new PrayerApi(authRequest),
 );
 
