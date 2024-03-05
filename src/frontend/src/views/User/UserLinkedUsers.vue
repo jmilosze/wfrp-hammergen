@@ -9,7 +9,10 @@ import FormInput from "../../components/FormInput.vue";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
 import { UnauthorizedError, useAuth } from "../../composables/auth.ts";
+import AlertBlock from "../../components/AlertBlock.vue";
 
+const apiError = ref("");
+const showApiError = ref(true);
 const applyChangesSubmissionState = ref(new SubmissionState());
 const addUserSubmissionState = ref(new SubmissionState());
 const showApplyChangesAfterSubmit = ref(false);
@@ -33,11 +36,7 @@ try {
   user.value = await callAndLogoutIfUnauthorized(userApi.get)();
   originalUser.value = user.value.copy();
 } catch (error) {
-  if (!(error instanceof UnauthorizedError)) {
-    applyChangesSubmissionState.value.setFailureFromError(error, []);
-  } else {
-    console.log(error);
-  }
+  apiError.value = "Error. Could not pull data from server.";
 }
 
 function removeUsername(username: string) {
@@ -89,6 +88,9 @@ async function submitForm() {
 </script>
 
 <template>
+  <AlertBlock v-if="apiError && showApiError" alertType="red" :centered="true" @click="showApiError = false">
+    {{ apiError }}
+  </AlertBlock>
   <Header title="Linked users">
     <p>
       In this page, you can add "linked users". You need to know their username (the email they used to register). When
