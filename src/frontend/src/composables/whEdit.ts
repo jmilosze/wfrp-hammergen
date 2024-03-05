@@ -13,6 +13,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
   const showApiError = ref(true);
 
   const submissionState = ref(new SubmissionState());
+  const showSubmissionStatus = ref(false);
 
   async function loadWh(id: string): Promise<boolean> {
     showApiError.value = true;
@@ -36,6 +37,8 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
       return false;
     }
 
+    showSubmissionStatus.value = true;
+
     try {
       if (wh.value.id === "create") {
         await auth.callAndLogoutIfUnauthorized(elementApi.createElement)(wh.value);
@@ -57,5 +60,16 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
     whOriginal.value = whInstance.copy() as T;
   }
 
-  return { wh, whOriginal, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm };
+  return {
+    wh,
+    whOriginal,
+    apiError,
+    showApiError,
+    loadWh,
+    submitForm,
+    hasChanged,
+    submissionState,
+    resetForm,
+    showSubmissionStatus,
+  };
 }

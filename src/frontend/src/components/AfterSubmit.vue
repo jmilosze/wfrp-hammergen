@@ -5,6 +5,7 @@ import { SubmissionState } from "../utils/submission.ts";
 defineProps<{
   submissionState: SubmissionState;
   visible: boolean;
+  centered?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -17,6 +18,7 @@ const emit = defineEmits<{
     <AlertBlock
       v-if="submissionState.status === 'failure' && submissionState.message !== ''"
       alertType="red"
+      :centered="centered"
       @click="emit('close')"
     >
       {{ submissionState.message }}
@@ -24,6 +26,7 @@ const emit = defineEmits<{
     <AlertBlock
       v-if="submissionState.status === 'success' && submissionState.message !== ''"
       alertType="green"
+      :centered="centered"
       @click="emit('close')"
     >
       {{ submissionState.message }}

@@ -10,15 +10,14 @@ import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
+import AfterSubmit from "../../../components/AfterSubmit.vue";
 
 const props = defineProps<{
   id: string;
 }>();
 
-const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm } = useWhEdit(
-  new Prayer({ name: "New prayer", canEdit: true, id: "create" }),
-  new PrayerApi(authRequest),
-);
+const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm, showSubmissionStatus } =
+  useWhEdit(new Prayer({ name: "New prayer", canEdit: true, id: "create" }), new PrayerApi(authRequest));
 
 if (props.id !== "create") {
   if (!(await loadWh(props.id))) {
@@ -48,20 +47,18 @@ const validDuration = computed(() => wh.value.validateDuration());
     class="justify-between text-left gap-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
-    <div class="m-1 my-3 flex-1">
-      <div>
-        <div class="flex flex-col gap-4">
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!wh.canEdit"
-          />
-        </div>
+    <div class="my-3 flex-1">
+      <div class="flex flex-col gap-4">
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <FormTextarea
+          v-model="wh.description"
+          title="Description"
+          :validationStatus="validDesc"
+          :disabled="!wh.canEdit"
+        />
       </div>
     </div>
-    <div class="m-1 my-3 flex-1">
+    <div class="my-3 flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!wh.canEdit" />
         <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!wh.canEdit" />
@@ -69,6 +66,14 @@ const validDuration = computed(() => wh.value.validateDuration());
       </div>
     </div>
   </div>
+
+  <AfterSubmit
+    :visible="showSubmissionStatus"
+    :submissionState="submissionState"
+    :centered="true"
+    @close="showSubmissionStatus = false"
+  />
+
   <EditControls
     :saving="submissionState.status === 'inProgress'"
     list="prayers"
