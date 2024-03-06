@@ -81,15 +81,15 @@ onUpdated(() => {
 
 <template>
   <div ref="contentContainerRef">
-    <div class="flex justify-stretch flex-wrap items-stretch">
+    <div class="flex flex-wrap">
       <ActionButton v-if="addCreateNewBtn" class="mr-2 mb-2 shrink-0" @click="emit('createNew')"
-        >Create New</ActionButton
+        >Create new</ActionButton
       >
       <input
         v-model="searchTerm"
         type="text"
         placeholder="Type to Search"
-        class="border border-neutral-300 rounded h-10 px-2 focus:border-neutral-700 focus:border-2 grow"
+        class="border border-neutral-300 rounded h-10 px-2 focus:border-neutral-700 focus:border-2 grow w-36"
       />
     </div>
     <div v-if="searchedItems.length > 0">
