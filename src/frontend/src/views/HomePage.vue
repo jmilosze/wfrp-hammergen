@@ -50,7 +50,7 @@ import TextLink from "../components/TextLink.vue";
     </ul>
     <p>
       You can see example characters (even without registering) by going to
-      <TextLink routeName="placeholder">Characters</TextLink>
+      <TextLink routeName="characters">Characters</TextLink>
       in the side navigation bar.
     </p>
     <div class="text-2xl font-semibold mt-5">How do I use it?</div>

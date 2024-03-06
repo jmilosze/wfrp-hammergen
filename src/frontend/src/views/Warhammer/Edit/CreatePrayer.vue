@@ -11,13 +11,14 @@ import EditControls from "../../../components/EditControls.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
+import PublicPropertyBox from "../../../components/ListWh/PublicPropertyBox.vue";
 
 const props = defineProps<{
   id: string;
 }>();
 
 const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm, showSubmissionStatus } =
-  useWhEdit(new Prayer({ name: "New prayer", canEdit: true, id: "create" }), new PrayerApi(authRequest));
+  useWhEdit(new Prayer({ name: "New prayer", canEdit: true, id: "create", shared: true }), new PrayerApi(authRequest));
 
 if (props.id !== "create") {
   if (!(await loadWh(props.id))) {
@@ -63,6 +64,7 @@ const validDuration = computed(() => wh.value.validateDuration());
         <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!wh.canEdit" />
         <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!wh.canEdit" />
         <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!wh.canEdit" />
+        <PublicPropertyBox v-model="wh.shared" propertyName="Prayer" :disabled="!wh.canEdit" />
       </div>
     </div>
   </div>
