@@ -63,13 +63,7 @@ for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <div class="max-w-2xl">
-        <TableWithSearch
-          v-model="searchTerm"
-          :fields="modalColumns"
-          :items="sources"
-          :stackedViewSize="ViewSize.lg"
-          class="mx-1 w-fit"
-        >
+        <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="sources" :stackedViewSize="ViewSize.zero">
           <!--          <template #actions="{ name, id, canEdit }">-->
           <!--            <ActionButtonsNonCharacter-->
           <!--              :id="id"-->

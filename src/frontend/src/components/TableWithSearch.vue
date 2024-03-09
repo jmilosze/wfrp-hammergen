@@ -94,6 +94,7 @@ onUpdated(() => {
     </div>
     <div v-if="searchedItems.length > 0">
       <TablePagination
+        v-if="searchedItems.length > rowsPerPage"
         v-model="startRow"
         :totalRows="searchedItems.length"
         :rowsPerPage="rowsPerPage"
@@ -140,6 +141,7 @@ onUpdated(() => {
         </div>
       </div>
       <TablePagination
+        v-if="searchedItems.length > rowsPerPage"
         v-model="startRow"
         :totalRows="searchedItems.length"
         :rowsPerPage="rowsPerPage"
