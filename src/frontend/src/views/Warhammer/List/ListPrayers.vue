@@ -83,7 +83,7 @@ function formatPrayerRow(prayer: Prayer): TableRow {
     <template #actions="{ name, id, canEdit }">
       <ActionButtonsNonCharacter
         :id="id"
-        :canEdit="canEdit"
+        :canEdit="canEdit as boolean"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'prayer', params: { id: id } })"

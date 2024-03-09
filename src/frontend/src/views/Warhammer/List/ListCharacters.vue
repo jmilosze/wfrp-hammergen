@@ -76,7 +76,7 @@ function formatCharacterRow(character: Character): TableRow {
     <template #actions="{ name, id, canEdit }">
       <ActionButtonsCharacter
         :id="id"
-        :canEdit="canEdit"
+        :canEdit="canEdit as boolean"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'character', params: { id: id } })"

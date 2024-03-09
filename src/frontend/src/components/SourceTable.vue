@@ -77,13 +77,19 @@ function onModifyClick() {
           :stackedViewSize="ViewSize.zero"
         >
           <template #selected="{ id }: { id: string }">
-            <input v-model="sources[id].selected" type="checkbox" class="w-5 h-5 accent-neutral-600" />
+            <input
+              v-model="sources[id].selected"
+              type="checkbox"
+              class="w-5 h-5 accent-neutral-600"
+              @input="console.log(`Source ${id} updated to ${sources[id].selected}`)"
+            />
           </template>
 
           <template #notes="{ id }: { id: string }">
             <input
               v-model="sources[id].notes"
               class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2"
+              @input="console.log(`Source ${id} updated to ${!sources[id].notes}`)"
             />
           </template>
         </TableWithSearch>
