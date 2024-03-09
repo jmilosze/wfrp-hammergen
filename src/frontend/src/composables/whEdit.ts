@@ -2,12 +2,14 @@ import { computed, Ref, ref } from "vue";
 import { useAuth } from "./auth.ts";
 import { WhApi, WhProperty } from "../services/wh/common.ts";
 import { SubmissionState } from "../utils/submission.ts";
+import { copySource } from "../services/wh/source.ts";
 
 export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, elementApi: WhApi<T, TApiData>) {
   const auth = useAuth();
 
   const wh = ref(whInstance.copy()) as Ref<T>;
   const whOriginal = ref(whInstance.copy()) as Ref<T>;
+  const initSources = ref(copySource(wh.value.source));
 
   const apiError = ref("");
   const showApiError = ref(true);
@@ -20,6 +22,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
     try {
       wh.value = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(id);
       whOriginal.value = wh.value.copy() as T;
+      initSources.value = copySource(wh.value.source);
     } catch (error) {
       apiError.value = "Error. Could not pull data from server.";
     }
@@ -61,6 +64,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
   return {
     wh,
     whOriginal,
+    initSources,
     apiError,
     showApiError,
     loadWh,

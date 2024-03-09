@@ -13,7 +13,7 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/ListWh/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
-import { copySource, defaultSource } from "../../../services/wh/source.ts";
+import { defaultSource } from "../../../services/wh/source.ts";
 
 const props = defineProps<{
   id: string;
@@ -27,8 +27,18 @@ const newPrayer = new Prayer({
   source: defaultSource(),
 });
 
-const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm, showSubmissionStatus } =
-  useWhEdit(newPrayer, new PrayerApi(authRequest));
+const {
+  wh,
+  initSources,
+  apiError,
+  showApiError,
+  loadWh,
+  submitForm,
+  hasChanged,
+  submissionState,
+  resetForm,
+  showSubmissionStatus,
+} = useWhEdit(newPrayer, new PrayerApi(authRequest));
 
 if (props.id !== "create") {
   await loadWh(props.id);
@@ -42,8 +52,6 @@ const validDesc = computed(() => wh.value.validateDescription());
 const validRange = computed(() => wh.value.validateRange());
 const validTarget = computed(() => wh.value.validateTarget());
 const validDuration = computed(() => wh.value.validateDuration());
-
-const initSources = ref(copySource(wh.value.source));
 </script>
 
 <template>
