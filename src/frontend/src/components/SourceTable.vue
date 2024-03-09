@@ -7,7 +7,7 @@ import { useModal } from "../composables/modal.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import TableWithSearch from "./TableWithSearch.vue";
 
-const props = defineProps<{ initSources: Record<string, string> }>();
+const props = defineProps<{ initSources: Record<string, string>; disabled?: boolean }>();
 
 const emit = defineEmits<{
   (e: "selected", modelValue: { id: string; notes: string; selected: boolean }): void;
@@ -54,9 +54,9 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center mb-3">
-      <div class="mb-1 mr-2">Sources</div>
-      <ActionButton size="sm" @click="onModifyClick">Modify</ActionButton>
+    <div class="flex items-center" :class="disabled ? 'mb-1' : 'mb-2'">
+      <div class="mr-2">Sources</div>
+      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
     </div>
     <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
       <table class="w-full">
