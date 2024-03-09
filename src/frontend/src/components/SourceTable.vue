@@ -57,7 +57,7 @@ for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <ModalWindow id="modifySourceModal" size="md">
+    <ModalWindow id="modifySourceModal">
       <template #header> Modify sources </template>
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
