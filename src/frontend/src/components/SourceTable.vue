@@ -78,13 +78,10 @@ function onModifyClick() {
         >
           <template #selected="{ name }: { name: string }">
             <input v-model="sources[name].selected" type="checkbox" class="w-5 h-5 accent-neutral-600" />
-            <!--            <ActionButtonsNonCharacter-->
-            <!--              :id="id"-->
-            <!--              :canEdit="canEdit"-->
-            <!--              @copy="(copiedId) => whList.copyWh(copiedId)"-->
-            <!--              @delete="whList.whToDelete.value = { name: name, id: id }"-->
-            <!--              @edit="router.push({ name: 'prayer', params: { id: id } })"-->
-            <!--            />-->
+          </template>
+
+          <template #notes="{ name }: { name: string }">
+            <input v-model="sources[name].notes" class="border border-neutral-300 rounded w-full h-10 px-2" />
           </template>
         </TableWithSearch>
       </div>
