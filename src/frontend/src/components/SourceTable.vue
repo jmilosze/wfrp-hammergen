@@ -9,6 +9,10 @@ import TableWithSearch from "./TableWithSearch.vue";
 
 const props = defineProps<{ initSources: Record<string, string> }>();
 
+const emit = defineEmits<{
+  (e: "selected", modelValue: { id: string; notes: string; selected: boolean }): void;
+}>();
+
 const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
@@ -81,7 +85,7 @@ function onModifyClick() {
               v-model="sources[id].selected"
               type="checkbox"
               class="w-5 h-5 accent-neutral-600"
-              @input="console.log(`Source ${id} updated to ${sources[id].selected}`)"
+              @input="emit('selected', { id: id, notes: sources[id].notes, selected: sources[id].selected })"
             />
           </template>
 
