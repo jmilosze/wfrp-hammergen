@@ -12,7 +12,7 @@ const modal = useModal();
 <template>
   <Teleport v-if="id === modal.modalId.value" to="#modal">
     <div class="flex justify-center">
-      <div class="bg-white rounded-lg shadow border m-5 border-neutral-500 shrink" @click.stop>
+      <div class="bg-white rounded-lg shadow border m-5 border-neutral-500 max-w-2xl flex-auto" @click.stop>
         <div class="p-3 flex justify-between">
           <div class="text-xl font-semibold text-gray-900 dark:text-white"><slot name="header"></slot></div>
           <button
