@@ -1,5 +1,24 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
+import { ref, Ref } from "vue";
+import { source } from "../services/wh/source.ts";
+
+const props = defineProps<{ initSources: Record<string, string> }>();
+
+const sources: Ref<{ name: string; dispName: string; notes: string; selected: boolean }[]> = ref([]);
+
+for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
+  if (props.initSources && allSourceName in props.initSources) {
+    sources.value.push({
+      name: allSourceName,
+      dispName: allSourceDispName,
+      notes: props.initSources[allSourceName],
+      selected: true,
+    });
+  } else {
+    sources.value.push({ name: allSourceName, dispName: allSourceDispName, notes: "", selected: false });
+  }
+}
 </script>
 
 <template>
@@ -16,6 +35,12 @@ import ActionButton from "./ActionButton.vue";
             <th class="border-b border-neutral-300 py-2 px-5">Notes</th>
           </tr>
         </thead>
+        <tbody>
+          <tr v-for="src in sources.filter((x) => x.selected)" :key="src.name" class="bg-white hover:bg-neutral-200">
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.dispName }}</td>
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.notes }}</td>
+          </tr>
+        </tbody>
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>

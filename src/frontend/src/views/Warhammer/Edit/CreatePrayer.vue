@@ -13,13 +13,22 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/ListWh/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
+import { defaultSource } from "../../../services/wh/source.ts";
 
 const props = defineProps<{
   id: string;
 }>();
 
+const newPrayer = new Prayer({
+  name: "New prayer",
+  canEdit: true,
+  id: "create",
+  shared: true,
+  source: defaultSource(),
+});
+
 const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm, showSubmissionStatus } =
-  useWhEdit(new Prayer({ name: "New prayer", canEdit: true, id: "create", shared: true }), new PrayerApi(authRequest));
+  useWhEdit(newPrayer, new PrayerApi(authRequest));
 
 if (props.id !== "create") {
   if (!(await loadWh(props.id))) {
@@ -75,7 +84,7 @@ const validDuration = computed(() => wh.value.validateDuration());
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="my-3 flex-1">
-      <SourceTable></SourceTable>
+      <SourceTable :initSources="wh.source"></SourceTable>
     </div>
     <div class="my-3 flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Prayer" :disabled="!wh.canEdit" />

@@ -34,3 +34,7 @@ export type Source = Record<string, string>;
 export function copySource(source: Source) {
   return JSON.parse(JSON.stringify(source));
 }
+
+export function defaultSource(): Source {
+  return { 0: "" };
+}
