@@ -6,7 +6,6 @@ import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import TableWithSearch from "./TableWithSearch.vue";
-import ActionButtonsNonCharacter from "./ListWh/ActionButtonsNonCharacter.vue";
 
 const props = defineProps<{ initSources: Record<string, string> }>();
 
@@ -68,17 +67,17 @@ function onModifyClick() {
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <div class="">
-        <!--        <div class="border-2 border-green-600">zxc zxcz zxc zx zxc zxc zxc zxc zxc zxc zxc zxc zxc zxc zxc</div>-->
         <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="sources" :stackedViewSize="ViewSize.zero">
-          <!--          <template #actions="{ name, id, canEdit }">-->
-          <!--            <ActionButtonsNonCharacter-->
-          <!--              :id="id"-->
-          <!--              :canEdit="canEdit"-->
-          <!--              @copy="(copiedId) => whList.copyWh(copiedId)"-->
-          <!--              @delete="whList.whToDelete.value = { name: name, id: id }"-->
-          <!--              @edit="router.push({ name: 'prayer', params: { id: id } })"-->
-          <!--            />-->
-          <!--          </template>-->
+          <template #selected="{ name, notes, selected }">
+            <input value="true" type="checkbox" class="w-5 h-5 accent-neutral-600" />
+            <!--            <ActionButtonsNonCharacter-->
+            <!--              :id="id"-->
+            <!--              :canEdit="canEdit"-->
+            <!--              @copy="(copiedId) => whList.copyWh(copiedId)"-->
+            <!--              @delete="whList.whToDelete.value = { name: name, id: id }"-->
+            <!--              @edit="router.push({ name: 'prayer', params: { id: id } })"-->
+            <!--            />-->
+          </template>
         </TableWithSearch>
       </div>
     </ModalWindow>
