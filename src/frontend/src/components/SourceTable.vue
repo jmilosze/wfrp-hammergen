@@ -32,13 +32,18 @@ for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
     sources.value.push({ name: allSourceName, dispName: allSourceDispName, notes: "", selected: false });
   }
 }
+
+function onModifyClick() {
+  modal.showModal("modifySourceModal");
+  searchTerm.value = "";
+}
 </script>
 
 <template>
   <div>
     <div class="flex items-center mb-3">
       <div class="mb-1 mr-2">Sources</div>
-      <ActionButton size="sm" @click="modal.showModal('modifySourceModal')">Modify</ActionButton>
+      <ActionButton size="sm" @click="onModifyClick">Modify</ActionButton>
     </div>
     <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
       <table class="w-full">
