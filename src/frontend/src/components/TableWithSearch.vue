@@ -16,7 +16,7 @@ const props = defineProps<{
   perPage?: number;
   stackedViewSize: ViewSize;
   modelValue: string;
-  addCreateNewBtn: boolean;
+  addCreateNewBtn?: boolean;
 }>();
 
 const emit = defineEmits<{

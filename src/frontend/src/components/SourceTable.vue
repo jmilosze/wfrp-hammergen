@@ -2,8 +2,21 @@
 import ActionButton from "./ActionButton.vue";
 import { ref, Ref } from "vue";
 import { source } from "../services/wh/source.ts";
+import ModalWindow from "./ModalWindow.vue";
+import { useModal } from "../composables/modal.ts";
+import { ViewSize } from "../utils/viewSize.ts";
+import TableWithSearch from "./TableWithSearch.vue";
+import ActionButtonsNonCharacter from "./ListWh/ActionButtonsNonCharacter.vue";
 
 const props = defineProps<{ initSources: Record<string, string> }>();
+
+const modal = useModal();
+const searchTerm = ref("");
+const modalColumns = [
+  { name: "dispName", displayName: "Name" },
+  { name: "notes", displayName: "Notes" },
+  { name: "selected", displayName: "Select" },
+];
 
 const sources: Ref<{ name: string; dispName: string; notes: string; selected: boolean }[]> = ref([]);
 
@@ -25,7 +38,7 @@ for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
   <div>
     <div class="flex items-center mb-3">
       <div class="mb-1 mr-2">Sources</div>
-      <ActionButton size="sm">Modify</ActionButton>
+      <ActionButton size="sm" @click="modal.showModal('modifySourceModal')">Modify</ActionButton>
     </div>
     <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
       <table class="w-full">
@@ -44,6 +57,31 @@ for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
+    <ModalWindow id="modifySourceModal">
+      <template #header> Modify sources </template>
+      <template #buttons>
+        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+      </template>
+      <div class="max-w-2xl">
+        <TableWithSearch
+          v-model="searchTerm"
+          :fields="modalColumns"
+          :items="sources"
+          :stackedViewSize="ViewSize.lg"
+          class="mx-1 w-fit"
+        >
+          <!--          <template #actions="{ name, id, canEdit }">-->
+          <!--            <ActionButtonsNonCharacter-->
+          <!--              :id="id"-->
+          <!--              :canEdit="canEdit"-->
+          <!--              @copy="(copiedId) => whList.copyWh(copiedId)"-->
+          <!--              @delete="whList.whToDelete.value = { name: name, id: id }"-->
+          <!--              @edit="router.push({ name: 'prayer', params: { id: id } })"-->
+          <!--            />-->
+          <!--          </template>-->
+        </TableWithSearch>
+      </div>
+    </ModalWindow>
   </div>
 </template>
 

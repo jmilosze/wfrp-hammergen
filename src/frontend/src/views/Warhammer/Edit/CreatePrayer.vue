@@ -94,7 +94,6 @@ const validDuration = computed(() => wh.value.validateDuration());
   <AfterSubmit
     :visible="showSubmissionStatus"
     :submissionState="submissionState"
-    :centered="true"
     class="w-fit"
     @close="showSubmissionStatus = false"
   />
