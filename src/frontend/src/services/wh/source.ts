@@ -31,7 +31,7 @@ export const source: Record<string, string> = {
 
 export type Source = Record<string, string>;
 
-export function copySource(source: Source) {
+export function copySource(source: Source): Source {
   return JSON.parse(JSON.stringify(source));
 }
 

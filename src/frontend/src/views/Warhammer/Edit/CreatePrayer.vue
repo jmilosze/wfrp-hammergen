@@ -13,7 +13,7 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/ListWh/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { copySource, defaultSource } from "../../../services/wh/source.ts";
 
 const props = defineProps<{
   id: string;
@@ -31,9 +31,7 @@ const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionSt
   useWhEdit(newPrayer, new PrayerApi(authRequest));
 
 if (props.id !== "create") {
-  if (!(await loadWh(props.id))) {
-    wh.value = new Prayer();
-  }
+  await loadWh(props.id);
 }
 
 const contentContainerRef = ref(null);
@@ -44,6 +42,8 @@ const validDesc = computed(() => wh.value.validateDescription());
 const validRange = computed(() => wh.value.validateRange());
 const validTarget = computed(() => wh.value.validateTarget());
 const validDuration = computed(() => wh.value.validateDuration());
+
+const initSources = ref(copySource(wh.value.source));
 </script>
 
 <template>
@@ -84,7 +84,7 @@ const validDuration = computed(() => wh.value.validateDuration());
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="my-3 flex-1">
-      <SourceTable :initSources="wh.source"></SourceTable>
+      <SourceTable :initSources="initSources"></SourceTable>
     </div>
     <div class="my-3 flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Prayer" :disabled="!wh.canEdit" />

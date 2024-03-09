@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
-import { computed, ref, Ref } from "vue";
+import { computed, ref, Ref, watch } from "vue";
 import { source } from "../services/wh/source.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
@@ -23,18 +23,24 @@ const modalColumns = [
 
 const sources: Ref<Record<string, { id: string; name: string; notes: string; selected: boolean }>> = ref({});
 
-for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
-  if (props.initSources && allSourceName in props.initSources) {
-    sources.value[allSourceName] = {
-      id: allSourceName,
-      name: allSourceDispName,
-      notes: props.initSources[allSourceName],
-      selected: true,
-    };
-  } else {
-    sources.value[allSourceName] = { id: allSourceName, name: allSourceDispName, notes: "", selected: false };
-  }
-}
+watch(
+  props.initSources,
+  (newVal) => {
+    for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
+      if (props.initSources && allSourceName in newVal) {
+        sources.value[allSourceName] = {
+          id: allSourceName,
+          name: allSourceDispName,
+          notes: props.initSources[allSourceName],
+          selected: true,
+        };
+      } else {
+        sources.value[allSourceName] = { id: allSourceName, name: allSourceDispName, notes: "", selected: false };
+      }
+    }
+  },
+  { immediate: true },
+);
 
 const allSources = computed(() => Object.values(sources.value).sort((a, b) => a.name.localeCompare(b.name)));
 const selectedSources = computed(() => allSources.value.filter((x) => x.selected));

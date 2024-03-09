@@ -15,15 +15,13 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
   const submissionState = ref(new SubmissionState());
   const showSubmissionStatus = ref(false);
 
-  async function loadWh(id: string): Promise<boolean> {
+  async function loadWh(id: string): Promise<void> {
     showApiError.value = true;
     try {
       wh.value = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(id);
       whOriginal.value = wh.value.copy() as T;
-      return true;
     } catch (error) {
       apiError.value = "Error. Could not pull data from server.";
-      return false;
     }
   }
 
