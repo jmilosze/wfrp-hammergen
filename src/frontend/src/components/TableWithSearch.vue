@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends TableRow">
 import { TableField, TableRow } from "../utils/table.ts";
 import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
@@ -12,7 +12,7 @@ const SEARCH_DEBOUNCE_MS = 250;
 
 const props = defineProps<{
   fields: TableField[];
-  items: TableRow[];
+  items: T[];
   perPage?: number;
   stackedViewSize: ViewSize;
   modelValue: string;

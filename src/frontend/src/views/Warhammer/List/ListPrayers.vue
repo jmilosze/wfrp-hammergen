@@ -6,7 +6,6 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
-import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ListWh/ActionButtonsNonCharacter.vue";
@@ -47,7 +46,7 @@ const items = computed(() => {
     .sort((a, b) => a.name.localeCompare(b.name));
 });
 
-function formatPrayerRow(prayer: Prayer): TableRow {
+function formatPrayerRow(prayer: Prayer) {
   return {
     name: addSpaces(prayer.name),
     source: Object.keys(prayer.source)
@@ -80,10 +79,10 @@ function formatPrayerRow(prayer: Prayer): TableRow {
     class="mx-1"
     @createNew="router.push({ name: 'prayer', params: { id: 'create' } })"
   >
-    <template #actions="{ name, id, canEdit }">
+    <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
-        :canEdit="canEdit as boolean"
+        :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'prayer', params: { id: id } })"

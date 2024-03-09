@@ -5,7 +5,6 @@ import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
-import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsCharacter from "../../../components/ListWh/ActionButtonsCharacter.vue";
@@ -44,7 +43,7 @@ const items = computed(() => {
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
 
-function formatCharacterRow(character: Character): TableRow {
+function formatCharacterRow(character: Character) {
   return {
     name: addSpaces(character.name),
     description: character.description,
@@ -73,10 +72,10 @@ function formatCharacterRow(character: Character): TableRow {
     class="mx-1"
     @createNew="router.push({ name: 'character', params: { id: 'create' } })"
   >
-    <template #actions="{ name, id, canEdit }">
+    <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsCharacter
         :id="id"
-        :canEdit="canEdit as boolean"
+        :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'character', params: { id: id } })"

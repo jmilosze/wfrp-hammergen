@@ -6,7 +6,6 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
-import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ListWh/ActionButtonsNonCharacter.vue";
@@ -48,7 +47,7 @@ const items = computed(() => {
     .sort((a, b) => (a.name > b.name ? 1 : -1));
 });
 
-function formatSpellRow(spell: Spell): TableRow {
+function formatSpellRow(spell: Spell) {
   return {
     name: addSpaces(spell.name),
     source: Object.keys(spell.source)
@@ -82,10 +81,10 @@ function formatSpellRow(spell: Spell): TableRow {
     class="mx-1"
     @createNew="router.push({ name: 'spell', params: { id: 'create' } })"
   >
-    <template #actions="{ name, id, canEdit }">
+    <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
-        :canEdit="canEdit as boolean"
+        :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'spell', params: { id: id } })"

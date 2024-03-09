@@ -20,7 +20,6 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
-import { TableRow } from "../../../utils/table.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ListWh/ActionButtonsNonCharacter.vue";
@@ -77,7 +76,7 @@ function filterGroup(type: string, group: string, wh: Item) {
   return type === ItemType.Armour.toString() && group === wh.armour.group.toString();
 }
 
-function formatItemRow(item: Item): TableRow {
+function formatItemRow(item: Item) {
   return {
     name: addSpaces(item.name),
     type: printItemType(item.type),
@@ -163,10 +162,10 @@ watch(
     class="mx-1"
     @createNew="router.push({ name: 'item', params: { id: 'create' } })"
   >
-    <template #actions="{ name, id, canEdit }">
+    <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
-        :canEdit="canEdit as boolean"
+        :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
         @edit="router.push({ name: 'item', params: { id: id } })"
