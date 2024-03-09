@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
-import { ref, Ref } from "vue";
+import { computed, ref, Ref } from "vue";
 import { source } from "../services/wh/source.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
@@ -17,20 +17,23 @@ const modalColumns = [
   { name: "selected", displayName: "Select" },
 ];
 
-const sources: Ref<{ name: string; dispName: string; notes: string; selected: boolean }[]> = ref([]);
+const sources: Ref<Record<string, { name: string; dispName: string; notes: string; selected: boolean }>> = ref({});
 
 for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
   if (props.initSources && allSourceName in props.initSources) {
-    sources.value.push({
+    sources.value[allSourceName] = {
       name: allSourceName,
       dispName: allSourceDispName,
       notes: props.initSources[allSourceName],
       selected: true,
-    });
+    };
   } else {
-    sources.value.push({ name: allSourceName, dispName: allSourceDispName, notes: "", selected: false });
+    sources.value[allSourceName] = { name: allSourceName, dispName: allSourceDispName, notes: "", selected: false };
   }
 }
+
+const allSources = computed(() => Object.values(sources.value));
+const selectedSources = computed(() => allSources.value.filter((x) => x.selected));
 
 function onModifyClick() {
   modal.showModal("modifySourceModal");
@@ -53,7 +56,7 @@ function onModifyClick() {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="src in sources.filter((x) => x.selected)" :key="src.name" class="bg-white hover:bg-neutral-200">
+          <tr v-for="src in selectedSources" :key="src.name" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.dispName }}</td>
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.notes }}</td>
           </tr>
@@ -67,9 +70,14 @@ function onModifyClick() {
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <div class="">
-        <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="sources" :stackedViewSize="ViewSize.zero">
-          <template #selected="{ name, notes, selected }">
-            <input value="true" type="checkbox" class="w-5 h-5 accent-neutral-600" />
+        <TableWithSearch
+          v-model="searchTerm"
+          :fields="modalColumns"
+          :items="allSources"
+          :stackedViewSize="ViewSize.zero"
+        >
+          <template #selected="{ name }: { name: string }">
+            <input v-model="sources[name].selected" type="checkbox" class="w-5 h-5 accent-neutral-600" />
             <!--            <ActionButtonsNonCharacter-->
             <!--              :id="id"-->
             <!--              :canEdit="canEdit"-->

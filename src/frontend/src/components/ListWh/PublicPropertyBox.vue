@@ -36,7 +36,7 @@ const modal = useModal();
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>
-      <div class="">
+      <div>
         When an element (character, skill, item, etc.) is marked as Public anyone you give your username to, can see
         that element in read-only mode. Element sharing is explained in the
         <TextLink routeName="linkedusers">Linked Users</TextLink>
