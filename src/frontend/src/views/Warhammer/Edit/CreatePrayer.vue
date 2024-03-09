@@ -92,7 +92,7 @@ const validDuration = computed(() => wh.value.validateDuration());
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="my-3 flex-1">
-      <SourceTable :initSources="initSources"></SourceTable>
+      <SourceTable :initSources="initSources" @selected="(e) => wh.updateSource(e)"></SourceTable>
     </div>
     <div class="my-3 flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Prayer" :disabled="!wh.canEdit" />

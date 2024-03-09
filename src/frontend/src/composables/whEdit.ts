@@ -59,6 +59,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
   function resetForm() {
     wh.value = whInstance.copy() as T;
     whOriginal.value = whInstance.copy() as T;
+    initSources.value = copySource(wh.value.source);
   }
 
   return {
