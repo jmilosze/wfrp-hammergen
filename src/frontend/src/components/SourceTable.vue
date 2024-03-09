@@ -81,7 +81,10 @@ function onModifyClick() {
           </template>
 
           <template #notes="{ name }: { name: string }">
-            <input v-model="sources[name].notes" class="border border-neutral-300 rounded w-full h-10 px-2" />
+            <input
+              v-model="sources[name].notes"
+              class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2"
+            />
           </template>
         </TableWithSearch>
       </div>
