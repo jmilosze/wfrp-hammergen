@@ -32,7 +32,7 @@ for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
   }
 }
 
-const allSources = computed(() => Object.values(sources.value));
+const allSources = computed(() => Object.values(sources.value).sort((a, b) => a.name.localeCompare(b.name)));
 const selectedSources = computed(() => allSources.value.filter((x) => x.selected));
 
 function onModifyClick() {
