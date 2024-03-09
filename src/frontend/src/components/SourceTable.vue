@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
-import { computed, ref, Ref } from "vue";
+import { computed, nextTick, ref, Ref } from "vue";
 import { source } from "../services/wh/source.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
