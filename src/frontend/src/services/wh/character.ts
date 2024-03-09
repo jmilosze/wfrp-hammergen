@@ -2,7 +2,7 @@ import { DEFAULT_SIZE, getMovementFormula, getWoundsFormula, SpeciesWithRegion }
 import { StatusStanding, StatusTier } from "./career.ts";
 import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
 import { ApiResponse, IdNumber, validShortDescFn, WhApi, WhProperty } from "./common.ts";
-import { copySource, Source } from "./source.ts";
+import { copySource, Source, updateSource } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { compareIdNumber } from "./common.ts";
@@ -200,6 +200,10 @@ export class Character implements WhProperty {
       this.shared === otherCharacter.shared &&
       objectsAreEqual(this.source, otherCharacter.source)
     );
+  }
+
+  updateSource(update: { id: string; notes: string; selected: boolean }): void {
+    updateSource(this.source, update);
   }
 
   copy(): Character {

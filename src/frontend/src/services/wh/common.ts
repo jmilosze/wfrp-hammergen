@@ -14,6 +14,7 @@ export interface WhProperty {
   validateName: () => ValidationStatus;
   validateDescription: () => ValidationStatus;
   isEqualTo: (other: WhProperty) => boolean;
+  updateSource: (update: { id: string; notes: string; selected: boolean }) => void;
 }
 
 export interface WhApi<T, TApiData> {

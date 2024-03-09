@@ -6,7 +6,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { Source, copySource } from "./source.ts";
+import { Source, copySource, updateSource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
@@ -115,6 +115,10 @@ export class Prayer implements WhProperty {
       this.shared === otherPrayer.shared &&
       objectsAreEqual(this.source, otherPrayer.source)
     );
+  }
+
+  updateSource(update: { id: string; notes: string; selected: boolean }): void {
+    updateSource(this.source, update);
   }
 }
 

@@ -1,4 +1,4 @@
-import { copySource, Source } from "./source.ts";
+import { copySource, Source, updateSource } from "./source.ts";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -516,6 +516,10 @@ export class Item implements WhProperty {
     }
 
     return true;
+  }
+
+  updateSource(update: { id: string; notes: string; selected: boolean }): void {
+    updateSource(this.source, update);
   }
 }
 

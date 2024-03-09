@@ -1,5 +1,5 @@
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
-import { copySource, Source } from "./source.ts";
+import { Source, copySource, updateSource } from "./source.ts";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -136,6 +136,10 @@ export class Talent implements WhProperty {
     }
 
     return this.modifiers.isEqualTo(otherTalent.modifiers);
+  }
+
+  updateSource(update: { id: string; notes: string; selected: boolean }): void {
+    updateSource(this.source, update);
   }
 
   maxRankDisplay(): string {

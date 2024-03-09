@@ -1,4 +1,4 @@
-import { Source, copySource } from "./source.ts";
+import { Source, copySource, updateSource } from "./source.ts";
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import {
   createElementFunc,
@@ -113,6 +113,10 @@ export class Mutation implements WhProperty {
       this.modifiers.isEqualTo(otherMutation.modifiers) &&
       objectsAreEqual(this.source, otherMutation.source)
     );
+  }
+
+  updateSource(update: { id: string; notes: string; selected: boolean }): void {
+    updateSource(this.source, update);
   }
 }
 

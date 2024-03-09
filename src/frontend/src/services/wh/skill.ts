@@ -1,4 +1,4 @@
-import { copySource, Source } from "./source.ts";
+import { copySource, Source, updateSource } from "./source.ts";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -135,6 +135,10 @@ export class Skill implements WhProperty {
       objectsAreEqual(this.source, otherSkill.source) &&
       arraysAreEqualIgnoreOrder(this.group, otherSkill.group)
     );
+  }
+
+  updateSource(update: { id: string; notes: string; selected: boolean }): void {
+    updateSource(this.source, update);
   }
 }
 

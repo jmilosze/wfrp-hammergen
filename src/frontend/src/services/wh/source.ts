@@ -38,3 +38,12 @@ export function copySource(source: Source): Source {
 export function defaultSource(): Source {
   return { 0: "" };
 }
+
+export function updateSource(source: Source, update: { id: string; notes: string; selected: boolean }) {
+  if (!update.selected && update.id in source) {
+    delete source[update.id];
+  }
+  if (update.selected) {
+    source[update.id] = update.notes;
+  }
+}

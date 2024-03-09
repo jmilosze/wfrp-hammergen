@@ -1,4 +1,4 @@
-import { copySource, Source } from "./source.ts";
+import { copySource, Source, updateSource } from "./source.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
@@ -116,6 +116,10 @@ export class ItemProperty implements WhProperty {
       arraysAreEqualIgnoreOrder(this.applicableTo, otherItemProperty.applicableTo) &&
       objectsAreEqual(this.source, otherItemProperty.source)
     );
+  }
+
+  updateSource(update: { id: string; notes: string; selected: boolean }): void {
+    updateSource(this.source, update);
   }
 }
 
