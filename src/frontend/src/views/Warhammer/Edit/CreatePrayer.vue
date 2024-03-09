@@ -90,23 +90,24 @@ const validDuration = computed(() => wh.value.validateDuration());
       <PublicPropertyBox v-model="wh.shared" propertyName="Prayer" :disabled="!wh.canEdit" />
     </div>
   </div>
+  <div class="mt-4">
+    <AfterSubmit
+      :visible="showSubmissionStatus"
+      :submissionState="submissionState"
+      class="w-fit"
+      @close="showSubmissionStatus = false"
+    />
 
-  <AfterSubmit
-    :visible="showSubmissionStatus"
-    :submissionState="submissionState"
-    class="w-fit"
-    @close="showSubmissionStatus = false"
-  />
-
-  <EditControls
-    :saving="submissionState.status === 'inProgress'"
-    list="prayers"
-    :allowAddAnother="id === 'create'"
-    :confirmExit="hasChanged"
-    :submitForm="submitForm"
-    :resetForm="resetForm"
-    :readOnly="!wh.canEdit"
-  ></EditControls>
+    <EditControls
+      :saving="submissionState.status === 'inProgress'"
+      list="prayers"
+      :allowAddAnother="id === 'create'"
+      :confirmExit="hasChanged"
+      :submitForm="submitForm"
+      :resetForm="resetForm"
+      :readOnly="!wh.canEdit"
+    ></EditControls>
+  </div>
 </template>
 
 <style scoped></style>
