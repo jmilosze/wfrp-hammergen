@@ -1,17 +1,28 @@
 <script setup lang="ts">
 import { useModal } from "../composables/modal.ts";
+import { ref } from "vue";
 
-defineProps<{
+const props = defineProps<{
   id: string;
+  size?: "max" | "md" | "sm";
 }>();
 
 const modal = useModal();
+
+const modalMargin = ref([] as string[]);
+if (props.size === "sm") {
+  modalMargin.value.push("mx-96");
+} else if (props.size === "md") {
+  modalMargin.value.push("mx-32");
+} else {
+  modalMargin.value.push("mx-5");
+}
 </script>
 
 <template>
   <Teleport v-if="id === modal.modalId.value" to="#modal">
-    <div class="flex justify-center">
-      <div class="bg-white rounded-lg shadow m-5 w-fit border border-neutral-500" @click.stop>
+    <div class="my-5" :class="modalMargin">
+      <div class="bg-white rounded-lg shadow border border-neutral-500" @click.stop>
         <div class="p-3 flex justify-between">
           <div class="text-xl font-semibold text-gray-900 dark:text-white"><slot name="header"></slot></div>
           <button
