@@ -22,6 +22,7 @@ const modalColumns = [
 ];
 
 const sources: Ref<Record<string, { id: string; name: string; notes: string; selected: boolean }>> = ref({});
+const sourcesList: Ref<{ id: string; name: string; notes: string; selected: boolean }[]> = ref([]);
 
 watch(
   () => props.initSources,
@@ -39,16 +40,19 @@ watch(
         sources.value[allSourceName] = { id: allSourceName, name: allSourceDispName, notes: "", selected: false };
       }
     }
+    sourcesList.value = Object.values(sources.value).sort((a, b) => a.name.localeCompare(b.name));
   },
   { immediate: true },
 );
 
-const allSources = computed(() => Object.values(sources.value).sort((a, b) => a.name.localeCompare(b.name)));
-const selectedSources = computed(() => allSources.value.filter((x) => x.selected));
+const selectedSources = computed(() => sourcesList.value.filter((x) => x.selected));
 
 function onModifyClick() {
   modal.showModal("modifySourceModal");
   searchTerm.value = "";
+  sourcesList.value.sort((a, b) => {
+    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
+  });
 }
 </script>
 
@@ -84,7 +88,7 @@ function onModifyClick() {
         <TableWithSearch
           v-model="searchTerm"
           :fields="modalColumns"
-          :items="allSources"
+          :items="sourcesList"
           :stackedViewSize="ViewSize.zero"
         >
           <template #selected="{ id }: { id: string }">
