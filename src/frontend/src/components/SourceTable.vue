@@ -24,14 +24,15 @@ const modalColumns = [
 const sources: Ref<Record<string, { id: string; name: string; notes: string; selected: boolean }>> = ref({});
 
 watch(
-  props.initSources,
+  () => props.initSources,
   (newVal) => {
+    sources.value = {};
     for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
-      if (props.initSources && allSourceName in newVal) {
+      if (newVal && allSourceName in newVal) {
         sources.value[allSourceName] = {
           id: allSourceName,
           name: allSourceDispName,
-          notes: props.initSources[allSourceName],
+          notes: newVal[allSourceName],
           selected: true,
         };
       } else {
