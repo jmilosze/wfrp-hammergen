@@ -40,9 +40,7 @@ const {
   showSubmissionStatus,
 } = useWhEdit(newPrayer, new PrayerApi(authRequest));
 
-if (props.id !== "create") {
-  await loadWh(props.id);
-}
+await loadWh(props.id);
 
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
