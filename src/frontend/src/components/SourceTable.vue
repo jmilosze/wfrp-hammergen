@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
-import { source, sourceIsValid, validateSourceRecord } from "../services/wh/source.ts";
+import { source, validateSourceRecord } from "../services/wh/source.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import { ViewSize } from "../utils/viewSize.ts";
