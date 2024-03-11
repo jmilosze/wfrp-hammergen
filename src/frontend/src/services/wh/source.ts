@@ -1,5 +1,5 @@
 import { ValidationStatus } from "../../utils/validation.ts";
-import { validShortDescFn } from "./common.ts";
+import { validVeryShortDescFn } from "./common.ts";
 
 export const source: Record<string, string> = {
   0: "Custom",
@@ -52,7 +52,7 @@ export function updateSource(source: Source, update: { id: string; notes: string
 }
 
 export function validateSourceRecord(record: string): ValidationStatus {
-  return validShortDescFn(record);
+  return validVeryShortDescFn(record);
 }
 
 export function sourceIsValid(source: Source): boolean {

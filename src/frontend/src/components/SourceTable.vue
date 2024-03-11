@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
-import { source } from "../services/wh/source.ts";
+import { source, sourceIsValid, validateSourceRecord } from "../services/wh/source.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import { ViewSize } from "../utils/viewSize.ts";
@@ -46,6 +46,14 @@ watch(
 );
 
 const selectedSources = computed(() => sourcesList.value.filter((x) => x.selected));
+const selectedSourcesValid = computed(() => {
+  for (const src of selectedSources.value) {
+    if (!validateSourceRecord(src.notes).valid) {
+      return false;
+    }
+  }
+  return true;
+});
 
 function onModifyClick() {
   modal.showModal("modifySourceModal");
@@ -79,6 +87,7 @@ function onModifyClick() {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
+    <p class="text-sm text-red-600" :class="[selectedSourcesValid ? 'hidden' : '']">Some of the sources are invalid.</p>
     <ModalWindow id="modifySourceModal">
       <template #header> Modify sources </template>
       <template #buttons>
@@ -106,6 +115,9 @@ function onModifyClick() {
               class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2"
               @input="emit('selected', { id: id, notes: sources[id].notes, selected: sources[id].selected })"
             />
+            <p class="text-sm text-red-600" :class="[validateSourceRecord(sources[id].notes).valid ? 'hidden' : '']">
+              {{ validateSourceRecord(sources[id].notes).message }}
+            </p>
           </template>
         </TableWithSearch>
       </div>

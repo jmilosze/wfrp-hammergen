@@ -37,8 +37,16 @@ export interface IdNumber {
   number: number;
 }
 
+export const VERY_SHORT_DESC_REGEX: RegExp = /^[^<>]{0,15}$/;
 export const SHORT_DESC_REGEX: RegExp = /^[^<>]{0,200}$/;
 export const LONG_DESC_REGEX: RegExp = /^[^<>]{0,10000}$/;
+
+export function validVeryShortDescFn(name: string): ValidationStatus {
+  return setValidationStatus(
+    VERY_SHORT_DESC_REGEX.test(name),
+    "This field has to be shorter than 15 characters and cannot use <> symbols.",
+  );
+}
 
 export function validShortDescFn(name: string): ValidationStatus {
   return setValidationStatus(
