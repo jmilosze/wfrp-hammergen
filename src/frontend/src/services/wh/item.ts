@@ -1,4 +1,4 @@
-import { copySource, Source, updateSource } from "./source.ts";
+import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -463,7 +463,7 @@ export class Item implements WhProperty {
 
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid
+      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
       // Finish implementation
     );
   }

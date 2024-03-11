@@ -2,7 +2,7 @@ import { DEFAULT_SIZE, getMovementFormula, getWoundsFormula, SpeciesWithRegion }
 import { StatusStanding, StatusTier } from "./career.ts";
 import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
 import { ApiResponse, IdNumber, validShortDescFn, WhApi, WhProperty } from "./common.ts";
-import { copySource, Source, updateSource } from "./source.ts";
+import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { compareIdNumber } from "./common.ts";
@@ -255,7 +255,7 @@ export class Character implements WhProperty {
 
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid
+      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
       // Finish implementation
     );
   }

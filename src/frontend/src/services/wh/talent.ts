@@ -1,5 +1,5 @@
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
-import { Source, copySource, updateSource } from "./source.ts";
+import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
 import {
   createElementFunc,
   deleteElementFunc,
@@ -98,7 +98,7 @@ export class Talent implements WhProperty {
 
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid
+      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
       // Finish implementation
     );
   }

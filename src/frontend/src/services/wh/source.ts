@@ -1,3 +1,6 @@
+import { ValidationStatus } from "../../utils/validation.ts";
+import { validShortDescFn } from "./common.ts";
+
 export const source: Record<string, string> = {
   0: "Custom",
   1: "WFRP",
@@ -46,4 +49,17 @@ export function updateSource(source: Source, update: { id: string; notes: string
   if (update.selected) {
     source[update.id] = update.notes;
   }
+}
+
+export function validateSourceRecord(record: string): ValidationStatus {
+  return validShortDescFn(record);
+}
+
+export function sourceIsValid(source: Source): boolean {
+  for (const notes of Object.values(source)) {
+    if (!validateSourceRecord(notes).valid) {
+      return false;
+    }
+  }
+  return true;
 }

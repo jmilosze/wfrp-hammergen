@@ -1,4 +1,4 @@
-import { copySource, Source, updateSource } from "./source.ts";
+import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
@@ -97,7 +97,7 @@ export class ItemProperty implements WhProperty {
 
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid
+      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
       // Finish implementation
     );
   }

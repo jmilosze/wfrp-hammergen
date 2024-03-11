@@ -6,7 +6,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { Source, copySource, updateSource } from "./source.ts";
+import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
@@ -85,7 +85,7 @@ export class Spell implements WhProperty {
 
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid
+      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
       // Finish implementation
     );
   }
