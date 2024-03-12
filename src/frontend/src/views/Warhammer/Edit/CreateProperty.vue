@@ -20,7 +20,7 @@ const props = defineProps<{
 }>();
 
 const newItemProperty = new ItemProperty({
-  name: "New itemProperty",
+  name: "New quality",
   canEdit: true,
   id: "create",
   shared: true,
@@ -55,7 +55,7 @@ const validDesc = computed(() => wh.value.validateDescription());
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create itemProperty' : wh.canEdit ? 'Edit itemProperty' : wh.name" />
+  <Header :title="id === 'create' ? 'Create quality/rune' : wh.canEdit ? 'Edit quality/rune' : wh.name" />
   <div
     ref="contentContainerRef"
     class="justify-between text-left gap-4"
@@ -90,7 +90,7 @@ const validDesc = computed(() => wh.value.validateDescription());
       ></SourceTable>
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="ItemProperty" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -103,7 +103,7 @@ const validDesc = computed(() => wh.value.validateDescription());
 
     <EditControls
       :saving="submissionState.status === 'inProgress'"
-      list="itemPropertys"
+      list="properties"
       :allowAddAnother="id === 'create'"
       :confirmExit="hasChanged"
       :submitForm="submitForm"
