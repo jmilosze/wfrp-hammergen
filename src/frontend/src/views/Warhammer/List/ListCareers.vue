@@ -15,11 +15,11 @@ import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed, ref, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
-import ActionButtonsNonCharacter from "../../../components/ListWh/ActionButtonsNonCharacter.vue";
+import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 import { useRouter } from "vue-router";
-import DeleteModal from "../../../components/ListWh/DeleteModal.vue";
+import DeleteModal from "../../../components/DeleteModal.vue";
 import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
-import SelectInput from "../../../components/ListWh/SelectInput.vue";
+import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 

@@ -16,10 +16,10 @@ import EditControls from "../../../components/EditControls.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
-import PublicPropertyBox from "../../../components/ListWh/PublicPropertyBox.vue";
+import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
-import SelectInput from "../../../components/ListWh/SelectInput.vue";
+import SelectInput from "../../../components/SelectInput.vue";
 
 const props = defineProps<{
   id: string;

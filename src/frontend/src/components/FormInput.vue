@@ -7,11 +7,11 @@ const props = defineProps<{
   title?: string;
   disabled?: boolean;
   validationStatus: ValidationStatus;
-  modelValue: string;
+  modelValue: string | number;
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", modelValue: string): void;
+  (e: "update:modelValue", modelValue: string | number): void;
 }>();
 
 const value = computed({
