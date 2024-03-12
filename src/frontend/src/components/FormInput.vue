@@ -1,27 +1,14 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T = number | string">
 import { ValidationStatus } from "../utils/validation.ts";
-import { computed } from "vue";
 
-const props = defineProps<{
+defineProps<{
   type?: "text" | "password" | "number";
   title?: string;
   disabled?: boolean;
   validationStatus: ValidationStatus;
-  modelValue: string | number;
 }>();
 
-const emit = defineEmits<{
-  (e: "update:modelValue", modelValue: string | number): void;
-}>();
-
-const value = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit("update:modelValue", value);
-  },
-});
+const model = defineModel<T>();
 </script>
 
 <template>
@@ -30,7 +17,7 @@ const value = computed({
     <div class="flex items-stretch justify-between">
       <div class="flex-auto">
         <input
-          v-model="value"
+          v-model="model"
           :type="type ? type : 'text'"
           class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
           :disabled="disabled ? disabled : false"
