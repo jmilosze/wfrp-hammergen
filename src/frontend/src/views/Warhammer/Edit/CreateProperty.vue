@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import Header from "../../../components/PageHeader.vue";
-import { ItemProperty, ItemPropertyApi } from "../../../services/wh/itemproperty.ts";
+import {
+  ItemProperty,
+  ItemPropertyApi,
+  itemPropertyTypeList,
+  printItemPropertyType,
+} from "../../../services/wh/itemproperty.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import { useElSize } from "../../../composables/viewSize.ts";
@@ -14,6 +19,7 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/ListWh/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
+import SelectInput from "../../../components/ListWh/SelectInput.vue";
 
 const props = defineProps<{
   id: string;
@@ -47,6 +53,8 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
+
+const typeOptions = ref(itemPropertyTypeList.map((x) => ({ text: printItemPropertyType(x), value: x })));
 </script>
 
 <template>
@@ -73,7 +81,9 @@ const validDesc = computed(() => wh.value.validateDescription());
       </div>
     </div>
     <div class="my-3 flex-1">
-      <div class="flex flex-col gap-4"></div>
+      <div class="flex flex-col gap-4">
+        <SelectInput v-model="wh.type" :options="typeOptions" title="Type"></SelectInput>
+      </div>
     </div>
   </div>
 
