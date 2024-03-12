@@ -72,7 +72,10 @@ const typeOptions = ref(itemPropertyTypeList.map((x) => ({ text: printItemProper
     <div class="my-3 flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOptions" title="Type"></SelectInput>
+        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type"></SelectInput>
+        <div>
+          <div class="mb-1">Applicable to</div>
+        </div>
       </div>
     </div>
     <div class="my-3 flex-1">
