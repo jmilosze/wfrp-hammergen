@@ -95,11 +95,10 @@ export class ItemProperty implements WhProperty {
     return validShortDescFn(this.description);
   }
 
+  // Other fields are selected from list, so no need for client side validation.
+
   isValid(): boolean {
-    return (
-      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
-      // Finish implementation
-    );
+    return this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source);
   }
 
   isEqualTo(otherItemProperty: WhProperty): boolean {
