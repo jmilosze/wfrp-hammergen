@@ -9,8 +9,9 @@ import { AxiosInstance } from "axios";
 import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
-import { ValidationStatus } from "../../utils/validation.ts";
+import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 
+const CASTING_NUMBER_RE = /^([1-9][0-9]|[0-9])$/;
 const API_BASE_PATH = "/api/wh/spell";
 
 export interface SpellApiData {
@@ -83,10 +84,34 @@ export class Spell implements WhProperty {
     return validShortDescFn(this.description);
   }
 
+  validateRange(): ValidationStatus {
+    return validShortDescFn(this.range);
+  }
+
+  validateTarget(): ValidationStatus {
+    return validShortDescFn(this.target);
+  }
+
+  validateDuration(): ValidationStatus {
+    return validShortDescFn(this.duration);
+  }
+
+  validateCn(): ValidationStatus {
+    return setValidationStatus(
+      CASTING_NUMBER_RE.test(this.cn.toString()),
+      "Casting Number is required and has to be between 0 and 99.",
+    );
+  }
+
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
-      // Finish implementation
+      this.validateName().valid &&
+      this.validateDescription().valid &&
+      this.validateRange().valid &&
+      this.validateTarget().valid &&
+      this.validateDuration().valid &&
+      this.validateCn().valid &&
+      sourceIsValid(this.source)
     );
   }
 

@@ -3,7 +3,7 @@ import { ValidationStatus } from "../utils/validation.ts";
 import { computed } from "vue";
 
 const props = defineProps<{
-  type?: "text" | "password";
+  type?: "text" | "password" | "number";
   title?: string;
   disabled?: boolean;
   validationStatus: ValidationStatus;
