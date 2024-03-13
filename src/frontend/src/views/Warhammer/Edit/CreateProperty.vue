@@ -20,6 +20,8 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
 import SelectInput from "../../../components/SelectInput.vue";
+import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
+import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
 
 const props = defineProps<{
   id: string;
@@ -55,6 +57,7 @@ const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 
 const typeOptions = ref(itemPropertyTypeList.map((x) => ({ text: printItemPropertyType(x), value: x })));
+const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x), value: x })));
 </script>
 
 <template>
@@ -73,9 +76,12 @@ const typeOptions = ref(itemPropertyTypeList.map((x) => ({ text: printItemProper
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
         <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type"></SelectInput>
-        <div>
-          <div class="mb-1">Applicable to</div>
-        </div>
+        <MultipleCheckboxInput
+          v-model="wh.applicableTo"
+          :options="applicableToOptions"
+          :disabled="!wh.canEdit"
+          title="Applicable to"
+        ></MultipleCheckboxInput>
       </div>
     </div>
     <div class="my-3 flex-1">
