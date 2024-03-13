@@ -10,6 +10,17 @@ const props = defineProps<{
 function isSelected(value: T): boolean {
   return !!model?.value?.includes(value);
 }
+// @change="handleChange"
+// handleChange(event: Event) {
+//   const target = event.target as HTMLInputElement;
+//   let newValue = [...this.modelValue];
+//   if (target.checked) {
+//     newValue.push(target.value);
+//   } else {
+//     newValue = newValue.filter((value) => value !== target.value);
+//   }
+//   this.$emit('update:modelValue', newValue);
+// },
 </script>
 
 <template>
