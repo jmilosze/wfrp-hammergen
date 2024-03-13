@@ -120,7 +120,7 @@ const filteredApplicableToOptions = computed(() => {
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="auth.loggedIn.value"
     class="mx-1"
-    @createNew="router.push({ name: 'itemProperty', params: { id: 'create' } })"
+    @createNew="router.push({ name: 'property', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
