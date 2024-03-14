@@ -17,6 +17,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import EditControls from "../../../components/EditControls.vue";
+import CharacterModifiers from "../../../components/CharacterModifiers.vue";
 
 const props = defineProps<{
   id: string;
@@ -99,6 +100,9 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     <div class="my-3 flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
     </div>
+  </div>
+  <div class="mt-4">
+    <CharacterModifiers></CharacterModifiers>
   </div>
   <div class="mt-4">
     <AfterSubmit
