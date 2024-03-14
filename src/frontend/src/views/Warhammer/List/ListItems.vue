@@ -60,7 +60,7 @@ const items = computed(() => {
     .filter((wh) => queryParams.value.type === "" || queryParams.value.type === wh.type.toString())
     .filter((wh) => queryParams.value.group === "" || filterGroup(queryParams.value.type, queryParams.value.group, wh))
     .map((x) => formatItemRow(x))
-    .sort((a, b) => (a.name > b.name ? 1 : -1));
+    .sort((a, b) => a.name.localeCompare(b.name));
 });
 
 function filterGroup(type: string, group: string, wh: Item) {

@@ -53,7 +53,7 @@ const items = computed(() => {
     .filter((wh) => queryParams.value.class === "" || queryParams.value.class === wh.careerClass.toString())
     .filter((wh) => queryParams.value.species === "" || wh.species.includes(Number(queryParams.value.species)))
     .map((x) => formatCareerRow(x))
-    .sort((a, b) => (a.name > b.name ? 1 : -1));
+    .sort((a, b) => a.name.localeCompare(b.name));
 });
 
 function formatCareerRow(career: Career) {

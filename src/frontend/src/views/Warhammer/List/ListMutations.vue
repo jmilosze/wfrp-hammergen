@@ -45,7 +45,7 @@ const items = computed(() => {
     .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
     .filter((wh) => queryParams.value.type === "" || queryParams.value.type === wh.type.toString())
     .map((x) => formatMutationRow(x))
-    .sort((a, b) => (a.name > b.name ? 1 : -1));
+    .sort((a, b) => a.name.localeCompare(b.name));
 });
 
 function formatMutationRow(mutation: Mutation) {

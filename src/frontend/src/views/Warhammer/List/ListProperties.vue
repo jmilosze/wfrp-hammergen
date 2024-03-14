@@ -55,7 +55,7 @@ const items = computed(() => {
       (wh) => queryParams.value.applicableTo === "" || wh.applicableTo.includes(Number(queryParams.value.applicableTo)),
     )
     .map((x) => formatItemPropertyRow(x))
-    .sort((a, b) => (a.name > b.name ? 1 : -1));
+    .sort((a, b) => a.name.localeCompare(b.name));
 });
 
 function formatItemPropertyRow(itemProperty: ItemProperty) {

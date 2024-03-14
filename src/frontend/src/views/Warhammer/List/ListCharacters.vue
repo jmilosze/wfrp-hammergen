@@ -40,7 +40,7 @@ const items = computed(() => {
   return whList.whList.value
     .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
     .map((x) => formatCharacterRow(x))
-    .sort((a, b) => (a.name > b.name ? 1 : -1));
+    .sort((a, b) => a.name.localeCompare(b.name));
 });
 
 function formatCharacterRow(character: Character) {
