@@ -202,6 +202,6 @@ export function attributesAreEqual(att1: Attributes, att2: Attributes): boolean 
   return true;
 }
 
-export function copyAttributes(attributes: Attributes) {
-  return JSON.parse(JSON.stringify(attributes));
+export function copyAttributes(attributes: Attributes): Attributes {
+  return JSON.parse(JSON.stringify(attributes)) as Attributes;
 }

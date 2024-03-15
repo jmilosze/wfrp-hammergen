@@ -102,7 +102,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     </div>
   </div>
   <div class="mt-4">
-    <CharacterModifiers></CharacterModifiers>
+    <CharacterModifiers v-model="wh.modifiers.attributes" :disabled="!wh.canEdit"></CharacterModifiers>
   </div>
   <div class="mt-4">
     <AfterSubmit
@@ -114,7 +114,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
 
     <EditControls
       :saving="submissionState.status === 'inProgress'"
-      list="properties"
+      list="mutations"
       :allowAddAnother="id === 'create'"
       :confirmExit="hasChanged"
       :submitForm="submitForm"
