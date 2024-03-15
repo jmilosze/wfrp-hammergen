@@ -56,7 +56,7 @@ function updateAtts(event: Event, att: AttributeName) {
     </div>
 
     <div v-if="lg.isEqualOrGreater.value">
-      <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T', 'I', 'Ag', 'Dex', 'Int', 'WP', 'Fel']">
+      <CharacterModifiersAttributes :rows="1">
         <template #WS>
           <input
             type="number"
@@ -147,46 +147,6 @@ function updateAtts(event: Event, att: AttributeName) {
             @input="(event) => updateAtts(event, AttributeName.Fel)"
           />
         </template>
-      </CharacterModifiersAttributes>
-    </div>
-    <div v-else-if="sm.isEqualOrGreater.value">
-      <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T']" class="mt-2">
-        <template #WS><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #BS><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #S><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #T><input type="number" :class="inputClass" :disabled="dsb" /></template>
-      </CharacterModifiersAttributes>
-      <CharacterModifiersAttributes :attributeNames="['I', 'Ag', 'Dex', 'Int']" class="mt-2">
-        <template #I><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #Ag><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #Dex><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #Int><input type="number" :class="inputClass" :disabled="dsb" /></template>
-      </CharacterModifiersAttributes>
-      <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2">
-        <template #WP><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #Fel><input type="number" :class="inputClass" :disabled="dsb" /></template>
-      </CharacterModifiersAttributes>
-    </div>
-    <div v-else>
-      <CharacterModifiersAttributes :attributeNames="['WS', 'BS']" class="mt-2">
-        <template #WS><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #BS><input type="number" :class="inputClass" :disabled="dsb" /></template>
-      </CharacterModifiersAttributes>
-      <CharacterModifiersAttributes :attributeNames="['S', 'T']" class="mt-2">
-        <template #S><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #T><input type="number" :class="inputClass" :disabled="dsb" /></template>
-      </CharacterModifiersAttributes>
-      <CharacterModifiersAttributes :attributeNames="['I', 'Ag']" class="mt-2">
-        <template #I><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #Ag><input type="number" :class="inputClass" :disabled="dsb" /></template>
-      </CharacterModifiersAttributes>
-      <CharacterModifiersAttributes :attributeNames="['Dex', 'Int']" class="mt-2">
-        <template #Dex><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #Int><input type="number" :class="inputClass" :disabled="dsb" /></template>
-      </CharacterModifiersAttributes>
-      <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2">
-        <template #WP><input type="number" :class="inputClass" :disabled="dsb" /></template>
-        <template #Fel><input type="number" :class="inputClass" :disabled="dsb" /></template>
       </CharacterModifiersAttributes>
     </div>
 
