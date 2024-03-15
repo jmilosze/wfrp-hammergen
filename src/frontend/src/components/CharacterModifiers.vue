@@ -35,17 +35,6 @@ const lg = useElSize(ViewSize.lg, contentContainerRef);
       <CharacterModifiersAttributes :attributeNames="['Dex', 'Int']" class="mt-2" />
       <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2" />
     </div>
-    <!--    <div v-else>-->
-    <!--      <div>-->
-    <!--        <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T']" />-->
-    <!--      </div>-->
-    <!--      <div class="mt-2">-->
-    <!--        <CharacterModifiersAttributes :attributeNames="['I', 'Ag', 'Dex', 'Int']" />-->
-    <!--      </div>-->
-    <!--      <div class="mt-2">-->
-    <!--        <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" />-->
-    <!--      </div>-->
-    <!--    </div>-->
 
     <ModalWindow id="modifiersHelpModal">
       <template #header> Character modifiers </template>
