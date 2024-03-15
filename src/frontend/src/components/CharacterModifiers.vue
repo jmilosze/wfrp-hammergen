@@ -9,7 +9,8 @@ import { ViewSize } from "../utils/viewSize.ts";
 const modal = useModal();
 
 const contentContainerRef = ref(null);
-const { isEqualOrGreater } = useElSize(ViewSize.lg, contentContainerRef);
+const sm = useElSize(ViewSize.sm, contentContainerRef);
+const lg = useElSize(ViewSize.lg, contentContainerRef);
 </script>
 
 <template>
@@ -19,101 +20,32 @@ const { isEqualOrGreater } = useElSize(ViewSize.lg, contentContainerRef);
       <ActionButton size="sm" @click="modal.showModal('modifiersHelpModal')">What are modifiers?</ActionButton>
     </div>
 
-    <div v-if="isEqualOrGreater" class="flex gap-2 justify-between">
-      <div class="rounded-xl border border-neutral-300 bg-neutral-50">
-        <table class="w-full">
-          <tbody>
-            <tr>
-              <th class="p-2 font-semibold">WS</th>
-              <th class="p-2 font-semibold rounded">BS</th>
-              <th class="p-2 font-semibold">S</th>
-              <th class="p-2 font-semibold rounded">T</th>
-              <th class="p-2 font-semibold">I</th>
-              <th class="p-2 font-semibold rounded">Ag</th>
-              <th class="p-2 font-semibold">Dex</th>
-              <th class="p-2 font-semibold rounded">int</th>
-              <th class="p-2 font-semibold">WP</th>
-              <th class="p-2 font-semibold rounded">Fel</th>
-            </tr>
-            <tr>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-              <td class="p-2">
-                <input
-                  type="number"
-                  class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div v-if="lg.isEqualOrGreater.value">
+      <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T', 'I', 'Ag', 'Dex', 'Int', 'WP', 'Fel']" />
+    </div>
+    <div v-else-if="sm.isEqualOrGreater.value">
+      <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T']" class="mt-2" />
+      <CharacterModifiersAttributes :attributeNames="['I', 'Ag', 'Dex', 'Int']" class="mt-2" />
+      <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2" />
     </div>
     <div v-else>
-      <div class="flex gap-2 justify-between">
-        <CharacterModifiersAttributes attribute2Name="WS" attribute1Name="BS" />
-        <CharacterModifiersAttributes attribute2Name="S" attribute1Name="T" />
-      </div>
-      <div class="flex gap-2 justify-between mt-2">
-        <CharacterModifiersAttributes attribute2Name="I" attribute1Name="Ag" />
-        <CharacterModifiersAttributes attribute2Name="Dex" attribute1Name="Int" />
-      </div>
-      <div class="w-full mt-2">
-        <CharacterModifiersAttributes attribute2Name="WP" attribute1Name="Fel" />
-      </div>
+      <CharacterModifiersAttributes :attributeNames="['WS', 'BS']" class="mt-2" />
+      <CharacterModifiersAttributes :attributeNames="['S', 'T']" class="mt-2" />
+      <CharacterModifiersAttributes :attributeNames="['I', 'Ag']" class="mt-2" />
+      <CharacterModifiersAttributes :attributeNames="['Dex', 'Int']" class="mt-2" />
+      <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2" />
     </div>
+    <!--    <div v-else>-->
+    <!--      <div>-->
+    <!--        <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T']" />-->
+    <!--      </div>-->
+    <!--      <div class="mt-2">-->
+    <!--        <CharacterModifiersAttributes :attributeNames="['I', 'Ag', 'Dex', 'Int']" />-->
+    <!--      </div>-->
+    <!--      <div class="mt-2">-->
+    <!--        <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" />-->
+    <!--      </div>-->
+    <!--    </div>-->
 
     <ModalWindow id="modifiersHelpModal">
       <template #header> Character modifiers </template>
