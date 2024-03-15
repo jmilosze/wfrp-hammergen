@@ -1,25 +1,33 @@
 <script setup lang="ts">
+import { ref, Ref, watch } from "vue";
+
 const props = defineProps<{ rows: 1 | 3 | 5 }>();
 
-let attributeNames: string[][];
+const attributeNames: Ref<string[][]> = ref([]);
 
-if (props.rows === 1) {
-  attributeNames = [["WS", "BS", "S", "T", "I", "Ag", "Dex", "Int", "WP", "Fel"]];
-} else if (props.rows === 3) {
-  attributeNames = [
-    ["WS", "BS", "S", "T"],
-    ["I", "Ag", "Dex", "Int"],
-    ["WP", "Fel"],
-  ];
-} else {
-  attributeNames = [
-    ["WS", "BS"],
-    ["S", "T"],
-    ["I", "Ag"],
-    ["Dex", "Int"],
-    ["WP", "Fel"],
-  ];
-}
+watch(
+  () => props.rows,
+  (newVal) => {
+    if (newVal === 1) {
+      attributeNames.value = [["WS", "BS", "S", "T", "I", "Ag", "Dex", "Int", "WP", "Fel"]];
+    } else if (newVal === 3) {
+      attributeNames.value = [
+        ["WS", "BS", "S", "T"],
+        ["I", "Ag", "Dex", "Int"],
+        ["WP", "Fel"],
+      ];
+    } else {
+      attributeNames.value = [
+        ["WS", "BS"],
+        ["S", "T"],
+        ["I", "Ag"],
+        ["Dex", "Int"],
+        ["WP", "Fel"],
+      ];
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
