@@ -1,7 +1,8 @@
 import * as c from "./characterUtils.ts";
 import { SpeciesWithRegion } from "./characterUtils.ts";
+import { isKey } from "../../utils/object.ts";
 
-export interface Attributes extends Record<string, number> {
+export interface Attributes {
   WS: number;
   BS: number;
   S: number;
@@ -170,10 +171,12 @@ export const getAttributes = (species = SpeciesWithRegion.None): Attributes => {
 };
 
 export function sumAttributes(...args: Attributes[]): Attributes {
-  const returnAtts = JSON.parse(JSON.stringify(racialAttributes.none));
+  const returnAtts = JSON.parse(JSON.stringify(racialAttributes.none)) as Attributes;
   for (const attributes of args)
     for (const key of Object.keys(returnAtts)) {
-      returnAtts[key] += attributes[key];
+      if (isKey(returnAtts, key) && isKey(attributes, key)) {
+        returnAtts[key] += attributes[key];
+      }
     }
   return returnAtts;
 }
@@ -181,15 +184,19 @@ export function sumAttributes(...args: Attributes[]): Attributes {
 export function multiplyAttributes(multiplier: number, attributes: Attributes): Attributes {
   const returnAtts = JSON.parse(JSON.stringify(attributes));
   for (const key of Object.keys(returnAtts)) {
-    returnAtts[key] = multiplier * attributes[key];
+    if (isKey(attributes, key)) {
+      returnAtts[key] = multiplier * attributes[key];
+    }
   }
   return returnAtts;
 }
 
 export function attributesAreEqual(att1: Attributes, att2: Attributes): boolean {
   for (const key of Object.keys(att1)) {
-    if (att1[key] !== att2[key]) {
-      return false;
+    if (isKey(att1, key) && isKey(att1, key)) {
+      if (att1[key] !== att2[key]) {
+        return false;
+      }
     }
   }
   return true;

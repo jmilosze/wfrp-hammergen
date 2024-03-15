@@ -11,6 +11,20 @@ const modal = useModal();
 const contentContainerRef = ref(null);
 const sm = useElSize(ViewSize.sm, contentContainerRef);
 const lg = useElSize(ViewSize.lg, contentContainerRef);
+
+const inputClass = ref([
+  "border",
+  "border-neutral-300",
+  "rounded",
+  "w-full",
+  "h-10",
+  "px-2",
+  "focus:outline-neutral-700",
+  "focus:border-transparent",
+  "focus:outline",
+  "focus:outline-2",
+  "disabled:bg-neutral-200",
+]);
 </script>
 
 <template>
@@ -21,19 +35,58 @@ const lg = useElSize(ViewSize.lg, contentContainerRef);
     </div>
 
     <div v-if="lg.isEqualOrGreater.value">
-      <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T', 'I', 'Ag', 'Dex', 'Int', 'WP', 'Fel']" />
+      <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T', 'I', 'Ag', 'Dex', 'Int', 'WP', 'Fel']">
+        <template #WS><input type="number" :class="inputClass" /></template>
+        <template #BS><input type="number" :class="inputClass" /></template>
+        <template #S><input type="number" :class="inputClass" /></template>
+        <template #T><input type="number" :class="inputClass" /></template>
+        <template #I><input type="number" :class="inputClass" /></template>
+        <template #Ag><input type="number" :class="inputClass" /></template>
+        <template #Dex><input type="number" :class="inputClass" /></template>
+        <template #Int><input type="number" :class="inputClass" /></template>
+        <template #WP><input type="number" :class="inputClass" /></template>
+        <template #Fel><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
     </div>
     <div v-else-if="sm.isEqualOrGreater.value">
-      <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T']" class="mt-2" />
-      <CharacterModifiersAttributes :attributeNames="['I', 'Ag', 'Dex', 'Int']" class="mt-2" />
-      <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2" />
+      <CharacterModifiersAttributes :attributeNames="['WS', 'BS', 'S', 'T']" class="mt-2">
+        <template #WS><input type="number" :class="inputClass" /></template>
+        <template #BS><input type="number" :class="inputClass" /></template>
+        <template #S><input type="number" :class="inputClass" /></template>
+        <template #T><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
+      <CharacterModifiersAttributes :attributeNames="['I', 'Ag', 'Dex', 'Int']" class="mt-2">
+        <template #I><input type="number" :class="inputClass" /></template>
+        <template #Ag><input type="number" :class="inputClass" /></template>
+        <template #Dex><input type="number" :class="inputClass" /></template>
+        <template #Int><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
+      <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2">
+        <template #WP><input type="number" :class="inputClass" /></template>
+        <template #Fel><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
     </div>
     <div v-else>
-      <CharacterModifiersAttributes :attributeNames="['WS', 'BS']" class="mt-2" />
-      <CharacterModifiersAttributes :attributeNames="['S', 'T']" class="mt-2" />
-      <CharacterModifiersAttributes :attributeNames="['I', 'Ag']" class="mt-2" />
-      <CharacterModifiersAttributes :attributeNames="['Dex', 'Int']" class="mt-2" />
-      <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2" />
+      <CharacterModifiersAttributes :attributeNames="['WS', 'BS']" class="mt-2">
+        <template #WS><input type="number" :class="inputClass" /></template>
+        <template #BS><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
+      <CharacterModifiersAttributes :attributeNames="['S', 'T']" class="mt-2">
+        <template #S><input type="number" :class="inputClass" /></template>
+        <template #T><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
+      <CharacterModifiersAttributes :attributeNames="['I', 'Ag']" class="mt-2">
+        <template #I><input type="number" :class="inputClass" /></template>
+        <template #Ag><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
+      <CharacterModifiersAttributes :attributeNames="['Dex', 'Int']" class="mt-2">
+        <template #Dex><input type="number" :class="inputClass" /></template>
+        <template #Int><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
+      <CharacterModifiersAttributes :attributeNames="['WP', 'Fel']" class="mt-2">
+        <template #WP><input type="number" :class="inputClass" /></template>
+        <template #Fel><input type="number" :class="inputClass" /></template>
+      </CharacterModifiersAttributes>
     </div>
 
     <ModalWindow id="modifiersHelpModal">
