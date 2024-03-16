@@ -70,7 +70,11 @@ export class CharacterModifiers {
     return this;
   }
 
-  validate(): ValidationStatus {
-    return;
+  validateAttributes(): ValidationStatus {
+    return validAttributesFn(this.attributes, -99, 99);
+  }
+
+  isValid(): boolean {
+    return this.validateAttributes().valid;
   }
 }

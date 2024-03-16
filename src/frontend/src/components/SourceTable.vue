@@ -87,7 +87,9 @@ function onModifyClick() {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <p class="text-sm text-red-600" :class="[selectedSourcesValid ? 'hidden' : '']">Some of the sources are invalid.</p>
+    <p class="text-sm text-red-600 mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
+      Some of the sources are invalid.
+    </p>
     <ModalWindow id="modifySourceModal">
       <template #header> Modify sources </template>
       <template #buttons>

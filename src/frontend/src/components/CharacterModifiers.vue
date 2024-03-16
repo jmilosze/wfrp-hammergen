@@ -8,6 +8,7 @@ import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import { AttributeName, Attributes, copyAttributes, setAttributeValue } from "../services/wh/attributes.ts";
 import SelectInput from "./SelectInput.vue";
+import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 
 const props = defineProps<{
   disabled?: boolean;
@@ -74,6 +75,16 @@ const movementOptions = [
   { text: "-1", value: -1 },
   { text: "-2", value: -2 },
 ];
+
+const validAtts = computed(() => {
+  const modifiers = new CharacterModifiers({
+    size: props.size,
+    movement: props.movement,
+    attributes: props.attributes,
+  });
+
+  return modifiers.validateAttributes();
+});
 </script>
 
 <template>
@@ -181,7 +192,7 @@ const movementOptions = [
         :modelValue="props.size"
         :options="sizeOptions"
         title="Character size"
-        class="flex-1 my-4"
+        class="flex-1 mt-4"
         :disabled="props.disabled ? props.disabled : false"
         @update:modelValue="(event) => emit('update:size', event)"
       />
@@ -190,11 +201,11 @@ const movementOptions = [
         :options="movementOptions"
         title="Character movement"
         :disabled="props.disabled ? props.disabled : false"
-        class="flex-1 my-4"
+        class="flex-1 mt-4"
         @update:modelValue="(event) => emit('update:movement', event)"
       />
     </div>
-    <!--    <p class="text-sm text-red-600" :class="[selectedSourcesValid ? 'hidden' : '']">Some of the sources are invalid.</p>-->
+    <p class="text-sm text-red-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
   </div>
 
   <ModalWindow id="modifiersHelpModal">

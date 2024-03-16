@@ -33,6 +33,8 @@ const value = computed({
       :class="[minH ? 'h-' + minH : 'h-36']"
       :disabled="disabled ? disabled : false"
     />
-    <p class="text-sm text-red-600" :class="[validationStatus.valid ? 'hidden' : '']">{{ validationStatus.message }}</p>
+    <p class="text-sm text-red-600" :class="[validationStatus.valid ? 'hidden' : '']">
+      {{ validationStatus.message }}
+    </p>
   </div>
 </template>

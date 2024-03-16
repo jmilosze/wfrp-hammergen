@@ -96,7 +96,7 @@ export class Mutation implements WhProperty {
     return (
       this.validateName().valid &&
       this.validateDescription().valid &&
-      this.modifiers.validate().valid &&
+      this.modifiers.isValid() &&
       sourceIsValid(this.source)
     );
   }
