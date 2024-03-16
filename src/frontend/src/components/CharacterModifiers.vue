@@ -194,6 +194,7 @@ const movementOptions = [
         @update:modelValue="(event) => emit('update:movement', event)"
       />
     </div>
+    <p class="text-sm text-red-600" :class="[selectedSourcesValid ? 'hidden' : '']">Some of the sources are invalid.</p>
   </div>
 
   <ModalWindow id="modifiersHelpModal">

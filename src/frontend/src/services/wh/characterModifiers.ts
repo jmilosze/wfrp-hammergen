@@ -1,4 +1,12 @@
-import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
+import {
+  Attributes,
+  attributesAreEqual,
+  getAttributes,
+  multiplyAttributes,
+  sumAttributes,
+  validAttributesFn,
+} from "./attributes.ts";
+import { ValidationStatus } from "../../utils/validation.ts";
 
 export interface CharacterModifiersData {
   size: number;
@@ -60,5 +68,9 @@ export class CharacterModifiers {
     this.attributes = multiplyAttributes(multiplier, this.attributes);
 
     return this;
+  }
+
+  validate(): ValidationStatus {
+    return validAttributesFn(this.attributes, -99, 99);
   }
 }

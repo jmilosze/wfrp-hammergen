@@ -49,7 +49,6 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
-const validAtts = computed(() => wh.value.validateAttributes());
 
 const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x), value: x })));
 </script>

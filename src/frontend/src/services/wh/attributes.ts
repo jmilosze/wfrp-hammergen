@@ -207,11 +207,11 @@ export function copyAttributes(attributes: Attributes): Attributes {
   return JSON.parse(JSON.stringify(attributes)) as Attributes;
 }
 
-export function validAttributesFn(attributes: Attributes): ValidationStatus {
+export function validAttributesFn(attributes: Attributes, min: number, max: number): ValidationStatus {
   let isValid = true;
   for (const key of Object.keys(attributes)) {
     if (isKey(attributes, key)) {
-      if (attributes[key] > 99 || attributes[key] < -99 || !Number.isInteger(attributes[key])) {
+      if (attributes[key] > max || attributes[key] < min || !Number.isInteger(attributes[key])) {
         isValid = false;
         break;
       }

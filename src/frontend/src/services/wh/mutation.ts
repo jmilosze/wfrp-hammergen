@@ -11,7 +11,6 @@ import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { validAttributesFn } from "./attributes.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
 
@@ -93,17 +92,12 @@ export class Mutation implements WhProperty {
     return validShortDescFn(this.description);
   }
 
-  validateAttributes(): ValidationStatus {
-    return validAttributesFn(this.modifiers.attributes);
-  }
-
   isValid(): boolean {
     return (
       this.validateName().valid &&
       this.validateDescription().valid &&
-      this.validateAttributes() &&
+      this.modifiers.validate().valid &&
       sourceIsValid(this.source)
-      // Finish implementation
     );
   }
 
