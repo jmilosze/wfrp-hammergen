@@ -1,6 +1,7 @@
 import * as c from "./characterUtils.ts";
 import { SpeciesWithRegion } from "./characterUtils.ts";
 import { isKey } from "../../utils/object.ts";
+import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 
 export interface Attributes {
   WS: number;
@@ -204,4 +205,23 @@ export function attributesAreEqual(att1: Attributes, att2: Attributes): boolean 
 
 export function copyAttributes(attributes: Attributes): Attributes {
   return JSON.parse(JSON.stringify(attributes)) as Attributes;
+}
+
+export function validAttributesFn(attributes: Attributes): ValidationStatus {
+  let isValid = true;
+  for (const key of Object.keys(attributes)) {
+    if (isKey(attributes, key)) {
+      if (attributes[key] > 99 || attributes[key] < -99 || !Number.isInteger(attributes[key])) {
+        isValid = false;
+        break;
+      }
+    } else {
+      isValid = false;
+      break;
+    }
+  }
+  return setValidationStatus(
+    isValid,
+    "Invalid value of one or more attributes. Attributes have to be integers between -99 and 99.",
+  );
 }
