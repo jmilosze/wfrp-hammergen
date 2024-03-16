@@ -71,6 +71,6 @@ export class CharacterModifiers {
   }
 
   validate(): ValidationStatus {
-    return validAttributesFn(this.attributes, -99, 99);
+    return;
   }
 }
