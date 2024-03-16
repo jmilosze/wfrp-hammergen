@@ -72,3 +72,13 @@ export function compareIdNumber(x: IdNumber, y: IdNumber): -1 | 0 | 1 {
     return xIdNumber < yIdNumber ? -1 : 1;
   }
 }
+
+export function validIntegerFn(value: number, min: number, max: number): ValidationStatus {
+  let isValid = true;
+
+  if (value > max || value < min || !Number.isInteger(value)) {
+    isValid = false;
+  }
+
+  return setValidationStatus(isValid, `This field an integer between ${min} and ${max}.`);
+}

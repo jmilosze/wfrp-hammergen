@@ -222,6 +222,6 @@ export function validAttributesFn(attributes: Attributes, min: number, max: numb
   }
   return setValidationStatus(
     isValid,
-    "Invalid value of one or more attributes. Attributes have to be integers between -99 and 99.",
+    `Invalid value of one or more attributes. Attributes have to be integers between ${min} and ${max}.`,
   );
 }

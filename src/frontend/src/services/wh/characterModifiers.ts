@@ -7,6 +7,7 @@ import {
   validAttributesFn,
 } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
+import { validIntegerFn } from "./common.ts";
 
 export interface CharacterModifiersData {
   size: number;
@@ -74,7 +75,15 @@ export class CharacterModifiers {
     return validAttributesFn(this.attributes, -99, 99);
   }
 
+  validateSize(): ValidationStatus {
+    return validIntegerFn(this.size, -3, 3);
+  }
+
+  validateMovement(): ValidationStatus {
+    return validIntegerFn(this.movement, -3, 3);
+  }
+
   isValid(): boolean {
-    return this.validateAttributes().valid;
+    return this.validateAttributes().valid && this.validateSize().valid && this.validateMovement().valid;
   }
 }
