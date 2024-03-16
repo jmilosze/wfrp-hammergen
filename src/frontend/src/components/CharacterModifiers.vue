@@ -3,18 +3,23 @@ import ActionButton from "./ActionButton.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import CharacterModifiersAttributes from "./CharacterModifiersAttributes.vue";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import { AttributeName, Attributes, copyAttributes, setAttributeValue } from "../services/wh/attributes.ts";
+import SelectInput from "./SelectInput.vue";
 
 const props = defineProps<{
   disabled?: boolean;
-  modelValue: Attributes;
+  attributes: Attributes;
+  size: number;
+  movement: number;
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", modelValue: Attributes): void;
+  (e: "update:attributes", attributes: Attributes): void;
+  (e: "update:size", size: number): void;
+  (e: "update:movement", movement: number): void;
 }>();
 
 const modal = useModal();
@@ -50,9 +55,9 @@ const rows = computed(() => {
 
 function updateAtts(event: Event, att: AttributeName) {
   const target = event.target as HTMLInputElement;
-  const newAttributes = copyAttributes(props.modelValue);
+  const newAttributes = copyAttributes(props.attributes);
   setAttributeValue(att, parseInt(target.value), newAttributes);
-  emit("update:modelValue", newAttributes);
+  emit("update:attributes", newAttributes);
 }
 </script>
 
@@ -69,7 +74,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.WS"
+          :value="attributes.WS"
           @input="(event) => updateAtts(event, AttributeName.WS)"
         />
       </template>
@@ -78,7 +83,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.BS"
+          :value="attributes.BS"
           @input="(event) => updateAtts(event, AttributeName.BS)"
         />
       </template>
@@ -87,7 +92,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.S"
+          :value="attributes.S"
           @input="(event) => updateAtts(event, AttributeName.S)"
         />
       </template>
@@ -96,7 +101,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.T"
+          :value="attributes.T"
           @input="(event) => updateAtts(event, AttributeName.T)"
         />
       </template>
@@ -105,7 +110,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.I"
+          :value="attributes.I"
           @input="(event) => updateAtts(event, AttributeName.I)"
         />
       </template>
@@ -114,7 +119,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.Ag"
+          :value="attributes.Ag"
           @input="(event) => updateAtts(event, AttributeName.Ag)"
         />
       </template>
@@ -123,7 +128,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.Dex"
+          :value="attributes.Dex"
           @input="(event) => updateAtts(event, AttributeName.Dex)"
         />
       </template>
@@ -132,7 +137,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.Int"
+          :value="attributes.Int"
           @input="(event) => updateAtts(event, AttributeName.Int)"
         />
       </template>
@@ -141,7 +146,7 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.WP"
+          :value="attributes.WP"
           @input="(event) => updateAtts(event, AttributeName.WP)"
         />
       </template>
@@ -150,11 +155,28 @@ function updateAtts(event: Event, att: AttributeName) {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.Fel"
+          :value="attributes.Fel"
           @input="(event) => updateAtts(event, AttributeName.Fel)"
         />
       </template>
     </CharacterModifiersAttributes>
+
+    <div class="justify-between text-left gap-4" :class="[lg.isEqualOrGreater.value ? 'flex' : 'flex-col']">
+      <SelectInput
+        :modelValue="props.size"
+        @update:modelValue="(event) => emit('update:size', event as number)"
+        title="Character size"
+        :disabled="props.disabled ? props.disabled : false"
+        class="flex-1 my-4"
+      />
+      <SelectInput
+        :modelValue="props.movement"
+        @update:modelValue="(event) => emit('update:movement', event as number)"
+        title="Character movement"
+        :disabled="props.disabled ? props.disabled : false"
+        class="flex-1 my-4"
+      />
+    </div>
   </div>
 
   <ModalWindow id="modifiersHelpModal">

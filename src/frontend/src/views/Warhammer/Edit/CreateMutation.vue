@@ -102,7 +102,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     </div>
   </div>
   <div class="mt-4">
-    <CharacterModifiers v-model="wh.modifiers.attributes" :disabled="!wh.canEdit"></CharacterModifiers>
+    <CharacterModifiers v-model:attributes="wh.modifiers.attributes" :disabled="!wh.canEdit"></CharacterModifiers>
   </div>
   <div class="mt-4">
     <AfterSubmit
