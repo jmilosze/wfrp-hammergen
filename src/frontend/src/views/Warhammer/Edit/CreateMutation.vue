@@ -8,11 +8,9 @@ import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
 import FormInput from "../../../components/FormInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import { itemPropertyTypeList, printItemPropertyType } from "../../../services/wh/itemproperty.ts";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
@@ -102,7 +100,12 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     </div>
   </div>
   <div class="mt-4">
-    <CharacterModifiers v-model:attributes="wh.modifiers.attributes" :disabled="!wh.canEdit"></CharacterModifiers>
+    <CharacterModifiers
+      v-model:attributes="wh.modifiers.attributes"
+      v-model:size="wh.modifiers.size"
+      v-model:movement="wh.modifiers.movement"
+      :disabled="!wh.canEdit"
+    ></CharacterModifiers>
   </div>
   <div class="mt-4">
     <AfterSubmit

@@ -59,6 +59,21 @@ function updateAtts(event: Event, att: AttributeName) {
   setAttributeValue(att, parseInt(target.value), newAttributes);
   emit("update:attributes", newAttributes);
 }
+
+const sizeOptions = [
+  { text: "2", value: 2 },
+  { text: "1", value: 1 },
+  { text: "0", value: 0 },
+  { text: "-1", value: -1 },
+  { text: "-2", value: -2 },
+];
+const movementOptions = [
+  { text: "2", value: 2 },
+  { text: "1", value: 1 },
+  { text: "0", value: 0 },
+  { text: "-1", value: -1 },
+  { text: "-2", value: -2 },
+];
 </script>
 
 <template>
@@ -164,17 +179,19 @@ function updateAtts(event: Event, att: AttributeName) {
     <div class="justify-between text-left gap-4" :class="[lg.isEqualOrGreater.value ? 'flex' : 'flex-col']">
       <SelectInput
         :modelValue="props.size"
-        @update:modelValue="(event) => emit('update:size', event as number)"
+        :options="sizeOptions"
         title="Character size"
-        :disabled="props.disabled ? props.disabled : false"
         class="flex-1 my-4"
+        :disabled="props.disabled ? props.disabled : false"
+        @update:modelValue="(event) => emit('update:size', event)"
       />
       <SelectInput
         :modelValue="props.movement"
-        @update:modelValue="(event) => emit('update:movement', event as number)"
+        :options="movementOptions"
         title="Character movement"
         :disabled="props.disabled ? props.disabled : false"
         class="flex-1 my-4"
+        @update:modelValue="(event) => emit('update:movement', event)"
       />
     </div>
   </div>
