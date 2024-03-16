@@ -6,21 +6,17 @@ import CharacterModifiersAttributes from "./CharacterModifiersAttributes.vue";
 import { computed, ref } from "vue";
 import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
-import { AttributeName, Attributes, copyAttributes, setAttributeValue } from "../services/wh/attributes.ts";
+import { AttributeName, setAttributeValue } from "../services/wh/attributes.ts";
 import SelectInput from "./SelectInput.vue";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 
 const props = defineProps<{
   disabled?: boolean;
-  attributes: Attributes;
-  size: number;
-  movement: number;
+  modelValue: CharacterModifiers;
 }>();
 
 const emit = defineEmits<{
-  (e: "update:attributes", attributes: Attributes): void;
-  (e: "update:size", size: number): void;
-  (e: "update:movement", movement: number): void;
+  (e: "update:modelValue", modifiers: CharacterModifiers): void;
 }>();
 
 const modal = useModal();
@@ -56,9 +52,21 @@ const rows = computed(() => {
 
 function updateAtts(event: Event, att: AttributeName) {
   const target = event.target as HTMLInputElement;
-  const newAttributes = copyAttributes(props.attributes);
-  setAttributeValue(att, parseInt(target.value), newAttributes);
-  emit("update:attributes", newAttributes);
+  const newModifiers = props.modelValue.copy();
+  setAttributeValue(att, parseInt(target.value), newModifiers.attributes);
+  emit("update:modelValue", newModifiers);
+}
+
+function updateSize(newSize: number) {
+  const newModifiers = props.modelValue.copy();
+  newModifiers.size = newSize;
+  emit("update:modelValue", newModifiers);
+}
+
+function updateMovement(newMovement: number) {
+  const newModifiers = props.modelValue.copy();
+  newModifiers.movement = newMovement;
+  emit("update:modelValue", newModifiers);
 }
 
 const sizeOptions = [
@@ -77,13 +85,7 @@ const movementOptions = [
 ];
 
 const validAtts = computed(() => {
-  const modifiers = new CharacterModifiers({
-    size: props.size,
-    movement: props.movement,
-    attributes: props.attributes,
-  });
-
-  return modifiers.validateAttributes();
+  return props.modelValue.validateAttributes();
 });
 </script>
 
@@ -100,7 +102,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.WS"
+          :value="modelValue.attributes.WS"
           @input="(event) => updateAtts(event, AttributeName.WS)"
         />
       </template>
@@ -109,7 +111,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.BS"
+          :value="modelValue.attributes.BS"
           @input="(event) => updateAtts(event, AttributeName.BS)"
         />
       </template>
@@ -118,7 +120,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.S"
+          :value="modelValue.attributes.S"
           @input="(event) => updateAtts(event, AttributeName.S)"
         />
       </template>
@@ -127,7 +129,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.T"
+          :value="modelValue.attributes.T"
           @input="(event) => updateAtts(event, AttributeName.T)"
         />
       </template>
@@ -136,7 +138,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.I"
+          :value="modelValue.attributes.I"
           @input="(event) => updateAtts(event, AttributeName.I)"
         />
       </template>
@@ -145,7 +147,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.Ag"
+          :value="modelValue.attributes.Ag"
           @input="(event) => updateAtts(event, AttributeName.Ag)"
         />
       </template>
@@ -154,7 +156,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.Dex"
+          :value="modelValue.attributes.Dex"
           @input="(event) => updateAtts(event, AttributeName.Dex)"
         />
       </template>
@@ -163,7 +165,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.Int"
+          :value="modelValue.attributes.Int"
           @input="(event) => updateAtts(event, AttributeName.Int)"
         />
       </template>
@@ -172,7 +174,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.WP"
+          :value="modelValue.attributes.WP"
           @input="(event) => updateAtts(event, AttributeName.WP)"
         />
       </template>
@@ -181,7 +183,7 @@ const validAtts = computed(() => {
           type="number"
           :class="inputClass"
           :disabled="props.disabled ? props.disabled : false"
-          :value="attributes.Fel"
+          :value="modelValue.attributes.Fel"
           @input="(event) => updateAtts(event, AttributeName.Fel)"
         />
       </template>
@@ -189,20 +191,20 @@ const validAtts = computed(() => {
 
     <div class="justify-between text-left gap-4" :class="[lg.isEqualOrGreater.value ? 'flex' : 'flex-col']">
       <SelectInput
-        :modelValue="props.size"
+        :modelValue="modelValue.size"
         :options="sizeOptions"
         title="Character size"
         class="flex-1 mt-4"
         :disabled="props.disabled ? props.disabled : false"
-        @update:modelValue="(event) => emit('update:size', event)"
+        @update:modelValue="(event) => updateSize(event)"
       />
       <SelectInput
-        :modelValue="props.movement"
+        :modelValue="modelValue.movement"
         :options="movementOptions"
         title="Character movement"
         :disabled="props.disabled ? props.disabled : false"
         class="flex-1 mt-4"
-        @update:modelValue="(event) => emit('update:movement', event)"
+        @update:modelValue="(event) => updateMovement(event)"
       />
     </div>
     <p class="text-sm text-red-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
