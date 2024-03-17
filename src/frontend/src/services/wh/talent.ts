@@ -12,7 +12,7 @@ import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { areEqual } from "../../utils/set.ts";
+import { setsAreEqual } from "../../utils/set.ts";
 
 const API_BASE_PATH = "/api/wh/talent";
 
@@ -131,7 +131,7 @@ export class Talent implements WhProperty {
       return false;
     }
 
-    if (!areEqual(this.group, otherTalent.group)) {
+    if (!setsAreEqual(this.group, otherTalent.group)) {
       return false;
     }
 

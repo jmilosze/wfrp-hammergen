@@ -32,7 +32,7 @@ const skill = new Skill({
   type: SkillType.Basic,
   displayZero: true,
   isGroup: true,
-  group: ["a", "b"],
+  group: new Set(["a", "b"]),
   shared: true,
   source: { 1: "page 2", 3: "page 5-10" },
 });
@@ -46,14 +46,6 @@ test("modelToApi returns expected api skill data", () => {
 });
 
 testIsEqualCommonProperties("skill", skill);
-
-describe("isEqualTo returns true", () => {
-  test("when other skill has group field with elements in different order", () => {
-    const otherSkill = skill.copy();
-    otherSkill.group = ["b", "a"];
-    expect(skill.isEqualTo(otherSkill)).toBe(true);
-  });
-});
 
 describe("isEqualTo returns false", () => {
   test("when other skill has different value of isGroup", () => {
@@ -76,13 +68,13 @@ describe("isEqualTo returns false", () => {
 
   test("when other skill has group field that is a subset", () => {
     const otherSkill = skill.copy();
-    otherSkill.group = ["a"];
+    otherSkill.group = new Set(["a"]);
     expect(skill.isEqualTo(otherSkill)).toBe(false);
   });
 
   test("when other skill has group field of the same length but different values", () => {
     const otherSkill = skill.copy();
-    otherSkill.group = ["c", "d"];
+    otherSkill.group = new Set(["c", "d"]);
     expect(skill.isEqualTo(otherSkill)).toBe(false);
   });
 });

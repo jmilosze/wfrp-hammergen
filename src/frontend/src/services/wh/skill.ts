@@ -6,12 +6,12 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
+import { setsAreEqual } from "../../utils/set.ts";
 
 export const enum SkillType {
   Basic = 0,
@@ -57,7 +57,7 @@ export class Skill implements WhProperty {
   type: number;
   displayZero: boolean;
   isGroup: boolean;
-  group: string[];
+  group: Set<string>;
   shared: boolean;
   source: Source;
 
@@ -70,7 +70,7 @@ export class Skill implements WhProperty {
     type = SkillType.Basic,
     displayZero = false,
     isGroup = false,
-    group = [] as string[],
+    group = new Set<string>(),
     shared = false,
     source = {},
   } = {}) {
@@ -82,7 +82,7 @@ export class Skill implements WhProperty {
     this.type = type;
     this.displayZero = displayZero;
     this.isGroup = isGroup;
-    this.group = JSON.parse(JSON.stringify(group));
+    this.group = group;
     this.shared = shared;
     this.source = source;
   }
@@ -97,7 +97,7 @@ export class Skill implements WhProperty {
       type: this.type,
       displayZero: this.displayZero,
       isGroup: this.isGroup,
-      group: JSON.parse(JSON.stringify(this.group)),
+      group: new Set(...[this.group]),
       shared: this.shared,
       source: copySource(this.source),
     });
@@ -133,7 +133,7 @@ export class Skill implements WhProperty {
       this.isGroup === otherSkill.isGroup &&
       this.shared === otherSkill.shared &&
       objectsAreEqual(this.source, otherSkill.source) &&
-      arraysAreEqualIgnoreOrder(this.group, otherSkill.group)
+      setsAreEqual(this.group, otherSkill.group)
     );
   }
 
@@ -142,20 +142,22 @@ export class Skill implements WhProperty {
   }
 }
 
-export function apiResponseToModel(talentApi: ApiResponse<SkillApiData>): Skill {
-  return new Skill({
-    id: talentApi.id,
-    canEdit: talentApi.canEdit,
-    name: talentApi.object.name,
-    description: talentApi.object.description,
-    attribute: talentApi.object.attribute,
-    type: talentApi.object.type,
-    displayZero: talentApi.object.displayZero,
-    isGroup: talentApi.object.isGroup,
-    group: JSON.parse(JSON.stringify(talentApi.object.group)),
-    shared: talentApi.object.shared,
-    source: copySource(talentApi.object.source),
+export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>): Skill {
+  const newSkill = new Skill({
+    id: skillApi.id,
+    canEdit: skillApi.canEdit,
+    name: skillApi.object.name,
+    description: skillApi.object.description,
+    attribute: skillApi.object.attribute,
+    type: skillApi.object.type,
+    displayZero: skillApi.object.displayZero,
+    isGroup: skillApi.object.isGroup,
+    group: new Set(skillApi.object.group),
+    shared: skillApi.object.shared,
+    source: skillApi.object.source,
   });
+
+  return newSkill.copy();
 }
 
 export function modelToApi(skill: Skill): SkillApiData {
@@ -166,7 +168,7 @@ export function modelToApi(skill: Skill): SkillApiData {
     type: skill.type,
     displayZero: skill.displayZero,
     isGroup: skill.isGroup,
-    group: JSON.parse(JSON.stringify(skill.group)),
+    group: [...skill.group],
     shared: skill.shared,
     source: copySource(skill.source),
   };

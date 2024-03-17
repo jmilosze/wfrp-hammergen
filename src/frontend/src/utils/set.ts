@@ -1,4 +1,4 @@
-export function areEqual<T>(setA: Set<T>, setB: Set<T>): boolean {
+export function setsAreEqual<T>(setA: Set<T>, setB: Set<T>): boolean {
   if (setA.size !== setB.size) return false;
 
   for (const element of setA) {
