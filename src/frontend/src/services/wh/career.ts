@@ -330,8 +330,8 @@ function careerLevelApiDataToCareerLevel(apiData: CareerLevelApiData): CareerLev
     status: apiData.status,
     standing: apiData.standing,
     attributes: [...apiData.attributes],
-    skills: new Set([...apiData.skills]),
-    talents: new Set([...apiData.talents]),
+    skills: new Set(apiData.skills),
+    talents: new Set(apiData.talents),
     items: apiData.items,
   };
 }

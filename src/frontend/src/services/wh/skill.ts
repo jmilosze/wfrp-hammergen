@@ -97,7 +97,7 @@ export class Skill implements WhProperty {
       type: this.type,
       displayZero: this.displayZero,
       isGroup: this.isGroup,
-      group: new Set(...[this.group]),
+      group: new Set(this.group),
       shared: this.shared,
       source: copySource(this.source),
     });

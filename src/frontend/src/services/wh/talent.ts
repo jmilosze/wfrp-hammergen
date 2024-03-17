@@ -81,7 +81,7 @@ export class Talent implements WhProperty {
       maxRank: this.maxRank,
       attribute: this.attribute,
       isGroup: this.isGroup,
-      group: new Set(...[this.group]),
+      group: new Set(this.group),
       modifiers: this.modifiers.copy(),
       shared: this.shared,
       source: copySource(this.source),

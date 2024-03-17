@@ -207,7 +207,7 @@ describe("isEqualTo returns false", () => {
     });
 
     test("skills is subset", () => {
-      const currentValue = new Set(...t.level.skills);
+      const currentValue = new Set(t.level.skills);
       const firstSkill = t.level.skills.values().next().value;
       t.level.skills.delete(firstSkill);
       expect(career.isEqualTo(otherCareer)).toBe(false);
@@ -215,7 +215,7 @@ describe("isEqualTo returns false", () => {
     });
 
     test("skills is same length but different elements", () => {
-      const currentValue = new Set(...t.level.skills);
+      const currentValue = new Set(t.level.skills);
       const firstSkill = t.level.skills.values().next().value;
       t.level.skills.delete(firstSkill);
       t.level.skills.add("someOtherSkill");
@@ -224,7 +224,7 @@ describe("isEqualTo returns false", () => {
     });
 
     test("talents is subset", () => {
-      const currentValue = new Set(...t.level.talents);
+      const currentValue = new Set(t.level.talents);
       const firstTalent = t.level.talents.values().next().value;
       t.level.talents.delete(firstTalent);
       expect(career.isEqualTo(otherCareer)).toBe(false);
@@ -232,7 +232,7 @@ describe("isEqualTo returns false", () => {
     });
 
     test("talents is same length but different elements", () => {
-      const currentValue = new Set(...t.level.talents);
+      const currentValue = new Set(t.level.talents);
       const firstTalent = t.level.talents.values().next().value;
       t.level.talents.delete(firstTalent);
       t.level.talents.add("someOtherTalent");
