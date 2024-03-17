@@ -301,8 +301,8 @@ function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
     status: careerLevel.status,
     standing: careerLevel.standing,
     attributes: [...careerLevel.attributes],
-    skills: new Set(...careerLevel.skills),
-    talents: new Set(...careerLevel.talents),
+    skills: new Set(careerLevel.skills),
+    talents: new Set(careerLevel.talents),
     items: careerLevel.items,
   };
 }
