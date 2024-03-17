@@ -1,6 +1,7 @@
 import {
   Attributes,
   attributesAreEqual,
+  copyAttributes,
   getAttributes,
   multiplyAttributes,
   sumAttributes,
@@ -50,7 +51,7 @@ export class CharacterModifiers {
     return new CharacterModifiers({
       size: this.size,
       movement: this.movement,
-      attributes: JSON.parse(JSON.stringify(this.attributes)),
+      attributes: copyAttributes(this.attributes),
     });
   }
 

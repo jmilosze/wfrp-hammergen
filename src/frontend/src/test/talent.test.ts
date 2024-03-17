@@ -44,7 +44,7 @@ const talentGroup = new Talent({
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
   }),
   isGroup: true,
-  group: ["a", "b", "c"],
+  group: new Set(["a", "b", "c"]),
   shared: true,
   source: { 1: "page 2", 3: "page 5-10" },
 });
@@ -63,7 +63,7 @@ const talentIndividual = new Talent({
     attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   }),
   isGroup: false,
-  group: ["a", "b"],
+  group: new Set(["a", "b"]),
   shared: true,
   source: {},
 });
@@ -81,12 +81,6 @@ testIsEqualCommonProperties("talent", talentIndividual);
 testIsEqualCharacterModifiers("talent", talentIndividual);
 
 describe("isEqualTo returns true", () => {
-  test("when other talent has group field with elements in different order", () => {
-    const otherTalentGroup = talentGroup.copy();
-    otherTalentGroup.group = ["b", "a"];
-    expect(talentGroup.isEqualTo(otherTalentGroup)).toBe(true);
-  });
-
   test("when other talent has different value of tests, maxRank, attribute, and modifiers", () => {
     const otherTalentGroup = talentGroup.copy();
     otherTalentGroup.tests = "otherTest";
@@ -128,13 +122,13 @@ describe("isEqualTo returns false", () => {
 
   test("when talent is individual and other talent has group field that is a subset", () => {
     const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.group = ["a"];
+    otherTalentIndividual.group = new Set(["a"]);
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
   });
 
   test("when talent is individual and other talent has group field of the same length but different values", () => {
     const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.group = ["c", "d"];
+    otherTalentIndividual.group = new Set(["c", "d"]);
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
   });
 });

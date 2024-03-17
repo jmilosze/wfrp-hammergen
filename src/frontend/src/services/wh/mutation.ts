@@ -129,7 +129,7 @@ export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): M
     name: mutationApi.object.name,
     description: mutationApi.object.description,
     type: mutationApi.object.type,
-    modifiers: new CharacterModifiers(mutationApi.object.modifiers),
+    modifiers: new CharacterModifiers(mutationApi.object.modifiers).copy(),
     shared: mutationApi.object.shared,
     source: copySource(mutationApi.object.source),
   });

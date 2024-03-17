@@ -69,7 +69,7 @@ export class ItemProperty implements WhProperty {
     this.name = name;
     this.description = description;
     this.type = type;
-    this.applicableTo = JSON.parse(JSON.stringify(applicableTo));
+    this.applicableTo = applicableTo;
     this.shared = shared;
     this.source = source;
   }
@@ -81,7 +81,7 @@ export class ItemProperty implements WhProperty {
       name: this.name,
       description: this.description,
       type: this.type,
-      applicableTo: JSON.parse(JSON.stringify(this.applicableTo)),
+      applicableTo: [...this.applicableTo],
       shared: this.shared,
       source: copySource(this.source),
     });
@@ -129,7 +129,7 @@ export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiD
     name: itemPropertyApi.object.name,
     description: itemPropertyApi.object.description,
     type: itemPropertyApi.object.type,
-    applicableTo: itemPropertyApi.object.applicableTo,
+    applicableTo: [...itemPropertyApi.object.applicableTo],
     shared: itemPropertyApi.object.shared,
     source: copySource(itemPropertyApi.object.source),
   });
@@ -140,7 +140,7 @@ export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
     name: itemProperty.name,
     description: itemProperty.description,
     type: itemProperty.type,
-    applicableTo: itemProperty.applicableTo,
+    applicableTo: [...itemProperty.applicableTo],
     shared: itemProperty.shared,
     source: copySource(itemProperty.source),
   };

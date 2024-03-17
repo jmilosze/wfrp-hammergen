@@ -7,12 +7,12 @@ import {
   listElementsFunc,
   updateElementFunc,
 } from "./crudGenerator.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
+import { areEqual } from "../../utils/set.ts";
 
 const API_BASE_PATH = "/api/wh/talent";
 
@@ -38,7 +38,7 @@ export class Talent implements WhProperty {
   maxRank: number;
   attribute: AttributeName;
   isGroup: boolean;
-  group: string[];
+  group: Set<string>;
   modifiers: CharacterModifiers;
   shared: boolean;
   source: Source;
@@ -52,7 +52,7 @@ export class Talent implements WhProperty {
     maxRank = 0,
     attribute = AttributeName.None,
     isGroup = false,
-    group = [] as string[],
+    group = new Set<string>(),
     modifiers = new CharacterModifiers(),
     shared = false,
     source = {},
@@ -65,7 +65,7 @@ export class Talent implements WhProperty {
     this.maxRank = maxRank;
     this.attribute = attribute;
     this.isGroup = isGroup;
-    this.group = JSON.parse(JSON.stringify(group));
+    this.group = group;
     this.modifiers = modifiers;
     this.shared = shared;
     this.source = source;
@@ -81,7 +81,7 @@ export class Talent implements WhProperty {
       maxRank: this.maxRank,
       attribute: this.attribute,
       isGroup: this.isGroup,
-      group: JSON.parse(JSON.stringify(this.group)),
+      group: new Set(...[this.group]),
       modifiers: this.modifiers.copy(),
       shared: this.shared,
       source: copySource(this.source),
@@ -131,7 +131,7 @@ export class Talent implements WhProperty {
       return false;
     }
 
-    if (!arraysAreEqualIgnoreOrder(this.group, otherTalent.group)) {
+    if (!areEqual(this.group, otherTalent.group)) {
       return false;
     }
 
@@ -169,7 +169,7 @@ export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talen
     maxRank: talentApi.object.maxRank,
     attribute: talentApi.object.attribute,
     isGroup: talentApi.object.isGroup,
-    group: JSON.parse(JSON.stringify(talentApi.object.group)),
+    group: new Set(talentApi.object.group),
     modifiers: new CharacterModifiers(talentApi.object.modifiers),
     shared: talentApi.object.shared,
     source: copySource(talentApi.object.source),
@@ -184,7 +184,7 @@ export function modelToApi(talent: Talent): TalentApiData {
     maxRank: talent.maxRank,
     attribute: talent.attribute,
     isGroup: talent.isGroup,
-    group: JSON.parse(JSON.stringify(talent.group)),
+    group: [...talent.group],
     modifiers: talent.modifiers.copy(),
     shared: talent.shared,
     source: copySource(talent.source),
