@@ -139,7 +139,7 @@ export class Spell implements WhProperty {
 }
 
 export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
-  return new Spell({
+  const newSpell = new Spell({
     id: spellApi.id,
     canEdit: spellApi.canEdit,
     name: spellApi.object.name,
@@ -151,6 +151,8 @@ export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
     shared: spellApi.object.shared,
     source: spellApi.object.source,
   });
+
+  return newSpell.copy();
 }
 
 export function modelToApi(spell: Spell): SpellApiData {
@@ -162,7 +164,7 @@ export function modelToApi(spell: Spell): SpellApiData {
     duration: spell.duration,
     description: spell.description,
     shared: spell.shared,
-    source: spell.source,
+    source: copySource(spell.source),
   };
 }
 

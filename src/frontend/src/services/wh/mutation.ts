@@ -123,16 +123,18 @@ export class Mutation implements WhProperty {
 }
 
 export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): Mutation {
-  return new Mutation({
+  const newMutation = new Mutation({
     id: mutationApi.id,
     canEdit: mutationApi.canEdit,
     name: mutationApi.object.name,
     description: mutationApi.object.description,
     type: mutationApi.object.type,
-    modifiers: new CharacterModifiers(mutationApi.object.modifiers).copy(),
+    modifiers: new CharacterModifiers(mutationApi.object.modifiers),
     shared: mutationApi.object.shared,
-    source: copySource(mutationApi.object.source),
+    source: mutationApi.object.source,
   });
+
+  return newMutation.copy();
 }
 
 export function modelToApi(mutation: Mutation): MutationApiData {

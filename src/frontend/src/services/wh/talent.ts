@@ -160,7 +160,7 @@ export class Talent implements WhProperty {
 }
 
 export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talent {
-  return new Talent({
+  const newTalent = new Talent({
     id: talentApi.id,
     canEdit: talentApi.canEdit,
     name: talentApi.object.name,
@@ -172,8 +172,10 @@ export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talen
     group: new Set(talentApi.object.group),
     modifiers: new CharacterModifiers(talentApi.object.modifiers),
     shared: talentApi.object.shared,
-    source: copySource(talentApi.object.source),
+    source: talentApi.object.source,
   });
+
+  return newTalent.copy();
 }
 
 export function modelToApi(talent: Talent): TalentApiData {

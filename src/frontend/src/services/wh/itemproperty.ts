@@ -123,16 +123,18 @@ export class ItemProperty implements WhProperty {
 }
 
 export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiData>): ItemProperty {
-  return new ItemProperty({
+  const newProperty = new ItemProperty({
     id: itemPropertyApi.id,
     canEdit: itemPropertyApi.canEdit,
     name: itemPropertyApi.object.name,
     description: itemPropertyApi.object.description,
     type: itemPropertyApi.object.type,
-    applicableTo: [...itemPropertyApi.object.applicableTo],
+    applicableTo: itemPropertyApi.object.applicableTo,
     shared: itemPropertyApi.object.shared,
-    source: copySource(itemPropertyApi.object.source),
+    source: itemPropertyApi.object.source,
   });
+
+  return newProperty.copy();
 }
 
 export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {

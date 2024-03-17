@@ -124,7 +124,7 @@ export class Prayer implements WhProperty {
 }
 
 export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Prayer {
-  return new Prayer({
+  const newPrayer = new Prayer({
     id: prayerApi.id,
     canEdit: prayerApi.canEdit,
     name: prayerApi.object.name,
@@ -135,6 +135,8 @@ export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Praye
     shared: prayerApi.object.shared,
     source: prayerApi.object.source,
   });
+
+  return newPrayer.copy();
 }
 
 export function modelToApi(prayer: Prayer): PrayerApiData {
@@ -145,7 +147,7 @@ export function modelToApi(prayer: Prayer): PrayerApiData {
     duration: prayer.duration,
     description: prayer.description,
     shared: prayer.shared,
-    source: prayer.source,
+    source: copySource(prayer.source),
   };
 }
 
