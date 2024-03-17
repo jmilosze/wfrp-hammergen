@@ -12,6 +12,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
+import { setsAreEqual } from "../../utils/set.ts";
 
 export const enum CareerClass {
   Academic = 0,
@@ -128,6 +129,16 @@ export type CareerLevel = {
   status: StatusTier;
   standing: StatusStanding;
   attributes: AttributeName[];
+  skills: Set<string>;
+  talents: Set<string>;
+  items: string;
+};
+
+export type CareerLevelApiData = {
+  name: string;
+  status: StatusTier;
+  standing: StatusStanding;
+  attributes: AttributeName[];
   skills: string[];
   talents: string[];
   items: string;
@@ -140,10 +151,10 @@ export interface CareerApiData {
   description: string;
   species: Species[];
   class: CareerClass;
-  level1: CareerLevel;
-  level2: CareerLevel;
-  level3: CareerLevel;
-  level4: CareerLevel;
+  level1: CareerLevelApiData;
+  level2: CareerLevelApiData;
+  level3: CareerLevelApiData;
+  level4: CareerLevelApiData;
   shared: boolean;
   source: Source;
 }
@@ -153,8 +164,8 @@ const zeroCareerLevel: CareerLevel = {
   status: StatusTier.Brass,
   standing: 0,
   attributes: JSON.parse(JSON.stringify(racialAttributes.none)),
-  skills: [],
-  talents: [],
+  skills: new Set<string>(),
+  talents: new Set<string>(),
   items: "",
 };
 
@@ -164,8 +175,8 @@ const careerLevelEqual = (careerLevel: CareerLevel, OtherCareerLevel: CareerLeve
     careerLevel.status === OtherCareerLevel.status &&
     careerLevel.standing === OtherCareerLevel.standing &&
     arraysAreEqualIgnoreOrder(careerLevel.attributes, OtherCareerLevel.attributes) &&
-    arraysAreEqualIgnoreOrder(careerLevel.skills, OtherCareerLevel.skills) &&
-    arraysAreEqualIgnoreOrder(careerLevel.talents, OtherCareerLevel.talents) &&
+    setsAreEqual(careerLevel.skills, OtherCareerLevel.skills) &&
+    setsAreEqual(careerLevel.talents, OtherCareerLevel.talents) &&
     careerLevel.items === OtherCareerLevel.items
   );
 };
@@ -191,10 +202,10 @@ export class Career implements WhProperty {
     description = "",
     species = [Species.Human],
     careerClass = CareerClass.Academic,
-    level1 = zeroCareerLevel,
-    level2 = zeroCareerLevel,
-    level3 = zeroCareerLevel,
-    level4 = zeroCareerLevel,
+    level1 = copyCareerLevel(zeroCareerLevel),
+    level2 = copyCareerLevel(zeroCareerLevel),
+    level3 = copyCareerLevel(zeroCareerLevel),
+    level4 = copyCareerLevel(zeroCareerLevel),
     shared = false,
     source = {},
   } = {}) {
@@ -202,12 +213,12 @@ export class Career implements WhProperty {
     this.canEdit = canEdit;
     this.name = name;
     this.description = description;
-    this.species = JSON.parse(JSON.stringify(species));
+    this.species = species;
     this.careerClass = careerClass;
-    this.level1 = JSON.parse(JSON.stringify(level1));
-    this.level2 = JSON.parse(JSON.stringify(level2));
-    this.level3 = JSON.parse(JSON.stringify(level3));
-    this.level4 = JSON.parse(JSON.stringify(level4));
+    this.level1 = level1;
+    this.level2 = level2;
+    this.level3 = level3;
+    this.level4 = level4;
     this.shared = shared;
     this.source = source;
   }
@@ -218,12 +229,12 @@ export class Career implements WhProperty {
       canEdit: this.canEdit,
       name: this.name,
       description: this.description,
-      species: this.species,
+      species: [...this.species],
       careerClass: this.careerClass,
-      level1: JSON.parse(JSON.stringify(this.level1)),
-      level2: JSON.parse(JSON.stringify(this.level2)),
-      level3: JSON.parse(JSON.stringify(this.level3)),
-      level4: JSON.parse(JSON.stringify(this.level4)),
+      level1: copyCareerLevel(this.level1),
+      level2: copyCareerLevel(this.level2),
+      level3: copyCareerLevel(this.level3),
+      level4: copyCareerLevel(this.level4),
       shared: this.shared,
       source: copySource(this.source),
     });
@@ -284,6 +295,18 @@ export class Career implements WhProperty {
   }
 }
 
+function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
+  return {
+    name: careerLevel.name,
+    status: careerLevel.status,
+    standing: careerLevel.standing,
+    attributes: [...careerLevel.attributes],
+    skills: new Set(...careerLevel.skills),
+    talents: new Set(...careerLevel.talents),
+    items: careerLevel.items,
+  };
+}
+
 export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Career {
   return new Career({
     id: careerApi.id,
@@ -291,14 +314,26 @@ export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Caree
     name: careerApi.object.name,
     description: careerApi.object.description,
     careerClass: careerApi.object.class,
-    species: JSON.parse(JSON.stringify(careerApi.object.species)),
-    level1: JSON.parse(JSON.stringify(careerApi.object.level1)),
-    level2: JSON.parse(JSON.stringify(careerApi.object.level2)),
-    level3: JSON.parse(JSON.stringify(careerApi.object.level3)),
-    level4: JSON.parse(JSON.stringify(careerApi.object.level4)),
+    species: [...careerApi.object.species],
+    level1: careerLevelApiDataToCareerLevel(careerApi.object.level1),
+    level2: careerLevelApiDataToCareerLevel(careerApi.object.level2),
+    level3: careerLevelApiDataToCareerLevel(careerApi.object.level3),
+    level4: careerLevelApiDataToCareerLevel(careerApi.object.level4),
     shared: careerApi.object.shared,
     source: copySource(careerApi.object.source),
   });
+}
+
+function careerLevelApiDataToCareerLevel(apiData: CareerLevelApiData): CareerLevel {
+  return {
+    name: apiData.name,
+    status: apiData.status,
+    standing: apiData.standing,
+    attributes: [...apiData.attributes],
+    skills: new Set([...apiData.skills]),
+    talents: new Set([...apiData.talents]),
+    items: apiData.items,
+  };
 }
 
 export function modelToApi(career: Career): CareerApiData {
@@ -306,13 +341,25 @@ export function modelToApi(career: Career): CareerApiData {
     name: career.name,
     description: career.description,
     class: career.careerClass,
-    species: JSON.parse(JSON.stringify(career.species)),
-    level1: JSON.parse(JSON.stringify(career.level1)),
-    level2: JSON.parse(JSON.stringify(career.level2)),
-    level3: JSON.parse(JSON.stringify(career.level3)),
-    level4: JSON.parse(JSON.stringify(career.level4)),
+    species: [...career.species],
+    level1: careerLevelToCareerLevelApiData(career.level1),
+    level2: careerLevelToCareerLevelApiData(career.level2),
+    level3: careerLevelToCareerLevelApiData(career.level3),
+    level4: careerLevelToCareerLevelApiData(career.level4),
     shared: career.shared,
     source: copySource(career.source),
+  };
+}
+
+function careerLevelToCareerLevelApiData(careerLevel: CareerLevel): CareerLevelApiData {
+  return {
+    name: careerLevel.name,
+    status: careerLevel.status,
+    standing: careerLevel.standing,
+    attributes: [...careerLevel.attributes],
+    skills: [...careerLevel.skills],
+    talents: [...careerLevel.talents],
+    items: careerLevel.items,
   };
 }
 

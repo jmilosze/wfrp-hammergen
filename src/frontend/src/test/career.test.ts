@@ -4,6 +4,7 @@ import {
   CareerApiData,
   CareerClass,
   CareerLevel,
+  CareerLevelApiData,
   modelToApi,
   Species,
   StatusTier,
@@ -28,7 +29,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill11", "skill12"],
     talents: ["talent11", "talent12"],
     items: "items1",
-  } as CareerLevel,
+  } as CareerLevelApiData,
   level2: {
     name: "l2",
     status: StatusTier.Silver,
@@ -37,7 +38,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill21", "skill22"],
     talents: ["talent21", "talent22"],
     items: "items2",
-  } as CareerLevel,
+  } as CareerLevelApiData,
   level3: {
     name: "l3",
     status: StatusTier.Silver,
@@ -46,7 +47,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill31", "skill32"],
     talents: ["talent31", "talent32"],
     items: "items3",
-  } as CareerLevel,
+  } as CareerLevelApiData,
   level4: {
     name: "l4",
     status: StatusTier.Silver,
@@ -55,7 +56,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill41", "skill42"],
     talents: ["talent41", "talent42"],
     items: "items4",
-  } as CareerLevel,
+  } as CareerLevelApiData,
 };
 
 const careerApiResponse: ApiResponse<CareerApiData> = {
@@ -79,8 +80,8 @@ const career = new Career({
     status: StatusTier.Brass,
     standing: 1,
     attributes: [AttributeName.Ag, AttributeName.I],
-    skills: ["skill11", "skill12"],
-    talents: ["talent11", "talent12"],
+    skills: new Set(["skill11", "skill12"]),
+    talents: new Set(["talent11", "talent12"]),
     items: "items1",
   } as CareerLevel,
   level2: {
@@ -88,8 +89,8 @@ const career = new Career({
     status: StatusTier.Silver,
     standing: 2,
     attributes: [AttributeName.T, AttributeName.Dex],
-    skills: ["skill21", "skill22"],
-    talents: ["talent21", "talent22"],
+    skills: new Set(["skill21", "skill22"]),
+    talents: new Set(["talent21", "talent22"]),
     items: "items2",
   } as CareerLevel,
   level3: {
@@ -97,8 +98,8 @@ const career = new Career({
     status: StatusTier.Silver,
     standing: 4,
     attributes: [AttributeName.Int, AttributeName.Fel],
-    skills: ["skill31", "skill32"],
-    talents: ["talent31", "talent32"],
+    skills: new Set(["skill31", "skill32"]),
+    talents: new Set(["talent31", "talent32"]),
     items: "items3",
   } as CareerLevel,
   level4: {
@@ -106,8 +107,8 @@ const career = new Career({
     status: StatusTier.Silver,
     standing: 5,
     attributes: [AttributeName.S, AttributeName.BS],
-    skills: ["skill41", "skill42"],
-    talents: ["talent41", "talent42"],
+    skills: new Set(["skill41", "skill42"]),
+    talents: new Set(["talent41", "talent42"]),
     items: "items4",
   } as CareerLevel,
 });
@@ -147,24 +148,10 @@ describe("isEqualTo returns true", () => {
     { name: "level4", level: otherCareer.level4 },
   ])(`when other career has different $name`, (t) => {
     test("attributes are in different order", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.attributes));
+      const currentValue = [...t.level.attributes];
       t.level.attributes.reverse();
       expect(career.isEqualTo(otherCareer)).toBe(true);
       t.level.attributes = currentValue;
-    });
-
-    test("skills are in different order", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.skills));
-      t.level.skills.reverse();
-      expect(career.isEqualTo(otherCareer)).toBe(true);
-      t.level.skills = currentValue;
-    });
-
-    test("talents are in different order", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.talents));
-      t.level.talents.reverse();
-      expect(career.isEqualTo(otherCareer)).toBe(true);
-      t.level.talents = currentValue;
     });
   });
 });
@@ -206,43 +193,49 @@ describe("isEqualTo returns false", () => {
     });
 
     test("attributes is subset", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.attributes));
+      const currentValue = [...t.level.attributes];
       t.level.attributes.pop();
       expect(career.isEqualTo(otherCareer)).toBe(false);
       t.level.attributes = currentValue;
     });
 
     test("attributes is same length but different elements", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.attributes));
+      const currentValue = [...t.level.attributes];
       t.level.attributes[1] = AttributeName.None;
       expect(career.isEqualTo(otherCareer)).toBe(false);
       t.level.attributes = currentValue;
     });
 
     test("skills is subset", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.skills));
-      t.level.skills.pop();
+      const currentValue = new Set(...t.level.skills);
+      const firstSkill = t.level.skills.values().next().value;
+      t.level.skills.delete(firstSkill);
       expect(career.isEqualTo(otherCareer)).toBe(false);
       t.level.skills = currentValue;
     });
 
     test("skills is same length but different elements", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.skills));
-      t.level.skills[1] = "someOtherSkill";
+      const currentValue = new Set(...t.level.skills);
+      const firstSkill = t.level.skills.values().next().value;
+      t.level.skills.delete(firstSkill);
+      t.level.skills.add("someOtherSkill");
       expect(career.isEqualTo(otherCareer)).toBe(false);
       t.level.skills = currentValue;
     });
 
     test("talents is subset", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.talents));
-      t.level.talents.pop();
+      const currentValue = new Set(...t.level.talents);
+      const firstTalent = t.level.talents.values().next().value;
+      t.level.talents.delete(firstTalent);
       expect(career.isEqualTo(otherCareer)).toBe(false);
       t.level.talents = currentValue;
     });
 
     test("talents is same length but different elements", () => {
-      const currentValue = JSON.parse(JSON.stringify(t.level.talents));
-      t.level.talents[1] = "someOtherTalent";
+      const currentValue = new Set(...t.level.talents);
+      const firstTalent = t.level.talents.values().next().value;
+      t.level.talents.delete(firstTalent);
+      t.level.talents.add("someOtherTalent");
       expect(career.isEqualTo(otherCareer)).toBe(false);
       t.level.talents = currentValue;
     });
