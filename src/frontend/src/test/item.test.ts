@@ -8,7 +8,6 @@ import {
   Availability,
   CarryType,
   ContainerType,
-  GrimoireType,
   Item,
   ItemApiData,
   ItemType,
@@ -56,7 +55,7 @@ const itemApiData: ItemApiData = {
     location: [ArmourLocation.Arms, ArmourLocation.Head],
     group: ArmourGroup.Plate,
   } as ArmourType,
-  grimoire: { spells: ["spell1", "spell2"] } as GrimoireType,
+  grimoire: { spells: ["spell1", "spell2"] },
   container: { capacity: 1, carryType: CarryType.CarriableAndNotWearable } as ContainerType,
   other: { carryType: CarryType.CarriableAndWearable } as OtherType,
 };
@@ -78,7 +77,7 @@ const item = new Item({
   price: 12,
   enc: 2,
   availability: Availability.Exotic,
-  properties: ["prop1", "prop2"],
+  properties: new Set(["prop1", "prop2"]),
   type: ItemType.Ranged,
   melee: {
     hands: WeaponHands.OneHanded,
@@ -101,7 +100,7 @@ const item = new Item({
     location: [ArmourLocation.Arms, ArmourLocation.Head],
     group: ArmourGroup.Plate,
   } as ArmourType,
-  grimoire: { spells: ["spell1", "spell2"] } as GrimoireType,
+  grimoire: { spells: new Set(["spell1", "spell2"]) },
   container: { capacity: 1, carryType: CarryType.CarriableAndNotWearable } as ContainerType,
   other: { carryType: CarryType.CarriableAndWearable } as OtherType,
 });
@@ -132,24 +131,10 @@ describe("isEqualTo returns true", () => {
       location: [],
       group: ArmourGroup.Plate,
     };
-    otherItem.grimoire = { spells: [] };
+    otherItem.grimoire = { spells: new Set<string>() };
     otherItem.container = { capacity: 2, carryType: 1 };
     otherItem.other = { carryType: 0 };
     expect(item.isEqualTo(otherItem)).toBe(true);
-  });
-
-  test("when other item has property field with elements in different order", () => {
-    const otherItem = item.copy();
-    otherItem.properties = ["prop2", "prop1"];
-    expect(item.isEqualTo(otherItem)).toBe(true);
-  });
-
-  test("when item is grimoire and other item has spells in different order", () => {
-    const grimoire = item.copy();
-    grimoire.type = ItemType.Grimoire;
-    const otherItem = grimoire.copy();
-    otherItem.grimoire.spells = ["spell2", "spell1"];
-    expect(grimoire.isEqualTo(otherItem)).toBe(true);
   });
 
   test("when item is armour and other item has location in different order", () => {
@@ -188,13 +173,13 @@ describe("isEqualTo returns false", () => {
 
   test("when other item has properties field that is a subset", () => {
     const otherItem = item.copy();
-    otherItem.properties = ["prop1"];
+    otherItem.properties = new Set(["prop1"]);
     expect(item.isEqualTo(otherItem)).toBe(false);
   });
 
   test("when other item has group properties of the same length but different values", () => {
     const otherItem = item.copy();
-    otherItem.properties = ["prop3", "prop4"];
+    otherItem.properties = new Set(["prop3", "prop4"]);
     expect(item.isEqualTo(otherItem)).toBe(false);
   });
 
@@ -335,13 +320,13 @@ describe("isEqualTo returns false", () => {
 
     test("when other item has spells field that is a subset", () => {
       const otherItem = grimoire.copy();
-      otherItem.grimoire.spells = ["spell1"];
+      otherItem.grimoire.spells = new Set(["spell1"]);
       expect(grimoire.isEqualTo(otherItem)).toBe(false);
     });
 
     test("when other skill has spells field of the same length but different values", () => {
       const otherItem = grimoire.copy();
-      otherItem.grimoire.spells = ["spell1", "spell3"];
+      otherItem.grimoire.spells = new Set(["spell1", "spell3"]);
       expect(grimoire.isEqualTo(otherItem)).toBe(false);
     });
   });

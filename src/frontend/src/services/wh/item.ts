@@ -11,6 +11,7 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
+import { setsAreEqual } from "../../utils/set.ts";
 
 export const enum ItemType {
   Melee = 0,
@@ -334,10 +335,6 @@ export type OtherType = {
   carryType: CarryType;
 };
 
-export type GrimoireType = {
-  spells: string[];
-};
-
 export interface ItemApiData {
   name: string;
   description: string;
@@ -350,7 +347,7 @@ export interface ItemApiData {
   ranged: RangedType;
   ammunition: AmmoType;
   armour: ArmourType;
-  grimoire: GrimoireType;
+  grimoire: { spells: string[] };
   container: ContainerType;
   other: OtherType;
   shared: boolean;
@@ -365,13 +362,13 @@ export class Item implements WhProperty {
   price: number;
   enc: number;
   availability: Availability;
-  properties: string[];
+  properties: Set<string>;
   type: ItemType;
   melee: MeleeType;
   ranged: RangedType;
   ammunition: AmmoType;
   armour: ArmourType;
-  grimoire: GrimoireType;
+  grimoire: { spells: Set<string> };
   container: ContainerType;
   other: OtherType;
   shared: boolean;
@@ -385,7 +382,7 @@ export class Item implements WhProperty {
     price = 0,
     enc = 0,
     availability = Availability.Common,
-    properties = [] as string[],
+    properties = new Set<string>(),
     type = ItemType.Melee,
     melee = {
       hands: WeaponHands.OneHanded,
@@ -404,7 +401,7 @@ export class Item implements WhProperty {
     } as RangedType,
     ammunition = { dmg: 0, rng: 0, rngMult: 0, group: AmmoGroup.Bow } as AmmoType,
     armour = { points: 0, location: [], group: ArmourGroup.SoftLeather } as ArmourType,
-    grimoire = { spells: [] } as GrimoireType,
+    grimoire = { spells: new Set<string>() },
     container = { capacity: 1, carryType: CarryType.NotCarriableAndNotWearable } as ContainerType,
     other = { carryType: CarryType.NotCarriableAndNotWearable } as OtherType,
     shared = false,
@@ -417,15 +414,15 @@ export class Item implements WhProperty {
     this.price = price;
     this.enc = enc;
     this.availability = availability;
-    this.properties = JSON.parse(JSON.stringify(properties));
+    this.properties = properties;
     this.type = type;
-    this.melee = JSON.parse(JSON.stringify(melee));
-    this.ranged = JSON.parse(JSON.stringify(ranged));
-    this.ammunition = JSON.parse(JSON.stringify(ammunition));
-    this.armour = JSON.parse(JSON.stringify(armour));
-    this.grimoire = JSON.parse(JSON.stringify(grimoire));
-    this.container = JSON.parse(JSON.stringify(container));
-    this.other = JSON.parse(JSON.stringify(other));
+    this.melee = melee;
+    this.ranged = ranged;
+    this.ammunition = ammunition;
+    this.armour = armour;
+    this.grimoire = grimoire;
+    this.container = container;
+    this.other = other;
     this.shared = shared;
     this.source = source;
   }
@@ -439,15 +436,37 @@ export class Item implements WhProperty {
       price: this.price,
       enc: this.enc,
       availability: this.availability,
-      properties: JSON.parse(JSON.stringify(this.properties)),
+      properties: new Set(this.properties),
       type: this.type,
-      melee: JSON.parse(JSON.stringify(this.melee)),
-      ranged: JSON.parse(JSON.stringify(this.ranged)),
-      ammunition: JSON.parse(JSON.stringify(this.ammunition)),
-      armour: JSON.parse(JSON.stringify(this.armour)),
-      grimoire: JSON.parse(JSON.stringify(this.grimoire)),
-      container: JSON.parse(JSON.stringify(this.container)),
-      other: JSON.parse(JSON.stringify(this.other)),
+      melee: {
+        hands: this.melee.hands,
+        dmg: this.melee.dmg,
+        dmgSbMult: this.melee.dmgSbMult,
+        reach: this.melee.reach,
+        group: this.melee.group,
+      },
+      ranged: {
+        hands: this.ranged.hands,
+        dmg: this.ranged.dmg,
+        dmgSbMult: this.ranged.dmgSbMult,
+        rng: this.ranged.rng,
+        rngSbMult: this.ranged.rngSbMult,
+        group: this.ranged.group,
+      },
+      ammunition: {
+        dmg: this.ammunition.dmg,
+        rng: this.ammunition.rng,
+        rngMult: this.ammunition.rngMult,
+        group: this.ammunition.group,
+      },
+      armour: {
+        points: this.armour.points,
+        location: [...this.armour.location],
+        group: this.armour.group,
+      },
+      grimoire: { spells: new Set(this.grimoire.spells) },
+      container: { capacity: this.container.capacity, carryType: this.container.carryType },
+      other: { carryType: this.other.carryType },
       shared: this.shared,
       source: copySource(this.source),
     });
@@ -482,7 +501,7 @@ export class Item implements WhProperty {
       this.enc !== otherItem.enc ||
       this.availability !== otherItem.availability ||
       this.type !== otherItem.type ||
-      !arraysAreEqualIgnoreOrder(this.properties, otherItem.properties) ||
+      !setsAreEqual(this.properties, otherItem.properties) ||
       this.shared !== otherItem.shared ||
       !objectsAreEqual(this.source, otherItem.source)
     ) {
@@ -512,7 +531,7 @@ export class Item implements WhProperty {
       return objectsAreEqual(this.other, otherItem.other);
     }
     if (this.type === ItemType.Grimoire) {
-      return arraysAreEqualIgnoreOrder(this.grimoire.spells, otherItem.grimoire.spells);
+      return setsAreEqual(this.grimoire.spells, otherItem.grimoire.spells);
     }
 
     return true;
@@ -524,7 +543,7 @@ export class Item implements WhProperty {
 }
 
 export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
-  return new Item({
+  const newItem = new Item({
     id: itemApi.id,
     canEdit: itemApi.canEdit,
     name: itemApi.object.name,
@@ -532,18 +551,20 @@ export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
     price: itemApi.object.price,
     enc: itemApi.object.enc,
     availability: itemApi.object.availability,
-    properties: JSON.parse(JSON.stringify(itemApi.object.properties)),
+    properties: new Set(itemApi.object.properties),
     type: itemApi.object.type,
-    melee: JSON.parse(JSON.stringify(itemApi.object.melee)),
-    ranged: JSON.parse(JSON.stringify(itemApi.object.ranged)),
-    ammunition: JSON.parse(JSON.stringify(itemApi.object.ammunition)),
-    armour: JSON.parse(JSON.stringify(itemApi.object.armour)),
-    grimoire: JSON.parse(JSON.stringify(itemApi.object.grimoire)),
-    container: JSON.parse(JSON.stringify(itemApi.object.container)),
-    other: JSON.parse(JSON.stringify(itemApi.object.other)),
+    melee: itemApi.object.melee,
+    ranged: itemApi.object.ranged,
+    ammunition: itemApi.object.ammunition,
+    armour: itemApi.object.armour,
+    grimoire: { spells: new Set(itemApi.object.grimoire.spells) },
+    container: itemApi.object.container,
+    other: itemApi.object.other,
     shared: itemApi.object.shared,
-    source: copySource(itemApi.object.source),
+    source: itemApi.object.source,
   });
+
+  return newItem.copy();
 }
 
 export function modelToApi(item: Item): ItemApiData {
@@ -553,15 +574,37 @@ export function modelToApi(item: Item): ItemApiData {
     price: item.price,
     enc: item.enc,
     availability: item.availability,
-    properties: JSON.parse(JSON.stringify(item.properties)),
+    properties: [...item.properties],
     type: item.type,
-    melee: JSON.parse(JSON.stringify(item.melee)),
-    ranged: JSON.parse(JSON.stringify(item.ranged)),
-    ammunition: JSON.parse(JSON.stringify(item.ammunition)),
-    armour: JSON.parse(JSON.stringify(item.armour)),
-    grimoire: JSON.parse(JSON.stringify(item.grimoire)),
-    container: JSON.parse(JSON.stringify(item.container)),
-    other: JSON.parse(JSON.stringify(item.other)),
+    melee: {
+      hands: item.melee.hands,
+      dmg: item.melee.dmg,
+      dmgSbMult: item.melee.dmgSbMult,
+      reach: item.melee.reach,
+      group: item.melee.group,
+    },
+    ranged: {
+      hands: item.ranged.hands,
+      dmg: item.ranged.dmg,
+      dmgSbMult: item.ranged.dmgSbMult,
+      rng: item.ranged.rng,
+      rngSbMult: item.ranged.rngSbMult,
+      group: item.ranged.group,
+    },
+    ammunition: {
+      dmg: item.ammunition.dmg,
+      rng: item.ammunition.rng,
+      rngMult: item.ammunition.rngMult,
+      group: item.ammunition.group,
+    },
+    armour: {
+      points: item.armour.points,
+      location: [...item.armour.location],
+      group: item.armour.group,
+    },
+    grimoire: { spells: [...item.grimoire.spells] },
+    container: { capacity: item.container.capacity, carryType: item.container.carryType },
+    other: { carryType: item.other.carryType },
     shared: item.shared,
     source: copySource(item.source),
   };
