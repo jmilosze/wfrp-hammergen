@@ -22,7 +22,7 @@ const listOfWhTalents: Talent[] = [
       attributes: { WS: 10, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     }),
     maxRank: 0,
-    group: ["id3", "id4"],
+    group: new Set(["id3", "id4"]),
     attribute: AttributeName.WS,
   }),
   new Talent({
@@ -31,7 +31,7 @@ const listOfWhTalents: Talent[] = [
       attributes: { WS: 0, BS: 20, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
     }),
     maxRank: 1,
-    group: ["id3"],
+    group: new Set(["id3"]),
     attribute: AttributeName.S,
   }),
   new Talent({
@@ -294,9 +294,9 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
     const group1members = [] as Talent[];
     const group2members = [] as Talent[];
     for (let i = 0; i < 3; i++) {
-      group0members.push(new Talent({ id: `g0m${i}`, attribute: AttributeName.S, group: ["g0"] }));
-      group1members.push(new Talent({ id: `g1m${i}`, attribute: AttributeName.WS, group: ["g1"] }));
-      group2members.push(new Talent({ id: `g2m${i}`, attribute: AttributeName.BS, group: ["g2"] }));
+      group0members.push(new Talent({ id: `g0m${i}`, attribute: AttributeName.S, group: new Set(["g0"]) }));
+      group1members.push(new Talent({ id: `g1m${i}`, attribute: AttributeName.WS, group: new Set(["g1"]) }));
+      group2members.push(new Talent({ id: `g2m${i}`, attribute: AttributeName.BS, group: new Set(["g2"]) }));
     }
 
     const individual0 = new Talent({

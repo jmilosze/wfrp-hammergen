@@ -55,7 +55,7 @@ export function resolveSkillGroups(listOfWhSkills: Skill[]): Record<string, stri
   const resolvedGroups: Record<string, string[]> = {};
 
   for (const skill of listOfWhSkills) {
-    if (skill.group.length > 0) {
+    if (skill.group) {
       for (const group of skill.group) {
         if (group in resolvedGroups) {
           resolvedGroups[group].push(skill.id);

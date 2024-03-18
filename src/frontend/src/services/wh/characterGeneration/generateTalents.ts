@@ -85,7 +85,7 @@ export function getTalentGroups(listOfWhTalents: Talent[]): Record<string, strin
   const resolvedGroups: Record<string, string[]> = {};
 
   for (const talent of listOfWhTalents) {
-    if (talent.group.length > 0) {
+    if (talent.group) {
       for (const group of talent.group) {
         if (group in resolvedGroups) {
           resolvedGroups[group].push(talent.id);
