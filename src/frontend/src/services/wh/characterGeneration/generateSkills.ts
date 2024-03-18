@@ -14,7 +14,7 @@ export function generateSkills(
   listOfWhSkills: Skill[],
   level: number,
   selectRandomFn: SelectRandomFn,
-): [IdNumber[], number] {
+): [Record<string, IdNumber>, number] {
   const resolvedSkillGroups = resolveSkillGroups(listOfWhSkills);
   let skills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandomFn);
   const availSkills = genAvailSkills(resolvedSkillGroups, careerSkills, selectRandomFn);
@@ -43,9 +43,9 @@ export function generateSkills(
     );
   }
 
-  const generatedSkills: IdNumber[] = [];
+  const generatedSkills: Record<string, IdNumber> = {};
   for (const [id, number] of Object.entries(skills)) {
-    generatedSkills.push({ id: id, number: number });
+    generatedSkills[id] = { id: id, number: number };
   }
 
   return [generatedSkills, expSpent];

@@ -8,7 +8,7 @@ import {
   multiplyAttributes,
   sumAttributes,
 } from "../attributes.ts";
-import { IdNumber } from "../common.ts";
+import { IdNumber, idNumberArrayToRecord } from "../common.ts";
 import { RollInTableFn, SelectRandomFn } from "../../../utils/random.ts";
 import { generateSpeciesTalents, RandomTalents, SpeciesTalents } from "./generateSpeciesTalents.ts";
 import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
@@ -28,7 +28,7 @@ export function genTalentsAndAdvances(
   level: 1 | 2 | 3 | 4,
   selectRandomFn: SelectRandomFn,
   rollInTableFn: RollInTableFn,
-): [IdNumber[], Attributes, number] {
+): [Record<string, IdNumber>, Attributes, number] {
   const talentGroups = getTalentGroups(listOfWhTalents);
 
   let advances = getAttributes();
@@ -78,7 +78,7 @@ export function genTalentsAndAdvances(
     );
   }
 
-  return [talents, advances, expSpent];
+  return [idNumberArrayToRecord(talents), advances, expSpent];
 }
 
 export function getTalentGroups(listOfWhTalents: Talent[]): Record<string, string[]> {

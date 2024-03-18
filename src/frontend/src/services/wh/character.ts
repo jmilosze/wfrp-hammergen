@@ -8,7 +8,15 @@ import {
   multiplyAttributes,
   sumAttributes,
 } from "./attributes.ts";
-import { ApiResponse, copyRecordWithObject, IdNumber, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import {
+  ApiResponse,
+  copyRecordWithObject,
+  IdNumber,
+  idNumberArrayToRecord,
+  validShortDescFn,
+  WhApi,
+  WhProperty,
+} from "./common.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { compareIdNumber } from "./common.ts";
@@ -316,48 +324,12 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
       multiplyAttributes(-1, getAttributes(characterApi.object.species)),
     ),
     attributeAdvances: copyAttributes(characterApi.object.attributeAdvances),
-    skills: characterApi.object.skills.reduce(
-      (acc, current) => {
-        acc[current.id] = current;
-        return acc;
-      },
-      {} as Record<string, IdNumber>,
-    ),
-    talents: characterApi.object.talents.reduce(
-      (acc, current) => {
-        acc[current.id] = current;
-        return acc;
-      },
-      {} as Record<string, IdNumber>,
-    ),
-    equippedItems: characterApi.object.equippedItems.reduce(
-      (acc, current) => {
-        acc[current.id] = current;
-        return acc;
-      },
-      {} as Record<string, IdNumber>,
-    ),
-    carriedItems: characterApi.object.carriedItems.reduce(
-      (acc, current) => {
-        acc[current.id] = current;
-        return acc;
-      },
-      {} as Record<string, IdNumber>,
-    ),
-    storedItems: characterApi.object.storedItems.reduce(
-      (acc, current) => {
-        acc[current.id] = current;
-        return acc;
-      },
-      {} as Record<string, IdNumber>,
-    ),
-    careerPath: characterApi.object.careerPath.reduce(
-      (acc, current) => {
-        acc[current.id] = current;
-        return acc;
-      },
-      {} as Record<string, IdNumber>,
-    ),
+    skills: idNumberArrayToRecord(characterApi.object.skills),
+    talents: idNumberArrayToRecord(characterApi.object.talents),
+    equippedItems: idNumberArrayToRecord(characterApi.object.equippedItems),
+    carriedItems: idNumberArrayToRecord(characterApi.object.carriedItems),
+    storedItems: idNumberArrayToRecord(characterApi.object.storedItems),
+    careerPath: idNumberArrayToRecord(characterApi.object.careerPath),
     spells: new Set(characterApi.object.spells),
     prayers: new Set(characterApi.object.prayers),
     mutations: new Set(characterApi.object.mutations),

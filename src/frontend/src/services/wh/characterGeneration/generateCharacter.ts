@@ -10,7 +10,7 @@ import {
 } from "../characterUtils.ts";
 import { Career, StatusStanding, StatusTier } from "../career.ts";
 import { rollDice, RollDiceFn, rollInTable, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
-import { IdNumber } from "../common.ts";
+import { IdNumber, idNumberArrayToRecord } from "../common.ts";
 import { RandomTalents } from "./generateSpeciesTalents.ts";
 import { Talent } from "../talent.ts";
 import { Skill } from "../skill.ts";
@@ -51,9 +51,8 @@ export function generateCharacter(
   character.name = generateName(species);
   character.species = species;
   character.career = { id: whCareer.id, number: level };
-  character.careerPath = [];
   for (let i = 1; i < level; ++i) {
-    character.careerPath.push({ id: whCareer.id, number: i });
+    character.careerPath[whCareer.id] = { id: whCareer.id, number: i };
   }
   character.description = generateDescription(species);
   character.notes = "";
@@ -64,15 +63,19 @@ export function generateCharacter(
   character.standing = whCareer.getLevel(level).standing;
   [character.brass, character.silver, character.gold] = generateCoins(character.status, character.standing, rollDice);
   character.attributeRolls = generateRolls(rollDice);
-  character.storedItems = [];
-  character.equippedItems = classItems.equipped;
-  character.carriedItems = classItems.carried;
+  character.equippedItems = idNumberArrayToRecord(classItems.equipped);
+  character.carriedItems = idNumberArrayToRecord(classItems.carried);
 
   let skillExpSpent = 0;
   if (species in generationProps.speciesSkills) {
     [character.skills, skillExpSpent] = generateSkills(
       generationProps.speciesSkills[species],
-      [whCareer.level1.skills, whCareer.level2.skills, whCareer.level3.skills, whCareer.level4.skills],
+      [
+        [...whCareer.level1.skills],
+        [...whCareer.level2.skills],
+        [...whCareer.level3.skills],
+        [...whCareer.level4.skills],
+      ],
       listOfWhSkills,
       level,
       selectRandom,
@@ -86,7 +89,12 @@ export function generateCharacter(
     [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
       generationProps.speciesTalents[species],
       generationProps.randomTalents,
-      [whCareer.level1.talents, whCareer.level2.talents, whCareer.level3.talents, whCareer.level4.talents],
+      [
+        [...whCareer.level1.talents],
+        [...whCareer.level2.talents],
+        [...whCareer.level3.talents],
+        [...whCareer.level4.talents],
+      ],
       baseAttributes,
       listOfWhTalents,
       [whCareer.level1.attributes, whCareer.level2.attributes, whCareer.level3.attributes, whCareer.level4.attributes],
@@ -99,12 +107,6 @@ export function generateCharacter(
   const totalExSpent = skillExpSpent + talentAndAttExpSpent + 100 * (level - 1);
   character.currentExp = exp - totalExSpent > 0 ? exp - totalExSpent : 0;
   character.spentExp = totalExSpent;
-
-  character.sin = 0;
-  character.corruption = 0;
-  character.spells = [];
-  character.mutations = [];
-
   return character;
 }
 

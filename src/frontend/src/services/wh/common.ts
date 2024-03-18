@@ -91,3 +91,13 @@ export function copyRecordWithObject<T extends object>(source: Record<string, T>
   }
   return copy;
 }
+
+export function idNumberArrayToRecord(arr: IdNumber[]): Record<string, IdNumber> {
+  return arr.reduce(
+    (acc, current) => {
+      acc[current.id] = current;
+      return acc;
+    },
+    {} as Record<string, IdNumber>,
+  );
+}
