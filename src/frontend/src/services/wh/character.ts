@@ -1,10 +1,16 @@
 import { DEFAULT_SIZE, getMovementFormula, getWoundsFormula, SpeciesWithRegion } from "./characterUtils.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
-import { Attributes, attributesAreEqual, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
-import { ApiResponse, IdNumber, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import {
+  Attributes,
+  attributesAreEqual,
+  copyAttributes,
+  getAttributes,
+  multiplyAttributes,
+  sumAttributes,
+} from "./attributes.ts";
+import { ApiResponse, copyRecordWithObject, IdNumber, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { compareIdNumber } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { AxiosInstance } from "axios";
@@ -17,6 +23,7 @@ import {
 } from "./crudGenerator.ts";
 import { apiResponseToCharacterFull, CharacterFull } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
+import { setsAreEqual } from "../../utils/set.ts";
 
 const API_BASE_PATH = "/api/wh/character";
 
@@ -76,15 +83,15 @@ export class Character implements WhProperty {
   career: IdNumber;
   attributeRolls: Attributes;
   attributeAdvances: Attributes;
-  skills: IdNumber[];
-  talents: IdNumber[];
-  equippedItems: IdNumber[];
-  carriedItems: IdNumber[];
-  storedItems: IdNumber[];
-  careerPath: IdNumber[];
-  spells: string[];
-  prayers: string[];
-  mutations: string[];
+  skills: Record<string, IdNumber>;
+  talents: Record<string, IdNumber>;
+  equippedItems: Record<string, IdNumber>;
+  carriedItems: Record<string, IdNumber>;
+  storedItems: Record<string, IdNumber>;
+  careerPath: Record<string, IdNumber>;
+  spells: Set<string>;
+  prayers: Set<string>;
+  mutations: Set<string>;
   shared: boolean;
   source: Source;
   modifiers: CharacterModifiers;
@@ -112,15 +119,15 @@ export class Character implements WhProperty {
     career = { id: "", number: 0 } as IdNumber,
     attributeRolls = getAttributes(),
     attributeAdvances = getAttributes(),
-    skills = [] as IdNumber[],
-    talents = [] as IdNumber[],
-    equippedItems = [] as IdNumber[],
-    carriedItems = [] as IdNumber[],
-    storedItems = [] as IdNumber[],
-    careerPath = [] as IdNumber[],
-    spells = [] as string[],
-    prayers = [] as string[],
-    mutations = [] as string[],
+    skills = {} as Record<string, IdNumber>,
+    talents = {} as Record<string, IdNumber>,
+    equippedItems = {} as Record<string, IdNumber>,
+    carriedItems = {} as Record<string, IdNumber>,
+    storedItems = {} as Record<string, IdNumber>,
+    careerPath = {} as Record<string, IdNumber>,
+    spells = new Set<string>(),
+    prayers = new Set<string>(),
+    mutations = new Set<string>(),
     shared = false,
     source = {},
     modifiers = new CharacterModifiers(),
@@ -188,15 +195,15 @@ export class Character implements WhProperty {
       compareIdNumber(this.career, otherCharacter.career) === 0 &&
       attributesAreEqual(this.attributeRolls, otherCharacter.attributeRolls) &&
       attributesAreEqual(this.attributeAdvances, otherCharacter.attributeAdvances) &&
-      arraysAreEqualIgnoreOrder(this.skills, otherCharacter.skills, compareIdNumber) &&
-      arraysAreEqualIgnoreOrder(this.talents, otherCharacter.talents, compareIdNumber) &&
-      arraysAreEqualIgnoreOrder(this.equippedItems, otherCharacter.equippedItems, compareIdNumber) &&
-      arraysAreEqualIgnoreOrder(this.carriedItems, otherCharacter.carriedItems, compareIdNumber) &&
-      arraysAreEqualIgnoreOrder(this.storedItems, otherCharacter.storedItems, compareIdNumber) &&
-      arraysAreEqualIgnoreOrder(this.careerPath, otherCharacter.careerPath, compareIdNumber) &&
-      arraysAreEqualIgnoreOrder(this.spells, otherCharacter.spells) &&
-      arraysAreEqualIgnoreOrder(this.prayers, otherCharacter.prayers) &&
-      arraysAreEqualIgnoreOrder(this.mutations, otherCharacter.mutations) &&
+      objectsAreEqual(this.skills, otherCharacter.skills) &&
+      objectsAreEqual(this.talents, otherCharacter.talents) &&
+      objectsAreEqual(this.equippedItems, otherCharacter.equippedItems) &&
+      objectsAreEqual(this.carriedItems, otherCharacter.carriedItems) &&
+      objectsAreEqual(this.storedItems, otherCharacter.storedItems) &&
+      objectsAreEqual(this.careerPath, otherCharacter.careerPath) &&
+      setsAreEqual(this.spells, otherCharacter.spells) &&
+      setsAreEqual(this.prayers, otherCharacter.prayers) &&
+      setsAreEqual(this.mutations, otherCharacter.mutations) &&
       this.shared === otherCharacter.shared &&
       objectsAreEqual(this.source, otherCharacter.source)
     );
@@ -227,18 +234,18 @@ export class Character implements WhProperty {
       corruption: this.corruption,
       status: this.status,
       standing: this.standing,
-      career: JSON.parse(JSON.stringify(this.career)),
-      attributeRolls: JSON.parse(JSON.stringify(this.attributeRolls)),
-      attributeAdvances: JSON.parse(JSON.stringify(this.attributeAdvances)),
-      skills: JSON.parse(JSON.stringify(this.skills)),
-      talents: JSON.parse(JSON.stringify(this.talents)),
-      equippedItems: JSON.parse(JSON.stringify(this.equippedItems)),
-      carriedItems: JSON.parse(JSON.stringify(this.carriedItems)),
-      storedItems: JSON.parse(JSON.stringify(this.storedItems)),
-      careerPath: JSON.parse(JSON.stringify(this.careerPath)),
-      spells: JSON.parse(JSON.stringify(this.spells)),
-      prayers: JSON.parse(JSON.stringify(this.prayers)),
-      mutations: JSON.parse(JSON.stringify(this.mutations)),
+      career: { id: this.career.id, number: this.career.number },
+      attributeRolls: copyAttributes(this.attributeRolls),
+      attributeAdvances: copyAttributes(this.attributeAdvances),
+      skills: copyRecordWithObject(this.skills),
+      talents: copyRecordWithObject(this.talents),
+      equippedItems: copyRecordWithObject(this.equippedItems),
+      carriedItems: copyRecordWithObject(this.carriedItems),
+      storedItems: copyRecordWithObject(this.storedItems),
+      careerPath: copyRecordWithObject(this.careerPath),
+      spells: new Set(this.spells),
+      prayers: new Set(this.prayers),
+      mutations: new Set(this.mutations),
       shared: this.shared,
       source: copySource(this.source),
       modifiers: this.modifiers.copy(),

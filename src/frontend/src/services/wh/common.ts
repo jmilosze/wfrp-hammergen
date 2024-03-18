@@ -82,3 +82,12 @@ export function validIntegerFn(value: number, min: number, max: number): Validat
 
   return setValidationStatus(isValid, `This field an integer between ${min} and ${max}.`);
 }
+
+export function copyRecordWithObject<T extends object>(source: Record<string, T>): Record<string, T> {
+  const copy: Record<string, T> = {};
+
+  for (const [key, value] of Object.entries(source)) {
+    copy[key] = { ...value };
+  }
+  return copy;
+}
