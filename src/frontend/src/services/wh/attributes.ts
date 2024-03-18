@@ -141,7 +141,7 @@ export function setAttributeValue(attributeName: AttributeName, attributeValue: 
   }
 }
 
-export const racialAttributes: Record<string, Attributes> = {
+export const racialAttributes = {
   none: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   human: { WS: 20, BS: 20, S: 20, T: 20, I: 20, Ag: 20, Dex: 20, Int: 20, WP: 20, Fel: 20 },
   halfling: { WS: 10, BS: 30, S: 10, T: 20, I: 20, Ag: 20, Dex: 30, Int: 20, WP: 30, Fel: 30 },
@@ -153,26 +153,26 @@ export const racialAttributes: Record<string, Attributes> = {
 
 export const getAttributes = (species = SpeciesWithRegion.None): Attributes => {
   if (c.HUMAN_LIST.includes(species)) {
-    return JSON.parse(JSON.stringify(racialAttributes.human));
+    return copyAttributes(racialAttributes.human);
   } else if (c.HALFLING_LIST.includes(species)) {
-    return JSON.parse(JSON.stringify(racialAttributes.halfling));
+    return copyAttributes(racialAttributes.halfling);
   } else if (c.DWARF_LIST.includes(species)) {
-    return JSON.parse(JSON.stringify(racialAttributes.dwarf));
+    return copyAttributes(racialAttributes.dwarf);
   } else if (c.HIGH_ELF_LIST.includes(species)) {
-    return JSON.parse(JSON.stringify(racialAttributes.elf));
+    return copyAttributes(racialAttributes.elf);
   } else if (c.WOOD_ELF_LIST.includes(species)) {
-    return JSON.parse(JSON.stringify(racialAttributes.elf));
+    return copyAttributes(racialAttributes.elf);
   } else if (c.GNOME_LIST.includes(species)) {
-    return JSON.parse(JSON.stringify(racialAttributes.gnome));
+    return copyAttributes(racialAttributes.gnome);
   } else if (c.OGRE_LIST.includes(species)) {
-    return JSON.parse(JSON.stringify(racialAttributes.ogre));
+    return copyAttributes(racialAttributes.ogre);
   } else {
-    return JSON.parse(JSON.stringify(racialAttributes.none));
+    return copyAttributes(racialAttributes.none);
   }
 };
 
 export function sumAttributes(...args: Attributes[]): Attributes {
-  const returnAtts = JSON.parse(JSON.stringify(racialAttributes.none)) as Attributes;
+  const returnAtts: Attributes = { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 };
   for (const attributes of args)
     for (const key of Object.keys(returnAtts)) {
       if (isKey(returnAtts, key) && isKey(attributes, key)) {
@@ -183,7 +183,7 @@ export function sumAttributes(...args: Attributes[]): Attributes {
 }
 
 export function multiplyAttributes(multiplier: number, attributes: Attributes): Attributes {
-  const returnAtts = JSON.parse(JSON.stringify(attributes));
+  const returnAtts = copyAttributes(attributes);
   for (const key of Object.keys(returnAtts)) {
     if (isKey(attributes, key)) {
       returnAtts[key] = multiplier * attributes[key];
@@ -204,7 +204,15 @@ export function attributesAreEqual(att1: Attributes, att2: Attributes): boolean 
 }
 
 export function copyAttributes(attributes: Attributes): Attributes {
-  return JSON.parse(JSON.stringify(attributes)) as Attributes;
+  const copy: Attributes = { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 };
+
+  for (const [key, value] of Object.entries(attributes)) {
+    if (isKey(copy, key)) {
+      copy[key] = value;
+    }
+  }
+
+  return copy;
 }
 
 export function validAttributesFn(attributes: Attributes, min: number, max: number): ValidationStatus {
