@@ -129,7 +129,7 @@ export const testIsEqualCharacterModifiers = (name: string, whProperty: WhProper
       const whProperty1 = whProperty.copy() as WhPropertyWithModifiers;
       const whProperty2 = whProperty.copy() as WhPropertyWithModifiers;
       whProperty1.modifiers.attributes = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 0 };
-      whProperty2.modifiers.attributes[t.field] = t.value;
+      whProperty2.modifiers.attributes[t.field as keyof typeof whProperty2.modifiers.attributes] = t.value;
       expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
     });
 
