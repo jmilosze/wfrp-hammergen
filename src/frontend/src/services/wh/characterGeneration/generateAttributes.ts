@@ -8,13 +8,16 @@ import {
   setAttributeValue,
 } from "../attributes.ts";
 import { RollDiceFn, SelectRandomFn } from "../../../utils/random.ts";
+import { isKey } from "../../../utils/object.ts";
 
 const MAX_FILL_UP_TO = 1000;
 
 export function generateRolls(rollDiceFn: RollDiceFn): Attributes {
   const rolls = getAttributes();
   for (const key of Object.keys(rolls)) {
-    rolls[key] = rollDiceFn(10, 2);
+    if (isKey(rolls, key)) {
+      rolls[key] = rollDiceFn(10, 2);
+    }
   }
   return rolls;
 }

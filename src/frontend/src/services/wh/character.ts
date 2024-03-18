@@ -290,7 +290,7 @@ export class Character implements WhProperty {
 }
 
 export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>): Character {
-  return new Character({
+  const newCharacter = new Character({
     id: characterApi.id,
     canEdit: characterApi.canEdit,
     name: characterApi.object.name,
@@ -315,20 +315,58 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
       characterApi.object.baseAttributes,
       multiplyAttributes(-1, getAttributes(characterApi.object.species)),
     ),
-    attributeAdvances: JSON.parse(JSON.stringify(characterApi.object.attributeAdvances)),
-    skills: JSON.parse(JSON.stringify(characterApi.object.skills)),
-    talents: JSON.parse(JSON.stringify(characterApi.object.talents)),
-    equippedItems: JSON.parse(JSON.stringify(characterApi.object.equippedItems)),
-    carriedItems: JSON.parse(JSON.stringify(characterApi.object.carriedItems)),
-    storedItems: JSON.parse(JSON.stringify(characterApi.object.storedItems)),
-    careerPath: JSON.parse(JSON.stringify(characterApi.object.careerPath)),
-    spells: JSON.parse(JSON.stringify(characterApi.object.spells)),
-    prayers: JSON.parse(JSON.stringify(characterApi.object.prayers)),
-    mutations: JSON.parse(JSON.stringify(characterApi.object.mutations)),
+    attributeAdvances: copyAttributes(characterApi.object.attributeAdvances),
+    skills: characterApi.object.skills.reduce(
+      (acc, current) => {
+        acc[current.id] = current;
+        return acc;
+      },
+      {} as Record<string, IdNumber>,
+    ),
+    talents: characterApi.object.talents.reduce(
+      (acc, current) => {
+        acc[current.id] = current;
+        return acc;
+      },
+      {} as Record<string, IdNumber>,
+    ),
+    equippedItems: characterApi.object.equippedItems.reduce(
+      (acc, current) => {
+        acc[current.id] = current;
+        return acc;
+      },
+      {} as Record<string, IdNumber>,
+    ),
+    carriedItems: characterApi.object.carriedItems.reduce(
+      (acc, current) => {
+        acc[current.id] = current;
+        return acc;
+      },
+      {} as Record<string, IdNumber>,
+    ),
+    storedItems: characterApi.object.storedItems.reduce(
+      (acc, current) => {
+        acc[current.id] = current;
+        return acc;
+      },
+      {} as Record<string, IdNumber>,
+    ),
+    careerPath: characterApi.object.careerPath.reduce(
+      (acc, current) => {
+        acc[current.id] = current;
+        return acc;
+      },
+      {} as Record<string, IdNumber>,
+    ),
+    spells: new Set(characterApi.object.spells),
+    prayers: new Set(characterApi.object.prayers),
+    mutations: new Set(characterApi.object.mutations),
     shared: characterApi.object.shared,
     source: {},
     modifiers: new CharacterModifiers(),
   });
+
+  return newCharacter.copy();
 }
 
 export function modelToApi(character: Character): CharacterApiData {
@@ -352,16 +390,16 @@ export function modelToApi(character: Character): CharacterApiData {
     standing: character.standing,
     career: character.career,
     baseAttributes: character.getBaseAttributes(),
-    attributeAdvances: JSON.parse(JSON.stringify(character.attributeAdvances)),
-    skills: JSON.parse(JSON.stringify(character.skills)),
-    talents: JSON.parse(JSON.stringify(character.talents)),
-    equippedItems: JSON.parse(JSON.stringify(character.equippedItems)),
-    carriedItems: JSON.parse(JSON.stringify(character.carriedItems)),
-    storedItems: JSON.parse(JSON.stringify(character.storedItems)),
-    careerPath: JSON.parse(JSON.stringify(character.careerPath)),
-    spells: JSON.parse(JSON.stringify(character.spells)),
-    prayers: JSON.parse(JSON.stringify(character.prayers)),
-    mutations: JSON.parse(JSON.stringify(character.mutations)),
+    attributeAdvances: copyAttributes(character.attributeAdvances),
+    skills: Object.values(character.skills),
+    talents: Object.values(character.talents),
+    equippedItems: Object.values(character.equippedItems),
+    carriedItems: Object.values(character.carriedItems),
+    storedItems: Object.values(character.storedItems),
+    careerPath: Object.values(character.careerPath),
+    spells: [...character.spells],
+    prayers: [...character.prayers],
+    mutations: [...character.mutations],
     shared: character.shared,
   };
 }

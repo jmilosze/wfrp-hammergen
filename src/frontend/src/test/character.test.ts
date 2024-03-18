@@ -87,34 +87,40 @@ const character = new Character({
   career: { id: "careerId3", number: 3 },
   attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
   attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-  skills: [
-    { id: "skillId1", number: 4 },
-    { id: "skillId2", number: 5 },
-  ],
-  talents: [
-    { id: "talentId1", number: 1 },
-    { id: "talentId2", number: 2 },
-  ],
-  equippedItems: [
-    { id: "eItemId1", number: 7 },
-    { id: "eItemId2", number: 7 },
-  ],
-  carriedItems: [
-    { id: "cItemId1", number: 8 },
-    { id: "cItemId2", number: 9 },
-    { id: "cItemId3", number: 10 },
-  ],
-  storedItems: [
-    { id: "sItemId1", number: 2 },
-    { id: "sItemId2", number: 3 },
-  ],
-  spells: ["spellId1", "spellId2"],
-  prayers: ["prayerId1", "prayerId2"],
-  mutations: ["mutationId1", "mutationId2"],
-  careerPath: [
-    { id: "careerId1", number: 1 },
-    { id: "careerId2", number: 2 },
-  ],
+  skills: {
+    skillId1: { id: "skillId1", number: 4 },
+    skillId2: { id: "skillId2", number: 5 },
+  },
+  talents: {
+    talentId1: {
+      id: "talentId1",
+      number: 1,
+    },
+    talentId2: {
+      id: "talentId2",
+      number: 2,
+    },
+  },
+  equippedItems: {
+    eItemId1: { id: "eItemId1", number: 7 },
+    eItemId2: { id: "eItemId2", number: 7 },
+  },
+  carriedItems: {
+    cItemId1: { id: "cItemId1", number: 8 },
+    cItemId2: { id: "cItemId2", number: 9 },
+    cItemId3: { id: "cItemId3", number: 10 },
+  },
+  storedItems: {
+    sItemId1: { id: "sItemId1", number: 2 },
+    sItemId2: { id: "sItemId2", number: 3 },
+  },
+  spells: new Set(["spellId1", "spellId2"]),
+  prayers: new Set(["prayerId1", "prayerId2"]),
+  mutations: new Set(["mutationId1", "mutationId2"]),
+  careerPath: {
+    careerId1: { id: "careerId1", number: 1 },
+    careerId2: { id: "careerId2", number: 2 },
+  },
   shared: true,
 });
 
@@ -128,87 +134,12 @@ test("modelToApi returns expected api item data", () => {
 
 testIsEqualCommonProperties("character", character);
 
-describe("isEqualTo returns true", () => {
-  test("when characters have different modifiers", () => {
-    const otherCharacter = character.copy();
-    otherCharacter.modifiers.size = 1;
-    otherCharacter.modifiers.movement = 1;
-    otherCharacter.modifiers.attributes.WP = 10;
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  });
-  test("when elements of careerPath are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.careerPath = [
-      { id: "careerId2", number: 2 },
-      { id: "careerId1", number: 1 },
-    ];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
-  test("when elements of skills are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.skills = [
-      { id: "skillId2", number: 5 },
-      { id: "skillId1", number: 4 },
-    ];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
-  test("when elements of talents are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.talents = [
-      { id: "talentId2", number: 2 },
-      { id: "talentId1", number: 1 },
-    ];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
-  test("when elements of equippedItems are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.equippedItems = [
-      { id: "eItemId2", number: 7 },
-      { id: "eItemId1", number: 7 },
-    ];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
-  test("when elements of carriedItems are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.carriedItems = [
-      { id: "cItemId3", number: 10 },
-      { id: "cItemId1", number: 8 },
-      { id: "cItemId2", number: 9 },
-    ];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
-  test("when elements of storedItems are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.storedItems = [
-      { id: "sItemId2", number: 3 },
-      { id: "sItemId1", number: 2 },
-    ];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
-  test("when elements of spells are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.spells = ["spellId2", "spellId1"];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
-  test("when elements of prayers are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.prayers = ["prayerId2", "prayerId1"];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
-  test("when elements of mutations are in different order");
-  {
-    const otherCharacter = character.copy();
-    otherCharacter.mutations = ["mutationId2", "mutationId1"];
-    expect(character.isEqualTo(otherCharacter)).toBe(true);
-  }
+test(" isEqualTo returns true when characters have different modifiers", () => {
+  const otherCharacter = character.copy();
+  otherCharacter.modifiers.size = 1;
+  otherCharacter.modifiers.movement = 1;
+  otherCharacter.modifiers.attributes.WP = 10;
+  expect(character.isEqualTo(otherCharacter)).toBe(true);
 });
 
 describe("isEqualTo returns false", () => {
@@ -326,10 +257,12 @@ describe("isEqualTo returns false", () => {
       { field: "WP", value: 11 },
       { field: "Fel", value: 11 },
     ])(`the difference is in $field`, (t2) => {
-      const currentValue = t1.atts[t2.field];
-      t1.atts[t2.field] = t2.value;
+      const key = t2.field as keyof typeof t1.atts;
+      const currentValue = t1.atts[key];
+      // const currentValue = t1.atts["zxc" as keyof typeof Attr]
+      t1.atts[key] = t2.value;
       expect(character.isEqualTo(otherCharacter)).toBe(false);
-      t1.atts[t2.field] = currentValue;
+      t1.atts[key] = currentValue;
     });
   });
 
