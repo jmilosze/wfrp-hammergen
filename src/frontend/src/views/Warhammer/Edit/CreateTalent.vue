@@ -15,6 +15,7 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import CharacterModifiers from "../../../components/CharacterModifiers.vue";
 import EditControls from "../../../components/EditControls.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
+import SourceTable from "../../../components/SourceTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -48,6 +49,7 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
+const validTests = computed(() => wh.value.validateTests());
 </script>
 
 <template>
@@ -59,7 +61,7 @@ const validDesc = computed(() => wh.value.validateDescription());
   <Header :title="id === 'create' ? 'Create talent' : wh.canEdit ? 'Edit talent' : wh.name" />
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4"
+    class="justify-between text-left gap-4 mt-4 mb-8"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="my-3 flex-1">
@@ -81,11 +83,33 @@ const validDesc = computed(() => wh.value.validateDescription());
       </div>
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+      <FormTextarea
+        v-model="wh.tests"
+        title="Tests"
+        :minH="24"
+        :validationStatus="validTests"
+        :disabled="!wh.canEdit"
+      />
     </div>
   </div>
-  <div class="mt-4">
+  <div class="my-8">
     <CharacterModifiers v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiers>
+  </div>
+  <div
+    ref="contentContainerRef"
+    class="justify-between text-left gap-4 my-8"
+    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+  >
+    <div class="my-3 flex-1">
+      <SourceTable
+        :disabled="!wh.canEdit"
+        :initSources="initSources"
+        @selected="(e) => wh.updateSource(e)"
+      ></SourceTable>
+    </div>
+    <div class="my-3 flex-1">
+      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+    </div>
   </div>
   <div class="mt-4">
     <AfterSubmit

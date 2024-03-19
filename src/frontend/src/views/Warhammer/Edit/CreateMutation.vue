@@ -62,7 +62,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
   <Header :title="id === 'create' ? 'Create mutation' : wh.canEdit ? 'Edit mutation' : wh.name" />
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4"
+    class="justify-between text-left gap-4 mt-4 mb-8"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="my-3 flex-1">
@@ -82,10 +82,12 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       </div>
     </div>
   </div>
-
+  <div class="my-8">
+    <CharacterModifiers v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiers>
+  </div>
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4"
+    class="justify-between text-left gap-4 my-8"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="my-3 flex-1">
@@ -98,9 +100,6 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     <div class="my-3 flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
     </div>
-  </div>
-  <div class="mt-4">
-    <CharacterModifiers v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiers>
   </div>
   <div class="mt-4">
     <AfterSubmit

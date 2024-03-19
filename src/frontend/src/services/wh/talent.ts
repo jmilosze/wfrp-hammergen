@@ -96,9 +96,16 @@ export class Talent implements WhProperty {
     return validShortDescFn(this.description);
   }
 
+  validateTests(): ValidationStatus {
+    return validShortDescFn(this.tests);
+  }
+
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
+      this.validateName().valid &&
+      this.validateDescription().valid &&
+      this.validateTests().valid &&
+      sourceIsValid(this.source)
       // Finish implementation
     );
   }
