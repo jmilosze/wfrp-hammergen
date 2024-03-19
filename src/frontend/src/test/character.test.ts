@@ -496,61 +496,71 @@ describe("getMovement returns correct value", () => {
     {
       name: printSpecies(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
-      modifier: 0,
+      talentModifier: 0,
+      mutationModifier: 0,
       expected: 4,
     },
     {
       name: printSpecies(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
-      modifier: -1,
+      talentModifier: -1,
+      mutationModifier: 0,
       expected: 3,
     },
     {
       name: printSpecies(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
-      modifier: 1,
+      talentModifier: 0,
+      mutationModifier: 1,
       expected: 5,
     },
     {
       name: printSpecies(SpeciesWithRegion.HalflingDefault),
       speciesWithRegion: SpeciesWithRegion.HalflingDefault,
-      modifier: 0,
+      talentModifier: 0,
+      mutationModifier: 0,
       expected: 3,
     },
     {
       name: printSpecies(SpeciesWithRegion.DwarfDefault),
       speciesWithRegion: SpeciesWithRegion.DwarfDefault,
-      modifier: 0,
+      talentModifier: 0,
+      mutationModifier: 0,
       expected: 3,
     },
     {
       name: printSpecies(SpeciesWithRegion.HighElfDefault),
       speciesWithRegion: SpeciesWithRegion.HighElfDefault,
-      modifier: 0,
+      talentModifier: 0,
+      mutationModifier: 0,
       expected: 5,
     },
     {
       name: printSpecies(SpeciesWithRegion.WoodElfDefault),
       speciesWithRegion: SpeciesWithRegion.WoodElfDefault,
-      modifier: 0,
+      talentModifier: 0,
+      mutationModifier: 0,
       expected: 5,
     },
     {
       name: printSpecies(SpeciesWithRegion.GnomeDefault),
       speciesWithRegion: SpeciesWithRegion.GnomeDefault,
-      modifier: 0,
+      talentModifier: 0,
+      mutationModifier: 0,
       expected: 3,
     },
     {
       name: printSpecies(SpeciesWithRegion.OgreDefault),
       speciesWithRegion: SpeciesWithRegion.OgreDefault,
-      modifier: 0,
+      talentModifier: 0,
+      mutationModifier: 0,
       expected: 6,
     },
   ])("when speciesWithRegion is $name and modifier is $modifier", (t) => {
     const char = character.copy();
     char.species = t.speciesWithRegion;
-    char.modifiers.talents.movement = t.modifier;
+    char.modifiers.talents.movement = t.talentModifier;
+    char.modifiers.mutations.movement = t.mutationModifier;
     expect(char.getMovement()).toEqual(t.expected);
   });
 });
@@ -698,7 +708,8 @@ describe("getBaseAttributes returns correct value", () => {
 describe("getTotalAttributes returns correct value", () => {
   const char = character.copy();
   char.attributeRolls = { WS: 12, BS: 1, S: 2, T: 1, I: 2, Ag: 1, Dex: 2, Int: 1, WP: 2, Fel: 0 };
-  char.modifiers.mutations.attributes = { WS: 3, BS: 4, S: 3, T: 4, I: 3, Ag: 4, Dex: 3, Int: 4, WP: 3, Fel: 1 };
+  char.modifiers.talents.attributes = { WS: 2, BS: 4, S: 3, T: 2, I: 3, Ag: 4, Dex: 0, Int: 4, WP: 3, Fel: 1 };
+  char.modifiers.mutations.attributes = { WS: 1, BS: 0, S: 0, T: 2, I: 0, Ag: 0, Dex: 3, Int: 0, WP: 0, Fel: 0 };
   char.attributeAdvances = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 10 };
   test.each([
     {
