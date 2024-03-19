@@ -3,6 +3,7 @@ import router from "../router.ts";
 import ActionButton from "./ActionButton.vue";
 import { onBeforeRouteLeave } from "vue-router";
 import { ref } from "vue";
+import DoubleRadioButton from "./DoubleRadioButton.vue";
 
 const props = defineProps<{
   readOnly: boolean;
@@ -47,17 +48,7 @@ async function onSave() {
 <template>
   <div>
     <div v-if="allowAddAnother === true && !readOnly" class="my-2">
-      <div>Add another after saving?</div>
-      <div class="flex my-3">
-        <div class="flex items-center">
-          <input v-model="addAnother" type="radio" :value="true" class="mr-2 w-5 h-5 accent-neutral-600" />
-          <div class="mr-5">Yes</div>
-        </div>
-        <div class="flex items-center">
-          <input v-model="addAnother" type="radio" :value="false" class="mr-2 w-5 h-5 accent-neutral-600" />
-          <div>No</div>
-        </div>
-      </div>
+      <DoubleRadioButton v-model="addAnother" title="Add another after saving?" trueText="Yes" falseText="No" />
     </div>
     <div class="flex flex-wrap gap-4">
       <ActionButton v-if="!readOnly" :spinner="saving" @click="onSave">Save</ActionButton>
