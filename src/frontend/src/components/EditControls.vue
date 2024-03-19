@@ -48,7 +48,13 @@ async function onSave() {
 <template>
   <div>
     <div v-if="allowAddAnother === true && !readOnly" class="my-2">
-      <DoubleRadioButton v-model="addAnother" title="Add another after saving?" trueText="Yes" falseText="No" />
+      <DoubleRadioButton
+        v-model="addAnother"
+        title="Add another after saving?"
+        trueText="Yes"
+        falseText="No"
+        class="my-3"
+      />
     </div>
     <div class="flex flex-wrap gap-4">
       <ActionButton v-if="!readOnly" :spinner="saving" @click="onSave">Save</ActionButton>

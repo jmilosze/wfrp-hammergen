@@ -11,6 +11,10 @@ import Header from "../../../components/PageHeader.vue";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
+import AfterSubmit from "../../../components/AfterSubmit.vue";
+import CharacterModifiers from "../../../components/CharacterModifiers.vue";
+import EditControls from "../../../components/EditControls.vue";
+import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 
 const props = defineProps<{
   id: string;
@@ -76,6 +80,30 @@ const validDesc = computed(() => wh.value.validateDescription());
         />
       </div>
     </div>
+    <div class="my-3 flex-1">
+      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+    </div>
+  </div>
+  <div class="mt-4">
+    <CharacterModifiers v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiers>
+  </div>
+  <div class="mt-4">
+    <AfterSubmit
+      :visible="showSubmissionStatus"
+      :submissionState="submissionState"
+      class="w-fit"
+      @close="showSubmissionStatus = false"
+    />
+
+    <EditControls
+      :saving="submissionState.status === 'inProgress'"
+      list="talents"
+      :allowAddAnother="id === 'create'"
+      :confirmExit="hasChanged"
+      :submitForm="submitForm"
+      :resetForm="resetForm"
+      :readOnly="!wh.canEdit"
+    ></EditControls>
   </div>
 </template>
 
