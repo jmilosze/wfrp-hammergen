@@ -136,9 +136,9 @@ testIsEqualCommonProperties("character", character);
 
 test(" isEqualTo returns true when characters have different modifiers", () => {
   const otherCharacter = character.copy();
-  otherCharacter.modifiers.size = 1;
-  otherCharacter.modifiers.movement = 1;
-  otherCharacter.modifiers.attributes.WP = 10;
+  otherCharacter.modifiers.mutations.size = 1;
+  otherCharacter.modifiers.talents.movement = 1;
+  otherCharacter.modifiers.talents.attributes.WP = 10;
   expect(character.isEqualTo(otherCharacter)).toBe(true);
 });
 
@@ -472,19 +472,22 @@ test("getWounds returns correct value", () => {
 
   char.attributeRolls.T = 5;
   char.attributeAdvances.T = 3;
-  char.modifiers.attributes.T = 2;
+  char.modifiers.talents.attributes.T = 1;
+  char.modifiers.mutations.attributes.T = 1;
 
   char.attributeRolls.WP = 6;
   char.attributeAdvances.WP = 5;
-  char.modifiers.attributes.WP = 2;
+  char.modifiers.talents.attributes.WP = 1;
+  char.modifiers.mutations.attributes.WP = 1;
 
   char.attributeRolls.S = 10;
   char.attributeAdvances.S = 0;
-  char.modifiers.attributes.S = 2;
+  char.modifiers.talents.attributes.S = 1;
+  char.modifiers.mutations.attributes.S = 1;
 
   // Halfling T 30, WP 43, S 22
   char.species = SpeciesWithRegion.HalflingDefault;
-  char.modifiers.size = -1;
+  char.modifiers.talents.size = -1;
   expect(char.getWounds()).toEqual(2 * 3 + 4);
 });
 
@@ -547,7 +550,7 @@ describe("getMovement returns correct value", () => {
   ])("when speciesWithRegion is $name and modifier is $modifier", (t) => {
     const char = character.copy();
     char.species = t.speciesWithRegion;
-    char.modifiers.movement = t.modifier;
+    char.modifiers.talents.movement = t.modifier;
     expect(char.getMovement()).toEqual(t.expected);
   });
 });
@@ -695,7 +698,7 @@ describe("getBaseAttributes returns correct value", () => {
 describe("getTotalAttributes returns correct value", () => {
   const char = character.copy();
   char.attributeRolls = { WS: 12, BS: 1, S: 2, T: 1, I: 2, Ag: 1, Dex: 2, Int: 1, WP: 2, Fel: 0 };
-  char.modifiers.attributes = { WS: 3, BS: 4, S: 3, T: 4, I: 3, Ag: 4, Dex: 3, Int: 4, WP: 3, Fel: 1 };
+  char.modifiers.mutations.attributes = { WS: 3, BS: 4, S: 3, T: 4, I: 3, Ag: 4, Dex: 3, Int: 4, WP: 3, Fel: 1 };
   char.attributeAdvances = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 10 };
   test.each([
     {

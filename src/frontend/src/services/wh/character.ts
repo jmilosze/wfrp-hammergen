@@ -102,7 +102,7 @@ export class Character implements WhProperty {
   mutations: Set<string>;
   shared: boolean;
   source: Source;
-  modifiers: CharacterModifiers;
+  modifiers: { talents: CharacterModifiers; mutations: CharacterModifiers };
 
   constructor({
     id = "",
@@ -138,7 +138,7 @@ export class Character implements WhProperty {
     mutations = new Set<string>(),
     shared = false,
     source = {},
-    modifiers = new CharacterModifiers(),
+    modifiers = { talents: new CharacterModifiers(), mutations: new CharacterModifiers() },
   } = {}) {
     this.id = id;
     this.canEdit = canEdit;
@@ -256,7 +256,7 @@ export class Character implements WhProperty {
       mutations: new Set(this.mutations),
       shared: this.shared,
       source: copySource(this.source),
-      modifiers: this.modifiers.copy(),
+      modifiers: { talents: this.modifiers.talents.copy(), mutations: this.modifiers.mutations.copy() },
     });
   }
 
@@ -276,7 +276,7 @@ export class Character implements WhProperty {
   }
 
   getMovement(): number {
-    return getMovementFormula(this.species) + this.modifiers.movement;
+    return getMovementFormula(this.species) + this.modifiers.talents.movement + this.modifiers.mutations.movement;
   }
 
   getRacialAttributes(): Attributes {
@@ -288,12 +288,20 @@ export class Character implements WhProperty {
   }
 
   getTotalAttributes(): Attributes {
-    return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.modifiers.attributes);
+    return sumAttributes(
+      sumAttributes(this.getBaseAttributes(), this.attributeAdvances),
+      sumAttributes(this.modifiers.talents.attributes, this.modifiers.mutations.attributes),
+    );
   }
 
   getWounds() {
     const attributeTotal = this.getTotalAttributes();
-    return getWoundsFormula(DEFAULT_SIZE + this.modifiers.size, attributeTotal.T, attributeTotal.WP, attributeTotal.S);
+    return getWoundsFormula(
+      DEFAULT_SIZE + this.modifiers.talents.size + this.modifiers.mutations.size,
+      attributeTotal.T,
+      attributeTotal.WP,
+      attributeTotal.S,
+    );
   }
 }
 
@@ -335,7 +343,7 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     mutations: new Set(characterApi.object.mutations),
     shared: characterApi.object.shared,
     source: {},
-    modifiers: new CharacterModifiers(),
+    modifiers: { talents: new CharacterModifiers(), mutations: new CharacterModifiers() },
   });
 
   return newCharacter.copy();
