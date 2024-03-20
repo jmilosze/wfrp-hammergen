@@ -69,10 +69,10 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
   <Header :title="id === 'create' ? 'Create quality/rune' : wh.canEdit ? 'Edit quality/rune' : wh.name" />
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4"
+    class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
         <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type"></SelectInput>
@@ -84,7 +84,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
         ></MultipleCheckboxInput>
       </div>
     </div>
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormTextarea
           v-model="wh.description"
@@ -98,17 +98,17 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
 
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4"
+    class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <SourceTable
         :disabled="!wh.canEdit"
         :initSources="initSources"
         @selected="(e) => wh.updateSource(e)"
       ></SourceTable>
     </div>
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
     </div>
   </div>

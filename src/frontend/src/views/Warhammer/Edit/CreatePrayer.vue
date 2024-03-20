@@ -61,10 +61,10 @@ const validDuration = computed(() => wh.value.validateDuration());
   <Header :title="id === 'create' ? 'Create prayer' : wh.canEdit ? 'Edit prayer' : wh.name" />
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4"
+    class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
         <FormTextarea
@@ -75,7 +75,7 @@ const validDuration = computed(() => wh.value.validateDuration());
         />
       </div>
     </div>
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!wh.canEdit" />
         <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!wh.canEdit" />
@@ -86,17 +86,17 @@ const validDuration = computed(() => wh.value.validateDuration());
 
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4"
+    class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <SourceTable
         :disabled="!wh.canEdit"
         :initSources="initSources"
         @selected="(e) => wh.updateSource(e)"
       ></SourceTable>
     </div>
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Prayer" :disabled="!wh.canEdit" />
     </div>
   </div>

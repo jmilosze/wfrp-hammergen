@@ -61,10 +61,10 @@ const validTests = computed(() => wh.value.validateTests());
   <Header :title="id === 'create' ? 'Create talent' : wh.canEdit ? 'Edit talent' : wh.name" />
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4 mt-4 mb-8"
+    class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
         <DoubleRadioButton
@@ -82,7 +82,7 @@ const validTests = computed(() => wh.value.validateTests());
         />
       </div>
     </div>
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <FormTextarea
         v-model="wh.tests"
         title="Tests"
@@ -92,12 +92,12 @@ const validTests = computed(() => wh.value.validateTests());
       />
     </div>
   </div>
-  <div class="my-8">
+  <div class="my-4">
     <CharacterModifiers v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiers>
   </div>
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4 my-8"
+    class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
     <div class="my-3 flex-1">

@@ -62,16 +62,16 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
   <Header :title="id === 'create' ? 'Create mutation' : wh.canEdit ? 'Edit mutation' : wh.name" />
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4 mt-4 mb-8"
+    class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
         <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type"></SelectInput>
       </div>
     </div>
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormTextarea
           v-model="wh.description"
@@ -82,22 +82,22 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       </div>
     </div>
   </div>
-  <div class="my-8">
+  <div class="my-4">
     <CharacterModifiers v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiers>
   </div>
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4 my-8"
+    class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
   >
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <SourceTable
         :disabled="!wh.canEdit"
         :initSources="initSources"
         @selected="(e) => wh.updateSource(e)"
       ></SourceTable>
     </div>
-    <div class="my-3 flex-1">
+    <div class="flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
     </div>
   </div>
