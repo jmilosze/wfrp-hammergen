@@ -16,6 +16,8 @@ import CharacterModifiers from "../../../components/CharacterModifiers.vue";
 import EditControls from "../../../components/EditControls.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
+import SelectInput from "../../../components/SelectInput.vue";
+import { attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
 
 const props = defineProps<{
   id: string;
@@ -50,6 +52,8 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validTests = computed(() => wh.value.validateTests());
+
+const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(x), value: x })));
 </script>
 
 <template>
@@ -83,13 +87,30 @@ const validTests = computed(() => wh.value.validateTests());
       </div>
     </div>
     <div class="flex-1">
-      <FormTextarea
-        v-model="wh.tests"
-        title="Tests"
-        :minH="24"
-        :validationStatus="validTests"
-        :disabled="!wh.canEdit"
-      />
+      <div class="flex flex-col gap-4">
+        <div>
+          <p class="mb-1">Max rank</p>
+          <div class="inline-flex items-center flex-wrap">
+            <SelectInput
+              v-model="wh.attribute"
+              :options="attOptions"
+              :disabled="!wh.canEdit"
+              class="grow-1 min-w-24"
+            ></SelectInput>
+            <div class="shrink-0 px-4">Bonus +</div>
+            <div class="flex-1 min-w-24">
+              <FormInput v-model="wh.maxRank" :validationStatus="validName" :disabled="!wh.canEdit" type="number" />
+            </div>
+          </div>
+        </div>
+        <FormTextarea
+          v-model="wh.tests"
+          title="Tests"
+          :minH="24"
+          :validationStatus="validTests"
+          :disabled="!wh.canEdit"
+        />
+      </div>
     </div>
   </div>
   <div class="my-4">
