@@ -90,17 +90,15 @@ const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(
       <div class="flex flex-col gap-4">
         <div>
           <p class="mb-1">Max rank</p>
-          <div class="inline-flex items-center flex-wrap">
+          <div class="flex items-center">
             <SelectInput
               v-model="wh.attribute"
               :options="attOptions"
               :disabled="!wh.canEdit"
-              class="grow-1 min-w-24"
+              class="min-w-24"
             ></SelectInput>
-            <div class="shrink-0 px-4">Bonus +</div>
-            <div class="flex-1 min-w-24">
-              <FormInput v-model="wh.maxRank" :validationStatus="validName" :disabled="!wh.canEdit" type="number" />
-            </div>
+            <div class="shrink-0 mx-4">Bonus +</div>
+            <FormInput v-model="wh.maxRank" :validationStatus="validName" :disabled="!wh.canEdit" type="number" />
           </div>
         </div>
         <FormTextarea
