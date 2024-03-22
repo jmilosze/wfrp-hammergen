@@ -88,7 +88,7 @@ const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <div>
+        <div class="overflow-auto">
           <p class="mb-1">Max rank</p>
           <div class="flex items-center">
             <SelectInput
@@ -98,7 +98,13 @@ const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(
               class="min-w-24"
             ></SelectInput>
             <div class="shrink-0 mx-4">Bonus +</div>
-            <FormInput v-model="wh.maxRank" :validationStatus="validName" :disabled="!wh.canEdit" type="number" />
+            <FormInput
+              v-model="wh.maxRank"
+              :validationStatus="validName"
+              :disabled="!wh.canEdit"
+              type="number"
+              class="min-w-14"
+            />
           </div>
         </div>
         <FormTextarea
