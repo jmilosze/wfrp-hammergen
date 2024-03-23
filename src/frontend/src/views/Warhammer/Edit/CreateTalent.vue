@@ -136,7 +136,10 @@ watch(
     </div>
   </div>
   <div class="my-4">
-    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiersBlock>
+    <CharacterModifiersBlock
+      v-model="wh.modifiers"
+      :disabled="!wh.canEdit || daisableIndividualFields"
+    ></CharacterModifiersBlock>
   </div>
   <div
     ref="contentContainerRef"
