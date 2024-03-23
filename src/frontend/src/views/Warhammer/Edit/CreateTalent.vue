@@ -19,6 +19,7 @@ import SourceTable from "../../../components/SourceTable.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
 import { CharacterModifiers } from "../../../services/wh/characterModifiers.ts";
+import SelectTable from "../../../components/SelectTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -132,6 +133,7 @@ watch(
           :validationStatus="validTests"
           :disabled="!wh.canEdit || daisableIndividualFields"
         />
+        <SelectTable :disabled="!wh.canEdit || daisableIndividualFields" title="Belongs to group"></SelectTable>
       </div>
     </div>
   </div>
