@@ -3,7 +3,7 @@ import { defaultSource } from "../../../services/wh/source.ts";
 import { Talent, TalentApi } from "../../../services/wh/talent.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
@@ -12,12 +12,13 @@ import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
-import CharacterModifiers from "../../../components/CharacterModifiers.vue";
+import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 import EditControls from "../../../components/EditControls.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import SelectInput from "../../../components/SelectInput.vue";
-import { attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
+import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
+import { CharacterModifiers } from "../../../services/wh/characterModifiers.ts";
 
 const props = defineProps<{
   id: string;
@@ -54,6 +55,23 @@ const validDesc = computed(() => wh.value.validateDescription());
 const validTests = computed(() => wh.value.validateTests());
 
 const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(x), value: x })));
+
+const daisableIndividualFields = ref(false);
+watch(
+  () => wh.value.isGroup,
+  (newVal) => {
+    if (newVal) {
+      wh.value.group = new Set<string>();
+      wh.value.tests = "";
+      wh.value.maxRank = 0;
+      wh.value.attribute = AttributeName.None;
+      wh.value.modifiers = new CharacterModifiers();
+      daisableIndividualFields.value = true;
+    } else {
+      daisableIndividualFields.value = false;
+    }
+  },
+);
 </script>
 
 <template>
@@ -94,14 +112,14 @@ const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(
             <SelectInput
               v-model="wh.attribute"
               :options="attOptions"
-              :disabled="!wh.canEdit"
+              :disabled="!wh.canEdit || daisableIndividualFields"
               class="min-w-24"
             ></SelectInput>
             <div class="shrink-0 mx-4">Bonus +</div>
             <FormInput
               v-model="wh.maxRank"
               :validationStatus="validName"
-              :disabled="!wh.canEdit"
+              :disabled="!wh.canEdit || daisableIndividualFields"
               type="number"
               class="min-w-14"
             />
@@ -112,13 +130,13 @@ const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(
           title="Tests"
           :minH="24"
           :validationStatus="validTests"
-          :disabled="!wh.canEdit"
+          :disabled="!wh.canEdit || daisableIndividualFields"
         />
       </div>
     </div>
   </div>
   <div class="my-4">
-    <CharacterModifiers v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiers>
+    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiersBlock>
   </div>
   <div
     ref="contentContainerRef"

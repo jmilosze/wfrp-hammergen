@@ -15,7 +15,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import EditControls from "../../../components/EditControls.vue";
-import CharacterModifiers from "../../../components/CharacterModifiers.vue";
+import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 
 const props = defineProps<{
   id: string;
@@ -83,7 +83,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     </div>
   </div>
   <div class="my-4">
-    <CharacterModifiers v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiers>
+    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiersBlock>
   </div>
   <div
     ref="contentContainerRef"
