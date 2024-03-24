@@ -1,11 +1,41 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
+import { computed, ref, Ref, watch } from "vue";
 
+interface itemWithSelect {
+  item: { name: string; id: string; description: string };
+  selected: boolean;
+}
 const props = defineProps<{
   disabled?: boolean;
   title?: string;
-  itemList: { name: string; id: string; description: string; selected: boolean }[];
+  itemList: { name: string; id: string; description: string }[];
+  initSelectedItems: Set<string>;
 }>();
+
+const itemsWithSelect: Ref<Record<string, itemWithSelect>> = ref({});
+const itemsWithSelectList: Ref<itemWithSelect[]> = ref([]);
+
+watch(
+  () => props.initSelectedItems,
+  (newVal) => {
+    itemsWithSelect.value = {};
+    for (const item of props.itemList) {
+      itemsWithSelect.value[item.id] = { item: item, selected: false };
+      if (newVal && newVal.has(item.id)) {
+        itemsWithSelect.value[item.id].selected = true;
+      }
+    }
+    itemsWithSelectList.value = Object.values(itemsWithSelect.value).sort((a, b) =>
+      a.item.name.localeCompare(b.item.name),
+    );
+  },
+  { immediate: true },
+);
+
+function updateItemsWithSelect();
+
+const selectedItems = computed(() => itemsWithSelectList.value.filter((x) => x.selected));
 </script>
 
 <template>
