@@ -4,6 +4,7 @@ import ActionButton from "./ActionButton.vue";
 const props = defineProps<{
   disabled?: boolean;
   title?: string;
+  itemList: { name: string; id: string; description: string; selected: boolean }[];
 }>();
 </script>
 

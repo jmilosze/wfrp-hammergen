@@ -20,6 +20,7 @@ import SelectInput from "../../../components/SelectInput.vue";
 import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
 import { CharacterModifiers } from "../../../services/wh/characterModifiers.ts";
 import SelectTable from "../../../components/SelectTable.vue";
+import { useWhList } from "../../../composables/whList.ts";
 
 const props = defineProps<{
   id: string;
@@ -45,6 +46,10 @@ const {
   resetForm,
   showSubmissionStatus,
 } = useWhEdit(newTalent, new TalentApi(authRequest));
+
+const { whList, loadWhList } = useWhList(new TalentApi(authRequest));
+
+loadWhList();
 
 await loadWh(props.id);
 
@@ -133,7 +138,11 @@ watch(
           :validationStatus="validTests"
           :disabled="!wh.canEdit || daisableIndividualFields"
         />
-        <SelectTable :disabled="!wh.canEdit || daisableIndividualFields" title="Belongs to group"></SelectTable>
+        <SelectTable
+          :disabled="!wh.canEdit || daisableIndividualFields"
+          :itemList="whList"
+          title="Belongs to group"
+        ></SelectTable>
       </div>
     </div>
   </div>
