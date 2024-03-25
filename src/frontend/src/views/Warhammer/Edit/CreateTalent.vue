@@ -140,6 +140,7 @@ watch(
         />
         <SelectTable
           :disabled="!wh.canEdit || daisableIndividualFields"
+          :initSelectedItems="wh.group"
           :itemList="whList"
           title="Belongs to group"
         ></SelectTable>
