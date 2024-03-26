@@ -62,7 +62,7 @@ const validTests = computed(() => wh.value.validateTests());
 
 const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(x), value: x })));
 
-const daisableIndividualFields = ref(false);
+const disableIndividualFields = ref(false);
 watch(
   () => wh.value.isGroup,
   (newVal) => {
@@ -72,9 +72,9 @@ watch(
       wh.value.maxRank = 0;
       wh.value.attribute = AttributeName.None;
       wh.value.modifiers = new CharacterModifiers();
-      daisableIndividualFields.value = true;
+      disableIndividualFields.value = true;
     } else {
-      daisableIndividualFields.value = false;
+      disableIndividualFields.value = false;
     }
   },
 );
@@ -118,14 +118,14 @@ watch(
             <SelectInput
               v-model="wh.attribute"
               :options="attOptions"
-              :disabled="!wh.canEdit || daisableIndividualFields"
+              :disabled="!wh.canEdit || disableIndividualFields"
               class="min-w-24"
             ></SelectInput>
             <div class="shrink-0 mx-4">Bonus +</div>
             <FormInput
               v-model="wh.maxRank"
               :validationStatus="validName"
-              :disabled="!wh.canEdit || daisableIndividualFields"
+              :disabled="!wh.canEdit || disableIndividualFields"
               type="number"
               class="min-w-14"
             />
@@ -136,10 +136,10 @@ watch(
           title="Tests"
           :minH="24"
           :validationStatus="validTests"
-          :disabled="!wh.canEdit || daisableIndividualFields"
+          :disabled="!wh.canEdit || disableIndividualFields"
         />
         <SelectTable
-          :disabled="!wh.canEdit || daisableIndividualFields"
+          :disabled="!wh.canEdit || disableIndividualFields"
           :initSelectedItems="wh.group"
           :itemList="whList"
           title="Belongs to group"
@@ -150,7 +150,7 @@ watch(
   <div class="my-4">
     <CharacterModifiersBlock
       v-model="wh.modifiers"
-      :disabled="!wh.canEdit || daisableIndividualFields"
+      :disabled="!wh.canEdit || disableIndividualFields"
     ></CharacterModifiersBlock>
   </div>
   <div
