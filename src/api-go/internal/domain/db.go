@@ -9,6 +9,7 @@ const (
 	DbInvalidUserFieldError
 	DbNotImplementedError
 	DbWriteToDbError
+	DbInvalidIdError
 )
 
 type DbError struct {
