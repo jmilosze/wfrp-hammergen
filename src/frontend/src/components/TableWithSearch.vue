@@ -17,6 +17,7 @@ const props = defineProps<{
   stackedViewSize: ViewSize;
   modelValue: string;
   addCreateNewBtn?: boolean;
+  elementId?: string;
 }>();
 
 const emit = defineEmits<{
@@ -67,13 +68,29 @@ function searchInRow(row: TableRow): boolean {
 onUpdated(() => {
   if (needToScroll.value === "top") {
     needToScroll.value = "no";
-    window.scroll(0, 0);
+    if (props.elementId) {
+      const element = document.getElementById(props.elementId);
+      if (element) {
+        element.scroll(0, 0);
+      }
+    } else {
+      window.scroll(0, 0);
+    }
+
     return;
   }
 
   if (needToScroll.value === "bottom") {
     needToScroll.value = "no";
-    window.scroll(0, document.body.scrollHeight);
+    if (props.elementId) {
+      const element = document.getElementById(props.elementId);
+      if (element) {
+        element.scroll(0, element.scrollHeight);
+      }
+    } else {
+      window.scroll(0, document.body.scrollHeight);
+    }
+
     return;
   }
 });

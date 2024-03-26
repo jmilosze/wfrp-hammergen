@@ -106,6 +106,7 @@ function onModifyClick() {
           :fields="modalColumns"
           :items="itemsWithSelectList"
           :stackedViewSize="ViewSize.zero"
+          elementId="modal"
         >
           <template #selected="{ id }: { id: string }">
             <input v-model="itemsWithSelect[id].selected" type="checkbox" class="w-5 h-5 accent-neutral-600" />
