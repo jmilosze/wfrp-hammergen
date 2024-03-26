@@ -3,7 +3,7 @@ import { defaultSource } from "../../../services/wh/source.ts";
 import { Talent, TalentApi } from "../../../services/wh/talent.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { computed, ref, watch } from "vue";
+import { computed, Ref, ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
@@ -48,8 +48,17 @@ const {
 } = useWhEdit(newTalent, new TalentApi(authRequest));
 
 const { whList, loadWhList } = useWhList(new TalentApi(authRequest));
+const groupTalents: Ref<Talent[]> = ref([]);
 
 loadWhList();
+
+watch(
+  () => whList,
+  (newValue) => {
+    groupTalents.value = newValue.value.filter((x) => x.isGroup);
+  },
+  { immediate: true, deep: true },
+);
 
 await loadWh(props.id);
 
@@ -141,7 +150,7 @@ watch(
         <SelectTable
           :disabled="!wh.canEdit || disableIndividualFields"
           :initSelectedItems="wh.group"
-          :itemList="whList"
+          :itemList="groupTalents"
           title="Belongs to group"
         ></SelectTable>
       </div>
