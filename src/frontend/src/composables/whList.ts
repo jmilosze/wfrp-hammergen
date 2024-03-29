@@ -15,14 +15,21 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
   const whList: Ref<T[]> = ref([]);
   const apiError = ref("");
   const showApiError = ref(true);
+  const loading = ref(false);
 
   async function loadWhList(): Promise<void> {
+    if (loading.value) {
+      return;
+    }
+
+    loading.value = true;
     showApiError.value = true;
     try {
       whList.value = await auth.callAndLogoutIfUnauthorized(elementApi.listElements)();
     } catch (error) {
       apiError.value = "Error. Could not pull data from server.";
     }
+    loading.value = false;
   }
 
   async function copyWh(whId: string): Promise<void> {
@@ -70,5 +77,5 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
     return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
   });
 
-  return { whList, apiError, showApiError, loadWhList, copyWh, deleteWh, filteredSourceOptions, whToDelete };
+  return { whList, apiError, showApiError, loadWhList, loading, copyWh, deleteWh, filteredSourceOptions, whToDelete };
 }

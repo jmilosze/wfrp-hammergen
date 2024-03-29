@@ -50,7 +50,7 @@ const {
   showSubmissionStatus,
 } = useWhEdit(newTalent, new TalentApi(authRequest));
 
-const { whList, loadWhList } = useWhList(new TalentApi(authRequest));
+const { whList, loadWhList, loading } = useWhList(new TalentApi(authRequest));
 const groupTalents: Ref<Talent[]> = ref([]);
 
 loadWhList();
@@ -156,6 +156,7 @@ watch(
           :itemList="groupTalents"
           title="Belongs to group"
           modalTitle="Modify groups"
+          :loading="loading"
           @createNew="openInNewTab('talent', { id: 'create' })"
           @reload="loadWhList"
         ></SelectTable>

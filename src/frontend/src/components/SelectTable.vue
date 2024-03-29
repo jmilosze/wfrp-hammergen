@@ -5,6 +5,7 @@ import { ViewSize } from "../utils/viewSize.ts";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
+import SpinnerAnimation from "./SpinnerAnimation.vue";
 
 type itemWithSelect = {
   id: string;
@@ -19,6 +20,7 @@ const props = defineProps<{
   modalTitle?: string;
   itemList: { name: string; id: string; description: string }[];
   initSelectedItems: Set<string>;
+  loading?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -85,7 +87,10 @@ function onModifyClick() {
       <div v-if="title" class="mr-2">{{ title }}</div>
       <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
     </div>
-    <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+    <div v-if="props.loading" class="flex justify-center">
+      <SpinnerAnimation class="w-14 m-2" />
+    </div>
+    <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
       <table class="w-full">
         <thead>
           <tr class="text-left">
@@ -107,30 +112,29 @@ function onModifyClick() {
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>
-      <div class="">
-        <TableWithSearch
-          v-model="searchTerm"
-          :fields="modalColumns"
-          :items="itemsWithSelectList"
-          :stackedViewSize="ViewSize.sm"
-          :addCreateNewBtn="true"
-          :addReloadBtn="true"
-          elementId="modal"
-          @createNew="emit('createNew')"
-          @reload="emit('reload')"
-        >
-          <template #selected="{ id }: { id: string }">
-            <div>
-              <input
-                v-model="itemsWithSelect[id].selected"
-                type="checkbox"
-                class="w-5 h-5 accent-neutral-600"
-                @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
-              />
-            </div>
-          </template>
-        </TableWithSearch>
-      </div>
+      <TableWithSearch
+        v-model="searchTerm"
+        :fields="modalColumns"
+        :items="itemsWithSelectList"
+        :stackedViewSize="ViewSize.sm"
+        :addCreateNewBtn="true"
+        :addReloadBtn="true"
+        :loading="props.loading"
+        elementId="modal"
+        @createNew="emit('createNew')"
+        @reload="emit('reload')"
+      >
+        <template #selected="{ id }: { id: string }">
+          <div>
+            <input
+              v-model="itemsWithSelect[id].selected"
+              type="checkbox"
+              class="w-5 h-5 accent-neutral-600"
+              @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
+            />
+          </div>
+        </template>
+      </TableWithSearch>
     </ModalWindow>
   </div>
 </template>
