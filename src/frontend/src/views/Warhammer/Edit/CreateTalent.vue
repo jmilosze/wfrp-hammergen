@@ -21,6 +21,7 @@ import { AttributeName, attributeNameList, printAttributeName } from "../../../s
 import { CharacterModifiers } from "../../../services/wh/characterModifiers.ts";
 import SelectTable from "../../../components/SelectTable.vue";
 import { useWhList } from "../../../composables/whList.ts";
+import { useNewTab } from "../../../composables/newTab.ts";
 
 const props = defineProps<{
   id: string;
@@ -33,6 +34,8 @@ const newTalent = new Talent({
   shared: true,
   source: defaultSource(),
 });
+
+const { openInNewTab } = useNewTab();
 
 const {
   wh,
@@ -153,6 +156,7 @@ watch(
           :itemList="groupTalents"
           title="Belongs to group"
           modalTitle="Modify groups"
+          @createNew="openInNewTab('talent', { id: 'create' })"
         ></SelectTable>
       </div>
     </div>
