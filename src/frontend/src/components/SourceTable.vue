@@ -103,12 +103,14 @@ function onModifyClick() {
           :stackedViewSize="ViewSize.sm"
         >
           <template #selected="{ id }: { id: string }">
-            <input
-              v-model="sources[id].selected"
-              type="checkbox"
-              class="w-5 h-5 accent-neutral-600"
-              @input="emit('selected', { id: id, notes: sources[id].notes, selected: !sources[id].selected })"
-            />
+            <div>
+              <input
+                v-model="sources[id].selected"
+                type="checkbox"
+                class="w-5 h-5 accent-neutral-600"
+                @input="emit('selected', { id: id, notes: sources[id].notes, selected: !sources[id].selected })"
+              />
+            </div>
           </template>
 
           <template #notes="{ id }: { id: string }">

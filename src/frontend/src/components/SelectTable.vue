@@ -16,6 +16,7 @@ type itemWithSelect = {
 const props = defineProps<{
   disabled?: boolean;
   title?: string;
+  modalTitle?: string;
   itemList: { name: string; id: string; description: string }[];
   initSelectedItems: Set<string>;
 }>();
@@ -96,7 +97,7 @@ function onModifyClick() {
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
     <ModalWindow id="modifyItemsModal">
-      <template #header> Modify stuff </template>
+      <template #header> {{ modalTitle }} </template>
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>

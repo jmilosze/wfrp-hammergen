@@ -152,6 +152,7 @@ watch(
           :initSelectedItems="wh.group"
           :itemList="groupTalents"
           title="Belongs to group"
+          modalTitle="Modify groups"
         ></SelectTable>
       </div>
     </div>
