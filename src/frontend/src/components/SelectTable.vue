@@ -105,11 +105,15 @@ function onModifyClick() {
           v-model="searchTerm"
           :fields="modalColumns"
           :items="itemsWithSelectList"
-          :stackedViewSize="ViewSize.zero"
+          :stackedViewSize="ViewSize.sm"
+          :addCreateNewBtn="true"
+          :addReloadBtn="true"
           elementId="modal"
         >
           <template #selected="{ id }: { id: string }">
-            <input v-model="itemsWithSelect[id].selected" type="checkbox" class="w-5 h-5 accent-neutral-600" />
+            <div>
+              <input v-model="itemsWithSelect[id].selected" type="checkbox" class="w-5 h-5 accent-neutral-600" />
+            </div>
           </template>
         </TableWithSearch>
       </div>

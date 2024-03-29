@@ -17,6 +17,7 @@ const props = defineProps<{
   stackedViewSize: ViewSize;
   modelValue: string;
   addCreateNewBtn?: boolean;
+  addReloadBtn?: boolean;
   elementId?: string;
 }>();
 
@@ -102,6 +103,7 @@ onUpdated(() => {
       <ActionButton v-if="addCreateNewBtn" class="mr-2 mb-2 shrink-0" @click="emit('createNew')"
         >Create new</ActionButton
       >
+      <ActionButton v-if="addReloadBtn" class="mr-2 mb-2 shrink-0">Reload</ActionButton>
       <input
         v-model="searchTerm"
         type="text"

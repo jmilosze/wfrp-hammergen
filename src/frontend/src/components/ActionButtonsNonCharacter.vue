@@ -18,11 +18,11 @@ const auth = useAuth();
 
 <template>
   <div class="flex">
-    <ActionButton size="sm" class="mx-1" @click="emit('edit', id)">{{ canEdit ? "View/Edit" : "View" }}</ActionButton>
+    <ActionButton size="sm" @click="emit('edit', id)">{{ canEdit ? "View/Edit" : "View" }}</ActionButton>
     <ActionButton v-if="auth.loggedIn" size="sm" variant="amber" class="mx-1" @click="emit('copy', id)"
       >Copy</ActionButton
     >
-    <ActionButton v-if="canEdit" size="sm" variant="red" class="mx-1" @click="emit('delete', id)">Delete</ActionButton>
+    <ActionButton v-if="canEdit" size="sm" variant="red" @click="emit('delete', id)">Delete</ActionButton>
   </div>
 </template>
 
