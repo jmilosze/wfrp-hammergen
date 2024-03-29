@@ -157,6 +157,7 @@ watch(
           title="Belongs to group"
           modalTitle="Modify groups"
           @createNew="openInNewTab('talent', { id: 'create' })"
+          @reload="loadWhList"
         ></SelectTable>
       </div>
     </div>
