@@ -10,7 +10,7 @@ import TableWithSearch from "./TableWithSearch.vue";
 const props = defineProps<{ initSources: Record<string, string>; disabled?: boolean }>();
 
 const emit = defineEmits<{
-  (e: "selected", modelValue: { id: string; notes: string; selected: boolean }): void;
+  (e: "selected", value: { id: string; notes: string; selected: boolean }): void;
 }>();
 
 const modal = useModal();

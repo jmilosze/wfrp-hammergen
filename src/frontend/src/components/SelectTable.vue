@@ -21,6 +21,12 @@ const props = defineProps<{
   initSelectedItems: Set<string>;
 }>();
 
+const emit = defineEmits<{
+  (e: "selected", value: { id: string; selected: boolean }): void;
+  (e: "createNew"): void;
+  (e: "reload"): void;
+}>();
+
 const itemsWithSelect: Ref<Record<string, itemWithSelect>> = ref({});
 const itemsWithSelectList: Ref<itemWithSelect[]> = ref([]);
 
@@ -110,10 +116,17 @@ function onModifyClick() {
           :addCreateNewBtn="true"
           :addReloadBtn="true"
           elementId="modal"
+          @createNew="emit('createNew')"
+          @reload="emit('reload')"
         >
           <template #selected="{ id }: { id: string }">
             <div>
-              <input v-model="itemsWithSelect[id].selected" type="checkbox" class="w-5 h-5 accent-neutral-600" />
+              <input
+                v-model="itemsWithSelect[id].selected"
+                type="checkbox"
+                class="w-5 h-5 accent-neutral-600"
+                @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
+              />
             </div>
           </template>
         </TableWithSearch>
