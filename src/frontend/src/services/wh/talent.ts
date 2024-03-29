@@ -164,6 +164,24 @@ export class Talent implements WhProperty {
       return constPart + bonusPart;
     }
   }
+
+  modifyGroup(id: string, selected: boolean) {
+    if (selected) {
+      if (this.group.has(id)) {
+        // do nothing
+        return;
+      } else {
+        this.group.add(id);
+      }
+    } else {
+      if (this.group.has(id)) {
+        this.group.delete(id);
+        return;
+      } else {
+        // do nothing
+      }
+    }
+  }
 }
 
 export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talent {

@@ -58,7 +58,7 @@ loadWhList();
 watch(
   () => whList,
   (newValue) => {
-    groupTalents.value = newValue.value.filter((x) => x.isGroup);
+    groupTalents.value = newValue.value.filter((x) => x.isGroup && x.id !== wh.value.id);
   },
   { immediate: true, deep: true },
 );
@@ -159,6 +159,7 @@ watch(
           :loading="loading"
           @createNew="openInNewTab('talent', { id: 'create' })"
           @reload="loadWhList"
+          @selected="(e) => wh.modifyGroup(e.id, e.selected)"
         ></SelectTable>
       </div>
     </div>
