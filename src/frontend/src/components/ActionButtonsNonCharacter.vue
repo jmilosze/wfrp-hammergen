@@ -17,7 +17,7 @@ const auth = useAuth();
 </script>
 
 <template>
-  <div class="flex gap-2">
+  <div class="flex gap-2 my-1">
     <ActionButton size="sm" @click="emit('edit', id)">{{ canEdit ? "View/Edit" : "View" }}</ActionButton>
     <ActionButton v-if="auth.loggedIn.value" size="sm" variant="amber" @click="emit('copy', id)">Copy</ActionButton>
     <ActionButton v-if="canEdit" size="sm" variant="red" @click="emit('delete', id)">Delete</ActionButton>

@@ -59,7 +59,9 @@ function updateItemsWithSelect(
       itemsWithSelect.value[item.id].selected = true;
     }
   }
-  itemsWithSelectList.value = Object.values(itemsWithSelect.value).sort((a, b) => a.name.localeCompare(b.name));
+  itemsWithSelectList.value = Object.values(itemsWithSelect.value).sort((a, b) => {
+    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
+  });
 }
 
 const selectedItems = computed(() => itemsWithSelectList.value.filter((x) => x.selected));
@@ -129,7 +131,7 @@ function onModifyClick() {
             <input
               v-model="itemsWithSelect[id].selected"
               type="checkbox"
-              class="w-5 h-5 accent-neutral-600"
+              class="w-5 h-5 accent-neutral-600 my-1"
               @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
             />
           </div>
