@@ -89,6 +89,7 @@ watch(
       disableIndividualFields.value = false;
     }
   },
+  { immediate: true },
 );
 </script>
 
