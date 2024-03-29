@@ -100,7 +100,7 @@ function onModifyClick() {
           v-model="searchTerm"
           :fields="modalColumns"
           :items="sourcesList"
-          :stackedViewSize="ViewSize.zero"
+          :stackedViewSize="ViewSize.sm"
         >
           <template #selected="{ id }: { id: string }">
             <input
