@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import { Skill, SkillApi } from "../../../services/wh/skill.ts";
+import { printSkillType, Skill, SkillApi, SkillType, skillTypeList } from "../../../services/wh/skill.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
 import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
@@ -11,10 +11,10 @@ import { computed, ref, Ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
-import FormTextarea from "../../../components/FormTextarea.vue";
 import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
+import { CharacterModifiers } from "../../../services/wh/characterModifiers.ts";
 
 const props = defineProps<{
   id: string;
@@ -67,6 +67,30 @@ const validDesc = computed(() => wh.value.validateDescription());
 const attOptions = attributeNameList
   .filter((x) => x !== AttributeName.None && x !== AttributeName.Various)
   .map((x) => ({ text: printAttributeName(x), value: x }));
+
+const typeOpts = computed(() => {
+  if (wh.value.isGroup) {
+    return skillTypeList.map((x) => ({ text: printSkillType(x), value: x }));
+  } else {
+    return skillTypeList.filter((x) => x !== SkillType.Mixed).map((x) => ({ text: printSkillType(x), value: x }));
+  }
+});
+
+const disableIndividualFields = ref(false);
+watch(
+  () => wh.value.isGroup,
+  (newVal) => {
+    if (newVal) {
+      disableIndividualFields.value = true;
+    } else {
+      if (wh.value.type === SkillType.Mixed) {
+        wh.value.type = SkillType.Basic;
+      }
+      disableIndividualFields.value = false;
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -95,6 +119,14 @@ const attOptions = attributeNameList
           v-model="wh.attribute"
           :options="attOptions"
           :disabled="!wh.canEdit"
+          title="Attribute"
+          class="min-w-24"
+        ></SelectInput>
+        <SelectInput
+          v-model="wh.type"
+          :options="typeOpts"
+          :disabled="!wh.canEdit"
+          title="Type"
           class="min-w-24"
         ></SelectInput>
       </div>
