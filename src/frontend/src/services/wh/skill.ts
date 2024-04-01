@@ -9,7 +9,7 @@ import {
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
-import { AttributeName } from "./attributes.ts";
+import { AttributeName, attributeNameList } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
 
@@ -203,4 +203,16 @@ export class SkillApi implements WhApi<Skill, SkillApiData> {
     this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
     this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
   }
+}
+
+export function getSkillAttributeNameList(isGroup: boolean): AttributeName[] {
+  if (isGroup) {
+    return attributeNameList.filter((x) => x !== AttributeName.None);
+  } else {
+    return attributeNameList.filter((x) => x !== AttributeName.None && x !== AttributeName.Various);
+  }
+}
+
+export function getSkillTypeList(isGroup: boolean): SkillType[] {
+  return isGroup ? skillTypeList : skillTypeList.filter((x) => x !== SkillType.Mixed);
 }

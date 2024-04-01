@@ -75,7 +75,6 @@ const validMaxRank = computed(() => wh.value.validateMaxRank());
 
 const attOptions = attributeNameList.map((x) => ({ text: printAttributeName(x), value: x }));
 
-const disableIndividualFields = ref(false);
 watch(
   () => wh.value.isGroup,
   (newVal) => {
@@ -85,9 +84,6 @@ watch(
       wh.value.maxRank = 0;
       wh.value.attribute = AttributeName.None;
       wh.value.modifiers = new CharacterModifiers();
-      disableIndividualFields.value = true;
-    } else {
-      disableIndividualFields.value = false;
     }
   },
   { immediate: true },
@@ -133,14 +129,14 @@ watch(
             <SelectInput
               v-model="wh.attribute"
               :options="attOptions"
-              :disabled="!wh.canEdit || disableIndividualFields"
+              :disabled="!wh.canEdit || wh.isGroup"
               class="min-w-24"
             ></SelectInput>
             <div class="shrink-0 mx-4 pt-2">Bonus +</div>
             <FormInput
               v-model="wh.maxRank"
               :validationStatus="validMaxRank"
-              :disabled="!wh.canEdit || disableIndividualFields"
+              :disabled="!wh.canEdit || wh.isGroup"
               type="number"
               class="min-w-14"
             />
@@ -151,10 +147,10 @@ watch(
           title="Tests"
           :minH="24"
           :validationStatus="validTests"
-          :disabled="!wh.canEdit || disableIndividualFields"
+          :disabled="!wh.canEdit || wh.isGroup"
         />
         <SelectTable
-          :disabled="!wh.canEdit || disableIndividualFields"
+          :disabled="!wh.canEdit || wh.isGroup"
           :initSelectedItems="wh.group"
           :itemList="groupTalents"
           title="Belongs to group"
@@ -168,10 +164,7 @@ watch(
     </div>
   </div>
   <div class="my-4">
-    <CharacterModifiersBlock
-      v-model="wh.modifiers"
-      :disabled="!wh.canEdit || disableIndividualFields"
-    ></CharacterModifiersBlock>
+    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit || wh.isGroup"></CharacterModifiersBlock>
   </div>
   <div
     ref="contentContainerRef"

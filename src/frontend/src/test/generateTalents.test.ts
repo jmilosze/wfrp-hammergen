@@ -391,12 +391,24 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
       getRollInTableTest(75),
     );
 
-    expect(talents).toEqual([
-      { id: "i0", number: 1 },
-      { id: "i1", number: 1 },
-      { id: "r1", number: 1 },
-      { id: "g0m0", number: 1 },
-    ]);
+    expect(talents).toEqual({
+      i0: {
+        id: "i0",
+        number: 1,
+      },
+      i1: {
+        id: "i1",
+        number: 1,
+      },
+      r1: {
+        id: "r1",
+        number: 1,
+      },
+      g0m0: {
+        id: "g0m0",
+        number: 1,
+      },
+    });
 
     expect(advances).toEqual({
       Ag: 0,

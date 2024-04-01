@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import { printSkillType, Skill, SkillApi, SkillType, skillTypeList } from "../../../services/wh/skill.ts";
+import {
+  getSkillAttributeNameList,
+  getSkillTypeList,
+  printSkillType,
+  Skill,
+  SkillApi,
+  SkillType,
+} from "../../../services/wh/skill.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
 import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
@@ -13,7 +20,7 @@ import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import SelectInput from "../../../components/SelectInput.vue";
-import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
+import { AttributeName, printAttributeName } from "../../../services/wh/attributes.ts";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
@@ -69,29 +76,26 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 
-const attOptions = attributeNameList
-  .filter((x) => x !== AttributeName.None && x !== AttributeName.Various)
-  .map((x) => ({ text: printAttributeName(x), value: x }));
-
-const typeOpts = computed(() => {
-  if (wh.value.isGroup) {
-    return skillTypeList.map((x) => ({ text: printSkillType(x), value: x }));
-  } else {
-    return skillTypeList.filter((x) => x !== SkillType.Mixed).map((x) => ({ text: printSkillType(x), value: x }));
-  }
+const attOptions = computed(() => {
+  return getSkillAttributeNameList(wh.value.isGroup).map((x) => ({ text: printAttributeName(x), value: x }));
 });
 
-const disableIndividualFields = ref(false);
+const typeOpts = computed(() => {
+  return getSkillTypeList(wh.value.isGroup).map((x) => ({ text: printSkillType(x), value: x }));
+});
+
 watch(
   () => wh.value.isGroup,
   (newVal) => {
     if (newVal) {
-      disableIndividualFields.value = true;
+      wh.value.group = new Set<string>();
     } else {
       if (wh.value.type === SkillType.Mixed) {
         wh.value.type = SkillType.Basic;
       }
-      disableIndividualFields.value = false;
+      if (wh.value.attribute === AttributeName.Various) {
+        wh.value.attribute = AttributeName.WS;
+      }
     }
   },
   { immediate: true },
@@ -153,7 +157,7 @@ watch(
           :disabled="!wh.canEdit"
         />
         <SelectTable
-          :disabled="!wh.canEdit || disableIndividualFields"
+          :disabled="!wh.canEdit || wh.isGroup"
           :initSelectedItems="wh.group"
           :itemList="groupSkills"
           title="Belongs to group"
