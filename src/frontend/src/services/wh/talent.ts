@@ -9,7 +9,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validIntegerFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
@@ -100,13 +100,17 @@ export class Talent implements WhProperty {
     return validShortDescFn(this.tests);
   }
 
+  validateMaxRank(): ValidationStatus {
+    return validIntegerFn(this.maxRank, 0, 99);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
       this.validateDescription().valid &&
       this.validateTests().valid &&
+      this.validateMaxRank().valid &&
       sourceIsValid(this.source)
-      // Finish implementation
     );
   }
 

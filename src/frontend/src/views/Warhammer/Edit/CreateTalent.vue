@@ -71,6 +71,7 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validTests = computed(() => wh.value.validateTests());
+const validMaxRank = computed(() => wh.value.validateMaxRank());
 
 const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(x), value: x })));
 
@@ -125,7 +126,7 @@ watch(
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <div class="overflow-auto">
+        <div>
           <p class="mb-1">Max rank</p>
           <div class="flex items-center">
             <SelectInput
@@ -137,7 +138,7 @@ watch(
             <div class="shrink-0 mx-4">Bonus +</div>
             <FormInput
               v-model="wh.maxRank"
-              :validationStatus="validName"
+              :validationStatus="validMaxRank"
               :disabled="!wh.canEdit || disableIndividualFields"
               type="number"
               class="min-w-14"
