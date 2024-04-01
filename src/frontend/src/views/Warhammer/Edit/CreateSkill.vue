@@ -7,9 +7,14 @@ import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { useWhList } from "../../../composables/whList.ts";
-import { ref, Ref, watch } from "vue";
+import { computed, ref, Ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
+import FormInput from "../../../components/FormInput.vue";
+import FormTextarea from "../../../components/FormTextarea.vue";
+import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
+import SelectInput from "../../../components/SelectInput.vue";
+import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
 
 const props = defineProps<{
   id: string;
@@ -55,6 +60,13 @@ await loadWh(props.id);
 
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
+
+const validName = computed(() => wh.value.validateName());
+const validDesc = computed(() => wh.value.validateDescription());
+
+const attOptions = attributeNameList
+  .filter((x) => x !== AttributeName.None && x !== AttributeName.Various)
+  .map((x) => ({ text: printAttributeName(x), value: x }));
 </script>
 
 <template>
@@ -68,7 +80,26 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
     ref="contentContainerRef"
     class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
-  ></div>
+  >
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <DoubleRadioButton
+          v-model="wh.isGroup"
+          title="Individual skill/group of skills"
+          :invertOrder="true"
+          trueText="Group"
+          falseText="Individual"
+        />
+        <SelectInput
+          v-model="wh.attribute"
+          :options="attOptions"
+          :disabled="!wh.canEdit"
+          class="min-w-24"
+        ></SelectInput>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped></style>

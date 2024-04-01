@@ -66,7 +66,7 @@ export class Skill implements WhProperty {
     canEdit = false,
     name = "",
     description = "",
-    attribute = AttributeName.Ag,
+    attribute = AttributeName.WS,
     type = SkillType.Basic,
     displayZero = false,
     isGroup = false,

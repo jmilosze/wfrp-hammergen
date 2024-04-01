@@ -73,7 +73,7 @@ const validDesc = computed(() => wh.value.validateDescription());
 const validTests = computed(() => wh.value.validateTests());
 const validMaxRank = computed(() => wh.value.validateMaxRank());
 
-const attOptions = ref(attributeNameList.map((x) => ({ text: printAttributeName(x), value: x })));
+const attOptions = attributeNameList.map((x) => ({ text: printAttributeName(x), value: x }));
 
 const disableIndividualFields = ref(false);
 watch(
@@ -128,14 +128,14 @@ watch(
       <div class="flex flex-col gap-4">
         <div>
           <p class="mb-1">Max rank</p>
-          <div class="flex items-center">
+          <div class="flex">
             <SelectInput
               v-model="wh.attribute"
               :options="attOptions"
               :disabled="!wh.canEdit || disableIndividualFields"
               class="min-w-24"
             ></SelectInput>
-            <div class="shrink-0 mx-4">Bonus +</div>
+            <div class="shrink-0 mx-4 pt-2">Bonus +</div>
             <FormInput
               v-model="wh.maxRank"
               :validationStatus="validMaxRank"
