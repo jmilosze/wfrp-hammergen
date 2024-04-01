@@ -112,10 +112,7 @@ export class Skill implements WhProperty {
   }
 
   isValid(): boolean {
-    return (
-      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
-      // Finish implementation
-    );
+    return this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source);
   }
 
   isEqualTo(otherSkill: WhProperty): boolean {
@@ -139,6 +136,24 @@ export class Skill implements WhProperty {
 
   updateSource(update: { id: string; notes: string; selected: boolean }): void {
     updateSource(this.source, update);
+  }
+
+  modifyGroup(id: string, selected: boolean): void {
+    if (selected) {
+      if (this.group.has(id)) {
+        // do nothing
+        return;
+      } else {
+        this.group.add(id);
+      }
+    } else {
+      if (this.group.has(id)) {
+        this.group.delete(id);
+        return;
+      } else {
+        // do nothing
+      }
+    }
   }
 }
 

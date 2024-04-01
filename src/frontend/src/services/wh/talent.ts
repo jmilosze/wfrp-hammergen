@@ -169,7 +169,7 @@ export class Talent implements WhProperty {
     }
   }
 
-  modifyGroup(id: string, selected: boolean) {
+  modifyGroup(id: string, selected: boolean): void {
     if (selected) {
       if (this.group.has(id)) {
         // do nothing

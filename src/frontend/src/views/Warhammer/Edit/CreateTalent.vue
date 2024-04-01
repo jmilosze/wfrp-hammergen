@@ -115,6 +115,7 @@ watch(
           :invertOrder="true"
           trueText="Group"
           falseText="Individual"
+          :disabled="!wh.canEdit"
         />
         <FormTextarea
           v-model="wh.description"

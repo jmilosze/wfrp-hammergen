@@ -14,7 +14,12 @@ import FormInput from "../../../components/FormInput.vue";
 import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
-import { CharacterModifiers } from "../../../services/wh/characterModifiers.ts";
+import FormTextarea from "../../../components/FormTextarea.vue";
+import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
+import SourceTable from "../../../components/SourceTable.vue";
+import AfterSubmit from "../../../components/AfterSubmit.vue";
+import EditControls from "../../../components/EditControls.vue";
+import SelectTable from "../../../components/SelectTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -114,6 +119,7 @@ watch(
           :invertOrder="true"
           trueText="Group"
           falseText="Individual"
+          :disabled="!wh.canEdit"
         />
         <SelectInput
           v-model="wh.attribute"
@@ -129,8 +135,70 @@ watch(
           title="Type"
           class="min-w-24"
         ></SelectInput>
+        <FormTextarea
+          v-model="wh.description"
+          title="Description"
+          :validationStatus="validDesc"
+          :disabled="!wh.canEdit"
+        />
       </div>
     </div>
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <DoubleRadioButton
+          v-model="wh.displayZero"
+          title="Display if skill/group not taken?"
+          trueText="Yes"
+          falseText="No"
+          :disabled="!wh.canEdit"
+        />
+        <SelectTable
+          :disabled="!wh.canEdit || disableIndividualFields"
+          :initSelectedItems="wh.group"
+          :itemList="groupSkills"
+          title="Belongs to group"
+          modalTitle="Modify groups"
+          :loading="loading"
+          @createNew="openInNewTab('skill', { id: 'create' })"
+          @reload="loadWhList"
+          @selected="(e) => wh.modifyGroup(e.id, e.selected)"
+        ></SelectTable>
+      </div>
+    </div>
+  </div>
+  <div
+    ref="contentContainerRef"
+    class="justify-between text-left gap-4 my-4"
+    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+  >
+    <div class="my-3 flex-1">
+      <SourceTable
+        :disabled="!wh.canEdit"
+        :initSources="initSources"
+        @selected="(e) => wh.updateSource(e)"
+      ></SourceTable>
+    </div>
+    <div class="my-3 flex-1">
+      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+    </div>
+  </div>
+  <div class="mt-4">
+    <AfterSubmit
+      :visible="showSubmissionStatus"
+      :submissionState="submissionState"
+      class="w-fit"
+      @close="showSubmissionStatus = false"
+    />
+
+    <EditControls
+      :saving="submissionState.status === 'inProgress'"
+      list="skills"
+      :allowAddAnother="id === 'create'"
+      :confirmExit="hasChanged"
+      :submitForm="submitForm"
+      :resetForm="resetForm"
+      :readOnly="!wh.canEdit"
+    ></EditControls>
   </div>
 </template>
 
