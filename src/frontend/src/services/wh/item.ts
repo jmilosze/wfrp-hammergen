@@ -9,7 +9,15 @@ import {
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
-import { ApiResponse, validFloatFn, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import {
+  ApiResponse,
+  validFloatFn,
+  validIntegerFn,
+  validLongDescFn,
+  validShortDescFn,
+  WhApi,
+  WhProperty,
+} from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
 
@@ -505,13 +513,23 @@ export class Item implements WhProperty {
     return validFloatFn(this.price, 0, 1000);
   }
 
+  validateMeleeDmgSbMult(): ValidationStatus {
+    return validFloatFn(this.melee.dmgSbMult, 0, 10);
+  }
+
+  validateMeleeDmg(): ValidationStatus {
+    return validIntegerFn(this.melee.dmg, -100, 100);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
       this.validateDescription().valid &&
       sourceIsValid(this.source) &&
       this.validatePrice().valid &&
-      this.validateEnc().valid
+      this.validateEnc().valid &&
+      this.validateMeleeDmgSbMult().valid &&
+      this.validateMeleeDmg().valid
       // Finish implementation
     );
   }
@@ -568,6 +586,49 @@ export class Item implements WhProperty {
 
   updateSource(update: { id: string; notes: string; selected: boolean }): void {
     updateSource(this.source, update);
+  }
+
+  resetDetails() {
+    if (this.type !== ItemType.Melee) {
+      this.melee = {
+        hands: WeaponHands.OneHanded,
+        dmg: 0,
+        dmgSbMult: 0,
+        reach: MeleeReach.Personal,
+        group: MeleeGroup.Basic,
+      };
+    }
+
+    if (this.type !== ItemType.Ranged) {
+      this.ranged = {
+        hands: WeaponHands.OneHanded,
+        dmg: 0,
+        dmgSbMult: 0,
+        rng: 0,
+        rngSbMult: 0,
+        group: RangedGroup.Bow,
+      };
+    }
+
+    if (this.type !== ItemType.Ammunition) {
+      this.ammunition = { dmg: 0, rng: 0, rngMult: 0, group: AmmoGroup.Bow };
+    }
+
+    if (this.type !== ItemType.Armour) {
+      this.armour = { points: 0, location: [], group: ArmourGroup.SoftLeather };
+    }
+
+    if (this.type !== ItemType.Grimoire) {
+      this.grimoire = { spells: new Set<string>() };
+    }
+
+    if (this.type !== ItemType.Container) {
+      this.container = { capacity: 1, carryType: CarryType.NotCarriableAndNotWearable };
+    }
+
+    if (this.type !== ItemType.Other) {
+      this.other = { carryType: CarryType.NotCarriableAndNotWearable };
+    }
   }
 }
 

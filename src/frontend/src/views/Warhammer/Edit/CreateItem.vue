@@ -9,11 +9,12 @@ import {
   availabilityList,
   Item,
   ItemApi,
+  ItemType,
   itemTypeList,
   printAvailability,
   printItemType,
 } from "../../../services/wh/item.ts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
@@ -61,8 +62,18 @@ const validDesc = computed(() => wh.value.validateDescription());
 const validPrice = computed(() => wh.value.validatePrice());
 const validEnc = computed(() => wh.value.validateEnc());
 
+const validMeleeSbDmgMult = computed(() => wh.value.validateMeleeDmgSbMult());
+const validMeleeDmg = computed(() => wh.value.validateMeleeDmg());
+
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
+
+watch(
+  () => wh.value.type,
+  () => {
+    wh.value.resetDetails();
+  },
+);
 </script>
 
 <template>
@@ -102,6 +113,30 @@ const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), val
           :validationStatus="validDesc"
           :disabled="!wh.canEdit"
         />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div v-if="wh.type === ItemType.Melee" class="flex flex-col gap-4">
+        <div>
+          <p class="mb-1">Weapon damage</p>
+          <div class="flex">
+            <div class="shrink-0 mr-4 pt-2">SB x</div>
+            <FormInput
+              v-model="wh.melee.dmgSbMult"
+              :validationStatus="validMeleeSbDmgMult"
+              :disabled="!wh.canEdit"
+              class="min-w-14"
+            />
+            <div class="shrink-0 mx-4 pt-2">+</div>
+            <FormInput
+              v-model="wh.melee.dmg"
+              :validationStatus="validMeleeDmg"
+              :disabled="!wh.canEdit"
+              type="number"
+              class="min-w-14"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
