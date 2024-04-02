@@ -262,6 +262,16 @@ export const enum MeleeReach {
   Massive,
 }
 
+export const meleeReachList: MeleeReach[] = [
+  MeleeReach.Personal,
+  MeleeReach.VeryShort,
+  MeleeReach.Short,
+  MeleeReach.Average,
+  MeleeReach.Long,
+  MeleeReach.VeryLong,
+  MeleeReach.Massive,
+];
+
 export function printMeleeReach(meleeReach: MeleeReach) {
   switch (meleeReach) {
     case MeleeReach.Personal:
@@ -287,6 +297,21 @@ export const enum WeaponHands {
   Any = 0,
   OneHanded,
   TwoHanded,
+}
+
+export const weaponHandsList = [WeaponHands.Any, WeaponHands.OneHanded, WeaponHands.TwoHanded];
+
+export function printWeaponHands(weaponHands: WeaponHands) {
+  switch (weaponHands) {
+    case WeaponHands.Any:
+      return "Any";
+    case WeaponHands.OneHanded:
+      return "One-handed";
+    case WeaponHands.TwoHanded:
+      return "Two-handed";
+    default:
+      return "";
+  }
 }
 
 export const enum Availability {
@@ -628,6 +653,24 @@ export class Item implements WhProperty {
 
     if (this.type !== ItemType.Other) {
       this.other = { carryType: CarryType.NotCarriableAndNotWearable };
+    }
+  }
+
+  modifyProperties(id: string, selected: boolean): void {
+    if (selected) {
+      if (this.properties.has(id)) {
+        // do nothing
+        return;
+      } else {
+        this.properties.add(id);
+      }
+    } else {
+      if (this.properties.has(id)) {
+        this.properties.delete(id);
+        return;
+      } else {
+        // do nothing
+      }
     }
   }
 }

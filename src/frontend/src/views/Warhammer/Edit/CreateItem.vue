@@ -11,8 +11,14 @@ import {
   ItemApi,
   ItemType,
   itemTypeList,
+  meleeGroupList,
+  meleeReachList,
   printAvailability,
   printItemType,
+  printMeleeGroup,
+  printMeleeReach,
+  printWeaponHands,
+  weaponHandsList,
 } from "../../../services/wh/item.ts";
 import { computed, ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
@@ -24,6 +30,9 @@ import EditControls from "../../../components/EditControls.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
+import { useWhList } from "../../../composables/whList.ts";
+import { ItemPropertyApi } from "../../../services/wh/itemproperty.ts";
+import SelectTable from "../../../components/SelectTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -52,6 +61,13 @@ const {
   showSubmissionStatus,
 } = useWhEdit(newItem, new ItemApi(authRequest));
 
+const propertyListUtils = useWhList(new ItemPropertyApi(authRequest));
+propertyListUtils.loadWhList();
+
+const propertyList = computed(() => {
+  return propertyListUtils.whList.value.filter((x) => x.applicableTo.includes(wh.value.type));
+});
+
 await loadWh(props.id);
 
 const contentContainerRef = ref(null);
@@ -67,6 +83,9 @@ const validMeleeDmg = computed(() => wh.value.validateMeleeDmg());
 
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
+const weaponHandsOpts = weaponHandsList.map((x) => ({ text: printWeaponHands(x), value: x }));
+const meleeGroupOpts = meleeGroupList.map((x) => ({ text: printMeleeGroup(x), value: x }));
+const meleeReachOpts = meleeReachList.map((x) => ({ text: printMeleeReach(x), value: x }));
 
 watch(
   () => wh.value.type,
@@ -137,7 +156,40 @@ watch(
             />
           </div>
         </div>
+        <SelectInput
+          v-model="wh.melee.group"
+          :options="meleeGroupOpts"
+          :disabled="!wh.canEdit"
+          title="Weapon group"
+          class="min-w-24"
+        ></SelectInput>
+        <SelectInput
+          v-model="wh.melee.hands"
+          :options="weaponHandsOpts"
+          :disabled="!wh.canEdit"
+          title="One/Two handed"
+          class="min-w-24"
+        ></SelectInput>
+        <SelectInput
+          v-model="wh.melee.reach"
+          :options="meleeReachOpts"
+          :disabled="!wh.canEdit"
+          title="Weapon reach"
+          class="min-w-24"
+        ></SelectInput>
       </div>
+      <SelectTable
+        :disabled="!wh.canEdit"
+        :initSelectedItems="wh.properties"
+        :itemList="propertyList"
+        title="Qualities and runes"
+        modalTitle="Modify qualities and runes"
+        :loading="propertyListUtils.loading.value"
+        class="mt-4"
+        @createNew="openInNewTab('property', { id: 'create' })"
+        @reload="propertyListUtils.loadWhList"
+        @selected="(e) => wh.modifyProperties(e.id, e.selected)"
+      ></SelectTable>
     </div>
   </div>
   <div
