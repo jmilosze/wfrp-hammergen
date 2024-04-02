@@ -546,6 +546,22 @@ export class Item implements WhProperty {
     return validIntegerFn(this.melee.dmg, -100, 100);
   }
 
+  validateRangedDmgSbMult(): ValidationStatus {
+    return validFloatFn(this.ranged.dmgSbMult, 0, 10);
+  }
+
+  validateRangedDmg(): ValidationStatus {
+    return validIntegerFn(this.ranged.dmg, -100, 100);
+  }
+
+  validateRangedRngSbMult(): ValidationStatus {
+    return validFloatFn(this.ranged.rngSbMult, 0, 10);
+  }
+
+  validateRangedRng(): ValidationStatus {
+    return validIntegerFn(this.ranged.rng, -10000, 10000);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -554,7 +570,11 @@ export class Item implements WhProperty {
       this.validatePrice().valid &&
       this.validateEnc().valid &&
       this.validateMeleeDmgSbMult().valid &&
-      this.validateMeleeDmg().valid
+      this.validateMeleeDmg().valid &&
+      this.validateRangedDmgSbMult().valid &&
+      this.validateRangedDmg().valid &&
+      this.validateRangedRngSbMult().valid &&
+      this.validateRangedRng().valid
       // Finish implementation
     );
   }
@@ -614,6 +634,8 @@ export class Item implements WhProperty {
   }
 
   resetDetails() {
+    this.properties = new Set<string>();
+
     if (this.type !== ItemType.Melee) {
       this.melee = {
         hands: WeaponHands.OneHanded,

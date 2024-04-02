@@ -17,7 +17,9 @@ import {
   printItemType,
   printMeleeGroup,
   printMeleeReach,
+  printRangedGroup,
   printWeaponHands,
+  rangedGroupList,
   weaponHandsList,
 } from "../../../services/wh/item.ts";
 import { computed, ref, watch } from "vue";
@@ -80,12 +82,17 @@ const validEnc = computed(() => wh.value.validateEnc());
 
 const validMeleeSbDmgMult = computed(() => wh.value.validateMeleeDmgSbMult());
 const validMeleeDmg = computed(() => wh.value.validateMeleeDmg());
+const validRangedSbDmgMult = computed(() => wh.value.validateRangedDmgSbMult());
+const validRangedDmg = computed(() => wh.value.validateRangedDmg());
+const validRangedSbRngMult = computed(() => wh.value.validateRangedRngSbMult());
+const validRangedRng = computed(() => wh.value.validateRangedRng());
 
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
 const weaponHandsOpts = weaponHandsList.map((x) => ({ text: printWeaponHands(x), value: x }));
 const meleeGroupOpts = meleeGroupList.map((x) => ({ text: printMeleeGroup(x), value: x }));
 const meleeReachOpts = meleeReachList.map((x) => ({ text: printMeleeReach(x), value: x }));
+const rangedGroupOpts = rangedGroupList.map((x) => ({ text: printRangedGroup(x), value: x }));
 
 watch(
   () => wh.value.type,
@@ -144,6 +151,7 @@ watch(
               v-model="wh.melee.dmgSbMult"
               :validationStatus="validMeleeSbDmgMult"
               :disabled="!wh.canEdit"
+              type="number"
               class="min-w-14"
             />
             <div class="shrink-0 mx-4 pt-2">+</div>
@@ -175,6 +183,63 @@ watch(
           :options="meleeReachOpts"
           :disabled="!wh.canEdit"
           title="Weapon reach"
+          class="min-w-24"
+        ></SelectInput>
+      </div>
+      <div v-else-if="wh.type === ItemType.Ranged" class="flex flex-col gap-4">
+        <div>
+          <p class="mb-1">Weapon damage</p>
+          <div class="flex">
+            <div class="shrink-0 mr-4 pt-2">SB x</div>
+            <FormInput
+              v-model="wh.ranged.dmgSbMult"
+              :validationStatus="validRangedSbDmgMult"
+              :disabled="!wh.canEdit"
+              type="number"
+              class="min-w-14"
+            />
+            <div class="shrink-0 mx-4 pt-2">+</div>
+            <FormInput
+              v-model="wh.ranged.dmg"
+              :validationStatus="validRangedDmg"
+              :disabled="!wh.canEdit"
+              type="number"
+              class="min-w-14"
+            />
+          </div>
+        </div>
+        <div>
+          <p class="mb-1">Weapon range</p>
+          <div class="flex">
+            <div class="shrink-0 mr-4 pt-2">SB x</div>
+            <FormInput
+              v-model="wh.ranged.rngSbMult"
+              :validationStatus="validRangedSbRngMult"
+              :disabled="!wh.canEdit"
+              class="min-w-14"
+            />
+            <div class="shrink-0 mx-4 pt-2">+</div>
+            <FormInput
+              v-model="wh.ranged.rng"
+              :validationStatus="validRangedRng"
+              :disabled="!wh.canEdit"
+              type="number"
+              class="min-w-14"
+            />
+          </div>
+        </div>
+        <SelectInput
+          v-model="wh.ranged.group"
+          :options="rangedGroupOpts"
+          :disabled="!wh.canEdit"
+          title="Weapon group"
+          class="min-w-24"
+        ></SelectInput>
+        <SelectInput
+          v-model="wh.ranged.hands"
+          :options="weaponHandsOpts"
+          :disabled="!wh.canEdit"
+          title="One/Two handed"
           class="min-w-24"
         ></SelectInput>
       </div>
