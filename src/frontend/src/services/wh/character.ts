@@ -13,6 +13,7 @@ import {
   copyRecordWithObject,
   IdNumber,
   idNumberArrayToRecord,
+  validLongDescFn,
   validShortDescFn,
   WhApi,
   WhProperty,
@@ -265,7 +266,7 @@ export class Character implements WhProperty {
   }
 
   validateDescription(): ValidationStatus {
-    return validShortDescFn(this.description);
+    return validLongDescFn(this.description);
   }
 
   isValid(): boolean {

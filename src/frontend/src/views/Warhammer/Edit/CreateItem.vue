@@ -18,6 +18,11 @@ import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
+import FormTextarea from "../../../components/FormTextarea.vue";
+import EditControls from "../../../components/EditControls.vue";
+import SourceTable from "../../../components/SourceTable.vue";
+import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
+import AfterSubmit from "../../../components/AfterSubmit.vue";
 
 const props = defineProps<{
   id: string;
@@ -53,6 +58,8 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
+const validPrice = computed(() => wh.value.validatePrice());
+const validEnc = computed(() => wh.value.validateEnc());
 
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
@@ -87,8 +94,50 @@ const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), val
           title="Availability"
           class="min-w-24"
         ></SelectInput>
+        <FormInput v-model="wh.price" title="Price (in brass)" :validationStatus="validPrice" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.enc" title="Encumbrance" :validationStatus="validEnc" :disabled="!wh.canEdit" />
+        <FormTextarea
+          v-model="wh.description"
+          title="Description"
+          :validationStatus="validDesc"
+          :disabled="!wh.canEdit"
+        />
       </div>
     </div>
+  </div>
+  <div
+    ref="contentContainerRef"
+    class="justify-between text-left gap-4 my-4"
+    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+  >
+    <div class="my-3 flex-1">
+      <SourceTable
+        :disabled="!wh.canEdit"
+        :initSources="initSources"
+        @selected="(e) => wh.updateSource(e)"
+      ></SourceTable>
+    </div>
+    <div class="my-3 flex-1">
+      <PublicPropertyBox v-model="wh.shared" propertyName="Trapping" :disabled="!wh.canEdit" />
+    </div>
+  </div>
+  <div class="mt-4">
+    <AfterSubmit
+      :visible="showSubmissionStatus"
+      :submissionState="submissionState"
+      class="w-fit"
+      @close="showSubmissionStatus = false"
+    />
+
+    <EditControls
+      :saving="submissionState.status === 'inProgress'"
+      list="items"
+      :allowAddAnother="id === 'create'"
+      :confirmExit="hasChanged"
+      :submitForm="submitForm"
+      :resetForm="resetForm"
+      :readOnly="!wh.canEdit"
+    ></EditControls>
   </div>
 </template>
 

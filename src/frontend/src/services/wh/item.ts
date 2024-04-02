@@ -9,7 +9,7 @@ import {
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
-import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validFloatFn, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
 
@@ -494,12 +494,24 @@ export class Item implements WhProperty {
   }
 
   validateDescription(): ValidationStatus {
-    return validShortDescFn(this.description);
+    return validLongDescFn(this.description);
+  }
+
+  validatePrice(): ValidationStatus {
+    return validFloatFn(this.price, 0, 1000000000);
+  }
+
+  validateEnc(): ValidationStatus {
+    return validFloatFn(this.price, 0, 1000);
   }
 
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
+      this.validateName().valid &&
+      this.validateDescription().valid &&
+      sourceIsValid(this.source) &&
+      this.validatePrice().valid &&
+      this.validateEnc().valid
       // Finish implementation
     );
   }

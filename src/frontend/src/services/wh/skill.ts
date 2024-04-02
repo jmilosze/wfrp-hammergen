@@ -8,7 +8,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName, attributeNameList } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
@@ -108,7 +108,7 @@ export class Skill implements WhProperty {
   }
 
   validateDescription(): ValidationStatus {
-    return validShortDescFn(this.description);
+    return validLongDescFn(this.description);
   }
 
   isValid(): boolean {

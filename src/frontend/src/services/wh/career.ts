@@ -1,6 +1,6 @@
 import { AttributeName, racialAttributes } from "./attributes.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
@@ -245,7 +245,7 @@ export class Career implements WhProperty {
   }
 
   validateDescription(): ValidationStatus {
-    return validShortDescFn(this.description);
+    return validLongDescFn(this.description);
   }
 
   isValid(): boolean {

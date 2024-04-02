@@ -8,7 +8,7 @@ import {
 import { AxiosInstance } from "axios";
 import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 
 const CASTING_NUMBER_RE = /^([1-9][0-9]|[0-9])$/;
@@ -81,7 +81,7 @@ export class Spell implements WhProperty {
   }
 
   validateDescription(): ValidationStatus {
-    return validShortDescFn(this.description);
+    return validLongDescFn(this.description);
   }
 
   validateRange(): ValidationStatus {
