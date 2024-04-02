@@ -288,6 +288,23 @@ export const enum Availability {
   Exotic,
 }
 
+export const availabilityList = [Availability.Common, Availability.Scarce, Availability.Rare, Availability.Exotic];
+
+export function printAvailability(availability: Availability) {
+  switch (availability) {
+    case Availability.Common:
+      return "Common";
+    case Availability.Scarce:
+      return "Scarce";
+    case Availability.Rare:
+      return "Rare";
+    case Availability.Exotic:
+      return "Exotic";
+    default:
+      return "";
+  }
+}
+
 export const enum CarryType {
   CarriableAndWearable = 0,
   CarriableAndNotWearable,
