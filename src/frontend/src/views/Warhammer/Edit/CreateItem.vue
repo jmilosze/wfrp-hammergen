@@ -216,6 +216,7 @@ watch(
               v-model="wh.ranged.rngSbMult"
               :validationStatus="validRangedSbRngMult"
               :disabled="!wh.canEdit"
+              type="number"
               class="min-w-14"
             />
             <div class="shrink-0 mx-4 pt-2">+</div>
