@@ -351,6 +351,25 @@ export const enum CarryType {
   NotCarriableAndNotWearable,
 }
 
+export const carryTypeList: CarryType[] = [
+  CarryType.CarriableAndWearable,
+  CarryType.CarriableAndNotWearable,
+  CarryType.NotCarriableAndNotWearable,
+];
+
+export function printCarryType(carryType: CarryType): string {
+  switch (carryType) {
+    case CarryType.CarriableAndWearable:
+      return "Can be carried and worn";
+    case CarryType.CarriableAndNotWearable:
+      return "Can be carried";
+    case CarryType.NotCarriableAndNotWearable:
+      return "Cannot be carried";
+    default:
+      return "";
+  }
+}
+
 const API_BASE_PATH = "/api/wh/item";
 
 export type MeleeType = {
@@ -583,6 +602,10 @@ export class Item implements WhProperty {
 
   validateArmourPoints(): ValidationStatus {
     return validIntegerFn(this.armour.points, 0, 100);
+  }
+
+  validateContainerCapacity(): ValidationStatus {
+    return validIntegerFn(this.container.capacity, 0, 1000);
   }
 
   isValid(): boolean {

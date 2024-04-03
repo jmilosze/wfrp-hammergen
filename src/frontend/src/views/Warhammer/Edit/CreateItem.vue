@@ -10,6 +10,7 @@ import {
   armourGroupList,
   armourLocationList,
   availabilityList,
+  carryTypeList,
   Item,
   ItemApi,
   ItemType,
@@ -20,6 +21,7 @@ import {
   printArmourGroup,
   printArmourLocation,
   printAvailability,
+  printCarryType,
   printItemType,
   printMeleeGroup,
   printMeleeReach,
@@ -97,6 +99,7 @@ const validAmmunitionDmg = computed(() => wh.value.validateAmmunitionDmg());
 const validAmmunitionRngMult = computed(() => wh.value.validateAmmunitionRngMult());
 const validAmmunitionRng = computed(() => wh.value.validateAmmunitionRng());
 const validArmourPoints = computed(() => wh.value.validateArmourPoints());
+const validContainerCapacity = computed(() => wh.value.validateContainerCapacity());
 
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
@@ -107,6 +110,7 @@ const rangedGroupOpts = rangedGroupList.map((x) => ({ text: printRangedGroup(x),
 const ammunitionGroupOpts = ammoGroupList.map((x) => ({ text: printAmmoGroup(x), value: x }));
 const ArmourLocationOpts = armourLocationList.map((x) => ({ text: printArmourLocation(x), value: x }));
 const armourGroupOpts = armourGroupList.map((x) => ({ text: printArmourGroup(x), value: x }));
+const carryTypeOpts = carryTypeList.map((x) => ({ text: printCarryType(x), value: x }));
 
 watch(
   () => wh.value.type,
@@ -332,6 +336,22 @@ watch(
           :options="armourGroupOpts"
           :disabled="!wh.canEdit"
           title="Armour group"
+          class="min-w-24"
+        ></SelectInput>
+      </div>
+      <div v-else-if="wh.type === ItemType.Container" class="flex flex-col gap-4">
+        <FormInput
+          v-model="wh.container.capacity"
+          title="Container capacity"
+          :validationStatus="validContainerCapacity"
+          type="number"
+          :disabled="!wh.canEdit"
+        />
+        <SelectInput
+          v-model="wh.container.carryType"
+          :options="carryTypeOpts"
+          :disabled="!wh.canEdit"
+          title="Can it be carried?"
           class="min-w-24"
         ></SelectInput>
       </div>
