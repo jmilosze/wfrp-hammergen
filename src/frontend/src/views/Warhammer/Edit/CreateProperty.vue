@@ -75,7 +75,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type"></SelectInput>
+        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type" />
         <MultipleCheckboxInput
           v-model="wh.applicableTo"
           :options="applicableToOptions"

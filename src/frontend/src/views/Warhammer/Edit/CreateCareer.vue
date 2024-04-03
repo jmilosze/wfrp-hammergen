@@ -3,7 +3,14 @@ import Header from "../../../components/PageHeader.vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
 import { useNewTab } from "../../../composables/newTab.ts";
-import { Career, CareerApi, printSpeciesName, speciesList } from "../../../services/wh/career.ts";
+import {
+  Career,
+  CareerApi,
+  careerClassList,
+  printClassName,
+  printSpeciesName,
+  speciesList,
+} from "../../../services/wh/career.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed, ref } from "vue";
@@ -11,6 +18,8 @@ import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
+import SelectInput from "../../../components/SelectInput.vue";
+import FormTextarea from "../../../components/FormTextarea.vue";
 
 const props = defineProps<{
   id: string;
@@ -48,6 +57,7 @@ const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 
 const speciesOpts = speciesList.map((x) => ({ text: printSpeciesName(x), value: x }));
+const classOpts = careerClassList.map((x) => ({ text: printClassName(x), value: x }));
 </script>
 
 <template>
@@ -66,6 +76,23 @@ const speciesOpts = speciesList.map((x) => ({ text: printSpeciesName(x), value: 
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
         <MultipleCheckboxInput v-model="wh.species" title="Species" :options="speciesOpts" :disabled="!wh.canEdit" />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <SelectInput
+          v-model="wh.careerClass"
+          :options="classOpts"
+          :disabled="!wh.canEdit"
+          title="Class"
+          class="min-w-24"
+        />
+        <FormTextarea
+          v-model="wh.description"
+          title="Description"
+          :validationStatus="validDesc"
+          :disabled="!wh.canEdit"
+        />
       </div>
     </div>
   </div>

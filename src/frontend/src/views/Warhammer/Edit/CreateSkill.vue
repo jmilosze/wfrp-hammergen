@@ -131,14 +131,8 @@ watch(
           :disabled="!wh.canEdit"
           title="Attribute"
           class="min-w-24"
-        ></SelectInput>
-        <SelectInput
-          v-model="wh.type"
-          :options="typeOpts"
-          :disabled="!wh.canEdit"
-          title="Type"
-          class="min-w-24"
-        ></SelectInput>
+        />
+        <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!wh.canEdit" title="Type" class="min-w-24" />
         <FormTextarea
           v-model="wh.description"
           title="Description"

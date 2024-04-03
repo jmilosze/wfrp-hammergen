@@ -131,7 +131,7 @@ watch(
               :options="attOptions"
               :disabled="!wh.canEdit || wh.isGroup"
               class="min-w-24"
-            ></SelectInput>
+            />
             <div class="shrink-0 mx-4 pt-2">Bonus +</div>
             <FormInput
               v-model="wh.maxRank"

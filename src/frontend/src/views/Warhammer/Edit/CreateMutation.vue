@@ -68,7 +68,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type"></SelectInput>
+        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type" />
       </div>
     </div>
     <div class="flex-1">

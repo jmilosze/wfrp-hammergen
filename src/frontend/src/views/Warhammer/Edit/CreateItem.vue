@@ -139,20 +139,14 @@ watch(
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-        <SelectInput
-          v-model="wh.type"
-          :options="typeOpts"
-          :disabled="!wh.canEdit"
-          title="Type"
-          class="min-w-24"
-        ></SelectInput>
+        <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!wh.canEdit" title="Type" class="min-w-24" />
         <SelectInput
           v-model="wh.availability"
           :options="availOpts"
           :disabled="!wh.canEdit"
           title="Availability"
           class="min-w-24"
-        ></SelectInput>
+        />
         <FormInput
           v-model="wh.price"
           title="Price (in brass)"
@@ -204,21 +198,21 @@ watch(
           :disabled="!wh.canEdit"
           title="Weapon group"
           class="min-w-24"
-        ></SelectInput>
+        />
         <SelectInput
           v-model="wh.melee.hands"
           :options="weaponHandsOpts"
           :disabled="!wh.canEdit"
           title="One/Two handed"
           class="min-w-24"
-        ></SelectInput>
+        />
         <SelectInput
           v-model="wh.melee.reach"
           :options="meleeReachOpts"
           :disabled="!wh.canEdit"
           title="Weapon reach"
           class="min-w-24"
-        ></SelectInput>
+        />
       </div>
       <div v-else-if="wh.type === ItemType.Ranged" class="flex flex-col gap-4">
         <div>
@@ -269,14 +263,14 @@ watch(
           :disabled="!wh.canEdit"
           title="Weapon group"
           class="min-w-24"
-        ></SelectInput>
+        />
         <SelectInput
           v-model="wh.ranged.hands"
           :options="weaponHandsOpts"
           :disabled="!wh.canEdit"
           title="One/Two handed"
           class="min-w-24"
-        ></SelectInput>
+        />
       </div>
       <div v-else-if="wh.type === ItemType.Ammunition" class="flex flex-col gap-4">
         <div>
@@ -319,7 +313,7 @@ watch(
           :disabled="!wh.canEdit"
           title="Ammunition group"
           class="min-w-24"
-        ></SelectInput>
+        />
       </div>
       <div v-else-if="wh.type === ItemType.Armour" class="flex flex-col gap-4">
         <MultipleCheckboxInput
@@ -341,7 +335,7 @@ watch(
           :disabled="!wh.canEdit"
           title="Armour group"
           class="min-w-24"
-        ></SelectInput>
+        />
       </div>
       <div v-else-if="wh.type === ItemType.Container" class="flex flex-col gap-4">
         <FormInput
@@ -357,7 +351,7 @@ watch(
           :disabled="!wh.canEdit"
           title="Can it be worn/carried?"
           class="min-w-24"
-        ></SelectInput>
+        />
       </div>
       <div v-else-if="wh.type === ItemType.Other" class="flex flex-col gap-4">
         <SelectInput
