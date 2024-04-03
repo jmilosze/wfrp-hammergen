@@ -21,6 +21,7 @@ const props = defineProps<{
   itemList: { name: string; id: string; description: string }[];
   initSelectedItems: Set<string>;
   loading?: boolean;
+  modalId?: string;
 }>();
 
 const emit = defineEmits<{
@@ -74,8 +75,10 @@ const modalColumns = [
   { name: "selected", displayName: "Select" },
 ];
 
+const modalId = props.modalId ? props.modalId : "modifyItemsModal";
+
 function onModifyClick() {
-  modal.showModal("modifyItemsModal");
+  modal.showModal(modalId);
   searchTerm.value = "";
   itemsWithSelectList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
@@ -109,7 +112,7 @@ function onModifyClick() {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <ModalWindow id="modifyItemsModal">
+    <ModalWindow :id="modalId">
       <template #header> {{ modalTitle }} </template>
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>

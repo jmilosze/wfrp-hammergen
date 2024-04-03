@@ -623,8 +623,9 @@ export class Item implements WhProperty {
       this.validateRangedRng().valid &&
       this.validateAmmunitionDmg().valid &&
       this.validateAmmunitionRngMult().valid &&
-      this.validateAmmunitionRng().valid
-      // Finish implementation
+      this.validateAmmunitionRng().valid &&
+      this.validateArmourPoints().valid &&
+      this.validateContainerCapacity().valid
     );
   }
 
@@ -727,7 +728,7 @@ export class Item implements WhProperty {
     }
   }
 
-  modifyProperties(id: string, selected: boolean): void {
+  updateProperties(id: string, selected: boolean): void {
     if (selected) {
       if (this.properties.has(id)) {
         // do nothing
@@ -738,6 +739,24 @@ export class Item implements WhProperty {
     } else {
       if (this.properties.has(id)) {
         this.properties.delete(id);
+        return;
+      } else {
+        // do nothing
+      }
+    }
+  }
+
+  updateSpells(id: string, selected: boolean): void {
+    if (selected) {
+      if (this.grimoire.spells.has(id)) {
+        // do nothing
+        return;
+      } else {
+        this.grimoire.spells.add(id);
+      }
+    } else {
+      if (this.grimoire.spells.has(id)) {
+        this.grimoire.spells.delete(id);
         return;
       } else {
         // do nothing

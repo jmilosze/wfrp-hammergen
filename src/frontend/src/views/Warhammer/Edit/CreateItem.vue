@@ -44,6 +44,7 @@ import { useWhList } from "../../../composables/whList.ts";
 import { ItemPropertyApi } from "../../../services/wh/itemproperty.ts";
 import SelectTable from "../../../components/SelectTable.vue";
 import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
+import { SpellApi } from "../../../services/wh/spell.ts";
 
 const props = defineProps<{
   id: string;
@@ -74,6 +75,9 @@ const {
 
 const propertyListUtils = useWhList(new ItemPropertyApi(authRequest));
 propertyListUtils.loadWhList();
+
+const spellListUtils = useWhList(new SpellApi(authRequest));
+spellListUtils.loadWhList();
 
 const propertyList = computed(() => {
   return propertyListUtils.whList.value.filter((x) => x.applicableTo.includes(wh.value.type));
@@ -351,9 +355,33 @@ watch(
           v-model="wh.container.carryType"
           :options="carryTypeOpts"
           :disabled="!wh.canEdit"
-          title="Can it be carried?"
+          title="Can it be worn/carried?"
           class="min-w-24"
         ></SelectInput>
+      </div>
+      <div v-else-if="wh.type === ItemType.Other" class="flex flex-col gap-4">
+        <SelectInput
+          v-model="wh.other.carryType"
+          :options="carryTypeOpts"
+          :disabled="!wh.canEdit"
+          title="Can it be worn/carried?"
+          class="min-w-24"
+        />
+      </div>
+      <div v-else-if="wh.type === ItemType.Grimoire" class="flex flex-col gap-4">
+        <SelectTable
+          modalId="grimoire"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.grimoire.spells"
+          :itemList="spellListUtils.whList.value"
+          title="Spells"
+          modalTitle="Add/remove spells"
+          :loading="spellListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('spell', { id: 'create' })"
+          @reload="spellListUtils.loadWhList"
+          @selected="(e) => wh.updateSpells(e.id, e.selected)"
+        />
       </div>
       <SelectTable
         :disabled="!wh.canEdit"
@@ -365,8 +393,8 @@ watch(
         class="mt-4"
         @createNew="openInNewTab('property', { id: 'create' })"
         @reload="propertyListUtils.loadWhList"
-        @selected="(e) => wh.modifyProperties(e.id, e.selected)"
-      ></SelectTable>
+        @selected="(e) => wh.updateProperties(e.id, e.selected)"
+      />
     </div>
   </div>
   <div
