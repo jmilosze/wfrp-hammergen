@@ -1,4 +1,4 @@
-import { AttributeName, racialAttributes } from "./attributes.ts";
+import { AttributeName } from "./attributes.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
@@ -163,7 +163,7 @@ const zeroCareerLevel: CareerLevel = {
   name: "",
   status: StatusTier.Brass,
   standing: 0,
-  attributes: JSON.parse(JSON.stringify(racialAttributes.none)),
+  attributes: [],
   skills: new Set<string>(),
   talents: new Set<string>(),
   items: "",
