@@ -6,6 +6,7 @@ import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import {
+  ammoGroupList,
   availabilityList,
   Item,
   ItemApi,
@@ -13,6 +14,7 @@ import {
   itemTypeList,
   meleeGroupList,
   meleeReachList,
+  printAmmoGroup,
   printAvailability,
   printItemType,
   printMeleeGroup,
@@ -86,6 +88,9 @@ const validRangedSbDmgMult = computed(() => wh.value.validateRangedDmgSbMult());
 const validRangedDmg = computed(() => wh.value.validateRangedDmg());
 const validRangedSbRngMult = computed(() => wh.value.validateRangedRngSbMult());
 const validRangedRng = computed(() => wh.value.validateRangedRng());
+const validAmmunitionDmg = computed(() => wh.value.validateAmmunitionDmg());
+const validAmmunitionRngMult = computed(() => wh.value.validateAmmunitionRngMult());
+const validAmmunitionRng = computed(() => wh.value.validateAmmunitionRng());
 
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
@@ -93,6 +98,7 @@ const weaponHandsOpts = weaponHandsList.map((x) => ({ text: printWeaponHands(x),
 const meleeGroupOpts = meleeGroupList.map((x) => ({ text: printMeleeGroup(x), value: x }));
 const meleeReachOpts = meleeReachList.map((x) => ({ text: printMeleeReach(x), value: x }));
 const rangedGroupOpts = rangedGroupList.map((x) => ({ text: printRangedGroup(x), value: x }));
+const ammunitionGroupOpts = ammoGroupList.map((x) => ({ text: printAmmoGroup(x), value: x }));
 
 watch(
   () => wh.value.type,
@@ -241,6 +247,49 @@ watch(
           :options="weaponHandsOpts"
           :disabled="!wh.canEdit"
           title="One/Two handed"
+          class="min-w-24"
+        ></SelectInput>
+      </div>
+      <div v-else-if="wh.type === ItemType.Ammunition" class="flex flex-col gap-4">
+        <div>
+          <p class="mb-1">Damage modification</p>
+          <div class="flex">
+            <div class="shrink-0 mr-4 pt-2">Weapon +</div>
+            <FormInput
+              v-model="wh.ammunition.dmg"
+              :validationStatus="validAmmunitionDmg"
+              :disabled="!wh.canEdit"
+              type="number"
+              class="min-w-14"
+            />
+          </div>
+        </div>
+        <div>
+          <p class="mb-1">Range modification</p>
+          <div class="flex">
+            <div class="shrink-0 mr-4 pt-2">Weapon x</div>
+            <FormInput
+              v-model="wh.ammunition.rngMult"
+              :validationStatus="validAmmunitionRngMult"
+              :disabled="!wh.canEdit"
+              type="number"
+              class="min-w-14"
+            />
+            <div class="shrink-0 mx-4 pt-2">+</div>
+            <FormInput
+              v-model="wh.ammunition.rng"
+              :validationStatus="validAmmunitionRng"
+              :disabled="!wh.canEdit"
+              type="number"
+              class="min-w-14"
+            />
+          </div>
+        </div>
+        <SelectInput
+          v-model="wh.ammunition.group"
+          :options="ammunitionGroupOpts"
+          :disabled="!wh.canEdit"
+          title="Ammunition group"
           class="min-w-24"
         ></SelectInput>
       </div>

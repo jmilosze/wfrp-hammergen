@@ -562,6 +562,18 @@ export class Item implements WhProperty {
     return validIntegerFn(this.ranged.rng, -10000, 10000);
   }
 
+  validateAmmunitionDmg(): ValidationStatus {
+    return validIntegerFn(this.ammunition.dmg, -100, 100);
+  }
+
+  validateAmmunitionRngMult(): ValidationStatus {
+    return validFloatFn(this.ammunition.rngMult, 0, 10);
+  }
+
+  validateAmmunitionRng(): ValidationStatus {
+    return validIntegerFn(this.ammunition.rng, -10000, 10000);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -574,7 +586,10 @@ export class Item implements WhProperty {
       this.validateRangedDmgSbMult().valid &&
       this.validateRangedDmg().valid &&
       this.validateRangedRngSbMult().valid &&
-      this.validateRangedRng().valid
+      this.validateRangedRng().valid &&
+      this.validateAmmunitionDmg().valid &&
+      this.validateAmmunitionRngMult().valid &&
+      this.validateAmmunitionRng().valid
       // Finish implementation
     );
   }
