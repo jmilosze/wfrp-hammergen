@@ -47,7 +47,7 @@ function handleChange(event: Event) {
         class="w-5 h-5 accent-neutral-600"
         @change="handleChange"
       />
-      <div class="ml-1 mr-3">{{ option.text }}</div>
+      <div class="ml-2 mr-3">{{ option.text }}</div>
     </div>
   </div>
 </template>

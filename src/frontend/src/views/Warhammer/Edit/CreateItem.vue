@@ -7,6 +7,8 @@ import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import {
   ammoGroupList,
+  armourGroupList,
+  armourLocationList,
   availabilityList,
   Item,
   ItemApi,
@@ -15,6 +17,8 @@ import {
   meleeGroupList,
   meleeReachList,
   printAmmoGroup,
+  printArmourGroup,
+  printArmourLocation,
   printAvailability,
   printItemType,
   printMeleeGroup,
@@ -37,6 +41,7 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import { useWhList } from "../../../composables/whList.ts";
 import { ItemPropertyApi } from "../../../services/wh/itemproperty.ts";
 import SelectTable from "../../../components/SelectTable.vue";
+import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
 
 const props = defineProps<{
   id: string;
@@ -91,6 +96,7 @@ const validRangedRng = computed(() => wh.value.validateRangedRng());
 const validAmmunitionDmg = computed(() => wh.value.validateAmmunitionDmg());
 const validAmmunitionRngMult = computed(() => wh.value.validateAmmunitionRngMult());
 const validAmmunitionRng = computed(() => wh.value.validateAmmunitionRng());
+const validArmourPoints = computed(() => wh.value.validateArmourPoints());
 
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
@@ -99,6 +105,8 @@ const meleeGroupOpts = meleeGroupList.map((x) => ({ text: printMeleeGroup(x), va
 const meleeReachOpts = meleeReachList.map((x) => ({ text: printMeleeReach(x), value: x }));
 const rangedGroupOpts = rangedGroupList.map((x) => ({ text: printRangedGroup(x), value: x }));
 const ammunitionGroupOpts = ammoGroupList.map((x) => ({ text: printAmmoGroup(x), value: x }));
+const ArmourLocationOpts = armourLocationList.map((x) => ({ text: printArmourLocation(x), value: x }));
+const armourGroupOpts = armourGroupList.map((x) => ({ text: printArmourGroup(x), value: x }));
 
 watch(
   () => wh.value.type,
@@ -137,8 +145,20 @@ watch(
           title="Availability"
           class="min-w-24"
         ></SelectInput>
-        <FormInput v-model="wh.price" title="Price (in brass)" :validationStatus="validPrice" :disabled="!wh.canEdit" />
-        <FormInput v-model="wh.enc" title="Encumbrance" :validationStatus="validEnc" :disabled="!wh.canEdit" />
+        <FormInput
+          v-model="wh.price"
+          title="Price (in brass)"
+          :validationStatus="validPrice"
+          :disabled="!wh.canEdit"
+          type="number"
+        />
+        <FormInput
+          v-model="wh.enc"
+          title="Encumbrance"
+          :validationStatus="validEnc"
+          :disabled="!wh.canEdit"
+          type="number"
+        />
         <FormTextarea
           v-model="wh.description"
           title="Description"
@@ -290,6 +310,28 @@ watch(
           :options="ammunitionGroupOpts"
           :disabled="!wh.canEdit"
           title="Ammunition group"
+          class="min-w-24"
+        ></SelectInput>
+      </div>
+      <div v-else-if="wh.type === ItemType.Armour" class="flex flex-col gap-4">
+        <MultipleCheckboxInput
+          v-model="wh.armour.location"
+          title="Armour location"
+          :disabled="!wh.canEdit"
+          :options="ArmourLocationOpts"
+        />
+        <FormInput
+          v-model="wh.armour.points"
+          title="Armour points"
+          :validationStatus="validArmourPoints"
+          type="number"
+          :disabled="!wh.canEdit"
+        />
+        <SelectInput
+          v-model="wh.armour.group"
+          :options="armourGroupOpts"
+          :disabled="!wh.canEdit"
+          title="Armour group"
           class="min-w-24"
         ></SelectInput>
       </div>

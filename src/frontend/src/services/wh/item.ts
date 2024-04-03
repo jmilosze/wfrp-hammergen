@@ -237,6 +237,13 @@ export const enum ArmourLocation {
   Head,
 }
 
+export const armourLocationList: ArmourLocation[] = [
+  ArmourLocation.Arms,
+  ArmourLocation.Body,
+  ArmourLocation.Legs,
+  ArmourLocation.Head,
+];
+
 export function printArmourLocation(armourLocation: ArmourLocation) {
   switch (armourLocation) {
     case ArmourLocation.Arms:
@@ -572,6 +579,10 @@ export class Item implements WhProperty {
 
   validateAmmunitionRng(): ValidationStatus {
     return validIntegerFn(this.ammunition.rng, -10000, 10000);
+  }
+
+  validateArmourPoints(): ValidationStatus {
+    return validIntegerFn(this.armour.points, 0, 100);
   }
 
   isValid(): boolean {
