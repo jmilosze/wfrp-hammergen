@@ -3,12 +3,14 @@ import Header from "../../../components/PageHeader.vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
 import { useNewTab } from "../../../composables/newTab.ts";
-import { Career, CareerApi } from "../../../services/wh/career.ts";
+import { Career, CareerApi, printSpeciesName, speciesList } from "../../../services/wh/career.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
+import FormInput from "../../../components/FormInput.vue";
+import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
 
 const props = defineProps<{
   id: string;
@@ -41,6 +43,11 @@ await loadWh(props.id);
 
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
+
+const validName = computed(() => wh.value.validateName());
+const validDesc = computed(() => wh.value.validateDescription());
+
+const speciesOpts = speciesList.map((x) => ({ text: printSpeciesName(x), value: x }));
 </script>
 
 <template>
@@ -54,7 +61,14 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
     ref="contentContainerRef"
     class="justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
-  ></div>
+  >
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <MultipleCheckboxInput v-model="wh.species" title="Species" :options="speciesOpts" :disabled="!wh.canEdit" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped></style>
