@@ -342,6 +342,46 @@ export class Career implements WhProperty {
         return zeroCareerLevel;
     }
   }
+
+  updateLevelSkills(level: 1 | 2 | 3 | 4, id: string, selected: boolean): void {
+    const careerLevel = this.getLevel(level);
+
+    if (selected) {
+      if (careerLevel.skills.has(id)) {
+        // do nothing
+        return;
+      } else {
+        careerLevel.skills.add(id);
+      }
+    } else {
+      if (careerLevel.skills.has(id)) {
+        careerLevel.skills.delete(id);
+        return;
+      } else {
+        // do nothing
+      }
+    }
+  }
+
+  updateLevelTalents(level: 1 | 2 | 3 | 4, id: string, selected: boolean): void {
+    const careerLevel = this.getLevel(level);
+
+    if (selected) {
+      if (careerLevel.talents.has(id)) {
+        // do nothing
+        return;
+      } else {
+        careerLevel.talents.add(id);
+      }
+    } else {
+      if (careerLevel.talents.has(id)) {
+        careerLevel.talents.delete(id);
+        return;
+      } else {
+        // do nothing
+      }
+    }
+  }
 }
 
 function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {

@@ -29,6 +29,10 @@ import EditControls from "../../../components/EditControls.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
+import { useWhList } from "../../../composables/whList.ts";
+import { SkillApi } from "../../../services/wh/skill.ts";
+import { TalentApi } from "../../../services/wh/talent.ts";
+import SelectTable from "../../../components/SelectTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -56,6 +60,12 @@ const {
   resetForm,
   showSubmissionStatus,
 } = useWhEdit(newCareer, new CareerApi(authRequest));
+
+const skillListUtils = useWhList(new SkillApi(authRequest));
+skillListUtils.loadWhList();
+
+const talentListUtils = useWhList(new TalentApi(authRequest));
+talentListUtils.loadWhList();
 
 await loadWh(props.id);
 
@@ -155,6 +165,36 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           title="Trappings"
           :validationStatus="validLevel1Items"
           :disabled="!wh.canEdit"
+        />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <SelectTable
+          modalId="skill1"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.level1.skills"
+          :itemList="skillListUtils.whList.value"
+          title="Skills"
+          modalTitle="Add/remove skills"
+          :loading="skillListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('skill', { id: 'create' })"
+          @reload="skillListUtils.loadWhList"
+          @selected="(e) => wh.updateLevelSkills(1, e.id, e.selected)"
+        />
+        <SelectTable
+          modalId="talent1"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.level1.talents"
+          :itemList="talentListUtils.whList.value"
+          title="Talents"
+          modalTitle="Add/remove talents"
+          :loading="talentListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('talent', { id: 'create' })"
+          @reload="talentListUtils.loadWhList"
+          @selected="(e) => wh.updateLevelTalents(1, e.id, e.selected)"
         />
       </div>
     </div>
