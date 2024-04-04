@@ -150,14 +150,14 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             title="Status"
             :options="statusTierOpts"
             :disabled="!wh.canEdit"
-            class="min-w-24"
+            class="min-w-24 flex-1"
           />
           <SelectInput
             v-model="wh.level1.standing"
             title="Standing"
             :options="statusStandingOpts"
             :disabled="!wh.canEdit"
-            class="min-w-24"
+            class="min-w-24 flex-1"
           />
         </div>
         <FormTextarea
