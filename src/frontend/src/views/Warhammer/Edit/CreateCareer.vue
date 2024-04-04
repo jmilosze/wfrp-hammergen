@@ -199,6 +199,219 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
       </div>
     </div>
   </div>
+  <p class="text-xl">Level 2</p>
+  <div
+    ref="contentContainerRef"
+    class="justify-between text-left gap-4 my-4"
+    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+  >
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <FormInput v-model="wh.level2.name" title="Name" :validationStatus="validLevel2Name" :disabled="!wh.canEdit" />
+        <MultipleCheckboxInput
+          v-model="wh.level2.attributes"
+          title="Attributes"
+          :options="attributeOpts"
+          :disabled="!wh.canEdit"
+        />
+
+        <div class="flex flex-wrap gap-4 mt-2">
+          <SelectInput
+            v-model="wh.level2.status"
+            title="Status"
+            :options="statusTierOpts"
+            :disabled="!wh.canEdit"
+            class="min-w-24 flex-1"
+          />
+          <SelectInput
+            v-model="wh.level2.standing"
+            title="Standing"
+            :options="statusStandingOpts"
+            :disabled="!wh.canEdit"
+            class="min-w-24 flex-1"
+          />
+        </div>
+        <FormTextarea
+          v-model="wh.level2.items"
+          title="Trappings"
+          :validationStatus="validLevel2Items"
+          :disabled="!wh.canEdit"
+        />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <SelectTable
+          modalId="skill2"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.level2.skills"
+          :itemList="skillListUtils.whList.value"
+          title="Skills"
+          modalTitle="Add/remove skills"
+          :loading="skillListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('skill', { id: 'create' })"
+          @reload="skillListUtils.loadWhList"
+          @selected="(e) => wh.updateLevelSkills(2, e.id, e.selected)"
+        />
+        <SelectTable
+          modalId="talent2"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.level2.talents"
+          :itemList="talentListUtils.whList.value"
+          title="Talents"
+          modalTitle="Add/remove talents"
+          :loading="talentListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('talent', { id: 'create' })"
+          @reload="talentListUtils.loadWhList"
+          @selected="(e) => wh.updateLevelTalents(2, e.id, e.selected)"
+        />
+      </div>
+    </div>
+  </div>
+  <p class="text-xl">Level 3</p>
+  <div
+    ref="contentContainerRef"
+    class="justify-between text-left gap-4 my-4"
+    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+  >
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <FormInput v-model="wh.level3.name" title="Name" :validationStatus="validLevel3Name" :disabled="!wh.canEdit" />
+        <MultipleCheckboxInput
+          v-model="wh.level3.attributes"
+          title="Attributes"
+          :options="attributeOpts"
+          :disabled="!wh.canEdit"
+        />
+
+        <div class="flex flex-wrap gap-4 mt-2">
+          <SelectInput
+            v-model="wh.level3.status"
+            title="Status"
+            :options="statusTierOpts"
+            :disabled="!wh.canEdit"
+            class="min-w-24 flex-1"
+          />
+          <SelectInput
+            v-model="wh.level3.standing"
+            title="Standing"
+            :options="statusStandingOpts"
+            :disabled="!wh.canEdit"
+            class="min-w-24 flex-1"
+          />
+        </div>
+        <FormTextarea
+          v-model="wh.level3.items"
+          title="Trappings"
+          :validationStatus="validLevel3Items"
+          :disabled="!wh.canEdit"
+        />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <SelectTable
+          modalId="skill3"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.level3.skills"
+          :itemList="skillListUtils.whList.value"
+          title="Skills"
+          modalTitle="Add/remove skills"
+          :loading="skillListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('skill', { id: 'create' })"
+          @reload="skillListUtils.loadWhList"
+          @selected="(e) => wh.updateLevelSkills(3, e.id, e.selected)"
+        />
+        <SelectTable
+          modalId="talent3"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.level3.talents"
+          :itemList="talentListUtils.whList.value"
+          title="Talents"
+          modalTitle="Add/remove talents"
+          :loading="talentListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('talent', { id: 'create' })"
+          @reload="talentListUtils.loadWhList"
+          @selected="(e) => wh.updateLevelTalents(3, e.id, e.selected)"
+        />
+      </div>
+    </div>
+  </div>
+  <p class="text-xl">Level 4</p>
+  <div
+    ref="contentContainerRef"
+    class="justify-between text-left gap-4 my-4"
+    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+  >
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <FormInput v-model="wh.level4.name" title="Name" :validationStatus="validLevel4Name" :disabled="!wh.canEdit" />
+        <MultipleCheckboxInput
+          v-model="wh.level4.attributes"
+          title="Attributes"
+          :options="attributeOpts"
+          :disabled="!wh.canEdit"
+        />
+
+        <div class="flex flex-wrap gap-4 mt-2">
+          <SelectInput
+            v-model="wh.level4.status"
+            title="Status"
+            :options="statusTierOpts"
+            :disabled="!wh.canEdit"
+            class="min-w-24 flex-1"
+          />
+          <SelectInput
+            v-model="wh.level4.standing"
+            title="Standing"
+            :options="statusStandingOpts"
+            :disabled="!wh.canEdit"
+            class="min-w-24 flex-1"
+          />
+        </div>
+        <FormTextarea
+          v-model="wh.level4.items"
+          title="Trappings"
+          :validationStatus="validLevel4Items"
+          :disabled="!wh.canEdit"
+        />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <SelectTable
+          modalId="skill4"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.level4.skills"
+          :itemList="skillListUtils.whList.value"
+          title="Skills"
+          modalTitle="Add/remove skills"
+          :loading="skillListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('skill', { id: 'create' })"
+          @reload="skillListUtils.loadWhList"
+          @selected="(e) => wh.updateLevelSkills(4, e.id, e.selected)"
+        />
+        <SelectTable
+          modalId="talent4"
+          :disabled="!wh.canEdit"
+          :initSelectedItems="wh.level4.talents"
+          :itemList="talentListUtils.whList.value"
+          title="Talents"
+          modalTitle="Add/remove talents"
+          :loading="talentListUtils.loading.value"
+          class="mt-4"
+          @createNew="openInNewTab('talent', { id: 'create' })"
+          @reload="talentListUtils.loadWhList"
+          @selected="(e) => wh.updateLevelTalents(4, e.id, e.selected)"
+        />
+      </div>
+    </div>
+  </div>
   <div
     ref="contentContainerRef"
     class="justify-between text-left gap-4 my-4"
