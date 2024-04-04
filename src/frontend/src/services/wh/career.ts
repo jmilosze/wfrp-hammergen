@@ -68,7 +68,9 @@ export const enum StatusTier {
   Gold,
 }
 
-export function printStatusTier(statusTier: StatusTier) {
+export const statusTierList: StatusTier[] = [StatusTier.Brass, StatusTier.Silver, StatusTier.Gold];
+
+export function printStatusTier(statusTier: StatusTier): string {
   switch (statusTier) {
     case StatusTier.Brass:
       return "Brass";
@@ -82,6 +84,12 @@ export function printStatusTier(statusTier: StatusTier) {
 }
 
 export type StatusStanding = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+export const statusStandingList: StatusStanding[] = [0, 1, 2, 3, 4, 5, 6, 7];
+
+export function printStatusStanding(statusStanding: StatusStanding): string {
+  return statusStanding.toString();
+}
 
 export enum Species {
   Human = 0,
@@ -248,10 +256,51 @@ export class Career implements WhProperty {
     return validLongDescFn(this.description);
   }
 
+  validateLevel1Name(): ValidationStatus {
+    return validShortDescFn(this.level1.name);
+  }
+
+  validateLevel2Name(): ValidationStatus {
+    return validShortDescFn(this.level2.name);
+  }
+
+  validateLevel3Name(): ValidationStatus {
+    return validShortDescFn(this.level3.name);
+  }
+
+  validateLevel4Name(): ValidationStatus {
+    return validShortDescFn(this.level4.name);
+  }
+
+  validateLevel1Items(): ValidationStatus {
+    return validLongDescFn(this.level1.items);
+  }
+
+  validateLevel2Items(): ValidationStatus {
+    return validLongDescFn(this.level2.items);
+  }
+
+  validateLevel3Items(): ValidationStatus {
+    return validLongDescFn(this.level3.items);
+  }
+
+  validateLevel4Items(): ValidationStatus {
+    return validLongDescFn(this.level4.items);
+  }
+
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
-      // Finish implementation
+      this.validateName().valid &&
+      this.validateDescription().valid &&
+      sourceIsValid(this.source) &&
+      this.validateLevel1Name().valid &&
+      this.validateLevel2Name().valid &&
+      this.validateLevel3Name().valid &&
+      this.validateLevel4Name().valid &&
+      this.validateLevel1Items().valid &&
+      this.validateLevel2Items().valid &&
+      this.validateLevel3Items().valid &&
+      this.validateLevel4Items().valid
     );
   }
 
