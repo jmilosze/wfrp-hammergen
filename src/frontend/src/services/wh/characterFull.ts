@@ -2,7 +2,7 @@ import {
   DEFAULT_SIZE,
   getMovementFormula,
   getWoundsFormula,
-  printSpecies,
+  printSpeciesWithRegion,
   SpeciesWithRegion,
 } from "./characterUtils.ts";
 import { CareerApiData, CareerClass, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
@@ -208,7 +208,7 @@ export function newCharacterFull({
   name = "",
   description = "",
   notes = "",
-  species = printSpecies(SpeciesWithRegion.None),
+  species = printSpeciesWithRegion(SpeciesWithRegion.None),
   fate = 0,
   fortune = 0,
   resilience = 0,
@@ -343,7 +343,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     name: fullCharacterApi.object.name,
     description: fullCharacterApi.object.description,
     notes: fullCharacterApi.object.notes,
-    species: printSpecies(fullCharacterApi.object.species),
+    species: printSpeciesWithRegion(fullCharacterApi.object.species),
     fate: fullCharacterApi.object.fate,
     fortune: fullCharacterApi.object.fortune,
     resilience: fullCharacterApi.object.resilience,

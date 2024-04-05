@@ -38,7 +38,7 @@ export enum SpeciesWithRegion {
   None = "9999",
 }
 
-export function printSpecies(species: SpeciesWithRegion) {
+export function printSpeciesWithRegion(species: SpeciesWithRegion) {
   switch (species) {
     case SpeciesWithRegion.HumanDefault:
       return "Human";
@@ -169,6 +169,16 @@ export const WOOD_ELF_LIST = [SpeciesWithRegion.WoodElfDefault];
 export const GNOME_LIST = [SpeciesWithRegion.GnomeDefault];
 
 export const OGRE_LIST = [SpeciesWithRegion.OgreDefault];
+
+export const speciesWithRegionList = [
+  ...HUMAN_LIST,
+  ...HALFLING_LIST,
+  ...DWARF_LIST,
+  ...HIGH_ELF_LIST,
+  ...WOOD_ELF_LIST,
+  ...GNOME_LIST,
+  ...OGRE_LIST,
+];
 
 export enum Sex {
   Male = 0,

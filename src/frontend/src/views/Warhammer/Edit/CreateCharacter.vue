@@ -14,7 +14,12 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormInput from "../../../components/FormInput.vue";
 import ActionButton from "../../../components/ActionButton.vue";
 import generateName from "../../../services/wh/characterGeneration/generateName.ts";
-import { SpeciesWithRegion } from "../../../services/wh/characterUtils.ts";
+import {
+  printSpeciesWithRegion,
+  SpeciesWithRegion,
+  speciesWithRegionList,
+} from "../../../services/wh/characterUtils.ts";
+import SelectInput from "../../../components/SelectInput.vue";
 
 const props = defineProps<{
   id: string;
@@ -55,6 +60,8 @@ const validDesc = computed(() => wh.value.validateDescription());
 function formGenerateName() {
   wh.value.name = generateName(wh.value.species);
 }
+
+const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
 </script>
 
 <template>
@@ -74,6 +81,13 @@ function formGenerateName() {
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit">
           <ActionButton class="ml-2" @click="formGenerateName">Generate</ActionButton>
         </FormInput>
+        <SelectInput
+          v-model="wh.species"
+          title="Species"
+          :options="speciesOpts"
+          :disabled="!wh.canEdit"
+          class="min-w-24 flex-1"
+        />
       </div>
     </div>
   </div>

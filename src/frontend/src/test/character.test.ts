@@ -1,5 +1,5 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
-import { getWoundsFormula, printSpecies, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
+import { getWoundsFormula, printSpeciesWithRegion, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
 import { ApiResponse, IdNumber } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -494,63 +494,63 @@ test("getWounds returns correct value", () => {
 describe("getMovement returns correct value", () => {
   test.each([
     {
-      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
       talentModifier: 0,
       mutationModifier: 0,
       expected: 4,
     },
     {
-      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
       talentModifier: -1,
       mutationModifier: 0,
       expected: 3,
     },
     {
-      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
       talentModifier: 0,
       mutationModifier: 1,
       expected: 5,
     },
     {
-      name: printSpecies(SpeciesWithRegion.HalflingDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HalflingDefault),
       speciesWithRegion: SpeciesWithRegion.HalflingDefault,
       talentModifier: 0,
       mutationModifier: 0,
       expected: 3,
     },
     {
-      name: printSpecies(SpeciesWithRegion.DwarfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.DwarfDefault),
       speciesWithRegion: SpeciesWithRegion.DwarfDefault,
       talentModifier: 0,
       mutationModifier: 0,
       expected: 3,
     },
     {
-      name: printSpecies(SpeciesWithRegion.HighElfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HighElfDefault),
       speciesWithRegion: SpeciesWithRegion.HighElfDefault,
       talentModifier: 0,
       mutationModifier: 0,
       expected: 5,
     },
     {
-      name: printSpecies(SpeciesWithRegion.WoodElfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.WoodElfDefault),
       speciesWithRegion: SpeciesWithRegion.WoodElfDefault,
       talentModifier: 0,
       mutationModifier: 0,
       expected: 5,
     },
     {
-      name: printSpecies(SpeciesWithRegion.GnomeDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.GnomeDefault),
       speciesWithRegion: SpeciesWithRegion.GnomeDefault,
       talentModifier: 0,
       mutationModifier: 0,
       expected: 3,
     },
     {
-      name: printSpecies(SpeciesWithRegion.OgreDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.OgreDefault),
       speciesWithRegion: SpeciesWithRegion.OgreDefault,
       talentModifier: 0,
       mutationModifier: 0,
@@ -588,7 +588,7 @@ describe("getBaseAttributes returns correct value", () => {
   char.attributeRolls = { WS: 12, BS: 1, S: 2, T: 1, I: 2, Ag: 1, Dex: 2, Int: 1, WP: 2, Fel: 0 };
   test.each([
     {
-      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
       expected: {
         WS: 20 + 12,
@@ -604,7 +604,7 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.HalflingDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HalflingDefault),
       speciesWithRegion: SpeciesWithRegion.HalflingDefault,
       expected: {
         WS: 10 + 12,
@@ -620,7 +620,7 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.DwarfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.DwarfDefault),
       speciesWithRegion: SpeciesWithRegion.DwarfDefault,
       expected: {
         WS: 30 + 12,
@@ -636,7 +636,7 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.HighElfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HighElfDefault),
       speciesWithRegion: SpeciesWithRegion.HighElfDefault,
       expected: {
         WS: 30 + 12,
@@ -652,7 +652,7 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.WoodElfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.WoodElfDefault),
       speciesWithRegion: SpeciesWithRegion.WoodElfDefault,
       expected: {
         WS: 30 + 12,
@@ -668,7 +668,7 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.GnomeDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.GnomeDefault),
       speciesWithRegion: SpeciesWithRegion.GnomeDefault,
       expected: {
         WS: 20 + 12,
@@ -684,7 +684,7 @@ describe("getBaseAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.OgreDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.OgreDefault),
       speciesWithRegion: SpeciesWithRegion.OgreDefault,
       expected: {
         WS: 20 + 12,
@@ -713,7 +713,7 @@ describe("getTotalAttributes returns correct value", () => {
   char.attributeAdvances = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 10 };
   test.each([
     {
-      name: printSpecies(SpeciesWithRegion.HumanReikland),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
       expected: {
         WS: 20 + 16,
@@ -729,7 +729,7 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.HalflingDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HalflingDefault),
       speciesWithRegion: SpeciesWithRegion.HalflingDefault,
       expected: {
         WS: 10 + 16,
@@ -745,7 +745,7 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.DwarfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.DwarfDefault),
       speciesWithRegion: SpeciesWithRegion.DwarfDefault,
       expected: {
         WS: 30 + 16,
@@ -761,7 +761,7 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.HighElfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.HighElfDefault),
       speciesWithRegion: SpeciesWithRegion.HighElfDefault,
       expected: {
         WS: 30 + 16,
@@ -777,7 +777,7 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.WoodElfDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.WoodElfDefault),
       speciesWithRegion: SpeciesWithRegion.WoodElfDefault,
       expected: {
         WS: 30 + 16,
@@ -793,7 +793,7 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.GnomeDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.GnomeDefault),
       speciesWithRegion: SpeciesWithRegion.GnomeDefault,
       expected: {
         WS: 20 + 16,
@@ -809,7 +809,7 @@ describe("getTotalAttributes returns correct value", () => {
       },
     },
     {
-      name: printSpecies(SpeciesWithRegion.OgreDefault),
+      name: printSpeciesWithRegion(SpeciesWithRegion.OgreDefault),
       speciesWithRegion: SpeciesWithRegion.OgreDefault,
       expected: {
         WS: 20 + 16,
