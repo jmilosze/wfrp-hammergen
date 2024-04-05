@@ -21,6 +21,7 @@ const props = defineProps<{
   addReloadBtn?: boolean;
   elementId?: string;
   loading?: boolean;
+  resetPagination?: number;
 }>();
 
 const emit = defineEmits<{
@@ -52,6 +53,13 @@ const searchedItems = computed(() => {
 watch(searchTermDebounced, () => {
   startRow.value = 0;
 });
+
+watch(
+  () => props.resetPagination,
+  () => {
+    startRow.value = 0;
+  },
+);
 
 const rowsPerPage: number = props.perPage ? props.perPage : DEFAULT_PER_PAGE;
 const startRow: Ref<number> = ref(0);

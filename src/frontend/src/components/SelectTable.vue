@@ -77,7 +77,10 @@ const modalColumns = [
 
 const modalId = props.modalId ? props.modalId : "modifyItemsModal";
 
+const resetPaginationCounter = ref(0);
+
 function onModifyClick() {
+  resetPaginationCounter.value += 1;
   modal.showModal(modalId);
   searchTerm.value = "";
   itemsWithSelectList.value.sort((a, b) => {
@@ -125,6 +128,7 @@ function onModifyClick() {
         :addCreateNewBtn="true"
         :addReloadBtn="true"
         :loading="props.loading"
+        :resetPagination="resetPaginationCounter"
         elementId="modal"
         @createNew="emit('createNew')"
         @reload="emit('reload')"

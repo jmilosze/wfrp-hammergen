@@ -153,7 +153,7 @@ async function submitForm() {
       :validationStatus="validNewSharedAccount"
       class="mt-3"
     >
-      <ActionButton class="ml-3" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername"
+      <ActionButton class="ml-2" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername"
         >Add</ActionButton
       >
     </FormInput>
