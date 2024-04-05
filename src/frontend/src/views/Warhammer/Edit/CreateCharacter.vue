@@ -23,6 +23,7 @@ import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import { generateFateAndResilience } from "../../../services/wh/characterGeneration/generateCharacter.ts";
 import { rollDice } from "../../../utils/random.ts";
+import generateDescription from "../../../services/wh/characterGeneration/generateDescription.ts";
 
 const props = defineProps<{
   id: string;
@@ -69,10 +70,14 @@ function formGenerateName() {
   wh.value.name = generateName(wh.value.species);
 }
 
-function setFateResilience() {
+function formGenerateFateResilience() {
   [wh.value.fate, wh.value.resilience] = generateFateAndResilience(wh.value.species, rollDice);
   wh.value.fortune = wh.value.fate;
   wh.value.resolve = wh.value.resilience;
+}
+
+function formGenerateDescription() {
+  wh.value.description = generateDescription(wh.value.species);
 }
 
 const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
@@ -102,11 +107,10 @@ const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRe
           :disabled="!wh.canEdit"
           class="min-w-24 flex-1"
         />
-        <ActionButton @click="setFateResilience"
-          ><div class="flex justify-center w-full">
-            <div class="text-center">Generate Fate/Resilience</div>
-          </div></ActionButton
-        >
+        <div class="flex flex-wrap items-center gap-2">
+          <p class="text-xl">Fate and resilience</p>
+          <ActionButton @click="formGenerateFateResilience">Generate</ActionButton>
+        </div>
         <div class="flex gap-4">
           <FormInput
             v-model="wh.fate"
@@ -148,7 +152,10 @@ const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRe
           title="Description"
           :validationStatus="validDesc"
           :disabled="!wh.canEdit"
-        />
+          :class="[isEqualOrGreater ? '' : 'mt-2']"
+        >
+          <ActionButton class="mb-2" @click="formGenerateDescription">Generate</ActionButton>
+        </FormTextarea>
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!wh.canEdit" />
       </div>
     </div>

@@ -34,10 +34,12 @@ const spinnerClass = computed(() => {
 </script>
 
 <template>
-  <button :class="btnClass">
-    <span class="flex justify-between items-center">
-      <slot></slot>
-      <SpinnerAnimation :class="spinnerClass" />
-    </span>
-  </button>
+  <div>
+    <button :class="btnClass">
+      <span class="flex justify-between items-center">
+        <slot></slot>
+        <SpinnerAnimation :class="spinnerClass" />
+      </span>
+    </button>
+  </div>
 </template>
