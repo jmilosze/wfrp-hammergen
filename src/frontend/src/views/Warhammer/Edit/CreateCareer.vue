@@ -215,7 +215,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           :disabled="!wh.canEdit"
         />
 
-        <div class="flex flex-wrap gap-4 mt-2">
+        <div class="flex flex-wrap gap-4">
           <SelectInput
             v-model="wh.level2.status"
             title="Status"
@@ -286,7 +286,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           :disabled="!wh.canEdit"
         />
 
-        <div class="flex flex-wrap gap-4 mt-2">
+        <div class="flex flex-wrap gap-4">
           <SelectInput
             v-model="wh.level3.status"
             title="Status"
@@ -357,7 +357,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           :disabled="!wh.canEdit"
         />
 
-        <div class="flex flex-wrap gap-4 mt-2">
+        <div class="flex flex-wrap gap">
           <SelectInput
             v-model="wh.level4.status"
             title="Status"

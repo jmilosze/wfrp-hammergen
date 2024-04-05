@@ -20,6 +20,7 @@ import {
   speciesWithRegionList,
 } from "../../../services/wh/characterUtils.ts";
 import SelectInput from "../../../components/SelectInput.vue";
+import FormTextarea from "../../../components/FormTextarea.vue";
 
 const props = defineProps<{
   id: string;
@@ -56,6 +57,11 @@ const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
+const validNotes = computed(() => wh.value.validateNotes());
+const validFate = computed(() => wh.value.validateFate());
+const validFortune = computed(() => wh.value.validateFortune());
+const validResilience = computed(() => wh.value.validateResilience());
+const validResolve = computed(() => wh.value.validateResolve());
 
 function formGenerateName() {
   wh.value.name = generateName(wh.value.species);
@@ -88,6 +94,49 @@ const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRe
           :disabled="!wh.canEdit"
           class="min-w-24 flex-1"
         />
+        <div class="flex gap-4">
+          <FormInput
+            v-model="wh.fate"
+            type="number"
+            title="Fate"
+            :validationStatus="validFate"
+            :disabled="!wh.canEdit"
+          />
+          <FormInput
+            v-model="wh.fortune"
+            type="number"
+            title="Fortune"
+            :validationStatus="validFortune"
+            :disabled="!wh.canEdit"
+          />
+        </div>
+        <div class="flex gap-4">
+          <FormInput
+            v-model="wh.resilience"
+            type="number"
+            title="Resilience"
+            :validationStatus="validResilience"
+            :disabled="!wh.canEdit"
+          />
+          <FormInput
+            v-model="wh.resolve"
+            type="number"
+            title="Resolve"
+            :validationStatus="validResolve"
+            :disabled="!wh.canEdit"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
+        <FormTextarea
+          v-model="wh.description"
+          title="Description"
+          :validationStatus="validDesc"
+          :disabled="!wh.canEdit"
+        />
+        <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!wh.canEdit" />
       </div>
     </div>
   </div>

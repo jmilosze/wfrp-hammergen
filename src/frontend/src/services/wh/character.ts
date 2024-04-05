@@ -13,6 +13,7 @@ import {
   copyRecordWithObject,
   IdNumber,
   idNumberArrayToRecord,
+  validIntegerFn,
   validLongDescFn,
   validShortDescFn,
   WhApi,
@@ -269,10 +270,36 @@ export class Character implements WhProperty {
     return validLongDescFn(this.description);
   }
 
+  validateNotes(): ValidationStatus {
+    return validLongDescFn(this.notes);
+  }
+
+  validateFate(): ValidationStatus {
+    return validIntegerFn(this.fate, 0, 1000);
+  }
+
+  validateFortune(): ValidationStatus {
+    return validIntegerFn(this.fortune, 0, 1000);
+  }
+
+  validateResilience(): ValidationStatus {
+    return validIntegerFn(this.resilience, 0, 1000);
+  }
+
+  validateResolve(): ValidationStatus {
+    return validIntegerFn(this.resolve, 0, 1000);
+  }
+
   isValid(): boolean {
     return (
-      this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source)
-      // Finish implementation
+      this.validateName().valid &&
+      this.validateDescription().valid &&
+      sourceIsValid(this.source) &&
+      this.validateNotes().valid &&
+      this.validateFate().valid &&
+      this.validateFortune().valid &&
+      this.validateResilience().valid &&
+      this.validateResolve().valid
     );
   }
 
