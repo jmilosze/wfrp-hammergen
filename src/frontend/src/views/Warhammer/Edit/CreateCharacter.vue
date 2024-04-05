@@ -71,6 +71,8 @@ await loadWh(props.id);
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
+const smSize = useElSize(ViewSize.sm, contentContainerRef);
+
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validNotes = computed(() => wh.value.validateNotes());
@@ -141,13 +143,14 @@ function formGenerateStatusStanding() {
           <p class="text-xl">Fate and resilience</p>
           <ActionButton v-if="wh.canEdit" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
-        <div class="flex gap-4">
+        <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
           <FormInput
             v-model="wh.fate"
             type="number"
             title="Fate"
             :validationStatus="validFate"
             :disabled="!wh.canEdit"
+            class="my-2"
           />
           <FormInput
             v-model="wh.fortune"
@@ -155,15 +158,17 @@ function formGenerateStatusStanding() {
             title="Fortune"
             :validationStatus="validFortune"
             :disabled="!wh.canEdit"
+            class="my-2"
           />
         </div>
-        <div class="flex gap-4">
+        <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
           <FormInput
             v-model="wh.resilience"
             type="number"
             title="Resilience"
             :validationStatus="validResilience"
             :disabled="!wh.canEdit"
+            class="my-2"
           />
           <FormInput
             v-model="wh.resolve"
@@ -171,6 +176,7 @@ function formGenerateStatusStanding() {
             title="Resolve"
             :validationStatus="validResolve"
             :disabled="!wh.canEdit"
+            class="my-2"
           />
         </div>
         <div class="flex flex-wrap items-center gap-2 -mb-2">
@@ -179,24 +185,24 @@ function formGenerateStatusStanding() {
             >Generate</ActionButton
           >
         </div>
-        <div class="flex flex-wrap gap-4">
+        <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
           <SelectInput
             v-model="wh.status"
             title="Status"
             :options="statusTierOpts"
             :disabled="!wh.canEdit"
-            class="min-w-24 flex-1"
+            class="min-w-24 flex-1 my-2"
           />
           <SelectInput
             v-model="wh.standing"
             title="Standing"
             :options="statusStandingOpts"
             :disabled="!wh.canEdit"
-            class="min-w-24 flex-1"
+            class="min-w-24 flex-1 my-2"
           />
         </div>
         <p class="text-xl -mb-2">Wealth</p>
-        <div :class="isEqualOrGreater ? ['flex', 'gap-4'] : ['flex-col']">
+        <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
           <FormInput
             v-model="wh.brass"
             type="number"
