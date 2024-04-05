@@ -24,12 +24,22 @@ import FormTextarea from "../../../components/FormTextarea.vue";
 import { generateFateAndResilience } from "../../../services/wh/characterGeneration/generateCharacter.ts";
 import { rollDice } from "../../../utils/random.ts";
 import generateDescription from "../../../services/wh/characterGeneration/generateDescription.ts";
+import {
+  Career,
+  CareerApi,
+  CareerLevel,
+  printStatusStanding,
+  printStatusTier,
+  statusStandingList,
+  statusTierList,
+} from "../../../services/wh/career.ts";
+import { useWhList } from "../../../composables/whList.ts";
 
 const props = defineProps<{
   id: string;
 }>();
 
-const newCareer = new Character({
+const newCharacter = new Character({
   name: "New character",
   species: SpeciesWithRegion.HumanDefault,
   canEdit: true,
@@ -51,7 +61,10 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newCareer, new CharacterApi(authRequest));
+} = useWhEdit(newCharacter, new CharacterApi(authRequest));
+
+const careerListUtils = useWhList(new CareerApi(authRequest));
+careerListUtils.loadWhList();
 
 await loadWh(props.id);
 
@@ -65,6 +78,13 @@ const validFate = computed(() => wh.value.validateFate());
 const validFortune = computed(() => wh.value.validateFortune());
 const validResilience = computed(() => wh.value.validateResilience());
 const validResolve = computed(() => wh.value.validateResolve());
+const validBrass = computed(() => wh.value.validateBrass());
+const validSilver = computed(() => wh.value.validateSilver());
+const validGold = computed(() => wh.value.validateGold());
+
+const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
+const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
+const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
 
 function formGenerateName() {
   wh.value.name = generateName(wh.value.species);
@@ -80,7 +100,17 @@ function formGenerateDescription() {
   wh.value.description = generateDescription(wh.value.species);
 }
 
-const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
+function formGenerateStatusStanding() {
+  let career = careerListUtils.whList.value.find((x) => x.id === wh.value.career.id);
+  if (!career) {
+    career = new Career();
+  }
+  const lvl = [1, 2, 3, 4].includes(wh.value.career.number) ? (wh.value.career.number as 1 | 2 | 3 | 4) : 1;
+
+  const careerWithLevel = career.getLevel(lvl);
+  wh.value.status = careerWithLevel.status;
+  wh.value.standing = careerWithLevel.standing;
+}
 </script>
 
 <template>
@@ -98,7 +128,7 @@ const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRe
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit">
-          <ActionButton class="ml-2" @click="formGenerateName">Generate</ActionButton>
+          <ActionButton v-if="wh.canEdit" class="ml-2" @click="formGenerateName">Generate</ActionButton>
         </FormInput>
         <SelectInput
           v-model="wh.species"
@@ -107,9 +137,9 @@ const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRe
           :disabled="!wh.canEdit"
           class="min-w-24 flex-1"
         />
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2 -mb-2">
           <p class="text-xl">Fate and resilience</p>
-          <ActionButton @click="formGenerateFateResilience">Generate</ActionButton>
+          <ActionButton v-if="wh.canEdit" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
         <div class="flex gap-4">
           <FormInput
@@ -141,6 +171,55 @@ const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRe
             title="Resolve"
             :validationStatus="validResolve"
             :disabled="!wh.canEdit"
+          />
+        </div>
+        <div class="flex flex-wrap items-center gap-2 -mb-2">
+          <p class="text-xl">Status and standing</p>
+          <ActionButton v-if="wh.canEdit && !careerListUtils.loading.value" @click="formGenerateStatusStanding"
+            >Generate</ActionButton
+          >
+        </div>
+        <div class="flex flex-wrap gap-4">
+          <SelectInput
+            v-model="wh.status"
+            title="Status"
+            :options="statusTierOpts"
+            :disabled="!wh.canEdit"
+            class="min-w-24 flex-1"
+          />
+          <SelectInput
+            v-model="wh.standing"
+            title="Standing"
+            :options="statusStandingOpts"
+            :disabled="!wh.canEdit"
+            class="min-w-24 flex-1"
+          />
+        </div>
+        <p class="text-xl -mb-2">Wealth</p>
+        <div :class="isEqualOrGreater ? ['flex', 'gap-4'] : ['flex-col']">
+          <FormInput
+            v-model="wh.brass"
+            type="number"
+            title="Brass"
+            :validationStatus="validBrass"
+            :disabled="!wh.canEdit"
+            class="my-2"
+          />
+          <FormInput
+            v-model="wh.silver"
+            type="number"
+            title="Silver"
+            :validationStatus="validSilver"
+            :disabled="!wh.canEdit"
+            class="my-2"
+          />
+          <FormInput
+            v-model="wh.gold"
+            type="number"
+            title="Gold"
+            :validationStatus="validGold"
+            :disabled="!wh.canEdit"
+            class="my-2"
           />
         </div>
       </div>

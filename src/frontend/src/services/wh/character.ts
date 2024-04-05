@@ -290,6 +290,18 @@ export class Character implements WhProperty {
     return validIntegerFn(this.resolve, 0, 1000);
   }
 
+  validateBrass(): ValidationStatus {
+    return validIntegerFn(this.brass, 0, 1000000);
+  }
+
+  validateSilver(): ValidationStatus {
+    return validIntegerFn(this.silver, 0, 1000000);
+  }
+
+  validateGold(): ValidationStatus {
+    return validIntegerFn(this.gold, 0, 1000000);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
