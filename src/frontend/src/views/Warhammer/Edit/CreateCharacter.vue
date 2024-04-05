@@ -21,6 +21,8 @@ import {
 } from "../../../services/wh/characterUtils.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
+import { generateFateAndResilience } from "../../../services/wh/characterGeneration/generateCharacter.ts";
+import { rollDice } from "../../../utils/random.ts";
 
 const props = defineProps<{
   id: string;
@@ -67,6 +69,12 @@ function formGenerateName() {
   wh.value.name = generateName(wh.value.species);
 }
 
+function setFateResilience() {
+  [wh.value.fate, wh.value.resilience] = generateFateAndResilience(wh.value.species, rollDice);
+  wh.value.fortune = wh.value.fate;
+  wh.value.resolve = wh.value.resilience;
+}
+
 const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
 </script>
 
@@ -94,6 +102,11 @@ const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRe
           :disabled="!wh.canEdit"
           class="min-w-24 flex-1"
         />
+        <ActionButton @click="setFateResilience"
+          ><div class="flex justify-center w-full">
+            <div class="text-center">Generate Fate/Resilience</div>
+          </div></ActionButton
+        >
         <div class="flex gap-4">
           <FormInput
             v-model="wh.fate"
