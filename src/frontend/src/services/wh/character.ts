@@ -302,6 +302,14 @@ export class Character implements WhProperty {
     return validIntegerFn(this.gold, 0, 1000000);
   }
 
+  validateSin(): ValidationStatus {
+    return validIntegerFn(this.sin, 0, 1000);
+  }
+
+  validateCorruption(): ValidationStatus {
+    return validIntegerFn(this.sin, 0, 1000);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -311,7 +319,9 @@ export class Character implements WhProperty {
       this.validateFate().valid &&
       this.validateFortune().valid &&
       this.validateResilience().valid &&
-      this.validateResolve().valid
+      this.validateResolve().valid &&
+      this.validateSin().valid &&
+      this.validateCorruption().valid
     );
   }
 

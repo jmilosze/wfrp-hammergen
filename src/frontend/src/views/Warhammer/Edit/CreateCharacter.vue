@@ -83,6 +83,8 @@ const validResolve = computed(() => wh.value.validateResolve());
 const validBrass = computed(() => wh.value.validateBrass());
 const validSilver = computed(() => wh.value.validateSilver());
 const validGold = computed(() => wh.value.validateGold());
+const validSin = computed(() => wh.value.validateSin());
+const validCorruption = computed(() => wh.value.validateCorruption());
 
 const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
@@ -140,94 +142,124 @@ function formGenerateStatusStanding() {
           class="min-w-24 flex-1"
         />
         <div class="flex flex-wrap items-center gap-2 -mb-2">
-          <p class="text-xl">Fate and resilience</p>
+          <p class="">Fate and resilience</p>
           <ActionButton v-if="wh.canEdit" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
-        <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
-          <FormInput
-            v-model="wh.fate"
-            type="number"
-            title="Fate"
-            :validationStatus="validFate"
-            :disabled="!wh.canEdit"
-            class="my-2"
-          />
-          <FormInput
-            v-model="wh.fortune"
-            type="number"
-            title="Fortune"
-            :validationStatus="validFortune"
-            :disabled="!wh.canEdit"
-            class="my-2"
-          />
-        </div>
-        <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
-          <FormInput
-            v-model="wh.resilience"
-            type="number"
-            title="Resilience"
-            :validationStatus="validResilience"
-            :disabled="!wh.canEdit"
-            class="my-2"
-          />
-          <FormInput
-            v-model="wh.resolve"
-            type="number"
-            title="Resolve"
-            :validationStatus="validResolve"
-            :disabled="!wh.canEdit"
-            class="my-2"
-          />
+        <div class="border border-neutral-300 rounded p-2">
+          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+            <FormInput
+              v-model="wh.fate"
+              type="number"
+              title="Fate"
+              :validationStatus="validFate"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+            <FormInput
+              v-model="wh.fortune"
+              type="number"
+              title="Fortune"
+              :validationStatus="validFortune"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+          </div>
+
+          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+            <FormInput
+              v-model="wh.resilience"
+              type="number"
+              title="Resilience"
+              :validationStatus="validResilience"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+            <FormInput
+              v-model="wh.resolve"
+              type="number"
+              title="Resolve"
+              :validationStatus="validResolve"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+          </div>
         </div>
         <div class="flex flex-wrap items-center gap-2 -mb-2">
-          <p class="text-xl">Status and standing</p>
+          <p class="">Status and standing</p>
           <ActionButton v-if="wh.canEdit && !careerListUtils.loading.value" @click="formGenerateStatusStanding"
             >Generate</ActionButton
           >
         </div>
-        <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
-          <SelectInput
-            v-model="wh.status"
-            title="Status"
-            :options="statusTierOpts"
-            :disabled="!wh.canEdit"
-            class="min-w-24 flex-1 my-2"
-          />
-          <SelectInput
-            v-model="wh.standing"
-            title="Standing"
-            :options="statusStandingOpts"
-            :disabled="!wh.canEdit"
-            class="min-w-24 flex-1 my-2"
-          />
+        <div class="border border-neutral-300 rounded p-2">
+          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+            <SelectInput
+              v-model="wh.status"
+              title="Status"
+              :options="statusTierOpts"
+              :disabled="!wh.canEdit"
+              class="min-w-24 flex-1 my-2"
+            />
+            <SelectInput
+              v-model="wh.standing"
+              title="Standing"
+              :options="statusStandingOpts"
+              :disabled="!wh.canEdit"
+              class="min-w-24 flex-1 my-2"
+            />
+          </div>
         </div>
-        <p class="text-xl -mb-2">Wealth</p>
-        <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
-          <FormInput
-            v-model="wh.brass"
-            type="number"
-            title="Brass"
-            :validationStatus="validBrass"
-            :disabled="!wh.canEdit"
-            class="my-2"
-          />
-          <FormInput
-            v-model="wh.silver"
-            type="number"
-            title="Silver"
-            :validationStatus="validSilver"
-            :disabled="!wh.canEdit"
-            class="my-2"
-          />
-          <FormInput
-            v-model="wh.gold"
-            type="number"
-            title="Gold"
-            :validationStatus="validGold"
-            :disabled="!wh.canEdit"
-            class="my-2"
-          />
+        <p class="-mb-2">Wealth</p>
+        <div class="border border-neutral-300 rounded p-2">
+          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+            <FormInput
+              v-model="wh.brass"
+              type="number"
+              title="Brass"
+              :validationStatus="validBrass"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+            <FormInput
+              v-model="wh.silver"
+              type="number"
+              title="Silver"
+              :validationStatus="validSilver"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+            <FormInput
+              v-model="wh.gold"
+              type="number"
+              title="Gold"
+              :validationStatus="validGold"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+          </div>
         </div>
+        <p class="-mb-2">Sin and corruption</p>
+        <div class="border border-neutral-300 rounded p-2">
+          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+            <FormInput
+              v-model="wh.sin"
+              type="number"
+              title="Sin"
+              :validationStatus="validSin"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+            <FormInput
+              v-model="wh.corruption"
+              type="number"
+              title="Corruption"
+              :validationStatus="validCorruption"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+          </div>
+        </div>
+        <p class="-mb-2">Experience</p>
+        <div class="border border-neutral-300 rounded p-2"></div>
       </div>
     </div>
     <div class="flex-1">
