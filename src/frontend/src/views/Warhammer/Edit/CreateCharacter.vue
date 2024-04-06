@@ -82,6 +82,9 @@ const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRe
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
 const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
 
+const movement = computed(() => wh.value.getMovement());
+const wounds = computed(() => wh.value.getWounds());
+
 function formGenerateName() {
   wh.value.name = generateName(wh.value.species);
 }
@@ -278,6 +281,19 @@ function formGenerateStatusStanding() {
           <ActionButton class="mb-2" @click="formGenerateDescription">Generate</ActionButton>
         </FormTextarea>
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!wh.canEdit" />
+        <p class="-mb-2">Calculated</p>
+        <div class="border border-neutral-300 rounded p-2">
+          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+            <div class="flex-1">
+              <p class="mb-3">Movement</p>
+              <div class="ml-2">{{ movement }}</div>
+            </div>
+            <div class="flex-1">
+              <p class="mb-3">Wounds (unmodified by Hardy)</p>
+              <div class="ml-2">{{ wounds }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
