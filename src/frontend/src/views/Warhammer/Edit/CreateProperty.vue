@@ -69,8 +69,8 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
   <Header :title="id === 'create' ? 'Create quality/rune' : wh.canEdit ? 'Edit quality/rune' : wh.name" />
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+    class="flex justify-between text-left gap-4 my-4"
+    :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
@@ -98,8 +98,8 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
 
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+    class="flex justify-between text-left gap-4 my-4"
+    :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
       <SourceTable

@@ -118,8 +118,8 @@ function formGenerateStatusStanding() {
   <Header :title="id === 'create' ? 'Create career' : wh.canEdit ? 'Edit career' : wh.name" />
   <div
     ref="contentContainerRef"
-    class="justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
+    class="flex justify-between text-left gap-4 my-4"
+    :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
@@ -138,14 +138,13 @@ function formGenerateStatusStanding() {
           <ActionButton v-if="wh.canEdit" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
         <div class="border border-neutral-300 rounded p-2">
-          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <FormInput
               v-model="wh.fate"
               type="number"
               title="Fate"
               :validationStatus="validFate"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
             <FormInput
               v-model="wh.fortune"
@@ -153,18 +152,16 @@ function formGenerateStatusStanding() {
               title="Fortune"
               :validationStatus="validFortune"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
           </div>
 
-          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <FormInput
               v-model="wh.resilience"
               type="number"
               title="Resilience"
               :validationStatus="validResilience"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
             <FormInput
               v-model="wh.resolve"
@@ -172,7 +169,6 @@ function formGenerateStatusStanding() {
               title="Resolve"
               :validationStatus="validResolve"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
           </div>
         </div>
@@ -183,33 +179,32 @@ function formGenerateStatusStanding() {
           >
         </div>
         <div class="border border-neutral-300 rounded p-2">
-          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <SelectInput
               v-model="wh.status"
               title="Status"
               :options="statusTierOpts"
               :disabled="!wh.canEdit"
-              class="min-w-24 flex-1 my-2"
+              class="min-w-24 flex-1"
             />
             <SelectInput
               v-model="wh.standing"
               title="Standing"
               :options="statusStandingOpts"
               :disabled="!wh.canEdit"
-              class="min-w-24 flex-1 my-2"
+              class="min-w-24 flex-1"
             />
           </div>
         </div>
         <p class="-mb-2">Wealth</p>
         <div class="border border-neutral-300 rounded p-2">
-          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <FormInput
               v-model="wh.brass"
               type="number"
               title="Brass"
               :validationStatus="validBrass"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
             <FormInput
               v-model="wh.silver"
@@ -217,7 +212,6 @@ function formGenerateStatusStanding() {
               title="Silver"
               :validationStatus="validSilver"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
             <FormInput
               v-model="wh.gold"
@@ -225,20 +219,18 @@ function formGenerateStatusStanding() {
               title="Gold"
               :validationStatus="validGold"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
           </div>
         </div>
         <p class="-mb-2">Sin and corruption</p>
         <div class="border border-neutral-300 rounded p-2">
-          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <FormInput
               v-model="wh.sin"
               type="number"
               title="Sin"
               :validationStatus="validSin"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
             <FormInput
               v-model="wh.corruption"
@@ -246,20 +238,18 @@ function formGenerateStatusStanding() {
               title="Corruption"
               :validationStatus="validCorruption"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
           </div>
         </div>
         <p class="-mb-2">Experience</p>
         <div class="border border-neutral-300 rounded p-2">
-          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <FormInput
               v-model="wh.currentExp"
               type="number"
               title="Unspent"
               :validationStatus="validCurrentExp"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
             <FormInput
               v-model="wh.spentExp"
@@ -267,9 +257,8 @@ function formGenerateStatusStanding() {
               title="Spent"
               :validationStatus="validSpentExp"
               :disabled="!wh.canEdit"
-              class="my-2"
             />
-            <div class="my-2">
+            <div>
               <p class="mb-3">Total</p>
               <div class="ml-2">{{ wh.currentExp + wh.spentExp }}</div>
             </div>
