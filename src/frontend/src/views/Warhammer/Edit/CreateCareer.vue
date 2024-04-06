@@ -174,7 +174,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           />
         </div>
       </div>
-      <div class="flex-1">
+      <div class="flex-1" :class="[isEqualOrGreater ? '' : 'mt-3']">
         <div class="flex flex-col gap-4">
           <SelectTable
             modalId="skill1"
@@ -196,7 +196,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             title="Talents"
             modalTitle="Add/remove talents"
             :loading="talentListUtils.loading.value"
-            class="mt-4"
             @createNew="openInNewTab('talent', { id: 'create' })"
             @reload="talentListUtils.loadWhList"
             @selected="(e) => wh.updateLevelTalents(1, e.id, e.selected)"
@@ -251,7 +250,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           />
         </div>
       </div>
-      <div class="flex-1">
+      <div class="flex-1" :class="[isEqualOrGreater ? '' : 'mt-3']">
         <div class="flex flex-col gap-4">
           <SelectTable
             modalId="skill2"
@@ -261,7 +260,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             title="Skills"
             modalTitle="Add/remove skills"
             :loading="skillListUtils.loading.value"
-            class="mt-4"
             @createNew="openInNewTab('skill', { id: 'create' })"
             @reload="skillListUtils.loadWhList"
             @selected="(e) => wh.updateLevelSkills(2, e.id, e.selected)"
@@ -274,7 +272,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             title="Talents"
             modalTitle="Add/remove talents"
             :loading="talentListUtils.loading.value"
-            class="mt-4"
             @createNew="openInNewTab('talent', { id: 'create' })"
             @reload="talentListUtils.loadWhList"
             @selected="(e) => wh.updateLevelTalents(2, e.id, e.selected)"
@@ -329,7 +326,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           />
         </div>
       </div>
-      <div class="flex-1">
+      <div class="flex-1" :class="[isEqualOrGreater ? '' : 'mt-3']">
         <div class="flex flex-col gap-4">
           <SelectTable
             modalId="skill3"
@@ -339,7 +336,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             title="Skills"
             modalTitle="Add/remove skills"
             :loading="skillListUtils.loading.value"
-            class="mt-4"
             @createNew="openInNewTab('skill', { id: 'create' })"
             @reload="skillListUtils.loadWhList"
             @selected="(e) => wh.updateLevelSkills(3, e.id, e.selected)"
@@ -352,7 +348,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             title="Talents"
             modalTitle="Add/remove talents"
             :loading="talentListUtils.loading.value"
-            class="mt-4"
             @createNew="openInNewTab('talent', { id: 'create' })"
             @reload="talentListUtils.loadWhList"
             @selected="(e) => wh.updateLevelTalents(3, e.id, e.selected)"
@@ -383,7 +378,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             :disabled="!wh.canEdit"
           />
 
-          <div class="flex flex-wrap gap">
+          <div class="flex flex-wrap gap-4">
             <SelectInput
               v-model="wh.level4.status"
               title="Status"
@@ -407,7 +402,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           />
         </div>
       </div>
-      <div class="flex-1">
+      <div class="flex-1" :class="[isEqualOrGreater ? '' : 'mt-3']">
         <div class="flex flex-col gap-4">
           <SelectTable
             modalId="skill4"
@@ -417,7 +412,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             title="Skills"
             modalTitle="Add/remove skills"
             :loading="skillListUtils.loading.value"
-            class="mt-4"
             @createNew="openInNewTab('skill', { id: 'create' })"
             @reload="skillListUtils.loadWhList"
             @selected="(e) => wh.updateLevelSkills(4, e.id, e.selected)"
@@ -430,7 +424,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             title="Talents"
             modalTitle="Add/remove talents"
             :loading="talentListUtils.loading.value"
-            class="mt-4"
             @createNew="openInNewTab('talent', { id: 'create' })"
             @reload="talentListUtils.loadWhList"
             @selected="(e) => wh.updateLevelTalents(4, e.id, e.selected)"
