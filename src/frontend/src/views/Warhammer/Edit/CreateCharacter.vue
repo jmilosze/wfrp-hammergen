@@ -50,18 +50,8 @@ const newCharacter = new Character({
 
 const { openInNewTab } = useNewTab();
 
-const {
-  wh,
-  initSources,
-  apiError,
-  showApiError,
-  loadWh,
-  submitForm,
-  hasChanged,
-  submissionState,
-  resetForm,
-  showSubmissionStatus,
-} = useWhEdit(newCharacter, new CharacterApi(authRequest));
+const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm, showSubmissionStatus } =
+  useWhEdit(newCharacter, new CharacterApi(authRequest));
 
 const careerListUtils = useWhList(new CareerApi(authRequest));
 careerListUtils.loadWhList();
@@ -85,6 +75,8 @@ const validSilver = computed(() => wh.value.validateSilver());
 const validGold = computed(() => wh.value.validateGold());
 const validSin = computed(() => wh.value.validateSin());
 const validCorruption = computed(() => wh.value.validateCorruption());
+const validCurrentExp = computed(() => wh.value.validateCurrentExp());
+const validSpentExp = computed(() => wh.value.validateSpentExp());
 
 const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
@@ -259,7 +251,30 @@ function formGenerateStatusStanding() {
           </div>
         </div>
         <p class="-mb-2">Experience</p>
-        <div class="border border-neutral-300 rounded p-2"></div>
+        <div class="border border-neutral-300 rounded p-2">
+          <div :class="smSize.isEqualOrGreater.value ? ['flex', 'gap-4'] : ['flex-col']">
+            <FormInput
+              v-model="wh.currentExp"
+              type="number"
+              title="Unspent"
+              :validationStatus="validCurrentExp"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+            <FormInput
+              v-model="wh.spentExp"
+              type="number"
+              title="Spent"
+              :validationStatus="validSpentExp"
+              :disabled="!wh.canEdit"
+              class="my-2"
+            />
+            <div class="my-2">
+              <p class="mb-3">Total</p>
+              <div class="ml-2">{{ wh.currentExp + wh.spentExp }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="flex-1">
