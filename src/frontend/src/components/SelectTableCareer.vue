@@ -41,6 +41,7 @@ const emit = defineEmits<{
 
 const careersWithSelect: Ref<Record<string, CareerWithSelect>> = ref({});
 const careersWithSelectList: Ref<CareerWithSelect[]> = ref([]);
+let currentId = "";
 
 watch(
   () => props.initSelectedCurrentCareer,
@@ -88,6 +89,7 @@ function updateCareersWithSelect(
       };
 
       if (selectedCurrentCareer && selectedCurrentCareer.id === career.id && selectedCurrentCareer.number === i) {
+        currentId = career.id + "_" + i;
         careersWithSelect.value[career.id + "_" + i].current = true;
       }
       if (selectedPastCareers) {
@@ -126,6 +128,14 @@ function onModifyClick() {
   careersWithSelectList.value.sort((a, b) => {
     return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
   });
+}
+
+function selectNewCurrent(id: string) {
+  if (currentId in careersWithSelect.value) {
+    careersWithSelect.value[currentId].current = false;
+  }
+  currentId = id;
+  careersWithSelect.value[currentId].current = true;
 }
 </script>
 
@@ -169,12 +179,23 @@ function onModifyClick() {
       >
         <template #current="{ id }: { id: string }">
           <div>
-            <input v-model="careersWithSelect[id].current" type="checkbox" class="w-5 h-5 accent-neutral-600 my-1" />
+            <input
+              v-model="careersWithSelect[id].current"
+              type="checkbox"
+              :disabled="careersWithSelect[id].past"
+              class="w-5 h-5 accent-neutral-600 my-1"
+              @input="selectNewCurrent(id)"
+            />
           </div>
         </template>
         <template #past="{ id }: { id: string }">
           <div>
-            <input v-model="careersWithSelect[id].past" type="checkbox" class="w-5 h-5 accent-neutral-600 my-1" />
+            <input
+              v-model="careersWithSelect[id].past"
+              type="checkbox"
+              :disabled="careersWithSelect[id].current"
+              class="w-5 h-5 accent-neutral-600 my-1"
+            />
           </div>
         </template>
       </TableWithSearch>
