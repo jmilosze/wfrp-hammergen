@@ -23,3 +23,12 @@ export function objectsAreEqual<T extends object>(obj1: T, obj2: T) {
 export function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
   return k in x;
 }
+
+export function copyRecordWithObject<T extends object>(source: Record<string, T>): Record<string, T> {
+  const copy: Record<string, T> = {};
+
+  for (const [key, value] of Object.entries(source)) {
+    copy[key] = { ...value };
+  }
+  return copy;
+}
