@@ -5,9 +5,9 @@ import {
   RandomTalents,
   SpeciesTalents,
 } from "../services/wh/characterGeneration/generateSpeciesTalents.ts";
-import { compareIdNumber, IdNumber } from "../services/wh/common.ts";
 import { arraysAreEqualIgnoreOrder } from "../utils/array.ts";
 import { getRollInTableTest, getSelectRandomTest } from "./commonTests.ts";
+import { compareIdNumber, IdNumber } from "../utils/idNumber.ts";
 
 describe("generateSpeciesTalents returns expected talents", () => {
   test("non-group non-random single talents", () => {

@@ -392,22 +392,10 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
     );
 
     expect(talents).toEqual({
-      i0: {
-        id: "i0",
-        number: 1,
-      },
-      i1: {
-        id: "i1",
-        number: 1,
-      },
-      r1: {
-        id: "r1",
-        number: 1,
-      },
-      g0m0: {
-        id: "g0m0",
-        number: 1,
-      },
+      i0: 1,
+      i1: 1,
+      r1: 1,
+      g0m0: 1,
     });
 
     expect(advances).toEqual({

@@ -1,7 +1,7 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
 import { getWoundsFormula, printSpeciesWithRegion, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
-import { ApiResponse, IdNumber } from "../services/wh/common.ts";
+import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
@@ -88,38 +88,32 @@ const character = new Character({
   attributeRolls: { WS: 10, BS: 10, S: 10, T: 5, I: 10, Ag: 5, Dex: 20, Int: 5, WP: 5, Fel: 5 },
   attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   skills: {
-    skillId1: { id: "skillId1", number: 4 },
-    skillId2: { id: "skillId2", number: 5 },
+    skillId1: 4,
+    skillId2: 5,
   },
   talents: {
-    talentId1: {
-      id: "talentId1",
-      number: 1,
-    },
-    talentId2: {
-      id: "talentId2",
-      number: 2,
-    },
+    talentId1: 1,
+    talentId2: 2,
   },
   equippedItems: {
-    eItemId1: { id: "eItemId1", number: 7 },
-    eItemId2: { id: "eItemId2", number: 7 },
+    eItemId1: 7,
+    eItemId2: 7,
   },
   carriedItems: {
-    cItemId1: { id: "cItemId1", number: 8 },
-    cItemId2: { id: "cItemId2", number: 9 },
-    cItemId3: { id: "cItemId3", number: 10 },
+    cItemId1: 8,
+    cItemId2: 9,
+    cItemId3: 10,
   },
   storedItems: {
-    sItemId1: { id: "sItemId1", number: 2 },
-    sItemId2: { id: "sItemId2", number: 3 },
+    sItemId1: 2,
+    sItemId2: 3,
   },
   spells: new Set(["spellId1", "spellId2"]),
   prayers: new Set(["prayerId1", "prayerId2"]),
   mutations: new Set(["mutationId1", "mutationId2"]),
   careerPath: {
-    careerId1: { id: "careerId1", number: 1 },
-    careerId2: { id: "careerId2", number: 2 },
+    careerId1: 1,
+    careerId2: 2,
   },
   shared: true,
 });
@@ -270,20 +264,20 @@ describe("isEqualTo returns false", () => {
     {
       name: "different id",
       value: {
-        skillId1: { id: "skillId1", number: 4 },
-        otherId: { id: "otherId", number: 5 },
-      } as Record<string, IdNumber>,
+        skillId1: 4,
+        otherId: 5,
+      } as Record<string, number>,
     },
     {
       name: "different number",
       value: {
-        skillId1: { id: "skillId1", number: 4 },
-        skillId2: { id: "skillId2", number: 7 },
-      } as Record<string, IdNumber>,
+        skillId1: 4,
+        skillId2: 7,
+      } as Record<string, number>,
     },
     {
       name: "different number of elements",
-      value: { skillId1: { id: "skillId1", number: 4 } } as Record<string, IdNumber>,
+      value: { skillId1: 4 } as Record<string, number>,
     },
   ])("when other character has a different value of skills ($name)", (t) => {
     const otherCharacter = character.copy();
@@ -295,20 +289,20 @@ describe("isEqualTo returns false", () => {
     {
       name: "different id",
       value: {
-        talentId1: { id: "talentId1", number: 1 },
-        otherId: { id: "otherId", number: 2 },
-      } as Record<string, IdNumber>,
+        talentId1: 1,
+        otherId: 2,
+      } as Record<string, number>,
     },
     {
       name: "different number",
       value: {
-        talentId1: { id: "talentId1", number: 3 },
-        talentId2: { id: "talentId2", number: 2 },
-      } as Record<string, IdNumber>,
+        talentId1: 3,
+        talentId2: 2,
+      } as Record<string, number>,
     },
     {
       name: "different number of elements",
-      value: { talentId1: { id: "talentId1", number: 1 } } as Record<string, IdNumber>,
+      value: { talentId1: 1 } as Record<string, number>,
     },
   ])("when other character has a different value of talents ($name)", (t) => {
     const otherCharacter = character.copy();
@@ -320,20 +314,20 @@ describe("isEqualTo returns false", () => {
     {
       name: "different id",
       value: {
-        careerId1: { id: "careerId1", number: 1 },
-        otherId: { id: "otherId", number: 2 },
-      } as Record<string, IdNumber>,
+        careerId1: 1,
+        otherId: 2,
+      } as Record<string, number>,
     },
     {
       name: "different number",
       value: {
-        careerId1: { id: "careerId1", number: 3 },
-        careerId2: { id: "careerId2", number: 2 },
-      } as Record<string, IdNumber>,
+        careerId1: 3,
+        careerId2: 2,
+      } as Record<string, number>,
     },
     {
       name: "different number of elements",
-      value: { careerId1: { id: "careerId1", number: 1 } } as Record<string, IdNumber>,
+      value: { careerId1: 1 } as Record<string, number>,
     },
   ])("when other character has a different value of careerPath ($name)", (t) => {
     const otherCharacter = character.copy();
@@ -345,20 +339,20 @@ describe("isEqualTo returns false", () => {
     {
       name: "different id",
       value: {
-        eItemId1: { id: "eItemId1", number: 7 },
-        otherID: { id: "otherID", number: 7 },
-      } as Record<string, IdNumber>,
+        eItemId1: 7,
+        otherID: 7,
+      } as Record<string, number>,
     },
     {
       name: "different number",
       value: {
-        eItemId1: { id: "eItemId1", number: 7 },
-        eItemId2: { id: "eItemId2", number: 8 },
-      } as Record<string, IdNumber>,
+        eItemId1: 7,
+        eItemId2: 8,
+      } as Record<string, number>,
     },
     {
       name: "different number of elements",
-      value: { eItemId1: { id: "eItemId1", number: 7 } } as Record<string, IdNumber>,
+      value: { eItemId1: 7 } as Record<string, number>,
     },
   ])("when other character has a different value of equippedItems ($name)", (t) => {
     const otherCharacter = character.copy();
@@ -370,25 +364,25 @@ describe("isEqualTo returns false", () => {
     {
       name: "different id",
       value: {
-        cItemId1: { id: "cItemId1", number: 8 },
-        cItemId2: { id: "cItemId2", number: 9 },
-        otherId: { id: "otherId", number: 10 },
-      } as Record<string, IdNumber>,
+        cItemId1: 8,
+        cItemId2: 9,
+        otherId: 10,
+      } as Record<string, number>,
     },
     {
       name: "different number",
       value: {
-        cItemId1: { id: "cItemId1", number: 9 },
-        cItemId2: { id: "cItemId2", number: 9 },
-        cItemId3: { id: "cItemId3", number: 10 },
-      } as Record<string, IdNumber>,
+        cItemId1: 9,
+        cItemId2: 9,
+        cItemId3: 10,
+      } as Record<string, number>,
     },
     {
       name: "different number of elements",
       value: {
-        cItemId1: { id: "cItemId1", number: 8 },
-        cItemId2: { id: "cItemId2", number: 9 },
-      } as Record<string, IdNumber>,
+        cItemId1: 8,
+        cItemId2: 9,
+      } as Record<string, number>,
     },
   ])("when other character has a different value of carriedItems ($name)", (t) => {
     const otherCharacter = character.copy();
@@ -400,20 +394,20 @@ describe("isEqualTo returns false", () => {
     {
       name: "different id",
       value: {
-        sItemId1: { id: "sItemId1", number: 2 },
-        otherId: { id: "otherId", number: 3 },
-      } as Record<string, IdNumber>,
+        sItemId1: 2,
+        otherId: 3,
+      } as Record<string, number>,
     },
     {
       name: "different number",
       value: {
-        sItemId1: { id: "sItemId1", number: 5 },
-        sItemId2: { id: "sItemId2", number: 3 },
-      } as Record<string, IdNumber>,
+        sItemId1: 5,
+        sItemId2: 3,
+      } as Record<string, number>,
     },
     {
       name: "different number of elements",
-      value: { sItemId1: { id: "sItemId1", number: 2 } } as Record<string, IdNumber>,
+      value: { sItemId1: 2 } as Record<string, number>,
     },
   ])("when other character has a different value of storedItems ($name)", (t) => {
     const otherCharacter = character.copy();
