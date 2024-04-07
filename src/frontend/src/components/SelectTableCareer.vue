@@ -34,7 +34,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "selected", value: { id: string; selected: boolean }): void;
+  (e: "pastSelected", value: { id: string; number: number; selected: boolean }): void;
+  (e: "currentSelected", value: { id: string; number: number; selected: boolean }): void;
   (e: "createNew"): void;
   (e: "reload"): void;
 }>();
@@ -131,11 +132,44 @@ function onModifyClick() {
 }
 
 function selectNewCurrent(id: string) {
+  if (id === currentId) {
+    careersWithSelect.value[currentId].current = false;
+    emitCurrentSelected(currentId);
+    currentId = "";
+    return;
+  }
+
   if (currentId in careersWithSelect.value) {
     careersWithSelect.value[currentId].current = false;
+    emitCurrentSelected(currentId);
   }
   currentId = id;
   careersWithSelect.value[currentId].current = true;
+  emitCurrentSelected(currentId);
+}
+
+function emitCurrentSelected(id: string) {
+  emit("currentSelected", {
+    id: careersWithSelect.value[id].careerId,
+    number: careersWithSelect.value[id].level,
+    selected: careersWithSelect.value[id].current,
+  });
+}
+
+function selectNewPast(id: string) {
+  if (careersWithSelect.value[id].past) {
+    emitPastSelected(id);
+    return;
+  }
+  emitPastSelected(id);
+}
+
+function emitPastSelected(id: string) {
+  emit("pastSelected", {
+    id: careersWithSelect.value[id].careerId,
+    number: careersWithSelect.value[id].level,
+    selected: !careersWithSelect.value[id].past,
+  });
 }
 </script>
 
@@ -195,6 +229,7 @@ function selectNewCurrent(id: string) {
               type="checkbox"
               :disabled="careersWithSelect[id].current"
               class="w-5 h-5 accent-neutral-600 my-1"
+              @input="selectNewPast(id)"
             />
           </div>
         </template>
