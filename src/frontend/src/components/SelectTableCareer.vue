@@ -105,6 +105,7 @@ function updateCareersWithSelect(
 }
 
 const selectedPastCareers = computed(() => careersWithSelectList.value.filter((x) => x.past));
+const selectedCurrentCareer = computed(() => careersWithSelectList.value.find((x) => x.current));
 
 const modal = useModal();
 const searchTerm = ref("");
@@ -137,22 +138,16 @@ function onModifyClick() {
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
     </div>
-    <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-5">Name</th>
-            <th class="border-b border-neutral-300 py-2 px-5">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="src in selectedPastCareers" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.description }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+    <div v-else class="border border-neutral-300 rounded p-2">
+      <div class="mb-1">Current career</div>
+      <div v-if="selectedCurrentCareer">
+        {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} - {{ selectedCurrentCareer.levelName }}
+      </div>
+      <div class="border-t border-neutral-300 my-1"></div>
+      <div class="mb-1">Past careers</div>
+      <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
+        <div>{{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}</div>
+      </div>
     </div>
     <ModalWindow id="modifyCareersModal">
       <template #header> Modify career </template>

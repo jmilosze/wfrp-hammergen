@@ -133,7 +133,7 @@ function formGenerateStatusStanding() {
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit">
-          <ActionButton v-if="wh.canEdit" class="ml-2" @click="formGenerateName">Generate</ActionButton>
+          <ActionButton v-if="wh.canEdit" size="sm" class="ml-2" @click="formGenerateName">Generate</ActionButton>
         </FormInput>
         <SelectInput
           v-model="wh.species"
@@ -144,7 +144,7 @@ function formGenerateStatusStanding() {
         />
         <div class="flex flex-wrap items-center gap-2 -mb-2">
           <p class="">Fate and resilience</p>
-          <ActionButton v-if="wh.canEdit" @click="formGenerateFateResilience">Generate</ActionButton>
+          <ActionButton v-if="wh.canEdit" size="sm" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
@@ -183,7 +183,10 @@ function formGenerateStatusStanding() {
         </div>
         <div class="flex flex-wrap items-center gap-2 -mb-2">
           <p class="">Status and standing</p>
-          <ActionButton v-if="wh.canEdit && !careerListUtils.loading.value" @click="formGenerateStatusStanding"
+          <ActionButton
+            v-if="wh.canEdit && !careerListUtils.loading.value"
+            size="sm"
+            @click="formGenerateStatusStanding"
             >Generate</ActionButton
           >
         </div>
@@ -295,7 +298,7 @@ function formGenerateStatusStanding() {
           :disabled="!wh.canEdit"
           :class="[isEqualOrGreater ? '' : 'mt-2']"
         >
-          <ActionButton class="mb-2" @click="formGenerateDescription">Generate</ActionButton>
+          <ActionButton class="mb-2" size="sm" @click="formGenerateDescription">Generate</ActionButton>
         </FormTextarea>
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!wh.canEdit" />
         <p class="-mb-2">Calculated</p>
