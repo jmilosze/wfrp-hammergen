@@ -290,8 +290,8 @@ function formGenerateStatusStanding() {
           :loading="careerListUtils.loading.value"
           @createNew="openInNewTab('career', { id: 'create' })"
           @reload="careerListUtils.loadWhList"
-          @currentSelected="(event) => console.log(event)"
-          @pastSelected="(event) => console.log(event)"
+          @currentSelected="(event) => wh.updateCurrentCareer(event.id, event.number, event.selected)"
+          @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
         ></SelectTableCareer>
         <FormTextarea
           v-model="wh.description"

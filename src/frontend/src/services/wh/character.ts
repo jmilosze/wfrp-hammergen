@@ -117,7 +117,7 @@ export class Character implements WhProperty {
     corruption = 0,
     status = StatusTier.Brass,
     standing = 0 as StatusStanding,
-    career = { id: "", number: 0 } as IdNumber,
+    career = { id: "000000000000000000000000", number: 1 } as IdNumber,
     attributeRolls = getAttributes(),
     attributeAdvances = getAttributes(),
     skills = {} as Record<string, number>,
@@ -357,7 +357,7 @@ export class Character implements WhProperty {
 
   updateCurrentCareer(id: string, number: number, selected: boolean) {
     if (!selected) {
-      this.career = { id: "", number: 0 };
+      this.career = { id: "000000000000000000000000", number: 1 };
     } else {
       this.career = { id: id, number: number };
     }
@@ -372,16 +372,12 @@ export class Character implements WhProperty {
         }
       }
     } else {
-      let alreadyPresent = false;
       for (const pastCareer of this.careerPath) {
         if (pastCareer.id === id && pastCareer.number === number) {
-          alreadyPresent = true;
           return;
         }
       }
-      if (!alreadyPresent) {
-        this.careerPath.push({ id: id, number: number });
-      }
+      this.careerPath.push({ id: id, number: number });
     }
   }
 }
