@@ -369,7 +369,7 @@ export class Character implements WhProperty {
     if (!selected) {
       for (const [i, pastCareer] of this.careerPath.entries()) {
         if (pastCareer.id === id && pastCareer.number === number) {
-          delete this.careerPath[i];
+          this.careerPath.splice(i, 1);
           return;
         }
       }

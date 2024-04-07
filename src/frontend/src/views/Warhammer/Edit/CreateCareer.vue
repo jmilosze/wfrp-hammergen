@@ -452,7 +452,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
     <AfterSubmit
       :visible="showSubmissionStatus"
       :submissionState="submissionState"
-      class="w-fit"
+      class="w-fit my-2"
       @close="showSubmissionStatus = false"
     />
 
