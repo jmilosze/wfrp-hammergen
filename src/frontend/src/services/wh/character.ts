@@ -357,9 +357,11 @@ export class Character implements WhProperty {
 
   updateCurrentCareer(id: string, number: number, selected: boolean) {
     if (!selected) {
-      this.career = { id: "000000000000000000000000", number: 1 };
+      this.career.id = "000000000000000000000000";
+      this.career.number = 1;
     } else {
-      this.career = { id: id, number: number };
+      this.career.id = id;
+      this.career.number = number;
     }
   }
 
