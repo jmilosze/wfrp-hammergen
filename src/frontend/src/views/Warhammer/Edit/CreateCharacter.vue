@@ -35,6 +35,7 @@ import {
 } from "../../../services/wh/career.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import SelectTable from "../../../components/SelectTable.vue";
+import SelectTableCareer from "../../../components/SelectTableCareer.vue";
 
 const props = defineProps<{
   id: string;
@@ -272,16 +273,16 @@ function formGenerateStatusStanding() {
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <SelectTable
+        <SelectTableCareer
           :disabled="!wh.canEdit"
           :initSelectedItems="new Set<string>()"
-          :itemList="careerListUtils.whList.value"
+          :careerList="careerListUtils.whList.value"
           title="Career"
           modalTitle="Modify career"
           :loading="careerListUtils.loading.value"
           @createNew="openInNewTab('career', { id: 'create' })"
           @reload="careerListUtils.loadWhList"
-        ></SelectTable>
+        ></SelectTableCareer>
         <FormTextarea
           v-model="wh.description"
           title="Description"

@@ -6,6 +6,7 @@ import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
+import { Career } from "../services/wh/career.ts";
 
 type itemWithSelect = {
   id: string;
@@ -16,9 +17,7 @@ type itemWithSelect = {
 
 const props = defineProps<{
   disabled?: boolean;
-  title?: string;
-  modalTitle?: string;
-  itemList: { name: string; id: string; description: string }[];
+  careerList: Career[];
   initSelectedItems: Set<string>;
   loading?: boolean;
   modalId?: string;
@@ -36,13 +35,13 @@ const itemsWithSelectList: Ref<itemWithSelect[]> = ref([]);
 watch(
   () => props.initSelectedItems,
   (newVal) => {
-    updateItemsWithSelect(newVal, props.itemList);
+    updateItemsWithSelect(newVal, props.careerList);
   },
   { immediate: true },
 );
 
 watch(
-  () => props.itemList,
+  () => props.careerList,
   (newVal) => {
     updateItemsWithSelect(props.initSelectedItems, newVal);
   },
@@ -71,8 +70,7 @@ const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
   { name: "name", displayName: "Name" },
-  { name: "description", displayName: "Description" },
-  { name: "selected", displayName: "Select" },
+  { name: "levels", displayName: "Levels" },
 ];
 
 const modalId = props.modalId ? props.modalId : "modifyItemsModal";
@@ -92,7 +90,7 @@ function onModifyClick() {
 <template>
   <div>
     <div class="flex items-center" :class="disabled ? 'mb-1' : 'mb-2'">
-      <div v-if="title" class="mr-2">{{ title }}</div>
+      <div class="mr-2">Career</div>
       <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
     </div>
     <div v-if="props.loading" class="flex justify-center">
@@ -116,7 +114,7 @@ function onModifyClick() {
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
     <ModalWindow :id="modalId">
-      <template #header> {{ modalTitle }} </template>
+      <template #header> Modify career </template>
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>
@@ -133,14 +131,10 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
-        <template #selected="{ id }: { id: string }">
-          <div>
-            <input
-              v-model="itemsWithSelect[id].selected"
-              type="checkbox"
-              class="w-5 h-5 accent-neutral-600 my-1"
-              @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
-            />
+        <template #levels="{ id }: { id: string }">
+          <div class="flex items-center gap-2">
+            <div>{{}}</div>
+            <input v-model="itemsWithSelect[id].selected" type="checkbox" class="w-5 h-5 accent-neutral-600 my-1" />
           </div>
         </template>
       </TableWithSearch>
