@@ -27,7 +27,6 @@ import generateDescription from "../../../services/wh/characterGeneration/genera
 import {
   Career,
   CareerApi,
-  CareerLevel,
   isLevel,
   printStatusStanding,
   printStatusTier,
@@ -36,7 +35,6 @@ import {
   statusTierList,
 } from "../../../services/wh/career.ts";
 import { useWhList } from "../../../composables/whList.ts";
-import SelectTable from "../../../components/SelectTable.vue";
 import SelectTableCareer from "../../../components/SelectTableCareer.vue";
 
 const props = defineProps<{

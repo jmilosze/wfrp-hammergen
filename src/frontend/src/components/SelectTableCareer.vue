@@ -6,45 +6,23 @@ import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { Career, CareerClass, isLevel } from "../services/wh/career.ts";
+import { Career, printClassName } from "../services/wh/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 
 type CareerWithSelect = {
   id: string;
+  careerId: string;
   name: string;
   description: string;
-  careerClass: CareerClass;
-  levels: [
-    {
-      name: string;
-      current: boolean;
-      past: boolean;
-    },
-    {
-      name: string;
-      current: boolean;
-      past: boolean;
-    },
-    {
-      name: string;
-      current: boolean;
-      past: boolean;
-    },
-    {
-      name: string;
-      current: boolean;
-      past: boolean;
-    },
-  ];
+  careerClass: string;
+  level: number;
+  levelName: string;
+  current: boolean;
+  past: boolean;
 };
 
 function anySelected(careerWithSelect: CareerWithSelect): boolean {
-  for (const level of careerWithSelect.levels) {
-    if (level.current || level.past) {
-      return true;
-    }
-  }
-  return false;
+  return careerWithSelect.current || careerWithSelect.past;
 }
 
 const props = defineProps<{
@@ -95,41 +73,28 @@ function updateCareersWithSelect(
 ) {
   careersWithSelect.value = {};
   for (const career of careerList) {
-    careersWithSelect.value[career.id] = {
-      id: career.id,
-      name: career.name,
-      description: career.description,
-      careerClass: career.careerClass,
-      levels: [
-        {
-          name: career.level1.name,
-          current: false,
-          past: false,
-        },
-        {
-          name: career.level2.name,
-          current: false,
-          past: false,
-        },
-        {
-          name: career.level3.name,
-          current: false,
-          past: false,
-        },
-        {
-          name: career.level4.name,
-          current: false,
-          past: false,
-        },
-      ],
-    };
-    if (selectedCurrentCareer && selectedCurrentCareer.id === career.id && isLevel(selectedCurrentCareer.number)) {
-      careersWithSelect.value[career.id].levels[selectedCurrentCareer.number - 1].current = true;
-    }
-    if (selectedPastCareers) {
-      for (const pastCareer of selectedPastCareers) {
-        if (pastCareer.id === career.id && isLevel(selectedCurrentCareer.number)) {
-          careersWithSelect.value[career.id].levels[selectedCurrentCareer.number - 1].past = true;
+    for (const i of [1, 2, 3, 4]) {
+      const lvl = career.getLevel(i as 1 | 2 | 3 | 4);
+      careersWithSelect.value[career.id + "_" + i] = {
+        id: career.id + "_" + i,
+        careerId: career.id,
+        name: career.name,
+        description: career.description,
+        careerClass: printClassName(career.careerClass),
+        level: i,
+        levelName: lvl.name,
+        current: false,
+        past: false,
+      };
+
+      if (selectedCurrentCareer && selectedCurrentCareer.id === career.id && selectedCurrentCareer.number === i) {
+        careersWithSelect.value[career.id + "_" + i].current = true;
+      }
+      if (selectedPastCareers) {
+        for (const pastCareer of selectedPastCareers) {
+          if (pastCareer.id === career.id && selectedCurrentCareer.number === i) {
+            careersWithSelect.value[career.id + "_" + i].past = true;
+          }
         }
       }
     }
@@ -139,13 +104,16 @@ function updateCareersWithSelect(
   });
 }
 
-const selectedItems = computed(() => careersWithSelectList.value.filter((x) => anySelected(x)));
+const selectedPastCareers = computed(() => careersWithSelectList.value.filter((x) => x.past));
 
 const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
   { name: "name", displayName: "Name" },
-  { name: "levels", displayName: "Levels" },
+  { name: "careerClass", displayName: "Class" },
+  { name: "levelName", displayName: "Level name" },
+  { name: "current", displayName: "Current" },
+  { name: "past", displayName: "Past" },
 ];
 
 const resetPaginationCounter = ref(0);
@@ -178,7 +146,7 @@ function onModifyClick() {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
+          <tr v-for="src in selectedPastCareers" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.description }}</td>
           </tr>
@@ -204,23 +172,14 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
-        <template #levels="{ id }: { id: string }">
-          <div class="max-w-48">
-            <div v-for="i in [0, 1, 2, 3]" :key="i" class="flex items-center gap-2">
-              <div>{{ careersWithSelect[id].levels[i].name }}</div>
-              <div class="font-semibold">current:</div>
-              <input
-                v-model="careersWithSelect[id].levels[i].current"
-                type="checkbox"
-                class="w-5 h-5 accent-neutral-600 my-1"
-              />
-              <div class="font-semibold">past:</div>
-              <input
-                v-model="careersWithSelect[id].levels[i].past"
-                type="checkbox"
-                class="w-5 h-5 accent-neutral-600 my-1"
-              />
-            </div>
+        <template #current="{ id }: { id: string }">
+          <div>
+            <input v-model="careersWithSelect[id].current" type="checkbox" class="w-5 h-5 accent-neutral-600 my-1" />
+          </div>
+        </template>
+        <template #past="{ id }: { id: string }">
+          <div>
+            <input v-model="careersWithSelect[id].past" type="checkbox" class="w-5 h-5 accent-neutral-600 my-1" />
           </div>
         </template>
       </TableWithSearch>
