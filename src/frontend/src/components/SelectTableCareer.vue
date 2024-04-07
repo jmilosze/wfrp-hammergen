@@ -95,7 +95,7 @@ function updateCareersWithSelect(
       }
       if (selectedPastCareers) {
         for (const pastCareer of selectedPastCareers) {
-          if (pastCareer.id === career.id && selectedCurrentCareer.number === i) {
+          if (pastCareer.id === career.id && pastCareer.number === i) {
             careersWithSelect.value[career.id + "_" + i].past = true;
           }
         }
