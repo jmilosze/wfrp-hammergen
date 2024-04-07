@@ -6,8 +6,8 @@
 <!--import TableWithSearch from "./TableWithSearch.vue";-->
 <!--import { useModal } from "../composables/modal.ts";-->
 <!--import SpinnerAnimation from "./SpinnerAnimation.vue";-->
-<!--import { Career, CareerClass } from "../services/wh/career.ts";-->
-<!--import { IdNumber } from "../services/wh/common.ts";-->
+<!--import { Career, CareerClass, isLevel } from "../services/wh/career.ts";-->
+<!--import { IdNumber } from "../utils/idNumber.ts";-->
 
 <!--type CareerWithSelect = {-->
 <!--  id: string;-->
@@ -42,7 +42,7 @@
 <!--  disabled?: boolean;-->
 <!--  careerList: Career[];-->
 <!--  initSelectedCurrentCareer: IdNumber;-->
-<!--  initSelectedPastCareers: Record<string, IdNumber>;-->
+<!--  initSelectedPastCareers: Record<string, number>;-->
 <!--  loading?: boolean;-->
 <!--}>();-->
 
@@ -73,7 +73,7 @@
 
 <!--function updateCareersWithSelect(-->
 <!--  selectedCurrentCareer: IdNumber,-->
-<!--  selectedPastCareers: Record<string, IdNumber>,-->
+<!--  selectedPastCareers: Record<string, number>,-->
 <!--  careerList: Career[],-->
 <!--) {-->
 <!--  careersWithSelect.value = {};-->
@@ -106,8 +106,8 @@
 <!--        },-->
 <!--      ],-->
 <!--    };-->
-<!--    if (selectedCurrentCareer && selectedCurrentCareer.id) {-->
-<!--      careersWithSelect.value[career.id].levels[selectedCurrentCareer.number].current = true;-->
+<!--    if (selectedCurrentCareer && selectedCurrentCareer.id && isLevel(selectedCurrentCareer.number)) {-->
+<!--      careersWithSelect.value[career.id].levels[selectedCurrentCareer.number - 1].current = true;-->
 <!--    }-->
 <!--    if (selectedPastCareers && career.id in selectedPastCareers) {-->
 <!--    }-->

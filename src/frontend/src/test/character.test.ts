@@ -4,6 +4,7 @@ import { StatusTier } from "../services/wh/career.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
+import { IdNumber } from "../utils/idNumber.ts";
 
 const characterApiData: CharacterApiData = {
   name: "char name",
@@ -111,10 +112,10 @@ const character = new Character({
   spells: new Set(["spellId1", "spellId2"]),
   prayers: new Set(["prayerId1", "prayerId2"]),
   mutations: new Set(["mutationId1", "mutationId2"]),
-  careerPath: {
-    careerId1: 1,
-    careerId2: 2,
-  },
+  careerPath: [
+    { id: "careerId1", number: 1 },
+    { id: "careerId2", number: 2 },
+  ],
   shared: true,
 });
 
@@ -313,21 +314,21 @@ describe("isEqualTo returns false", () => {
   test.each([
     {
       name: "different id",
-      value: {
-        careerId1: 1,
-        otherId: 2,
-      } as Record<string, number>,
+      value: [
+        { id: "careerId1", number: 1 },
+        { id: "otherId", number: 2 },
+      ] as IdNumber[],
     },
     {
       name: "different number",
-      value: {
-        careerId1: 3,
-        careerId2: 2,
-      } as Record<string, number>,
+      value: [
+        { id: "careerId1", number: 3 },
+        { id: "careerId2", number: 2 },
+      ] as IdNumber[],
     },
     {
       name: "different number of elements",
-      value: { careerId1: 1 } as Record<string, number>,
+      value: [{ id: "careerId1", number: 1 }] as IdNumber[],
     },
   ])("when other character has a different value of careerPath ($name)", (t) => {
     const otherCharacter = character.copy();

@@ -23,7 +23,8 @@ import {
 import { apiResponseToCharacterFull, CharacterFull } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
-import { compareIdNumber, IdNumber, idNumberArrayToRecord } from "../../utils/idNumber.ts";
+import { compareIdNumber, copyIdNumberArray, IdNumber, idNumberArrayToRecord } from "../../utils/idNumber.ts";
+import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 
 const API_BASE_PATH = "/api/wh/character";
 
@@ -88,7 +89,7 @@ export class Character implements WhProperty {
   equippedItems: Record<string, number>;
   carriedItems: Record<string, number>;
   storedItems: Record<string, number>;
-  careerPath: Record<string, number>;
+  careerPath: IdNumber[];
   spells: Set<string>;
   prayers: Set<string>;
   mutations: Set<string>;
@@ -124,7 +125,7 @@ export class Character implements WhProperty {
     equippedItems = {} as Record<string, number>,
     carriedItems = {} as Record<string, number>,
     storedItems = {} as Record<string, number>,
-    careerPath = {} as Record<string, number>,
+    careerPath = [] as IdNumber[],
     spells = new Set<string>(),
     prayers = new Set<string>(),
     mutations = new Set<string>(),
@@ -200,7 +201,7 @@ export class Character implements WhProperty {
       objectsAreEqual(this.equippedItems, otherCharacter.equippedItems) &&
       objectsAreEqual(this.carriedItems, otherCharacter.carriedItems) &&
       objectsAreEqual(this.storedItems, otherCharacter.storedItems) &&
-      objectsAreEqual(this.careerPath, otherCharacter.careerPath) &&
+      arraysAreEqualIgnoreOrder(this.careerPath, otherCharacter.careerPath, compareIdNumber) &&
       setsAreEqual(this.spells, otherCharacter.spells) &&
       setsAreEqual(this.prayers, otherCharacter.prayers) &&
       setsAreEqual(this.mutations, otherCharacter.mutations) &&
@@ -387,7 +388,7 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     equippedItems: idNumberArrayToRecord(characterApi.object.equippedItems),
     carriedItems: idNumberArrayToRecord(characterApi.object.carriedItems),
     storedItems: idNumberArrayToRecord(characterApi.object.storedItems),
-    careerPath: idNumberArrayToRecord(characterApi.object.careerPath),
+    careerPath: copyIdNumberArray(characterApi.object.careerPath),
     spells: new Set(characterApi.object.spells),
     prayers: new Set(characterApi.object.prayers),
     mutations: new Set(characterApi.object.mutations),
@@ -426,7 +427,7 @@ export function modelToApi(character: Character): CharacterApiData {
     equippedItems: Object.entries(character.equippedItems).map((x) => ({ id: x[0], number: x[1] })),
     carriedItems: Object.entries(character.carriedItems).map((x) => ({ id: x[0], number: x[1] })),
     storedItems: Object.entries(character.storedItems).map((x) => ({ id: x[0], number: x[1] })),
-    careerPath: Object.entries(character.careerPath).map((x) => ({ id: x[0], number: x[1] })),
+    careerPath: copyIdNumberArray(character.careerPath),
     spells: [...character.spells],
     prayers: [...character.prayers],
     mutations: [...character.mutations],

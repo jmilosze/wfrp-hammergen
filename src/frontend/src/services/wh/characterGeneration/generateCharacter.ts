@@ -52,7 +52,7 @@ export function generateCharacter(
   character.species = species;
   character.career = { id: whCareer.id, number: level };
   for (let i = 1; i < level; ++i) {
-    character.careerPath[whCareer.id] = i;
+    character.careerPath.push({ id: whCareer.id, number: i });
   }
   character.description = generateDescription(species);
   character.notes = "";

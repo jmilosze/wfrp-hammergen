@@ -28,9 +28,11 @@ import {
   Career,
   CareerApi,
   CareerLevel,
+  isLevel,
   printStatusStanding,
   printStatusTier,
   statusStandingList,
+  StatusTier,
   statusTierList,
 } from "../../../services/wh/career.ts";
 import { useWhList } from "../../../composables/whList.ts";
@@ -106,11 +108,15 @@ function formGenerateStatusStanding() {
   if (!career) {
     career = new Career();
   }
-  const lvl = [1, 2, 3, 4].includes(wh.value.career.number) ? (wh.value.career.number as 1 | 2 | 3 | 4) : 1;
 
-  const careerWithLevel = career.getLevel(lvl);
-  wh.value.status = careerWithLevel.status;
-  wh.value.standing = careerWithLevel.standing;
+  if (isLevel(wh.value.career.number)) {
+    const careerWithLevel = career.getLevel(wh.value.career.number);
+    wh.value.status = careerWithLevel.status;
+    wh.value.standing = careerWithLevel.standing;
+  } else {
+    wh.value.status = StatusTier.Brass;
+    wh.value.standing = 0;
+  }
 }
 </script>
 

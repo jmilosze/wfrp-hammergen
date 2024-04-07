@@ -23,3 +23,15 @@ export function idNumberArrayToRecord(arr: IdNumber[]): Record<string, number> {
     {} as Record<string, number>,
   );
 }
+
+export function copyIdNumberArray(arr: IdNumber[]): IdNumber[] {
+  if (arr) {
+    const retArr = new Array<IdNumber>(arr.length);
+    for (const [i, item] of arr.entries()) {
+      retArr[i] = { id: item.id, number: item.number };
+    }
+    return retArr;
+  } else {
+    return [] as IdNumber[];
+  }
+}
