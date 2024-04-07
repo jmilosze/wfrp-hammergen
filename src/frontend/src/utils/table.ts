@@ -4,5 +4,5 @@ export interface TableRow {
   [k: string]: TableItem;
 }
 
-export type TableItem = string | number | boolean;
+export type TableItem = string | number | boolean | object;
 export type TableField = { name: string; displayName: string };

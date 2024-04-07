@@ -37,7 +37,7 @@ import {
 } from "../../../services/wh/career.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import SelectTable from "../../../components/SelectTable.vue";
-// import SelectTableCareer from "../../../components/SelectTableCareer.vue";
+import SelectTableCareer from "../../../components/SelectTableCareer.vue";
 
 const props = defineProps<{
   id: string;
@@ -279,16 +279,17 @@ function formGenerateStatusStanding() {
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <!--        <SelectTableCareer-->
-        <!--          :disabled="!wh.canEdit"-->
-        <!--          :initSelectedCareers="new Set<string>()"-->
-        <!--          :careerList="careerListUtils.whList.value"-->
-        <!--          title="Career"-->
-        <!--          modalTitle="Modify career"-->
-        <!--          :loading="careerListUtils.loading.value"-->
-        <!--          @createNew="openInNewTab('career', { id: 'create' })"-->
-        <!--          @reload="careerListUtils.loadWhList"-->
-        <!--        ></SelectTableCareer>-->
+        <SelectTableCareer
+          :disabled="!wh.canEdit"
+          :initSelectedCurrentCareer="wh.career"
+          :initSelectedPastCareers="wh.careerPath"
+          :careerList="careerListUtils.whList.value"
+          title="Career"
+          modalTitle="Modify career"
+          :loading="careerListUtils.loading.value"
+          @createNew="openInNewTab('career', { id: 'create' })"
+          @reload="careerListUtils.loadWhList"
+        ></SelectTableCareer>
         <FormTextarea
           v-model="wh.description"
           title="Description"
