@@ -354,6 +354,36 @@ export class Character implements WhProperty {
       attributeTotal.S,
     );
   }
+
+  updateCurrentCareer(id: string, number: number, selected: boolean) {
+    if (!selected) {
+      this.career = { id: "", number: 0 };
+    } else {
+      this.career = { id: id, number: number };
+    }
+  }
+
+  updatePastCareer(id: string, number: number, selected: boolean) {
+    if (!selected) {
+      for (const [i, pastCareer] of this.careerPath.entries()) {
+        if (pastCareer.id === id && pastCareer.number === number) {
+          delete this.careerPath[i];
+          return;
+        }
+      }
+    } else {
+      let alreadyPresent = false;
+      for (const pastCareer of this.careerPath) {
+        if (pastCareer.id === id && pastCareer.number === number) {
+          alreadyPresent = true;
+          return;
+        }
+      }
+      if (!alreadyPresent) {
+        this.careerPath.push({ id: id, number: number });
+      }
+    }
+  }
 }
 
 export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>): Character {
