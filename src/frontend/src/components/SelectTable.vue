@@ -7,7 +7,7 @@ import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 
-type itemWithSelect = {
+type ItemWithSelect = {
   id: string;
   name: string;
   description: string;
@@ -30,8 +30,8 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
-const itemsWithSelect: Ref<Record<string, itemWithSelect>> = ref({});
-const itemsWithSelectList: Ref<itemWithSelect[]> = ref([]);
+const itemsWithSelect: Ref<Record<string, ItemWithSelect>> = ref({});
+const itemsWithSelectList: Ref<ItemWithSelect[]> = ref([]);
 
 watch(
   () => props.initSelectedItems,

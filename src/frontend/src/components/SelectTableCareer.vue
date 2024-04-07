@@ -6,21 +6,44 @@ import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { Career } from "../services/wh/career.ts";
+import { Career, CareerClass } from "../services/wh/career.ts";
+import { IdNumber } from "../services/wh/common.ts";
 
-type itemWithSelect = {
+type CareerWithSelect = {
   id: string;
   name: string;
   description: string;
-  selected: boolean;
+  careerClass: CareerClass;
+  levels: [
+    {
+      name: string;
+      current: boolean;
+      past: boolean;
+    },
+    {
+      name: string;
+      current: boolean;
+      past: boolean;
+    },
+    {
+      name: string;
+      current: boolean;
+      past: boolean;
+    },
+    {
+      name: string;
+      current: boolean;
+      past: boolean;
+    },
+  ];
 };
 
 const props = defineProps<{
   disabled?: boolean;
   careerList: Career[];
-  initSelectedItems: Set<string>;
+  initSelectedCurrentCareer: IdNumber;
+  initSelectedPastCareers: Record<string, IdNumber>;
   loading?: boolean;
-  modalId?: string;
 }>();
 
 const emit = defineEmits<{
@@ -29,39 +52,69 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
-const itemsWithSelect: Ref<Record<string, itemWithSelect>> = ref({});
-const itemsWithSelectList: Ref<itemWithSelect[]> = ref([]);
+const careersWithSelect: Ref<Record<string, CareerWithSelect>> = ref({});
+const careersWithSelectList: Ref<CareerWithSelect[]> = ref([]);
 
-watch(
-  () => props.initSelectedItems,
-  (newVal) => {
-    updateItemsWithSelect(newVal, props.careerList);
-  },
-  { immediate: true },
-);
+// watch(
+//   () => props.initSelectedCareers,
+//   (newVal) => {
+//     updateCareersWithSelect(newVal, props.careerList);
+//   },
+//   { immediate: true },
+// );
+//
+// watch(
+//   () => props.careerList,
+//   (newVal) => {
+//     updateCareersWithSelect(props.initSelectedCareers, newVal);
+//   },
+//   { immediate: true },
+// );
 
-watch(
-  () => props.careerList,
-  (newVal) => {
-    updateItemsWithSelect(props.initSelectedItems, newVal);
-  },
-  { immediate: true },
-);
-
-function updateItemsWithSelect(
-  selectedItems: Set<string>,
-  itemList: { name: string; id: string; description: string }[],
+function updateCareersWithSelect(
+  selectedCurrentCareer: IdNumber,
+  selectedPastCareers: Record<string, IdNumber>,
+  careerList: Career[],
 ) {
-  itemsWithSelect.value = {};
-  for (const item of itemList) {
-    itemsWithSelect.value[item.id] = { ...item, selected: false };
-    if (selectedItems && selectedItems.has(item.id)) {
-      itemsWithSelect.value[item.id].selected = true;
+  careersWithSelect.value = {};
+  for (const career of careerList) {
+    careersWithSelect.value[career.id] = {
+      id: career.id,
+      name: career.name,
+      description: career.description,
+      careerClass: career.careerClass,
+      levels: [
+        {
+          name: career.level1.name,
+          current: false,
+          past: false,
+        },
+        {
+          name: career.level2.name,
+          current: false,
+          past: false,
+        },
+        {
+          name: career.level3.name,
+          current: false,
+          past: false,
+        },
+        {
+          name: career.level4.name,
+          current: false,
+          past: false,
+        },
+      ],
+    };
+    if (selectedCurrentCareer && selectedCurrentCareer.id) {
+      careersWithSelect.value[career.id].levels[selectedCurrentCareer.number].current = true;
+    }
+    if (selectedPastCareers && career.id in selectedPastCareers) {
     }
   }
-  itemsWithSelectList.value = Object.values(itemsWithSelect.value).sort((a, b) => {
-    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
-  });
+  // itemsWithSelectList.value = Object.values(itemsWithSelect.value).sort((a, b) => {
+  //   return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
+  // });
 }
 
 const selectedItems = computed(() => itemsWithSelectList.value.filter((x) => x.selected));
@@ -73,13 +126,11 @@ const modalColumns = [
   { name: "levels", displayName: "Levels" },
 ];
 
-const modalId = props.modalId ? props.modalId : "modifyItemsModal";
-
 const resetPaginationCounter = ref(0);
 
 function onModifyClick() {
   resetPaginationCounter.value += 1;
-  modal.showModal(modalId);
+  modal.showModal("modifyCareersModal");
   searchTerm.value = "";
   itemsWithSelectList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
@@ -113,7 +164,7 @@ function onModifyClick() {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <ModalWindow :id="modalId">
+    <ModalWindow id="modifyCareersModal">
       <template #header> Modify career </template>
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>

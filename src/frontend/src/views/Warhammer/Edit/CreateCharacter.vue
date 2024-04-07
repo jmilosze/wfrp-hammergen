@@ -120,7 +120,7 @@ function formGenerateStatusStanding() {
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create career' : wh.canEdit ? 'Edit career' : wh.name" />
+  <Header :title="id === 'character' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -273,16 +273,16 @@ function formGenerateStatusStanding() {
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <SelectTableCareer
-          :disabled="!wh.canEdit"
-          :initSelectedItems="new Set<string>()"
-          :careerList="careerListUtils.whList.value"
-          title="Career"
-          modalTitle="Modify career"
-          :loading="careerListUtils.loading.value"
-          @createNew="openInNewTab('career', { id: 'create' })"
-          @reload="careerListUtils.loadWhList"
-        ></SelectTableCareer>
+        <!--        <SelectTableCareer-->
+        <!--          :disabled="!wh.canEdit"-->
+        <!--          :initSelectedCareers="new Set<string>()"-->
+        <!--          :careerList="careerListUtils.whList.value"-->
+        <!--          title="Career"-->
+        <!--          modalTitle="Modify career"-->
+        <!--          :loading="careerListUtils.loading.value"-->
+        <!--          @createNew="openInNewTab('career', { id: 'create' })"-->
+        <!--          @reload="careerListUtils.loadWhList"-->
+        <!--        ></SelectTableCareer>-->
         <FormTextarea
           v-model="wh.description"
           title="Description"
