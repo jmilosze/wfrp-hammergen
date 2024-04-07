@@ -120,6 +120,7 @@ const character = new Character({
 });
 
 test("apiResponseToModel returns expected item", () => {
+  console.log(apiResponseToModel(characterApiResponse));
   expect(apiResponseToModel(characterApiResponse)).toMatchObject(character);
 });
 

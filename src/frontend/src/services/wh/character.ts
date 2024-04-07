@@ -243,7 +243,7 @@ export class Character implements WhProperty {
       equippedItems: { ...this.equippedItems },
       carriedItems: { ...this.carriedItems },
       storedItems: { ...this.storedItems },
-      careerPath: { ...this.careerPath },
+      careerPath: copyIdNumberArray(this.careerPath),
       spells: new Set(this.spells),
       prayers: new Set(this.prayers),
       mutations: new Set(this.mutations),
