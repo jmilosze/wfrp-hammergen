@@ -10,7 +10,6 @@ import {
 } from "../characterUtils.ts";
 import { Career, StatusStanding, StatusTier } from "../career.ts";
 import { rollDice, RollDiceFn, rollInTable, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
-import { IdNumber, idNumberArrayToRecord } from "../common.ts";
 import { RandomTalents } from "./generateSpeciesTalents.ts";
 import { Talent } from "../talent.ts";
 import { Skill } from "../skill.ts";
@@ -21,6 +20,7 @@ import { generateRolls } from "./generateAttributes.ts";
 import { generateSkills } from "./generateSkills.ts";
 import { getAttributes, sumAttributes } from "../attributes.ts";
 import { genTalentsAndAdvances } from "./generateTalents.ts";
+import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
 
 interface GenerationProps {
   classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];
@@ -52,7 +52,7 @@ export function generateCharacter(
   character.species = species;
   character.career = { id: whCareer.id, number: level };
   for (let i = 1; i < level; ++i) {
-    character.careerPath[whCareer.id] = { id: whCareer.id, number: i };
+    character.careerPath[whCareer.id] = i;
   }
   character.description = generateDescription(species);
   character.notes = "";

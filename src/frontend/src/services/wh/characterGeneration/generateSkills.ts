@@ -1,7 +1,6 @@
 import { Skill } from "../skill.ts";
 import { SelectRandomFn } from "../../../utils/random.ts";
 import { skillCost } from "./calculateExperience.ts";
-import { IdNumber } from "../common.ts";
 
 const SKILL_ADV = [40, 30, 20, 10];
 const LEVEL_1_MAX_ADV_PER_SKILL = 10;
@@ -14,7 +13,7 @@ export function generateSkills(
   listOfWhSkills: Skill[],
   level: number,
   selectRandomFn: SelectRandomFn,
-): [Record<string, IdNumber>, number] {
+): [Record<string, number>, number] {
   const resolvedSkillGroups = resolveSkillGroups(listOfWhSkills);
   let skills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandomFn);
   const availSkills = genAvailSkills(resolvedSkillGroups, careerSkills, selectRandomFn);
@@ -43,9 +42,9 @@ export function generateSkills(
     );
   }
 
-  const generatedSkills: Record<string, IdNumber> = {};
+  const generatedSkills: Record<string, number> = {};
   for (const [id, number] of Object.entries(skills)) {
-    generatedSkills[id] = { id: id, number: number };
+    generatedSkills[id] = number;
   }
 
   return [generatedSkills, expSpent];

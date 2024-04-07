@@ -32,11 +32,6 @@ export interface ApiResponse<WhApiData> {
   object: WhApiData;
 }
 
-export interface IdNumber {
-  id: string;
-  number: number;
-}
-
 export const VERY_SHORT_DESC_REGEX: RegExp = /^[^<>]{0,15}$/;
 export const SHORT_DESC_REGEX: RegExp = /^[^<>]{0,200}$/;
 export const LONG_DESC_REGEX: RegExp = /^[^<>]{0,10000}$/;
@@ -60,17 +55,6 @@ export function validLongDescFn(name: string): ValidationStatus {
     LONG_DESC_REGEX.test(name),
     "This field has to be shorter than 10,000 characters characters and cannot use <> symbols.",
   );
-}
-
-export function compareIdNumber(x: IdNumber, y: IdNumber): -1 | 0 | 1 {
-  const xIdNumber = `${x.id}_${x.number}`;
-  const yIdNumber = `${y.id}_${y.number}`;
-
-  if (xIdNumber === yIdNumber) {
-    return 0;
-  } else {
-    return xIdNumber < yIdNumber ? -1 : 1;
-  }
 }
 
 export function validIntegerFn(value: number, min: number, max: number): ValidationStatus {
@@ -99,14 +83,4 @@ export function copyRecordWithObject<T extends object>(source: Record<string, T>
     copy[key] = { ...value };
   }
   return copy;
-}
-
-export function idNumberArrayToRecord(arr: IdNumber[]): Record<string, IdNumber> {
-  return arr.reduce(
-    (acc, current) => {
-      acc[current.id] = current;
-      return acc;
-    },
-    {} as Record<string, IdNumber>,
-  );
 }

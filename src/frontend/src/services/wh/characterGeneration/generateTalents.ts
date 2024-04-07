@@ -8,10 +8,10 @@ import {
   multiplyAttributes,
   sumAttributes,
 } from "../attributes.ts";
-import { IdNumber, idNumberArrayToRecord } from "../common.ts";
 import { RollInTableFn, SelectRandomFn } from "../../../utils/random.ts";
 import { generateSpeciesTalents, RandomTalents, SpeciesTalents } from "./generateSpeciesTalents.ts";
 import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
+import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
 
 const LEVEL_1_TALENTS = 1;
 const LEVEL_N_TALENTS = 2;
@@ -28,7 +28,7 @@ export function genTalentsAndAdvances(
   level: 1 | 2 | 3 | 4,
   selectRandomFn: SelectRandomFn,
   rollInTableFn: RollInTableFn,
-): [Record<string, IdNumber>, Attributes, number] {
+): [Record<string, number>, Attributes, number] {
   const talentGroups = getTalentGroups(listOfWhTalents);
 
   let advances = getAttributes();

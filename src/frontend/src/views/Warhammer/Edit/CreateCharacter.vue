@@ -35,7 +35,7 @@ import {
 } from "../../../services/wh/career.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import SelectTable from "../../../components/SelectTable.vue";
-import SelectTableCareer from "../../../components/SelectTableCareer.vue";
+// import SelectTableCareer from "../../../components/SelectTableCareer.vue";
 
 const props = defineProps<{
   id: string;

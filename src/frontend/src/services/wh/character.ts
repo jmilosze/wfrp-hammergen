@@ -8,20 +8,9 @@ import {
   multiplyAttributes,
   sumAttributes,
 } from "./attributes.ts";
-import {
-  ApiResponse,
-  copyRecordWithObject,
-  IdNumber,
-  idNumberArrayToRecord,
-  validIntegerFn,
-  validLongDescFn,
-  validShortDescFn,
-  WhApi,
-  WhProperty,
-} from "./common.ts";
+import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
-import { compareIdNumber } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { AxiosInstance } from "axios";
 import {
@@ -34,6 +23,7 @@ import {
 import { apiResponseToCharacterFull, CharacterFull } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
+import { compareIdNumber, IdNumber, idNumberArrayToRecord } from "../../utils/idNumber.ts";
 
 const API_BASE_PATH = "/api/wh/character";
 
@@ -93,12 +83,12 @@ export class Character implements WhProperty {
   career: IdNumber;
   attributeRolls: Attributes;
   attributeAdvances: Attributes;
-  skills: Record<string, IdNumber>;
-  talents: Record<string, IdNumber>;
-  equippedItems: Record<string, IdNumber>;
-  carriedItems: Record<string, IdNumber>;
-  storedItems: Record<string, IdNumber>;
-  careerPath: Record<string, IdNumber>;
+  skills: Record<string, number>;
+  talents: Record<string, number>;
+  equippedItems: Record<string, number>;
+  carriedItems: Record<string, number>;
+  storedItems: Record<string, number>;
+  careerPath: Record<string, number>;
   spells: Set<string>;
   prayers: Set<string>;
   mutations: Set<string>;
@@ -129,12 +119,12 @@ export class Character implements WhProperty {
     career = { id: "", number: 0 } as IdNumber,
     attributeRolls = getAttributes(),
     attributeAdvances = getAttributes(),
-    skills = {} as Record<string, IdNumber>,
-    talents = {} as Record<string, IdNumber>,
-    equippedItems = {} as Record<string, IdNumber>,
-    carriedItems = {} as Record<string, IdNumber>,
-    storedItems = {} as Record<string, IdNumber>,
-    careerPath = {} as Record<string, IdNumber>,
+    skills = {} as Record<string, number>,
+    talents = {} as Record<string, number>,
+    equippedItems = {} as Record<string, number>,
+    carriedItems = {} as Record<string, number>,
+    storedItems = {} as Record<string, number>,
+    careerPath = {} as Record<string, number>,
     spells = new Set<string>(),
     prayers = new Set<string>(),
     mutations = new Set<string>(),
@@ -247,12 +237,12 @@ export class Character implements WhProperty {
       career: { id: this.career.id, number: this.career.number },
       attributeRolls: copyAttributes(this.attributeRolls),
       attributeAdvances: copyAttributes(this.attributeAdvances),
-      skills: copyRecordWithObject(this.skills),
-      talents: copyRecordWithObject(this.talents),
-      equippedItems: copyRecordWithObject(this.equippedItems),
-      carriedItems: copyRecordWithObject(this.carriedItems),
-      storedItems: copyRecordWithObject(this.storedItems),
-      careerPath: copyRecordWithObject(this.careerPath),
+      skills: { ...this.skills },
+      talents: { ...this.talents },
+      equippedItems: { ...this.equippedItems },
+      carriedItems: { ...this.carriedItems },
+      storedItems: { ...this.storedItems },
+      careerPath: { ...this.careerPath },
       spells: new Set(this.spells),
       prayers: new Set(this.prayers),
       mutations: new Set(this.mutations),
@@ -431,12 +421,12 @@ export function modelToApi(character: Character): CharacterApiData {
     career: character.career,
     baseAttributes: character.getBaseAttributes(),
     attributeAdvances: copyAttributes(character.attributeAdvances),
-    skills: Object.values(character.skills),
-    talents: Object.values(character.talents),
-    equippedItems: Object.values(character.equippedItems),
-    carriedItems: Object.values(character.carriedItems),
-    storedItems: Object.values(character.storedItems),
-    careerPath: Object.values(character.careerPath),
+    skills: Object.entries(character.skills).map((x) => ({ id: x[0], number: x[1] })),
+    talents: Object.entries(character.talents).map((x) => ({ id: x[0], number: x[1] })),
+    equippedItems: Object.entries(character.equippedItems).map((x) => ({ id: x[0], number: x[1] })),
+    carriedItems: Object.entries(character.carriedItems).map((x) => ({ id: x[0], number: x[1] })),
+    storedItems: Object.entries(character.storedItems).map((x) => ({ id: x[0], number: x[1] })),
+    careerPath: Object.entries(character.careerPath).map((x) => ({ id: x[0], number: x[1] })),
     spells: [...character.spells],
     prayers: [...character.prayers],
     mutations: [...character.mutations],
