@@ -175,8 +175,8 @@ function emitPastSelected(id: string) {
 
 <template>
   <div>
-    <div class="flex items-center" :class="disabled ? 'mb-1' : 'mb-2'">
-      <div class="mr-2">Career</div>
+    <div class="flex items-center mb-1">
+      <div class="mr-1">Career</div>
       <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
     </div>
     <div v-if="props.loading" class="flex justify-center">

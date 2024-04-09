@@ -35,7 +35,8 @@ import {
   statusTierList,
 } from "../../../services/wh/career.ts";
 import { useWhList } from "../../../composables/whList.ts";
-import SelectTableCareer from "../../../components/SelectTableCareer.vue";
+import CharacterCareer from "../../../components/CharacterCareer.vue";
+import CharacterAttributes from "../../../components/CharacterAttributes.vue";
 
 const props = defineProps<{
   id: string;
@@ -142,7 +143,7 @@ function formGenerateStatusStanding() {
           :disabled="!wh.canEdit"
           class="min-w-24 flex-1"
         />
-        <div class="flex flex-wrap items-center gap-2 -mb-2">
+        <div class="flex flex-wrap items-center gap-2 -mb-3">
           <p class="">Fate and resilience</p>
           <ActionButton v-if="wh.canEdit" size="sm" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
@@ -181,7 +182,7 @@ function formGenerateStatusStanding() {
             />
           </div>
         </div>
-        <div class="flex flex-wrap items-center gap-2 -mb-2">
+        <div class="flex flex-wrap items-center gap-2 -mb-3">
           <p class="">Status and standing</p>
           <ActionButton
             v-if="wh.canEdit && !careerListUtils.loading.value"
@@ -208,7 +209,7 @@ function formGenerateStatusStanding() {
             />
           </div>
         </div>
-        <p class="-mb-2">Wealth</p>
+        <p class="-mb-3">Wealth</p>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <FormInput
@@ -234,7 +235,7 @@ function formGenerateStatusStanding() {
             />
           </div>
         </div>
-        <p class="-mb-2">Sin and corruption</p>
+        <p class="-mb-3">Sin and corruption</p>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <FormInput
@@ -253,7 +254,7 @@ function formGenerateStatusStanding() {
             />
           </div>
         </div>
-        <p class="-mb-2">Experience</p>
+        <p class="-mb-3">Experience</p>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <FormInput
@@ -280,7 +281,7 @@ function formGenerateStatusStanding() {
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <SelectTableCareer
+        <CharacterCareer
           :disabled="!wh.canEdit"
           :initSelectedCurrentCareer="wh.career"
           :initSelectedPastCareers="wh.careerPath"
@@ -292,7 +293,7 @@ function formGenerateStatusStanding() {
           @reload="careerListUtils.loadWhList"
           @currentSelected="(event) => wh.updateCurrentCareer(event.id, event.number, event.selected)"
           @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
-        ></SelectTableCareer>
+        />
         <FormTextarea
           v-model="wh.description"
           title="Description"
@@ -300,10 +301,10 @@ function formGenerateStatusStanding() {
           :disabled="!wh.canEdit"
           :class="[isEqualOrGreater ? '' : 'mt-2']"
         >
-          <ActionButton class="mb-2" size="sm" @click="formGenerateDescription">Generate</ActionButton>
+          <ActionButton class="mb-1" size="sm" @click="formGenerateDescription">Generate</ActionButton>
         </FormTextarea>
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!wh.canEdit" />
-        <p class="-mb-2">Calculated</p>
+        <p class="-mb-3">Calculated</p>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <div class="flex-1">
@@ -319,6 +320,7 @@ function formGenerateStatusStanding() {
       </div>
     </div>
   </div>
+  <CharacterAttributes :cols="isEqualOrGreater" title="Attributes" />
   <div class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
