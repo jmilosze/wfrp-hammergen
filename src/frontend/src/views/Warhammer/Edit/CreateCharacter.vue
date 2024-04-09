@@ -134,7 +134,9 @@ function formGenerateStatusStanding() {
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit">
-          <ActionButton v-if="wh.canEdit" size="sm" class="ml-2" @click="formGenerateName">Generate</ActionButton>
+          <ActionButton v-if="wh.canEdit" size="sm" class="ml-2 h-full" @click="formGenerateName"
+            >Generate</ActionButton
+          >
         </FormInput>
         <SelectInput
           v-model="wh.species"
@@ -320,7 +322,13 @@ function formGenerateStatusStanding() {
       </div>
     </div>
   </div>
-  <CharacterAttributes :cols="isEqualOrGreater" title="Attributes" />
+  <CharacterAttributes
+    v-model:attributeRolls="wh.attributeRolls"
+    v-model:attributeAdvances="wh.attributeAdvances"
+    :species="wh.species"
+    :cols="isEqualOrGreater"
+    title="Attributes"
+  />
   <div class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"

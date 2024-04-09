@@ -5,7 +5,7 @@ defineProps<{
   type?: "text" | "password" | "number";
   title?: string;
   disabled?: boolean;
-  validationStatus: ValidationStatus;
+  validationStatus?: ValidationStatus;
 }>();
 
 const model = defineModel<T>();
@@ -27,7 +27,7 @@ const model = defineModel<T>();
         <slot></slot>
       </div>
     </div>
-    <p class="text-sm text-red-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+    <p v-if="validationStatus" class="text-sm text-red-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </p>
   </div>
