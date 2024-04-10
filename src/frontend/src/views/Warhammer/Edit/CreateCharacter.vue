@@ -37,6 +37,7 @@ import {
 import { useWhList } from "../../../composables/whList.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
+import { getAttributes } from "../../../services/wh/attributes.ts";
 
 const props = defineProps<{
   id: string;
@@ -325,6 +326,7 @@ function formGenerateStatusStanding() {
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
     v-model:attributeAdvances="wh.attributeAdvances"
+    :otherAttributes="getAttributes()"
     :species="wh.species"
     :cols="isEqualOrGreater"
     title="Attributes"
