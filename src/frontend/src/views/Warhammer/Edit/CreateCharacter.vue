@@ -81,6 +81,8 @@ const validSin = computed(() => wh.value.validateSin());
 const validCorruption = computed(() => wh.value.validateCorruption());
 const validCurrentExp = computed(() => wh.value.validateCurrentExp());
 const validSpentExp = computed(() => wh.value.validateSpentExp());
+const validRolls = computed(() => wh.value.validateRolls());
+const validAdvances = computed(() => wh.value.validateAdvances());
 
 const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
@@ -330,6 +332,8 @@ function formGenerateStatusStanding() {
     :species="wh.species"
     :cols="isEqualOrGreater"
     title="Attributes"
+    :rollsValidationStatus="validRolls"
+    :advancesValidationStatus="validAdvances"
   />
   <div class="mt-4">
     <AfterSubmit

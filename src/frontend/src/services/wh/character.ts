@@ -8,7 +8,15 @@ import {
   multiplyAttributes,
   sumAttributes,
 } from "./attributes.ts";
-import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import {
+  ApiResponse,
+  validAttributesFn,
+  validIntegerFn,
+  validLongDescFn,
+  validShortDescFn,
+  WhApi,
+  WhProperty,
+} from "./common.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
@@ -309,6 +317,14 @@ export class Character implements WhProperty {
     return validIntegerFn(this.spentExp, 0, 10000000);
   }
 
+  validateRolls(): ValidationStatus {
+    return validAttributesFn("Rolls", this.attributeRolls, -99, 99);
+  }
+
+  validateAdvances(): ValidationStatus {
+    return validAttributesFn("Advances", this.attributeAdvances, -99, 99);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -322,7 +338,9 @@ export class Character implements WhProperty {
       this.validateSin().valid &&
       this.validateCorruption().valid &&
       this.validateCurrentExp().valid &&
-      this.validateSpentExp().valid
+      this.validateSpentExp().valid &&
+      this.validateRolls().valid &&
+      this.validateAdvances().valid
     );
   }
 

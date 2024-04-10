@@ -1,5 +1,6 @@
 import { Source } from "./source.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
+import { Attributes } from "./attributes.ts";
 
 export interface WhProperty {
   id: string;
@@ -74,4 +75,16 @@ export function validFloatFn(value: number, min: number, max: number) {
     isValid = true;
   }
   return setValidationStatus(isValid, `This field a number between ${min} and ${max}.`);
+}
+
+export function validAttributesFn(attName: string, attributes: Attributes, min: number, max: number): ValidationStatus {
+  let isValid = true;
+
+  for (const value of Object.values(attributes)) {
+    if (value > max || value < min || !Number.isInteger(value)) {
+      isValid = false;
+    }
+  }
+
+  return setValidationStatus(isValid, `${attName} attributes have to be integer numbers between  ${min} and ${max}.`);
 }

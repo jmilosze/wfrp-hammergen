@@ -11,12 +11,15 @@ import FormInput from "./FormInput.vue";
 import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import { computed, ref } from "vue";
+import { ValidationStatus } from "../utils/validation.ts";
 
 const props = defineProps<{
   title: string;
   cols: boolean;
   species: SpeciesWithRegion;
   otherAttributes: Attributes;
+  rollsValidationStatus: ValidationStatus;
+  advancesValidationStatus: ValidationStatus;
 }>();
 
 const attributeRolls = defineModel<Attributes>("attributeRolls", { required: true });
@@ -619,6 +622,12 @@ function updateAdvances(attribute: AttributeName, newValue: number) {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
+    <p class="text-sm text-red-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
+      {{ rollsValidationStatus.message }}
+    </p>
+    <p class="text-sm text-red-600 mt-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
+      {{ advancesValidationStatus.message }}
+    </p>
   </div>
 </template>
 
