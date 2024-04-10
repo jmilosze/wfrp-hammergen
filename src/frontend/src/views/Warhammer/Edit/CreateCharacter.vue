@@ -6,7 +6,7 @@ import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import EditControls from "../../../components/EditControls.vue";

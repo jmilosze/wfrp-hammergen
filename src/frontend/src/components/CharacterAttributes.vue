@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { Attributes, getAttributes, sumAttributes } from "../services/wh/attributes.ts";
+import {
+  AttributeName,
+  Attributes,
+  getAttributes,
+  setAttributeValue,
+  sumAttributes,
+} from "../services/wh/attributes.ts";
 import { SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import FormInput from "./FormInput.vue";
 import { useElSize } from "../composables/viewSize.ts";
@@ -30,6 +36,14 @@ const total = computed(() => {
 const thClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
 const tdClassNoInput = ["px-4", "py-2", "border-b", "border-neutral-300"];
 const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
+
+function updateRolls(attribute: AttributeName, newValue: number) {
+  setAttributeValue(attribute, newValue, attributeRolls.value);
+}
+
+function updateAdvances(attribute: AttributeName, newValue: number) {
+  setAttributeValue(attribute, newValue, attributeAdvances.value);
+}
 </script>
 
 <template>
@@ -48,10 +62,18 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
           <tr class="bg-white">
             <td :class="tdClass">Rolls</td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.WS" />
+              <FormInput
+                :modelValue="attributeRolls.WS"
+                type="number"
+                @update:modelValue="updateRolls(AttributeName.WS, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.WS" />
+              <FormInput
+                :modelValue="attributeRolls.BS"
+                type="number"
+                @update:modelValue="updateRolls(AttributeName.BS, $event)"
+              />
             </td>
           </tr>
           <tr class="bg-white">
@@ -75,10 +97,18 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
           <tr class="bg-white">
             <td :class="tdClass">Advances</td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.WS" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.WS"
+                @update:modelValue="updateAdvances(AttributeName.WS, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.WS" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.BS"
+                @update:modelValue="updateAdvances(AttributeName.BS, $event)"
+              />
             </td>
           </tr>
           <tr class="bg-white">
@@ -104,16 +134,32 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
         <tbody>
           <tr class="bg-white">
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.S" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.S"
+                @update:modelValue="updateRolls(AttributeName.S, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.T" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.T"
+                @update:modelValue="updateRolls(AttributeName.T, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.I" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.I"
+                @update:modelValue="updateRolls(AttributeName.I, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.Ag" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.Ag"
+                @update:modelValue="updateRolls(AttributeName.Ag, $event)"
+              />
             </td>
           </tr>
           <tr class="bg-white">
@@ -146,16 +192,32 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
           </tr>
           <tr class="bg-white">
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.S" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.S"
+                @update:modelValue="updateAdvances(AttributeName.S, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.T" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.T"
+                @update:modelValue="updateAdvances(AttributeName.T, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.I" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.I"
+                @update:modelValue="updateAdvances(AttributeName.I, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.Ag" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.Ag"
+                @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
+              />
             </td>
           </tr>
           <tr class="bg-white">
@@ -186,16 +248,32 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
         <tbody>
           <tr class="bg-white">
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.Dex" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.Dex"
+                @update:modelValue="updateRolls(AttributeName.Dex, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.Int" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.Int"
+                @update:modelValue="updateRolls(AttributeName.Int, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.WP" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.WP"
+                @update:modelValue="updateRolls(AttributeName.WP, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.Fel" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.Fel"
+                @update:modelValue="updateRolls(AttributeName.Fel, $event)"
+              />
             </td>
           </tr>
           <tr class="bg-white">
@@ -228,16 +306,32 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
           </tr>
           <tr class="bg-white">
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.Dex" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.Dex"
+                @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.Int" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.Int"
+                @update:modelValue="updateAdvances(AttributeName.Int, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.WP" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.WP"
+                @update:modelValue="updateAdvances(AttributeName.WP, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.Fel" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.Fel"
+                @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
+              />
             </td>
           </tr>
           <tr class="bg-white">
@@ -279,34 +373,74 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
           <tr class="bg-white">
             <td :class="tdClass">Rolls</td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.WS" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.WS"
+                @update:modelValue="updateRolls(AttributeName.WS, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.WS" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.BS"
+                @update:modelValue="updateRolls(AttributeName.BS, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.S" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.S"
+                @update:modelValue="updateRolls(AttributeName.S, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.T" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.T"
+                @update:modelValue="updateRolls(AttributeName.T, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.I" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.I"
+                @update:modelValue="updateRolls(AttributeName.I, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.Ag" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.Ag"
+                @update:modelValue="updateRolls(AttributeName.Ag, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.Dex" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.Dex"
+                @update:modelValue="updateRolls(AttributeName.Dex, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.Int" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.Int"
+                @update:modelValue="updateRolls(AttributeName.Int, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.WP" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.WP"
+                @update:modelValue="updateRolls(AttributeName.WP, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeRolls.Fel" />
+              <FormInput
+                type="number"
+                :modelValue="attributeRolls.Fel"
+                @update:modelValue="updateRolls(AttributeName.Fel, $event)"
+              />
             </td>
           </tr>
           <tr class="bg-white">
@@ -378,34 +512,74 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
           <tr class="bg-white">
             <td :class="tdClass">Adv</td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.WS" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.WS"
+                @update:modelValue="updateAdvances(AttributeName.WS, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.WS" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.BS"
+                @update:modelValue="updateAdvances(AttributeName.BS, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.S" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.S"
+                @update:modelValue="updateAdvances(AttributeName.S, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.T" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.T"
+                @update:modelValue="updateAdvances(AttributeName.T, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.I" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.I"
+                @update:modelValue="updateAdvances(AttributeName.I, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.Ag" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.Ag"
+                @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.Dex" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.Dex"
+                @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.Int" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.Int"
+                @update:modelValue="updateAdvances(AttributeName.Int, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.WP" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.WP"
+                @update:modelValue="updateAdvances(AttributeName.WP, $event)"
+              />
             </td>
             <td :class="tdClass">
-              <FormInput type="number" :modelValue="attributeAdvances.Fel" />
+              <FormInput
+                type="number"
+                :modelValue="attributeAdvances.Fel"
+                @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
+              />
             </td>
           </tr>
           <tr class="bg-white">
