@@ -22,12 +22,15 @@ const props = defineProps<{
   initSelectedItems: Set<string>;
   loading?: boolean;
   modalId?: string;
+  clearAllBtn?: boolean;
+  disableDescription?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: "selected", value: { id: string; selected: boolean }): void;
   (e: "createNew"): void;
   (e: "reload"): void;
+  (e: "clearAll"): void;
 }>();
 
 const itemsWithSelect: Ref<Record<string, ItemWithSelect>> = ref({});
@@ -91,9 +94,12 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center" :class="disabled ? 'mb-1' : 'mb-2'">
-      <div v-if="title" class="mr-2">{{ title }}</div>
+    <div class="flex items-center gap-2 mb-1">
+      <div v-if="title">{{ title }}</div>
       <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
+      <ActionButton v-if="!disabled && clearAllBtn" size="sm" variant="red" @click="emit('clearAll')">
+        Clear all
+      </ActionButton>
     </div>
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
@@ -103,13 +109,13 @@ function onModifyClick() {
         <thead>
           <tr class="text-left">
             <th class="border-b border-neutral-300 py-2 px-5">Name</th>
-            <th class="border-b border-neutral-300 py-2 px-5">Description</th>
+            <th v-if="!disableDescription" class="border-b border-neutral-300 py-2 px-5">Description</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.description }}</td>
+            <td v-if="!disableDescription" class="py-2 px-5 border-b border-neutral-300">{{ src.description }}</td>
           </tr>
         </tbody>
       </table>

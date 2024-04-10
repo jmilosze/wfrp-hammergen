@@ -102,11 +102,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
-      <SourceTable
-        :disabled="!wh.canEdit"
-        :initSources="initSources"
-        @selected="(e) => wh.updateSource(e)"
-      ></SourceTable>
+      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />

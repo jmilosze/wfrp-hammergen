@@ -12,7 +12,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual } from "../../utils/set.ts";
+import { setsAreEqual, updateSet } from "../../utils/set.ts";
 
 export const enum CareerClass {
   Academic = 0,
@@ -349,42 +349,12 @@ export class Career implements WhProperty {
 
   updateLevelSkills(level: 1 | 2 | 3 | 4, id: string, selected: boolean): void {
     const careerLevel = this.getLevel(level);
-
-    if (selected) {
-      if (careerLevel.skills.has(id)) {
-        // do nothing
-        return;
-      } else {
-        careerLevel.skills.add(id);
-      }
-    } else {
-      if (careerLevel.skills.has(id)) {
-        careerLevel.skills.delete(id);
-        return;
-      } else {
-        // do nothing
-      }
-    }
+    updateSet(careerLevel.skills, id, selected);
   }
 
   updateLevelTalents(level: 1 | 2 | 3 | 4, id: string, selected: boolean): void {
     const careerLevel = this.getLevel(level);
-
-    if (selected) {
-      if (careerLevel.talents.has(id)) {
-        // do nothing
-        return;
-      } else {
-        careerLevel.talents.add(id);
-      }
-    } else {
-      if (careerLevel.talents.has(id)) {
-        careerLevel.talents.delete(id);
-        return;
-      } else {
-        // do nothing
-      }
-    }
+    updateSet(careerLevel.talents, id, selected);
   }
 }
 

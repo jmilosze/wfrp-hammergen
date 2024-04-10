@@ -98,11 +98,7 @@ const validCn = computed(() => wh.value.validateCn());
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
-      <SourceTable
-        :disabled="!wh.canEdit"
-        :initSources="initSources"
-        @selected="(e) => wh.updateSource(e)"
-      ></SourceTable>
+      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Spell" :disabled="!wh.canEdit" />

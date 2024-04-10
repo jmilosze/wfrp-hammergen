@@ -30,7 +30,7 @@ import {
 } from "./crudGenerator.ts";
 import { apiResponseToCharacterFull, CharacterFull } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual } from "../../utils/set.ts";
+import { setsAreEqual, updateSet } from "../../utils/set.ts";
 import { compareIdNumber, copyIdNumberArray, IdNumber, idNumberArrayToRecord } from "../../utils/idNumber.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 
@@ -399,6 +399,30 @@ export class Character implements WhProperty {
       }
       this.careerPath.push({ id: id, number: number });
     }
+  }
+
+  updateSpells(id: string, selected: boolean): void {
+    updateSet(this.spells, id, selected);
+  }
+
+  clearSpells(): void {
+    this.spells = new Set<string>();
+  }
+
+  updatePrayers(id: string, selected: boolean): void {
+    updateSet(this.prayers, id, selected);
+  }
+
+  clearPrayers(): void {
+    this.prayers = new Set<string>();
+  }
+
+  updateMutations(id: string, selected: boolean): void {
+    updateSet(this.mutations, id, selected);
+  }
+
+  clearMutations(): void {
+    this.mutations = new Set<string>();
   }
 }
 

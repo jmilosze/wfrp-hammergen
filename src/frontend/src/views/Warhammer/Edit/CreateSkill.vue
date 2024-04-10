@@ -160,7 +160,7 @@ watch(
           @createNew="openInNewTab('skill', { id: 'create' })"
           @reload="loadWhList"
           @selected="(e) => wh.modifyGroup(e.id, e.selected)"
-        ></SelectTable>
+        />
       </div>
     </div>
   </div>
@@ -170,11 +170,7 @@ watch(
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="my-3 flex-1">
-      <SourceTable
-        :disabled="!wh.canEdit"
-        :initSources="initSources"
-        @selected="(e) => wh.updateSource(e)"
-      ></SourceTable>
+      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
       <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />

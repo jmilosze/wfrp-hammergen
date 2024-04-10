@@ -11,7 +11,7 @@ import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName, attributeNameList } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual } from "../../utils/set.ts";
+import { setsAreEqual, updateSet } from "../../utils/set.ts";
 
 export const enum SkillType {
   Basic = 0,
@@ -139,21 +139,7 @@ export class Skill implements WhProperty {
   }
 
   modifyGroup(id: string, selected: boolean): void {
-    if (selected) {
-      if (this.group.has(id)) {
-        // do nothing
-        return;
-      } else {
-        this.group.add(id);
-      }
-    } else {
-      if (this.group.has(id)) {
-        this.group.delete(id);
-        return;
-      } else {
-        // do nothing
-      }
-    }
+    updateSet(this.group, id, selected);
   }
 }
 

@@ -12,7 +12,7 @@ import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { AttributeName, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual } from "../../utils/set.ts";
+import { setsAreEqual, updateSet } from "../../utils/set.ts";
 
 const API_BASE_PATH = "/api/wh/talent";
 
@@ -169,22 +169,8 @@ export class Talent implements WhProperty {
     }
   }
 
-  modifyGroup(id: string, selected: boolean): void {
-    if (selected) {
-      if (this.group.has(id)) {
-        // do nothing
-        return;
-      } else {
-        this.group.add(id);
-      }
-    } else {
-      if (this.group.has(id)) {
-        this.group.delete(id);
-        return;
-      } else {
-        // do nothing
-      }
-    }
+  updateGroup(id: string, selected: boolean): void {
+    updateSet(this.group, id, selected);
   }
 }
 

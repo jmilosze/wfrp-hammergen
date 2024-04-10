@@ -6,7 +6,7 @@ import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import EditControls from "../../../components/EditControls.vue";
@@ -38,6 +38,10 @@ import { useWhList } from "../../../composables/whList.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
 import { getAttributes } from "../../../services/wh/attributes.ts";
+import SelectTable from "../../../components/SelectTable.vue";
+import { SpellApi } from "../../../services/wh/spell.ts";
+import { MutationApi } from "../../../services/wh/mutation.ts";
+import { PrayerApi } from "../../../services/wh/prayer.ts";
 
 const props = defineProps<{
   id: string;
@@ -59,6 +63,12 @@ const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionSt
 
 const careerListUtils = useWhList(new CareerApi(authRequest));
 careerListUtils.loadWhList();
+const spellListUtils = useWhList(new SpellApi(authRequest));
+spellListUtils.loadWhList();
+const prayerListUtils = useWhList(new PrayerApi(authRequest));
+prayerListUtils.loadWhList();
+const mutationListUtils = useWhList(new MutationApi(authRequest));
+mutationListUtils.loadWhList();
 
 await loadWh(props.id);
 
@@ -335,6 +345,62 @@ function formGenerateStatusStanding() {
     :rollsValidationStatus="validRolls"
     :advancesValidationStatus="validAdvances"
   />
+  <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
+    <div class="flex-1">
+      <SelectTable
+        :disabled="!wh.canEdit"
+        :initSelectedItems="wh.spells"
+        :itemList="spellListUtils.whList.value"
+        title="Spells"
+        modalTitle="Modify spells"
+        modalId="characterSpells"
+        :loading="spellListUtils.loading.value"
+        :clearAllBtn="true"
+        :disableDescription="true"
+        class="min-w-64"
+        @createNew="openInNewTab('spell', { id: 'create' })"
+        @reload="spellListUtils.loadWhList"
+        @selected="(e) => wh.updateSpells(e.id, e.selected)"
+        @clearAll="wh.clearSpells()"
+      />
+    </div>
+    <div class="flex-1">
+      <SelectTable
+        :disabled="!wh.canEdit"
+        :initSelectedItems="wh.prayers"
+        :itemList="prayerListUtils.whList.value"
+        title="Prayers"
+        modalTitle="Modify prayers"
+        modalId="characterPrayers"
+        :loading="prayerListUtils.loading.value"
+        :clearAllBtn="true"
+        :disableDescription="true"
+        class="min-w-64"
+        @createNew="openInNewTab('prayer', { id: 'create' })"
+        @reload="prayerListUtils.loadWhList"
+        @selected="(e) => wh.updatePrayers(e.id, e.selected)"
+        @clearAll="wh.clearPrayers()"
+      />
+    </div>
+    <div class="flex-1">
+      <SelectTable
+        :disabled="!wh.canEdit"
+        :initSelectedItems="wh.mutations"
+        :itemList="mutationListUtils.whList.value"
+        title="Mutations"
+        modalTitle="Modify mutations"
+        modalId="characterMutations"
+        :loading="mutationListUtils.loading.value"
+        :clearAllBtn="true"
+        :disableDescription="true"
+        class="min-w-64"
+        @createNew="openInNewTab('mutation', { id: 'create' })"
+        @reload="mutationListUtils.loadWhList"
+        @selected="(e) => wh.updateMutations(e.id, e.selected)"
+        @clearAll="wh.clearMutations()"
+      />
+    </div>
+  </div>
   <div class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
