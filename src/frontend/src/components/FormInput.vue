@@ -27,8 +27,8 @@ const model = defineModel<T>();
         <slot></slot>
       </div>
     </div>
-    <p v-if="validationStatus" class="text-sm text-red-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+    <div v-if="validationStatus" class="text-sm text-red-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
-    </p>
+    </div>
   </div>
 </template>

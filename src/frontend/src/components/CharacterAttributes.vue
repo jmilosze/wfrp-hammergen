@@ -12,6 +12,9 @@ import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import { computed, ref } from "vue";
 import { ValidationStatus } from "../utils/validation.ts";
+import ActionButton from "./ActionButton.vue";
+import { generateRolls } from "../services/wh/characterGeneration/generateAttributes.ts";
+import { rollDice } from "../utils/random.ts";
 
 const props = defineProps<{
   title: string;
@@ -20,6 +23,7 @@ const props = defineProps<{
   otherAttributes: Attributes;
   rollsValidationStatus: ValidationStatus;
   advancesValidationStatus: ValidationStatus;
+  disabled?: boolean;
 }>();
 
 const attributeRolls = defineModel<Attributes>("attributeRolls", { required: true });
@@ -47,10 +51,17 @@ function updateRolls(attribute: AttributeName, newValue: number) {
 function updateAdvances(attribute: AttributeName, newValue: number) {
   setAttributeValue(attribute, newValue, attributeAdvances.value);
 }
+
+function newRolls() {
+  attributeRolls.value = generateRolls(rollDice);
+}
 </script>
 
 <template>
-  <div class="mb-1">{{ title }}</div>
+  <div class="flex flex-wrap items-center gap-2 mb-1">
+    <div class="mb-1">{{ title }}</div>
+    <ActionButton v-if="!disabled" size="sm" @click="newRolls">Generate rolls</ActionButton>
+  </div>
   <div ref="contentContainerRef" class="w-full">
     <div v-if="!lgELSize.isEqualOrGreater.value" class="bg-neutral-50 rounded-xl border border-neutral-300 w-full">
       <table class="w-full">
@@ -622,12 +633,12 @@ function updateAdvances(attribute: AttributeName, newValue: number) {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <p class="text-sm text-red-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-red-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
       {{ rollsValidationStatus.message }}
-    </p>
-    <p class="text-sm text-red-600 mt-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
+    </div>
+    <div class="text-sm text-red-600 mt-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
       {{ advancesValidationStatus.message }}
-    </p>
+    </div>
   </div>
 </template>
 
