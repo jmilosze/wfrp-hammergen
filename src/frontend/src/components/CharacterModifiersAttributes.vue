@@ -37,7 +37,7 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
     <div
       v-for="(row, index) in attributeNames"
       :key="index"
-      class="bg-neutral-50 rounded-xl border border-neutral-300 w-full"
+      class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit"
     >
       <table class="w-full">
         <thead>

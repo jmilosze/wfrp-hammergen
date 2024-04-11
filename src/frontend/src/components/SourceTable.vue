@@ -66,7 +66,7 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center" :class="disabled ? 'mb-1' : 'mb-2'">
+    <div class="flex items-center mb-1">
       <div class="mr-2">Sources</div>
       <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
     </div>
