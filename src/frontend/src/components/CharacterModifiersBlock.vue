@@ -39,6 +39,7 @@ const rows = computed(() => {
 function updateAttributes(attribute: AttributeName, newValue: number) {
   const newModifiers = props.modelValue.copy();
   setAttributeValue(attribute, newValue, newModifiers.attributes);
+  emit("update:modelValue", newModifiers);
 }
 
 function updateSize(newSize: number) {
