@@ -21,6 +21,7 @@ import { getAttributes, sumAttributes } from "../attributes.ts";
 import { genTalentsAndAdvances } from "./generateTalents.ts";
 import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
 import { GenerationProps } from "../generationProps.ts";
+import { defaultSource } from "../source.ts";
 
 export function generateCharacter(
   species: SpeciesWithRegion,
@@ -30,7 +31,12 @@ export function generateCharacter(
   generationProps: GenerationProps,
   level: 1 | 2 | 3 | 4,
 ) {
-  const character = new Character();
+  const character = new Character({
+    canEdit: true,
+    id: "create",
+    shared: false,
+    source: defaultSource(),
+  });
 
   const exp = 50; // From random characteristics
 

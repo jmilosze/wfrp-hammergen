@@ -23,7 +23,7 @@ import {
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import {
-  // generateCharacter,
+  generateCharacter,
   generateFateAndResilience,
 } from "../../../services/wh/characterGeneration/generateCharacter.ts";
 import { rollDice } from "../../../utils/random.ts";
@@ -50,8 +50,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import HintModal from "../../../components/HintModal.vue";
 import { SkillApi } from "../../../services/wh/skill.ts";
 import { TalentApi } from "../../../services/wh/talent.ts";
-// import { getGenerationProps } from "../../../services/wh/generationProps.ts";
-// import { RandomTalents } from "../../../services/wh/characterGeneration/generateSpeciesTalents.ts";
+import { useGenerationProps } from "../../../composables/generationProps.ts";
 
 const props = defineProps<{
   id: string;
@@ -87,22 +86,8 @@ const skillListUtils = useWhList(new SkillApi(authRequest));
 skillListUtils.loadWhList();
 const talentListUtils = useWhList(new TalentApi(authRequest));
 talentListUtils.loadWhList();
-
-// let generationProps = {
-//   classItems: [] as { equipped: Record<string, string>; carried: Record<string, string> }[],
-//   randomTalents: [] as RandomTalents,
-//   speciesTalents: {} as Record<string, string[]>,
-//   speciesSkills: {} as Record<string, string[]>,
-// };
-//
-// async function loadGenerationProps() {
-//   try {
-//     generationProps = await getGenerationProps(authRequest);
-//   } catch (error) {
-//     //   do errror
-//   }
-// }
-// loadGenerationProps();
+const generationPropsUtils = useGenerationProps(authRequest);
+generationPropsUtils.loadGenerationProps();
 
 await loadWh(props.id);
 
@@ -217,18 +202,20 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
   return careers;
 }
 
-// function rollCharacter() {
-//   const career = careerListUtils.whList.value.find((x) => x.id === selectedGenCareer.value);
-//   if (!career) {
-//     return;
-//   }
-//   // this.wh.value = generateCharacter(
-//   //   selectedGenSpecies.value,
-//   //   career,
-//   //   skillListUtils.whList.value,
-//   //   talentListUtils.whList.value,
-//   // );
-// }
+function rollCharacter() {
+  const career = careerListUtils.whList.value.find((x) => x.id === selectedGenCareer.value);
+  if (!career) {
+    return;
+  }
+  wh.value = generateCharacter(
+    selectedGenSpecies.value,
+    career,
+    skillListUtils.whList.value,
+    talentListUtils.whList.value,
+    generationPropsUtils.generationProps.value,
+    selectedGenLevel.value as 1 | 2 | 3 | 4,
+  );
+}
 </script>
 
 <template>
@@ -283,6 +270,14 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
       @click="talentListUtils.showApiError.value = false"
     >
       {{ talentListUtils.apiError.value }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="generationPropsUtils.apiError.value && generationPropsUtils.showApiError.value"
+      alertType="red"
+      @click="generationPropsUtils.showApiError.value = false"
+    >
+      {{ generationPropsUtils.apiError.value }}
     </AlertBlock>
   </div>
   <Header :title="id === 'character' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
@@ -342,7 +337,7 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
         </p>
         <p class="my-1">Generating will override all current entries on the character sheet.</p>
       </HintModal>
-      <ActionButton size="sm">Generate</ActionButton>
+      <ActionButton size="sm" @click="rollCharacter">Generate</ActionButton>
     </div>
   </div>
   <div
