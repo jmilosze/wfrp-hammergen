@@ -232,3 +232,5 @@ export function getWoundsFormula(size: number, T: number, WP: number, S: number)
     return (SB + 2 * TB + WPB) * 8;
   }
 }
+
+export const DEFAULT_CAREER_ID = "000000000000000000000000";

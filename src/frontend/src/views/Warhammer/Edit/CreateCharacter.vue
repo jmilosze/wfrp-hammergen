@@ -6,7 +6,7 @@ import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import EditControls from "../../../components/EditControls.vue";
@@ -15,13 +15,17 @@ import FormInput from "../../../components/FormInput.vue";
 import ActionButton from "../../../components/ActionButton.vue";
 import generateName from "../../../services/wh/characterGeneration/generateName.ts";
 import {
+  DEFAULT_CAREER_ID,
   printSpeciesWithRegion,
   SpeciesWithRegion,
   speciesWithRegionList,
 } from "../../../services/wh/characterUtils.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import { generateFateAndResilience } from "../../../services/wh/characterGeneration/generateCharacter.ts";
+import {
+  generateCharacter,
+  generateFateAndResilience,
+} from "../../../services/wh/characterGeneration/generateCharacter.ts";
 import { rollDice } from "../../../utils/random.ts";
 import generateDescription from "../../../services/wh/characterGeneration/generateDescription.ts";
 import {
@@ -44,6 +48,8 @@ import { MutationApi } from "../../../services/wh/mutation.ts";
 import { PrayerApi } from "../../../services/wh/prayer.ts";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import HintModal from "../../../components/HintModal.vue";
+import { SkillApi } from "../../../services/wh/skill.ts";
+import { TalentApi } from "../../../services/wh/talent.ts";
 
 const props = defineProps<{
   id: string;
@@ -60,6 +66,7 @@ const newCharacter = new Character({
 
 const selectedGenSpecies = ref(SpeciesWithRegion.HumanReikland);
 const selectedGenLevel = ref(1);
+const selectedGenCareer = ref(DEFAULT_CAREER_ID);
 
 const { openInNewTab } = useNewTab();
 
@@ -74,6 +81,10 @@ const prayerListUtils = useWhList(new PrayerApi(authRequest));
 prayerListUtils.loadWhList();
 const mutationListUtils = useWhList(new MutationApi(authRequest));
 mutationListUtils.loadWhList();
+const skillListUtils = useWhList(new SkillApi(authRequest));
+skillListUtils.loadWhList();
+const talentListUtils = useWhList(new TalentApi(authRequest));
+talentListUtils.loadWhList();
 
 await loadWh(props.id);
 
@@ -110,6 +121,7 @@ const levelOpts = [
   { text: "Level 3", value: 3 },
   { text: "Level 4", value: 4 },
 ];
+const careerOpts = ref([] as { text: string; value: string }[]);
 
 const movement = computed(() => wh.value.getMovement());
 const wounds = computed(() => wh.value.getWounds());
@@ -144,35 +156,61 @@ function formGenerateStatusStanding() {
   }
 }
 
-// function generateCareers(speciesWithRegion) {
-//   let species = speciesWithRegionToSpecies(speciesWithRegion);
-//   let careers = this.listOfCareers
-//     .map((x, idx) => {
-//       let disabled = !x.species.includes(species);
-//       return { value: idx, text: x.name, disabled: disabled };
-//     })
-//     .filter((x) => x.disabled === false);
-//
-//   careers.sort(function (x, y) {
-//     if (x.text === y.text) {
-//       return 0;
-//     } else {
-//       return x.text < y.text ? -1 : 1;
-//     }
-//   });
-//
-//   if (includeRandom) {
-//     careers.unshift({
-//       value: -1,
-//       text: "Random (+50 XP)",
-//       disabled: false,
-//     });
-//   } else {
-//     careers.unshift({ value: -1, text: "Select Career", disabled: false });
-//   }
-//
-//   return careers;
-// },
+watch(
+  () => selectedGenSpecies.value,
+  (newVal) => {
+    careerOpts.value = setCareerOpts(newVal, careerListUtils.whList.value);
+    if (!careerOpts.value.some((x) => x.value === selectedGenCareer.value)) {
+      selectedGenCareer.value = DEFAULT_CAREER_ID;
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  () => careerListUtils.whList.value,
+  (newVal) => {
+    careerOpts.value = setCareerOpts(selectedGenSpecies.value, newVal);
+    if (!careerOpts.value.some((x) => x.value === selectedGenCareer.value)) {
+      selectedGenCareer.value = DEFAULT_CAREER_ID;
+    }
+  },
+  { immediate: true },
+);
+
+function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text: string; value: string }[] {
+  if (!careerList) {
+    return [{ value: DEFAULT_CAREER_ID, text: "Select Career" }];
+  }
+
+  const careers = careerList
+    .filter((x) => x.allowedForSpeciesWithRegion(species))
+    .map((x) => ({ text: x.name, value: x.id }))
+    .sort(function (x, y) {
+      if (x.text === y.text) {
+        return 0;
+      } else {
+        return x.text < y.text ? -1 : 1;
+      }
+    });
+
+  careers.unshift({ value: DEFAULT_CAREER_ID, text: "Select Career" });
+
+  return careers;
+}
+
+function rollCharacter() {
+  const career = careerListUtils.whList.value.find((x) => x.id === selectedGenCareer.value);
+  if (!career) {
+    return;
+  }
+  // this.wh.value = generateCharacter(
+  //   selectedGenSpecies.value,
+  //   career,
+  //   skillListUtils.whList.value,
+  //   talentListUtils.whList.value,
+  // );
+}
 </script>
 
 <template>
@@ -197,6 +235,13 @@ function formGenerateStatusStanding() {
         v-model="selectedGenLevel"
         title="Level"
         :options="levelOpts"
+        :disabled="!wh.canEdit"
+        class="min-w-24 flex-1"
+      />
+      <SelectInput
+        v-model="selectedGenCareer"
+        title="Career"
+        :options="careerOpts"
         :disabled="!wh.canEdit"
         class="min-w-24 flex-1"
       />
@@ -231,7 +276,7 @@ function formGenerateStatusStanding() {
         </p>
         <p class="my-1">Generating will override all current entries on the character sheet.</p>
       </HintModal>
-      <ActionButton size="sm">Generate</ActionButton>
+      <ActionButton size="sm" @click="generateCharacter()">Generate</ActionButton>
     </div>
   </div>
   <div

@@ -1,4 +1,10 @@
-import { DEFAULT_SIZE, getMovementFormula, getWoundsFormula, SpeciesWithRegion } from "./characterUtils.ts";
+import {
+  DEFAULT_SIZE,
+  DEFAULT_CAREER_ID,
+  getMovementFormula,
+  getWoundsFormula,
+  SpeciesWithRegion,
+} from "./characterUtils.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
 import {
   Attributes,
@@ -131,7 +137,7 @@ export class Character implements WhProperty {
     corruption = 0,
     status = StatusTier.Brass,
     standing = 0 as StatusStanding,
-    career = { id: "000000000000000000000000", number: 1 } as IdNumber,
+    career = { id: DEFAULT_CAREER_ID, number: 1 } as IdNumber,
     attributeRolls = getAttributes(),
     attributeAdvances = getAttributes(),
     skills = {} as Record<string, number>,
@@ -406,7 +412,7 @@ export class Character implements WhProperty {
 
   updateCurrentCareer(id: string, number: number, selected: boolean) {
     if (!selected) {
-      this.career.id = "000000000000000000000000";
+      this.career.id = DEFAULT_CAREER_ID;
       this.career.number = 1;
     } else {
       this.career.id = id;

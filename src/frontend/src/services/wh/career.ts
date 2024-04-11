@@ -13,6 +13,16 @@ import {
 } from "./crudGenerator.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
+import {
+  DWARF_LIST,
+  GNOME_LIST,
+  HALFLING_LIST,
+  HIGH_ELF_LIST,
+  HUMAN_LIST,
+  OGRE_LIST,
+  SpeciesWithRegion,
+  WOOD_ELF_LIST,
+} from "./characterUtils.ts";
 
 export const enum CareerClass {
   Academic = 0,
@@ -129,6 +139,26 @@ export function printSpeciesName(species: Species) {
       return "Ogre";
     default:
       return "";
+  }
+}
+
+export function speciesWithRegionToSpecies(speciesWithRegion: SpeciesWithRegion): Species {
+  if (HUMAN_LIST.includes(speciesWithRegion)) {
+    return Species.Human;
+  } else if (HALFLING_LIST.includes(speciesWithRegion)) {
+    return Species.Halfling;
+  } else if (DWARF_LIST.includes(speciesWithRegion)) {
+    return Species.Dwarf;
+  } else if (HIGH_ELF_LIST.includes(speciesWithRegion)) {
+    return Species.HighElf;
+  } else if (WOOD_ELF_LIST.includes(speciesWithRegion)) {
+    return Species.WoodElf;
+  } else if (GNOME_LIST.includes(speciesWithRegion)) {
+    return Species.Gnome;
+  } else if (OGRE_LIST.includes(speciesWithRegion)) {
+    return Species.Ogre;
+  } else {
+    return Species.Human;
   }
 }
 
@@ -355,6 +385,11 @@ export class Career implements WhProperty {
   updateLevelTalents(level: 1 | 2 | 3 | 4, id: string, selected: boolean): void {
     const careerLevel = this.getLevel(level);
     updateSet(careerLevel.talents, id, selected);
+  }
+
+  allowedForSpeciesWithRegion(speciesWithRegion: SpeciesWithRegion): boolean {
+    const species = speciesWithRegionToSpecies(speciesWithRegion);
+    return this.species.includes(species);
   }
 }
 
