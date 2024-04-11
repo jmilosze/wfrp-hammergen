@@ -35,3 +35,14 @@ export function copyIdNumberArray(arr: IdNumber[]): IdNumber[] {
     return [] as IdNumber[];
   }
 }
+
+export function updateIdNumberRecord(idNumberRecord: Record<string, any>, item: IdNumber): void {
+  if (item.number === 0) {
+    if (item.id in idNumberRecord) {
+      delete idNumberRecord[item.id];
+    }
+    return;
+  }
+
+  idNumberRecord[item.id] = item.number;
+}

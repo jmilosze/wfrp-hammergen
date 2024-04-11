@@ -1,6 +1,7 @@
 import { Source } from "./source.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 import { Attributes } from "./attributes.ts";
+import { isKey } from "../../utils/object.ts";
 
 export interface WhProperty {
   id: string;
@@ -68,7 +69,7 @@ export function validIntegerFn(value: number, min: number, max: number): Validat
   return setValidationStatus(isValid, `This field an integer between ${min} and ${max}.`);
 }
 
-export function validFloatFn(value: number, min: number, max: number) {
+export function validFloatFn(value: number, min: number, max: number): ValidationStatus {
   let isValid = false;
 
   if (value >= min && value <= max) {
@@ -77,14 +78,38 @@ export function validFloatFn(value: number, min: number, max: number) {
   return setValidationStatus(isValid, `This field a number between ${min} and ${max}.`);
 }
 
-export function validAttributesFn(attName: string, attributes: Attributes, min: number, max: number): ValidationStatus {
+export function validAttributesFn(
+  fieldName: string,
+  attributes: Attributes,
+  min: number,
+  max: number,
+): ValidationStatus {
   let isValid = true;
 
   for (const value of Object.values(attributes)) {
     if (value > max || value < min || !Number.isInteger(value)) {
       isValid = false;
+      break;
     }
   }
 
-  return setValidationStatus(isValid, `${attName} attributes have to be integer numbers between  ${min} and ${max}.`);
+  return setValidationStatus(isValid, `${fieldName} attributes have to be integer numbers between ${min} and ${max}.`);
+}
+
+export function validateIdNumber(
+  fieldName: string,
+  record: Record<string, number>,
+  min: number,
+  max: number,
+): ValidationStatus {
+  let isValid = true;
+  for (const [id, number] of Object.entries(record)) {
+    if (isKey(record, id)) {
+      if (!Number.isInteger(number) || number < min || number > max) {
+        isValid = false;
+        break;
+      }
+    }
+  }
+  return setValidationStatus(isValid, `${fieldName} numbers have to be integer numbers between ${min} and ${max}.`);
 }

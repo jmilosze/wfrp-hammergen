@@ -10,6 +10,7 @@ import {
 } from "./attributes.ts";
 import {
   ApiResponse,
+  validateIdNumber,
   validAttributesFn,
   validIntegerFn,
   validLongDescFn,
@@ -31,9 +32,14 @@ import {
 import { apiResponseToCharacterFull, CharacterFull } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
-import { compareIdNumber, copyIdNumberArray, IdNumber, idNumberArrayToRecord } from "../../utils/idNumber.ts";
+import {
+  compareIdNumber,
+  copyIdNumberArray,
+  IdNumber,
+  idNumberArrayToRecord,
+  updateIdNumberRecord,
+} from "../../utils/idNumber.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
-
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
@@ -325,6 +331,26 @@ export class Character implements WhProperty {
     return validAttributesFn("Advances", this.attributeAdvances, -99, 99);
   }
 
+  validateSkills(): ValidationStatus {
+    return validateIdNumber("Skills", this.skills, 1, 1000);
+  }
+
+  validateTalents(): ValidationStatus {
+    return validateIdNumber("Talents", this.talents, 1, 1000);
+  }
+
+  validateEquippedItems(): ValidationStatus {
+    return validateIdNumber("Equipped items", this.equippedItems, 1, 1000);
+  }
+
+  validateCarriedItems(): ValidationStatus {
+    return validateIdNumber("Carried items", this.carriedItems, 1, 1000);
+  }
+
+  validateStoredItems(): ValidationStatus {
+    return validateIdNumber("Stored items", this.storedItems, 1, 1000);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -423,6 +449,46 @@ export class Character implements WhProperty {
 
   clearMutations(): void {
     this.mutations = new Set<string>();
+  }
+
+  updateSkills(id: string, number: number): void {
+    updateIdNumberRecord(this.skills, { id: id, number: number });
+  }
+
+  clearSkills(): void {
+    this.skills = {} as Record<string, number>;
+  }
+
+  updateTalents(id: string, number: number): void {
+    updateIdNumberRecord(this.talents, { id: id, number: number });
+  }
+
+  clearTalents(): void {
+    this.talents = {} as Record<string, number>;
+  }
+
+  updateEquippedItems(id: string, number: number): void {
+    updateIdNumberRecord(this.equippedItems, { id: id, number: number });
+  }
+
+  clearEquippedItems(): void {
+    this.equippedItems = {} as Record<string, number>;
+  }
+
+  updateCarriedItems(id: string, number: number): void {
+    updateIdNumberRecord(this.carriedItems, { id: id, number: number });
+  }
+
+  clearCarriedItems(): void {
+    this.carriedItems = {} as Record<string, number>;
+  }
+
+  updateStoredItems(id: string, number: number): void {
+    updateIdNumberRecord(this.storedItems, { id: id, number: number });
+  }
+
+  clearStoredItems(): void {
+    this.storedItems = {} as Record<string, number>;
   }
 }
 
