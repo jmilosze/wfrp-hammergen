@@ -366,7 +366,12 @@ export class Character implements WhProperty {
       this.validateCurrentExp().valid &&
       this.validateSpentExp().valid &&
       this.validateRolls().valid &&
-      this.validateAdvances().valid
+      this.validateAdvances().valid &&
+      this.validateSkills().valid &&
+      this.validateTalents().valid &&
+      this.validateEquippedItems().valid &&
+      this.validateCarriedItems().valid &&
+      this.validateStoredItems().valid
     );
   }
 
