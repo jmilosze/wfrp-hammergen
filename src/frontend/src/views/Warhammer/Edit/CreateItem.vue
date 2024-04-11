@@ -125,9 +125,25 @@ watch(
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex items-center flex-col gap-4">
     <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
       {{ apiError }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="propertyListUtils.apiError.value && propertyListUtils.showApiError.value"
+      alertType="red"
+      @click="propertyListUtils.showApiError.value = false"
+    >
+      {{ propertyListUtils.apiError.value }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="spellListUtils.apiError.value && spellListUtils.showApiError.value"
+      alertType="red"
+      @click="spellListUtils.showApiError.value = false"
+    >
+      {{ spellListUtils.apiError.value }}
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create trapping' : wh.canEdit ? 'Edit trapping' : wh.name" />
