@@ -55,15 +55,15 @@ const {
   showSubmissionStatus,
 } = useWhEdit(newSkill, new SkillApi(authRequest));
 
-const { whList, loadWhList, loading } = useWhList(new SkillApi(authRequest));
+const skillListUtils = useWhList(new SkillApi(authRequest));
 const groupSkills: Ref<Skill[]> = ref([]);
 
-loadWhList();
+skillListUtils.loadWhList();
 
 watch(
-  () => whList,
+  () => skillListUtils.whList.value,
   (newValue) => {
-    groupSkills.value = newValue.value.filter((x) => x.isGroup && x.id !== wh.value.id);
+    groupSkills.value = newValue.filter((x) => x.isGroup && x.id !== wh.value.id);
   },
   { immediate: true, deep: true },
 );
@@ -103,9 +103,17 @@ watch(
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex items-center flex-col gap-4">
     <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
       {{ apiError }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="skillListUtils.apiError.value && skillListUtils.showApiError.value"
+      alertType="red"
+      @click="skillListUtils.showApiError.value = false"
+    >
+      {{ skillListUtils.apiError.value }}
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create skill' : wh.canEdit ? 'Edit skill' : wh.name" />
@@ -156,9 +164,9 @@ watch(
           :itemList="groupSkills"
           title="Belongs to group"
           modalTitle="Modify groups"
-          :loading="loading"
+          :loading="skillListUtils.loading.value"
           @createNew="openInNewTab('skill', { id: 'create' })"
-          @reload="loadWhList"
+          @reload="skillListUtils.loadWhList"
           @selected="(e) => wh.modifyGroup(e.id, e.selected)"
         />
       </div>

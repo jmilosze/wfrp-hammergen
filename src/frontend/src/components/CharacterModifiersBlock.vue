@@ -37,7 +37,7 @@ const inputClass = ref([
   "focus:outline",
   "focus:outline-2",
   "disabled:bg-neutral-200",
-  "text-center",
+  "text-left",
 ]);
 
 const rows = computed(() => {
@@ -95,8 +95,8 @@ const validAtts = computed(() => {
 
 <template>
   <div ref="contentContainerRef">
-    <div class="flex items-center mb-2">
-      <div class="mb-1 mr-2">Character modifiers</div>
+    <div class="flex items-center mb-1">
+      <div class="mr-2">Character modifiers</div>
       <ActionButton size="sm" @click="modal.showModal('modifiersHelpModal')">What are modifiers?</ActionButton>
     </div>
 

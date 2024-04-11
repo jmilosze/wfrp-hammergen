@@ -50,15 +50,15 @@ const {
   showSubmissionStatus,
 } = useWhEdit(newTalent, new TalentApi(authRequest));
 
-const { whList, loadWhList, loading } = useWhList(new TalentApi(authRequest));
+const talentListUtils = useWhList(new TalentApi(authRequest));
 const groupTalents: Ref<Talent[]> = ref([]);
 
-loadWhList();
+talentListUtils.loadWhList();
 
 watch(
-  () => whList,
+  () => talentListUtils.whList.value,
   (newValue) => {
-    groupTalents.value = newValue.value.filter((x) => x.isGroup && x.id !== wh.value.id);
+    groupTalents.value = newValue.filter((x) => x.isGroup && x.id !== wh.value.id);
   },
   { immediate: true, deep: true },
 );
@@ -91,11 +91,20 @@ watch(
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex items-center flex-col gap-4">
     <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
       {{ apiError }}
     </AlertBlock>
+
+    <AlertBlock
+      v-if="talentListUtils.apiError.value && talentListUtils.showApiError.value"
+      alertType="red"
+      @click="talentListUtils.showApiError.value = false"
+    >
+      {{ talentListUtils.apiError.value }}
+    </AlertBlock>
   </div>
+
   <Header :title="id === 'create' ? 'Create talent' : wh.canEdit ? 'Edit talent' : wh.name" />
   <div
     ref="contentContainerRef"
@@ -155,9 +164,9 @@ watch(
           :itemList="groupTalents"
           title="Belongs to group"
           modalTitle="Modify groups"
-          :loading="loading"
+          :loading="talentListUtils.loading.value"
           @createNew="openInNewTab('talent', { id: 'create' })"
-          @reload="loadWhList"
+          @reload="talentListUtils.loadWhList"
           @selected="(e) => wh.updateGroup(e.id, e.selected)"
         />
       </div>

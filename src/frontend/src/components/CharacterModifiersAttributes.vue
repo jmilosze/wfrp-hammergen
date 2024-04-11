@@ -32,11 +32,11 @@ watch(
 
 <template>
   <div v-for="(row, index) in attributeNames" :key="index">
-    <div class="rounded-xl border border-neutral-300 bg-neutral-50 mt-2">
+    <div class="rounded-xl border border-neutral-300 bg-neutral-50">
       <table class="w-full">
         <tbody>
           <tr>
-            <th v-for="attributeName in row" :key="attributeName" class="p-2 font-semibold">
+            <th v-for="attributeName in row" :key="attributeName" class="p-2 font-semibold text-left">
               {{ attributeName }}
             </th>
           </tr>
