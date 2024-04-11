@@ -164,7 +164,11 @@ watch(
   (newVal) => {
     careerOpts.value = setCareerOpts(newVal, careerListUtils.whList.value);
     if (!careerOpts.value.some((x) => x.value === selectedGenCareer.value)) {
-      selectedGenCareer.value = DEFAULT_CAREER_ID;
+      if (careerOpts.value.length > 0) {
+        selectedGenCareer.value = careerOpts.value[0].value;
+      } else {
+        selectedGenCareer.value = DEFAULT_CAREER_ID;
+      }
     }
   },
   { immediate: true },
@@ -175,7 +179,11 @@ watch(
   (newVal) => {
     careerOpts.value = setCareerOpts(selectedGenSpecies.value, newVal);
     if (!careerOpts.value.some((x) => x.value === selectedGenCareer.value)) {
-      selectedGenCareer.value = DEFAULT_CAREER_ID;
+      if (newVal.length > 0) {
+        selectedGenCareer.value = careerOpts.value[0].value;
+      } else {
+        selectedGenCareer.value = DEFAULT_CAREER_ID;
+      }
     }
   },
   { immediate: true },
@@ -183,7 +191,7 @@ watch(
 
 function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text: string; value: string }[] {
   if (!careerList) {
-    return [{ value: DEFAULT_CAREER_ID, text: "Select Career" }];
+    return [];
   }
 
   const careers = careerList
@@ -197,7 +205,7 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
       }
     });
 
-  careers.unshift({ value: DEFAULT_CAREER_ID, text: "Select Career" });
+  // careers.unshift({ value: DEFAULT_CAREER_ID, text: "Select Career" });
 
   return careers;
 }
