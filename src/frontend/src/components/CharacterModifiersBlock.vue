@@ -37,7 +37,7 @@ const inputClass = [
   "focus:outline",
   "focus:outline-2",
   "disabled:bg-neutral-200",
-  "text-left",
+  "text-center",
 ];
 
 const rows = computed(() => {

@@ -41,7 +41,7 @@ const total = computed(() => {
 });
 
 const thClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
-const tdClassNoInput = ["px-4", "py-2", "border-b", "border-neutral-300"];
+const tdClassNoInput = ["px-4", "py-2", "border-b", "border-neutral-300", "text-center"];
 const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
 
 function updateRolls(attribute: AttributeName, newValue: number) {
@@ -66,7 +66,7 @@ function newRolls() {
     <div v-if="!lgELSize.isEqualOrGreater.value" class="bg-neutral-50 rounded-xl border border-neutral-300 w-full">
       <table class="w-full">
         <thead>
-          <tr class="text-left">
+          <tr>
             <th :class="thClass">Source</th>
             <th :class="thClass">WS</th>
             <th :class="thClass">BS</th>
@@ -77,6 +77,7 @@ function newRolls() {
             <td :class="tdClass">Rolls</td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 :modelValue="attributeRolls.WS"
                 type="number"
                 @update:modelValue="updateRolls(AttributeName.WS, $event)"
@@ -84,6 +85,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 :modelValue="attributeRolls.BS"
                 type="number"
                 @update:modelValue="updateRolls(AttributeName.BS, $event)"
@@ -112,6 +114,7 @@ function newRolls() {
             <td :class="tdClass">Advances</td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.WS"
                 @update:modelValue="updateAdvances(AttributeName.WS, $event)"
@@ -119,6 +122,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.BS"
                 @update:modelValue="updateAdvances(AttributeName.BS, $event)"
@@ -138,7 +142,7 @@ function newRolls() {
       </table>
       <table class="w-full">
         <thead>
-          <tr class="text-left">
+          <tr>
             <th :class="thClass">S</th>
             <th :class="thClass">T</th>
             <th :class="thClass">I</th>
@@ -149,6 +153,7 @@ function newRolls() {
           <tr class="bg-white">
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.S"
                 @update:modelValue="updateRolls(AttributeName.S, $event)"
@@ -156,6 +161,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.T"
                 @update:modelValue="updateRolls(AttributeName.T, $event)"
@@ -163,6 +169,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.I"
                 @update:modelValue="updateRolls(AttributeName.I, $event)"
@@ -170,6 +177,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Ag"
                 @update:modelValue="updateRolls(AttributeName.Ag, $event)"
@@ -207,6 +215,7 @@ function newRolls() {
           <tr class="bg-white">
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.S"
                 @update:modelValue="updateAdvances(AttributeName.S, $event)"
@@ -214,6 +223,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.T"
                 @update:modelValue="updateAdvances(AttributeName.T, $event)"
@@ -221,6 +231,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.I"
                 @update:modelValue="updateAdvances(AttributeName.I, $event)"
@@ -228,6 +239,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Ag"
                 @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
@@ -252,7 +264,7 @@ function newRolls() {
       </table>
       <table class="w-full">
         <thead>
-          <tr class="text-left">
+          <tr>
             <th :class="thClass">Dex</th>
             <th :class="thClass">Int</th>
             <th :class="thClass">WP</th>
@@ -263,6 +275,7 @@ function newRolls() {
           <tr class="bg-white">
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Dex"
                 @update:modelValue="updateRolls(AttributeName.Dex, $event)"
@@ -270,6 +283,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Int"
                 @update:modelValue="updateRolls(AttributeName.Int, $event)"
@@ -277,6 +291,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.WP"
                 @update:modelValue="updateRolls(AttributeName.WP, $event)"
@@ -284,6 +299,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Fel"
                 @update:modelValue="updateRolls(AttributeName.Fel, $event)"
@@ -321,6 +337,7 @@ function newRolls() {
           <tr class="bg-white">
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Dex"
                 @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
@@ -328,6 +345,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Int"
                 @update:modelValue="updateAdvances(AttributeName.Int, $event)"
@@ -335,6 +353,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.WP"
                 @update:modelValue="updateAdvances(AttributeName.WP, $event)"
@@ -342,6 +361,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Fel"
                 @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
@@ -369,7 +389,7 @@ function newRolls() {
     <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 w-full">
       <table class="w-full">
         <thead>
-          <tr class="text-left">
+          <tr>
             <th :class="thClass">Source</th>
             <th :class="thClass">WS</th>
             <th :class="thClass">BS</th>
@@ -388,6 +408,7 @@ function newRolls() {
             <td :class="tdClass">Rolls</td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.WS"
                 @update:modelValue="updateRolls(AttributeName.WS, $event)"
@@ -395,6 +416,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.BS"
                 @update:modelValue="updateRolls(AttributeName.BS, $event)"
@@ -402,6 +424,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.S"
                 @update:modelValue="updateRolls(AttributeName.S, $event)"
@@ -409,6 +432,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.T"
                 @update:modelValue="updateRolls(AttributeName.T, $event)"
@@ -416,6 +440,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.I"
                 @update:modelValue="updateRolls(AttributeName.I, $event)"
@@ -423,6 +448,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Ag"
                 @update:modelValue="updateRolls(AttributeName.Ag, $event)"
@@ -430,6 +456,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Dex"
                 @update:modelValue="updateRolls(AttributeName.Dex, $event)"
@@ -437,6 +464,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Int"
                 @update:modelValue="updateRolls(AttributeName.Int, $event)"
@@ -444,6 +472,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.WP"
                 @update:modelValue="updateRolls(AttributeName.WP, $event)"
@@ -451,6 +480,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Fel"
                 @update:modelValue="updateRolls(AttributeName.Fel, $event)"
@@ -527,6 +557,7 @@ function newRolls() {
             <td :class="tdClass">Adv</td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.WS"
                 @update:modelValue="updateAdvances(AttributeName.WS, $event)"
@@ -534,6 +565,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.BS"
                 @update:modelValue="updateAdvances(AttributeName.BS, $event)"
@@ -541,6 +573,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.S"
                 @update:modelValue="updateAdvances(AttributeName.S, $event)"
@@ -548,6 +581,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.T"
                 @update:modelValue="updateAdvances(AttributeName.T, $event)"
@@ -555,6 +589,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.I"
                 @update:modelValue="updateAdvances(AttributeName.I, $event)"
@@ -562,6 +597,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Ag"
                 @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
@@ -569,6 +605,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Dex"
                 @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
@@ -576,6 +613,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Int"
                 @update:modelValue="updateAdvances(AttributeName.Int, $event)"
@@ -583,6 +621,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.WP"
                 @update:modelValue="updateAdvances(AttributeName.WP, $event)"
@@ -590,6 +629,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Fel"
                 @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
