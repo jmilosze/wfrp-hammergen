@@ -96,15 +96,15 @@ function onListWhClick() {
         <NavLink routeName="careers" variant="side" @click="onListWhClick()">Careers</NavLink>
         <NavLink routeName="mutations" variant="side" @click="onListWhClick()">Mutations</NavLink>
         <NavLink routeName="prayers" variant="side" @click="onListWhClick()">Prayers</NavLink>
-        <NavLink routeName="properties" variant="side" @click="onListWhClick()">Qualities and Runes</NavLink>
+        <NavLink routeName="properties" variant="side" @click="onListWhClick()">Qualities and runes</NavLink>
         <NavLink routeName="skills" variant="side" @click="onListWhClick()">Skills</NavLink>
         <NavLink routeName="spells" variant="side" @click="onListWhClick()">Spells</NavLink>
         <NavLink routeName="talents" variant="side" @click="onListWhClick()">Talents</NavLink>
         <NavLink routeName="items" variant="side" @click="onListWhClick()">Trappings</NavLink>
       </div>
       <div v-if="auth.loggedIn.value" class="py-2">
-        <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked Users</NavLink>
-        <NavLink routeName="manage" variant="side" @click="showSideBar = false">Manage Account</NavLink>
+        <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked users</NavLink>
+        <NavLink routeName="manage" variant="side" @click="showSideBar = false">Manage account</NavLink>
         <NavLink variant="side" @click="auth.logout">Logout</NavLink>
       </div>
       <div v-else class="py-2">

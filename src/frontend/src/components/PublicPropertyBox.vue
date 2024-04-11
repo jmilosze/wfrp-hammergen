@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
-import ModalWindow from "./ModalWindow.vue";
-import { useModal } from "../composables/modal.ts";
+import HintModal from "./HintModal.vue";
 import TextLink from "./TextLink.vue";
 
 const model = defineModel<boolean>();
@@ -10,15 +8,22 @@ defineProps<{
   propertyName: string;
   disabled?: boolean;
 }>();
-
-const modal = useModal();
 </script>
 
 <template>
   <div>
     <div class="flex items-center">
       <div class="mb-1 mr-2">Public {{ propertyName }}?</div>
-      <ActionButton size="sm" @click="modal.showModal('publicHelpModal')">What does it mean?</ActionButton>
+      <HintModal
+        buttonText="What does it mean?"
+        buttonSize="sm"
+        modalHeader="Public property"
+        modalId="publicHelpModal"
+      >
+        When an element (character, skill, item, etc.) is marked as Public anyone you give your username to, can see
+        that element in read-only mode. Element sharing is explained in the
+        <TextLink routeName="linkedusers">Linked users</TextLink> section.
+      </HintModal>
     </div>
     <div class="flex items-center">
       <input
@@ -29,19 +34,6 @@ const modal = useModal();
       />
       <div class="ml-2">Public</div>
     </div>
-
-    <ModalWindow id="publicHelpModal">
-      <template #header> Public property </template>
-      <template #buttons>
-        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
-      </template>
-      <div>
-        When an element (character, skill, item, etc.) is marked as Public anyone you give your username to, can see
-        that element in read-only mode. Element sharing is explained in the
-        <TextLink routeName="linkedusers">Linked Users</TextLink>
-        section.
-      </div>
-    </ModalWindow>
   </div>
 </template>
 
