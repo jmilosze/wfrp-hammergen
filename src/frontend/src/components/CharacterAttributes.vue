@@ -78,6 +78,7 @@ function newRolls() {
               <td :class="tdClass">Rolls</td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   :modelValue="attributeRolls.WS"
                   type="number"
@@ -86,6 +87,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   :modelValue="attributeRolls.BS"
                   type="number"
@@ -115,6 +117,7 @@ function newRolls() {
               <td :class="tdClass">Advances</td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.WS"
@@ -123,6 +126,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.BS"
@@ -157,6 +161,7 @@ function newRolls() {
             <tr class="bg-white">
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.S"
@@ -165,6 +170,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.T"
@@ -173,6 +179,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.I"
@@ -181,6 +188,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.Ag"
@@ -219,6 +227,7 @@ function newRolls() {
             <tr class="bg-white">
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.S"
@@ -227,6 +236,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.T"
@@ -235,6 +245,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.I"
@@ -243,6 +254,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.Ag"
@@ -282,6 +294,7 @@ function newRolls() {
             <tr class="bg-white">
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.Dex"
@@ -290,6 +303,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.Int"
@@ -298,6 +312,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.WP"
@@ -306,6 +321,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.Fel"
@@ -344,6 +360,7 @@ function newRolls() {
             <tr class="bg-white">
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.Dex"
@@ -352,6 +369,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.Int"
@@ -360,6 +378,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.WP"
@@ -368,6 +387,7 @@ function newRolls() {
               </td>
               <td :class="tdClass">
                 <FormInput
+                  :disabled="props.disabled"
                   :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.Fel"
@@ -416,6 +436,7 @@ function newRolls() {
             <td :class="tdClass">Rolls</td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.WS"
@@ -424,6 +445,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.BS"
@@ -432,6 +454,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.S"
@@ -440,6 +463,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.T"
@@ -448,6 +472,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.I"
@@ -456,6 +481,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Ag"
@@ -464,6 +490,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Dex"
@@ -472,6 +499,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Int"
@@ -480,6 +508,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.WP"
@@ -488,6 +517,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Fel"
@@ -565,6 +595,7 @@ function newRolls() {
             <td :class="tdClass">Adv</td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.WS"
@@ -573,6 +604,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.BS"
@@ -581,6 +613,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.S"
@@ -589,6 +622,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.T"
@@ -597,6 +631,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.I"
@@ -605,6 +640,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Ag"
@@ -613,6 +649,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Dex"
@@ -621,6 +658,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Int"
@@ -629,6 +667,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.WP"
@@ -637,6 +676,7 @@ function newRolls() {
             </td>
             <td :class="tdClass">
               <FormInput
+                :disabled="props.disabled"
                 :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Fel"

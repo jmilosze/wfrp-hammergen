@@ -9,6 +9,7 @@ import { ViewSize } from "../utils/viewSize.ts";
 import { AttributeName, setAttributeValue } from "../services/wh/attributes.ts";
 import SelectInput from "./SelectInput.vue";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
+import FormInput from "./FormInput.vue";
 
 const props = defineProps<{
   disabled?: boolean;
@@ -25,21 +26,6 @@ const contentContainerRef = ref(null);
 const sm = useElSize(ViewSize.sm, contentContainerRef);
 const lg = useElSize(ViewSize.lg, contentContainerRef);
 
-const inputClass = [
-  "border",
-  "border-neutral-300",
-  "rounded",
-  "w-full",
-  "h-10",
-  "px-2",
-  "focus:outline-neutral-700",
-  "focus:border-transparent",
-  "focus:outline",
-  "focus:outline-2",
-  "disabled:bg-neutral-200",
-  "text-center",
-];
-
 const rows = computed(() => {
   if (lg.isEqualOrGreater.value) {
     return 1;
@@ -50,11 +36,9 @@ const rows = computed(() => {
   }
 });
 
-function updateAtts(event: Event, att: AttributeName) {
-  const target = event.target as HTMLInputElement;
+function updateAttributes(attribute: AttributeName, newValue: number) {
   const newModifiers = props.modelValue.copy();
-  setAttributeValue(att, parseInt(target.value), newModifiers.attributes);
-  emit("update:modelValue", newModifiers);
+  setAttributeValue(attribute, newValue, newModifiers.attributes);
 }
 
 function updateSize(newSize: number) {
@@ -102,93 +86,93 @@ const validAtts = computed(() => {
 
     <CharacterModifiersAttributes :rows="rows">
       <template #WS>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.WS"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.WS"
-          @input="(event) => updateAtts(event, AttributeName.WS)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.WS, $event)"
         />
       </template>
       <template #BS>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.BS"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.BS"
-          @input="(event) => updateAtts(event, AttributeName.BS)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.BS, $event)"
         />
       </template>
       <template #S>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.S"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.S"
-          @input="(event) => updateAtts(event, AttributeName.S)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.S, $event)"
         />
       </template>
       <template #T>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.T"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.T"
-          @input="(event) => updateAtts(event, AttributeName.T)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.T, $event)"
         />
       </template>
       <template #I>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.I"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.I"
-          @input="(event) => updateAtts(event, AttributeName.I)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.I, $event)"
         />
       </template>
       <template #Ag>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.Ag"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.Ag"
-          @input="(event) => updateAtts(event, AttributeName.Ag)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.Ag, $event)"
         />
       </template>
       <template #Dex>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.Dex"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.Dex"
-          @input="(event) => updateAtts(event, AttributeName.Dex)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.Dex, $event)"
         />
       </template>
       <template #Int>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.Int"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.Int"
-          @input="(event) => updateAtts(event, AttributeName.Int)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.Int, $event)"
         />
       </template>
       <template #WP>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.WP"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.WP"
-          @input="(event) => updateAtts(event, AttributeName.WP)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.WP, $event)"
         />
       </template>
       <template #Fel>
-        <input
+        <FormInput
+          :centerText="true"
+          :modelValue="modelValue.attributes.Fel"
           type="number"
-          :class="inputClass"
-          :disabled="props.disabled ? props.disabled : false"
-          :value="modelValue.attributes.Fel"
-          @input="(event) => updateAtts(event, AttributeName.Fel)"
+          :disabled="props.disabled"
+          @update:modelValue="updateAttributes(AttributeName.Fel, $event)"
         />
       </template>
     </CharacterModifiersAttributes>
