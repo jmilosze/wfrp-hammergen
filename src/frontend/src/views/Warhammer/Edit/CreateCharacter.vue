@@ -6,7 +6,7 @@ import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import EditControls from "../../../components/EditControls.vue";
@@ -185,20 +185,20 @@ function formGenerateStatusStanding() {
   <div class="border border-neutral-300 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
     <div>Fill out character sheet automatically by randomly generating character (level 1-4).</div>
-    <div class="flex flex-wrap gap-4">
+    <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
       <SelectInput
         v-model="selectedGenSpecies"
         title="Species"
         :options="speciesOpts"
         :disabled="!wh.canEdit"
-        class="flex-auto"
+        class="min-w-24 flex-1"
       />
       <SelectInput
         v-model="selectedGenLevel"
         title="Level"
         :options="levelOpts"
         :disabled="!wh.canEdit"
-        class="flex-auto"
+        class="min-w-24 flex-1"
       />
     </div>
     <div class="flex flex-wrap mt-4 gap-4">
