@@ -93,9 +93,25 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex items-center flex-col gap-4">
     <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
       {{ apiError }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="skillListUtils.apiError.value && skillListUtils.showApiError.value"
+      alertType="red"
+      @click="skillListUtils.showApiError.value = false"
+    >
+      {{ skillListUtils.apiError.value }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="talentListUtils.apiError.value && talentListUtils.showApiError.value"
+      alertType="red"
+      @click="talentListUtils.showApiError.value = false"
+    >
+      {{ talentListUtils.apiError.value }}
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create career' : wh.canEdit ? 'Edit career' : wh.name" />
