@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, Ref, watch } from "vue";
 
-const props = defineProps<{ rows: 1 | 3 | 5 }>();
+const props = defineProps<{ rows: 1 | 2 | 5 }>();
 
 const attributeNames: Ref<string[][]> = ref([]);
 
@@ -10,11 +10,10 @@ watch(
   (newVal) => {
     if (newVal === 1) {
       attributeNames.value = [["WS", "BS", "S", "T", "I", "Ag", "Dex", "Int", "WP", "Fel"]];
-    } else if (newVal === 3) {
+    } else if (newVal === 2) {
       attributeNames.value = [
-        ["WS", "BS", "S", "T"],
-        ["I", "Ag", "Dex", "Int"],
-        ["WP", "Fel"],
+        ["WS", "BS", "S", "T", "I"],
+        ["Ag", "Dex", "Int", "WP", "Fel"],
       ];
     } else {
       attributeNames.value = [

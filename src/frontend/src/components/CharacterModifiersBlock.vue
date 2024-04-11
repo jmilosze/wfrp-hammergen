@@ -44,7 +44,7 @@ const rows = computed(() => {
   if (lg.isEqualOrGreater.value) {
     return 1;
   } else if (sm.isEqualOrGreater.value) {
-    return 3;
+    return 2;
   } else {
     return 5;
   }
