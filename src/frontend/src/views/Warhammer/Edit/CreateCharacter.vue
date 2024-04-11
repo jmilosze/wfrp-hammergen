@@ -23,7 +23,7 @@ import {
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import {
-  generateCharacter,
+  // generateCharacter,
   generateFateAndResilience,
 } from "../../../services/wh/characterGeneration/generateCharacter.ts";
 import { rollDice } from "../../../utils/random.ts";
@@ -50,8 +50,8 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import HintModal from "../../../components/HintModal.vue";
 import { SkillApi } from "../../../services/wh/skill.ts";
 import { TalentApi } from "../../../services/wh/talent.ts";
-import { getGenerationProps } from "../../../services/wh/generationProps.ts";
-import { RandomTalents } from "../../../services/wh/characterGeneration/generateSpeciesTalents.ts";
+// import { getGenerationProps } from "../../../services/wh/generationProps.ts";
+// import { RandomTalents } from "../../../services/wh/characterGeneration/generateSpeciesTalents.ts";
 
 const props = defineProps<{
   id: string;
@@ -88,21 +88,21 @@ skillListUtils.loadWhList();
 const talentListUtils = useWhList(new TalentApi(authRequest));
 talentListUtils.loadWhList();
 
-let generationProps = {
-  classItems: [] as { equipped: Record<string, string>; carried: Record<string, string> }[],
-  randomTalents: [] as RandomTalents,
-  speciesTalents: {} as Record<string, string[]>,
-  speciesSkills: {} as Record<string, string[]>,
-};
-
-async function loadGenerationProps() {
-  try {
-    generationProps = await getGenerationProps(authRequest);
-  } catch (error) {
-    //   do errror
-  }
-}
-loadGenerationProps();
+// let generationProps = {
+//   classItems: [] as { equipped: Record<string, string>; carried: Record<string, string> }[],
+//   randomTalents: [] as RandomTalents,
+//   speciesTalents: {} as Record<string, string[]>,
+//   speciesSkills: {} as Record<string, string[]>,
+// };
+//
+// async function loadGenerationProps() {
+//   try {
+//     generationProps = await getGenerationProps(authRequest);
+//   } catch (error) {
+//     //   do errror
+//   }
+// }
+// loadGenerationProps();
 
 await loadWh(props.id);
 
@@ -217,24 +217,72 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
   return careers;
 }
 
-function rollCharacter() {
-  const career = careerListUtils.whList.value.find((x) => x.id === selectedGenCareer.value);
-  if (!career) {
-    return;
-  }
-  // this.wh.value = generateCharacter(
-  //   selectedGenSpecies.value,
-  //   career,
-  //   skillListUtils.whList.value,
-  //   talentListUtils.whList.value,
-  // );
-}
+// function rollCharacter() {
+//   const career = careerListUtils.whList.value.find((x) => x.id === selectedGenCareer.value);
+//   if (!career) {
+//     return;
+//   }
+//   // this.wh.value = generateCharacter(
+//   //   selectedGenSpecies.value,
+//   //   career,
+//   //   skillListUtils.whList.value,
+//   //   talentListUtils.whList.value,
+//   // );
+// }
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="flex items-center flex-col gap-4">
     <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
       {{ apiError }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="careerListUtils.apiError.value && careerListUtils.showApiError.value"
+      alertType="red"
+      @click="careerListUtils.showApiError.value = false"
+    >
+      {{ careerListUtils.apiError.value }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="spellListUtils.apiError.value && spellListUtils.showApiError.value"
+      alertType="red"
+      @click="spellListUtils.showApiError.value = false"
+    >
+      {{ spellListUtils.apiError.value }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="prayerListUtils.apiError.value && prayerListUtils.showApiError.value"
+      alertType="red"
+      @click="prayerListUtils.showApiError.value = false"
+    >
+      {{ prayerListUtils.apiError.value }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="mutationListUtils.apiError.value && mutationListUtils.showApiError.value"
+      alertType="red"
+      @click="mutationListUtils.showApiError.value = false"
+    >
+      {{ mutationListUtils.apiError.value }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="skillListUtils.apiError.value && skillListUtils.showApiError.value"
+      alertType="red"
+      @click="skillListUtils.showApiError.value = false"
+    >
+      {{ skillListUtils.apiError.value }}
+    </AlertBlock>
+
+    <AlertBlock
+      v-if="talentListUtils.apiError.value && talentListUtils.showApiError.value"
+      alertType="red"
+      @click="talentListUtils.showApiError.value = false"
+    >
+      {{ talentListUtils.apiError.value }}
     </AlertBlock>
   </div>
   <Header :title="id === 'character' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
@@ -294,7 +342,7 @@ function rollCharacter() {
         </p>
         <p class="my-1">Generating will override all current entries on the character sheet.</p>
       </HintModal>
-      <ActionButton size="sm" @click="generateCharacter()">Generate</ActionButton>
+      <ActionButton size="sm">Generate</ActionButton>
     </div>
   </div>
   <div
