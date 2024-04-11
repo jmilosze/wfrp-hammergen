@@ -6,7 +6,7 @@ import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import EditControls from "../../../components/EditControls.vue";
@@ -51,12 +51,15 @@ const props = defineProps<{
 
 const newCharacter = new Character({
   name: "New character",
-  species: SpeciesWithRegion.HumanDefault,
+  species: SpeciesWithRegion.HumanReikland,
   canEdit: true,
   id: "create",
   shared: false,
   source: defaultSource(),
 });
+
+const selectedGenSpecies = ref(SpeciesWithRegion.HumanReikland);
+const selectedGenLevel = ref(1);
 
 const { openInNewTab } = useNewTab();
 
@@ -96,9 +99,17 @@ const validSpentExp = computed(() => wh.value.validateSpentExp());
 const validRolls = computed(() => wh.value.validateRolls());
 const validAdvances = computed(() => wh.value.validateAdvances());
 
-const speciesOpts = speciesWithRegionList.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
+const speciesOpts = speciesWithRegionList
+  .filter((x) => x !== SpeciesWithRegion.HumanDefault)
+  .map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
 const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
+const levelOpts = [
+  { text: "Level 1", value: 1 },
+  { text: "Level 2", value: 2 },
+  { text: "Level 3", value: 3 },
+  { text: "Level 4", value: 4 },
+];
 
 const movement = computed(() => wh.value.getMovement());
 const wounds = computed(() => wh.value.getWounds());
@@ -132,6 +143,36 @@ function formGenerateStatusStanding() {
     wh.value.standing = 0;
   }
 }
+
+// function generateCareers(speciesWithRegion) {
+//   let species = speciesWithRegionToSpecies(speciesWithRegion);
+//   let careers = this.listOfCareers
+//     .map((x, idx) => {
+//       let disabled = !x.species.includes(species);
+//       return { value: idx, text: x.name, disabled: disabled };
+//     })
+//     .filter((x) => x.disabled === false);
+//
+//   careers.sort(function (x, y) {
+//     if (x.text === y.text) {
+//       return 0;
+//     } else {
+//       return x.text < y.text ? -1 : 1;
+//     }
+//   });
+//
+//   if (includeRandom) {
+//     careers.unshift({
+//       value: -1,
+//       text: "Random (+50 XP)",
+//       disabled: false,
+//     });
+//   } else {
+//     careers.unshift({ value: -1, text: "Select Career", disabled: false });
+//   }
+//
+//   return careers;
+// },
 </script>
 
 <template>
@@ -141,10 +182,26 @@ function formGenerateStatusStanding() {
     </AlertBlock>
   </div>
   <Header :title="id === 'character' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
-  <div class="border border-neutral-300 rounded p-2">
+  <div class="border border-neutral-300 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
-    <div>
-      Fill out character sheet automatically by randomly generating character (level 1-4).
+    <div>Fill out character sheet automatically by randomly generating character (level 1-4).</div>
+    <div class="flex flex-wrap gap-4">
+      <SelectInput
+        v-model="selectedGenSpecies"
+        title="Species"
+        :options="speciesOpts"
+        :disabled="!wh.canEdit"
+        class="flex-auto"
+      />
+      <SelectInput
+        v-model="selectedGenLevel"
+        title="Level"
+        :options="levelOpts"
+        :disabled="!wh.canEdit"
+        class="flex-auto"
+      />
+    </div>
+    <div class="flex flex-wrap mt-4 gap-4">
       <HintModal
         buttonText="More details"
         buttonSize="sm"
@@ -174,6 +231,7 @@ function formGenerateStatusStanding() {
         </p>
         <p class="my-1">Generating will override all current entries on the character sheet.</p>
       </HintModal>
+      <ActionButton size="sm">Generate</ActionButton>
     </div>
   </div>
   <div
