@@ -194,7 +194,7 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
     return [];
   }
 
-  const careers = careerList
+  return careerList
     .filter((x) => x.allowedForSpeciesWithRegion(species))
     .map((x) => ({ text: x.name, value: x.id }))
     .sort(function (x, y) {
@@ -204,10 +204,6 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
         return x.text < y.text ? -1 : 1;
       }
     });
-
-  // careers.unshift({ value: DEFAULT_CAREER_ID, text: "Select Career" });
-
-  return careers;
 }
 
 function rollCharacter() {
