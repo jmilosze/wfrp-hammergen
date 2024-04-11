@@ -50,6 +50,8 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import HintModal from "../../../components/HintModal.vue";
 import { SkillApi } from "../../../services/wh/skill.ts";
 import { TalentApi } from "../../../services/wh/talent.ts";
+import { getGenerationProps } from "../../../services/wh/generationProps.ts";
+import { RandomTalents } from "../../../services/wh/characterGeneration/generateSpeciesTalents.ts";
 
 const props = defineProps<{
   id: string;
@@ -85,6 +87,22 @@ const skillListUtils = useWhList(new SkillApi(authRequest));
 skillListUtils.loadWhList();
 const talentListUtils = useWhList(new TalentApi(authRequest));
 talentListUtils.loadWhList();
+
+let generationProps = {
+  classItems: [] as { equipped: Record<string, string>; carried: Record<string, string> }[],
+  randomTalents: [] as RandomTalents,
+  speciesTalents: {} as Record<string, string[]>,
+  speciesSkills: {} as Record<string, string[]>,
+};
+
+async function loadGenerationProps() {
+  try {
+    generationProps = await getGenerationProps(authRequest);
+  } catch (error) {
+    //   do errror
+  }
+}
+loadGenerationProps();
 
 await loadWh(props.id);
 

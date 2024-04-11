@@ -10,7 +10,6 @@ import {
 } from "../characterUtils.ts";
 import { Career, StatusStanding, StatusTier } from "../career.ts";
 import { rollDice, RollDiceFn, rollInTable, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
-import { RandomTalents } from "./generateSpeciesTalents.ts";
 import { Talent } from "../talent.ts";
 import { Skill } from "../skill.ts";
 import generateName from "./generateName.ts";
@@ -21,13 +20,7 @@ import { generateSkills } from "./generateSkills.ts";
 import { getAttributes, sumAttributes } from "../attributes.ts";
 import { genTalentsAndAdvances } from "./generateTalents.ts";
 import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
-
-interface GenerationProps {
-  classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];
-  randomTalents: RandomTalents;
-  speciesTalents: Record<string, string[]>;
-  speciesSkills: Record<string, string[]>;
-}
+import { GenerationProps } from "../generationProps.ts";
 
 export function generateCharacter(
   species: SpeciesWithRegion,
