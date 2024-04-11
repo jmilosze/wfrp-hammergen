@@ -285,9 +285,9 @@ function rollCharacter() {
     </AlertBlock>
   </div>
   <Header :title="id === 'character' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
-  <div class="border border-neutral-300 rounded p-2 my-4">
+  <div class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
-    <div>Fill out character sheet automatically by randomly generating character (level 1-4).</div>
+    <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
     <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
       <SelectInput
         v-model="selectedGenSpecies"

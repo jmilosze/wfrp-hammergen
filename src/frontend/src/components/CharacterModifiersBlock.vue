@@ -25,7 +25,7 @@ const contentContainerRef = ref(null);
 const sm = useElSize(ViewSize.sm, contentContainerRef);
 const lg = useElSize(ViewSize.lg, contentContainerRef);
 
-const inputClass = ref([
+const inputClass = [
   "border",
   "border-neutral-300",
   "rounded",
@@ -38,7 +38,7 @@ const inputClass = ref([
   "focus:outline-2",
   "disabled:bg-neutral-200",
   "text-left",
-]);
+];
 
 const rows = computed(() => {
   if (lg.isEqualOrGreater.value) {
