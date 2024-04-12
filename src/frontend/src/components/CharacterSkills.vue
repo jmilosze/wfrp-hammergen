@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { printSkillType, Skill } from "../services/wh/skill.ts";
 import { computed, ref, Ref, watch } from "vue";
-import { printAttributeName } from "../services/wh/attributes.ts";
+import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/attributes.ts";
 import { useModal } from "../composables/modal.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ActionButton from "./ActionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
+import FormInput from "./FormInput.vue";
+import SpinnerAnimation from "./SpinnerAnimation.vue";
 
 type SkillWithNumber = {
   id: string;
@@ -22,6 +24,7 @@ const props = defineProps<{
   skillList: Skill[];
   initSkills: Record<string, number>;
   loading?: boolean;
+  attributes: Attributes;
 }>();
 
 const emit = defineEmits<{
@@ -114,11 +117,17 @@ function onModifyClick() {
         <thead>
           <tr class="text-left">
             <th class="border-b border-neutral-300 py-2 px-5">Name</th>
+            <th class="border-b border-neutral-300 py-2 px-5">Att</th>
+            <th class="border-b border-neutral-300 py-2 px-5">Adv</th>
+            <th class="border-b border-neutral-300 py-2 px-5">Skill</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.attribute }}</td>
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.number }}</td>
+            <td class="py-2 px-5 border-b border-neutral-300">{{ getAttributeValue(src.attribute, attributes) }}</td>
           </tr>
         </tbody>
       </table>
@@ -142,6 +151,16 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <template #number="{ id }: { id: string }">
+          <div>
+            <FormInput
+              v-model="skillsWithNumber[id].number"
+              type="number"
+              class="min-w-16"
+              @update:modelValue="emit('updated', { id: id, number: skillsWithNumber[id].number })"
+            />
+          </div>
+        </template>
       </TableWithSearch>
     </ModalWindow>
   </div>

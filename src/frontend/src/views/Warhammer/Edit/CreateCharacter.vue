@@ -215,6 +215,10 @@ function rollCharacter() {
     selectedGenLevel.value as 1 | 2 | 3 | 4,
   );
 }
+
+const attributes = computed(() => {
+  return wh.value.getTotalAttributes();
+});
 </script>
 
 <template>
@@ -552,10 +556,12 @@ function rollCharacter() {
         :initSkills="wh.skills"
         :skillList="skillListUtils.whList.value"
         :loading="skillListUtils.loading.value"
+        :attributes="attributes"
         class="min-w-52"
         @createNew="openInNewTab('skill', { id: 'create' })"
         @reload="skillListUtils.loadWhList"
         @clearAll="wh.clearSkills()"
+        @updated="(event) => console.log(event)"
       />
     </div>
   </div>
