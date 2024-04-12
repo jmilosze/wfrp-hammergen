@@ -95,11 +95,11 @@ const selectedSkills = computed(() => skillsWithNumberList.value.filter((x) => a
 const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
-  { name: "name", displayName: "Name" },
-  { name: "description", displayName: "Description" },
-  { name: "type", displayName: "Type" },
-  { name: "attributeName", displayName: "Att" },
-  { name: "number", displayName: "Rank" },
+  { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "description", displayName: "Description", skipStackedTitle: true },
+  { name: "type", displayName: "Type", skipStackedTitle: false },
+  { name: "attributeName", displayName: "Att", skipStackedTitle: false },
+  { name: "number", displayName: "Rank", skipStackedTitle: false },
 ];
 
 const resetPaginationCounter = ref(0);
@@ -129,18 +129,18 @@ function onModifyClick() {
       <table class="w-full">
         <thead>
           <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-5">Name</th>
-            <th class="border-b border-neutral-300 py-2 px-5">Att</th>
-            <th class="border-b border-neutral-300 py-2 px-5">Adv</th>
-            <th class="border-b border-neutral-300 py-2 px-5">Skill</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Att</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Adv</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Skill</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.attributeName }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.number }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
           </tr>
         </tbody>
       </table>

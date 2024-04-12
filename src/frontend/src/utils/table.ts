@@ -5,4 +5,4 @@ export interface TableRow {
 }
 
 export type TableItem = string | number | boolean;
-export type TableField = { name: string; displayName: string };
+export type TableField = { name: string; displayName: string; skipStackedTitle: boolean };

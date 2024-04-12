@@ -35,12 +35,12 @@ watch(
 const auth = useAuth();
 
 const columns = [
-  { name: "name", displayName: "Name" },
-  { name: "type", displayName: "Type" },
-  { name: "attribute", displayName: "Attr" },
-  { name: "description", displayName: "Description" },
-  { name: "source", displayName: "Source" },
-  { name: "actions", displayName: "Actions" },
+  { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "description", displayName: "Description", skipStackedTitle: false },
+  { name: "type", displayName: "Type", skipStackedTitle: false },
+  { name: "attribute", displayName: "Attr", skipStackedTitle: false },
+  { name: "source", displayName: "Source", skipStackedTitle: false },
+  { name: "actions", displayName: "Actions", skipStackedTitle: false },
 ];
 
 const items = computed(() => {

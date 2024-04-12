@@ -40,11 +40,11 @@ watch(
 const auth = useAuth();
 
 const columns = [
-  { name: "name", displayName: "Name" },
-  { name: "class", displayName: "Class" },
-  { name: "species", displayName: "Species" },
-  { name: "source", displayName: "Source" },
-  { name: "actions", displayName: "Actions" },
+  { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "class", displayName: "Class", skipStackedTitle: false },
+  { name: "species", displayName: "Species", skipStackedTitle: false },
+  { name: "source", displayName: "Source", skipStackedTitle: false },
+  { name: "actions", displayName: "Actions", skipStackedTitle: false },
 ];
 
 const items = computed(() => {

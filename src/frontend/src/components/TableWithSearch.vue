@@ -185,7 +185,7 @@ onUpdated(() => {
                       :key="field.name"
                       class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
                     >
-                      <div class="font-bold">{{ field.displayName }}:</div>
+                      <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
                       <slot :name="field.name" v-bind="item">{{ item[field.name] }}</slot>
                     </div>
                     <div class="border-b-4 border-neutral-400"></div>

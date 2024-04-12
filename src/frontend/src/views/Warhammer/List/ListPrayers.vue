@@ -33,10 +33,10 @@ watch(
 const auth = useAuth();
 
 const columns = [
-  { name: "name", displayName: "Name" },
-  { name: "description", displayName: "Description" },
-  { name: "source", displayName: "Source" },
-  { name: "actions", displayName: "Actions" },
+  { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "description", displayName: "Description", skipStackedTitle: true },
+  { name: "source", displayName: "Source", skipStackedTitle: false },
+  { name: "actions", displayName: "Actions", skipStackedTitle: false },
 ];
 
 const items = computed(() => {

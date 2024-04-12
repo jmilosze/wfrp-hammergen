@@ -73,9 +73,9 @@ const selectedItems = computed(() => itemsWithSelectList.value.filter((x) => x.s
 const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
-  { name: "name", displayName: "Name" },
-  { name: "description", displayName: "Description" },
-  { name: "selected", displayName: "Select" },
+  { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "description", displayName: "Description", skipStackedTitle: true },
+  { name: "selected", displayName: "Select", skipStackedTitle: false },
 ];
 
 const modalId = props.modalId ? props.modalId : "modifyItemsModal";
@@ -108,14 +108,14 @@ function onModifyClick() {
       <table class="w-full">
         <thead>
           <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-5">Name</th>
-            <th v-if="!disableDescription" class="border-b border-neutral-300 py-2 px-5">Description</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+            <th v-if="!disableDescription" class="border-b border-neutral-300 py-2 px-2">Description</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td v-if="!disableDescription" class="py-2 px-5 border-b border-neutral-300">{{ src.description }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+            <td v-if="!disableDescription" class="py-2 px-2 border-b border-neutral-300">{{ src.description }}</td>
           </tr>
         </tbody>
       </table>
