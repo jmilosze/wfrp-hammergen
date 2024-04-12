@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import { useModal } from "../composables/modal.ts";
 
-defineProps<{
+const props = defineProps<{
   id: string;
-  size?: "max" | "md" | "sm";
+  size?: "lg" | "md" | "sm";
 }>();
 
 const modal = useModal();
+
+let modalSize = "max-w-2xl";
+if (props.size === "md") {
+  modalSize = "max-w-3xl";
+} else if (props.size === "lg") {
+  modalSize = "max-w-5xl";
+}
 </script>
 
 <template>
   <Teleport v-if="id === modal.modalId.value" to="#modal">
     <div class="flex justify-center">
-      <div class="bg-white rounded-lg shadow border m-5 border-neutral-500 max-w-2xl flex-auto" @click.stop>
+      <div class="bg-white rounded-lg shadow border m-5 border-neutral-500 flex-auto" :class="[modalSize]" @click.stop>
         <div class="p-3 flex justify-between">
           <div class="text-xl font-semibold text-gray-900 dark:text-white"><slot name="header"></slot></div>
           <button

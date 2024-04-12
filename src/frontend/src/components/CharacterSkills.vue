@@ -97,8 +97,6 @@ const searchTerm = ref("");
 const modalColumns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
   { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "type", displayName: "Type", skipStackedTitle: false },
-  { name: "attributeName", displayName: "Att", skipStackedTitle: false },
   { name: "number", displayName: "Rank", skipStackedTitle: false },
 ];
 
@@ -171,6 +169,16 @@ function onModifyClick() {
             class="w-20"
             @update:modelValue="emit('updated', { id: id, number: skillsWithNumber[id].number })"
           />
+        </template>
+
+        <template #description="{ id }: { id: string }">
+          <div>
+            {{ skillsWithNumber[id].description }}
+            <div class="mb-1"><span class="font-semibold mr-1">Type</span> {{ skillsWithNumber[id].type }}</div>
+            <div class="mb-1">
+              <span class="font-semibold mr-1">Attribute</span> {{ skillsWithNumber[id].attributeName }}
+            </div>
+          </div>
         </template>
       </TableWithSearch>
     </ModalWindow>

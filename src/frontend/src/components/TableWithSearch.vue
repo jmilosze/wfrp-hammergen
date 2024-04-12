@@ -8,7 +8,7 @@ import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 
-const DEFAULT_PER_PAGE = 100;
+const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
 
 const props = defineProps<{
