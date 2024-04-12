@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Skill } from "../services/wh/skill.ts";
-import { ref, Ref } from "vue";
+import { ref, Ref, watch } from "vue";
 import { AttributeName } from "../services/wh/attributes.ts";
 
 export interface SkillWithNumber {
@@ -53,6 +53,22 @@ function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillLis
     return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
   });
 }
+
+watch(
+  () => props.initSkills,
+  (newVal) => {
+    updateSkillsWithNumber(newVal, props.skillList);
+  },
+  { immediate: true },
+);
+
+watch(
+  () => props.skillList,
+  (newVal) => {
+    updateSkillsWithNumber(props.initSkills, newVal);
+  },
+  { immediate: true },
+);
 </script>
 
 <template></template>
