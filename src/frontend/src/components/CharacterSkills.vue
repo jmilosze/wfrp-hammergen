@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { Skill, SkillData } from "../services/wh/skill.ts";
+import { Skill } from "../services/wh/skill.ts";
 import { ref, Ref } from "vue";
+import { AttributeName } from "../services/wh/attributes.ts";
 
-interface SkillWithNumber extends SkillData {
+export interface SkillWithNumber {
+  id: string;
+  name: string;
+  description: string;
+  attribute: AttributeName;
+  type: number;
   number: number;
 }
 
@@ -30,7 +36,14 @@ function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillLis
   skillsWithNumber.value = {};
   for (const skill of skillList) {
     if (!skill.isGroup) {
-      skillsWithNumber.value[skill.id] = { ...skill, number: 0 };
+      skillsWithNumber.value[skill.id] = {
+        id: skill.id,
+        name: skill.name,
+        description: skill.description,
+        attribute: skill.attribute,
+        type: skill.type,
+        number: 0,
+      };
       if (skill.id in selectedSkills) {
         skillsWithNumber.value[skill.id].number = selectedSkills[skill.id];
       }

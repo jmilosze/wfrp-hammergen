@@ -48,20 +48,6 @@ export interface SkillApiData {
   source: Source;
 }
 
-export interface SkillData {
-  id: string;
-  canEdit: boolean;
-  name: string;
-  description: string;
-  attribute: AttributeName;
-  type: number;
-  displayZero: boolean;
-  isGroup: boolean;
-  group: Set<string>;
-  shared: boolean;
-  source: Source;
-}
-
 export class Skill implements WhProperty {
   id: string;
   canEdit: boolean;
