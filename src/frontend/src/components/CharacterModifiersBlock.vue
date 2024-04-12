@@ -88,7 +88,6 @@ const validAtts = computed(() => {
     <CharacterModifiersAttributes :rows="rows">
       <template #WS>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.WS"
           type="number"
           :disabled="props.disabled"
@@ -97,7 +96,6 @@ const validAtts = computed(() => {
       </template>
       <template #BS>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.BS"
           type="number"
           :disabled="props.disabled"
@@ -106,7 +104,6 @@ const validAtts = computed(() => {
       </template>
       <template #S>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.S"
           type="number"
           :disabled="props.disabled"
@@ -115,7 +112,6 @@ const validAtts = computed(() => {
       </template>
       <template #T>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.T"
           type="number"
           :disabled="props.disabled"
@@ -124,7 +120,6 @@ const validAtts = computed(() => {
       </template>
       <template #I>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.I"
           type="number"
           :disabled="props.disabled"
@@ -133,7 +128,6 @@ const validAtts = computed(() => {
       </template>
       <template #Ag>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.Ag"
           type="number"
           :disabled="props.disabled"
@@ -142,7 +136,6 @@ const validAtts = computed(() => {
       </template>
       <template #Dex>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.Dex"
           type="number"
           :disabled="props.disabled"
@@ -151,7 +144,6 @@ const validAtts = computed(() => {
       </template>
       <template #Int>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.Int"
           type="number"
           :disabled="props.disabled"
@@ -160,7 +152,6 @@ const validAtts = computed(() => {
       </template>
       <template #WP>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.WP"
           type="number"
           :disabled="props.disabled"
@@ -169,7 +160,6 @@ const validAtts = computed(() => {
       </template>
       <template #Fel>
         <FormInput
-          :centerText="true"
           :modelValue="modelValue.attributes.Fel"
           type="number"
           :disabled="props.disabled"

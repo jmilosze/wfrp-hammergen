@@ -561,7 +561,7 @@ const attributes = computed(() => {
         @createNew="openInNewTab('skill', { id: 'create' })"
         @reload="skillListUtils.loadWhList"
         @clearAll="wh.clearSkills()"
-        @updated="(event) => console.log(event)"
+        @updated="(event) => wh.updateSkills(event.id, event.number)"
       />
     </div>
   </div>

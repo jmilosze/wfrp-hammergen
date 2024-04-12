@@ -14,7 +14,8 @@ type SkillWithNumber = {
   id: string;
   name: string;
   description: string;
-  attribute: string;
+  attributeName: string;
+  attributeValue: number;
   type: string;
   number: number;
 };
@@ -41,7 +42,7 @@ function anySelected(skillsWithNumber: SkillWithNumber): boolean {
 const skillsWithNumber: Ref<Record<string, SkillWithNumber>> = ref({});
 const skillsWithNumberList: Ref<SkillWithNumber[]> = ref([]);
 
-function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillList: Skill[]) {
+function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillList: Skill[], attributes: Attributes) {
   skillsWithNumber.value = {};
   for (const skill of skillList) {
     if (!skill.isGroup) {
@@ -49,7 +50,8 @@ function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillLis
         id: skill.id,
         name: skill.name,
         description: skill.description,
-        attribute: printAttributeName(skill.attribute),
+        attributeName: printAttributeName(skill.attribute),
+        attributeValue: getAttributeValue(skill.attribute, attributes),
         type: printSkillType(skill.type),
         number: 0,
       };
@@ -66,7 +68,7 @@ function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillLis
 watch(
   () => props.initSkills,
   (newVal) => {
-    updateSkillsWithNumber(newVal, props.skillList);
+    updateSkillsWithNumber(newVal, props.skillList, props.attributes);
   },
   { immediate: true },
 );
@@ -74,7 +76,15 @@ watch(
 watch(
   () => props.skillList,
   (newVal) => {
-    updateSkillsWithNumber(props.initSkills, newVal);
+    updateSkillsWithNumber(props.initSkills, newVal, props.attributes);
+  },
+  { immediate: true },
+);
+
+watch(
+  () => props.attributes,
+  (newVal) => {
+    updateSkillsWithNumber(props.initSkills, props.skillList, newVal);
   },
   { immediate: true },
 );
@@ -87,6 +97,7 @@ const modalColumns = [
   { name: "name", displayName: "Name" },
   { name: "description", displayName: "Description" },
   { name: "type", displayName: "Type" },
+  { name: "attributeName", displayName: "Att" },
   { name: "number", displayName: "Rank" },
 ];
 
@@ -125,9 +136,9 @@ function onModifyClick() {
         <tbody>
           <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.attribute }}</td>
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.number }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ getAttributeValue(src.attribute, attributes) }}</td>
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
           </tr>
         </tbody>
       </table>
@@ -152,14 +163,12 @@ function onModifyClick() {
         @reload="emit('reload')"
       >
         <template #number="{ id }: { id: string }">
-          <div>
-            <FormInput
-              v-model="skillsWithNumber[id].number"
-              type="number"
-              class="min-w-16"
-              @update:modelValue="emit('updated', { id: id, number: skillsWithNumber[id].number })"
-            />
-          </div>
+          <FormInput
+            v-model="skillsWithNumber[id].number"
+            type="number"
+            class="w-20"
+            @update:modelValue="emit('updated', { id: id, number: skillsWithNumber[id].number })"
+          />
         </template>
       </TableWithSearch>
     </ModalWindow>

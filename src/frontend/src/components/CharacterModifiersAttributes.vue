@@ -28,7 +28,7 @@ watch(
   { immediate: true },
 );
 
-const thClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
+const thClass = ["px-2", "py-2", "border-b", "border-neutral-300", "text-left"];
 const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
 </script>
 

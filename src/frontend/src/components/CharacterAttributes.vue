@@ -40,8 +40,8 @@ const total = computed(() => {
   return sumAttributes(attributeRolls.value, attributeAdvances.value, props.otherAttributes, racial.value);
 });
 
-const thClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
-const tdClassNoInput = ["px-4", "py-2", "border-b", "border-neutral-300", "text-center"];
+const thClass = ["px-2", "py-2", "border-b", "border-neutral-300", "text-left"];
+const tdClassNoInput = ["px-4", "py-2", "border-b", "border-neutral-300"];
 const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
 
 function updateRolls(attribute: AttributeName, newValue: number) {
@@ -79,7 +79,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   :modelValue="attributeRolls.WS"
                   type="number"
                   @update:modelValue="updateRolls(AttributeName.WS, $event)"
@@ -88,7 +87,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   :modelValue="attributeRolls.BS"
                   type="number"
                   @update:modelValue="updateRolls(AttributeName.BS, $event)"
@@ -118,7 +116,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.WS"
                   @update:modelValue="updateAdvances(AttributeName.WS, $event)"
@@ -127,7 +124,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.BS"
                   @update:modelValue="updateAdvances(AttributeName.BS, $event)"
@@ -162,7 +158,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.S"
                   @update:modelValue="updateRolls(AttributeName.S, $event)"
@@ -171,7 +166,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.T"
                   @update:modelValue="updateRolls(AttributeName.T, $event)"
@@ -180,7 +174,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.I"
                   @update:modelValue="updateRolls(AttributeName.I, $event)"
@@ -189,7 +182,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.Ag"
                   @update:modelValue="updateRolls(AttributeName.Ag, $event)"
@@ -228,7 +220,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.S"
                   @update:modelValue="updateAdvances(AttributeName.S, $event)"
@@ -237,7 +228,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.T"
                   @update:modelValue="updateAdvances(AttributeName.T, $event)"
@@ -246,7 +236,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.I"
                   @update:modelValue="updateAdvances(AttributeName.I, $event)"
@@ -255,7 +244,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.Ag"
                   @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
@@ -295,7 +283,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.Dex"
                   @update:modelValue="updateRolls(AttributeName.Dex, $event)"
@@ -304,7 +291,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.Int"
                   @update:modelValue="updateRolls(AttributeName.Int, $event)"
@@ -313,7 +299,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.WP"
                   @update:modelValue="updateRolls(AttributeName.WP, $event)"
@@ -322,7 +307,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeRolls.Fel"
                   @update:modelValue="updateRolls(AttributeName.Fel, $event)"
@@ -361,7 +345,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.Dex"
                   @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
@@ -370,7 +353,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.Int"
                   @update:modelValue="updateAdvances(AttributeName.Int, $event)"
@@ -379,7 +361,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.WP"
                   @update:modelValue="updateAdvances(AttributeName.WP, $event)"
@@ -388,7 +369,6 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :centerText="true"
                   type="number"
                   :modelValue="attributeAdvances.Fel"
                   @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
@@ -437,7 +417,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.WS"
                 @update:modelValue="updateRolls(AttributeName.WS, $event)"
@@ -446,7 +425,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.BS"
                 @update:modelValue="updateRolls(AttributeName.BS, $event)"
@@ -455,7 +433,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.S"
                 @update:modelValue="updateRolls(AttributeName.S, $event)"
@@ -464,7 +441,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.T"
                 @update:modelValue="updateRolls(AttributeName.T, $event)"
@@ -473,7 +449,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.I"
                 @update:modelValue="updateRolls(AttributeName.I, $event)"
@@ -482,7 +457,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Ag"
                 @update:modelValue="updateRolls(AttributeName.Ag, $event)"
@@ -491,7 +465,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Dex"
                 @update:modelValue="updateRolls(AttributeName.Dex, $event)"
@@ -500,7 +473,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Int"
                 @update:modelValue="updateRolls(AttributeName.Int, $event)"
@@ -509,7 +481,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.WP"
                 @update:modelValue="updateRolls(AttributeName.WP, $event)"
@@ -518,7 +489,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeRolls.Fel"
                 @update:modelValue="updateRolls(AttributeName.Fel, $event)"
@@ -596,7 +566,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.WS"
                 @update:modelValue="updateAdvances(AttributeName.WS, $event)"
@@ -605,7 +574,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.BS"
                 @update:modelValue="updateAdvances(AttributeName.BS, $event)"
@@ -614,7 +582,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.S"
                 @update:modelValue="updateAdvances(AttributeName.S, $event)"
@@ -623,7 +590,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.T"
                 @update:modelValue="updateAdvances(AttributeName.T, $event)"
@@ -632,7 +598,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.I"
                 @update:modelValue="updateAdvances(AttributeName.I, $event)"
@@ -641,7 +606,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Ag"
                 @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
@@ -650,7 +614,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Dex"
                 @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
@@ -659,7 +622,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Int"
                 @update:modelValue="updateAdvances(AttributeName.Int, $event)"
@@ -668,7 +630,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.WP"
                 @update:modelValue="updateAdvances(AttributeName.WP, $event)"
@@ -677,7 +638,6 @@ function newRolls() {
             <td :class="tdClass">
               <FormInput
                 :disabled="props.disabled"
-                :centerText="true"
                 type="number"
                 :modelValue="attributeAdvances.Fel"
                 @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
