@@ -51,6 +51,7 @@ import HintModal from "../../../components/HintModal.vue";
 import { SkillApi } from "../../../services/wh/skill.ts";
 import { TalentApi } from "../../../services/wh/talent.ts";
 import { useGenerationProps } from "../../../composables/generationProps.ts";
+import CharacterSkills from "../../../components/CharacterSkills.vue";
 
 const props = defineProps<{
   id: string;
@@ -197,13 +198,7 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
   return careerList
     .filter((x) => x.allowedForSpeciesWithRegion(species))
     .map((x) => ({ text: x.name, value: x.id }))
-    .sort(function (x, y) {
-      if (x.text === y.text) {
-        return 0;
-      } else {
-        return x.text < y.text ? -1 : 1;
-      }
-    });
+    .sort((a, b) => a.text.localeCompare(b.text));
 }
 
 function rollCharacter() {
@@ -550,6 +545,20 @@ function rollCharacter() {
     :rollsValidationStatus="validRolls"
     :advancesValidationStatus="validAdvances"
   />
+  <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
+    <div class="flex-1">
+      <CharacterSkills
+        :disabled="!wh.canEdit"
+        :initSkills="wh.skills"
+        :skillList="skillListUtils.whList.value"
+        :loading="skillListUtils.loading.value"
+        class="min-w-52"
+        @createNew="openInNewTab('skill', { id: 'create' })"
+        @reload="skillListUtils.loadWhList"
+        @clearAll="wh.clearSkills()"
+      />
+    </div>
+  </div>
   <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
     <div class="flex-1">
       <SelectTable

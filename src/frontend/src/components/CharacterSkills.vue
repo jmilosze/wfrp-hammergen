@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import { Skill } from "../services/wh/skill.ts";
-import { ref, Ref, watch } from "vue";
-import { AttributeName } from "../services/wh/attributes.ts";
+import { printSkillType, Skill } from "../services/wh/skill.ts";
+import { computed, ref, Ref, watch } from "vue";
+import { printAttributeName } from "../services/wh/attributes.ts";
+import { useModal } from "../composables/modal.ts";
+import { ViewSize } from "../utils/viewSize.ts";
+import ModalWindow from "./ModalWindow.vue";
+import ActionButton from "./ActionButton.vue";
+import TableWithSearch from "./TableWithSearch.vue";
 
-export interface SkillWithNumber {
+type SkillWithNumber = {
   id: string;
   name: string;
   description: string;
-  attribute: AttributeName;
-  type: number;
+  attribute: string;
+  type: string;
   number: number;
-}
+};
 
 const props = defineProps<{
   disabled?: boolean;
@@ -23,6 +28,7 @@ const emit = defineEmits<{
   (e: "updated", value: { id: string; number: number }): void;
   (e: "createNew"): void;
   (e: "reload"): void;
+  (e: "clearAll"): void;
 }>();
 
 function anySelected(skillsWithNumber: SkillWithNumber): boolean {
@@ -40,8 +46,8 @@ function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillLis
         id: skill.id,
         name: skill.name,
         description: skill.description,
-        attribute: skill.attribute,
-        type: skill.type,
+        attribute: printAttributeName(skill.attribute),
+        type: printSkillType(skill.type),
         number: 0,
       };
       if (skill.id in selectedSkills) {
@@ -69,8 +75,76 @@ watch(
   },
   { immediate: true },
 );
+
+const selectedSkills = computed(() => skillsWithNumberList.value.filter((x) => anySelected(x)));
+
+const modal = useModal();
+const searchTerm = ref("");
+const modalColumns = [
+  { name: "name", displayName: "Name" },
+  { name: "description", displayName: "Description" },
+  { name: "type", displayName: "Type" },
+  { name: "number", displayName: "Rank" },
+];
+
+const resetPaginationCounter = ref(0);
+
+function onModifyClick() {
+  resetPaginationCounter.value += 1;
+  modal.showModal("modifySkillsModal");
+  searchTerm.value = "";
+  skillsWithNumberList.value.sort((a, b) => {
+    return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
+  });
+}
 </script>
 
-<template></template>
+<template>
+  <div>
+    <div class="flex items-center gap-2 mb-1">
+      <div>Skills</div>
+      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
+      <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')"> Clear all </ActionButton>
+    </div>
+    <div v-if="props.loading" class="flex justify-center">
+      <SpinnerAnimation class="w-14 m-2" />
+    </div>
+    <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+      <table class="w-full">
+        <thead>
+          <tr class="text-left">
+            <th class="border-b border-neutral-300 py-2 px-5">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+    </div>
+    <ModalWindow id="modifySkillsModal">
+      <template #header> Modify skills </template>
+      <template #buttons>
+        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+      </template>
+      <TableWithSearch
+        v-model="searchTerm"
+        :fields="modalColumns"
+        :items="skillsWithNumberList"
+        :stackedViewSize="ViewSize.sm"
+        :addCreateNewBtn="true"
+        :addReloadBtn="true"
+        :loading="props.loading"
+        :resetPagination="resetPaginationCounter"
+        elementId="modal"
+        @createNew="emit('createNew')"
+        @reload="emit('reload')"
+      >
+      </TableWithSearch>
+    </ModalWindow>
+  </div>
+</template>
 
 <style scoped></style>
