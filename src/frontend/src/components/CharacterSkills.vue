@@ -33,6 +33,7 @@ const emit = defineEmits<{
   (e: "createNew"): void;
   (e: "reload"): void;
   (e: "clearAll"): void;
+  (e: "addSpeciesSkills"): void;
 }>();
 
 function anySelected(skillsWithNumber: SkillWithNumber): boolean {
@@ -118,7 +119,8 @@ function onModifyClick() {
     <div class="flex items-center gap-2 mb-1">
       <div>Skills</div>
       <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
-      <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')"> Clear all </ActionButton>
+      <ActionButton v-if="!disabled" size="sm" @click="emit('addSpeciesSkills')">Add species skills</ActionButton>
+      <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')">Clear all</ActionButton>
     </div>
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />

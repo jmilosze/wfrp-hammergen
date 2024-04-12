@@ -562,6 +562,7 @@ const attributes = computed(() => {
         @reload="skillListUtils.loadWhList"
         @clearAll="wh.clearSkills()"
         @updated="(event) => wh.updateSkills(event.id, event.number)"
+        @addSpeciesSkills="wh.addSpeciesSkills(skillListUtils.whList.value, generationPropsUtils.generationProps.value)"
       />
     </div>
   </div>

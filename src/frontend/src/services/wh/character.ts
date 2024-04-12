@@ -46,6 +46,10 @@ import {
   updateIdNumberRecord,
 } from "../../utils/idNumber.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
+import { Skill } from "./skill.ts";
+import { GenerationProps } from "./generationProps.ts";
+import { generateSpeciesSkills, resolveSkillGroups } from "./characterGeneration/generateSkills.ts";
+import { selectRandom } from "../../utils/random.ts";
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
@@ -500,6 +504,30 @@ export class Character implements WhProperty {
 
   clearStoredItems(): void {
     this.storedItems = {} as Record<string, number>;
+  }
+
+  addSpeciesSkills(listOfSkills: Skill[], generationProps: GenerationProps): void {
+    if (!(this.species in generationProps.speciesSkills) || listOfSkills.length === 0) {
+      return;
+    }
+
+    const speciesSkills = generationProps.speciesSkills[this.species];
+    const resolvedSkillGroups = resolveSkillGroups(listOfSkills);
+    const generatedSkills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandom);
+
+    const newSkills = { ...this.skills };
+
+    for (const [genSkillId, genSkillNum] of Object.entries(generatedSkills)) {
+      if (genSkillId in newSkills) {
+        if (newSkills[genSkillId] < genSkillNum) {
+          newSkills[genSkillId] = genSkillNum;
+        }
+      } else {
+        newSkills[genSkillId] = genSkillNum;
+      }
+    }
+
+    this.skills = newSkills;
   }
 }
 
