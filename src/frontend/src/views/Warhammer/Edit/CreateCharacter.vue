@@ -576,7 +576,7 @@ const attributes = computed(() => {
       @reload="talentListUtils.loadWhList"
       @clearAll="wh.clearTalents(true)"
       @updated="(event) => wh.updateTalents(event.id, event.number)"
-      @addSpeciesTalents="consol.log('add species talents')"
+      @addSpeciesTalents="console.log('add species talents')"
     />
   </div>
 

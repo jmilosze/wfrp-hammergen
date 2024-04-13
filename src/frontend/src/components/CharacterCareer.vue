@@ -113,11 +113,11 @@ const selectedCurrentCareer = computed(() => careersWithSelectList.value.find((x
 const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
-  { name: "name", displayName: "Name" },
-  { name: "careerClass", displayName: "Class" },
-  { name: "levelName", displayName: "Level name" },
-  { name: "current", displayName: "Current" },
-  { name: "past", displayName: "Past" },
+  { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "careerClass", displayName: "Class", skipStackedTitle: false },
+  { name: "levelName", displayName: "Level name", skipStackedTitle: false },
+  { name: "current", displayName: "Current", skipStackedTitle: false },
+  { name: "past", displayName: "Past", skipStackedTitle: false },
 ];
 
 const resetPaginationCounter = ref(0);

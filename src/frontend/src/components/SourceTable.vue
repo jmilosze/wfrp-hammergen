@@ -16,9 +16,9 @@ const emit = defineEmits<{
 const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
-  { name: "name", displayName: "Name" },
-  { name: "notes", displayName: "Notes" },
-  { name: "selected", displayName: "Select" },
+  { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "notes", displayName: "Notes", skipStackedTitle: false },
+  { name: "selected", displayName: "Select", skipStackedTitle: false },
 ];
 
 const sources: Ref<Record<string, { id: string; name: string; notes: string; selected: boolean }>> = ref({});
