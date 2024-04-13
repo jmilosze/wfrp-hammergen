@@ -550,79 +550,85 @@ const attributes = computed(() => {
     :advancesValidationStatus="validAdvances"
   />
   <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
-    <div class="flex-1">
-      <CharacterSkills
-        :disabled="!wh.canEdit"
-        :initSkills="wh.skills"
-        :skillList="skillListUtils.whList.value"
-        :loading="skillListUtils.loading.value"
-        :attributes="attributes"
-        class="min-w-52"
-        @createNew="openInNewTab('skill', { id: 'create' })"
-        @reload="skillListUtils.loadWhList"
-        @clearAll="wh.clearSkills(true)"
-        @updated="(event) => wh.updateSkills(event.id, event.number)"
-        @addSpeciesSkills="
-          wh.addSpeciesSkills(skillListUtils.whList.value, generationPropsUtils.generationProps.value, true)
-        "
-      />
-    </div>
+    <CharacterSkills
+      :disabled="!wh.canEdit"
+      :initSkills="wh.skills"
+      :skillList="skillListUtils.whList.value"
+      :loading="skillListUtils.loading.value"
+      :attributes="attributes"
+      class="flex-1 min-w-52"
+      @createNew="openInNewTab('skill', { id: 'create' })"
+      @reload="skillListUtils.loadWhList"
+      @clearAll="wh.clearSkills(true)"
+      @updated="(event) => wh.updateSkills(event.id, event.number)"
+      @addSpeciesSkills="
+        wh.addSpeciesSkills(skillListUtils.whList.value, generationPropsUtils.generationProps.value, true)
+      "
+    />
+    <CharacterTalents
+      :disabled="!wh.canEdit"
+      :initTalents="wh.talents"
+      :talentList="talentListUtils.whList.value"
+      :loading="talentListUtils.loading.value"
+      :attributes="attributes"
+      class="flex-1 min-w-52"
+      @createNew="openInNewTab('talent', { id: 'create' })"
+      @reload="talentListUtils.loadWhList"
+      @clearAll="wh.clearTalents(true)"
+      @updated="(event) => wh.updateTalents(event.id, event.number)"
+      @addSpeciesTalents="consol.log('add species talents')"
+    />
   </div>
+
   <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
-    <div class="flex-1">
-      <SelectTable
-        :disabled="!wh.canEdit"
-        :initSelectedItems="wh.spells"
-        :itemList="spellListUtils.whList.value"
-        title="Spells"
-        modalTitle="Modify spells"
-        modalId="characterSpells"
-        :loading="spellListUtils.loading.value"
-        :clearAllBtn="true"
-        :disableDescription="true"
-        class="min-w-52"
-        @createNew="openInNewTab('spell', { id: 'create' })"
-        @reload="spellListUtils.loadWhList"
-        @selected="(e) => wh.updateSpells(e.id, e.selected)"
-        @clearAll="wh.clearSpells(true)"
-      />
-    </div>
-    <div class="flex-1">
-      <SelectTable
-        :disabled="!wh.canEdit"
-        :initSelectedItems="wh.prayers"
-        :itemList="prayerListUtils.whList.value"
-        title="Prayers"
-        modalTitle="Modify prayers"
-        modalId="characterPrayers"
-        :loading="prayerListUtils.loading.value"
-        :clearAllBtn="true"
-        :disableDescription="true"
-        class="min-w-52"
-        @createNew="openInNewTab('prayer', { id: 'create' })"
-        @reload="prayerListUtils.loadWhList"
-        @selected="(e) => wh.updatePrayers(e.id, e.selected)"
-        @clearAll="wh.clearPrayers(true)"
-      />
-    </div>
-    <div class="flex-1">
-      <SelectTable
-        :disabled="!wh.canEdit"
-        :initSelectedItems="wh.mutations"
-        :itemList="mutationListUtils.whList.value"
-        title="Mutations"
-        modalTitle="Modify mutations"
-        modalId="characterMutations"
-        :loading="mutationListUtils.loading.value"
-        :clearAllBtn="true"
-        :disableDescription="true"
-        class="min-w-52"
-        @createNew="openInNewTab('mutation', { id: 'create' })"
-        @reload="mutationListUtils.loadWhList"
-        @selected="(e) => wh.updateMutations(e.id, e.selected)"
-        @clearAll="wh.clearMutations(true)"
-      />
-    </div>
+    <SelectTable
+      :disabled="!wh.canEdit"
+      :initSelectedItems="wh.spells"
+      :itemList="spellListUtils.whList.value"
+      title="Spells"
+      modalTitle="Modify spells"
+      modalId="characterSpells"
+      :loading="spellListUtils.loading.value"
+      :clearAllBtn="true"
+      :disableDescription="true"
+      class="flex-1 min-w-52"
+      @createNew="openInNewTab('spell', { id: 'create' })"
+      @reload="spellListUtils.loadWhList"
+      @selected="(e) => wh.updateSpells(e.id, e.selected)"
+      @clearAll="wh.clearSpells(true)"
+    />
+    <SelectTable
+      :disabled="!wh.canEdit"
+      :initSelectedItems="wh.prayers"
+      :itemList="prayerListUtils.whList.value"
+      title="Prayers"
+      modalTitle="Modify prayers"
+      modalId="characterPrayers"
+      :loading="prayerListUtils.loading.value"
+      :clearAllBtn="true"
+      :disableDescription="true"
+      class="flex-1 min-w-52"
+      @createNew="openInNewTab('prayer', { id: 'create' })"
+      @reload="prayerListUtils.loadWhList"
+      @selected="(e) => wh.updatePrayers(e.id, e.selected)"
+      @clearAll="wh.clearPrayers(true)"
+    />
+    <SelectTable
+      :disabled="!wh.canEdit"
+      :initSelectedItems="wh.mutations"
+      :itemList="mutationListUtils.whList.value"
+      title="Mutations"
+      modalTitle="Modify mutations"
+      modalId="characterMutations"
+      :loading="mutationListUtils.loading.value"
+      :clearAllBtn="true"
+      :disableDescription="true"
+      class="flex-1 min-w-56"
+      @createNew="openInNewTab('mutation', { id: 'create' })"
+      @reload="mutationListUtils.loadWhList"
+      @selected="(e) => wh.updateMutations(e.id, e.selected)"
+      @clearAll="wh.clearMutations(true)"
+    />
   </div>
 
   <div class="my-4">

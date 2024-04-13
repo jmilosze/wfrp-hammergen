@@ -50,7 +50,7 @@ const items = computed(() => {
 function formatTalentRow(talent: Talent) {
   return {
     name: addSpaces(talent.name),
-    maxRank: talent.maxRankDisplay(),
+    maxRank: talent.getMaxRankDisplay(),
     source: Object.keys(talent.source)
       .map((x) => source[x])
       .join(", "),

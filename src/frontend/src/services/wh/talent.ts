@@ -10,7 +10,7 @@ import {
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
-import { AttributeName, printAttributeName } from "./attributes.ts";
+import { AttributeName, Attributes, getAttributeValue, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
 
@@ -153,7 +153,11 @@ export class Talent implements WhProperty {
     updateSource(this.source, update);
   }
 
-  maxRankDisplay(): string {
+  getMaxRank(attributes: Attributes): number {
+    return this.maxRank + Math.floor(getAttributeValue(this.attribute, attributes) / 10);
+  }
+
+  getMaxRankDisplay(): string {
     if (this.isGroup) {
       return "";
     }

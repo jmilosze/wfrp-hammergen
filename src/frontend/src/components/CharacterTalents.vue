@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Talent } from "../services/wh/talent.ts";
 import { computed, ref, Ref, watch } from "vue";
-import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/attributes.ts";
+import { Attributes, printAttributeName } from "../services/wh/attributes.ts";
 import { useModal } from "../composables/modal.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import ModalWindow from "./ModalWindow.vue";
@@ -15,6 +15,8 @@ type TalentWithNumber = {
   name: string;
   description: string;
   maxRank: number;
+  maxRankFormula: string;
+  attributeName: string;
   number: number;
 };
 
@@ -53,9 +55,9 @@ function updateTalentsWithNumber(
         id: talent.id,
         name: talent.name,
         description: talent.description,
+        maxRank: talent.getMaxRank(attributes),
+        maxRankFormula: talent.getMaxRankDisplay(),
         attributeName: printAttributeName(talent.attribute),
-        attributeValue: getAttributeValue(talent.attribute, attributes),
-        type: printTalentType(talent.type),
         number: 0,
       };
       if (talent.id in selectedTalents) {
@@ -130,17 +132,13 @@ function onModifyClick() {
         <thead>
           <tr class="text-left">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-            <th class="border-b border-neutral-300 py-2 px-2">Att</th>
-            <th class="border-b border-neutral-300 py-2 px-2">Adv</th>
-            <th class="border-b border-neutral-300 py-2 px-2">Talent</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Times taken</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="src in selectedTalents" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
           </tr>
         </tbody>
       </table>
@@ -176,9 +174,9 @@ function onModifyClick() {
         <template #description="{ id }: { id: string }">
           <div>
             {{ talentsWithNumber[id].description }}
-            <div class="mb-1"><span class="font-semibold mr-1">Type</span> {{ talentsWithNumber[id].type }}</div>
             <div class="mb-1">
-              <span class="font-semibold mr-1">Attribute</span> {{ talentsWithNumber[id].attributeName }}
+              <span class="font-semibold mr-1">Max rank</span>
+              {{ talentsWithNumber[id].maxRank }} ({{ talentsWithNumber[id].maxRankFormula }})
             </div>
           </div>
         </template>
