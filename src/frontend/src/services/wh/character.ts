@@ -26,7 +26,7 @@ import {
 } from "./common.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { CharacterModifiers } from "./characterModifiers.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
+import { clearObject, objectsAreEqual } from "../../utils/object.ts";
 import { AxiosInstance } from "axios";
 import {
   createElementFunc,
@@ -446,67 +446,99 @@ export class Character implements WhProperty {
     updateSet(this.spells, id, selected);
   }
 
-  clearSpells(): void {
-    this.spells = new Set<string>();
+  clearSpells(replace = true): void {
+    if (replace) {
+      this.spells = new Set<string>();
+    } else {
+      this.spells.clear();
+    }
   }
 
   updatePrayers(id: string, selected: boolean): void {
     updateSet(this.prayers, id, selected);
   }
 
-  clearPrayers(): void {
-    this.prayers = new Set<string>();
+  clearPrayers(replace = true): void {
+    if (replace) {
+      this.prayers = new Set<string>();
+    } else {
+      this.prayers.clear();
+    }
   }
 
   updateMutations(id: string, selected: boolean): void {
     updateSet(this.mutations, id, selected);
   }
 
-  clearMutations(): void {
-    this.mutations = new Set<string>();
+  clearMutations(replace = true): void {
+    if (replace) {
+      this.mutations = new Set<string>();
+    } else {
+      this.mutations.clear();
+    }
   }
 
   updateSkills(id: string, number: number): void {
     updateIdNumberRecord(this.skills, { id: id, number: number });
   }
 
-  clearSkills(): void {
-    this.skills = {} as Record<string, number>;
+  clearSkills(replace = true): void {
+    if (replace) {
+      this.skills = {} as Record<string, number>;
+    } else {
+      clearObject(this.skills);
+    }
   }
 
   updateTalents(id: string, number: number): void {
     updateIdNumberRecord(this.talents, { id: id, number: number });
   }
 
-  clearTalents(): void {
-    this.talents = {} as Record<string, number>;
+  clearTalents(replace = false): void {
+    if (replace) {
+      this.talents = {} as Record<string, number>;
+    } else {
+      clearObject(this.talents);
+    }
   }
 
   updateEquippedItems(id: string, number: number): void {
     updateIdNumberRecord(this.equippedItems, { id: id, number: number });
   }
 
-  clearEquippedItems(): void {
-    this.equippedItems = {} as Record<string, number>;
+  clearEquippedItems(replace = false): void {
+    if (replace) {
+      this.equippedItems = {} as Record<string, number>;
+    } else {
+      clearObject(this.equippedItems);
+    }
   }
 
   updateCarriedItems(id: string, number: number): void {
     updateIdNumberRecord(this.carriedItems, { id: id, number: number });
   }
 
-  clearCarriedItems(): void {
-    this.carriedItems = {} as Record<string, number>;
+  clearCarriedItems(replace = false): void {
+    if (replace) {
+      this.carriedItems = {} as Record<string, number>;
+    } else {
+      clearObject(this.carriedItems);
+    }
   }
 
   updateStoredItems(id: string, number: number): void {
     updateIdNumberRecord(this.storedItems, { id: id, number: number });
   }
 
-  clearStoredItems(): void {
-    this.storedItems = {} as Record<string, number>;
+  clearStoredItems(replace = false): void {
+    if (replace) {
+      this.storedItems = {} as Record<string, number>;
+    } else {
+      clearObject(this.storedItems);
+    }
   }
 
-  addSpeciesSkills(listOfSkills: Skill[], generationProps: GenerationProps): void {
+  addSpeciesSkills(listOfSkills: Skill[], generationProps: GenerationProps, replace = true): void {
     if (!(this.species in generationProps.speciesSkills) || listOfSkills.length === 0) {
       return;
     }
@@ -515,7 +547,12 @@ export class Character implements WhProperty {
     const resolvedSkillGroups = resolveSkillGroups(listOfSkills);
     const generatedSkills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandom);
 
-    const newSkills = { ...this.skills };
+    let newSkills: Record<string, number>;
+    if (replace) {
+      newSkills = { ...this.skills };
+    } else {
+      newSkills = this.skills;
+    }
 
     for (const [genSkillId, genSkillNum] of Object.entries(generatedSkills)) {
       if (genSkillId in newSkills) {
@@ -527,7 +564,9 @@ export class Character implements WhProperty {
       }
     }
 
-    this.skills = newSkills;
+    if (replace) {
+      this.skills = newSkills;
+    }
   }
 }
 

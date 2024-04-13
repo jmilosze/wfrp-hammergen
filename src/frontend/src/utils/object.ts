@@ -24,11 +24,10 @@ export function isKey<T extends object>(x: T, k: PropertyKey): k is keyof T {
   return k in x;
 }
 
-export function copyRecordWithObject<T extends object>(source: Record<string, T>): Record<string, T> {
-  const copy: Record<string, T> = {};
-
-  for (const [key, value] of Object.entries(source)) {
-    copy[key] = { ...value };
+export function clearObject(obj: object): void {
+  for (const prop in obj) {
+    if (isKey(obj, prop)) {
+      delete obj[prop];
+    }
   }
-  return copy;
 }
