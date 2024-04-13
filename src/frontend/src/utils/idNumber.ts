@@ -36,7 +36,7 @@ export function copyIdNumberArray(arr: IdNumber[]): IdNumber[] {
   }
 }
 
-export function updateIdNumberRecord(idNumberRecord: Record<string, any>, item: IdNumber): void {
+export function updateIdNumberRecord(idNumberRecord: Record<string, number>, item: IdNumber): void {
   if (item.number === 0) {
     if (item.id in idNumberRecord) {
       delete idNumberRecord[item.id];
@@ -45,4 +45,16 @@ export function updateIdNumberRecord(idNumberRecord: Record<string, any>, item: 
   }
 
   idNumberRecord[item.id] = item.number;
+}
+
+export function fillUpIdNumberRecord(idNumberRecord: Record<string, number>, newVals: Record<string, number>): void {
+  for (const [id, number] of Object.entries(newVals)) {
+    if (id in idNumberRecord) {
+      if (idNumberRecord[id] < number) {
+        idNumberRecord[id] = number;
+      }
+    } else {
+      idNumberRecord[id] = number;
+    }
+  }
 }

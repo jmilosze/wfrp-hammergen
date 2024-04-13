@@ -41,6 +41,7 @@ import { setsAreEqual, updateSet } from "../../utils/set.ts";
 import {
   compareIdNumber,
   copyIdNumberArray,
+  fillUpIdNumberRecord,
   IdNumber,
   idNumberArrayToRecord,
   updateIdNumberRecord,
@@ -49,7 +50,10 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { Skill } from "./skill.ts";
 import { GenerationProps } from "./generationProps.ts";
 import { generateSpeciesSkills, resolveSkillGroups } from "./characterGeneration/generateSkills.ts";
-import { selectRandom } from "../../utils/random.ts";
+import { rollInTable, selectRandom } from "../../utils/random.ts";
+import { Talent } from "./talent.ts";
+import { getTalentGroups } from "./characterGeneration/generateTalents.ts";
+import { generateSpeciesTalents } from "./characterGeneration/generateSpeciesTalents.ts";
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
@@ -543,6 +547,10 @@ export class Character implements WhProperty {
       return;
     }
 
+    if (!(this.species in generationProps.speciesSkills)) {
+      return;
+    }
+
     const speciesSkills = generationProps.speciesSkills[this.species];
     const resolvedSkillGroups = resolveSkillGroups(listOfSkills);
     const generatedSkills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandom);
@@ -554,18 +562,42 @@ export class Character implements WhProperty {
       newSkills = this.skills;
     }
 
-    for (const [genSkillId, genSkillNum] of Object.entries(generatedSkills)) {
-      if (genSkillId in newSkills) {
-        if (newSkills[genSkillId] < genSkillNum) {
-          newSkills[genSkillId] = genSkillNum;
-        }
-      } else {
-        newSkills[genSkillId] = genSkillNum;
-      }
-    }
+    fillUpIdNumberRecord(newSkills, generatedSkills);
 
     if (replace) {
       this.skills = newSkills;
+    }
+  }
+
+  addSpeciesTalents(listOfTalents: Talent[], generationProps: GenerationProps, replace = true): void {
+    if (!(this.species in generationProps.speciesTalents) || listOfTalents.length === 0) {
+      return;
+    }
+    if (!(this.species in generationProps.speciesTalents)) {
+      return;
+    }
+
+    const speciesTalents = generationProps.speciesTalents[this.species];
+    const resolvedTalentGroups = getTalentGroups(listOfTalents);
+    const generatedTalents = generateSpeciesTalents(
+      speciesTalents,
+      resolvedTalentGroups,
+      generationProps.randomTalents,
+      selectRandom,
+      rollInTable,
+    );
+
+    let newTalents: Record<string, number>;
+    if (replace) {
+      newTalents = { ...this.talents };
+    } else {
+      newTalents = this.talents;
+    }
+
+    fillUpIdNumberRecord(newTalents, idNumberArrayToRecord(generatedTalents));
+
+    if (replace) {
+      this.talents = newTalents;
     }
   }
 }
