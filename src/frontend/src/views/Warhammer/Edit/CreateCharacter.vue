@@ -560,9 +560,11 @@ const attributes = computed(() => {
         class="min-w-52"
         @createNew="openInNewTab('skill', { id: 'create' })"
         @reload="skillListUtils.loadWhList"
-        @clearAll="wh.clearSkills()"
+        @clearAll="wh.clearSkills(true)"
         @updated="(event) => wh.updateSkills(event.id, event.number)"
-        @addSpeciesSkills="wh.addSpeciesSkills(skillListUtils.whList.value, generationPropsUtils.generationProps.value)"
+        @addSpeciesSkills="
+          wh.addSpeciesSkills(skillListUtils.whList.value, generationPropsUtils.generationProps.value, true)
+        "
       />
     </div>
   </div>
@@ -582,7 +584,7 @@ const attributes = computed(() => {
         @createNew="openInNewTab('spell', { id: 'create' })"
         @reload="spellListUtils.loadWhList"
         @selected="(e) => wh.updateSpells(e.id, e.selected)"
-        @clearAll="wh.clearSpells()"
+        @clearAll="wh.clearSpells(true)"
       />
     </div>
     <div class="flex-1">
@@ -600,7 +602,7 @@ const attributes = computed(() => {
         @createNew="openInNewTab('prayer', { id: 'create' })"
         @reload="prayerListUtils.loadWhList"
         @selected="(e) => wh.updatePrayers(e.id, e.selected)"
-        @clearAll="wh.clearPrayers()"
+        @clearAll="wh.clearPrayers(true)"
       />
     </div>
     <div class="flex-1">
@@ -618,7 +620,7 @@ const attributes = computed(() => {
         @createNew="openInNewTab('mutation', { id: 'create' })"
         @reload="mutationListUtils.loadWhList"
         @selected="(e) => wh.updateMutations(e.id, e.selected)"
-        @clearAll="wh.clearMutations()"
+        @clearAll="wh.clearMutations(true)"
       />
     </div>
   </div>

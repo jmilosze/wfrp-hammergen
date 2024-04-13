@@ -494,7 +494,7 @@ export class Character implements WhProperty {
     updateIdNumberRecord(this.talents, { id: id, number: number });
   }
 
-  clearTalents(replace = false): void {
+  clearTalents(replace: boolean): void {
     if (replace) {
       this.talents = {} as Record<string, number>;
     } else {
@@ -506,7 +506,7 @@ export class Character implements WhProperty {
     updateIdNumberRecord(this.equippedItems, { id: id, number: number });
   }
 
-  clearEquippedItems(replace = false): void {
+  clearEquippedItems(replace: boolean): void {
     if (replace) {
       this.equippedItems = {} as Record<string, number>;
     } else {
@@ -518,7 +518,7 @@ export class Character implements WhProperty {
     updateIdNumberRecord(this.carriedItems, { id: id, number: number });
   }
 
-  clearCarriedItems(replace = false): void {
+  clearCarriedItems(replace: boolean): void {
     if (replace) {
       this.carriedItems = {} as Record<string, number>;
     } else {
@@ -530,7 +530,7 @@ export class Character implements WhProperty {
     updateIdNumberRecord(this.storedItems, { id: id, number: number });
   }
 
-  clearStoredItems(replace = false): void {
+  clearStoredItems(replace: boolean): void {
     if (replace) {
       this.storedItems = {} as Record<string, number>;
     } else {
