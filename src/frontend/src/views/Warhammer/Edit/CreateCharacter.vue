@@ -52,6 +52,7 @@ import { SkillApi } from "../../../services/wh/skill.ts";
 import { TalentApi } from "../../../services/wh/talent.ts";
 import { useGenerationProps } from "../../../composables/generationProps.ts";
 import CharacterSkills from "../../../components/CharacterSkills.vue";
+import CharacterTalents from "../../../components/CharacterTalents.vue";
 
 const props = defineProps<{
   id: string;

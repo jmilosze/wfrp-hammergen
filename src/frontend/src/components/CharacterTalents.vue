@@ -176,7 +176,12 @@ function onModifyClick() {
             {{ talentsWithNumber[id].description }}
             <div class="mb-1">
               <span class="font-semibold mr-1">Max rank</span>
-              {{ talentsWithNumber[id].maxRank }} ({{ talentsWithNumber[id].maxRankFormula }})
+              {{ talentsWithNumber[id].maxRank }}
+              {{
+                talentsWithNumber[id].maxRankFormula.includes("Bonus")
+                  ? "(" + talentsWithNumber[id].maxRankFormula + ")"
+                  : ""
+              }}
             </div>
           </div>
         </template>
