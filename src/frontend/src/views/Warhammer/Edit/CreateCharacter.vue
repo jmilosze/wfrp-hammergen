@@ -285,7 +285,7 @@ const attributes = computed(() => {
     </AlertBlock>
   </div>
   <Header :title="id === 'character' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
-  <div class="border border-neutral-700 rounded p-2 my-4">
+  <div v-if="wh.canEdit" class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
     <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
     <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
@@ -521,7 +521,9 @@ const attributes = computed(() => {
           :disabled="!wh.canEdit"
           :class="[isEqualOrGreater ? '' : 'mt-2']"
         >
-          <ActionButton class="mb-1" size="sm" @click="formGenerateDescription">Generate</ActionButton>
+          <ActionButton v-if="wh.canEdit" class="mb-1" size="sm" @click="formGenerateDescription"
+            >Generate</ActionButton
+          >
         </FormTextarea>
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!wh.canEdit" />
         <p class="-mb-3">Calculated</p>
@@ -549,6 +551,7 @@ const attributes = computed(() => {
     title="Attributes"
     :rollsValidationStatus="validRolls"
     :advancesValidationStatus="validAdvances"
+    :disabled="!wh.canEdit"
   />
   <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
     <CharacterSkills
@@ -582,6 +585,13 @@ const attributes = computed(() => {
       "
     />
   </div>
+
+  <div class="flex flex-wrap items-center gap-2 mb-1">
+    <p class="mb-1">Trappings</p>
+    <ActionButton v-if="wh.canEdit" size="sm" @click="formGenerateStatusStanding">Add class items</ActionButton>
+  </div>
+
+  <div class="border border-neutral-300 rounded p-2"></div>
 
   <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
     <SelectTable
