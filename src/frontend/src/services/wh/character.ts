@@ -5,7 +5,7 @@ import {
   getWoundsFormula,
   SpeciesWithRegion,
 } from "./characterUtils.ts";
-import { StatusStanding, StatusTier } from "./career.ts";
+import { CareerClass, StatusStanding, StatusTier } from "./career.ts";
 import {
   Attributes,
   attributesAreEqual,
@@ -50,10 +50,11 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { Skill } from "./skill.ts";
 import { GenerationProps } from "./generationProps.ts";
 import { generateSpeciesSkills, resolveSkillGroups } from "./characterGeneration/generateSkills.ts";
-import { rollInTable, selectRandom } from "../../utils/random.ts";
+import { rollDice, rollInTable, selectRandom } from "../../utils/random.ts";
 import { Talent } from "./talent.ts";
 import { getTalentGroups } from "./characterGeneration/generateTalents.ts";
 import { generateSpeciesTalents } from "./characterGeneration/generateSpeciesTalents.ts";
+import { generateClassItems } from "./characterGeneration/generateCharacter.ts";
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
@@ -542,7 +543,7 @@ export class Character implements WhProperty {
     }
   }
 
-  addSpeciesSkills(listOfSkills: Skill[], generationProps: GenerationProps, replace = true): void {
+  addSpeciesSkills(listOfSkills: Skill[], generationProps: GenerationProps, replace: boolean): void {
     if (!(this.species in generationProps.speciesSkills) || listOfSkills.length === 0) {
       return;
     }
@@ -569,7 +570,7 @@ export class Character implements WhProperty {
     }
   }
 
-  addSpeciesTalents(listOfTalents: Talent[], generationProps: GenerationProps, replace = true): void {
+  addSpeciesTalents(listOfTalents: Talent[], generationProps: GenerationProps, replace: boolean): void {
     if (!(this.species in generationProps.speciesTalents) || listOfTalents.length === 0) {
       return;
     }
@@ -598,6 +599,33 @@ export class Character implements WhProperty {
 
     if (replace) {
       this.talents = newTalents;
+    }
+  }
+
+  addClassItems(careerClass: CareerClass, generationProps: GenerationProps, replace: boolean): void {
+    if (generationProps.classItems.length === 0) {
+      return;
+    }
+
+    const classItems = generationProps.classItems[careerClass];
+    const generatedItems = generateClassItems(classItems, rollDice, selectRandom);
+
+    let newEquipped: Record<string, number>;
+    let newCarried: Record<string, number>;
+    if (replace) {
+      newEquipped = { ...this.equippedItems };
+      newCarried = { ...this.carriedItems };
+    } else {
+      newEquipped = this.equippedItems;
+      newCarried = this.carriedItems;
+    }
+
+    fillUpIdNumberRecord(newEquipped, idNumberArrayToRecord(generatedItems.equipped));
+    fillUpIdNumberRecord(newCarried, idNumberArrayToRecord(generatedItems.carried));
+
+    if (replace) {
+      this.equippedItems = newEquipped;
+      this.carriedItems = newCarried;
     }
   }
 }
