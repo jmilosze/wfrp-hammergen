@@ -5,7 +5,7 @@ import {
   getWoundsFormula,
   SpeciesWithRegion,
 } from "./characterUtils.ts";
-import { CareerClass, StatusStanding, StatusTier } from "./career.ts";
+import { Career, StatusStanding, StatusTier } from "./career.ts";
 import {
   Attributes,
   attributesAreEqual,
@@ -602,12 +602,18 @@ export class Character implements WhProperty {
     }
   }
 
-  addClassItems(careerClass: CareerClass, generationProps: GenerationProps, replace: boolean): void {
+  addClassItems(careerList: Career[], generationProps: GenerationProps, replace: boolean): void {
     if (generationProps.classItems.length === 0) {
       return;
     }
 
-    const classItems = generationProps.classItems[careerClass];
+    const selectedCareerd = careerList.find((x) => x.id === this.career.id);
+
+    if (!selectedCareerd) {
+      return;
+    }
+
+    const classItems = generationProps.classItems[selectedCareerd.careerClass];
     const generatedItems = generateClassItems(classItems, rollDice, selectRandom);
 
     let newEquipped: Record<string, number>;

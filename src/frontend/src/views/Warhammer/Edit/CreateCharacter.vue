@@ -588,7 +588,12 @@ const attributes = computed(() => {
 
   <div class="flex flex-wrap items-center gap-2 mb-1">
     <p class="mb-1">Trappings</p>
-    <ActionButton v-if="wh.canEdit" size="sm" @click="formGenerateStatusStanding">Add class items</ActionButton>
+    <ActionButton
+      v-if="wh.canEdit"
+      size="sm"
+      @click="wh.addClassItems(careerListUtils.whList.value, generationPropsUtils.generationProps.value, true)"
+      >Add class items</ActionButton
+    >
   </div>
 
   <div class="border border-neutral-300 rounded p-2"></div>
