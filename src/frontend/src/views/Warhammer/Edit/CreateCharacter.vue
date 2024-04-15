@@ -53,6 +53,8 @@ import { TalentApi } from "../../../services/wh/talent.ts";
 import { useGenerationProps } from "../../../composables/generationProps.ts";
 import CharacterSkills from "../../../components/CharacterSkills.vue";
 import CharacterTalents from "../../../components/CharacterTalents.vue";
+import { ItemApi, itemTypeList } from "../../../services/wh/item.ts";
+import CharacterItems from "../../../components/CharacterItems.vue";
 
 const props = defineProps<{
   id: string;
@@ -88,6 +90,8 @@ const skillListUtils = useWhList(new SkillApi(authRequest));
 skillListUtils.loadWhList();
 const talentListUtils = useWhList(new TalentApi(authRequest));
 talentListUtils.loadWhList();
+const itemListUtils = useWhList(new ItemApi(authRequest));
+itemListUtils.loadWhList();
 const generationPropsUtils = useGenerationProps(authRequest);
 generationPropsUtils.loadGenerationProps();
 
@@ -586,17 +590,21 @@ const attributes = computed(() => {
     />
   </div>
 
-  <div class="flex flex-wrap items-center gap-2 mb-1">
-    <p class="mb-1">Trappings</p>
-    <ActionButton
-      v-if="wh.canEdit"
-      size="sm"
-      @click="wh.addClassItems(careerListUtils.whList.value, generationPropsUtils.generationProps.value, true)"
-      >Add class items</ActionButton
-    >
-  </div>
-
-  <div class="border border-neutral-300 rounded p-2"></div>
+  <CharacterItems
+    :disabled="!wh.canEdit"
+    :initEquipped="wh.equippedItems"
+    :initCarried="wh.carriedItems"
+    :initStored="wh.storedItems"
+    :itemList="itemListUtils.whList.value"
+    :loading="itemListUtils.loading.value"
+    :attributes="attributes"
+    class="flex-1 min-w-96"
+    @createNew="openInNewTab('talent', { id: 'create' })"
+    @reload="itemListUtils.loadWhList"
+    @clearAll="wh.clearTalents(true)"
+    @updated="(event) => wh.updateTalents(event.id, event.number)"
+    @addClassItems="wh.addClassItems(careerListUtils.whList.value, generationPropsUtils.generationProps.value, true)"
+  />
 
   <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
     <SelectTable
