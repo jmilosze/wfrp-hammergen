@@ -121,7 +121,7 @@ const resetPaginationCounter = ref(0);
 
 function onModifyClick() {
   resetPaginationCounter.value += 1;
-  modal.showModal("modifyTalentsModal");
+  modal.showModal("modifyItemsModal");
   searchTerm.value = "";
   itemsWithNumberList.value.sort((a, b) => {
     return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
@@ -132,9 +132,9 @@ function onModifyClick() {
 <template>
   <div>
     <div class="flex items-center gap-2 mb-1">
-      <div>Talents</div>
+      <div>Trappings</div>
       <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
-      <ActionButton v-if="!disabled" size="sm" @click="emit('addClassItems')">Add species talents</ActionButton>
+      <ActionButton v-if="!disabled" size="sm" @click="emit('addClassItems')">Add class items</ActionButton>
       <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')">Clear all</ActionButton>
     </div>
     <div v-if="props.loading" class="flex justify-center">
@@ -157,8 +157,8 @@ function onModifyClick() {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
     </div>
-    <ModalWindow id="modifyTalentsModal">
-      <template #header> Modify talents </template>
+    <ModalWindow id="modifyItemsModal">
+      <template #header> Modify trappings </template>
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>

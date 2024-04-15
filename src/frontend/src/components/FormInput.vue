@@ -13,7 +13,7 @@ const model = defineModel<T>();
 </script>
 
 <template>
-  <div class="w-full">
+  <div>
     <p v-if="title" class="mb-1">{{ title }}</p>
     <div class="flex items-stretch justify-between">
       <div class="flex-auto">
