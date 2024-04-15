@@ -507,7 +507,7 @@ export class Character implements WhProperty {
     }
   }
 
-  updateEquippedItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {
+  updateItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {
     switch (location) {
       case "equipped":
         updateIdNumberRecord(this.equippedItems, { id: id, number: number });

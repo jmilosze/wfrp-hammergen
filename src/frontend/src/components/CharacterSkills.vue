@@ -166,7 +166,7 @@ function onModifyClick() {
           <FormInput
             v-model="skillsWithNumber[id].number"
             type="number"
-            class="w-20"
+            class="min-w-16 w-full"
             @update:modelValue="emit('updated', { id: id, number: skillsWithNumber[id].number })"
           />
         </template>

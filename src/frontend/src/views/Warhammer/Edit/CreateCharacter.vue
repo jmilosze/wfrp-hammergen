@@ -601,8 +601,8 @@ const attributes = computed(() => {
     class="flex-1 min-w-96"
     @createNew="openInNewTab('talent', { id: 'create' })"
     @reload="itemListUtils.loadWhList"
-    @clearAll="wh.clearTalents(true)"
-    @updated="(event) => wh.updateTalents(event.id, event.number)"
+    @clearAll="wh.clearItems(true)"
+    @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
     @addClassItems="wh.addClassItems(careerListUtils.whList.value, generationPropsUtils.generationProps.value, true)"
   />
 

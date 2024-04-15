@@ -5,7 +5,7 @@ import { ViewSize } from "../utils/viewSize.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ActionButton from "./ActionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
-// import FormInput from "./FormInput.vue";
+import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Item } from "../services/wh/item.ts";
 
@@ -28,7 +28,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "updated", value: { id: string; number: number }): void;
+  (e: "equippedUpdated", value: { id: string; number: number }): void;
+  (e: "carriedUpdated", value: { id: string; number: number }): void;
+  (e: "storedUpdated", value: { id: string; number: number }): void;
   (e: "createNew"): void;
   (e: "reload"): void;
   (e: "clearAll"): void;
@@ -68,7 +70,7 @@ function updateItemsWithNumber(
       itemsWithNumber.value[item.id].stored = selectedStored[item.id];
     }
   }
-  itemsWithNumberList.value = Object.values(itemsWithNumberList.value).sort((a, b) => {
+  itemsWithNumberList.value = Object.values(itemsWithNumber.value).sort((a, b) => {
     return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
   });
 }
@@ -106,6 +108,9 @@ watch(
 );
 
 const selectedItems = computed(() => itemsWithNumberList.value.filter((x) => anySelected(x)));
+const selectedEquipped = computed(() => selectedItems.value.filter((x) => x.equipped !== 0));
+const selectedStored = computed(() => selectedItems.value.filter((x) => x.stored !== 0));
+const selectedCarried = computed(() => selectedItems.value.filter((x) => x.carried !== 0));
 
 const modal = useModal();
 const searchTerm = ref("");
@@ -131,33 +136,80 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1">
-      <div>Trappings</div>
-      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
-      <ActionButton v-if="!disabled" size="sm" @click="emit('addClassItems')">Add class items</ActionButton>
-      <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')">Clear all</ActionButton>
+    <div class="border border-neutral-300 rounded p-2">
+      <div class="flex items-center gap-2 mb-1">
+        <div>Trappings</div>
+        <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
+        <ActionButton v-if="!disabled" size="sm" @click="emit('addClassItems')">Add class items</ActionButton>
+        <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')">Clear all</ActionButton>
+      </div>
+      <div v-if="props.loading" class="flex justify-center">
+        <SpinnerAnimation class="w-14 m-2" />
+      </div>
+      <div v-else class="flex gap-4 flex-wrap">
+        <div class="flex-1">
+          <div class="mb-1">Equipped</div>
+          <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left">
+                  <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+                  <th class="border-b border-neutral-300 py-2 px-2">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="src in selectedEquipped" :key="src.id" class="bg-white hover:bg-neutral-200">
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.equipped }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+          </div>
+        </div>
+        <div class="flex-1">
+          <div class="mb-1">Carried</div>
+          <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left">
+                  <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+                  <th class="border-b border-neutral-300 py-2 px-2">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="src in selectedCarried" :key="src.id" class="bg-white hover:bg-neutral-200">
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.carried }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+          </div>
+        </div>
+        <div class="flex-1">
+          <div class="mb-1">Stored</div>
+          <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left">
+                  <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+                  <th class="border-b border-neutral-300 py-2 px-2">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="src in selectedStored" :key="src.id" class="bg-white hover:bg-neutral-200">
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.stored }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-            <th class="border-b border-neutral-300 py-2 px-2">Times taken</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.equipped }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
-    </div>
-    <ModalWindow id="modifyItemsModal">
+    <ModalWindow id="modifyItemsModal" size="lg">
       <template #header> Modify trappings </template>
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
@@ -166,7 +218,7 @@ function onModifyClick() {
         v-model="searchTerm"
         :fields="modalColumns"
         :items="itemsWithNumberList"
-        :stackedViewSize="ViewSize.sm"
+        :stackedViewSize="ViewSize.md"
         :addCreateNewBtn="true"
         :addReloadBtn="true"
         :loading="props.loading"
@@ -175,14 +227,32 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
-        <!--        <template #number="{ id }: { id: string }">-->
-        <!--          <FormInput-->
-        <!--            v-model="talentsWithNumber[id].number"-->
-        <!--            type="number"-->
-        <!--            class="w-20"-->
-        <!--            @update:modelValue="emit('updated', { id: id, number: talentsWithNumber[id].number })"-->
-        <!--          />-->
-        <!--        </template>-->
+        <template #equipped="{ id }: { id: string }">
+          <FormInput
+            v-model="itemsWithNumber[id].equipped"
+            type="number"
+            class="min-w-16 w-full"
+            @update:modelValue="emit('equippedUpdated', { id: id, number: itemsWithNumber[id].equipped })"
+          />
+        </template>
+
+        <template #carried="{ id }: { id: string }">
+          <FormInput
+            v-model="itemsWithNumber[id].carried"
+            type="number"
+            class="min-w-16 w-full"
+            @update:modelValue="emit('carriedUpdated', { id: id, number: itemsWithNumber[id].carried })"
+          />
+        </template>
+
+        <template #stored="{ id }: { id: string }">
+          <FormInput
+            v-model="itemsWithNumber[id].stored"
+            type="number"
+            class="min-w-16 w-full"
+            @update:modelValue="emit('storedUpdated', { id: id, number: itemsWithNumber[id].stored })"
+          />
+        </template>
 
         <!--        <template #description="{ id }: { id: string }">-->
         <!--          <div>-->
