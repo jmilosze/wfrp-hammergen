@@ -507,38 +507,30 @@ export class Character implements WhProperty {
     }
   }
 
-  updateEquippedItems(id: string, number: number): void {
-    updateIdNumberRecord(this.equippedItems, { id: id, number: number });
+  updateEquippedItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {
+    switch (location) {
+      case "equipped":
+        updateIdNumberRecord(this.equippedItems, { id: id, number: number });
+        return;
+      case "carried":
+        updateIdNumberRecord(this.carriedItems, { id: id, number: number });
+        return;
+      case "stored":
+        updateIdNumberRecord(this.storedItems, { id: id, number: number });
+        return;
+      default:
+        return;
+    }
   }
 
-  clearEquippedItems(replace: boolean): void {
+  clearItems(replace: boolean): void {
     if (replace) {
       this.equippedItems = {} as Record<string, number>;
-    } else {
-      clearObject(this.equippedItems);
-    }
-  }
-
-  updateCarriedItems(id: string, number: number): void {
-    updateIdNumberRecord(this.carriedItems, { id: id, number: number });
-  }
-
-  clearCarriedItems(replace: boolean): void {
-    if (replace) {
       this.carriedItems = {} as Record<string, number>;
-    } else {
-      clearObject(this.carriedItems);
-    }
-  }
-
-  updateStoredItems(id: string, number: number): void {
-    updateIdNumberRecord(this.storedItems, { id: id, number: number });
-  }
-
-  clearStoredItems(replace: boolean): void {
-    if (replace) {
       this.storedItems = {} as Record<string, number>;
     } else {
+      clearObject(this.equippedItems);
+      clearObject(this.carriedItems);
       clearObject(this.storedItems);
     }
   }
