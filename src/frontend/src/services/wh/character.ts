@@ -347,11 +347,11 @@ export class Character implements WhProperty {
   }
 
   validateSkills(): ValidationStatus {
-    return validateIdNumber("Skills", this.skills, 1, 1000);
+    return validateIdNumber("Skills number", this.skills, 1, 1000);
   }
 
   validateTalents(): ValidationStatus {
-    return validateIdNumber("Talents", this.talents, 1, 1000);
+    return validateIdNumber("Talents number", this.talents, 1, 1000);
   }
 
   validateEquippedItems(): ValidationStatus {

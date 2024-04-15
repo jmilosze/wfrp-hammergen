@@ -9,6 +9,7 @@ import ActionButton from "./ActionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
+import { ValidationStatus } from "../utils/validation.ts";
 
 type SkillWithNumber = {
   id: string;
@@ -26,6 +27,7 @@ const props = defineProps<{
   initSkills: Record<string, number>;
   loading?: boolean;
   attributes: Attributes;
+  validationStatus: ValidationStatus;
 }>();
 
 const emit = defineEmits<{
@@ -143,6 +145,9 @@ function onModifyClick() {
         </tbody>
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+    </div>
+    <div class="text-sm text-red-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+      {{ validationStatus.message }}
     </div>
     <ModalWindow id="modifySkillsModal">
       <template #header> Modify skills </template>

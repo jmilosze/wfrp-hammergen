@@ -111,5 +111,5 @@ export function validateIdNumber(
       }
     }
   }
-  return setValidationStatus(isValid, `${fieldName} numbers have to be integer numbers between ${min} and ${max}.`);
+  return setValidationStatus(isValid, `${fieldName} has to be an integer between ${min} and ${max}.`);
 }

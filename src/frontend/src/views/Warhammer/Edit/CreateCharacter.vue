@@ -118,6 +118,8 @@ const validCurrentExp = computed(() => wh.value.validateCurrentExp());
 const validSpentExp = computed(() => wh.value.validateSpentExp());
 const validRolls = computed(() => wh.value.validateRolls());
 const validAdvances = computed(() => wh.value.validateAdvances());
+const validSkills = computed(() => wh.value.validateSkills());
+const validTalents = computed(() => wh.value.validateTalents());
 
 const speciesOpts = speciesWithRegionList
   .filter((x) => x !== SpeciesWithRegion.HumanDefault)
@@ -564,6 +566,7 @@ const attributes = computed(() => {
       :skillList="skillListUtils.whList.value"
       :loading="skillListUtils.loading.value"
       :attributes="attributes"
+      :validationStatus="validSkills"
       class="flex-1 min-w-96"
       @createNew="openInNewTab('skill', { id: 'create' })"
       @reload="skillListUtils.loadWhList"
@@ -579,6 +582,7 @@ const attributes = computed(() => {
       :talentList="talentListUtils.whList.value"
       :loading="talentListUtils.loading.value"
       :attributes="attributes"
+      :validationStatus="validTalents"
       class="flex-1 min-w-96"
       @createNew="openInNewTab('talent', { id: 'create' })"
       @reload="talentListUtils.loadWhList"
