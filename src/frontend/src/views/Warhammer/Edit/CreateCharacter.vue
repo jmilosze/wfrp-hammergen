@@ -120,6 +120,9 @@ const validRolls = computed(() => wh.value.validateRolls());
 const validAdvances = computed(() => wh.value.validateAdvances());
 const validSkills = computed(() => wh.value.validateSkills());
 const validTalents = computed(() => wh.value.validateTalents());
+const validEquipped = computed(() => wh.value.validateEquippedItems());
+const validCarried = computed(() => wh.value.validateCarriedItems());
+const validStored = computed(() => wh.value.validateStoredItems());
 
 const speciesOpts = speciesWithRegionList
   .filter((x) => x !== SpeciesWithRegion.HumanDefault)
@@ -601,11 +604,16 @@ const attributes = computed(() => {
     :initStored="wh.storedItems"
     :itemList="itemListUtils.whList.value"
     :loading="itemListUtils.loading.value"
+    :equippedValidationStatus="validEquipped"
+    :carriedValidationStatus="validCarried"
+    :storedValidationStatus="validStored"
     class="flex-1 min-w-96"
     @createNew="openInNewTab('talent', { id: 'create' })"
     @reload="itemListUtils.loadWhList"
     @clearAll="wh.clearItems(true)"
     @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
+    @carriedUpdated="(event) => wh.updateItems(event.id, event.number, 'carried')"
+    @storedUpdated="(event) => wh.updateItems(event.id, event.number, 'stored')"
     @addClassItems="wh.addClassItems(careerListUtils.whList.value, generationPropsUtils.generationProps.value, true)"
   />
 

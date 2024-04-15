@@ -8,6 +8,7 @@ import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Item } from "../services/wh/item.ts";
+import { ValidationStatus } from "../utils/validation.ts";
 
 type ItemWithNumber = {
   id: string;
@@ -24,6 +25,9 @@ const props = defineProps<{
   initEquipped: Record<string, number>;
   initCarried: Record<string, number>;
   initStored: Record<string, number>;
+  equippedValidationStatus: ValidationStatus;
+  storedValidationStatus: ValidationStatus;
+  carriedValidationStatus: ValidationStatus;
   loading?: boolean;
 }>();
 
@@ -208,6 +212,15 @@ function onModifyClick() {
           </div>
         </div>
       </div>
+    </div>
+    <div class="text-sm text-red-600 mt-1" :class="[equippedValidationStatus.valid ? 'hidden' : '']">
+      {{ equippedValidationStatus.message }}
+    </div>
+    <div class="text-sm text-red-600 mt-1" :class="[carriedValidationStatus.valid ? 'hidden' : '']">
+      {{ carriedValidationStatus.message }}
+    </div>
+    <div class="text-sm text-red-600 mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
+      {{ storedValidationStatus.message }}
     </div>
     <ModalWindow id="modifyItemsModal" size="lg">
       <template #header> Modify trappings </template>

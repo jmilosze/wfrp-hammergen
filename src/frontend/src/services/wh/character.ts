@@ -355,15 +355,15 @@ export class Character implements WhProperty {
   }
 
   validateEquippedItems(): ValidationStatus {
-    return validateIdNumber("Equipped items", this.equippedItems, 1, 1000);
+    return validateIdNumber("Equipped items number", this.equippedItems, 1, 1000);
   }
 
   validateCarriedItems(): ValidationStatus {
-    return validateIdNumber("Carried items", this.carriedItems, 1, 1000);
+    return validateIdNumber("Carried items number", this.carriedItems, 1, 1000);
   }
 
   validateStoredItems(): ValidationStatus {
-    return validateIdNumber("Stored items", this.storedItems, 1, 1000);
+    return validateIdNumber("Stored items number", this.storedItems, 1, 1000);
   }
 
   isValid(): boolean {
