@@ -597,7 +597,6 @@ const attributes = computed(() => {
     :initStored="wh.storedItems"
     :itemList="itemListUtils.whList.value"
     :loading="itemListUtils.loading.value"
-    :attributes="attributes"
     class="flex-1 min-w-96"
     @createNew="openInNewTab('talent', { id: 'create' })"
     @reload="itemListUtils.loadWhList"
