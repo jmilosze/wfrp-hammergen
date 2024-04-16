@@ -52,8 +52,8 @@ function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillLis
     if (!skill.isGroup) {
       skillsWithNumber.value[skill.id] = {
         id: skill.id,
-        name: skill.name,
-        description: skill.description,
+        name: addSpaces(skill.name),
+        description: addSpaces(skill.description),
         attributeName: printAttributeName(skill.attribute),
         attributeValue: getAttributeValue(skill.attribute, attributes),
         type: printSkillType(skill.type),
@@ -120,7 +120,7 @@ function onModifyClick() {
     <div class="flex items-center gap-2 mb-1 flex-wrap">
       <div>Skills</div>
       <div class="flex gap-2 flex-wrap">
-        <ActionButton v-if="!disabled" size="sm" class="flex-1 text-center" @click="onModifyClick">
+        <ActionButton v-if="!disabled" size="sm" class="flex-1" @click="onModifyClick">
           <span class="flex-1">Modify</span>
         </ActionButton>
         <ActionButton v-if="!disabled" size="sm" class="whitespace-nowrap flex-1" @click="emit('addSpeciesSkills')">
@@ -152,7 +152,7 @@ function onModifyClick() {
         </thead>
         <tbody>
           <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-2 border-b border-neutral-300">{{ addSpaces(src.name) }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
@@ -193,7 +193,7 @@ function onModifyClick() {
 
         <template #description="{ id }: { id: string }">
           <div>
-            {{ addSpaces(skillsWithNumber[id].description) }}
+            {{ skillsWithNumber[id].description }}
             <div class="mb-1"><span class="font-semibold mr-1">Type</span> {{ skillsWithNumber[id].type }}</div>
             <div class="mb-1">
               <span class="font-semibold mr-1">Attribute</span> {{ skillsWithNumber[id].attributeName }}

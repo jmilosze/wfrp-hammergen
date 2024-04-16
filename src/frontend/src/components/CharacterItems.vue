@@ -9,6 +9,7 @@ import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Item } from "../services/wh/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
+import { addSpaces } from "../utils/string.ts";
 
 type ItemWithNumber = {
   id: string;
@@ -60,8 +61,8 @@ function updateItemsWithNumber(
   for (const item of itemList) {
     itemsWithNumber.value[item.id] = {
       id: item.id,
-      name: item.name,
-      description: item.description,
+      name: addSpaces(item.name),
+      description: addSpaces(item.description),
       equipped: 0,
       carried: 0,
       stored: 0,
@@ -144,12 +145,26 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="border border-neutral-300 rounded p-2">
-      <div class="flex items-center gap-2 mb-1">
+    <div class="border border-neutral-300 rounded p-2 min-w-fit">
+      <div class="flex items-center gap-2 mb-1 flex-wrap">
         <div>Trappings</div>
-        <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
-        <ActionButton v-if="!disabled" size="sm" @click="emit('addClassItems')">Add class items</ActionButton>
-        <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')">Clear all</ActionButton>
+        <div class="flex gap-2 flex-wrap">
+          <ActionButton v-if="!disabled" size="sm" class="flex-1" @click="onModifyClick">
+            <span class="flex-1">Modify</span>
+          </ActionButton>
+          <ActionButton v-if="!disabled" size="sm" class="whitespace-nowrap flex-1" @click="emit('addClassItems')">
+            <span class="flex-1">Add species talents</span>
+          </ActionButton>
+          <ActionButton
+            v-if="!disabled"
+            size="sm"
+            variant="red"
+            class="whitespace-nowrap flex-1"
+            @click="emit('clearAll')"
+          >
+            <span class="flex-1">Clear all</span>
+          </ActionButton>
+        </div>
       </div>
       <div v-if="props.loading" class="flex justify-center">
         <SpinnerAnimation class="w-14 m-2" />

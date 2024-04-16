@@ -10,6 +10,7 @@ import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { ValidationStatus } from "../utils/validation.ts";
+import { addSpaces } from "../utils/string.ts";
 
 type TalentWithNumber = {
   id: string;
@@ -55,8 +56,8 @@ function updateTalentsWithNumber(
     if (!talent.isGroup) {
       talentsWithNumber.value[talent.id] = {
         id: talent.id,
-        name: talent.name,
-        description: talent.description,
+        name: addSpaces(talent.name),
+        description: addSpaces(talent.description),
         maxRank: talent.getMaxRank(attributes),
         maxRankFormula: talent.getMaxRankDisplay(),
         attributeName: printAttributeName(talent.attribute),
@@ -120,11 +121,25 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1">
+    <div class="flex items-center gap-2 mb-1 flex-wrap">
       <div>Talents</div>
-      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
-      <ActionButton v-if="!disabled" size="sm" @click="emit('addSpeciesTalents')">Add species talents</ActionButton>
-      <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')">Clear all</ActionButton>
+      <div class="flex gap-2 flex-wrap">
+        <ActionButton v-if="!disabled" size="sm" class="flex-1" @click="onModifyClick">
+          <span class="flex-1">Modify</span>
+        </ActionButton>
+        <ActionButton v-if="!disabled" size="sm" class="whitespace-nowrap flex-1" @click="emit('addSpeciesTalents')">
+          <span class="flex-1">Add species talents</span>
+        </ActionButton>
+        <ActionButton
+          v-if="!disabled"
+          size="sm"
+          variant="red"
+          class="whitespace-nowrap flex-1"
+          @click="emit('clearAll')"
+        >
+          <span class="flex-1">Clear all</span>
+        </ActionButton>
+      </div>
     </div>
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
