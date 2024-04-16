@@ -87,7 +87,7 @@ function updateItemsWithNumber(
 watch(
   () => props.initEquipped,
   (newVal) => {
-    updateItemsWithNumber(newVal, props.initStored, props.initCarried, props.itemList);
+    updateItemsWithNumber(newVal, props.initCarried, props.initStored, props.itemList);
   },
   { immediate: true },
 );
@@ -95,7 +95,7 @@ watch(
 watch(
   () => props.initCarried,
   (newVal) => {
-    updateItemsWithNumber(props.initEquipped, props.initStored, newVal, props.itemList);
+    updateItemsWithNumber(props.initEquipped, newVal, props.initStored, props.itemList);
   },
   { immediate: true },
 );
@@ -103,7 +103,7 @@ watch(
 watch(
   () => props.initStored,
   (newVal) => {
-    updateItemsWithNumber(props.initEquipped, props.initStored, newVal, props.itemList);
+    updateItemsWithNumber(props.initEquipped, props.initCarried, newVal, props.itemList);
   },
   { immediate: true },
 );
@@ -111,7 +111,7 @@ watch(
 watch(
   () => props.itemList,
   (newVal) => {
-    updateItemsWithNumber(props.initEquipped, props.initStored, props.initCarried, newVal);
+    updateItemsWithNumber(props.initEquipped, props.initCarried, props.initStored, newVal);
   },
   { immediate: true },
 );
@@ -153,7 +153,7 @@ function onModifyClick() {
             <span class="flex-1">Modify</span>
           </ActionButton>
           <ActionButton v-if="!disabled" size="sm" class="whitespace-nowrap flex-1" @click="emit('addClassItems')">
-            <span class="flex-1">Add species talents</span>
+            <span class="flex-1">Add class items</span>
           </ActionButton>
           <ActionButton
             v-if="!disabled"

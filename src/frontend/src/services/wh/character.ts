@@ -599,13 +599,13 @@ export class Character implements WhProperty {
       return;
     }
 
-    const selectedCareerd = careerList.find((x) => x.id === this.career.id);
+    const selectedCarrer = careerList.find((x) => x.id === this.career.id);
 
-    if (!selectedCareerd) {
+    if (!selectedCarrer) {
       return;
     }
 
-    const classItems = generationProps.classItems[selectedCareerd.careerClass];
+    const classItems = generationProps.classItems[selectedCarrer.careerClass];
     const generatedItems = generateClassItems(classItems, rollDice, selectRandom);
 
     let newEquipped: Record<string, number>;

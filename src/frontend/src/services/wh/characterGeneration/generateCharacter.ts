@@ -178,7 +178,7 @@ export function generateClassItems(
   for (const [itemIds, itemNumber] of Object.entries(classItems.carried)) {
     const id = getIdFromCommaSeparatedIds(itemIds, selectRandomFn);
     const number = getNumberFromDiceRollString(itemNumber, rollDiceFn);
-    items.equipped.push({ id: id, number: number });
+    items.carried.push({ id: id, number: number });
   }
 
   return items;
