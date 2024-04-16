@@ -562,7 +562,7 @@ const attributes = computed(() => {
     :advancesValidationStatus="validAdvances"
     :disabled="!wh.canEdit"
   />
-  <div class="flex justify-between text-left gap-4 my-4 flex-wrap" :class="[isEqualOrGreater ? '' : 'flex-col']">
+  <div class="flex justify-between text-left gap-4 my-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
     <CharacterSkills
       :disabled="!wh.canEdit"
       :initSkills="wh.skills"

@@ -6,6 +6,7 @@ import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
+import { addSpaces } from "../utils/string.ts";
 
 type ItemWithSelect = {
   id: string;
@@ -58,7 +59,12 @@ function updateItemsWithSelect(
 ) {
   itemsWithSelect.value = {};
   for (const item of itemList) {
-    itemsWithSelect.value[item.id] = { ...item, selected: false };
+    itemsWithSelect.value[item.id] = {
+      id: item.id,
+      name: addSpaces(item.name),
+      description: addSpaces(item.description),
+      selected: false,
+    };
     if (selectedItems && selectedItems.has(item.id)) {
       itemsWithSelect.value[item.id].selected = true;
     }
