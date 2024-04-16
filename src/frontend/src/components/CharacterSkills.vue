@@ -182,10 +182,6 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
-        <template #name="{ id }: { id: string }">
-          {{ addSpaces(skillsWithNumber[id].name) }}
-        </template>
-
         <template #number="{ id }: { id: string }">
           <FormInput
             v-model="skillsWithNumber[id].number"
