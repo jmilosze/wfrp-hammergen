@@ -562,7 +562,7 @@ const attributes = computed(() => {
     :advancesValidationStatus="validAdvances"
     :disabled="!wh.canEdit"
   />
-  <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
+  <div class="flex justify-between text-left gap-4 my-4 flex-wrap" :class="[isEqualOrGreater ? '' : 'flex-col']">
     <CharacterSkills
       :disabled="!wh.canEdit"
       :initSkills="wh.skills"
@@ -570,7 +570,7 @@ const attributes = computed(() => {
       :loading="skillListUtils.loading.value"
       :attributes="attributes"
       :validationStatus="validSkills"
-      class="flex-1 min-w-96"
+      class="flex-1"
       @createNew="openInNewTab('skill', { id: 'create' })"
       @reload="skillListUtils.loadWhList"
       @clearAll="wh.clearSkills(true)"
@@ -586,7 +586,7 @@ const attributes = computed(() => {
       :loading="talentListUtils.loading.value"
       :attributes="attributes"
       :validationStatus="validTalents"
-      class="flex-1 min-w-96"
+      class="flex-1"
       @createNew="openInNewTab('talent', { id: 'create' })"
       @reload="talentListUtils.loadWhList"
       @clearAll="wh.clearTalents(true)"
@@ -607,7 +607,7 @@ const attributes = computed(() => {
     :equippedValidationStatus="validEquipped"
     :carriedValidationStatus="validCarried"
     :storedValidationStatus="validStored"
-    class="flex-1 min-w-96"
+    class="flex-1"
     @createNew="openInNewTab('talent', { id: 'create' })"
     @reload="itemListUtils.loadWhList"
     @clearAll="wh.clearItems(true)"
@@ -617,7 +617,7 @@ const attributes = computed(() => {
     @addClassItems="wh.addClassItems(careerListUtils.whList.value, generationPropsUtils.generationProps.value, true)"
   />
 
-  <div ref="contentContainerRef" class="flex justify-between text-left gap-4 my-4 flex-wrap">
+  <div class="flex justify-between text-left gap-4 my-4 flex-wrap">
     <SelectTable
       :disabled="!wh.canEdit"
       :initSelectedItems="wh.spells"

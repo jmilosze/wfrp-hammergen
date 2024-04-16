@@ -10,6 +10,7 @@ import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { ValidationStatus } from "../utils/validation.ts";
+import { addSpaces } from "../utils/string.ts";
 
 type SkillWithNumber = {
   id: string;
@@ -116,11 +117,25 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1">
+    <div class="flex items-center gap-2 mb-1 flex-wrap">
       <div>Skills</div>
-      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
-      <ActionButton v-if="!disabled" size="sm" @click="emit('addSpeciesSkills')">Add species skills</ActionButton>
-      <ActionButton v-if="!disabled" size="sm" variant="red" @click="emit('clearAll')">Clear all</ActionButton>
+      <div class="flex gap-2 flex-wrap">
+        <ActionButton v-if="!disabled" size="sm" class="flex-1 text-center" @click="onModifyClick">
+          <span class="flex-1">Modify</span>
+        </ActionButton>
+        <ActionButton v-if="!disabled" size="sm" class="whitespace-nowrap flex-1" @click="emit('addSpeciesSkills')">
+          <span class="flex-1">Add species skills</span>
+        </ActionButton>
+        <ActionButton
+          v-if="!disabled"
+          size="sm"
+          variant="red"
+          class="whitespace-nowrap flex-1"
+          @click="emit('clearAll')"
+        >
+          <span class="flex-1">Clear all</span>
+        </ActionButton>
+      </div>
     </div>
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
@@ -137,7 +152,7 @@ function onModifyClick() {
         </thead>
         <tbody>
           <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ addSpaces(src.name) }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
@@ -167,6 +182,10 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <template #name="{ id }: { id: string }">
+          {{ addSpaces(skillsWithNumber[id].name) }}
+        </template>
+
         <template #number="{ id }: { id: string }">
           <FormInput
             v-model="skillsWithNumber[id].number"
@@ -178,7 +197,7 @@ function onModifyClick() {
 
         <template #description="{ id }: { id: string }">
           <div>
-            {{ skillsWithNumber[id].description }}
+            {{ addSpaces(skillsWithNumber[id].description) }}
             <div class="mb-1"><span class="font-semibold mr-1">Type</span> {{ skillsWithNumber[id].type }}</div>
             <div class="mb-1">
               <span class="font-semibold mr-1">Attribute</span> {{ skillsWithNumber[id].attributeName }}
