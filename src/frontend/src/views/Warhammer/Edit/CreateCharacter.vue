@@ -53,7 +53,7 @@ import { TalentApi } from "../../../services/wh/talent.ts";
 import { useGenerationProps } from "../../../composables/generationProps.ts";
 import CharacterSkills from "../../../components/CharacterSkills.vue";
 import CharacterTalents from "../../../components/CharacterTalents.vue";
-import { ItemApi, itemTypeList } from "../../../services/wh/item.ts";
+import { ItemApi } from "../../../services/wh/item.ts";
 import CharacterItems from "../../../components/CharacterItems.vue";
 
 const props = defineProps<{

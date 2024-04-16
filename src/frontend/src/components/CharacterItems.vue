@@ -14,6 +14,8 @@ type ItemWithNumber = {
   id: string;
   name: string;
   description: string;
+  canBeEquipped: boolean;
+  canBeCarried: boolean;
   equipped: number;
   carried: number;
   stored: number;
@@ -63,6 +65,8 @@ function updateItemsWithNumber(
       equipped: 0,
       carried: 0,
       stored: 0,
+      canBeEquipped: item.canBeEquipped(),
+      canBeCarried: item.canBeCarried(),
     };
     if (item.id in selectedEquipped) {
       itemsWithNumber.value[item.id].equipped = selectedEquipped[item.id];
@@ -242,20 +246,24 @@ function onModifyClick() {
       >
         <template #equipped="{ id }: { id: string }">
           <FormInput
+            v-if="itemsWithNumber[id].canBeEquipped"
             v-model="itemsWithNumber[id].equipped"
             type="number"
             class="min-w-16 w-full"
             @update:modelValue="emit('equippedUpdated', { id: id, number: itemsWithNumber[id].equipped })"
           />
+          <div v-else>N/A</div>
         </template>
 
         <template #carried="{ id }: { id: string }">
           <FormInput
+            v-if="itemsWithNumber[id].canBeCarried"
             v-model="itemsWithNumber[id].carried"
             type="number"
             class="min-w-16 w-full"
             @update:modelValue="emit('carriedUpdated', { id: id, number: itemsWithNumber[id].carried })"
           />
+          <div v-else>N/A</div>
         </template>
 
         <template #stored="{ id }: { id: string }">

@@ -19,7 +19,7 @@ import {
   WhProperty,
 } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual } from "../../utils/set.ts";
+import { setsAreEqual, updateSet } from "../../utils/set.ts";
 
 export const enum ItemType {
   Melee = 0,
@@ -729,39 +729,47 @@ export class Item implements WhProperty {
   }
 
   updateProperties(id: string, selected: boolean): void {
-    if (selected) {
-      if (this.properties.has(id)) {
-        // do nothing
-        return;
-      } else {
-        this.properties.add(id);
-      }
-    } else {
-      if (this.properties.has(id)) {
-        this.properties.delete(id);
-        return;
-      } else {
-        // do nothing
-      }
-    }
+    updateSet(this.properties, id, selected);
   }
 
   updateSpells(id: string, selected: boolean): void {
-    if (selected) {
-      if (this.grimoire.spells.has(id)) {
-        // do nothing
-        return;
-      } else {
-        this.grimoire.spells.add(id);
-      }
-    } else {
-      if (this.grimoire.spells.has(id)) {
-        this.grimoire.spells.delete(id);
-        return;
-      } else {
-        // do nothing
-      }
+    updateSet(this.grimoire.spells, id, selected);
+  }
+
+  canBeEquipped(): boolean {
+    if (
+      [ItemType.Melee, ItemType.Ranged, ItemType.Ammunition, ItemType.Armour, ItemType.Grimoire].includes(this.type)
+    ) {
+      return true;
     }
+
+    if (ItemType.Container && this.container.carryType === CarryType.CarriableAndWearable) {
+      return true;
+    }
+
+    return ItemType.Other && this.other.carryType === CarryType.CarriableAndWearable;
+  }
+
+  canBeCarried(): boolean {
+    if (
+      [ItemType.Melee, ItemType.Ranged, ItemType.Ammunition, ItemType.Armour, ItemType.Grimoire].includes(this.type)
+    ) {
+      return true;
+    }
+
+    if (
+      ItemType.Container &&
+      (this.container.carryType === CarryType.CarriableAndWearable ||
+        this.container.carryType === CarryType.CarriableAndNotWearable)
+    ) {
+      return true;
+    }
+
+    return (
+      ItemType.Other &&
+      (this.other.carryType === CarryType.CarriableAndWearable ||
+        this.other.carryType === CarryType.CarriableAndNotWearable)
+    );
   }
 }
 
