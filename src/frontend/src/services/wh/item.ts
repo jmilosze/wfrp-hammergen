@@ -743,11 +743,11 @@ export class Item implements WhProperty {
       return true;
     }
 
-    if (ItemType.Container && this.container.carryType === CarryType.CarriableAndWearable) {
+    if (this.type === ItemType.Container && this.container.carryType === CarryType.CarriableAndWearable) {
       return true;
     }
 
-    return ItemType.Other && this.other.carryType === CarryType.CarriableAndWearable;
+    return this.type === ItemType.Other && this.other.carryType === CarryType.CarriableAndWearable;
   }
 
   canBeCarried(): boolean {
@@ -758,7 +758,7 @@ export class Item implements WhProperty {
     }
 
     if (
-      ItemType.Container &&
+      this.type === ItemType.Container &&
       (this.container.carryType === CarryType.CarriableAndWearable ||
         this.container.carryType === CarryType.CarriableAndNotWearable)
     ) {
@@ -766,7 +766,7 @@ export class Item implements WhProperty {
     }
 
     return (
-      ItemType.Other &&
+      this.type === ItemType.Other &&
       (this.other.carryType === CarryType.CarriableAndWearable ||
         this.other.carryType === CarryType.CarriableAndNotWearable)
     );
