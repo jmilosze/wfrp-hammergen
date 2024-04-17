@@ -9,7 +9,10 @@ import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Item } from "../services/wh/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
-import { addSpaces } from "../utils/string.ts";
+import { addSpaces, truncate } from "../utils/string.ts";
+import TextLink from "./TextLink.vue";
+
+const DESC_CHARS = 100;
 
 type ItemWithNumber = {
   id: string;
@@ -62,7 +65,7 @@ function updateItemsWithNumber(
     itemsWithNumber.value[item.id] = {
       id: item.id,
       name: addSpaces(item.name),
-      description: addSpaces(item.description),
+      description: truncate(addSpaces(item.description), DESC_CHARS),
       equipped: 0,
       carried: 0,
       stored: 0,
@@ -182,7 +185,7 @@ function onModifyClick() {
               </thead>
               <tbody>
                 <tr v-for="src in selectedEquipped" :key="src.id" class="bg-white hover:bg-neutral-200">
-                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ addSpaces(src.name) }}</td>
                   <td class="py-2 px-2 border-b border-neutral-300">{{ src.equipped }}</td>
                 </tr>
               </tbody>
@@ -202,7 +205,7 @@ function onModifyClick() {
               </thead>
               <tbody>
                 <tr v-for="src in selectedCarried" :key="src.id" class="bg-white hover:bg-neutral-200">
-                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ addSpaces(src.name) }}</td>
                   <td class="py-2 px-2 border-b border-neutral-300">{{ src.carried }}</td>
                 </tr>
               </tbody>
@@ -222,7 +225,7 @@ function onModifyClick() {
               </thead>
               <tbody>
                 <tr v-for="src in selectedStored" :key="src.id" class="bg-white hover:bg-neutral-200">
-                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300">{{ addSpaces(src.name) }}</td>
                   <td class="py-2 px-2 border-b border-neutral-300">{{ src.stored }}</td>
                 </tr>
               </tbody>
@@ -259,6 +262,10 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <template #name="{ id }: { id: string }">
+          <TextLink routeName="item" :params="{ id: id }">{{ addSpaces(itemsWithNumber[id].name) }}</TextLink>
+        </template>
+
         <template #equipped="{ id }: { id: string }">
           <FormInput
             v-if="itemsWithNumber[id].canBeEquipped"

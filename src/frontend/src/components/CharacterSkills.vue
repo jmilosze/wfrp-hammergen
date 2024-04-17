@@ -155,7 +155,7 @@ function onModifyClick() {
         </thead>
         <tbody>
           <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ addSpaces(src.name) }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
