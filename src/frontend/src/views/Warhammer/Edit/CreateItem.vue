@@ -387,6 +387,8 @@ watch(
           title="Spells"
           modalTitle="Add/remove spells"
           :loading="spellListUtils.loading.value"
+          itemViewRouteName="spell"
+          :truncateModalDescription="100"
           class="mt-4"
           @createNew="openInNewTab('spell', { id: 'create' })"
           @reload="spellListUtils.loadWhList"

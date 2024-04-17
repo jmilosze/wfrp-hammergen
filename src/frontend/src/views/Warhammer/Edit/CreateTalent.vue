@@ -165,6 +165,8 @@ watch(
           title="Belongs to group"
           modalTitle="Modify groups"
           :loading="talentListUtils.loading.value"
+          itemViewRouteName="talent"
+          :truncateModalDescription="100"
           @createNew="openInNewTab('talent', { id: 'create' })"
           @reload="talentListUtils.loadWhList"
           @selected="(e) => wh.updateGroup(e.id, e.selected)"
