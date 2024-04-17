@@ -561,7 +561,7 @@ export class Item implements WhProperty {
   }
 
   validateEnc(): ValidationStatus {
-    return validFloatFn(this.price, 0, 1000);
+    return validFloatFn(this.enc, 0, 1000);
   }
 
   validateMeleeDmgSbMult(): ValidationStatus {

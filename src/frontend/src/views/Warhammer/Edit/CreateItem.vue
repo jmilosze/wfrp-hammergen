@@ -400,6 +400,8 @@ watch(
         title="Qualities and runes"
         modalTitle="Modify qualities and runes"
         :loading="propertyListUtils.loading.value"
+        itemViewRouteName="property"
+        :truncateModalDescription="100"
         class="mt-4"
         @createNew="openInNewTab('property', { id: 'create' })"
         @reload="propertyListUtils.loadWhList"

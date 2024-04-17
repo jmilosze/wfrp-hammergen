@@ -6,7 +6,8 @@ import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { addSpaces } from "../utils/string.ts";
+import { addSpaces, truncate } from "../utils/string.ts";
+import TextLink from "./TextLink.vue";
 
 type ItemWithSelect = {
   id: string;
@@ -25,6 +26,8 @@ const props = defineProps<{
   modalId?: string;
   clearAllBtn?: boolean;
   disableDescription?: boolean;
+  truncateModalDescription?: number;
+  itemViewRouteName?: string;
 }>();
 
 const emit = defineEmits<{
@@ -62,7 +65,7 @@ function updateItemsWithSelect(
     itemsWithSelect.value[item.id] = {
       id: item.id,
       name: addSpaces(item.name),
-      description: addSpaces(item.description),
+      description: truncate(addSpaces(item.description), props.truncateModalDescription),
       selected: false,
     };
     if (selectedItems && selectedItems.has(item.id)) {
@@ -145,6 +148,10 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <template v-if="itemViewRouteName" #name="{ id }: { id: string }">
+          <TextLink :routeName="itemViewRouteName" :params="{ id: id }">{{ itemsWithSelect[id].name }}</TextLink>
+        </template>
+
         <template #selected="{ id }: { id: string }">
           <div>
             <input
