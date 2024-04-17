@@ -10,7 +10,10 @@ import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { ValidationStatus } from "../utils/validation.ts";
-import { addSpaces } from "../utils/string.ts";
+import { addSpaces, truncate } from "../utils/string.ts";
+import TextLink from "./TextLink.vue";
+
+const DESC_CHARS = 100;
 
 type TalentWithNumber = {
   id: string;
@@ -56,8 +59,8 @@ function updateTalentsWithNumber(
     if (!talent.isGroup) {
       talentsWithNumber.value[talent.id] = {
         id: talent.id,
-        name: addSpaces(talent.name),
-        description: addSpaces(talent.description),
+        name: talent.name,
+        description: talent.description,
         maxRank: talent.getMaxRank(attributes),
         maxRankFormula: talent.getMaxRankDisplay(),
         attributeName: printAttributeName(talent.attribute),
@@ -182,6 +185,10 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <template #name="{ id }: { id: string }">
+          <TextLink routeName="talent" :params="{ id: id }">{{ addSpaces(talentsWithNumber[id].name) }}</TextLink>
+        </template>
+
         <template #number="{ id }: { id: string }">
           <FormInput
             v-model="talentsWithNumber[id].number"
@@ -193,7 +200,7 @@ function onModifyClick() {
 
         <template #description="{ id }: { id: string }">
           <div>
-            {{ talentsWithNumber[id].description }}
+            {{ truncate(addSpaces(talentsWithNumber[id].description), DESC_CHARS) }}
             <div class="mb-1">
               <span class="font-semibold mr-1">Max rank</span>
               {{ talentsWithNumber[id].maxRank }}

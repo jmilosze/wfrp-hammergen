@@ -148,8 +148,10 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
-        <template v-if="itemViewRouteName" #name="{ id }: { id: string }">
-          <TextLink :routeName="itemViewRouteName" :params="{ id: id }">{{ itemsWithSelect[id].name }}</TextLink>
+        <template #name="{ id }: { id: string }">
+          <TextLink v-if="itemViewRouteName" :routeName="itemViewRouteName" :params="{ id: id }">
+            {{ itemsWithSelect[id].name }}
+          </TextLink>
         </template>
 
         <template #selected="{ id }: { id: string }">

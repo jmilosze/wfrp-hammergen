@@ -10,7 +10,10 @@ import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { ValidationStatus } from "../utils/validation.ts";
-import { addSpaces } from "../utils/string.ts";
+import { addSpaces, truncate } from "../utils/string.ts";
+import TextLink from "./TextLink.vue";
+
+const DESC_CHARS = 100;
 
 type SkillWithNumber = {
   id: string;
@@ -52,8 +55,8 @@ function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillLis
     if (!skill.isGroup) {
       skillsWithNumber.value[skill.id] = {
         id: skill.id,
-        name: addSpaces(skill.name),
-        description: addSpaces(skill.description),
+        name: skill.name,
+        description: skill.description,
         attributeName: printAttributeName(skill.attribute),
         attributeValue: getAttributeValue(skill.attribute, attributes),
         type: printSkillType(skill.type),
@@ -182,6 +185,10 @@ function onModifyClick() {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <template #name="{ id }: { id: string }">
+          <TextLink routeName="skill" :params="{ id: id }">{{ addSpaces(skillsWithNumber[id].name) }}</TextLink>
+        </template>
+
         <template #number="{ id }: { id: string }">
           <FormInput
             v-model="skillsWithNumber[id].number"
@@ -193,7 +200,7 @@ function onModifyClick() {
 
         <template #description="{ id }: { id: string }">
           <div>
-            {{ skillsWithNumber[id].description }}
+            {{ truncate(addSpaces(skillsWithNumber[id].description), DESC_CHARS) }}
             <div class="mb-1"><span class="font-semibold mr-1">Type</span> {{ skillsWithNumber[id].type }}</div>
             <div class="mb-1">
               <span class="font-semibold mr-1">Attribute</span> {{ skillsWithNumber[id].attributeName }}

@@ -8,6 +8,8 @@ import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Career, printClassName } from "../services/wh/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
+import { addSpaces } from "../utils/string.ts";
+import TextLink from "./TextLink.vue";
 
 type CareerWithSelect = {
   id: string;
@@ -211,6 +213,12 @@ function emitPastSelected(id: string) {
         @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <template #name="{ id }: { id: string }">
+          <TextLink routeName="career" :params="{ id: careersWithSelect[id].careerId }">
+            {{ addSpaces(careersWithSelect[id].name) }}
+          </TextLink>
+        </template>
+
         <template #current="{ id }: { id: string }">
           <div>
             <input
