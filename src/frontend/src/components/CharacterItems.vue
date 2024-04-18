@@ -7,7 +7,7 @@ import ActionButton from "./ActionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { Item } from "../services/wh/item.ts";
+import { Item, printItemType } from "../services/wh/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
 import { addSpaces, truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
@@ -20,6 +20,7 @@ type ItemWithNumber = {
   description: string;
   canBeEquipped: boolean;
   canBeCarried: boolean;
+  itemType: string;
   equipped: number;
   carried: number;
   stored: number;
@@ -69,6 +70,7 @@ function updateItemsWithNumber(
       equipped: 0,
       carried: 0,
       stored: 0,
+      itemType: printItemType(item.type),
       canBeEquipped: item.canBeEquipped(),
       canBeCarried: item.canBeCarried(),
     };
@@ -258,6 +260,7 @@ function onModifyClick() {
         :addReloadBtn="true"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
+        cellPadding="px-2"
         elementId="modal"
         @createNew="emit('createNew')"
         @reload="emit('reload')"
@@ -297,20 +300,15 @@ function onModifyClick() {
           />
         </template>
 
-        <!--        <template #description="{ id }: { id: string }">-->
-        <!--          <div>-->
-        <!--            {{ talentsWithNumber[id].description }}-->
-        <!--            <div class="mb-1">-->
-        <!--              <span class="font-semibold mr-1">Max rank</span>-->
-        <!--              {{ talentsWithNumber[id].maxRank }}-->
-        <!--              {{-->
-        <!--                talentsWithNumber[id].maxRankFormula.includes("Bonus")-->
-        <!--                  ? "(" + talentsWithNumber[id].maxRankFormula + ")"-->
-        <!--                  : ""-->
-        <!--              }}-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </template>-->
+        <template #description="{ id }: { id: string }">
+          <div class="min-w-40">
+            <div class="mb-1">
+              <span class="font-semibold mr-1">Type</span>
+              {{ itemsWithNumber[id].itemType }}
+            </div>
+            {{ itemsWithNumber[id].description }}
+          </div>
+        </template>
       </TableWithSearch>
     </ModalWindow>
   </div>
