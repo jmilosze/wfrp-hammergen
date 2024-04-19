@@ -1,12 +1,12 @@
 <script setup lang="ts">
-defineProps<{ routeName?: string; params?: any; href?: string }>();
+defineProps<{ routeName?: string; params?: any; href?: string; sameWindow?: boolean }>();
 </script>
 
 <template>
   <RouterLink
     v-if="routeName"
     :to="{ name: routeName, params: params }"
-    target="_blank"
+    :target="sameWindow ? '' : '_blank'"
     class="text-blue-600 hover:underline"
     ><slot
   /></RouterLink>

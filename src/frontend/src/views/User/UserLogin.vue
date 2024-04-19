@@ -79,10 +79,10 @@ async function submitForm() {
       >Log in</ActionButton
     >
     <div class="mt-5">
-      <TextLink routeName="forgotpassword">Forgot your password?</TextLink>
+      <TextLink routeName="forgotpassword" :sameWindow="true">Forgot your password?</TextLink>
     </div>
     <div class="mt-3">
-      <TextLink routeName="register">Register as a new user.</TextLink>
+      <TextLink routeName="register" :sameWindow="true">Register as a new user.</TextLink>
     </div>
   </div>
 </template>
