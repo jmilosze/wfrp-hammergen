@@ -37,7 +37,7 @@ const columns = [
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "maxRank", displayName: "Max rank", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
-  { name: "actions", displayName: "Actions", skipStackedTitle: false },
+  { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
 const items = computed(() => {

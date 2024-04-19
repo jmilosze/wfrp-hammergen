@@ -51,7 +51,7 @@ const columns = [
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "type", displayName: "Type", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
-  { name: "actions", displayName: "Actions", skipStackedTitle: false },
+  { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
 const items = computed(() => {

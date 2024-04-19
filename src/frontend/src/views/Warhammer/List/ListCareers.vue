@@ -44,7 +44,7 @@ const columns = [
   { name: "class", displayName: "Class", skipStackedTitle: false },
   { name: "species", displayName: "Species", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
-  { name: "actions", displayName: "Actions", skipStackedTitle: false },
+  { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
 const items = computed(() => {
