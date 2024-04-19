@@ -558,21 +558,26 @@ const grimoiresDisp = ref(
     class="my-5"
   />
   <ViewCharacterTable
-    title="Other equipped"
+    title="Other equipped trappings"
     :stack="!isEqualOrGreater && !printing"
     :items="equippedOtherDisp.items"
     :fields="equippedOtherDisp.fields"
     class="my-5"
   />
   <ViewCharacterTable
-    title="Carried"
+    title="Carried trappings"
     :stack="!isEqualOrGreater && !printing"
     :items="carriedDisp.items"
     :fields="carriedDisp.fields"
     class="my-5"
   />
   <div class="flex justify-between text-left gap-5" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <ViewCharacterTable title="Stored" :items="storedDisp.items" :fields="storedDisp.fields" class="grow" />
+    <ViewCharacterTable
+      title="Owned and stored stuff"
+      :items="storedDisp.items"
+      :fields="storedDisp.fields"
+      class="grow"
+    />
     <ViewCharacterTable
       title="Encumbrance (Equipped and Carried)"
       :items="encDisp.items"

@@ -327,7 +327,7 @@ export class Character implements WhProperty {
   }
 
   validateCorruption(): ValidationStatus {
-    return validIntegerFn(this.sin, 0, 1000);
+    return validIntegerFn(this.corruption, 0, 1000);
   }
 
   validateCurrentExp(): ValidationStatus {
@@ -355,15 +355,15 @@ export class Character implements WhProperty {
   }
 
   validateEquippedItems(): ValidationStatus {
-    return validateIdNumber("Equipped items number", this.equippedItems, 1, 1000);
+    return validateIdNumber("Equipped trappings number", this.equippedItems, 1, 1000);
   }
 
   validateCarriedItems(): ValidationStatus {
-    return validateIdNumber("Carried items number", this.carriedItems, 1, 1000);
+    return validateIdNumber("Carried trappings number", this.carriedItems, 1, 1000);
   }
 
   validateStoredItems(): ValidationStatus {
-    return validateIdNumber("Stored items number", this.storedItems, 1, 1000);
+    return validateIdNumber("Stored trappings number", this.storedItems, 1, 1000);
   }
 
   isValid(): boolean {
