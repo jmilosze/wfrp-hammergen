@@ -167,6 +167,7 @@ const validAtts = computed(() => {
         />
       </template>
     </CharacterModifiersAttributes>
+    <p class="text-sm text-red-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
 
     <div class="justify-between text-left gap-4" :class="[lg.isEqualOrGreater.value ? 'flex' : 'flex-col']">
       <SelectInput
@@ -186,7 +187,6 @@ const validAtts = computed(() => {
         @update:modelValue="(event) => updateMovement(event)"
       />
     </div>
-    <p class="text-sm text-red-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
   </div>
 
   <ModalWindow id="modifiersHelpModal">
