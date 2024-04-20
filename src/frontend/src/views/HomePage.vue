@@ -17,7 +17,7 @@ const showAlert = ref(true);
         scheme and made navigation easier, especially ony smaller screens.
       </p>
       <p>
-        At this time there are no functional changes, all changes are purely visual and users do not need to take any
+        At this time there are no functional changes, all changes are purely visual, and users do not need to take any
         action.
       </p>
       <p class="mt-2">
