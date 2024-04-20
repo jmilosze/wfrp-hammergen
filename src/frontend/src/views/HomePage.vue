@@ -13,8 +13,8 @@ const showAlert = ref(true);
     <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
       <p class="text-2xl">New look!</p>
       <p class="mt-2">
-        We are very happy to announce that Hammergen has a new look on both desktop and mobile. We updated the color
-        scheme and made navigation easier, especially ony smaller screens.
+        We are very happy to announce that, after intense 5 months of work, Hammergen has a new look on both desktop and
+        mobile. We updated the colour scheme and made navigation easier, especially on smaller screens.
       </p>
       <p>
         At this time there are no functional changes, all changes are purely visual, and users do not need to take any
