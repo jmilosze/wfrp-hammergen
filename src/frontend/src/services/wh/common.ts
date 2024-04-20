@@ -59,20 +59,18 @@ export function validLongDescFn(name: string): ValidationStatus {
   );
 }
 
-export function validIntegerFn(value: number | string | undefined, min: number, max: number): ValidationStatus {
+export function validIntegerFn(value: number, min: number, max: number): ValidationStatus {
   let isValid = true;
-
-  if (typeof value !== "number" || value > max || value < min || !Number.isInteger(value)) {
+  if (value > max || value < min || !Number.isInteger(value)) {
     isValid = false;
   }
 
   return setValidationStatus(isValid, `This field an integer between ${min} and ${max}.`);
 }
 
-export function validFloatFn(value: number | string | undefined, min: number, max: number): ValidationStatus {
+export function validFloatFn(value: number, min: number, max: number): ValidationStatus {
   let isValid = false;
-
-  if (typeof value === "number" && value >= min && value <= max) {
+  if (value >= min && value <= max) {
     isValid = true;
   }
   return setValidationStatus(isValid, `This field a number between ${min} and ${max}.`);
@@ -87,7 +85,7 @@ export function validAttributesFn(
   let isValid = true;
 
   for (const value of Object.values(attributes)) {
-    if (typeof value !== "number" || value > max || value < min || !Number.isInteger(value)) {
+    if (value > max || value < min || !Number.isInteger(value)) {
       isValid = false;
       break;
     }
@@ -98,14 +96,14 @@ export function validAttributesFn(
 
 export function validateIdNumber(
   fieldName: string,
-  record: Record<string, number | string | undefined>,
+  record: Record<string, number>,
   min: number,
   max: number,
 ): ValidationStatus {
   let isValid = true;
   for (const [id, number] of Object.entries(record)) {
     if (isKey(record, id)) {
-      if (typeof number !== "number" || !Number.isInteger(number) || number < min || number > max) {
+      if (!Number.isInteger(number) || number < min || number > max) {
         isValid = false;
         break;
       }

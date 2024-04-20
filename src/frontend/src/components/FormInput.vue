@@ -1,7 +1,9 @@
 <script setup lang="ts" generic="T = number | string">
 import { ValidationStatus } from "../utils/validation.ts";
+import { computed } from "vue";
 
-defineProps<{
+const props = defineProps<{
+  modelValue: T;
   type?: "text" | "password" | "number";
   title?: string;
   disabled?: boolean;
@@ -9,7 +11,22 @@ defineProps<{
   centerText?: boolean;
 }>();
 
-const model = defineModel<T>();
+const emit = defineEmits<{
+  (e: "update:modelValue", modelValue: T): void;
+}>();
+
+const value = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    if (props.type === "number" && typeof value !== "number") {
+      emit("update:modelValue", Number.NaN as T);
+      return;
+    }
+    emit("update:modelValue", value);
+  },
+});
 </script>
 
 <template>
@@ -18,7 +35,7 @@ const model = defineModel<T>();
     <div class="flex items-stretch justify-between">
       <div class="flex-auto">
         <input
-          v-model="model"
+          v-model="value"
           :type="type ? type : 'text'"
           class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2 disabled:bg-neutral-200"
           :class="centerText ? ['text-center'] : []"
