@@ -66,7 +66,7 @@ function formatSpellRow(spell: Spell) {
     v-if="whList.apiError.value && whList.showApiError.value"
     alertType="red"
     :centered="true"
-    @click="whList.showApiError.value = false"
+    @close="whList.showApiError.value = false"
   >
     {{ whList.apiError.value }}
   </AlertBlock>

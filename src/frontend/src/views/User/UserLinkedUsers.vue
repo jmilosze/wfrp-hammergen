@@ -88,7 +88,7 @@ async function submitForm() {
 </script>
 
 <template>
-  <AlertBlock v-if="apiError && showApiError" alertType="red" :centered="true" @click="showApiError = false">
+  <AlertBlock v-if="apiError && showApiError" alertType="red" :centered="true" @close="showApiError = false">
     {{ apiError }}
   </AlertBlock>
   <Header title="Linked users">

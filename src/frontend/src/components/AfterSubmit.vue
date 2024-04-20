@@ -19,7 +19,7 @@ const emit = defineEmits<{
       v-if="submissionState.status === 'failure' && submissionState.message !== ''"
       alertType="red"
       :centered="centered"
-      @click="emit('close')"
+      @close="emit('close')"
     >
       {{ submissionState.message }}
     </AlertBlock>
@@ -27,7 +27,7 @@ const emit = defineEmits<{
       v-if="submissionState.status === 'success' && submissionState.message !== ''"
       alertType="green"
       :centered="centered"
-      @click="emit('close')"
+      @close="emit('close')"
     >
       {{ submissionState.message }}
     </AlertBlock>

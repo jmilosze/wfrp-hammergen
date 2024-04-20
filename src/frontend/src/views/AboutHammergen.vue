@@ -36,6 +36,10 @@ import TextLink from "../components/TextLink.vue";
   </p>
   <div class="text-2xl font-semibold mt-5">Updates</div>
   <div>
+    <div class="text-xl mt-2 mb-1">21 Apr 2024</div>
+    <p>Redesigned page layout and changed colour scheme. No changes to functionality.</p>
+  </div>
+  <div>
     <div class="text-xl mt-2 mb-1">19 Nov 2023</div>
     <p class="mb-1">Added contents of:</p>
     <ul class="list-disc ml-6 mt-1">

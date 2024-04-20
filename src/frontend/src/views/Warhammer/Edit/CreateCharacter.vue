@@ -233,14 +233,14 @@ const attributes = computed(() => {
 
 <template>
   <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
+    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
       {{ apiError }}
     </AlertBlock>
 
     <AlertBlock
       v-if="careerListUtils.apiError.value && careerListUtils.showApiError.value"
       alertType="red"
-      @click="careerListUtils.showApiError.value = false"
+      @close="careerListUtils.showApiError.value = false"
     >
       {{ careerListUtils.apiError.value }}
     </AlertBlock>
@@ -248,7 +248,7 @@ const attributes = computed(() => {
     <AlertBlock
       v-if="spellListUtils.apiError.value && spellListUtils.showApiError.value"
       alertType="red"
-      @click="spellListUtils.showApiError.value = false"
+      @close="spellListUtils.showApiError.value = false"
     >
       {{ spellListUtils.apiError.value }}
     </AlertBlock>
@@ -256,7 +256,7 @@ const attributes = computed(() => {
     <AlertBlock
       v-if="prayerListUtils.apiError.value && prayerListUtils.showApiError.value"
       alertType="red"
-      @click="prayerListUtils.showApiError.value = false"
+      @close="prayerListUtils.showApiError.value = false"
     >
       {{ prayerListUtils.apiError.value }}
     </AlertBlock>
@@ -264,7 +264,7 @@ const attributes = computed(() => {
     <AlertBlock
       v-if="mutationListUtils.apiError.value && mutationListUtils.showApiError.value"
       alertType="red"
-      @click="mutationListUtils.showApiError.value = false"
+      @close="mutationListUtils.showApiError.value = false"
     >
       {{ mutationListUtils.apiError.value }}
     </AlertBlock>
@@ -272,7 +272,7 @@ const attributes = computed(() => {
     <AlertBlock
       v-if="skillListUtils.apiError.value && skillListUtils.showApiError.value"
       alertType="red"
-      @click="skillListUtils.showApiError.value = false"
+      @close="skillListUtils.showApiError.value = false"
     >
       {{ skillListUtils.apiError.value }}
     </AlertBlock>
@@ -280,7 +280,7 @@ const attributes = computed(() => {
     <AlertBlock
       v-if="talentListUtils.apiError.value && talentListUtils.showApiError.value"
       alertType="red"
-      @click="talentListUtils.showApiError.value = false"
+      @close="talentListUtils.showApiError.value = false"
     >
       {{ talentListUtils.apiError.value }}
     </AlertBlock>
@@ -288,7 +288,7 @@ const attributes = computed(() => {
     <AlertBlock
       v-if="generationPropsUtils.apiError.value && generationPropsUtils.showApiError.value"
       alertType="red"
-      @click="generationPropsUtils.showApiError.value = false"
+      @close="generationPropsUtils.showApiError.value = false"
     >
       {{ generationPropsUtils.apiError.value }}
     </AlertBlock>

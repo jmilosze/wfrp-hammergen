@@ -104,14 +104,14 @@ watch(
 
 <template>
   <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
+    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
       {{ apiError }}
     </AlertBlock>
 
     <AlertBlock
       v-if="skillListUtils.apiError.value && skillListUtils.showApiError.value"
       alertType="red"
-      @click="skillListUtils.showApiError.value = false"
+      @close="skillListUtils.showApiError.value = false"
     >
       {{ skillListUtils.apiError.value }}
     </AlertBlock>

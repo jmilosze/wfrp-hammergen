@@ -54,7 +54,7 @@ const validDuration = computed(() => wh.value.validateDuration());
 
 <template>
   <div class="flex justify-center">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
+    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
       {{ apiError }}
     </AlertBlock>
   </div>

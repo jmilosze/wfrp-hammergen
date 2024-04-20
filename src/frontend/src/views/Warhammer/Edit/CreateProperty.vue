@@ -62,7 +62,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
 
 <template>
   <div class="flex justify-center">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
+    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
       {{ apiError }}
     </AlertBlock>
   </div>

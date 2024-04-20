@@ -126,14 +126,14 @@ watch(
 
 <template>
   <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
+    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
       {{ apiError }}
     </AlertBlock>
 
     <AlertBlock
       v-if="propertyListUtils.apiError.value && propertyListUtils.showApiError.value"
       alertType="red"
-      @click="propertyListUtils.showApiError.value = false"
+      @close="propertyListUtils.showApiError.value = false"
     >
       {{ propertyListUtils.apiError.value }}
     </AlertBlock>
@@ -141,7 +141,7 @@ watch(
     <AlertBlock
       v-if="spellListUtils.apiError.value && spellListUtils.showApiError.value"
       alertType="red"
-      @click="spellListUtils.showApiError.value = false"
+      @close="spellListUtils.showApiError.value = false"
     >
       {{ spellListUtils.apiError.value }}
     </AlertBlock>

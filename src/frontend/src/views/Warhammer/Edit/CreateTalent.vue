@@ -92,14 +92,14 @@ watch(
 
 <template>
   <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
+    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
       {{ apiError }}
     </AlertBlock>
 
     <AlertBlock
       v-if="talentListUtils.apiError.value && talentListUtils.showApiError.value"
       alertType="red"
-      @click="talentListUtils.showApiError.value = false"
+      @close="talentListUtils.showApiError.value = false"
     >
       {{ talentListUtils.apiError.value }}
     </AlertBlock>

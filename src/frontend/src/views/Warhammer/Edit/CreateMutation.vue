@@ -55,7 +55,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
 
 <template>
   <div class="flex justify-center">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @click="showApiError = false">
+    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
       {{ apiError }}
     </AlertBlock>
   </div>
