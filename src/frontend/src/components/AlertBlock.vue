@@ -2,7 +2,7 @@
 import { ref } from "vue";
 
 const props = defineProps<{
-  alertType?: "green" | "red";
+  alertType?: "green" | "red" | "amber";
   centered?: boolean;
 }>();
 
@@ -11,22 +11,22 @@ const emit = defineEmits<{
 }>();
 
 const blockClass = ref(["p-2", "rounded", "border", "flex", "justify-between", "gap-2"]);
+const btnClass = ref(["p-2", "hover:text-gray-900", "rounded", "h-8"]);
+
 if (props.alertType === "red") {
   blockClass.value.push(...["bg-red-200", "text-red-800", "border-red-500"]);
+  btnClass.value.push(...["text-red-800", "hover:bg-red-300"]);
+} else if (props.alertType === "amber") {
+  blockClass.value.push(...["bg-amber-300", "text-amber-900", "border-amber-800"]);
+  btnClass.value.push(...["text-amber-800", "hover:bg-amber-300"]);
 } else {
   blockClass.value.push(...["bg-green-200", "text-green-800", "border-green-500"]);
+  btnClass.value.push(...["text-green-800", "hover:bg-green-300"]);
 }
 
 const centerClass = ref([] as string[]);
 if (props.centered) {
   centerClass.value.push(...["flex", "justify-center"]);
-}
-
-const btnClass = ref(["p-2", "hover:text-gray-900", "rounded", "h-8"]);
-if (props.alertType === "red") {
-  btnClass.value.push(...["text-red-800", "hover:bg-red-300"]);
-} else {
-  btnClass.value.push(...["text-green-800", "hover:bg-green-300"]);
 }
 </script>
 
