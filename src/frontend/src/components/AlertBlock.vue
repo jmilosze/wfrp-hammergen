@@ -18,7 +18,7 @@ if (props.alertType === "red") {
   btnClass.value.push(...["text-red-800", "hover:bg-red-300"]);
 } else if (props.alertType === "amber") {
   blockClass.value.push(...["bg-amber-300", "text-amber-900", "border-amber-800"]);
-  btnClass.value.push(...["text-amber-800", "hover:bg-amber-300"]);
+  btnClass.value.push(...["text-amber-800", "hover:bg-amber-400"]);
 } else {
   blockClass.value.push(...["bg-green-200", "text-green-800", "border-green-500"]);
   btnClass.value.push(...["text-green-800", "hover:bg-green-300"]);
