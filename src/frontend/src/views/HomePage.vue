@@ -10,25 +10,24 @@ const showAlert = ref(true);
   <div class="">
     <div class="text-center mt-5 font-hammergen text-6xl md:text-8xl">Hammergen</div>
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
-    <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
-      <p class="text-2xl">New look!</p>
-      <p class="mt-2">
-        We are very happy to announce that, after intense 5 months of work, Hammergen has a new look on both desktop and
-        mobile. We updated the colour scheme and made navigation easier, especially on smaller screens.
-      </p>
-      <p>
-        At this time there are no functional changes, all changes are purely visual, and users do not need to take any
-        action.
-      </p>
-      <p class="mt-2">
-        Even though the changes are visual only, we have made significant changes to the code behind Hammergen. As usual
-        with such changes, we might have introduced a bug or two. If you find something that does not work as expected
-        please drop us an email at <TextLink href="mailto:admin@hammergen.net">admin@hammergen.net</TextLink>.
-      </p>
-      <p class="mt-2">
-        If you're enjoying using Hammergen please consider supporting at with donation at
-        <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>.
-      </p>
+    <AlertBlock v-if="showAlert" alertType="amber" class="mt-5" @close="showAlert = false">
+      <div class="pl-2">
+        <p class="text-2xl">We need your feedback</p>
+        <p class="mt-2">
+          We are looking for new ways to improve Hammergen. Currently we have more ideas than time and we would really
+          appreciate your opinion on how to move forward. If you can spare a minute or two, please fill out this super
+          short (6 questions)
+          <TextLink
+            href="https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAYAAKzR-3FURVlVRkxJQUlBV0NGQU8zUEU0QzdJSUgyNS4u"
+            >survey</TextLink
+          >.
+        </p>
+
+        <p class="mt-2">
+          If you're enjoying using Hammergen please consider supporting it with donation at
+          <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>.
+        </p>
+      </div>
     </AlertBlock>
     <div class="text-2xl font-semibold mt-10">What is Hammergen?</div>
     <p>

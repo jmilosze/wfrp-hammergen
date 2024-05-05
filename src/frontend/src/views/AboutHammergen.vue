@@ -5,6 +5,14 @@ import TextLink from "../components/TextLink.vue";
 
 <template>
   <Header title="About Hammergen" />
+  <div class="text-2xl font-semibold mt-5">The author</div>
+  <p>
+    Hi there! Hammergen is a non-commercial hobby project run by an overworked middle-aged man. If you have any
+    comments, discovered bugs, or have any suggestions on how to improve Hammergen, you can contact me by email:
+    <a class="text-blue-500 hover:underline" href="mailto:admin@hammergen.net">admin@hammergen.net</a>. I try to answer
+    emails/fix bugs on the same or next day but sometimes life gets in the way so please be patient.
+  </p>
+
   <div class="text-2xl font-semibold mt-5">Source books</div>
   <p>Hammergen includes contents from the following source books:</p>
   <ul class="list-disc ml-6 mt-1">
@@ -27,13 +35,6 @@ import TextLink from "../components/TextLink.vue";
     <li>The Imperial Zoo</li>
   </ul>
 
-  <div class="text-2xl font-semibold mt-5">The author</div>
-  <p>
-    Hi there! Hammergen is a non-commercial hobby project run by an overworked middle-aged man. If you have any
-    comments, discovered bugs, or have any suggestions on how to improve Hammergen, you can contact me by email:
-    <a class="text-blue-500 hover:underline" href="mailto:admin@hammergen.net">admin@hammergen.net</a>. I try to answer
-    emails/fix bugs on the same or next day but sometimes life gets in the way so please be patient.
-  </p>
   <div class="text-2xl font-semibold mt-5">Updates</div>
   <div>
     <div class="text-xl mt-2 mb-1">21 Apr 2024</div>
