@@ -194,7 +194,7 @@ function emitPastSelected(id: string) {
         <div>{{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}</div>
       </div>
     </div>
-    <ModalWindow id="modifyCareersModal">
+    <ModalWindow id="modifyCareersModal" size="md">
       <template #header> Modify career </template>
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
