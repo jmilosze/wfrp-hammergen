@@ -8,7 +8,6 @@ import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Career, printClassName } from "../services/wh/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
-import { addSpaces } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 
 type CareerWithSelect = {
