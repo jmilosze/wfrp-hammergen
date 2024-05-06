@@ -116,8 +116,8 @@ const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "careerClass", displayName: "Class", skipStackedTitle: false },
   { name: "levelName", displayName: "Level name", skipStackedTitle: false },
+  { name: "careerClass", displayName: "Class", skipStackedTitle: false },
   { name: "current", displayName: "Current", skipStackedTitle: false },
   { name: "past", displayName: "Past", skipStackedTitle: false },
 ];
@@ -215,7 +215,7 @@ function emitPastSelected(id: string) {
       >
         <template #name="{ id }: { id: string }">
           <TextLink routeName="career" :params="{ id: careersWithSelect[id].careerId }">
-            {{ addSpaces(careersWithSelect[id].name) }}
+            {{ careersWithSelect[id].name + ` (level ${careersWithSelect[id].level})` }}
           </TextLink>
         </template>
 
