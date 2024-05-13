@@ -30,6 +30,16 @@ export const source: Record<string, string> = {
   25: "Ubersreik Adventures 2",
   26: "Guide to Ubersreik (Starter Set)",
   27: "Adventure Book (Starter Set)",
+  28: "Ubersreik Adventures 3",
+  29: "Tribes and Tribulations",
+  30: "Reikland Miscellanea",
+  31: "Patrons Of The Old World",
+  32: "Buildings Of The Reikland",
+  33: "One Shots Of The Reikland",
+  34: "Monuments Of The Reikland",
+  35: "Shrines Of Sigmar",
+  36: "Sullasaras Spells",
+  37: "Blood And Bramble",
 };
 
 export type Source = Record<string, string>;
