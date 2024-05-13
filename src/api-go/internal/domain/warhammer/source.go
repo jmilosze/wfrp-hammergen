@@ -35,6 +35,16 @@ const (
 	SourceUbersreikAdventures2          = "25"
 	SourceStarterSetGuideToUbersreik    = "26"
 	SourceStarterSetAdventureBook       = "27"
+	SourceUbersreikAdventures3          = "28"
+	SourceTribesAndTribulations         = "29"
+	SourceReiklandMiscellanea           = "30"
+	SourcePatronsOfTheOldWorld          = "31"
+	SourceBuildingsOfReikland           = "32"
+	SourceOneShotsOfTheReikland         = "33"
+	SourceMonumentsOfTheReikland        = "34"
+	SourceShrinesOfSigmar               = "35"
+	SourceSullasarasSpells              = "36"
+	SourceBloodAndBramble               = "37"
 )
 
 func sourceValues() string {
@@ -67,6 +77,16 @@ func sourceValues() string {
 		SourceUbersreikAdventures2,
 		SourceStarterSetGuideToUbersreik,
 		SourceStarterSetAdventureBook,
+		SourceUbersreikAdventures3,
+		SourceTribesAndTribulations,
+		SourceReiklandMiscellanea,
+		SourcePatronsOfTheOldWorld,
+		SourceBuildingsOfReikland,
+		SourceOneShotsOfTheReikland,
+		SourceMonumentsOfTheReikland,
+		SourceShrinesOfSigmar,
+		SourceSullasarasSpells,
+		SourceBloodAndBramble,
 	})
 }
 
@@ -84,6 +104,6 @@ func copySourceMap(input map[Source]string) map[Source]string {
 
 func GetSourceValidationAliases() map[string]string {
 	return map[string]string{
-		"source_valid": fmt.Sprintf("dive,keys,oneof=%s,endkeys,min=0,max=15,excludesall=<>", sourceValues()),
+		"source_valid": fmt.Sprintf("dive,keys,oneof=%s,endkeys,min=0,max=25,excludesall=<>", sourceValues()),
 	}
 }
