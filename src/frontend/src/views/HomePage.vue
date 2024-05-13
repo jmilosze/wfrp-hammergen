@@ -44,6 +44,11 @@ const showAlert = ref(true);
         original descriptions from the source books.
       </span>
     </p>
+    <p class="mt-2">
+      If at any point you need to roll dices, you can head over to
+      <TextLink href="https://dice.hammergen.net/">Hammergen Dice</TextLink>
+      where you can roll various RPG dices by yourself or with friends.
+    </p>
     <div class="text-2xl font-semibold mt-5">What exactly can I do here?</div>
     <p class="mt-1 text-xl">Generate characters</p>
     <ul class="list-disc ml-6 mt-1">
