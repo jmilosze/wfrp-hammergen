@@ -40,10 +40,11 @@ import TextLink from "../components/TextLink.vue";
     <li>View your character in a clear printable format.</li>
     <li>Download your character in spreadsheet format or as JSON file.</li>
   </ul>
-  <p class="my-2 text-2xl">Share your customer characters and properties with friends</p>
+  <p class="my-2 text-2xl">Share your characters and properties with friends</p>
   <p>
-    Any character of property you make, you can share with other Hammergen users. In order for them to use it, you must
-    mark your character/property as "public". Next, they will need to add you to "linked users". It can be done in
+    Any character or property (skill, talent, trapping, etc.) you make, you can share with other Hammergen users. In
+    order for them to use it, you must mark your character/property as "public". Next, they will need to add you to
+    "linked users". It can be done in
     <TextLink routeName="linkedusers">Linked Users</TextLink> tab visible in the left-hand navigation menu after logging
     in. Every shared character and property are in read-only mode. It means that only the original owner can modify or
     delete it.
