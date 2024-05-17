@@ -402,11 +402,12 @@ export class Character implements WhProperty {
     return sumAttributes(this.getRacialAttributes(), this.attributeRolls);
   }
 
+  getModifierAttributes(): Attributes {
+    return sumAttributes(this.modifiers.talents.attributes, this.modifiers.mutations.attributes);
+  }
+
   getTotalAttributes(): Attributes {
-    return sumAttributes(
-      sumAttributes(this.getBaseAttributes(), this.attributeAdvances),
-      sumAttributes(this.modifiers.talents.attributes, this.modifiers.mutations.attributes),
-    );
+    return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.getModifierAttributes());
   }
 
   getWounds() {

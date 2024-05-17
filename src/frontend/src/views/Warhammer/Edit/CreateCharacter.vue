@@ -229,6 +229,10 @@ function rollCharacter() {
 const attributes = computed(() => {
   return wh.value.getTotalAttributes();
 });
+
+const modiferAttributes = computed(() => {
+  return wh.value.getModifierAttributes();
+});
 </script>
 
 <template>
@@ -554,7 +558,7 @@ const attributes = computed(() => {
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
     v-model:attributeAdvances="wh.attributeAdvances"
-    :otherAttributes="getAttributes()"
+    :otherAttributes="modiferAttributes"
     :species="wh.species"
     :cols="isEqualOrGreater"
     title="Attributes"
