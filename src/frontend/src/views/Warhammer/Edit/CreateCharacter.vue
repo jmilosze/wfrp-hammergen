@@ -41,7 +41,6 @@ import {
 import { useWhList } from "../../../composables/whList.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
-import { getAttributes } from "../../../services/wh/attributes.ts";
 import SelectTable from "../../../components/SelectTable.vue";
 import { SpellApi } from "../../../services/wh/spell.ts";
 import { MutationApi } from "../../../services/wh/mutation.ts";
