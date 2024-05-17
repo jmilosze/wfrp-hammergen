@@ -71,7 +71,7 @@ const itemsOnPage = computed(() => {
 
 function searchInRow(row: TableRow): boolean {
   for (const column of props.fields) {
-    if (String(row[column.name]).includes(searchTermDebounced.value)) {
+    if (String(row[column.name]).toLowerCase().includes(searchTermDebounced.value.toLowerCase())) {
       return true;
     }
   }
