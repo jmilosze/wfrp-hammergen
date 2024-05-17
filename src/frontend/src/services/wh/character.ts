@@ -125,8 +125,8 @@ export class Character implements WhProperty {
   shared: boolean;
   source: Source;
   modifiers: {
-    talents: Record<string, { number: number; modifiers: CharacterModifiers }>;
-    mutations: Record<string, { modifiers: CharacterModifiers }>;
+    talents: Record<string, { number: number; value: CharacterModifiers }>;
+    mutations: Record<string, { value: CharacterModifiers }>;
   };
 
   constructor({
@@ -164,8 +164,8 @@ export class Character implements WhProperty {
     shared = false,
     source = {},
     modifiers = {
-      talents: {} as Record<string, { number: number; modifiers: CharacterModifiers }>,
-      mutations: {} as Record<string, { modifiers: CharacterModifiers }>,
+      talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
+      mutations: {} as Record<string, { value: CharacterModifiers }>,
     },
   } = {}) {
     this.id = id;
@@ -399,10 +399,10 @@ export class Character implements WhProperty {
     return (
       getMovementFormula(this.species) +
       Object.values(this.modifiers.talents)
-        .map((x) => x.number * x.modifiers.movement)
+        .map((x) => x.number * x.value.movement)
         .reduce((a, b) => a + b, 0) +
       Object.values(this.modifiers.mutations)
-        .map((x) => x.modifiers.movement)
+        .map((x) => x.value.movement)
         .reduce((a, b) => a + b, 0)
     );
   }
@@ -417,12 +417,10 @@ export class Character implements WhProperty {
 
   getModifierAttributes(): Attributes {
     const talentAttributes = sumAttributes(
-      ...Object.values(this.modifiers.talents).map((x) => multiplyAttributes(x.number, x.modifiers.attributes)),
+      ...Object.values(this.modifiers.talents).map((x) => multiplyAttributes(x.number, x.value.attributes)),
     );
 
-    const mutationAttributes = sumAttributes(
-      ...Object.values(this.modifiers.mutations).map((x) => x.modifiers.attributes),
-    );
+    const mutationAttributes = sumAttributes(...Object.values(this.modifiers.mutations).map((x) => x.value.attributes));
 
     return sumAttributes(talentAttributes, mutationAttributes);
   }
@@ -437,10 +435,10 @@ export class Character implements WhProperty {
     const size =
       DEFAULT_SIZE +
       Object.values(this.modifiers.talents)
-        .map((x) => x.number * x.modifiers.size)
+        .map((x) => x.number * x.value.size)
         .reduce((a, b) => a + b, 0) +
       Object.values(this.modifiers.mutations)
-        .map((x) => x.modifiers.size)
+        .map((x) => x.value.size)
         .reduce((a, b) => a + b, 0);
 
     return getWoundsFormula(size, attributeTotal.T, attributeTotal.WP, attributeTotal.S);
