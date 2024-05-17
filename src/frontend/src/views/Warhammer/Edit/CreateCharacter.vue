@@ -170,6 +170,22 @@ function formGenerateStatusStanding() {
 }
 
 watch(
+  () => talentListUtils.whList.value,
+  (newVal) => {
+    wh.value.hydrateTalentModifiers(newVal);
+  },
+  { immediate: true },
+);
+
+watch(
+  () => mutationListUtils.whList.value,
+  (newVal) => {
+    wh.value.hydrateMutationModifiers(newVal);
+  },
+  { immediate: true },
+);
+
+watch(
   () => selectedGenSpecies.value,
   (newVal) => {
     careerOpts.value = setCareerOpts(newVal, careerListUtils.whList.value);
@@ -593,7 +609,7 @@ const modiferAttributes = computed(() => {
       @createNew="openInNewTab('talent', { id: 'create' })"
       @reload="talentListUtils.loadWhList"
       @clearAll="wh.clearTalents(true)"
-      @updated="(event) => wh.updateTalents(event.id, event.number)"
+      @updated="(event) => wh.updateTalents(event.id, event.number, talentListUtils.whList.value)"
       @addSpeciesTalents="
         wh.addSpeciesTalents(talentListUtils.whList.value, generationPropsUtils.generationProps.value, true)
       "
@@ -672,7 +688,7 @@ const modiferAttributes = computed(() => {
       class="flex-1 min-w-56"
       @createNew="openInNewTab('mutation', { id: 'create' })"
       @reload="mutationListUtils.loadWhList"
-      @selected="(e) => wh.updateMutations(e.id, e.selected)"
+      @selected="(e) => wh.updateMutations(e.id, e.selected, mutationListUtils.whList.value)"
       @clearAll="wh.clearMutations(true)"
     />
   </div>
