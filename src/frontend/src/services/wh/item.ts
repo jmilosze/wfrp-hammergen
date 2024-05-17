@@ -292,7 +292,7 @@ export function printMeleeReach(meleeReach: MeleeReach) {
     case MeleeReach.Long:
       return "Long";
     case MeleeReach.VeryLong:
-      return "VeryLong";
+      return "Very Long";
     case MeleeReach.Massive:
       return "Massive";
     default:
