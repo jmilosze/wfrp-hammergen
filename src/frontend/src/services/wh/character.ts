@@ -55,6 +55,7 @@ import { Talent } from "./talent.ts";
 import { getTalentGroups } from "./characterGeneration/generateTalents.ts";
 import { generateSpeciesTalents } from "./characterGeneration/generateSpeciesTalents.ts";
 import { generateClassItems } from "./characterGeneration/generateCharacter.ts";
+import { Mutation } from "./mutation.ts";
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
@@ -496,8 +497,18 @@ export class Character implements WhProperty {
     }
   }
 
-  updateMutations(id: string, selected: boolean): void {
+  updateMutations(id: string, selected: boolean, mutations: Mutation[]): void {
     updateSet(this.mutations, id, selected);
+    if (!selected) {
+      delete this.modifiers.mutations[id];
+      return;
+    }
+    for (const mutation of mutations) {
+      if (mutation.id === id) {
+        this.modifiers.mutations[id] = { value: mutation.modifiers.copy() };
+        return;
+      }
+    }
   }
 
   clearMutations(replace = true): void {
@@ -520,8 +531,18 @@ export class Character implements WhProperty {
     }
   }
 
-  updateTalents(id: string, number: number): void {
+  updateTalents(id: string, number: number, talents: Talent[]): void {
     updateIdNumberRecord(this.talents, { id: id, number: number });
+    if (number === 0) {
+      delete this.modifiers.talents[id];
+      return;
+    }
+    for (const talent of talents) {
+      if (talent.id === id) {
+        this.modifiers.talents[id] = { number: number, value: talent.modifiers.copy() };
+        return;
+      }
+    }
   }
 
   clearTalents(replace: boolean): void {
@@ -649,6 +670,24 @@ export class Character implements WhProperty {
     if (replace) {
       this.equippedItems = newEquipped;
       this.carriedItems = newCarried;
+    }
+  }
+
+  hydrateTalentModifiers(talents: Talent[]) {
+    this.modifiers.talents = {};
+    for (const talent of talents) {
+      if (talent.id in this.talents) {
+        this.modifiers.talents[talent.id] = { number: this.talents[talent.id], value: talent.modifiers.copy() };
+      }
+    }
+  }
+
+  hydrateMutationModifiers(mutations: Mutation[]) {
+    this.modifiers.mutations = {};
+    for (const mutation of mutations) {
+      if (this.mutations.has(mutation.id)) {
+        this.modifiers.mutations[mutation.id] = { value: mutation.modifiers.copy() };
+      }
     }
   }
 }
