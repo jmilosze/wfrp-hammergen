@@ -124,7 +124,10 @@ export class Character implements WhProperty {
   mutations: Set<string>;
   shared: boolean;
   source: Source;
-  modifiers: { talents: CharacterModifiers; mutations: CharacterModifiers };
+  modifiers: {
+    talents: Record<string, { number: number; modifiers: CharacterModifiers }>;
+    mutations: Record<string, { modifiers: CharacterModifiers }>;
+  };
 
   constructor({
     id = "",
@@ -160,7 +163,10 @@ export class Character implements WhProperty {
     mutations = new Set<string>(),
     shared = false,
     source = {},
-    modifiers = { talents: new CharacterModifiers(), mutations: new CharacterModifiers() },
+    modifiers = {
+      talents: {} as Record<string, { number: number; modifiers: CharacterModifiers }>,
+      mutations: {} as Record<string, { modifiers: CharacterModifiers }>,
+    },
   } = {}) {
     this.id = id;
     this.canEdit = canEdit;
@@ -278,7 +284,6 @@ export class Character implements WhProperty {
       mutations: new Set(this.mutations),
       shared: this.shared,
       source: copySource(this.source),
-      modifiers: { talents: this.modifiers.talents.copy(), mutations: this.modifiers.mutations.copy() },
     });
   }
 
@@ -391,7 +396,15 @@ export class Character implements WhProperty {
   }
 
   getMovement(): number {
-    return getMovementFormula(this.species) + this.modifiers.talents.movement + this.modifiers.mutations.movement;
+    return (
+      getMovementFormula(this.species) +
+      Object.values(this.modifiers.talents)
+        .map((x) => x.number * x.modifiers.movement)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.mutations)
+        .map((x) => x.modifiers.movement)
+        .reduce((a, b) => a + b, 0)
+    );
   }
 
   getRacialAttributes(): Attributes {
@@ -403,7 +416,15 @@ export class Character implements WhProperty {
   }
 
   getModifierAttributes(): Attributes {
-    return sumAttributes(this.modifiers.talents.attributes, this.modifiers.mutations.attributes);
+    const talentAttributes = sumAttributes(
+      ...Object.values(this.modifiers.talents).map((x) => multiplyAttributes(x.number, x.modifiers.attributes)),
+    );
+
+    const mutationAttributes = sumAttributes(
+      ...Object.values(this.modifiers.mutations).map((x) => x.modifiers.attributes),
+    );
+
+    return sumAttributes(talentAttributes, mutationAttributes);
   }
 
   getTotalAttributes(): Attributes {
@@ -412,12 +433,17 @@ export class Character implements WhProperty {
 
   getWounds() {
     const attributeTotal = this.getTotalAttributes();
-    return getWoundsFormula(
-      DEFAULT_SIZE + this.modifiers.talents.size + this.modifiers.mutations.size,
-      attributeTotal.T,
-      attributeTotal.WP,
-      attributeTotal.S,
-    );
+
+    const size =
+      DEFAULT_SIZE +
+      Object.values(this.modifiers.talents)
+        .map((x) => x.number * x.modifiers.size)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.mutations)
+        .map((x) => x.modifiers.size)
+        .reduce((a, b) => a + b, 0);
+
+    return getWoundsFormula(size, attributeTotal.T, attributeTotal.WP, attributeTotal.S);
   }
 
   updateCurrentCareer(id: string, number: number, selected: boolean) {
@@ -666,8 +692,6 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     prayers: new Set(characterApi.object.prayers),
     mutations: new Set(characterApi.object.mutations),
     shared: characterApi.object.shared,
-    source: {},
-    modifiers: { talents: new CharacterModifiers(), mutations: new CharacterModifiers() },
   });
 
   return newCharacter.copy();
