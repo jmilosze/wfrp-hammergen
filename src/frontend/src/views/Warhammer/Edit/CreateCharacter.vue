@@ -41,7 +41,6 @@ import {
 import { useWhList } from "../../../composables/whList.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
-import { getAttributes } from "../../../services/wh/attributes.ts";
 import SelectTable from "../../../components/SelectTable.vue";
 import { SpellApi } from "../../../services/wh/spell.ts";
 import { MutationApi } from "../../../services/wh/mutation.ts";
@@ -171,6 +170,22 @@ function formGenerateStatusStanding() {
 }
 
 watch(
+  () => talentListUtils.whList.value,
+  (newVal) => {
+    wh.value.hydrateTalentModifiers(newVal);
+  },
+  { immediate: true },
+);
+
+watch(
+  () => mutationListUtils.whList.value,
+  (newVal) => {
+    wh.value.hydrateMutationModifiers(newVal);
+  },
+  { immediate: true },
+);
+
+watch(
   () => selectedGenSpecies.value,
   (newVal) => {
     careerOpts.value = setCareerOpts(newVal, careerListUtils.whList.value);
@@ -228,6 +243,10 @@ function rollCharacter() {
 
 const attributes = computed(() => {
   return wh.value.getTotalAttributes();
+});
+
+const modiferAttributes = computed(() => {
+  return wh.value.getModifierAttributes();
 });
 </script>
 
@@ -554,7 +573,7 @@ const attributes = computed(() => {
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
     v-model:attributeAdvances="wh.attributeAdvances"
-    :otherAttributes="getAttributes()"
+    :otherAttributes="modiferAttributes"
     :species="wh.species"
     :cols="isEqualOrGreater"
     title="Attributes"
@@ -590,7 +609,7 @@ const attributes = computed(() => {
       @createNew="openInNewTab('talent', { id: 'create' })"
       @reload="talentListUtils.loadWhList"
       @clearAll="wh.clearTalents(true)"
-      @updated="(event) => wh.updateTalents(event.id, event.number)"
+      @updated="(event) => wh.updateTalents(event.id, event.number, talentListUtils.whList.value)"
       @addSpeciesTalents="
         wh.addSpeciesTalents(talentListUtils.whList.value, generationPropsUtils.generationProps.value, true)
       "
@@ -669,7 +688,7 @@ const attributes = computed(() => {
       class="flex-1 min-w-56"
       @createNew="openInNewTab('mutation', { id: 'create' })"
       @reload="mutationListUtils.loadWhList"
-      @selected="(e) => wh.updateMutations(e.id, e.selected)"
+      @selected="(e) => wh.updateMutations(e.id, e.selected, mutationListUtils.whList.value)"
       @clearAll="wh.clearMutations(true)"
     />
   </div>

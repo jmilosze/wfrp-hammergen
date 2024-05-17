@@ -55,6 +55,7 @@ import { Talent } from "./talent.ts";
 import { getTalentGroups } from "./characterGeneration/generateTalents.ts";
 import { generateSpeciesTalents } from "./characterGeneration/generateSpeciesTalents.ts";
 import { generateClassItems } from "./characterGeneration/generateCharacter.ts";
+import { Mutation } from "./mutation.ts";
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
@@ -124,7 +125,10 @@ export class Character implements WhProperty {
   mutations: Set<string>;
   shared: boolean;
   source: Source;
-  modifiers: { talents: CharacterModifiers; mutations: CharacterModifiers };
+  modifiers: {
+    talents: Record<string, { number: number; value: CharacterModifiers }>;
+    mutations: Record<string, { value: CharacterModifiers }>;
+  };
 
   constructor({
     id = "",
@@ -160,7 +164,10 @@ export class Character implements WhProperty {
     mutations = new Set<string>(),
     shared = false,
     source = {},
-    modifiers = { talents: new CharacterModifiers(), mutations: new CharacterModifiers() },
+    modifiers = {
+      talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
+      mutations: {} as Record<string, { value: CharacterModifiers }>,
+    },
   } = {}) {
     this.id = id;
     this.canEdit = canEdit;
@@ -278,7 +285,6 @@ export class Character implements WhProperty {
       mutations: new Set(this.mutations),
       shared: this.shared,
       source: copySource(this.source),
-      modifiers: { talents: this.modifiers.talents.copy(), mutations: this.modifiers.mutations.copy() },
     });
   }
 
@@ -391,7 +397,15 @@ export class Character implements WhProperty {
   }
 
   getMovement(): number {
-    return getMovementFormula(this.species) + this.modifiers.talents.movement + this.modifiers.mutations.movement;
+    return (
+      getMovementFormula(this.species) +
+      Object.values(this.modifiers.talents)
+        .map((x) => x.number * x.value.movement)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.mutations)
+        .map((x) => x.value.movement)
+        .reduce((a, b) => a + b, 0)
+    );
   }
 
   getRacialAttributes(): Attributes {
@@ -402,21 +416,33 @@ export class Character implements WhProperty {
     return sumAttributes(this.getRacialAttributes(), this.attributeRolls);
   }
 
-  getTotalAttributes(): Attributes {
-    return sumAttributes(
-      sumAttributes(this.getBaseAttributes(), this.attributeAdvances),
-      sumAttributes(this.modifiers.talents.attributes, this.modifiers.mutations.attributes),
+  getModifierAttributes(): Attributes {
+    const talentAttributes = sumAttributes(
+      ...Object.values(this.modifiers.talents).map((x) => multiplyAttributes(x.number, x.value.attributes)),
     );
+
+    const mutationAttributes = sumAttributes(...Object.values(this.modifiers.mutations).map((x) => x.value.attributes));
+
+    return sumAttributes(talentAttributes, mutationAttributes);
+  }
+
+  getTotalAttributes(): Attributes {
+    return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.getModifierAttributes());
   }
 
   getWounds() {
     const attributeTotal = this.getTotalAttributes();
-    return getWoundsFormula(
-      DEFAULT_SIZE + this.modifiers.talents.size + this.modifiers.mutations.size,
-      attributeTotal.T,
-      attributeTotal.WP,
-      attributeTotal.S,
-    );
+
+    const size =
+      DEFAULT_SIZE +
+      Object.values(this.modifiers.talents)
+        .map((x) => x.number * x.value.size)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.mutations)
+        .map((x) => x.value.size)
+        .reduce((a, b) => a + b, 0);
+
+    return getWoundsFormula(size, attributeTotal.T, attributeTotal.WP, attributeTotal.S);
   }
 
   updateCurrentCareer(id: string, number: number, selected: boolean) {
@@ -471,8 +497,18 @@ export class Character implements WhProperty {
     }
   }
 
-  updateMutations(id: string, selected: boolean): void {
+  updateMutations(id: string, selected: boolean, mutations: Mutation[]): void {
     updateSet(this.mutations, id, selected);
+    if (!selected) {
+      delete this.modifiers.mutations[id];
+      return;
+    }
+    for (const mutation of mutations) {
+      if (mutation.id === id) {
+        this.modifiers.mutations[id] = { value: mutation.modifiers.copy() };
+        return;
+      }
+    }
   }
 
   clearMutations(replace = true): void {
@@ -495,8 +531,18 @@ export class Character implements WhProperty {
     }
   }
 
-  updateTalents(id: string, number: number): void {
+  updateTalents(id: string, number: number, talents: Talent[]): void {
     updateIdNumberRecord(this.talents, { id: id, number: number });
+    if (number === 0) {
+      delete this.modifiers.talents[id];
+      return;
+    }
+    for (const talent of talents) {
+      if (talent.id === id) {
+        this.modifiers.talents[id] = { number: number, value: talent.modifiers.copy() };
+        return;
+      }
+    }
   }
 
   clearTalents(replace: boolean): void {
@@ -626,6 +672,24 @@ export class Character implements WhProperty {
       this.carriedItems = newCarried;
     }
   }
+
+  hydrateTalentModifiers(talents: Talent[]) {
+    this.modifiers.talents = {};
+    for (const talent of talents) {
+      if (talent.id in this.talents) {
+        this.modifiers.talents[talent.id] = { number: this.talents[talent.id], value: talent.modifiers.copy() };
+      }
+    }
+  }
+
+  hydrateMutationModifiers(mutations: Mutation[]) {
+    this.modifiers.mutations = {};
+    for (const mutation of mutations) {
+      if (this.mutations.has(mutation.id)) {
+        this.modifiers.mutations[mutation.id] = { value: mutation.modifiers.copy() };
+      }
+    }
+  }
 }
 
 export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>): Character {
@@ -665,8 +729,6 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     prayers: new Set(characterApi.object.prayers),
     mutations: new Set(characterApi.object.mutations),
     shared: characterApi.object.shared,
-    source: {},
-    modifiers: { talents: new CharacterModifiers(), mutations: new CharacterModifiers() },
   });
 
   return newCharacter.copy();
