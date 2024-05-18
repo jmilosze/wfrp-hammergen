@@ -23,6 +23,7 @@ type TalentWithNumber = {
   maxRankFormula: string;
   attributeName: string;
   number: number;
+  fullTalentPos: number;
 };
 
 const props = defineProps<{
@@ -55,7 +56,8 @@ function updateTalentsWithNumber(
   attributes: Attributes,
 ) {
   talentsWithNumber.value = {};
-  for (const talent of talentList) {
+  for (let i = 0; i < talentList.length; i++) {
+    const talent = talentList[i];
     if (!talent.isGroup) {
       talentsWithNumber.value[talent.id] = {
         id: talent.id,
@@ -65,6 +67,7 @@ function updateTalentsWithNumber(
         maxRankFormula: talent.getMaxRankDisplay(),
         attributeName: printAttributeName(talent.attribute),
         number: 0,
+        fullTalentPos: i,
       };
       if (talent.id in selectedTalents) {
         talentsWithNumber.value[talent.id].number = selectedTalents[talent.id];
@@ -74,6 +77,14 @@ function updateTalentsWithNumber(
   talentsWithNumberList.value = Object.values(talentsWithNumber.value).sort((a, b) => {
     return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
   });
+}
+
+function updateAttributes(attributes: Attributes) {
+  for (const talent of talentsWithNumberList.value) {
+    const newMaxRank = props.talentList[talent.fullTalentPos].getMaxRank(attributes);
+    talent.maxRank = newMaxRank;
+    talentsWithNumber.value[talent.id].maxRank = newMaxRank;
+  }
 }
 
 watch(
@@ -96,7 +107,8 @@ watch(
   () => props.attributes,
   (newVal, oldVal) => {
     if (oldVal === undefined || !attributesAreEqual(newVal, oldVal)) {
-      updateTalentsWithNumber(props.initTalents, props.talentList, newVal);
+      console.log("updated");
+      updateAttributes(newVal);
     }
   },
   { immediate: true },
