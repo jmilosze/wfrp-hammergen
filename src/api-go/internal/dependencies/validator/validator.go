@@ -39,4 +39,7 @@ func configure(v *v.Validate) {
 	for k, r := range warhammer.GetCharacterValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
+	for k, r := range warhammer.GetModifierValidationAliases() {
+		v.RegisterAlias(k, r)
+	}
 }

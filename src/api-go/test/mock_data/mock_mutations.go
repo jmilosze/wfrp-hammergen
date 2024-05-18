@@ -27,6 +27,7 @@ var mutation0 = wh.Wh{
 				WP:  9,
 				Fel: 10,
 			},
+			Effects: []wh.EffectType{wh.EffectTypeHardy},
 		},
 		Shared: false,
 		Source: map[wh.Source]string{
