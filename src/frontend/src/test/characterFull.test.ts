@@ -860,6 +860,7 @@ const characterFull = {
   id: "id",
   name: "charDisplay",
   species: "Wood Elf",
+  size: "Small",
   fate: 1,
   fortune: 2,
   resilience: 3,
