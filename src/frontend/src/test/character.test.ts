@@ -1,5 +1,5 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
-import { getWoundsFormula, printSpeciesWithRegion, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
+import { getWoundsFormula, printSpeciesWithRegion, Size, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -454,19 +454,19 @@ describe("isEqualTo returns false", () => {
 
 describe("getWoundsFormula returns correct value", () => {
   test.each([
-    { size: 3, T: 10, WP: 10, S: 10, expected: 4 }, // 1 + (2 * 1) + 1
-    { size: 3, T: 12, WP: 17, S: 20, expected: 5 }, // 2 + (2 * 1) + 1
-    { size: 3, T: 21, WP: 26, S: 10, expected: 7 }, // 1 + (2 * 2) + 2
-    { size: 2, T: 20, WP: 10, S: 10, expected: 5 }, // (2 * 2) + 1
-    { size: 1, T: 20, WP: 10, S: 10, expected: 2 }, // 2
-    { size: 0, T: 20, WP: 10, S: 10, expected: 1 }, // 1
-    { size: -1, T: 20, WP: 10, S: 10, expected: 1 }, // 1
-    { size: 4, T: 20, WP: 10, S: 10, expected: 12 }, // 2 * (1 + (2 * 2) + 1)
-    { size: 5, T: 20, WP: 10, S: 10, expected: 24 }, // 4 * (1 + (2 * 2) + 1)
-    { size: 6, T: 20, WP: 10, S: 10, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
-    { size: 7, T: 20, WP: 10, S: 10, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
+    { size: Size.Average, T: 10, WP: 10, S: 10, hardy: 1, expected: 5 }, // 1 + (2 * 1) + 1 + 1
+    { size: Size.Average, T: 12, WP: 17, S: 20, hardy: 2, expected: 7 }, // 2 + (2 * 1) + 1 + 2
+    { size: Size.Average, T: 21, WP: 26, S: 10, hardy: 0, expected: 7 }, // 1 + (2 * 2) + 2
+    { size: Size.Small, T: 20, WP: 10, S: 10, hardy: 0, expected: 5 }, // (2 * 2) + 1
+    { size: Size.Little, T: 20, WP: 10, S: 10, hardy: 0, expected: 2 }, // 2
+    { size: Size.Tiny, T: 20, WP: 10, S: 10, hardy: 0, expected: 1 }, // 1
+    { size: -1, T: 20, WP: 10, S: 10, hardy: 0, expected: 1 }, // 1
+    { size: Size.Large, T: 20, WP: 10, S: 10, hardy: 0, expected: 12 }, // 2 * (1 + (2 * 2) + 1)
+    { size: Size.Enormous, T: 20, WP: 10, S: 10, hardy: 0, expected: 24 }, // 4 * (1 + (2 * 2) + 1)
+    { size: Size.Monstrous, T: 20, WP: 10, S: 10, hardy: 0, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
+    { size: 7, T: 20, WP: 10, S: 10, hardy: 0, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
   ])("when size = $size, T = $T, WP = $WP, S = $S", (t) => {
-    expect(getWoundsFormula(t.size, t.T, t.WP, t.S)).toEqual(t.expected);
+    expect(getWoundsFormula(t.size, t.T, t.WP, t.S, t.hardy)).toEqual(t.expected);
   });
 });
 

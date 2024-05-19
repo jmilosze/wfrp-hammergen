@@ -16,6 +16,7 @@ import ActionButton from "../../../components/ActionButton.vue";
 import generateName from "../../../services/wh/characterGeneration/generateName.ts";
 import {
   DEFAULT_CAREER_ID,
+  printSize,
   printSpeciesWithRegion,
   SpeciesWithRegion,
   speciesWithRegionList,
@@ -138,6 +139,7 @@ const careerOpts = ref([] as { text: string; value: string }[]);
 
 const movement = computed(() => wh.value.getMovement());
 const wounds = computed(() => wh.value.getWounds());
+const size = computed(() => printSize(wh.value.getSize()));
 
 function formGenerateName() {
   wh.value.name = generateName(wh.value.species);
@@ -559,11 +561,15 @@ const modiferAttributes = computed(() => {
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
             <div class="flex-1">
               <p class="mb-3">Movement</p>
-              <div class="ml-2">{{ movement }}</div>
+              <div class="ml-1">{{ movement }}</div>
             </div>
             <div class="flex-1">
-              <p class="mb-3">Wounds (unmodified by Hardy)</p>
-              <div class="ml-2">{{ wounds }}</div>
+              <p class="mb-3">Size</p>
+              <div>{{ size }}</div>
+            </div>
+            <div class="flex-1">
+              <p class="mb-3">Wounds</p>
+              <div class="ml-1">{{ wounds }}</div>
             </div>
           </div>
         </div>

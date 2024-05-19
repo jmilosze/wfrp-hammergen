@@ -199,7 +199,7 @@ export function getMovementFormula(species: SpeciesWithRegion) {
   }
 }
 
-const enum Size {
+export const enum Size {
   Tiny = 0,
   Little,
   Small,
@@ -209,28 +209,55 @@ const enum Size {
   Monstrous,
 }
 
+export function printSize(size: number): string {
+  if (size <= Size.Tiny) {
+    return "Tiny";
+  } else if (size === Size.Little) {
+    return "Little";
+  } else if (size === Size.Small) {
+    return "Small";
+  } else if (size === Size.Average) {
+    return "Average";
+  } else if (size === Size.Large) {
+    return "Large";
+  } else if (size === Size.Enormous) {
+    return "Enormous";
+  } else {
+    return "Monstrous";
+  }
+}
+
 export const DEFAULT_SIZE = Size.Average;
 
-export function getWoundsFormula(size: number, T: number, WP: number, S: number): number {
+export function getWoundsFormula(size: number, T: number, WP: number, S: number, hardyRanks: number): number {
   const TB = Math.floor(T / 10);
   const WPB = Math.floor(WP / 10);
   const SB = Math.floor(S / 10);
 
+  let base;
+
   if (size <= Size.Tiny) {
-    return 1;
+    base = 1;
   } else if (size === Size.Little) {
-    return TB;
+    base = TB;
   } else if (size === Size.Small) {
-    return 2 * TB + WPB;
+    base = 2 * TB + WPB;
   } else if (size === Size.Average) {
-    return SB + 2 * TB + WPB;
+    base = SB + 2 * TB + WPB;
   } else if (size === Size.Large) {
-    return (SB + 2 * TB + WPB) * 2;
+    base = (SB + 2 * TB + WPB) * 2;
   } else if (size === Size.Enormous) {
-    return (SB + 2 * TB + WPB) * 4;
+    base = (SB + 2 * TB + WPB) * 4;
   } else {
-    return (SB + 2 * TB + WPB) * 8;
+    base = (SB + 2 * TB + WPB) * 8;
   }
+
+  return base + TB * hardyRanks;
+}
+
+export function getModifiedSize(mods: number) {
+  const size = DEFAULT_SIZE + mods;
+  return size <= Size.Tiny ? Size.Tiny : size >= Size.Monstrous ? Size.Monstrous : size;
 }
 
 export const DEFAULT_CAREER_ID = "000000000000000000000000";
