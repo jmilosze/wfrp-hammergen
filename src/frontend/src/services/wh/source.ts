@@ -38,7 +38,7 @@ export const source: Record<string, string> = {
   33: "One Shots Of The Reikland",
   34: "Monuments Of The Reikland",
   35: "Shrines Of Sigmar",
-  36: "Sullasaras Spells",
+  36: "Sullasara's Spells",
   37: "Blood And Bramble",
 };
 
