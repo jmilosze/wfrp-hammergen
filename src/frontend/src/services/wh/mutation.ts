@@ -142,7 +142,7 @@ export function modelToApi(mutation: Mutation): MutationApiData {
     name: mutation.name,
     description: mutation.description,
     type: mutation.type,
-    modifiers: mutation.modifiers.copy(),
+    modifiers: mutation.modifiers.toData(),
     shared: mutation.shared,
     source: copySource(mutation.source),
   };
