@@ -12,6 +12,7 @@ const mutationApiData: MutationApiData = {
     size: 0,
     movement: 1,
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
+    effects: [],
   },
   shared: true,
   source: { 1: "page 2", 3: "page 5-10" },

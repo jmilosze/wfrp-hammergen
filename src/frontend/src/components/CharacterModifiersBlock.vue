@@ -10,6 +10,7 @@ import { AttributeName, setAttributeValue } from "../services/wh/attributes.ts";
 import SelectInput from "./SelectInput.vue";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import FormInput from "./FormInput.vue";
+import CharacterModifierEffectTable from "./CharacterModifierEffectTable.vue";
 
 const props = defineProps<{
   disabled?: boolean;
@@ -54,6 +55,12 @@ function updateMovement(newMovement: number) {
   emit("update:modelValue", newModifiers);
 }
 
+function updateEffects(id: number, selected: boolean) {
+  const newModifiers = props.modelValue.copy();
+  newModifiers.updateEffects(id, selected);
+  emit("update:modelValue", newModifiers);
+}
+
 const sizeOptions = [
   { text: "3", value: 3 },
   { text: "2", value: 2 },
@@ -80,112 +87,119 @@ const validAtts = computed(() => {
 
 <template>
   <div ref="contentContainerRef">
-    <div class="flex items-center mb-1">
+    <div class="flex items-center mb-2">
       <div class="mr-2">Character modifiers</div>
       <ActionButton size="sm" @click="modal.showModal('modifiersHelpModal')">What are modifiers?</ActionButton>
     </div>
+    <div class="border p-2 rounded border-neutral-300 bg-neutral-100">
+      <CharacterModifiersAttributes :rows="rows">
+        <template #WS>
+          <FormInput
+            :modelValue="modelValue.attributes.WS"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.WS, $event)"
+          />
+        </template>
+        <template #BS>
+          <FormInput
+            :modelValue="modelValue.attributes.BS"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.BS, $event)"
+          />
+        </template>
+        <template #S>
+          <FormInput
+            :modelValue="modelValue.attributes.S"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.S, $event)"
+          />
+        </template>
+        <template #T>
+          <FormInput
+            :modelValue="modelValue.attributes.T"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.T, $event)"
+          />
+        </template>
+        <template #I>
+          <FormInput
+            :modelValue="modelValue.attributes.I"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.I, $event)"
+          />
+        </template>
+        <template #Ag>
+          <FormInput
+            :modelValue="modelValue.attributes.Ag"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.Ag, $event)"
+          />
+        </template>
+        <template #Dex>
+          <FormInput
+            :modelValue="modelValue.attributes.Dex"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.Dex, $event)"
+          />
+        </template>
+        <template #Int>
+          <FormInput
+            :modelValue="modelValue.attributes.Int"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.Int, $event)"
+          />
+        </template>
+        <template #WP>
+          <FormInput
+            :modelValue="modelValue.attributes.WP"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.WP, $event)"
+          />
+        </template>
+        <template #Fel>
+          <FormInput
+            :modelValue="modelValue.attributes.Fel"
+            type="number"
+            :disabled="props.disabled"
+            @update:modelValue="updateAttributes(AttributeName.Fel, $event)"
+          />
+        </template>
+      </CharacterModifiersAttributes>
+      <p class="text-sm text-red-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
 
-    <CharacterModifiersAttributes :rows="rows">
-      <template #WS>
-        <FormInput
-          :modelValue="modelValue.attributes.WS"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.WS, $event)"
+      <div class="justify-between text-left gap-4 mt-4" :class="[lg.isEqualOrGreater.value ? 'flex' : 'flex-col']">
+        <CharacterModifierEffectTable
+          :initEffects="modelValue.effects"
+          :disabled="props.disabled ? props.disabled : false"
+          class="mt-1 flex-1"
+          @selected="(event) => updateEffects(event.id, event.selected)"
         />
-      </template>
-      <template #BS>
-        <FormInput
-          :modelValue="modelValue.attributes.BS"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.BS, $event)"
+        <SelectInput
+          :modelValue="modelValue.size"
+          :options="sizeOptions"
+          title="Character size"
+          class="flex-1 mt-4"
+          :disabled="props.disabled ? props.disabled : false"
+          @update:modelValue="(event) => updateSize(event)"
         />
-      </template>
-      <template #S>
-        <FormInput
-          :modelValue="modelValue.attributes.S"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.S, $event)"
+        <SelectInput
+          :modelValue="modelValue.movement"
+          :options="movementOptions"
+          title="Character movement"
+          :disabled="props.disabled ? props.disabled : false"
+          class="flex-1 mt-4"
+          @update:modelValue="(event) => updateMovement(event)"
         />
-      </template>
-      <template #T>
-        <FormInput
-          :modelValue="modelValue.attributes.T"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.T, $event)"
-        />
-      </template>
-      <template #I>
-        <FormInput
-          :modelValue="modelValue.attributes.I"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.I, $event)"
-        />
-      </template>
-      <template #Ag>
-        <FormInput
-          :modelValue="modelValue.attributes.Ag"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.Ag, $event)"
-        />
-      </template>
-      <template #Dex>
-        <FormInput
-          :modelValue="modelValue.attributes.Dex"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.Dex, $event)"
-        />
-      </template>
-      <template #Int>
-        <FormInput
-          :modelValue="modelValue.attributes.Int"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.Int, $event)"
-        />
-      </template>
-      <template #WP>
-        <FormInput
-          :modelValue="modelValue.attributes.WP"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.WP, $event)"
-        />
-      </template>
-      <template #Fel>
-        <FormInput
-          :modelValue="modelValue.attributes.Fel"
-          type="number"
-          :disabled="props.disabled"
-          @update:modelValue="updateAttributes(AttributeName.Fel, $event)"
-        />
-      </template>
-    </CharacterModifiersAttributes>
-    <p class="text-sm text-red-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
-
-    <div class="justify-between text-left gap-4" :class="[lg.isEqualOrGreater.value ? 'flex' : 'flex-col']">
-      <SelectInput
-        :modelValue="modelValue.size"
-        :options="sizeOptions"
-        title="Character size"
-        class="flex-1 mt-4"
-        :disabled="props.disabled ? props.disabled : false"
-        @update:modelValue="(event) => updateSize(event)"
-      />
-      <SelectInput
-        :modelValue="modelValue.movement"
-        :options="movementOptions"
-        title="Character movement"
-        :disabled="props.disabled ? props.disabled : false"
-        class="flex-1 mt-4"
-        @update:modelValue="(event) => updateMovement(event)"
-      />
+      </div>
     </div>
   </div>
 
