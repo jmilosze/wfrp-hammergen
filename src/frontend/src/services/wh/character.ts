@@ -1,9 +1,9 @@
 import {
-  DEFAULT_SIZE,
   DEFAULT_CAREER_ID,
   getMovementFormula,
   getWoundsFormula,
   SpeciesWithRegion,
+  getModifiedSize,
 } from "./characterUtils.ts";
 import { Career, StatusStanding, StatusTier } from "./career.ts";
 import {
@@ -25,7 +25,7 @@ import {
   WhProperty,
 } from "./common.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { CharacterModifiers } from "./characterModifiers.ts";
+import { CharacterModifiers, ModifierEffect } from "./characterModifiers.ts";
 import { clearObject, objectsAreEqual } from "../../utils/object.ts";
 import { AxiosInstance } from "axios";
 import {
@@ -430,11 +430,21 @@ export class Character implements WhProperty {
     return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.getModifierAttributes());
   }
 
-  getWounds() {
-    const attributeTotal = this.getTotalAttributes();
+  getHardyRanks(): number {
+    return (
+      Object.values(this.modifiers.talents).reduce(
+        (a, v) => a + v.number * (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
+        0,
+      ) +
+      Object.values(this.modifiers.mutations).reduce(
+        (a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
+        0,
+      )
+    );
+  }
 
-    const size =
-      DEFAULT_SIZE +
+  getSize(): number {
+    const mods: number =
       Object.values(this.modifiers.talents)
         .map((x) => x.number * x.value.size)
         .reduce((a, b) => a + b, 0) +
@@ -442,7 +452,18 @@ export class Character implements WhProperty {
         .map((x) => x.value.size)
         .reduce((a, b) => a + b, 0);
 
-    return getWoundsFormula(size, attributeTotal.T, attributeTotal.WP, attributeTotal.S);
+    return getModifiedSize(mods);
+  }
+
+  getWounds() {
+    const attributeTotal = this.getTotalAttributes();
+    return getWoundsFormula(
+      this.getSize(),
+      attributeTotal.T,
+      attributeTotal.WP,
+      attributeTotal.S,
+      this.getHardyRanks(),
+    );
   }
 
   updateCurrentCareer(id: string, number: number, selected: boolean) {

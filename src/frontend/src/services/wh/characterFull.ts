@@ -1,12 +1,20 @@
 import {
-  DEFAULT_SIZE,
+  getModifiedSize,
   getMovementFormula,
   getWoundsFormula,
+  printSize,
   printSpeciesWithRegion,
   SpeciesWithRegion,
 } from "./characterUtils.ts";
 import { CareerApiData, CareerClass, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
-import { Attributes, getAttributes, getAttributeValue, printAttributeName, sumAttributes } from "./attributes.ts";
+import {
+  Attributes,
+  getAttributes,
+  getAttributeValue,
+  multiplyAttributes,
+  printAttributeName,
+  sumAttributes,
+} from "./attributes.ts";
 import { ApiResponse } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
 import { TalentApiData } from "./talent.ts";
@@ -30,9 +38,9 @@ import {
 import { SpellApiData } from "./spell.ts";
 import { PrayerApiData } from "./prayer.ts";
 import { MutationApiData, printMutationType } from "./mutation.ts";
-import { CharacterModifiers } from "./characterModifiers.ts";
 import { Source } from "./source.ts";
 import { ItemPropertyApiData } from "./itemproperty.ts";
+import { ModifierEffect } from "./characterModifiers.ts";
 
 export interface ItemFullApiData {
   name: string;
@@ -151,6 +159,7 @@ export interface CharacterFull {
   description: string;
   notes: string;
   species: string;
+  size: string;
   fate: number;
   fortune: number;
   resilience: number;
@@ -209,6 +218,7 @@ export function newCharacterFull({
   description = "",
   notes = "",
   species = printSpeciesWithRegion(SpeciesWithRegion.None),
+  size = "",
   fate = 0,
   fortune = 0,
   resilience = 0,
@@ -259,6 +269,7 @@ export function newCharacterFull({
     description: description,
     notes: notes,
     species: species,
+    size: size,
     fate: fate,
     fortune: fortune,
     resilience: resilience,
@@ -304,27 +315,42 @@ export function newCharacterFull({
 }
 
 export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<CharacterFullApiData>): CharacterFull {
-  const totalModifiers = new CharacterModifiers();
+  const mutationAttributes: Attributes = fullCharacterApi.object.mutations.reduce(
+    (a, v) => sumAttributes(a, v.object.modifiers.attributes),
+    getAttributes(),
+  );
 
-  for (const mutation of fullCharacterApi.object.mutations) {
-    totalModifiers.add(mutation.object.modifiers);
-  }
+  const talentAttributes: Attributes = fullCharacterApi.object.talents.reduce(
+    (a, v) => sumAttributes(a, multiplyAttributes(v.number, v.wh.object.modifiers.attributes)),
+    getAttributes(),
+  );
 
-  for (const talent of fullCharacterApi.object.talents) {
-    const talentModifiers = new CharacterModifiers();
-    talentModifiers.add(talent.wh.object.modifiers).multiply(talent.number);
-    totalModifiers.add(talentModifiers);
-  }
+  const otherAttributes = sumAttributes(mutationAttributes, talentAttributes);
 
-  const otherAttributes = totalModifiers.attributes;
   const attributes = sumAttributes(
     fullCharacterApi.object.baseAttributes,
     fullCharacterApi.object.attributeAdvances,
-    totalModifiers.attributes,
+    otherAttributes,
   );
 
-  const sizeModifier = totalModifiers.size;
-  const movementModifier = totalModifiers.movement;
+  const sizeModifier: number =
+    fullCharacterApi.object.mutations.reduce((a, v) => a + v.object.modifiers.size, 0) +
+    fullCharacterApi.object.talents.reduce((a, v) => a + v.number * v.wh.object.modifiers.size, 0);
+  const movementModifier =
+    fullCharacterApi.object.mutations.reduce((a, v) => a + v.object.modifiers.movement, 0) +
+    fullCharacterApi.object.talents.reduce((a, v) => a + v.number * v.wh.object.modifiers.movement, 0);
+
+  const size = getModifiedSize(sizeModifier);
+
+  const hardyRanks =
+    fullCharacterApi.object.mutations.reduce(
+      (a, v) => a + (v.object.modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
+      0,
+    ) +
+    fullCharacterApi.object.talents.reduce(
+      (a, v) => a + v.number * (v.wh.object.modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
+      0,
+    );
 
   const [basicSkills, advancedSkills] = getSkills(fullCharacterApi.object.skills, attributes);
 
@@ -344,6 +370,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     description: fullCharacterApi.object.description,
     notes: fullCharacterApi.object.notes,
     species: printSpeciesWithRegion(fullCharacterApi.object.species),
+    size: printSize(size),
     fate: fullCharacterApi.object.fate,
     fortune: fullCharacterApi.object.fortune,
     resilience: fullCharacterApi.object.resilience,
@@ -372,7 +399,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     movement: getMovementFormula(fullCharacterApi.object.species) + movementModifier,
     walk: 2 * (getMovementFormula(fullCharacterApi.object.species) + movementModifier),
     run: 4 * (getMovementFormula(fullCharacterApi.object.species) + movementModifier),
-    wounds: getWoundsFormula(DEFAULT_SIZE + sizeModifier, attributes.T, attributes.WP, attributes.S),
+    wounds: getWoundsFormula(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
 
     talents: fullCharacterApi.object.talents.map((x) => ({ name: x.wh.object.name, rank: x.number })),
     basicSkills: basicSkills,

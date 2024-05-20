@@ -1,5 +1,5 @@
 export interface TableRow {
-  id: string;
+  id: string | number;
   name: string;
   [k: string]: TableItem;
 }

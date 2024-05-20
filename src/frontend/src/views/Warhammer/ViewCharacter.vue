@@ -97,11 +97,19 @@ const displayResilience = ref({
 
 const displayOther = ref({
   fields: [
-    { name: "wounds", displayName: "Wounds (unmodified by Hardy)" },
+    { name: "size", displayName: "Size" },
+    { name: "wounds", displayName: "Wounds" },
     { name: "sin", displayName: "Sin" },
     { name: "corruption", displayName: "Corruption" },
   ],
-  items: [{ wounds: character.value.wounds, sin: character.value.sin, corruption: character.value.corruption }],
+  items: [
+    {
+      size: character.value.size,
+      wounds: character.value.wounds,
+      sin: character.value.sin,
+      corruption: character.value.corruption,
+    },
+  ],
 });
 
 const displayExperience = ref({
@@ -498,13 +506,13 @@ const grimoiresDisp = ref(
     />
   </div>
   <div class="flex justify-between text-left gap-5 my-5" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <ViewCharacterTable title="Other" :items="displayOther.items" :fields="displayOther.fields" class="grow" />
     <ViewCharacterTable
       title="Experience"
       :items="displayExperience.items"
       :fields="displayExperience.fields"
       class="grow"
     />
+    <ViewCharacterTable title="Other" :items="displayOther.items" :fields="displayOther.fields" class="grow" />
   </div>
   <div class="flex justify-between text-left gap-5 my-5" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable

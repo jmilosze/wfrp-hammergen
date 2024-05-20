@@ -206,7 +206,7 @@ export function modelToApi(talent: Talent): TalentApiData {
     attribute: talent.attribute,
     isGroup: talent.isGroup,
     group: [...talent.group],
-    modifiers: talent.modifiers.copy(),
+    modifiers: talent.modifiers.toData(),
     shared: talent.shared,
     source: copySource(talent.source),
   };
