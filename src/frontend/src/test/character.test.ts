@@ -510,6 +510,17 @@ describe("getMovement returns correct value", () => {
       name: printSpeciesWithRegion(SpeciesWithRegion.HumanReikland),
       speciesWithRegion: SpeciesWithRegion.HumanReikland,
       modifiers: {
+        talents: {
+          talent1: { number: 1, value: new CharacterModifiers({ movement: -100 }) },
+        },
+        mutations: {} as Record<string, { value: CharacterModifiers }>,
+      },
+      expected: 0,
+    },
+    {
+      name: printSpeciesWithRegion(SpeciesWithRegion.HumanReikland),
+      speciesWithRegion: SpeciesWithRegion.HumanReikland,
+      modifiers: {
         talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
         mutations: {} as Record<string, { value: CharacterModifiers }>,
       },
