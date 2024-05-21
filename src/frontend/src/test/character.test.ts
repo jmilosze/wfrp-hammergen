@@ -1,11 +1,5 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
-import {
-  getSizeFormula,
-  getWoundsFormula,
-  printSpeciesWithRegion,
-  Size,
-  SpeciesWithRegion,
-} from "../services/wh/characterUtils.ts";
+import { getWoundsFormula, printSpeciesWithRegion, Size, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -458,17 +452,6 @@ describe("isEqualTo returns false", () => {
   });
 });
 
-describe("getSizeFormula returns correct value", () => {
-  test.each([
-    { title: "default is 3", mods: 0, expected: 3 },
-    { title: "mods are added correctly", mods: 2, expected: 5 },
-    { title: "can never be smaller than 0", mods: -10, expected: 0 },
-    { title: "can never be larger than 6", mods: 10, expected: 6 },
-  ])("$title", (t) => {
-    expect(getSizeFormula(t.mods)).toEqual(t.expected);
-  });
-});
-
 describe("getWoundsFormula returns correct value", () => {
   test.each([
     { size: Size.Average, T: 10, WP: 10, S: 10, hardy: 1, expected: 5 }, // 1 + (2 * 1) + 1 + 1
@@ -615,6 +598,57 @@ describe("getMovement returns correct value", () => {
     char.species = t.speciesWithRegion;
     char.modifiers = t.modifiers;
     expect(char.getMovement()).toEqual(t.expected);
+  });
+});
+
+describe("getSize returns correct value", () => {
+  test.each([
+    {
+      title: "default is 3",
+      modifiers: {
+        talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
+        mutations: {} as Record<string, { value: CharacterModifiers }>,
+      },
+      expected: 3,
+    },
+    {
+      title: "modifiers are added correctly",
+      modifiers: {
+        talents: {
+          talent1: { number: 1, value: new CharacterModifiers({ size: 1 }) },
+          talent2: { number: 2, value: new CharacterModifiers({ size: -1 }) },
+        },
+        mutations: {
+          mutation1: { value: new CharacterModifiers({ size: 1 }) },
+          mutation2: { value: new CharacterModifiers({ size: 2 }) },
+        },
+      },
+      expected: 5, // 3 + 1 - 2*1 + 1 + 2,
+    },
+    {
+      title: "can never be smaller than 0",
+      modifiers: {
+        talents: {
+          talent1: { number: 1, value: new CharacterModifiers({ size: -10 }) },
+        },
+        mutations: {} as Record<string, { value: CharacterModifiers }>,
+      },
+      expected: 0,
+    },
+    {
+      title: "can never be larger than 6",
+      modifiers: {
+        talents: {
+          talent1: { number: 1, value: new CharacterModifiers({ size: 10 }) },
+        },
+        mutations: {} as Record<string, { value: CharacterModifiers }>,
+      },
+      expected: 6,
+    },
+  ])("$title", (t) => {
+    const char = character.copy();
+    char.modifiers = t.modifiers;
+    expect(char.getSize()).toEqual(t.expected);
   });
 });
 
