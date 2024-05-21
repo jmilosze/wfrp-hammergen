@@ -37,6 +37,16 @@ import TextLink from "../components/TextLink.vue";
 
   <div class="text-2xl font-semibold mt-5">Updates</div>
   <div>
+    <div class="text-xl mt-2 mb-1">25 May 2024</div>
+    <p>Added hardy effect to talents and mutations.</p>
+    <p class="mb-1">
+      Added contents of
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-reikland-miscellanea" target="_blank">
+        Reikland Miscellanea
+      </TextLink>
+    </p>
+  </div>
+  <div>
     <div class="text-xl mt-2 mb-1">21 Apr 2024</div>
     <p>Redesigned page layout and changed colour scheme. No changes to functionality.</p>
   </div>
