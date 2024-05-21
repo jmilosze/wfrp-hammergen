@@ -185,15 +185,15 @@ export const enum Sex {
   Female,
 }
 
-export function getMovementFormula(species: SpeciesWithRegion) {
+export function getMovementFormula(species: SpeciesWithRegion, mods: number) {
   if (HALFLING_LIST.includes(species) || DWARF_LIST.includes(species) || GNOME_LIST.includes(species)) {
-    return 3;
+    return 3 + mods;
   } else if (HUMAN_LIST.includes(species)) {
-    return 4;
+    return 4 + mods;
   } else if (OGRE_LIST.includes(species)) {
-    return 6;
+    return 6 + mods;
   } else if (HIGH_ELF_LIST.includes(species) || WOOD_ELF_LIST.includes(species)) {
-    return 5;
+    return 5 + mods;
   } else {
     return 0;
   }
