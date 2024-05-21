@@ -1,5 +1,5 @@
 import {
-  getModifiedSize,
+  getSizeFormula,
   getMovementFormula,
   getWoundsFormula,
   printSize,
@@ -340,7 +340,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     fullCharacterApi.object.mutations.reduce((a, v) => a + v.object.modifiers.movement, 0) +
     fullCharacterApi.object.talents.reduce((a, v) => a + v.number * v.wh.object.modifiers.movement, 0);
 
-  const size = getModifiedSize(sizeModifier);
+  const size = getSizeFormula(sizeModifier);
 
   const hardyRanks =
     fullCharacterApi.object.mutations.reduce(

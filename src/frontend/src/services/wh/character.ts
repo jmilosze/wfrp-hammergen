@@ -3,7 +3,7 @@ import {
   getMovementFormula,
   getWoundsFormula,
   SpeciesWithRegion,
-  getModifiedSize,
+  getSizeFormula,
 } from "./characterUtils.ts";
 import { Career, StatusStanding, StatusTier } from "./career.ts";
 import {
@@ -452,7 +452,7 @@ export class Character implements WhProperty {
         .map((x) => x.value.size)
         .reduce((a, b) => a + b, 0);
 
-    return getModifiedSize(mods);
+    return getSizeFormula(mods);
   }
 
   getWounds() {
