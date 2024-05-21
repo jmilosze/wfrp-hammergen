@@ -397,15 +397,15 @@ export class Character implements WhProperty {
   }
 
   getMovement(): number {
-    return (
-      getMovementFormula(this.species) +
+    const mods =
       Object.values(this.modifiers.talents)
         .map((x) => x.number * x.value.movement)
         .reduce((a, b) => a + b, 0) +
       Object.values(this.modifiers.mutations)
         .map((x) => x.value.movement)
-        .reduce((a, b) => a + b, 0)
-    );
+        .reduce((a, b) => a + b, 0);
+
+    return getMovementFormula(this.species, mods);
   }
 
   getRacialAttributes(): Attributes {
@@ -455,7 +455,7 @@ export class Character implements WhProperty {
     return getSizeFormula(mods);
   }
 
-  getWounds() {
+  getWounds(): number {
     const attributeTotal = this.getTotalAttributes();
     return getWoundsFormula(
       this.getSize(),
@@ -694,7 +694,7 @@ export class Character implements WhProperty {
     }
   }
 
-  hydrateTalentModifiers(talents: Talent[]) {
+  hydrateTalentModifiers(talents: Talent[]): void {
     this.modifiers.talents = {};
     for (const talent of talents) {
       if (talent.id in this.talents) {
@@ -703,7 +703,7 @@ export class Character implements WhProperty {
     }
   }
 
-  hydrateMutationModifiers(mutations: Mutation[]) {
+  hydrateMutationModifiers(mutations: Mutation[]): void {
     this.modifiers.mutations = {};
     for (const mutation of mutations) {
       if (this.mutations.has(mutation.id)) {

@@ -396,9 +396,9 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     otherAttributes: otherAttributes,
     attributes: attributes,
 
-    movement: getMovementFormula(fullCharacterApi.object.species) + movementModifier,
-    walk: 2 * (getMovementFormula(fullCharacterApi.object.species) + movementModifier),
-    run: 4 * (getMovementFormula(fullCharacterApi.object.species) + movementModifier),
+    movement: getMovementFormula(fullCharacterApi.object.species, movementModifier),
+    walk: 2 * getMovementFormula(fullCharacterApi.object.species, movementModifier),
+    run: 4 * getMovementFormula(fullCharacterApi.object.species, movementModifier),
     wounds: getWoundsFormula(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
 
     talents: fullCharacterApi.object.talents.map((x) => ({ name: x.wh.object.name, rank: x.number })),
