@@ -180,20 +180,20 @@ export const speciesWithRegionList = [
   ...OGRE_LIST,
 ];
 
-export enum Sex {
+export const enum Sex {
   Male = 0,
   Female,
 }
 
-export function getMovementFormula(species: SpeciesWithRegion) {
+export function getMovementFormula(species: SpeciesWithRegion, mods: number) {
   if (HALFLING_LIST.includes(species) || DWARF_LIST.includes(species) || GNOME_LIST.includes(species)) {
-    return 3;
+    return 3 + mods;
   } else if (HUMAN_LIST.includes(species)) {
-    return 4;
+    return 4 + mods;
   } else if (OGRE_LIST.includes(species)) {
-    return 6;
+    return 6 + mods;
   } else if (HIGH_ELF_LIST.includes(species) || WOOD_ELF_LIST.includes(species)) {
-    return 5;
+    return 5 + mods;
   } else {
     return 0;
   }
@@ -255,7 +255,7 @@ export function getWoundsFormula(size: number, T: number, WP: number, S: number,
   return base + TB * hardyRanks;
 }
 
-export function getModifiedSize(mods: number) {
+export function getSizeFormula(mods: number) {
   const size = DEFAULT_SIZE + mods;
   return size <= Size.Tiny ? Size.Tiny : size >= Size.Monstrous ? Size.Monstrous : size;
 }

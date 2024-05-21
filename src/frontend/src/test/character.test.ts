@@ -601,6 +601,57 @@ describe("getMovement returns correct value", () => {
   });
 });
 
+describe("getSize returns correct value", () => {
+  test.each([
+    {
+      title: "default is 3",
+      modifiers: {
+        talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
+        mutations: {} as Record<string, { value: CharacterModifiers }>,
+      },
+      expected: 3,
+    },
+    {
+      title: "modifiers are added correctly",
+      modifiers: {
+        talents: {
+          talent1: { number: 1, value: new CharacterModifiers({ size: 1 }) },
+          talent2: { number: 2, value: new CharacterModifiers({ size: -1 }) },
+        },
+        mutations: {
+          mutation1: { value: new CharacterModifiers({ size: 1 }) },
+          mutation2: { value: new CharacterModifiers({ size: 2 }) },
+        },
+      },
+      expected: 5, // 3 + 1 - 2*1 + 1 + 2,
+    },
+    {
+      title: "can never be smaller than 0",
+      modifiers: {
+        talents: {
+          talent1: { number: 1, value: new CharacterModifiers({ size: -10 }) },
+        },
+        mutations: {} as Record<string, { value: CharacterModifiers }>,
+      },
+      expected: 0,
+    },
+    {
+      title: "can never be larger than 6",
+      modifiers: {
+        talents: {
+          talent1: { number: 1, value: new CharacterModifiers({ size: 10 }) },
+        },
+        mutations: {} as Record<string, { value: CharacterModifiers }>,
+      },
+      expected: 6,
+    },
+  ])("$title", (t) => {
+    const char = character.copy();
+    char.modifiers = t.modifiers;
+    expect(char.getSize()).toEqual(t.expected);
+  });
+});
+
 test("getRacialAttributes returns correct value", () => {
   const char = character.copy();
   // Dwarf
