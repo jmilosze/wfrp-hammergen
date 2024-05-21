@@ -180,7 +180,7 @@ export const speciesWithRegionList = [
   ...OGRE_LIST,
 ];
 
-export enum Sex {
+export const enum Sex {
   Male = 0,
   Female,
 }
@@ -255,7 +255,7 @@ export function getWoundsFormula(size: number, T: number, WP: number, S: number,
   return base + TB * hardyRanks;
 }
 
-export function getModifiedSize(mods: number) {
+export function getSizeFormula(mods: number) {
   const size = DEFAULT_SIZE + mods;
   return size <= Size.Tiny ? Size.Tiny : size >= Size.Monstrous ? Size.Monstrous : size;
 }

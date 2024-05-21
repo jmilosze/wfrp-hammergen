@@ -1,5 +1,11 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
-import { getWoundsFormula, printSpeciesWithRegion, Size, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
+import {
+  getSizeFormula,
+  getWoundsFormula,
+  printSpeciesWithRegion,
+  Size,
+  SpeciesWithRegion,
+} from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
 import { ApiResponse } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -449,6 +455,17 @@ describe("isEqualTo returns false", () => {
     const otherCharacter = character.copy();
     otherCharacter.mutations = t.value;
     expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+});
+
+describe("getSizeFormula returns correct value", () => {
+  test.each([
+    { title: "default is 3", mods: 0, expected: 3 },
+    { title: "mods are added correctly", mods: 2, expected: 5 },
+    { title: "can never be smaller than 0", mods: -10, expected: 0 },
+    { title: "can never be larger than 6", mods: 10, expected: 6 },
+  ])("$title", (t) => {
+    expect(getSizeFormula(t.mods)).toEqual(t.expected);
   });
 });
 
