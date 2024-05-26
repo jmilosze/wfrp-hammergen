@@ -72,3 +72,16 @@ func idListToWhList(idList []string, allIdWhMap map[string]*Wh) []*Wh {
 	}
 	return whList
 }
+
+func isUnique[T ~int](arr []T) bool {
+	seen := make(map[T]bool)
+
+	for _, value := range arr {
+		if _, exists := seen[value]; exists {
+			return false
+		}
+		seen[value] = true
+	}
+
+	return true
+}

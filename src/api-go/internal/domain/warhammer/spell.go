@@ -53,8 +53,6 @@ var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeRitual, Sp
 var SpellLabels = map[SpellType][]SpellLabel{
 	SpellTypePetty: []SpellLabel{SpellLabelSkaven, SpellLabelChaos},
 	SpellTypeRitual: []SpellLabel{
-		SpellLabelSkaven,
-		SpellLabelChaos,
 		SpellLabelLight,
 		SpellLabelMetal,
 		SpellLabelLife,
@@ -81,8 +79,6 @@ var SpellLabels = map[SpellType][]SpellLabel{
 		SpellLabelCustom,
 	},
 	SpellTypeRegular: []SpellLabel{
-		SpellLabelSkaven,
-		SpellLabelChaos,
 		SpellLabelLight,
 		SpellLabelMetal,
 		SpellLabelLife,
@@ -207,6 +203,10 @@ func CustomClassificationValidator(fl validator.FieldLevel) bool {
 		if !slices.Contains(SpellLabels[sc.Type], label) {
 			return false
 		}
+	}
+
+	if !isUnique(sc.Labels) {
+		return false
 	}
 
 	return true
