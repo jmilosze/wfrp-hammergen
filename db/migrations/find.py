@@ -53,5 +53,17 @@ def check_characters():
     print(f"not converted characters: {not_converted}")
 
 
+def find_in_spells(id):
+    spells = []
+    chars = DB["character"].find()
+    for char in chars:
+        for item in char["object"]["spells"]:
+            if item == id:
+                spells.append(char["object"]["name"])
+                break
+
+    print(f"characters with spell: {spells}")
+
+
 if __name__ == "__main__":
-    check_characters()
+    find_in_spells("6649b99f49960d0001d12df4")
