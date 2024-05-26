@@ -11,7 +11,7 @@ type SpellType int
 const (
 	SpellTypeOther   = 0
 	SpellTypePetty   = 1
-	SpellTypeRitual  = 2
+	SpellTypeArcane  = 2
 	SpellTypeRegular = 3
 )
 
@@ -45,38 +45,19 @@ const (
 	SpellLabelStealth      = 24
 	SpellLabelRuin         = 25
 	SpellLabelCustom       = 26
-	SpellLabelArcane       = 27
+	SpellLabelRitual       = 27
 )
 
-var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeRitual, SpellTypeRegular}
+var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeArcane, SpellTypeRegular}
 
 var SpellLabels = map[SpellType][]SpellLabel{
-	SpellTypePetty: []SpellLabel{SpellLabelSkaven, SpellLabelChaos},
-	SpellTypeRitual: []SpellLabel{
-		SpellLabelLight,
-		SpellLabelMetal,
-		SpellLabelLife,
-		SpellLabelHeavens,
-		SpellLabelShadows,
-		SpellLabelDeath,
-		SpellLabelFire,
-		SpellLabelBeasts,
-		SpellLabelDaemonology,
-		SpellLabelNecromancy,
-		SpellLabelHedgeCraft,
-		SpellLabelWitchcraft,
-		SpellLabelNurgle,
-		SpellLabelSlaanesh,
-		SpellLabelTzeentch,
-		SpellLabelHighGeneral,
-		SpellLabelHighSlann,
-		SpellLabelGreatMaw,
-		SpellLabelLittleWaaagh,
-		SpellLabelBigWaaagh,
-		SpellLabelPlague,
-		SpellLabelStealth,
-		SpellLabelRuin,
-		SpellLabelCustom,
+	SpellTypePetty: []SpellLabel{
+		SpellLabelSkaven,
+		SpellLabelChaos,
+	},
+	SpellTypeArcane: []SpellLabel{
+		SpellLabelSkaven,
+		SpellLabelChaos,
 	},
 	SpellTypeRegular: []SpellLabel{
 		SpellLabelLight,
@@ -103,9 +84,12 @@ var SpellLabels = map[SpellType][]SpellLabel{
 		SpellLabelStealth,
 		SpellLabelRuin,
 		SpellLabelCustom,
-		SpellLabelArcane,
+		SpellLabelRitual,
 	},
-	SpellTypeOther: []SpellLabel{SpellLabelFimirMarsh, SpellLabelCustom},
+	SpellTypeOther: []SpellLabel{
+		SpellLabelFimirMarsh,
+		SpellLabelCustom,
+	},
 }
 
 type SpellClassification struct {
