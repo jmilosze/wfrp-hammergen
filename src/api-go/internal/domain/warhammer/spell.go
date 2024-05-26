@@ -20,37 +20,32 @@ type SpellLabel int
 const (
 	SpellLabelSkaven       = 0
 	SpellLabelChaos        = 1
-	SpellLabelColour       = 2
-	SpellLabelDark         = 3
-	SpellLabelWitch        = 4
-	SpellLabelHigh         = 5
-	SpellLabelWaaagh       = 6
-	SpellLabelFimirMarsh   = 7
-	SpellLabelLight        = 8
-	SpellLabelMetal        = 9
-	SpellLabelLife         = 10
-	SpellLabelHeavens      = 11
-	SpellLabelShadows      = 12
-	SpellLabelDeath        = 13
-	SpellLabelFire         = 14
-	SpellLabelBeasts       = 15
-	SpellLabelDaemonology  = 16
-	SpellLabelNecromancy   = 17
-	SpellLabelHedgeCraft   = 18
-	SpellLabelWitchcraft   = 19
-	SpellLabelNurgle       = 20
-	SpellLabelSlaanesh     = 21
-	SpellLabelTzeentch     = 22
-	SpellLabelHighGeneral  = 23
-	SpellLabelHighSlann    = 24
-	SpellLabelGreatMaw     = 25
-	SpellLabelLittleWaaagh = 26
-	SpellLabelBigWaaagh    = 27
-	SpellLabelPlague       = 28
-	SpellLabelStealth      = 29
-	SpellLabelRuin         = 30
-	SpellLabelCustom       = 31
-	SpellLabelArcane       = 32
+	SpellLabelFimirMarsh   = 2
+	SpellLabelLight        = 3
+	SpellLabelMetal        = 4
+	SpellLabelLife         = 5
+	SpellLabelHeavens      = 6
+	SpellLabelShadows      = 7
+	SpellLabelDeath        = 8
+	SpellLabelFire         = 9
+	SpellLabelBeasts       = 10
+	SpellLabelDaemonology  = 11
+	SpellLabelNecromancy   = 12
+	SpellLabelHedgeCraft   = 13
+	SpellLabelWitchcraft   = 14
+	SpellLabelNurgle       = 15
+	SpellLabelSlaanesh     = 16
+	SpellLabelTzeentch     = 17
+	SpellLabelHighGeneral  = 18
+	SpellLabelHighSlann    = 19
+	SpellLabelGreatMaw     = 20
+	SpellLabelLittleWaaagh = 21
+	SpellLabelBigWaaagh    = 22
+	SpellLabelPlague       = 23
+	SpellLabelStealth      = 24
+	SpellLabelRuin         = 25
+	SpellLabelCustom       = 26
+	SpellLabelArcane       = 27
 )
 
 var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeRitual, SpellTypeRegular}
@@ -60,11 +55,6 @@ var SpellLabels = map[SpellType][]SpellLabel{
 	SpellTypeRitual: []SpellLabel{
 		SpellLabelSkaven,
 		SpellLabelChaos,
-		SpellLabelColour,
-		SpellLabelDark,
-		SpellLabelWitch,
-		SpellLabelHigh,
-		SpellLabelWaaagh,
 		SpellLabelLight,
 		SpellLabelMetal,
 		SpellLabelLife,
@@ -93,11 +83,6 @@ var SpellLabels = map[SpellType][]SpellLabel{
 	SpellTypeRegular: []SpellLabel{
 		SpellLabelSkaven,
 		SpellLabelChaos,
-		SpellLabelColour,
-		SpellLabelDark,
-		SpellLabelWitch,
-		SpellLabelHigh,
-		SpellLabelWaaagh,
 		SpellLabelLight,
 		SpellLabelMetal,
 		SpellLabelLife,
