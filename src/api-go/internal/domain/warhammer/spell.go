@@ -1,14 +1,18 @@
 package warhammer
 
-import "errors"
+import (
+	"errors"
+	"github.com/go-playground/validator/v10"
+	"golang.org/x/exp/slices"
+)
 
 type SpellType int
 
 const (
-	SpellTypePetty   = 0
-	SpellTypeRitual  = 1
-	SpellTypeRegular = 2
-	SpellTypeOther   = 3
+	SpellTypeOther   = 0
+	SpellTypePetty   = 1
+	SpellTypeRitual  = 2
+	SpellTypeRegular = 3
 )
 
 type SpellLabel int
@@ -28,26 +32,28 @@ const (
 	SpellLabelHeavens      = 11
 	SpellLabelShadows      = 12
 	SpellLabelDeath        = 13
-	SpellLabelFire         = 13
-	SpellLabelBeasts       = 14
-	SpellLabelDaemonology  = 15
-	SpellLabelNecromancy   = 16
-	SpellLabelHedgeCraft   = 17
-	SpellLabelWitchcraft   = 18
-	SpellLabelNurgle       = 19
-	SpellLabelSlaanesh     = 20
-	SpellLabelTzeentch     = 21
-	SpellLabelHighGeneral  = 22
-	SpellLabelHighSlann    = 22
-	SpellLabelGreatMaw     = 23
-	SpellLabelLittleWaaagh = 24
-	SpellLabelBigWaaagh    = 25
-	SpellLabelPlague       = 26
-	SpellLabelStealth      = 27
-	SpellLabelRuin         = 28
-	SpellLabelCustom       = 29
-	SpellLabelArcane       = 30
+	SpellLabelFire         = 14
+	SpellLabelBeasts       = 15
+	SpellLabelDaemonology  = 16
+	SpellLabelNecromancy   = 17
+	SpellLabelHedgeCraft   = 18
+	SpellLabelWitchcraft   = 19
+	SpellLabelNurgle       = 20
+	SpellLabelSlaanesh     = 21
+	SpellLabelTzeentch     = 22
+	SpellLabelHighGeneral  = 23
+	SpellLabelHighSlann    = 24
+	SpellLabelGreatMaw     = 25
+	SpellLabelLittleWaaagh = 26
+	SpellLabelBigWaaagh    = 27
+	SpellLabelPlague       = 28
+	SpellLabelStealth      = 29
+	SpellLabelRuin         = 30
+	SpellLabelCustom       = 31
+	SpellLabelArcane       = 32
 )
+
+var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeRitual, SpellTypeRegular}
 
 var SpellLabels = map[SpellType][]SpellLabel{
 	SpellTypePetty: []SpellLabel{SpellLabelSkaven, SpellLabelChaos},
@@ -121,15 +127,32 @@ var SpellLabels = map[SpellType][]SpellLabel{
 	SpellTypeOther: []SpellLabel{SpellLabelFimirMarsh, SpellLabelCustom},
 }
 
+type SpellClassification struct {
+	Type   SpellType    `json:"type"`
+	Labels []SpellLabel `json:"labels"`
+}
+
+func (classification *SpellClassification) Copy() *SpellClassification {
+	if classification == nil {
+		return nil
+	}
+
+	return &SpellClassification{
+		Type:   classification.Type,
+		Labels: copyArray(classification.Labels),
+	}
+}
+
 type Spell struct {
-	Name        string            `json:"name" validate:"name_valid"`
-	Description string            `json:"description" validate:"desc_valid"`
-	Cn          int               `json:"cn" validate:"min=0,max=99"`
-	Range       string            `json:"range" validate:"medium_string_valid"`
-	Target      string            `json:"target" validate:"medium_string_valid"`
-	Duration    string            `json:"duration" validate:"medium_string_valid"`
-	Shared      bool              `json:"shared" validate:"shared_valid"`
-	Source      map[Source]string `json:"source" validate:"source_valid"`
+	Name           string               `json:"name" validate:"name_valid"`
+	Description    string               `json:"description" validate:"desc_valid"`
+	Cn             int                  `json:"cn" validate:"min=0,max=99"`
+	Range          string               `json:"range" validate:"medium_string_valid"`
+	Target         string               `json:"target" validate:"medium_string_valid"`
+	Duration       string               `json:"duration" validate:"medium_string_valid"`
+	Classification *SpellClassification `json:"classification" validate:"spell_classification_valid"`
+	Shared         bool                 `json:"shared" validate:"shared_valid"`
+	Source         map[Source]string    `json:"source" validate:"source_valid"`
 }
 
 func (spell *Spell) IsShared() (bool, error) {
@@ -146,14 +169,15 @@ func (spell *Spell) Copy() WhObject {
 	}
 
 	return &Spell{
-		Name:        spell.Name,
-		Description: spell.Description,
-		Cn:          spell.Cn,
-		Range:       spell.Range,
-		Target:      spell.Target,
-		Duration:    spell.Duration,
-		Shared:      spell.Shared,
-		Source:      copySourceMap(spell.Source),
+		Name:           spell.Name,
+		Description:    spell.Description,
+		Cn:             spell.Cn,
+		Range:          spell.Range,
+		Target:         spell.Target,
+		Duration:       spell.Duration,
+		Classification: spell.Classification.Copy(),
+		Shared:         spell.Shared,
+		Source:         copySourceMap(spell.Source),
 	}
 }
 
@@ -166,5 +190,39 @@ func (spell *Spell) InitNilPointers() error {
 		spell.Source = map[Source]string{}
 	}
 
+	if spell.Classification == nil {
+		spell.Classification = &SpellClassification{
+			Type:   SpellTypeOther,
+			Labels: []SpellLabel{},
+		}
+	}
+
+	if spell.Classification.Labels == nil {
+		spell.Classification.Labels = []SpellLabel{}
+	}
+
 	return nil
+}
+
+func CustomClassificationValidator(fl validator.FieldLevel) bool {
+	sc, ok := fl.Field().Interface().(SpellClassification)
+	if !ok {
+		return false
+	}
+
+	if !slices.Contains(SpellTypes, sc.Type) {
+		return false
+	}
+
+	if sc.Labels == nil {
+		return false
+	}
+
+	for _, label := range sc.Labels {
+		if !slices.Contains(SpellLabels[sc.Type], label) {
+			return false
+		}
+	}
+
+	return true
 }
