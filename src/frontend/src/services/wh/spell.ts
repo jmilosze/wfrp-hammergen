@@ -14,6 +14,175 @@ import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts
 const CASTING_NUMBER_RE = /^([1-9][0-9]|[0-9])$/;
 const API_BASE_PATH = "/api/wh/spell";
 
+export const enum SpellType {
+  SpellTypeOther = 0,
+  SpellTypePetty = 1,
+  SpellTypeArcane = 2,
+  SpellTypeLore = 3,
+}
+
+export function printSpellType(spellType: SpellType) {
+  switch (spellType) {
+    case SpellType.SpellTypeOther:
+      return "Other spell";
+    case SpellType.SpellTypePetty:
+      return "Petty spell";
+    case SpellType.SpellTypeArcane:
+      return "Arcane spell";
+    case SpellType.SpellTypeLore:
+      return "Lore spell";
+    default:
+      return "";
+  }
+}
+
+export const enum SpellLabel {
+  SpellLabelSkaven = 0,
+  SpellLabelChaos = 1,
+  SpellLabelFimirMarsh = 2,
+  SpellLabelLight = 3,
+  SpellLabelMetal = 4,
+  SpellLabelLife = 5,
+  SpellLabelHeavens = 6,
+  SpellLabelShadows = 7,
+  SpellLabelDeath = 8,
+  SpellLabelFire = 9,
+  SpellLabelBeasts = 10,
+  SpellLabelDaemonology = 11,
+  SpellLabelNecromancy = 12,
+  SpellLabelHedgecraft = 13,
+  SpellLabelWitchcraft = 14,
+  SpellLabelNurgle = 15,
+  SpellLabelSlaanesh = 16,
+  SpellLabelTzeentch = 17,
+  SpellLabelHighGeneral = 18,
+  SpellLabelHighSlann = 19,
+  SpellLabelGreatMaw = 20,
+  SpellLabelLittleWaaagh = 21,
+  SpellLabelBigWaaagh = 22,
+  SpellLabelPlague = 23,
+  SpellLabelStealth = 24,
+  SpellLabelRuin = 25,
+  SpellLabelCustom = 26,
+  SpellLabelRitual = 27,
+}
+
+export function printSpellLabel(spellLabel: SpellLabel) {
+  switch (spellLabel) {
+    case SpellLabel.SpellLabelSkaven:
+      return "Skaven spell";
+    case SpellLabel.SpellLabelChaos:
+      return "Chaos spell";
+    case SpellLabel.SpellLabelFimirMarsh:
+      return "Fimir Marsh Magic";
+    case SpellLabel.SpellLabelLight:
+      return "The Lore of Light";
+    case SpellLabel.SpellLabelMetal:
+      return "The Lore of Metal";
+    case SpellLabel.SpellLabelLife:
+      return "The Lore of Life";
+    case SpellLabel.SpellLabelHeavens:
+      return "The Lore of Heavens";
+    case SpellLabel.SpellLabelShadows:
+      return "The Lore of Shadows";
+    case SpellLabel.SpellLabelDeath:
+      return "The Lore of Death";
+    case SpellLabel.SpellLabelFire:
+      return "The Lore of Fire";
+    case SpellLabel.SpellLabelBeasts:
+      return "The Lore of Beasts";
+    case SpellLabel.SpellLabelDaemonology:
+      return "The Lore of Daemonology";
+    case SpellLabel.SpellLabelNecromancy:
+      return "The Lore of Necromancy";
+    case SpellLabel.SpellLabelHedgecraft:
+      return "The Lore of Hedgecraft";
+    case SpellLabel.SpellLabelWitchcraft:
+      return "The Lore of Witchcraft";
+    case SpellLabel.SpellLabelNurgle:
+      return "The Lore of Nurgle";
+    case SpellLabel.SpellLabelSlaanesh:
+      return "The Lore of Slaanesh";
+    case SpellLabel.SpellLabelTzeentch:
+      return "The Lore of Tzeentch";
+    case SpellLabel.SpellLabelHighGeneral:
+      return "General High Magic";
+    case SpellLabel.SpellLabelHighSlann:
+      return "Slann High Magic";
+    case SpellLabel.SpellLabelGreatMaw:
+      return "The Lore of The Great Maw";
+    case SpellLabel.SpellLabelLittleWaaagh:
+      return "The Lore of Little Waaagh!";
+    case SpellLabel.SpellLabelBigWaaagh:
+      return "The Lore of Big Waaagh!";
+    case SpellLabel.SpellLabelPlague:
+      return "The Lore of Plague";
+    case SpellLabel.SpellLabelStealth:
+      return "The Lore of Stealth";
+    case SpellLabel.SpellLabelRuin:
+      return "The Lore of Ruin.";
+    case SpellLabel.SpellLabelCustom:
+      return "Custom Lore";
+    case SpellLabel.SpellLabelRitual:
+      return "Ritual";
+    default:
+      return "";
+  }
+}
+
+export function getColourLores() {
+  return [
+    SpellLabel.SpellLabelLight,
+    SpellLabel.SpellLabelMetal,
+    SpellLabel.SpellLabelLife,
+    SpellLabel.SpellLabelHeavens,
+    SpellLabel.SpellLabelShadows,
+    SpellLabel.SpellLabelDeath,
+    SpellLabel.SpellLabelFire,
+    SpellLabel.SpellLabelBeasts,
+  ];
+}
+
+export function getDarkLores() {
+  return [SpellLabel.SpellLabelDaemonology, SpellLabel.SpellLabelNecromancy];
+}
+
+export function getWitchLores() {
+  return [SpellLabel.SpellLabelHedgecraft, SpellLabel.SpellLabelWitchcraft];
+}
+
+export function getChaosLores() {
+  return [SpellLabel.SpellLabelNurgle, SpellLabel.SpellLabelSlaanesh, SpellLabel.SpellLabelTzeentch];
+}
+
+export function getHighMagic() {
+  return [SpellLabel.SpellLabelHighGeneral, SpellLabel.SpellLabelHighSlann];
+}
+
+export function getWaaaghLores() {
+  return [SpellLabel.SpellLabelBigWaaagh, SpellLabel.SpellLabelLittleWaaagh];
+}
+
+export function getSkavenLores() {
+  return [SpellLabel.SpellLabelPlague, SpellLabel.SpellLabelStealth, SpellLabel.SpellLabelRuin];
+}
+
+export function getOtherLores() {
+  return [SpellLabel.SpellLabelGreatMaw, SpellLabel.SpellLabelCustom];
+}
+
+export function getAllLores() {
+  return getColourLores().concat(
+    getDarkLores(),
+    getWitchLores(),
+    getChaosLores(),
+    getHighMagic(),
+    getWaaaghLores(),
+    getSkavenLores(),
+    getOtherLores(),
+  );
+}
+
 export interface SpellApiData {
   name: string;
   description: string;

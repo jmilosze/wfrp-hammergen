@@ -9,10 +9,10 @@ import (
 type SpellType int
 
 const (
-	SpellTypeOther   = 0
-	SpellTypePetty   = 1
-	SpellTypeArcane  = 2
-	SpellTypeRegular = 3
+	SpellTypeOther  = 0
+	SpellTypePetty  = 1
+	SpellTypeArcane = 2
+	SpellTypeLore   = 3
 )
 
 type SpellLabel int
@@ -48,7 +48,7 @@ const (
 	SpellLabelRitual       = 27
 )
 
-var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeArcane, SpellTypeRegular}
+var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeArcane, SpellTypeLore}
 
 var SpellLabels = map[SpellType][]SpellLabel{
 	SpellTypePetty: []SpellLabel{
@@ -59,7 +59,7 @@ var SpellLabels = map[SpellType][]SpellLabel{
 		SpellLabelSkaven,
 		SpellLabelChaos,
 	},
-	SpellTypeRegular: []SpellLabel{
+	SpellTypeLore: []SpellLabel{
 		SpellLabelLight,
 		SpellLabelMetal,
 		SpellLabelLife,
