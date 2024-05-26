@@ -133,7 +133,12 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 		return &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
 	}
 
-	dbErr := s.WhDbService.Delete(ctx, t, whId, c.Id)
+	ownerId := c.Id
+	if c.Admin {
+		ownerId = "admin"
+	}
+
+	dbErr := s.WhDbService.Delete(ctx, t, whId, ownerId)
 	if dbErr != nil {
 		return &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
 	}
