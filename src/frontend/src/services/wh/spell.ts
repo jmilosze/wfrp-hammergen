@@ -10,6 +10,7 @@ import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
+import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 
 const CASTING_NUMBER_RE = /^([1-9][0-9]|[0-9])$/;
 const API_BASE_PATH = "/api/wh/spell";
@@ -183,6 +184,11 @@ export function getAllLores() {
   );
 }
 
+export type SpellClassification = {
+  type: SpellType;
+  labels: SpellLabel[];
+};
+
 export interface SpellApiData {
   name: string;
   description: string;
@@ -191,6 +197,7 @@ export interface SpellApiData {
   duration: string;
   shared: boolean;
   target: string;
+  classification: SpellClassification;
   source: Source;
 }
 
@@ -204,6 +211,7 @@ export class Spell implements WhProperty {
   duration: string;
   shared: boolean;
   target: string;
+  classification: SpellClassification;
   source: Source;
 
   constructor({
@@ -214,6 +222,7 @@ export class Spell implements WhProperty {
     target = "",
     duration = "",
     description = "",
+    classification = { type: SpellType.SpellTypeOther, labels: [] } as SpellClassification,
     canEdit = false,
     shared = false,
     source = {},
@@ -225,6 +234,7 @@ export class Spell implements WhProperty {
     this.target = target;
     this.duration = duration;
     this.description = description;
+    this.classification = classification;
     this.canEdit = canEdit;
     this.shared = shared;
     this.source = source;
@@ -239,6 +249,7 @@ export class Spell implements WhProperty {
       target: this.target,
       duration: this.duration,
       description: this.description,
+      classification: { type: this.classification.type, labels: [...this.classification.labels] },
       canEdit: this.canEdit,
       shared: this.shared,
       source: copySource(this.source),
@@ -297,6 +308,8 @@ export class Spell implements WhProperty {
       this.target === otherSpell.target &&
       this.duration === otherSpell.duration &&
       this.description === otherSpell.description &&
+      this.classification.type === otherSpell.classification.type &&
+      arraysAreEqualIgnoreOrder(this.classification.labels, otherSpell.classification.labels) &&
       this.shared === otherSpell.shared &&
       objectsAreEqual(this.source, otherSpell.source)
     );
@@ -317,6 +330,7 @@ export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
     target: spellApi.object.target,
     duration: spellApi.object.duration,
     description: spellApi.object.description,
+    classification: spellApi.object.classification,
     shared: spellApi.object.shared,
     source: spellApi.object.source,
   });
@@ -332,6 +346,7 @@ export function modelToApi(spell: Spell): SpellApiData {
     target: spell.target,
     duration: spell.duration,
     description: spell.description,
+    classification: spell.classification,
     shared: spell.shared,
     source: copySource(spell.source),
   };
