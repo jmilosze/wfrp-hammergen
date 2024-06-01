@@ -2,7 +2,7 @@
 import { printSpellType, SpellClassification, SpellLabel, SpellType, spellTypeList } from "../services/wh/spell.ts";
 import SelectInput from "./SelectInput.vue";
 import DoubleRadioButton from "./DoubleRadioButton.vue";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 
@@ -24,23 +24,37 @@ function updateType(newType: SpellType) {
   emit("update:modelValue", { type: newType, labels: new Set<SpellLabel>() });
 }
 
+function updateLabel(label: SpellLabel, selected: boolean) {
+  const newLabels = new Set(props.modelValue.labels);
+
+  if (selected) {
+    newLabels.add(label);
+  } else {
+    newLabels.delete(label);
+  }
+
+  emit("update:modelValue", { type: props.modelValue.type, labels: newLabels });
+}
+
 const canBeRitual = computed(() => {
   return props.modelValue.type === SpellType.SpellTypeLore;
 });
 
-// watch(
-//   () => props.modelValue,
-//   (newVal) => {
-//     classification.value = newVal;
-//   },
-//   { immediate: true },
-// );
+const isRitual = ref(false);
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    isRitual.value = newValue.labels.has(SpellLabel.SpellLabelRitual);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
   <div ref="contentContainerRef">
     <div class="mr-2">Classification</div>
-    <div class="border p-2 rounded border-neutral-300 bg-neutral-100">
+    <div class="border p-2 rounded border-neutral-400">
       <div class="flex gap-4" :class="[sm.isEqualOrGreater.value ? '' : 'flex-col']">
         <SelectInput
           :modelValue="props.modelValue.type"
@@ -50,9 +64,15 @@ const canBeRitual = computed(() => {
           class="flex-1"
           @update:modelValue="updateType($event)"
         />
-        <div class="flex-1" :class="canBeRitual ? [] : ['invisible']">
+        <div class="flex-1">
           <p class="mb-3">Ritual</p>
-          <DoubleRadioButton trueText="Yes" falseText="No" />
+          <DoubleRadioButton
+            trueText="Yes"
+            falseText="No"
+            :modelValue="isRitual"
+            :disabled="props.disabled || !canBeRitual"
+            @update:modelValue="updateLabel(SpellLabel.SpellLabelRitual, $event)"
+          />
         </div>
       </div>
     </div>

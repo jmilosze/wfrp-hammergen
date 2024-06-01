@@ -91,7 +91,7 @@ const validAtts = computed(() => {
       <div class="mr-2">Character modifiers</div>
       <ActionButton size="sm" @click="modal.showModal('modifiersHelpModal')">What are modifiers?</ActionButton>
     </div>
-    <div class="border p-2 rounded border-neutral-300 bg-neutral-100">
+    <div class="border p-2 rounded border-neutral-400">
       <CharacterModifiersAttributes :rows="rows">
         <template #WS>
           <FormInput
