@@ -14,6 +14,7 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
+import SpellClassification from "../../../components/SpellClassification.vue";
 
 const props = defineProps<{
   id: string;
@@ -91,6 +92,8 @@ const validCn = computed(() => wh.value.validateCn());
       </div>
     </div>
   </div>
+
+  <SpellClassification v-model="wh.classification" />
 
   <div
     ref="contentContainerRef"

@@ -22,6 +22,13 @@ export const enum SpellType {
   SpellTypeLore = 3,
 }
 
+export const spellTypeList = [
+  SpellType.SpellTypePetty,
+  SpellType.SpellTypeArcane,
+  SpellType.SpellTypeLore,
+  SpellType.SpellTypeOther,
+];
+
 export function printSpellType(spellType: SpellType) {
   switch (spellType) {
     case SpellType.SpellTypeOther:
@@ -132,7 +139,7 @@ export function printSpellLabel(spellLabel: SpellLabel) {
     case SpellLabel.SpellLabelRuin:
       return "The Lore of Ruin.";
     case SpellLabel.SpellLabelCustom:
-      return "Custom Lore";
+      return "Custom Spell";
     case SpellLabel.SpellLabelRitual:
       return "Ritual";
     case SpellLabel.SpellLabelLoreColour:

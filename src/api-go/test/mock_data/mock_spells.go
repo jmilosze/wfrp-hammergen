@@ -15,7 +15,7 @@ var spell0 = wh.Wh{
 		Range:          "10",
 		Target:         "2",
 		Duration:       "5",
-		Classification: &wh.SpellClassification{Type: wh.SpellTypeLore, Labels: []wh.SpellLabel{wh.SpellLabelArcane, wh.SpellLabelLight}},
+		Classification: &wh.SpellClassification{Type: wh.SpellTypeLore, Labels: []wh.SpellLabel{wh.SpellLabelHedgeCraft, wh.SpellLabelLight}},
 		Shared:         false,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
