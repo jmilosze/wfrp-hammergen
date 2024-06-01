@@ -45,43 +45,45 @@ export function printSpellType(spellType: SpellType) {
 }
 
 export const enum SpellLabel {
-  SpellLabelSkaven = 0,
-  SpellLabelChaos = 1,
-  SpellLabelFimirMarsh = 2,
-  SpellLabelLight = 3,
-  SpellLabelMetal = 4,
+  // Lore labels
+  SpellLabelBeasts = 0,
+  SpellLabelDeath = 1,
+  SpellLabelFire = 3,
+  SpellLabelHeavens = 4,
   SpellLabelLife = 5,
-  SpellLabelHeavens = 6,
-  SpellLabelShadows = 7,
-  SpellLabelDeath = 8,
-  SpellLabelFire = 9,
-  SpellLabelBeasts = 10,
-  SpellLabelDaemonology = 11,
-  SpellLabelNecromancy = 12,
-  SpellLabelHedgecraft = 13,
-  SpellLabelWitchcraft = 14,
-  SpellLabelNurgle = 15,
-  SpellLabelSlaanesh = 16,
-  SpellLabelTzeentch = 17,
-  SpellLabelHighGeneral = 18,
-  SpellLabelHighSlann = 19,
-  SpellLabelGreatMaw = 20,
-  SpellLabelLittleWaaagh = 21,
-  SpellLabelBigWaaagh = 22,
-  SpellLabelPlague = 23,
-  SpellLabelStealth = 24,
-  SpellLabelRuin = 25,
-  SpellLabelCustom = 26,
-  SpellLabelRitual = 27,
+  SpellLabelLight = 6,
+  SpellLabelMetal = 7,
+  SpellLabelShadows = 8,
+  SpellLabelDaemonology = 9,
+  SpellLabelNecromancy = 10,
+  SpellLabelHedgecraft = 11,
+  SpellLabelWitchcraft = 12,
+  SpellLabelNurgle = 13,
+  SpellLabelSlaanesh = 14,
+  SpellLabelTzeentch = 15,
+  SpellLabelHighGeneral = 16,
+  SpellLabelHighSlann = 17,
+  SpellLabelBigWaaagh = 18,
+  SpellLabelLittleWaaagh = 19,
+  SpellLabelPlague = 20,
+  SpellLabelRuin = 21,
+  SpellLabelStealth = 22,
+  SpellLabelGreatMaw = 23,
+  // Other labels
+  SpellLabelCustom = 1000,
+  SpellLabelRitual = 1001,
+  SpellLabelSkaven = 1002,
+  SpellLabelChaos = 1003,
+  SpellLabelFimirMarsh = 1004,
   // Derived labels
-  SpellLabelLoreAny = 1000,
-  SpellLabelLoreColour = 1001,
-  SpellLabelLoreDark = 1002,
-  SpellLabelLoreWitch = 1003,
-  SpellLabelLoreChaos = 1004,
-  SpellLabelLoreHighMagic = 1005,
-  SpellLabelLoreWaaagh = 1006,
-  SpellLabelLoreSkaven = 1007,
+  SpellLabelLoreAny = 10000,
+  SpellLabelLoreColour = 10001,
+  SpellLabelLoreDark = 10002,
+  SpellLabelLoreWitch = 10003,
+  SpellLabelLoreChaos = 10004,
+  SpellLabelLoreHighMagic = 10005,
+  SpellLabelLoreWaaagh = 10006,
+  SpellLabelLoreSkaven = 10007,
 }
 
 export function printSpellLabel(spellLabel: SpellLabel) {
@@ -161,7 +163,7 @@ export function printSpellLabel(spellLabel: SpellLabel) {
   }
 }
 
-export const colourLores = [
+export const colourLores = new Set([
   SpellLabel.SpellLabelLight,
   SpellLabel.SpellLabelMetal,
   SpellLabel.SpellLabelLife,
@@ -170,22 +172,32 @@ export const colourLores = [
   SpellLabel.SpellLabelDeath,
   SpellLabel.SpellLabelFire,
   SpellLabel.SpellLabelBeasts,
-];
-export const darkLores = [SpellLabel.SpellLabelDaemonology, SpellLabel.SpellLabelNecromancy];
-export const witchLores = [SpellLabel.SpellLabelHedgecraft, SpellLabel.SpellLabelWitchcraft];
-export const chaosLores = [SpellLabel.SpellLabelNurgle, SpellLabel.SpellLabelSlaanesh, SpellLabel.SpellLabelTzeentch];
-export const highMagicLores = [SpellLabel.SpellLabelHighGeneral, SpellLabel.SpellLabelHighSlann];
-export const waaaghLores = [SpellLabel.SpellLabelBigWaaagh, SpellLabel.SpellLabelLittleWaaagh];
-export const skavenLores = [SpellLabel.SpellLabelPlague, SpellLabel.SpellLabelStealth, SpellLabel.SpellLabelRuin];
-export const otherLores = [SpellLabel.SpellLabelGreatMaw];
-export const allLores = colourLores.concat(
-  darkLores,
-  witchLores,
-  chaosLores,
-  highMagicLores,
-  waaaghLores,
-  skavenLores,
-  otherLores,
+]);
+export const darkLores = new Set([SpellLabel.SpellLabelDaemonology, SpellLabel.SpellLabelNecromancy]);
+export const witchLores = new Set([SpellLabel.SpellLabelHedgecraft, SpellLabel.SpellLabelWitchcraft]);
+export const chaosLores = new Set([
+  SpellLabel.SpellLabelNurgle,
+  SpellLabel.SpellLabelSlaanesh,
+  SpellLabel.SpellLabelTzeentch,
+]);
+export const highMagicLores = new Set([SpellLabel.SpellLabelHighGeneral, SpellLabel.SpellLabelHighSlann]);
+export const waaaghLores = new Set([SpellLabel.SpellLabelBigWaaagh, SpellLabel.SpellLabelLittleWaaagh]);
+export const skavenLores = new Set([
+  SpellLabel.SpellLabelPlague,
+  SpellLabel.SpellLabelStealth,
+  SpellLabel.SpellLabelRuin,
+]);
+export const otherLores = new Set([SpellLabel.SpellLabelGreatMaw]);
+export const allLores = new Set(
+  [...colourLores].concat(
+    [...darkLores],
+    [...witchLores],
+    [...chaosLores],
+    [...highMagicLores],
+    [...waaaghLores],
+    [...skavenLores],
+    [...otherLores],
+  ),
 );
 
 export function getAllowedLabels(spellType: SpellType): SpellLabel[] {
@@ -201,30 +213,30 @@ export function getAllowedLabels(spellType: SpellType): SpellLabel[] {
 }
 
 export function extractGroupFromLabels(
-  allLabels: SpellLabel[],
-  labelGroup: SpellLabel[],
-): { extracted: SpellLabel[]; remaining: SpellLabel[]; all: boolean } {
-  const ret = { extracted: [], remaining: [], all: false } as {
-    extracted: SpellLabel[];
-    remaining: SpellLabel[];
+  allLabels: Set<SpellLabel>,
+  labelGroup: Set<SpellLabel>,
+): { extracted: Set<SpellLabel>; remaining: Set<SpellLabel>; all: boolean } {
+  const ret = { extracted: new Set(), remaining: new Set(), all: false } as {
+    extracted: Set<SpellLabel>;
+    remaining: Set<SpellLabel>;
     all: boolean;
   };
   for (const label of allLabels) {
-    if (labelGroup.includes(label)) {
-      ret.extracted.push(label);
+    if (labelGroup.has(label)) {
+      ret.extracted.add(label);
     } else {
-      ret.remaining.push(label);
+      ret.remaining.add(label);
     }
   }
 
-  if (ret.extracted.length === labelGroup.length) {
+  if (ret.extracted.size === labelGroup.size) {
     ret.all = true;
   }
 
   return ret;
 }
 
-export function getSimplifiedLabels(spellType: SpellType, allLabels: SpellLabel[]): SpellLabel[] {
+export function getSimplifiedLabels(spellType: SpellType, allLabels: Set<SpellLabel>): Set<SpellLabel> {
   if (spellType !== SpellType.SpellTypeLore) {
     return allLabels;
   }
@@ -239,7 +251,7 @@ export function getSimplifiedLabels(spellType: SpellType, allLabels: SpellLabel[
   const other = extractGroupFromLabels(skaven.remaining, otherLores);
 
   if (colour.all && dark.all && witch.all && chaos.all && highMagic.all && waaagh.all && skaven.all && other.all) {
-    other.remaining.push(SpellLabel.SpellLabelLoreAny);
+    other.remaining.add(SpellLabel.SpellLabelLoreAny);
     return other.remaining;
   }
 
@@ -251,11 +263,11 @@ export function getSimplifiedLabels(spellType: SpellType, allLabels: SpellLabel[
     [highMagic, SpellLabel.SpellLabelLoreHighMagic],
     [waaagh, SpellLabel.SpellLabelLoreWaaagh],
     [skaven, SpellLabel.SpellLabelLoreSkaven],
-  ] as [{ extracted: SpellLabel[]; remaining: SpellLabel[]; all: boolean }, SpellLabel][]) {
+  ] as [{ extracted: Set<SpellLabel>; remaining: Set<SpellLabel>; all: boolean }, SpellLabel][]) {
     if (group[0].all) {
-      other.remaining.push(group[1]);
+      other.remaining.add(group[1]);
     } else {
-      other.remaining.concat(group[0].extracted);
+      new Set([...other.remaining, ...group[0].extracted]);
     }
   }
 

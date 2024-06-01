@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { printSpellType, SpellClassification, SpellLabel, SpellType, spellTypeList } from "../services/wh/spell.ts";
+import {
+  getSimplifiedLabels,
+  printSpellLabel,
+  printSpellType,
+  SpellClassification,
+  SpellLabel,
+  SpellType,
+  spellTypeList,
+} from "../services/wh/spell.ts";
 import SelectInput from "./SelectInput.vue";
 import DoubleRadioButton from "./DoubleRadioButton.vue";
 import { computed, ref, watch } from "vue";
@@ -41,11 +49,20 @@ const canBeRitual = computed(() => {
 });
 
 const isRitual = ref(false);
+const displayLabels = ref("");
+
+function printLabels(labels: Set<SpellLabel>): string {
+  return [...labels]
+    .sort()
+    .map((x) => printSpellLabel(x))
+    .join(", ");
+}
 
 watch(
   () => props.modelValue,
   (newValue) => {
     isRitual.value = newValue.labels.has(SpellLabel.SpellLabelRitual);
+    displayLabels.value = printLabels(getSimplifiedLabels(newValue.type, newValue.labels));
   },
   { immediate: true },
 );
@@ -74,6 +91,10 @@ watch(
             @update:modelValue="updateLabel(SpellLabel.SpellLabelRitual, $event)"
           />
         </div>
+      </div>
+      <div class="mt-4">
+        <p>Labels</p>
+        <p>{{ displayLabels }}</p>
       </div>
     </div>
   </div>

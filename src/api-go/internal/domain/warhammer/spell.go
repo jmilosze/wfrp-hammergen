@@ -18,34 +18,35 @@ const (
 type SpellLabel int
 
 const (
-	SpellLabelSkaven       = 0
-	SpellLabelChaos        = 1
-	SpellLabelFimirMarsh   = 2
-	SpellLabelLight        = 3
-	SpellLabelMetal        = 4
+	SpellLabelBeasts       = 0
+	SpellLabelDeath        = 1
+	SpellLabelFire         = 3
+	SpellLabelHeavens      = 4
 	SpellLabelLife         = 5
-	SpellLabelHeavens      = 6
-	SpellLabelShadows      = 7
-	SpellLabelDeath        = 8
-	SpellLabelFire         = 9
-	SpellLabelBeasts       = 10
-	SpellLabelDaemonology  = 11
-	SpellLabelNecromancy   = 12
-	SpellLabelHedgeCraft   = 13
-	SpellLabelWitchcraft   = 14
-	SpellLabelNurgle       = 15
-	SpellLabelSlaanesh     = 16
-	SpellLabelTzeentch     = 17
-	SpellLabelHighGeneral  = 18
-	SpellLabelHighSlann    = 19
-	SpellLabelGreatMaw     = 20
-	SpellLabelLittleWaaagh = 21
-	SpellLabelBigWaaagh    = 22
-	SpellLabelPlague       = 23
-	SpellLabelStealth      = 24
-	SpellLabelRuin         = 25
-	SpellLabelCustom       = 26
-	SpellLabelRitual       = 27
+	SpellLabelLight        = 6
+	SpellLabelMetal        = 7
+	SpellLabelShadows      = 8
+	SpellLabelDaemonology  = 9
+	SpellLabelNecromancy   = 10
+	SpellLabelHedgecraft   = 11
+	SpellLabelWitchcraft   = 12
+	SpellLabelNurgle       = 13
+	SpellLabelSlaanesh     = 14
+	SpellLabelTzeentch     = 15
+	SpellLabelHighGeneral  = 16
+	SpellLabelHighSlann    = 17
+	SpellLabelBigWaaagh    = 18
+	SpellLabelLittleWaaagh = 19
+	SpellLabelPlague       = 20
+	SpellLabelRuin         = 21
+	SpellLabelStealth      = 22
+	SpellLabelGreatMaw     = 23
+
+	SpellLabelCustom     = 1000
+	SpellLabelRitual     = 1001
+	SpellLabelSkaven     = 1002
+	SpellLabelChaos      = 1003
+	SpellLabelFimirMarsh = 1004
 )
 
 var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeArcane, SpellTypeLore}
@@ -70,7 +71,7 @@ var SpellLabels = map[SpellType][]SpellLabel{
 		SpellLabelBeasts,
 		SpellLabelDaemonology,
 		SpellLabelNecromancy,
-		SpellLabelHedgeCraft,
+		SpellLabelHedgecraft,
 		SpellLabelWitchcraft,
 		SpellLabelNurgle,
 		SpellLabelSlaanesh,
