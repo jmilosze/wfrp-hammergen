@@ -93,7 +93,7 @@ const validCn = computed(() => wh.value.validateCn());
     </div>
   </div>
 
-  <SpellClassification v-model="wh.classification" />
+  <SpellClassification v-model="wh.classification" :disabled="!wh.canEdit" />
 
   <div
     ref="contentContainerRef"
