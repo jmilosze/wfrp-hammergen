@@ -31,7 +31,10 @@ const spell = new Spell({
   target: "target",
   duration: "duration",
   description: "desc",
-  classification: { type: SpellType.SpellTypeLore, labels: [SpellLabel.SpellLabelRuin, SpellLabel.SpellLabelStealth] },
+  classification: {
+    type: SpellType.SpellTypeLore,
+    labels: new Set([SpellLabel.SpellLabelRuin, SpellLabel.SpellLabelStealth]),
+  },
   shared: true,
   source: { 1: "page 2", 3: "page 5-10" },
 });
@@ -46,9 +49,9 @@ test("modelToApi returns expected api spell data", () => {
 
 testIsEqualCommonProperties("spell", spell);
 
-test("isEqualTo returns true when other spell has labels in different order", () => {
+test("isEqualTo returns true when other spell has the same labels", () => {
   const otherSpell = spell.copy();
-  otherSpell.classification.labels = [SpellLabel.SpellLabelStealth, SpellLabel.SpellLabelRuin];
+  otherSpell.classification.labels = new Set([SpellLabel.SpellLabelStealth, SpellLabel.SpellLabelRuin]);
   expect(spell.isEqualTo(otherSpell)).toBe(true);
 });
 
@@ -63,14 +66,14 @@ describe("isEqualTo returns false", () => {
   test("when other spell has labels that are a subset");
   {
     const otherSpell = spell.copy();
-    otherSpell.classification.labels = [SpellLabel.SpellLabelStealth];
+    otherSpell.classification.labels = new Set([SpellLabel.SpellLabelStealth]);
     expect(spell.isEqualTo(otherSpell)).toBe(false);
   }
 
   test("when other spell has equal number of different labels");
   {
     const otherSpell = spell.copy();
-    otherSpell.classification.labels = [SpellLabel.SpellLabelBigWaaagh, SpellLabel.SpellLabelNecromancy];
+    otherSpell.classification.labels = new Set([SpellLabel.SpellLabelBigWaaagh, SpellLabel.SpellLabelNecromancy]);
     expect(spell.isEqualTo(otherSpell)).toBe(false);
   }
 

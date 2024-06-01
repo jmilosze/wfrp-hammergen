@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { printSpellType, SpellClassification, SpellType, spellTypeList } from "../services/wh/spell.ts";
+import { printSpellType, SpellClassification, SpellLabel, SpellType, spellTypeList } from "../services/wh/spell.ts";
 import SelectInput from "./SelectInput.vue";
 import DoubleRadioButton from "./DoubleRadioButton.vue";
 import { computed, ref } from "vue";
@@ -21,7 +21,7 @@ function updateType(newType: SpellType) {
   if (newType === props.modelValue.type) {
     return;
   }
-  emit("update:modelValue", { type: newType, labels: [] });
+  emit("update:modelValue", { type: newType, labels: new Set<SpellLabel>() });
 }
 
 const canBeRitual = computed(() => {
