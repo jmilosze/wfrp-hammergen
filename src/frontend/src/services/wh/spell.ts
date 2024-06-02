@@ -29,7 +29,7 @@ export const spellTypeList = [
   SpellType.SpellTypeOther,
 ];
 
-export function printSpellType(spellType: SpellType) {
+export function printSpellType(spellType: SpellType): string {
   switch (spellType) {
     case SpellType.SpellTypeOther:
       return "Other spell";
@@ -86,7 +86,7 @@ export const enum SpellLabel {
   SpellLabelLoreSkaven = 10007,
 }
 
-export function printSpellLabel(spellLabel: SpellLabel) {
+export function printSpellLabel(spellLabel: SpellLabel): string {
   switch (spellLabel) {
     case SpellLabel.SpellLabelSkaven:
       return "Skaven spell";

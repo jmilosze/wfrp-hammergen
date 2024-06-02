@@ -46,6 +46,8 @@ await loadWh(props.id);
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
+const spellSummary = ref("");
+
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validRange = computed(() => wh.value.validateRange());
@@ -61,6 +63,7 @@ const validCn = computed(() => wh.value.validateCn());
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create spell' : wh.canEdit ? 'Edit spell' : wh.name" />
+  <p class="text-xl">{{ spellSummary }}</p>
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -93,7 +96,7 @@ const validCn = computed(() => wh.value.validateCn());
     </div>
   </div>
 
-  <SpellClassification v-model="wh.classification" :disabled="!wh.canEdit" />
+  <SpellClassification v-model="wh.classification" :disabled="!wh.canEdit" @update:summary="spellSummary = $event" />
 
   <div
     ref="contentContainerRef"

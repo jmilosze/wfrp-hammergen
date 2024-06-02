@@ -18,6 +18,7 @@ const props = defineProps<{ modelValue: SpellClassification; disabled?: boolean;
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: SpellClassification): void;
+  (e: "update:summary", value: string): void;
 }>();
 
 const contentContainerRef = ref(null);
@@ -51,18 +52,28 @@ const canBeRitual = computed(() => {
 const isRitual = ref(false);
 const displayLabels = ref("");
 
-function printLabels(labels: Set<SpellLabel>): string {
-  return [...labels]
+function updateDisplayLabels(simplifiedLabels: Set<SpellLabel>) {
+  const labelsWithoutRitual = new Set(simplifiedLabels);
+  labelsWithoutRitual.delete(SpellLabel.SpellLabelRitual);
+  displayLabels.value = [...labelsWithoutRitual]
     .sort()
     .map((x) => printSpellLabel(x))
     .join(", ");
+}
+
+function updateSummary(simplifiedLabels: Set<SpellLabel>) {
+  const summary = [...simplifiedLabels].sort().map((x) => printSpellLabel(x));
+  summary.unshift(printSpellType(props.modelValue.type));
+  emit("update:summary", summary.join(", "));
 }
 
 watch(
   () => props.modelValue,
   (newValue) => {
     isRitual.value = newValue.labels.has(SpellLabel.SpellLabelRitual);
-    displayLabels.value = printLabels(getSimplifiedLabels(newValue.type, newValue.labels));
+    const simplifiedLables = getSimplifiedLabels(newValue.type, newValue.labels);
+    updateDisplayLabels(simplifiedLables);
+    updateSummary(simplifiedLables);
   },
   { immediate: true },
 );
