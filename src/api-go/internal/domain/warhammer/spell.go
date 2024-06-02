@@ -84,7 +84,6 @@ var SpellLabels = map[SpellType][]SpellLabel{
 		SpellLabelPlague,
 		SpellLabelStealth,
 		SpellLabelRuin,
-		SpellLabelCustom,
 		SpellLabelRitual,
 	},
 	SpellTypeOther: []SpellLabel{

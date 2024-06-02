@@ -89,9 +89,9 @@ export const enum SpellLabel {
 export function printSpellLabel(spellLabel: SpellLabel): string {
   switch (spellLabel) {
     case SpellLabel.SpellLabelSkaven:
-      return "Skaven spell";
+      return "Skaven";
     case SpellLabel.SpellLabelChaos:
-      return "Chaos spell";
+      return "Chaos";
     case SpellLabel.SpellLabelFimirMarsh:
       return "Fimir Marsh Magic";
     case SpellLabel.SpellLabelLight:
@@ -144,6 +144,8 @@ export function printSpellLabel(spellLabel: SpellLabel): string {
       return "Custom Spell";
     case SpellLabel.SpellLabelRitual:
       return "Ritual";
+    case SpellLabel.SpellLabelLoreAny:
+      return "Any Lore";
     case SpellLabel.SpellLabelLoreColour:
       return "Any Colour Lore";
     case SpellLabel.SpellLabelLoreDark:
@@ -206,7 +208,7 @@ export function getAllowedLabels(spellType: SpellType): SpellLabel[] {
   } else if (spellType === SpellType.SpellTypeOther) {
     return [SpellLabel.SpellLabelFimirMarsh, SpellLabel.SpellLabelCustom];
   } else if (spellType === SpellType.SpellTypeLore) {
-    return [...allLores, SpellLabel.SpellLabelCustom];
+    return [...allLores, SpellLabel.SpellLabelRitual];
   } else {
     return [];
   }
@@ -250,9 +252,11 @@ export function getSimplifiedLabels(spellType: SpellType, allLabels: Set<SpellLa
   const skaven = extractGroupFromLabels(waaagh.remaining, skavenLores);
   const other = extractGroupFromLabels(skaven.remaining, otherLores);
 
+  let ret = other.remaining;
+
   if (colour.all && dark.all && witch.all && chaos.all && highMagic.all && waaagh.all && skaven.all && other.all) {
     other.remaining.add(SpellLabel.SpellLabelLoreAny);
-    return other.remaining;
+    return ret;
   }
 
   for (const group of [
@@ -265,13 +269,13 @@ export function getSimplifiedLabels(spellType: SpellType, allLabels: Set<SpellLa
     [skaven, SpellLabel.SpellLabelLoreSkaven],
   ] as [{ extracted: Set<SpellLabel>; remaining: Set<SpellLabel>; all: boolean }, SpellLabel][]) {
     if (group[0].all) {
-      other.remaining.add(group[1]);
+      ret.add(group[1]);
     } else {
-      new Set([...other.remaining, ...group[0].extracted]);
+      ret = new Set([...ret, ...group[0].extracted]);
     }
   }
 
-  return other.remaining;
+  return ret;
 }
 
 export type SpellClassificationData = {

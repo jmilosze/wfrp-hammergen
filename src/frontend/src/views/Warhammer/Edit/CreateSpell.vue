@@ -96,7 +96,11 @@ const validCn = computed(() => wh.value.validateCn());
     </div>
   </div>
 
-  <SpellClassification v-model="wh.classification" :disabled="!wh.canEdit" @update:summary="spellSummary = $event" />
+  <SpellClassification
+    v-model="wh.classification"
+    :disabled="!wh.canEdit"
+    @update:displayLabels="spellSummary = $event"
+  />
 
   <div
     ref="contentContainerRef"
