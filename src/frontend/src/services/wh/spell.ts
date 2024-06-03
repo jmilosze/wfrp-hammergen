@@ -76,14 +76,14 @@ export const enum SpellLabel {
   SpellLabelChaos = 1003,
   SpellLabelFimirMarsh = 1004,
   // Derived labels
-  SpellLabelLoreAny = 10000,
-  SpellLabelLoreColour = 10001,
-  SpellLabelLoreDark = 10002,
-  SpellLabelLoreWitch = 10003,
-  SpellLabelLoreChaos = 10004,
-  SpellLabelLoreHighMagic = 10005,
-  SpellLabelLoreWaaagh = 10006,
-  SpellLabelLoreSkaven = 10007,
+  SpellLabelLoreAny = 100,
+  SpellLabelLoreColour = 101,
+  SpellLabelLoreDark = 102,
+  SpellLabelLoreWitch = 103,
+  SpellLabelLoreChaos = 104,
+  SpellLabelLoreHighMagic = 105,
+  SpellLabelLoreWaaagh = 106,
+  SpellLabelLoreSkaven = 107,
 }
 
 export function printSpellLabel(spellLabel: SpellLabel): string {

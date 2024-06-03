@@ -22,7 +22,7 @@ const props = defineProps<{ modelValue: SpellClassification; disabled?: boolean;
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: SpellClassification): void;
-  (e: "update:displayLabels", value: string): void;
+  (e: "update:simplifiedLabels", value: SpellLabel[]): void;
 }>();
 
 const contentContainerRef = ref(null);
@@ -52,8 +52,6 @@ function updateLabel(label: SpellLabel, selected: boolean) {
   emit("update:modelValue", { type: props.modelValue.type, labels: newLabels });
 }
 
-const displayLabels = ref("");
-
 const modalColumns = [
   { name: "name", displayName: "Label", skipStackedTitle: false },
   { name: "selected", displayName: "Select", skipStackedTitle: false },
@@ -61,6 +59,7 @@ const modalColumns = [
 
 const labelsWithSelect: Ref<Record<SpellLabel, boolean>> = ref({} as Record<SpellLabel, boolean>);
 const labelsWithSelectList: Ref<{ id: SpellLabel; name: string; selected: boolean }[]> = ref([]);
+const simplifiedLabels: Ref<SpellLabel[]> = ref(new Array<SpellLabel>());
 
 function updateLabelsWithSelect(newValue: SpellClassification) {
   const labelsForType = getAllowedLabels(newValue.type);
@@ -83,25 +82,16 @@ function updateLabelsWithSelect(newValue: SpellClassification) {
   }
 }
 
-function updateDisplayLabels(simplifiedLabels: Set<SpellLabel>) {
-  displayLabels.value = [...simplifiedLabels]
-    .sort()
-    .map((x) => printSpellLabel(x))
-    .join(", ");
-
-  if (simplifiedLabels.size > 0) {
-    emit("update:displayLabels", [printSpellType(props.modelValue.type), displayLabels.value].join(", "));
-  } else {
-    emit("update:displayLabels", printSpellType(props.modelValue.type));
-  }
+function updateSimplifiedLabels(newValue: SpellClassification) {
+  simplifiedLabels.value = [...getSimplifiedLabels(newValue.type, newValue.labels)];
+  emit("update:simplifiedLabels", [...simplifiedLabels.value]);
 }
 
 watch(
   () => props.modelValue,
   (newValue) => {
-    const simplifiedLabels = getSimplifiedLabels(newValue.type, newValue.labels);
-    updateDisplayLabels(simplifiedLabels);
     updateLabelsWithSelect(newValue);
+    updateSimplifiedLabels(newValue);
   },
   { immediate: true },
 );
@@ -131,7 +121,9 @@ function onModifyClick() {
               <div class="mr-2">Labels</div>
               <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
             </div>
-            <p>{{ displayLabels }}</p>
+            <span v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)" :key="i">
+              {{ printSpellLabel(label) + (i !== simplifiedLabels.length - 1 ? ", " : "") }}
+            </span>
           </div>
         </div>
       </div>
