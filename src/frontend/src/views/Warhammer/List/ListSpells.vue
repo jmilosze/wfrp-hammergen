@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
-import { Spell, SpellApi } from "../../../services/wh/spell.ts";
+import { getSimplifiedLabels, printSpellLabel, printSpellType, Spell, SpellApi } from "../../../services/wh/spell.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -35,7 +35,6 @@ const auth = useAuth();
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
   { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "cn", displayName: "CN", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
@@ -48,13 +47,18 @@ const items = computed(() => {
 });
 
 function formatSpellRow(spell: Spell) {
+  const simplifiedLabels = [...getSimplifiedLabels(spell.classification.type, spell.classification.labels)]
+    .sort((a, b) => b - a)
+    .map((x) => printSpellLabel(x));
+
+  simplifiedLabels.unshift(printSpellType(spell.classification.type));
+
   return {
     name: addSpaces(spell.name),
     source: Object.keys(spell.source)
       .map((x) => source[x])
       .join(", "),
-    cn: spell.cn,
-    description: spell.description,
+    description: simplifiedLabels.join(", ") + ". " + spell.description,
     canEdit: spell.canEdit,
     id: spell.id,
   };
