@@ -8,6 +8,7 @@ import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { addSpaces } from "../utils/string.ts";
+import LinkButton from "./LinkButton.vue";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -19,6 +20,7 @@ const props = defineProps<{
   stackedViewSize: ViewSize;
   modelValue: string;
   addCreateNewBtn?: boolean;
+  routeName?: string;
   addReloadBtn?: boolean;
   elementId?: string;
   loading?: boolean;
@@ -112,9 +114,14 @@ onUpdated(() => {
 <template>
   <div ref="contentContainerRef">
     <div class="flex flex-wrap">
-      <ActionButton v-if="addCreateNewBtn" class="mr-2 mb-2 shrink-0" @click="emit('createNew')"
-        >Create new</ActionButton
+      <LinkButton
+        v-if="addCreateNewBtn && routeName"
+        class="mr-2 mb-2 shrink-0"
+        :routeName="routeName"
+        :params="{ id: 'create' }"
       >
+        Create new
+      </LinkButton>
       <ActionButton v-if="addReloadBtn" class="mr-2 mb-2 shrink-0" @click="emit('reload')"
         ><svg
           class="w-6 h-6"

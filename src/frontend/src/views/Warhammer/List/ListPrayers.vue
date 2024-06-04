@@ -76,16 +76,16 @@ function formatPrayerRow(prayer: Prayer) {
     :items="items"
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="auth.loggedIn.value"
+    routeName="prayer"
     class="mx-1"
-    @createNew="router.push({ name: 'prayer', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
         :canEdit="canEdit"
+        routeName="prayer"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
-        @edit="router.push({ name: 'prayer', params: { id: id } })"
       />
     </template>
   </TableWithSearch>

@@ -82,16 +82,16 @@ function formatSpellRow(spell: Spell) {
     :items="items"
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="auth.loggedIn.value"
+    routeName="spell"
     class="mx-1"
-    @createNew="router.push({ name: 'spell', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
         :canEdit="canEdit"
+        routeName="spell"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
-        @edit="router.push({ name: 'spell', params: { id: id } })"
       />
     </template>
   </TableWithSearch>
