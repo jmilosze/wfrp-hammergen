@@ -95,51 +95,51 @@ export function printSpellLabel(spellLabel: SpellLabel): string {
     case SpellLabel.SpellLabelFimirMarsh:
       return "Fimir Marsh Magic";
     case SpellLabel.SpellLabelLight:
-      return "The Lore of Light";
+      return "Lore of Light";
     case SpellLabel.SpellLabelMetal:
-      return "The Lore of Metal";
+      return "Lore of Metal";
     case SpellLabel.SpellLabelLife:
-      return "The Lore of Life";
+      return "Lore of Life";
     case SpellLabel.SpellLabelHeavens:
-      return "The Lore of Heavens";
+      return "Lore of Heavens";
     case SpellLabel.SpellLabelShadows:
-      return "The Lore of Shadows";
+      return "Lore of Shadows";
     case SpellLabel.SpellLabelDeath:
-      return "The Lore of Death";
+      return "Lore of Death";
     case SpellLabel.SpellLabelFire:
-      return "The Lore of Fire";
+      return "Lore of Fire";
     case SpellLabel.SpellLabelBeasts:
-      return "The Lore of Beasts";
+      return "Lore of Beasts";
     case SpellLabel.SpellLabelDaemonology:
-      return "The Lore of Daemonology";
+      return "Lore of Daemonology";
     case SpellLabel.SpellLabelNecromancy:
-      return "The Lore of Necromancy";
+      return "Lore of Necromancy";
     case SpellLabel.SpellLabelHedgecraft:
-      return "The Lore of Hedgecraft";
+      return "Lore of Hedgecraft";
     case SpellLabel.SpellLabelWitchcraft:
-      return "The Lore of Witchcraft";
+      return "Lore of Witchcraft";
     case SpellLabel.SpellLabelNurgle:
-      return "The Lore of Nurgle";
+      return "Lore of Nurgle";
     case SpellLabel.SpellLabelSlaanesh:
-      return "The Lore of Slaanesh";
+      return "Lore of Slaanesh";
     case SpellLabel.SpellLabelTzeentch:
-      return "The Lore of Tzeentch";
+      return "Lore of Tzeentch";
     case SpellLabel.SpellLabelHighGeneral:
-      return "General High Magic";
+      return "Lore of High Magic (general)";
     case SpellLabel.SpellLabelHighSlann:
-      return "Slann High Magic";
+      return "Lore of High Magic (Slann)";
     case SpellLabel.SpellLabelGreatMaw:
-      return "The Lore of The Great Maw";
+      return "Lore of The Great Maw";
     case SpellLabel.SpellLabelLittleWaaagh:
-      return "The Lore of Little Waaagh!";
+      return "Lore of Little Waaagh!";
     case SpellLabel.SpellLabelBigWaaagh:
-      return "The Lore of Big Waaagh!";
+      return "Lore of Big Waaagh!";
     case SpellLabel.SpellLabelPlague:
-      return "The Lore of Plague";
+      return "Lore of Plague";
     case SpellLabel.SpellLabelStealth:
-      return "The Lore of Stealth";
+      return "Lore of Stealth";
     case SpellLabel.SpellLabelRuin:
-      return "The Lore of Ruin.";
+      return "Lore of Ruin";
     case SpellLabel.SpellLabelCustom:
       return "Custom Spell";
     case SpellLabel.SpellLabelRitual:
