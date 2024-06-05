@@ -7,7 +7,6 @@ import {
   printSpellType,
   Spell,
   SpellApi,
-  SpellType,
   spellTypeList,
 } from "../../../services/wh/spell.ts";
 import { authRequest } from "../../../services/auth.ts";
@@ -24,17 +23,6 @@ import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
-import {
-  ammoGroupList,
-  armourGroupList,
-  ItemType,
-  meleeGroupList,
-  printAmmoGroup,
-  printArmourGroup,
-  printMeleeGroup,
-  printRangedGroup,
-  rangedGroupList,
-} from "../../../services/wh/item.ts";
 
 const whList = useWhList(new SpellApi(authRequest));
 await whList.loadWhList();

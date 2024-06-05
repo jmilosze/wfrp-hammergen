@@ -10,19 +10,26 @@ const showAlert = ref(true);
   <div class="">
     <div class="text-center mt-5 font-hammergen text-6xl md:text-8xl">Hammergen</div>
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
-    <AlertBlock v-if="showAlert" alertType="amber" class="mt-5" @close="showAlert = false">
+    <AlertBlock v-if="showAlert" alertType="blue" class="mt-5" @close="showAlert = false">
       <div class="pl-2">
-        <p class="text-2xl">We need your feedback</p>
-        <p class="mt-2">
-          We are looking for new ways to improve Hammergen. Currently we have more ideas than time and we would really
-          appreciate your opinion on how to move forward. If you can spare a minute or two, please fill out this super
-          short (6 questions)
-          <TextLink
-            href="https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAYAAKzR-3FURVlVRkxJQUlBV0NGQU8zUEU0QzdJSUgyNS4u"
-            >survey</TextLink
-          >.
-        </p>
-
+        <p class="text-2xl">New updates!</p>
+        <ul class="list-disc list-outside mt-2 ml-5">
+          <li>
+            We added all new items and spells from
+            <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-reikland-miscellanea" target="_blank">
+              Reikland Miscellanea.
+            </TextLink>
+          </li>
+          <li>
+            Spells have now types and labels you can filter on. For example, a spell can have type of "Lore spell" and
+            labels "Ritual", "Lore of Light", and "Lore of Heavens". When filtering, this spell will show up if you
+            filter for "Ritual" or "Lore of Light" or "Lore of Heavens".
+          </li>
+          <li>
+            Some of the buttons, like "View/Edit" or "Create New" are now proper links. This means it is possible to
+            right click on them and "open in new tab".
+          </li>
+        </ul>
         <p class="mt-2">
           If you're enjoying using Hammergen please consider supporting it with donation at
           <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>.
