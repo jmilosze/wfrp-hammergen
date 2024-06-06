@@ -69,8 +69,8 @@ function formatCharacterRow(character: Character) {
     :items="items"
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="auth.loggedIn.value"
+    routeName="character"
     class="mx-1"
-    @createNew="router.push({ name: 'character', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsCharacter
@@ -78,8 +78,6 @@ function formatCharacterRow(character: Character) {
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
-        @edit="router.push({ name: 'character', params: { id: id } })"
-        @view="router.push({ name: 'viewCharacter', params: { id: id } })"
       />
     </template>
   </TableWithSearch>

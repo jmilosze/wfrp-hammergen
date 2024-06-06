@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Header from "../../../components/PageHeader.vue";
-import { Spell, SpellApi } from "../../../services/wh/spell.ts";
+import { printSpellLabel, printSpellType, Spell, SpellApi, SpellLabel } from "../../../services/wh/spell.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import { useElSize } from "../../../composables/viewSize.ts";
@@ -14,6 +14,7 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
+import SpellClassification from "../../../components/SpellClassification.vue";
 
 const props = defineProps<{
   id: string;
@@ -45,6 +46,8 @@ await loadWh(props.id);
 const contentContainerRef = ref(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
+const simplifiedLabels = ref(new Array<SpellLabel>());
+
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validRange = computed(() => wh.value.validateRange());
@@ -60,6 +63,16 @@ const validCn = computed(() => wh.value.validateCn());
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create spell' : wh.canEdit ? 'Edit spell' : wh.name" />
+  <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
+  <div class="flex flex-wrap gap-1 mt-1">
+    <div
+      v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)"
+      :key="i"
+      class="border p-1 border-neutral-500 rounded bg-amber-200"
+    >
+      {{ printSpellLabel(label) }}
+    </div>
+  </div>
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -91,6 +104,12 @@ const validCn = computed(() => wh.value.validateCn());
       </div>
     </div>
   </div>
+
+  <SpellClassification
+    v-model="wh.classification"
+    :disabled="!wh.canEdit"
+    @update:simplifiedLabels="simplifiedLabels = $event"
+  />
 
   <div
     ref="contentContainerRef"

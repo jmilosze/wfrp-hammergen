@@ -96,7 +96,7 @@ function onModifyClick() {
       <template #buttons>
         <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
       </template>
-      <div class="">
+      <div>
         <TableWithSearch
           v-model="searchTerm"
           :fields="modalColumns"

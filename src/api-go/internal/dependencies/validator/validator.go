@@ -3,6 +3,7 @@ package validator
 import (
 	v "github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
+	"log"
 )
 
 func NewValidator() *v.Validate {
@@ -41,5 +42,9 @@ func configure(v *v.Validate) {
 	}
 	for k, r := range warhammer.GetModifierValidationAliases() {
 		v.RegisterAlias(k, r)
+	}
+
+	if err := v.RegisterValidation("spell_classification_valid", warhammer.CustomClassificationValidator); err != nil {
+		log.Fatal(err)
 	}
 }

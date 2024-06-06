@@ -106,16 +106,16 @@ const filteredAttributeOptions = computed(() => {
     :items="items"
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="auth.loggedIn.value"
+    routeName="skill"
     class="mx-1"
-    @createNew="router.push({ name: 'skill', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
         :canEdit="canEdit"
+        routeName="skill"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
-        @edit="router.push({ name: 'skill', params: { id: id } })"
       />
     </template>
   </TableWithSearch>

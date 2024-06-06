@@ -111,16 +111,16 @@ const filteredSpeciesOptions = computed(() => {
     :items="items"
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="auth.loggedIn.value"
+    routeName="career"
     class="mx-1"
-    @createNew="router.push({ name: 'career', params: { id: 'create' } })"
   >
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
         :canEdit="canEdit"
+        routeName="career"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
-        @edit="router.push({ name: 'career', params: { id: id } })"
       />
     </template>
   </TableWithSearch>
