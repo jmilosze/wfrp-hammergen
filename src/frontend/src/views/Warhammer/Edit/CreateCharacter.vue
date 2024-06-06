@@ -314,7 +314,7 @@ const modiferAttributes = computed(() => {
       {{ generationPropsUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'character' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
+  <Header :title="id === 'create' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
   <div v-if="wh.canEdit" class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
     <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>

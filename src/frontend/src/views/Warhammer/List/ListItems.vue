@@ -29,6 +29,7 @@ import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
+import LinkButton from "../../../components/LinkButton.vue";
 
 const whList = useWhList(new ItemApi(authRequest));
 await whList.loadWhList();
@@ -158,10 +159,11 @@ watch(
     :fields="columns"
     :items="items"
     :stackedViewSize="ViewSize.lg"
-    :addCreateNewBtn="auth.loggedIn.value"
     class="mx-1"
-    routeName="item"
   >
+    <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0" routeName="item" :params="{ id: 'create' }">
+      Create new
+    </LinkButton>
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"

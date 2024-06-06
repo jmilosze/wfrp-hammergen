@@ -15,6 +15,7 @@ import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
+import LinkButton from "../../../components/LinkButton.vue";
 
 const whList = useWhList(new MutationApi(authRequest));
 await whList.loadWhList();
@@ -90,10 +91,11 @@ const filteredTypeOptions = computed(() => {
     :fields="columns"
     :items="items"
     :stackedViewSize="ViewSize.lg"
-    :addCreateNewBtn="auth.loggedIn.value"
-    routeName="mutation"
     class="mx-1"
   >
+    <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0" routeName="mutation" :params="{ id: 'create' }">
+      Create new
+    </LinkButton>
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
