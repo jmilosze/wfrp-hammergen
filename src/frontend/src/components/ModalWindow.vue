@@ -3,7 +3,7 @@ import { useModal } from "../composables/modal.ts";
 
 const props = defineProps<{
   id: string;
-  size?: "lg" | "md" | "sm";
+  size?: "lg" | "md" | "sm" | "xs";
 }>();
 
 const modal = useModal();
@@ -13,6 +13,8 @@ if (props.size === "md") {
   modalSize = "max-w-3xl";
 } else if (props.size === "lg") {
   modalSize = "max-w-5xl";
+} else if (props.size === "xs") {
+  modalSize = "max-w-xl";
 }
 </script>
 

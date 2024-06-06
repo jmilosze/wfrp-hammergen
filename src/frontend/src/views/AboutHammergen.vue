@@ -36,6 +36,20 @@ import TextLink from "../components/TextLink.vue";
   </ul>
 
   <div class="text-2xl font-semibold mt-5">Updates</div>
+
+  <div>
+    <div class="text-xl mt-2 mb-1">6 Jun 2024</div>
+    <p>
+      Added spell types and labels and the ability to filter by them. For example, a spell can have type of "Lore spell"
+      and labels "Ritual", "Lore of Light", and "Lore of Heavens". When filtering, this spell will show up if you filter
+      for "Ritual" or "Lore of Light" or "Lore of Heavens".
+    </p>
+    <p>
+      Some of the buttons, like "View/Edit" or "Create New" are now proper links. This means it is possible to right
+      click on them and "open in new tab".
+    </p>
+  </div>
+
   <div>
     <div class="text-xl mt-2 mb-1">25 May 2024</div>
     <p>Added hardy effect to talents and mutations.</p>
@@ -46,10 +60,12 @@ import TextLink from "../components/TextLink.vue";
       </TextLink>
     </p>
   </div>
+
   <div>
     <div class="text-xl mt-2 mb-1">21 Apr 2024</div>
     <p>Redesigned page layout and changed colour scheme. No changes to functionality.</p>
   </div>
+
   <div>
     <div class="text-xl mt-2 mb-1">19 Nov 2023</div>
     <p class="mb-1">Added contents of:</p>

@@ -2,7 +2,7 @@
 import { ref } from "vue";
 
 const props = defineProps<{
-  alertType?: "green" | "red" | "amber";
+  alertType?: "green" | "red" | "amber" | "blue";
   centered?: boolean;
 }>();
 
@@ -19,6 +19,9 @@ if (props.alertType === "red") {
 } else if (props.alertType === "amber") {
   blockClass.value.push(...["bg-amber-300", "text-amber-900", "border-amber-800"]);
   btnClass.value.push(...["text-amber-800", "hover:bg-amber-400"]);
+} else if (props.alertType === "blue") {
+  blockClass.value.push(...["bg-blue-100", "text-blue-900", "border-blue-800"]);
+  btnClass.value.push(...["text-blue-800", "hover:bg-blue-400"]);
 } else {
   blockClass.value.push(...["bg-green-200", "text-green-800", "border-green-500"]);
   btnClass.value.push(...["text-green-800", "hover:bg-green-300"]);

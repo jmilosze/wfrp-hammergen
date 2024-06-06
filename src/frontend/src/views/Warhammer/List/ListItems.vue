@@ -160,15 +160,15 @@ watch(
     :stackedViewSize="ViewSize.lg"
     :addCreateNewBtn="auth.loggedIn.value"
     class="mx-1"
-    @createNew="router.push({ name: 'item', params: { id: 'create' } })"
+    routeName="item"
   >
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
         :canEdit="canEdit"
+        routeName="item"
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
-        @edit="router.push({ name: 'item', params: { id: id } })"
       />
     </template>
   </TableWithSearch>

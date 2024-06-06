@@ -17,6 +17,7 @@ import {
 import { ItemPropertyType } from "../services/wh/itemproperty.ts";
 import { expect, test } from "vitest";
 import { ApiResponse } from "../services/wh/common.ts";
+import { SpellLabel, SpellType } from "../services/wh/spell.ts";
 
 const characterFullApiData: CharacterFullApiData = {
   name: "charDisplay",
@@ -669,6 +670,10 @@ const characterFullApiData: CharacterFullApiData = {
                   target: "spellbook_spell_1_target",
                   duration: "spellbook_spell_1_duration",
                   description: "spellbook_spell_1_desc",
+                  classification: {
+                    type: SpellType.SpellTypeLore,
+                    labels: [SpellLabel.SpellLabelFire, SpellLabel.SpellLabelHeavens],
+                  },
                   cn: 1,
                   shared: true,
                   source: {},
@@ -684,6 +689,10 @@ const characterFullApiData: CharacterFullApiData = {
                   target: "spellbook_spell_2_target",
                   duration: "spellbook_spell_2_duration",
                   description: "spellbook_spell_2_desc",
+                  classification: {
+                    type: SpellType.SpellTypeLore,
+                    labels: [SpellLabel.SpellLabelFire],
+                  },
                   cn: 2,
                   shared: true,
                   source: {},
@@ -755,6 +764,10 @@ const characterFullApiData: CharacterFullApiData = {
         target: "spell_1_target",
         duration: "spell_1_duration",
         description: "spell_1_desc",
+        classification: {
+          type: SpellType.SpellTypeLore,
+          labels: [SpellLabel.SpellLabelFire],
+        },
         cn: 1,
         shared: true,
         source: {},
@@ -770,6 +783,10 @@ const characterFullApiData: CharacterFullApiData = {
         target: "spell_2_target",
         duration: "spell_2_duration",
         description: "spell_2_desc",
+        classification: {
+          type: SpellType.SpellTypeLore,
+          labels: [SpellLabel.SpellLabelFire],
+        },
         cn: 2,
         shared: true,
         source: {},
