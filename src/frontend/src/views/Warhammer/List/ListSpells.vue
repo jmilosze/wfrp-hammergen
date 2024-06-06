@@ -29,14 +29,6 @@ await whList.loadWhList();
 
 const router = useRouter();
 const queryParams = ref({ search: "", source: "", type: "", label: "" });
-queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
-watch(
-  () => queryParams,
-  (newValue) => {
-    router.replace({ query: queryParamsToRouterQuery(newValue.value) });
-  },
-  { deep: true },
-);
 
 const auth = useAuth();
 
@@ -46,6 +38,47 @@ const columns = [
   { name: "source", displayName: "Source", skipStackedTitle: false },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
+
+queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
+watch(
+  () => queryParams,
+  (newValue) => {
+    router.replace({ query: queryParamsToRouterQuery(newValue.value) });
+  },
+  { deep: true },
+);
+
+watch(
+  () => queryParams.value.type,
+  () => {
+    queryParams.value.label = "";
+  },
+);
+
+const filteredTypeOptions = computed(() => {
+  return getOptions(
+    spellTypeList,
+    whList.whList.value.map((wh) => wh.classification.type),
+    printSpellType,
+    "Any type",
+  );
+});
+
+const filteredLabelOptions = computed(() => {
+  if (queryParams.value.type === "") {
+    return [];
+  }
+
+  const anyGroup = { text: "Any label", value: "" };
+  const sortedLabels = getAllowedLabels(parseInt(queryParams.value.type)).sort((a, b) => a - b);
+  return [
+    anyGroup,
+    ...sortedLabels.map((x) => ({
+      text: printSpellLabel(x),
+      value: x.toString(),
+    })),
+  ];
+});
 
 const items = computed(() => {
   return whList.whList.value
@@ -73,31 +106,6 @@ function formatSpellRow(spell: Spell) {
     id: spell.id,
   };
 }
-
-const filteredTypeOptions = computed(() => {
-  return getOptions(
-    spellTypeList,
-    whList.whList.value.map((wh) => wh.classification.type),
-    printSpellType,
-    "Any type",
-  );
-});
-
-const filteredLabelOptions = computed(() => {
-  if (queryParams.value.type === "") {
-    return [];
-  }
-
-  const anyGroup = { text: "Any label", value: "" };
-  const sortedLabels = getAllowedLabels(parseInt(queryParams.value.type)).sort((a, b) => a - b);
-  return [
-    anyGroup,
-    ...sortedLabels.map((x) => ({
-      text: printSpellLabel(x),
-      value: x.toString(),
-    })),
-  ];
-});
 </script>
 
 <template>
