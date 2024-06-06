@@ -387,10 +387,9 @@ watch(
           title="Spells"
           modalTitle="Add/remove spells"
           :loading="spellListUtils.loading.value"
-          itemViewRouteName="spell"
+          routeName="spell"
           :truncateModalDescription="100"
           class="mt-4"
-          @createNew="openInNewTab('spell', { id: 'create' })"
           @reload="spellListUtils.loadWhList"
           @selected="(e) => wh.updateSpells(e.id, e.selected)"
         />
@@ -402,10 +401,9 @@ watch(
         title="Qualities and runes"
         modalTitle="Modify qualities and runes"
         :loading="propertyListUtils.loading.value"
-        itemViewRouteName="property"
+        routeName="property"
         :truncateModalDescription="100"
         class="mt-4"
-        @createNew="openInNewTab('property', { id: 'create' })"
         @reload="propertyListUtils.loadWhList"
         @selected="(e) => wh.updateProperties(e.id, e.selected)"
       />

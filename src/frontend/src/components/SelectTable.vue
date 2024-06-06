@@ -8,6 +8,7 @@ import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { addSpaces, truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
+import LinkButton from "./LinkButton.vue";
 
 type ItemWithSelect = {
   id: string;
@@ -17,22 +18,21 @@ type ItemWithSelect = {
 };
 
 const props = defineProps<{
-  disabled?: boolean;
-  title?: string;
-  modalTitle?: string;
+  title: string;
   itemList: { name: string; id: string; description: string }[];
   initSelectedItems: Set<string>;
+  routeName: string;
+  disabled?: boolean;
+  modalTitle?: string;
   loading?: boolean;
   modalId?: string;
   clearAllBtn?: boolean;
   disableDescription?: boolean;
   truncateModalDescription?: number;
-  itemViewRouteName?: string;
 }>();
 
 const emit = defineEmits<{
   (e: "selected", value: { id: string; selected: boolean }): void;
-  (e: "createNew"): void;
   (e: "reload"): void;
   (e: "clearAll"): void;
 }>();
@@ -140,16 +140,34 @@ function onModifyClick() {
         :fields="modalColumns"
         :items="itemsWithSelectList"
         :stackedViewSize="ViewSize.sm"
-        :addCreateNewBtn="true"
-        :addReloadBtn="true"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         elementId="modal"
-        @createNew="emit('createNew')"
-        @reload="emit('reload')"
       >
+        <LinkButton class="mr-2 mb-2 shrink-0" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
+          Create new
+        </LinkButton>
+        <ActionButton class="mr-2 mb-2 shrink-0" @click="emit('reload')"
+          ><svg
+            class="w-6 h-6"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"
+            />
+          </svg>
+        </ActionButton>
         <template #name="{ id }: { id: string }">
-          <TextLink v-if="itemViewRouteName" :routeName="itemViewRouteName" :params="{ id: id }">
+          <TextLink :routeName="routeName" :params="{ id: id }">
             {{ itemsWithSelect[id].name }}
           </TextLink>
         </template>
