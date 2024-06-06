@@ -1,0 +1,4 @@
+.idea/
+deployment/gcp/staging/config.json
+deployment/gcp/production/config.json
+src/frontend/node_modules/

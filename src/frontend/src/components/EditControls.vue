@@ -58,7 +58,7 @@ async function onSave() {
     </div>
     <div class="flex flex-wrap gap-4">
       <ActionButton v-if="!readOnly" :spinner="saving" @click="onSave">Save</ActionButton>
-      <ActionButton @click="router.push({ name: list })">Back to list</ActionButton>
+      <ActionButton @click="router.go(-1)">Back</ActionButton>
     </div>
   </div>
 </template>

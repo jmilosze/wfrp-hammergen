@@ -1,4 +1,3 @@
-import json
 import os
 import re
 
@@ -58,19 +57,16 @@ def get_classification_from_description(desc):
             labels = labels + pattern["label"]
             new_desc = re.sub(pattern["pattern"], "", new_desc).strip()
 
-    print(json.dumps({
-        "desc": desc,
-        "new_desc": new_desc,
-        "classification": {"type": spell_type, "labels": labels}
-    }, indent=2))
     return {"type": spell_type, "labels": labels}, new_desc
 
 
 spells = collection.find({"ownerid": "admin"})
 for spell in spells:
-    get_classification_from_description(spell["object"]["description"])
-    # print(spell["object"]["name"])
-    # classification = {"type": 0, "labels": []}
-    # collection.find_one_and_update({
-    #     "$set": {"object.classification": classification}
-    # })
+    new_classification, new_desc = get_classification_from_description(spell["object"]["description"])
+    collection.find_one_and_update({"_id": spell["_id"]}, {
+        "$set": {"object.classification": new_classification, "object.description": new_desc}})
+
+spells = collection.find({"ownerid": {"$ne": "admin"}})
+for spell in spells:
+    collection.find_one_and_update({"_id": spell["_id"]},
+                                   {"$set": {"object.classification": {"type": 0, "labels": []}}})
