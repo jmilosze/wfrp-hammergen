@@ -10,7 +10,6 @@ import {
   SkillType,
 } from "../../../services/wh/skill.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
-import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { useWhList } from "../../../composables/whList.ts";
@@ -39,8 +38,6 @@ const newSkill = new Skill({
   shared: true,
   source: defaultSource(),
 });
-
-const { openInNewTab } = useNewTab();
 
 const {
   wh,

@@ -2,7 +2,6 @@
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
-import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
@@ -72,8 +71,6 @@ const newCharacter = new Character({
 const selectedGenSpecies = ref(SpeciesWithRegion.HumanReikland);
 const selectedGenLevel = ref(1);
 const selectedGenCareer = ref(DEFAULT_CAREER_ID);
-
-const { openInNewTab } = useNewTab();
 
 const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm, showSubmissionStatus } =
   useWhEdit(newCharacter, new CharacterApi(authRequest));
@@ -539,7 +536,6 @@ const modiferAttributes = computed(() => {
           title="Career"
           modalTitle="Modify career"
           :loading="careerListUtils.loading.value"
-          @createNew="openInNewTab('career', { id: 'create' })"
           @reload="careerListUtils.loadWhList"
           @currentSelected="(event) => wh.updateCurrentCareer(event.id, event.number, event.selected)"
           @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
@@ -596,7 +592,6 @@ const modiferAttributes = computed(() => {
       :attributes="attributes"
       :validationStatus="validSkills"
       class="flex-1"
-      @createNew="openInNewTab('skill', { id: 'create' })"
       @reload="skillListUtils.loadWhList"
       @clearAll="wh.clearSkills(true)"
       @updated="(event) => wh.updateSkills(event.id, event.number)"
@@ -612,7 +607,6 @@ const modiferAttributes = computed(() => {
       :attributes="attributes"
       :validationStatus="validTalents"
       class="flex-1"
-      @createNew="openInNewTab('talent', { id: 'create' })"
       @reload="talentListUtils.loadWhList"
       @clearAll="wh.clearTalents(true)"
       @updated="(event) => wh.updateTalents(event.id, event.number, talentListUtils.whList.value)"
@@ -633,7 +627,6 @@ const modiferAttributes = computed(() => {
     :carriedValidationStatus="validCarried"
     :storedValidationStatus="validStored"
     class="flex-1"
-    @createNew="openInNewTab('talent', { id: 'create' })"
     @reload="itemListUtils.loadWhList"
     @clearAll="wh.clearItems(true)"
     @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"

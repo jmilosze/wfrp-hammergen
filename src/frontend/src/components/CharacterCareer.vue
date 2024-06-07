@@ -39,7 +39,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "pastSelected", value: { id: string; number: number; selected: boolean }): void;
   (e: "currentSelected", value: { id: string; number: number; selected: boolean }): void;
-  (e: "createNew"): void;
   (e: "reload"): void;
 }>();
 

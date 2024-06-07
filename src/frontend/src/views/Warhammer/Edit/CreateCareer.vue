@@ -2,7 +2,6 @@
 import Header from "../../../components/PageHeader.vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
-import { useNewTab } from "../../../composables/newTab.ts";
 import {
   Career,
   CareerApi,
@@ -45,8 +44,6 @@ const newCareer = new Career({
   shared: true,
   source: defaultSource(),
 });
-
-const { openInNewTab } = useNewTab();
 
 const {
   wh,

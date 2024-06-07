@@ -2,7 +2,6 @@
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
-import { useNewTab } from "../../../composables/newTab.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import {
@@ -57,8 +56,6 @@ const newItem = new Item({
   shared: true,
   source: defaultSource(),
 });
-
-const { openInNewTab } = useNewTab();
 
 const {
   wh,
