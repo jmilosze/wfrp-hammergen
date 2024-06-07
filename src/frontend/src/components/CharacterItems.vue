@@ -11,6 +11,8 @@ import { Item, printItemType } from "../services/wh/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
 import { addSpaces, truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
+import ReloadButton from "./ReloadButton.vue";
+import LinkButton from "./LinkButton.vue";
 
 const DESC_CHARS = 100;
 
@@ -42,7 +44,6 @@ const emit = defineEmits<{
   (e: "equippedUpdated", value: { id: string; number: number }): void;
   (e: "carriedUpdated", value: { id: string; number: number }): void;
   (e: "storedUpdated", value: { id: string; number: number }): void;
-  (e: "createNew"): void;
   (e: "reload"): void;
   (e: "clearAll"): void;
   (e: "addClassItems"): void;
@@ -256,15 +257,17 @@ function onModifyClick() {
         :fields="modalColumns"
         :items="itemsWithNumberList"
         :stackedViewSize="ViewSize.md"
-        :addCreateNewBtn="true"
-        :addReloadBtn="true"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         cellPadding="px-2"
         elementId="modal"
-        @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <LinkButton class="mr-2 mb-2 shrink-0" routeName="item" :params="{ id: 'create' }" :newWindow="true">
+          Create new
+        </LinkButton>
+        <ReloadButton @click="emit('reload')" />
+
         <template #name="{ id }: { id: string }">
           <TextLink routeName="item" :params="{ id: id }">{{ addSpaces(itemsWithNumber[id].name) }}</TextLink>
         </template>
