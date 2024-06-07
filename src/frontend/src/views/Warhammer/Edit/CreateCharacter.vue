@@ -314,7 +314,7 @@ const modiferAttributes = computed(() => {
       {{ generationPropsUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'character' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
+  <Header :title="id === 'create' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
   <div v-if="wh.canEdit" class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
     <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
@@ -653,10 +653,9 @@ const modiferAttributes = computed(() => {
       :loading="spellListUtils.loading.value"
       :clearAllBtn="true"
       :disableDescription="true"
-      itemViewRouteName="spell"
+      routeName="spell"
       :truncateModalDescription="100"
       class="flex-1 min-w-52"
-      @createNew="openInNewTab('spell', { id: 'create' })"
       @reload="spellListUtils.loadWhList"
       @selected="(e) => wh.updateSpells(e.id, e.selected)"
       @clearAll="wh.clearSpells(true)"
@@ -671,10 +670,9 @@ const modiferAttributes = computed(() => {
       :loading="prayerListUtils.loading.value"
       :clearAllBtn="true"
       :disableDescription="true"
-      itemViewRouteName="prayer"
+      routeName="prayer"
       :truncateModalDescription="100"
       class="flex-1 min-w-52"
-      @createNew="openInNewTab('prayer', { id: 'create' })"
       @reload="prayerListUtils.loadWhList"
       @selected="(e) => wh.updatePrayers(e.id, e.selected)"
       @clearAll="wh.clearPrayers(true)"
@@ -689,10 +687,9 @@ const modiferAttributes = computed(() => {
       :loading="mutationListUtils.loading.value"
       :clearAllBtn="true"
       :disableDescription="true"
-      itemViewRouteName="mutation"
+      routeName="mutation"
       :truncateModalDescription="100"
       class="flex-1 min-w-56"
-      @createNew="openInNewTab('mutation', { id: 'create' })"
       @reload="mutationListUtils.loadWhList"
       @selected="(e) => wh.updateMutations(e.id, e.selected, mutationListUtils.whList.value)"
       @clearAll="wh.clearMutations(true)"

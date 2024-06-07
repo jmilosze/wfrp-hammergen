@@ -165,9 +165,8 @@ watch(
           title="Belongs to group"
           modalTitle="Modify groups"
           :loading="skillListUtils.loading.value"
-          itemViewRouteName="skill"
+          routeName="skill"
           :truncateModalDescription="100"
-          @createNew="openInNewTab('skill', { id: 'create' })"
           @reload="skillListUtils.loadWhList"
           @selected="(e) => wh.modifyGroup(e.id, e.selected)"
         />

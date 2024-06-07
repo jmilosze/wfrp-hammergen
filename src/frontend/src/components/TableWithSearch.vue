@@ -3,12 +3,10 @@ import { TableField, TableRow } from "../utils/table.ts";
 import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
-import ActionButton from "./ActionButton.vue";
 import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { addSpaces } from "../utils/string.ts";
-import LinkButton from "./LinkButton.vue";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -19,9 +17,6 @@ const props = defineProps<{
   perPage?: number;
   stackedViewSize: ViewSize;
   modelValue: string;
-  addCreateNewBtn?: boolean;
-  routeName?: string;
-  addReloadBtn?: boolean;
   elementId?: string;
   loading?: boolean;
   resetPagination?: number;
@@ -114,33 +109,15 @@ onUpdated(() => {
 <template>
   <div ref="contentContainerRef">
     <div class="flex flex-wrap">
-      <LinkButton
-        v-if="addCreateNewBtn && routeName"
-        class="mr-2 mb-2 shrink-0"
-        :routeName="routeName"
-        :params="{ id: 'create' }"
-      >
-        Create new
-      </LinkButton>
-      <ActionButton v-if="addReloadBtn" class="mr-2 mb-2 shrink-0" @click="emit('reload')"
-        ><svg
-          class="w-6 h-6"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"
-          />
-        </svg>
-      </ActionButton>
+      <!--      <LinkButton-->
+      <!--        v-if="addCreateNewBtn && routeName"-->
+      <!--        class="mr-2 mb-2 shrink-0"-->
+      <!--        :routeName="routeName"-->
+      <!--        :params="{ id: 'create' }"-->
+      <!--      >-->
+      <!--        Create new-->
+      <!--      </LinkButton>-->
+      <slot />
       <input
         v-model="searchTerm"
         type="text"

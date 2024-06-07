@@ -12,6 +12,8 @@ import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { ValidationStatus } from "../utils/validation.ts";
 import { addSpaces, truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
+import ReloadButton from "./ReloadButton.vue";
+import LinkButton from "./LinkButton.vue";
 
 const DESC_CHARS = 100;
 
@@ -36,7 +38,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "updated", value: { id: string; number: number }): void;
-  (e: "createNew"): void;
   (e: "reload"): void;
   (e: "clearAll"): void;
   (e: "addSpeciesSkills"): void;
@@ -177,14 +178,16 @@ function onModifyClick() {
         :fields="modalColumns"
         :items="skillsWithNumberList"
         :stackedViewSize="ViewSize.sm"
-        :addCreateNewBtn="true"
-        :addReloadBtn="true"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         elementId="modal"
-        @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <LinkButton class="mr-2 mb-2 shrink-0" routeName="skill" :params="{ id: 'create' }" :newWindow="true">
+          Create new
+        </LinkButton>
+        <ReloadButton @click="emit('reload')" />
+
         <template #name="{ id }: { id: string }">
           <TextLink routeName="skill" :params="{ id: id }">{{ addSpaces(skillsWithNumber[id].name) }}</TextLink>
         </template>

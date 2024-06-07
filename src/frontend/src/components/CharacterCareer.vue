@@ -9,6 +9,8 @@ import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Career, printClassName } from "../services/wh/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
+import ReloadButton from "./ReloadButton.vue";
+import LinkButton from "./LinkButton.vue";
 
 type CareerWithSelect = {
   id: string;
@@ -204,14 +206,16 @@ function emitPastSelected(id: string) {
         :fields="modalColumns"
         :items="careersWithSelectList"
         :stackedViewSize="ViewSize.sm"
-        :addCreateNewBtn="true"
-        :addReloadBtn="true"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         elementId="modal"
-        @createNew="emit('createNew')"
         @reload="emit('reload')"
       >
+        <LinkButton class="mr-2 mb-2 shrink-0" routeName="career" :params="{ id: 'create' }" :newWindow="true">
+          Create new
+        </LinkButton>
+        <ReloadButton @click="emit('reload')" />
+
         <template #name="{ id }: { id: string }">
           <TextLink routeName="career" :params="{ id: careersWithSelect[id].careerId }">
             {{ careersWithSelect[id].name + ` (level ${careersWithSelect[id].level})` }}

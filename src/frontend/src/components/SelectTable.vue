@@ -8,6 +8,8 @@ import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { addSpaces, truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
+import LinkButton from "./LinkButton.vue";
+import ReloadButton from "./ReloadButton.vue";
 
 type ItemWithSelect = {
   id: string;
@@ -17,22 +19,21 @@ type ItemWithSelect = {
 };
 
 const props = defineProps<{
-  disabled?: boolean;
-  title?: string;
-  modalTitle?: string;
+  title: string;
   itemList: { name: string; id: string; description: string }[];
   initSelectedItems: Set<string>;
+  routeName: string;
+  disabled?: boolean;
+  modalTitle?: string;
   loading?: boolean;
   modalId?: string;
   clearAllBtn?: boolean;
   disableDescription?: boolean;
   truncateModalDescription?: number;
-  itemViewRouteName?: string;
 }>();
 
 const emit = defineEmits<{
   (e: "selected", value: { id: string; selected: boolean }): void;
-  (e: "createNew"): void;
   (e: "reload"): void;
   (e: "clearAll"): void;
 }>();
@@ -140,16 +141,17 @@ function onModifyClick() {
         :fields="modalColumns"
         :items="itemsWithSelectList"
         :stackedViewSize="ViewSize.sm"
-        :addCreateNewBtn="true"
-        :addReloadBtn="true"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         elementId="modal"
-        @createNew="emit('createNew')"
-        @reload="emit('reload')"
       >
+        <LinkButton class="mr-2 mb-2 shrink-0" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
+          Create new
+        </LinkButton>
+        <ReloadButton @click="emit('reload')" />
+
         <template #name="{ id }: { id: string }">
-          <TextLink v-if="itemViewRouteName" :routeName="itemViewRouteName" :params="{ id: id }">
+          <TextLink :routeName="routeName" :params="{ id: id }">
             {{ itemsWithSelect[id].name }}
           </TextLink>
         </template>
