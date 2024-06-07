@@ -52,6 +52,13 @@ function updateLabel(label: SpellLabel, selected: boolean) {
   emit("update:modelValue", { type: props.modelValue.type, labels: newLabels });
 }
 
+function selectAllLabels() {
+  emit("update:modelValue", {
+    type: props.modelValue.type,
+    labels: new Set<SpellLabel>(getAllowedLabels(props.modelValue.type)),
+  });
+}
+
 const modalColumns = [
   { name: "name", displayName: "Label", skipStackedTitle: false },
   { name: "selected", displayName: "Select", skipStackedTitle: false },
@@ -140,6 +147,7 @@ function onModifyClick() {
           :items="labelsWithSelectList"
           :stackedViewSize="ViewSize.zero"
         >
+          <ActionButton class="mr-2 mb-2 shrink-0" @click="selectAllLabels"> Select all </ActionButton>
           <template #selected="{ id }: { id: SpellLabel }">
             <div>
               <input
