@@ -275,6 +275,8 @@ export function getSimplifiedLabels(spellType: SpellType, allLabels: Set<SpellLa
     }
   }
 
+  ret = new Set([...ret, ...other.extracted]);
+
   return ret;
 }
 
