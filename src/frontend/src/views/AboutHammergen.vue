@@ -33,9 +33,21 @@ import TextLink from "../components/TextLink.vue";
     <li>Ubersreik Adventures 2</li>
     <li>Altdorf - Crown of the Empire</li>
     <li>The Imperial Zoo</li>
+    <li>Reikland Miscellanea</li>
+    <li>Tribes and Tribulations</li>
   </ul>
 
   <div class="text-2xl font-semibold mt-5">Updates</div>
+
+  <div>
+    <div class="text-xl mt-2 mb-1">9 Jun 2024</div>
+    <p class="mb-1">
+      Added contents of
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-tribes-and-tribulations" target="_blank">
+        Tribes and Tribulations
+      </TextLink>
+    </p>
+  </div>
 
   <div>
     <div class="text-xl mt-2 mb-1">6 Jun 2024</div>
