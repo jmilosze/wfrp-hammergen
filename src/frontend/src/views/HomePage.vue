@@ -17,14 +17,14 @@ const showAlert = ref(true);
           <li>
             We added all new items and spells from
             <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-reikland-miscellanea" target="_blank">
-              Reikland Miscellanea.
+              Reikland Miscellanea
             </TextLink>
             and
             <TextLink
               href="https://cubicle7games.com/warhammer-fantasy-roleplay-tribes-and-tribulations"
               target="_blank"
             >
-              Tribes and Tribulations
+              Tribes and Tribulations.
             </TextLink>
           </li>
           <li>
