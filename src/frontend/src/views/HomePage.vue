@@ -19,6 +19,13 @@ const showAlert = ref(true);
             <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-reikland-miscellanea" target="_blank">
               Reikland Miscellanea.
             </TextLink>
+            and
+            <TextLink
+              href="https://cubicle7games.com/warhammer-fantasy-roleplay-tribes-and-tribulations"
+              target="_blank"
+            >
+              Tribes and Tribulations
+            </TextLink>
           </li>
           <li>
             Spells have now types and labels you can filter on. For example, a spell can have type of "Lore spell" and
