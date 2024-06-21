@@ -3,7 +3,7 @@ package golangjwt
 import (
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"time"
 )
