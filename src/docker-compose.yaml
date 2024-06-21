@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  wfrp:
+    container_name: wfrp
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VERSION: wfrp_mock
+    image: wfrp:mock
+    environment:
+      HAMMERGEN_USERSERVICE_CREATE_MOCKS: "true"
+      HAMMERGEN_WHSERVICE_CREATE_MOCKS: "true"
+    ports:
+      - 8080:8080
