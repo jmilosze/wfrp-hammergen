@@ -5,7 +5,6 @@ import "fmt"
 const (
 	NotFoundError = iota
 	ConflictError
-	InternalError
 	IncorrectPasswordError
 	InvalidArgumentsError
 	SendEmailError
@@ -13,15 +12,15 @@ const (
 	TokenExpiredError
 )
 
-type UserError struct {
+type Error struct {
 	Type int
 	Err  error
 }
 
-func (e *UserError) Unwrap() error {
+func (e *Error) Unwrap() error {
 	return e.Err
 }
 
-func (e *UserError) Error() string {
+func (e *Error) Error() string {
 	return fmt.Sprintf("user error, %s", e.Err)
 }

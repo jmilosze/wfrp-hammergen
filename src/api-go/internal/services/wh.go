@@ -7,7 +7,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/rs/xid"
 	"golang.org/x/exp/slices"
@@ -30,7 +29,7 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 
 	newWh := w.Copy()
 	if err := newWh.InitNilPointers(); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.InternalError, Err: err}
 	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
@@ -50,7 +49,7 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 
 	createdWh, dbErr := s.WhDbService.Create(ctx, t, newWh)
 	if dbErr != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: dbErr}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.InternalError, Err: dbErr}
 	}
 
 	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
@@ -97,7 +96,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 
 	newWh := w.Copy()
 	if err := newWh.InitNilPointers(); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.InternalError, Err: err}
 	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
