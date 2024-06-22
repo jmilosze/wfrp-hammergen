@@ -5,8 +5,6 @@ import "fmt"
 const (
 	DbNotFoundError = iota
 	DbConflictError
-	DbInvalidUserFieldError
-	DbWriteToDbError
 )
 
 type DbError struct {
