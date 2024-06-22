@@ -3,14 +3,13 @@ package user
 import "fmt"
 
 const (
-	NotFoundError = iota
-	ConflictError
-	IncorrectPasswordError
-	InvalidArgumentsError
-	SendEmailError
-	UnauthorizedError
-	TokenExpiredError
-	InvalidTokenError
+	ErrorNotFound = iota
+	ErrorConflict
+	ErrorIncorrectPassword
+	ErrorInvalidArguments
+	ErrorUnauthorized
+	ErrorTokenExpired
+	ErrorInvalidToken
 )
 
 type Error struct {
