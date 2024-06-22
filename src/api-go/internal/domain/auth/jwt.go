@@ -1,10 +1,7 @@
 package auth
 
 const (
-	ErrorInvalidToken  = "token is invalid"
-	ErrorExpiredToken  = "token is expired"
-	ErrorInvalidClaims = "invalid claims"
-	ErrorCreateToken   = "could not create token"
+	ErrorExpiredToken = "token is expired"
 )
 
 type Claims struct {
@@ -23,10 +20,6 @@ type JwtService interface {
 type Error struct {
 	Type string
 	Err  error
-}
-
-func NewError(errType string, err error) *Error {
-	return &Error{Type: errType, Err: err}
 }
 
 func (e *Error) Unwrap() error {

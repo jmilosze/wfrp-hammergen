@@ -22,11 +22,11 @@ func NewHmacService(hmacSecret string, accessTokenExpiryTime time.Duration, rese
 	}
 }
 
-func (jwtService *HmacService) GenerateAccessToken(claims *auth.Claims) (string, *auth.Error) {
+func (jwtService *HmacService) GenerateAccessToken(claims *auth.Claims) (string, error) {
 	return generateToken(claims, jwtService.AccessTokenExpiryTime, jwtService.HmacSecret)
 }
 
-func generateToken(claims *auth.Claims, expiryTime time.Duration, hmacSecret []byte) (string, *auth.Error) {
+func generateToken(claims *auth.Claims, expiryTime time.Duration, hmacSecret []byte) (string, error) {
 	currentTime := time.Now()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -40,17 +40,17 @@ func generateToken(claims *auth.Claims, expiryTime time.Duration, hmacSecret []b
 
 	signedToken, err := token.SignedString(hmacSecret)
 	if err != nil {
-		return "", auth.NewError(auth.ErrorCreateToken, err)
+		return "", fmt.Errorf("could not sing token: %w", err)
 	}
 
 	return signedToken, nil
 }
 
-func (jwtService *HmacService) GenerateResetPasswordToken(claims *auth.Claims) (string, *auth.Error) {
+func (jwtService *HmacService) GenerateResetPasswordToken(claims *auth.Claims) (string, error) {
 	return generateToken(claims, jwtService.ResetTokenExpiryTime, jwtService.HmacSecret)
 }
 
-func (jwtService *HmacService) ParseToken(tokenString string) (*auth.Claims, *auth.Error) {
+func (jwtService *HmacService) ParseToken(tokenString string) (*auth.Claims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -60,19 +60,19 @@ func (jwtService *HmacService) ParseToken(tokenString string) (*auth.Claims, *au
 
 	if err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) {
-			return nil, auth.NewError(auth.ErrorExpiredToken, err)
+			return nil, &auth.Error{Type: auth.ErrorExpiredToken, Err: fmt.Errorf("token is expired: %w", err)}
 		} else {
-			return nil, auth.NewError(auth.ErrorInvalidToken, err)
+			return nil, fmt.Errorf("could not parse token: %w", err)
 		}
 	}
 
 	jwtClaims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, auth.NewError(auth.ErrorInvalidClaims, fmt.Errorf("could not extract claims"))
+		return nil, fmt.Errorf("could not extract claims: %w", err)
 	}
 
 	var claims auth.Claims
-	claims.Id, _ = jwtClaims["sub"].(string)
+	claims.Id, ok = jwtClaims["sub"].(string)
 	claims.Admin, _ = jwtClaims["adm"].(bool)
 	claims.ResetPassword, _ = jwtClaims["pwd"].(bool)
 
