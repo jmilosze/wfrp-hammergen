@@ -15,9 +15,9 @@ type Claims struct {
 }
 
 type JwtService interface {
-	GenerateAccessToken(claims *Claims) (string, *Error)
-	GenerateResetPasswordToken(claims *Claims) (string, *Error)
-	ParseToken(token string) (*Claims, *Error)
+	GenerateAccessToken(claims *Claims) (string, error)
+	GenerateResetPasswordToken(claims *Claims) (string, error)
+	ParseToken(token string) (*Claims, error)
 }
 
 type Error struct {
