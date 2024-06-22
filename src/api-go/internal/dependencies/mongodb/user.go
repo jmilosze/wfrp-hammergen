@@ -40,16 +40,16 @@ func NewUserDbService(db *DbService, createIndex bool) *UserDbService {
 	return &UserDbService{Db: db, Collection: coll}
 }
 
-func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*user.User, *domain.DbError) {
+func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*user.User, error) {
 	if fieldName != "username" && fieldName != "id" {
-		return nil, &domain.DbError{Type: domain.DbInvalidUserFieldError, Err: fmt.Errorf("invalid field name %s", fieldName)}
+		return nil, fmt.Errorf("invalid field name %s", fieldName)
 	}
 
 	var matchStage bson.D
 	if fieldName == "id" {
 		id, err := primitive.ObjectIDFromHex(fieldValue)
 		if err != nil {
-			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+			return nil, fmt.Errorf("failed to calculate object id of %s: %w", fieldValue, err)
 		}
 		matchStage = bson.D{{"$match", bson.D{{"_id", id}}}}
 	} else {
@@ -79,23 +79,29 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	cur, err := s.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindStage, lookupStage, groupStage})
 	defer cur.Close(ctx)
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("failed to query aggregate: %w", err)
 	}
 
 	var userMongo Mongo
 	ok := cur.Next(ctx)
 	if !ok {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
+		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: fmt.Errorf("user not found")}
 	}
 	err = cur.Decode(&userMongo)
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("failed to unmarshal user: %w", err)
 	}
 
-	return newUserFromMongo(&userMongo, nil), nil
+	newUser := newUserFromMongo(&userMongo, nil)
+
+	if err := cur.Close(ctx); err != nil {
+		return nil, fmt.Errorf("failed close cursor: %w", err)
+	}
+
+	return newUser, nil
 }
 
-func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fieldValues []string) ([]*Mongo, *domain.DbError) {
+func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fieldValues []string) ([]*Mongo, error) {
 	getAll := false
 	if fieldValues == nil {
 		getAll = true
@@ -114,7 +120,7 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 			} else {
 				id, err := primitive.ObjectIDFromHex(fieldValue)
 				if err != nil {
-					return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+					return nil, fmt.Errorf("failed to calculate object id of %s: %w", fieldValue, err)
 				}
 				queryValueList = append(queryValueList, bson.D{{"_id", id}})
 			}
@@ -126,26 +132,26 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 
 	cur, err := coll.Find(ctx, query)
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("failed to executre find query: %w", err)
 	}
 
 	users := make([]*Mongo, 0)
 	for cur.Next(ctx) {
 		var u Mongo
 		if err := cur.Decode(&u); err != nil {
-			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+			return nil, fmt.Errorf("failed to unmarshal users: %w", err)
 		}
 		users = append(users, &u)
 	}
 
 	if err := cur.Close(ctx); err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("failed close cursor: %w", err)
 	}
 
 	return users, nil
 }
 
-func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, *domain.DbError) {
+func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, error) {
 	mongoUsers, err := getMany(ctx, s.Collection, "username", nil)
 	if err != nil {
 		return nil, err
@@ -159,7 +165,7 @@ func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, *domain.
 	return users, nil
 }
 
-func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
+func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, error) {
 	linkedUsers, dbErr := getLinkedUsers(ctx, s.Collection, u.SharedAccountNames)
 	if dbErr != nil {
 		return nil, dbErr
@@ -167,25 +173,26 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *
 
 	userMongoDb, err := newMongoFromUser(u, linkedUsers)
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("failed to create mongo-user from user: %w", err)
 	}
 
 	_, err = s.Collection.InsertOne(ctx, userMongoDb)
 	if err != nil {
+		wErr := fmt.Errorf("failed to insert mongo-user: %w", err)
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, &domain.DbError{Type: domain.DbConflictError, Err: err}
+			return nil, &domain.DbError{Type: domain.DbConflictError, Err: wErr}
 		} else {
-			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+			return nil, wErr
 		}
 	}
 
 	return newUserFromMongo(userMongoDb, linkedUsers), nil
 }
 
-func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts []string) ([]*Mongo, *domain.DbError) {
+func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts []string) ([]*Mongo, error) {
 	linkedUsers := make([]*Mongo, 0)
 	if sharedAccounts != nil {
-		var err *domain.DbError
+		var err error
 		linkedUsers, err = getMany(ctx, col, "username", sharedAccounts)
 		if err != nil {
 			return nil, err
@@ -273,7 +280,7 @@ func idsToUsernames(ids []primitive.ObjectID, users []*Mongo) []string {
 	return usernames
 }
 
-func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User, *domain.DbError) {
+func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User, error) {
 	linkedUsers, dbErr := getLinkedUsers(ctx, s.Collection, user.SharedAccountNames)
 	if dbErr != nil {
 		return nil, dbErr
@@ -281,15 +288,16 @@ func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User
 
 	userMongo, err := newMongoFromUser(user, linkedUsers)
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("failed to create mongo-user from user: %w", err)
 	}
 
 	result, err := s.Collection.UpdateOne(ctx, bson.D{{"_id", userMongo.Id}}, bson.D{{"$set", userMongo}})
 	if err != nil {
+		wErr := fmt.Errorf("failed to insert mongo-user: %w", err)
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, &domain.DbError{Type: domain.DbConflictError, Err: err}
+			return nil, &domain.DbError{Type: domain.DbConflictError, Err: wErr}
 		} else {
-			return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+			return nil, wErr
 		}
 	}
 
@@ -300,15 +308,15 @@ func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User
 	return newUserFromMongo(userMongo, linkedUsers), nil
 }
 
-func (s *UserDbService) Delete(ctx context.Context, id string) *domain.DbError {
+func (s *UserDbService) Delete(ctx context.Context, id string) error {
 	idObject, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return fmt.Errorf("failed to calculate object id of %s: %w", id, err)
 	}
 
 	_, err = s.Collection.DeleteOne(ctx, bson.D{{"_id", idObject}})
 	if err != nil {
-		return &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return fmt.Errorf("failed to delete user: %w", err)
 	}
 
 	return nil
