@@ -94,10 +94,6 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 
 	newUser := newUserFromMongo(&userMongo, nil)
 
-	if err := cur.Close(ctx); err != nil {
-		return nil, fmt.Errorf("failed close cursor: %w", err)
-	}
-
 	return newUser, nil
 }
 
@@ -131,6 +127,7 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 	}
 
 	cur, err := coll.Find(ctx, query)
+	defer cur.Close(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to executre find query: %w", err)
 	}
@@ -142,10 +139,6 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 			return nil, fmt.Errorf("failed to unmarshal users: %w", err)
 		}
 		users = append(users, &u)
-	}
-
-	if err := cur.Close(ctx); err != nil {
-		return nil, fmt.Errorf("failed close cursor: %w", err)
 	}
 
 	return users, nil
