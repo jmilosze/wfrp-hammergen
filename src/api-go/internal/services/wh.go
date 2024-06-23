@@ -24,7 +24,7 @@ func NewWhService(v *validator.Validate, db wh.WhDbService) *WhService {
 
 func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, *wh.WhError) {
 	if c.Id == "anonymous" {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: errors.New("unauthorized")}
 	}
 
 	newWh := w.Copy()
@@ -33,11 +33,11 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
 	if err := extraCharacterValidation(t, newWh, s.Validator); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
 	if c.Admin {
@@ -91,7 +91,7 @@ func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []strin
 
 func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, *wh.WhError) {
 	if c.Id == "anonymous" {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: errors.New("unauthorized")}
 	}
 
 	newWh := w.Copy()
@@ -100,11 +100,11 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
 	if err := extraCharacterValidation(t, newWh, s.Validator); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
 	ownerId := c.Id
@@ -117,7 +117,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: dbErr}
+			return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: dbErr}
 		default:
 			return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
 		}
@@ -129,7 +129,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 
 func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) *wh.WhError {
 	if c.Id == "anonymous" {
-		return &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
+		return &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: errors.New("unauthorized")}
 	}
 
 	ownerId := c.Id
@@ -177,7 +177,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 	}
 
 	if errIfNotFound && len(whIds) != 0 && len(whsRet) != len(whIds) {
-		return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: errors.New("not all id found")}
+		return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: errors.New("not all id found")}
 	}
 
 	return whsRet, nil
@@ -373,7 +373,7 @@ func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, *wh.W
 	if dbErr != nil {
 		switch dbErr.Type {
 		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.NotFoundError, Err: dbErr}
+			return nil, &wh.WhError{ErrType: wh.ErrorNotFound, Err: dbErr}
 		default:
 			return nil, &wh.WhError{ErrType: wh.InternalError, Err: dbErr}
 		}

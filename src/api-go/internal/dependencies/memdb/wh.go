@@ -56,15 +56,15 @@ func createNewWhMemDb() (*memdb.MemDB, error) {
 	return memdb.NewMemDB(schema)
 }
 
-func getOne(db *memdb.MemDB, t warhammer.WhType, whId string) (*warhammer.Wh, *domain.DbError) {
+func getOne(db *memdb.MemDB, t warhammer.WhType, whId string) (*warhammer.Wh, error) {
 	txn := db.Txn(false)
 	whRaw, err := txn.First(string(t), "id", whId)
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("could not get first object from memdb : %w", err)
 	}
 
 	if whRaw == nil {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("wh not found")}
+		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: fmt.Errorf("wh %s not found", whId)}
 	}
 
 	wh, ok := whRaw.(*warhammer.Wh)
@@ -75,11 +75,11 @@ func getOne(db *memdb.MemDB, t warhammer.WhType, whId string) (*warhammer.Wh, *d
 	return wh.Copy(), nil
 }
 
-func (s *WhDbService) Create(ctx context.Context, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, *domain.DbError) {
+func (s *WhDbService) Create(ctx context.Context, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, error) {
 	return upsertWh(s.Db, t, w)
 }
 
-func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhammer.Wh, userId string) (*warhammer.Wh, *domain.DbError) {
+func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhammer.Wh, userId string) (*warhammer.Wh, error) {
 	wh, dbErr := getOne(s.Db, t, w.Id)
 	if dbErr != nil {
 		return nil, dbErr
@@ -92,7 +92,7 @@ func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhamm
 	return upsertWh(s.Db, t, w)
 }
 
-func upsertWh(db *memdb.MemDB, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, *domain.DbError) {
+func upsertWh(db *memdb.MemDB, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, error) {
 	txn := db.Txn(true)
 	defer txn.Abort()
 	if err := txn.Insert(string(t), w); err != nil {
@@ -103,7 +103,7 @@ func upsertWh(db *memdb.MemDB, t warhammer.WhType, w *warhammer.Wh) (*warhammer.
 	return w.Copy(), nil
 }
 
-func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId string, userId string) *domain.DbError {
+func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId string, userId string) error {
 	wh, dbErr := getOne(s.Db, t, whId)
 	if dbErr != nil {
 		switch dbErr.Type {
@@ -128,7 +128,7 @@ func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId strin
 	return nil
 }
 
-func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, users []string, sharedUsers []string, whIds []string) ([]*warhammer.Wh, *domain.DbError) {
+func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, users []string, sharedUsers []string, whIds []string) ([]*warhammer.Wh, error) {
 	txn := s.Db.Txn(false)
 	it, err := txn.Get(string(t), "id")
 	if err != nil {
@@ -156,7 +156,7 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, users []
 	return whs, nil
 }
 
-func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.GenProps, *domain.DbError) {
+func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.GenProps, error) {
 	txn := s.Db.Txn(false)
 	raw, err := txn.First(warhammer.WhTypeOther, "id", "generationProps")
 	if err != nil {
@@ -175,7 +175,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.G
 	return genProp.Copy(), nil
 }
 
-func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, *domain.DbError) {
+func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, error) {
 	txn := s.Db.Txn(true)
 	defer txn.Abort()
 	if err := txn.Insert(warhammer.WhTypeOther, gp); err != nil {

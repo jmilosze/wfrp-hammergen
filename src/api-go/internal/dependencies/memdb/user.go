@@ -53,13 +53,17 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	txn := s.Db.Txn(false)
 	userRaw, err := txn.First("user", fieldName, fieldValue)
 	if err != nil {
-		return nil, fmt.Errorf("could not get fist object from memdb : %w", err)
+		return nil, fmt.Errorf("could not get first object from memdb : %w", err)
 	}
 
 	if userRaw == nil {
 		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: fmt.Errorf("user %s not found", fieldValue)}
 	}
-	udb := userRaw.(*user.User)
+	udb, ok := userRaw.(*user.User)
+	if !ok {
+		return nil, fmt.Errorf("could not populate wh from object %v", userRaw)
+	}
+
 	u := udb.Copy()
 
 	linkedUsers, dbErr := getManyUsers(s.Db, "id", u.SharedAccountIds)
@@ -91,7 +95,10 @@ func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*u
 
 	var users []*user.User
 	for obj := it.Next(); obj != nil; obj = it.Next() {
-		u := obj.(*user.User)
+		u, ok := obj.(*user.User)
+		if !ok {
+			return nil, fmt.Errorf("could not populate wh from object %v", obj)
+		}
 		if getAll {
 			users = append(users, u.Copy())
 		} else {
@@ -162,7 +169,11 @@ func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, erro
 
 	var currentUsers []*user.User
 	for obj := it.Next(); obj != nil; obj = it.Next() {
-		currentUsers = append(currentUsers, obj.(*user.User))
+		nextUser, ok := obj.(*user.User)
+		if !ok {
+			return nil, fmt.Errorf("could not populate wh from object %v", obj)
+		}
+		currentUsers = append(currentUsers, nextUser)
 	}
 
 	indexFound := false

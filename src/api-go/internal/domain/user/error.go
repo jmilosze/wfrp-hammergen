@@ -1,7 +1,5 @@
 package user
 
-import "fmt"
-
 const (
 	ErrorNotFound = iota
 	ErrorConflict
@@ -22,5 +20,5 @@ func (e *Error) Unwrap() error {
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("user error, %s", e.Err)
+	return e.Err.Error()
 }
