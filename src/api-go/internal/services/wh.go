@@ -116,7 +116,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	updatedWh, dbErr := s.WhDbService.Update(ctx, t, newWh, ownerId)
 	if dbErr != nil {
 		switch dbErr.Type {
-		case domain.DbNotFoundError:
+		case domain.ErrorDbNotFound:
 			return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: dbErr}
 		default:
 			return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
@@ -372,7 +372,7 @@ func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, *wh.W
 	generationPropsMap, dbErr := s.WhDbService.RetrieveGenerationProps(ctx)
 	if dbErr != nil {
 		switch dbErr.Type {
-		case domain.DbNotFoundError:
+		case domain.ErrorDbNotFound:
 			return nil, &wh.WhError{ErrType: wh.ErrorNotFound, Err: dbErr}
 		default:
 			return nil, &wh.WhError{ErrType: wh.InternalError, Err: dbErr}

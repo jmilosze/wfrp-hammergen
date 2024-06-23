@@ -57,7 +57,7 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	}
 
 	if userRaw == nil {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: fmt.Errorf("user %s not found", fieldValue)}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user %s not found", fieldValue)}
 	}
 	udb, ok := userRaw.(*user.User)
 	if !ok {
@@ -182,16 +182,16 @@ func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, erro
 			indexFound = true
 		}
 		if currentUser.Id != userUpsert.Id && currentUser.Username == userUpsert.Username {
-			return nil, &domain.DbError{Type: domain.DbConflictError, Err: fmt.Errorf("user %s already exists", userUpsert.Username)}
+			return nil, &domain.DbError{Type: domain.ErrorDbConflict, Err: fmt.Errorf("user %s already exists", userUpsert.Username)}
 		}
 	}
 
 	if !indexFound && isUpdate {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: fmt.Errorf("user %s not found", userUpsert.Username)}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user %s not found", userUpsert.Username)}
 	}
 
 	if indexFound && !isUpdate {
-		return nil, &domain.DbError{Type: domain.DbConflictError, Err: fmt.Errorf("user %s already exists", userUpsert.Id)}
+		return nil, &domain.DbError{Type: domain.ErrorDbConflict, Err: fmt.Errorf("user %s already exists", userUpsert.Id)}
 	}
 
 	if err := txn.Insert("user", userUpsert); err != nil {

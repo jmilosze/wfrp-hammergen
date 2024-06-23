@@ -85,7 +85,7 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	var userMongo Mongo
 	ok := cur.Next(ctx)
 	if !ok {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: fmt.Errorf("user not found")}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user not found db")}
 	}
 	err = cur.Decode(&userMongo)
 	if err != nil {
@@ -147,7 +147,7 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, error) {
 	mongoUsers, err := getMany(ctx, s.Collection, "username", nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get users from db: %w", err)
 	}
 
 	users := make([]*user.User, len(mongoUsers))
@@ -173,7 +173,7 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, e
 	if err != nil {
 		wErr := fmt.Errorf("failed to insert mongo-user: %w", err)
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, &domain.DbError{Type: domain.DbConflictError, Err: wErr}
+			return nil, &domain.DbError{Type: domain.ErrorDbConflict, Err: wErr}
 		} else {
 			return nil, wErr
 		}
@@ -188,7 +188,7 @@ func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts [
 		var err error
 		linkedUsers, err = getMany(ctx, col, "username", sharedAccounts)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to get linked-users from db: %w", err)
 		}
 	}
 	return linkedUsers, nil
@@ -197,7 +197,7 @@ func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts [
 func newMongoFromUser(u *user.User, linkedUsers []*Mongo) (*Mongo, error) {
 	id, err := primitive.ObjectIDFromHex(u.Id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to calculate object id of %s: %w", u.Id, err)
 	}
 
 	userMongo := Mongo{
@@ -288,14 +288,14 @@ func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User
 	if err != nil {
 		wErr := fmt.Errorf("failed to insert mongo-user: %w", err)
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, &domain.DbError{Type: domain.DbConflictError, Err: wErr}
+			return nil, &domain.DbError{Type: domain.ErrorDbConflict, Err: wErr}
 		} else {
 			return nil, wErr
 		}
 	}
 
 	if result.MatchedCount == 0 {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: errors.New("user not found in db")}
 	}
 
 	return newUserFromMongo(userMongo, linkedUsers), nil

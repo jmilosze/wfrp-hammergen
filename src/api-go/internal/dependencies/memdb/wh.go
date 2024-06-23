@@ -67,7 +67,7 @@ func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhamm
 	}
 
 	if wh.OwnerId != userId {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("invalid owner id")}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: errors.New("invalid owner id")}
 	}
 
 	return upsertWh(s.Db, t, w)
@@ -81,7 +81,7 @@ func getOne(db *memdb.MemDB, t warhammer.WhType, whId string) (*warhammer.Wh, er
 	}
 
 	if whRaw == nil {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: fmt.Errorf("wh %s not found", whId)}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("wh %s not found", whId)}
 	}
 
 	wh, ok := whRaw.(*warhammer.Wh)
@@ -159,7 +159,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.G
 	}
 
 	if raw == nil {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: fmt.Errorf("generationProps not found")}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("generationProps not found")}
 	}
 
 	genProp, ok := raw.(*warhammer.GenProps)

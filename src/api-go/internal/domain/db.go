@@ -3,8 +3,8 @@ package domain
 import "fmt"
 
 const (
-	DbNotFoundError = iota
-	DbConflictError
+	ErrorDbNotFound = iota
+	ErrorDbConflict
 )
 
 type DbError struct {

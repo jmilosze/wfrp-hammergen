@@ -54,7 +54,7 @@ func (s *UserService) Get(ctx context.Context, c *auth.Claims, id string) (*user
 func handleRetrieveError(err error) error {
 	var dbErr *domain.DbError
 	wErr := fmt.Errorf("failed to retrieve user: %w", err)
-	if errors.As(err, &dbErr) && dbErr.Type == domain.DbNotFoundError {
+	if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
 		return &user.Error{Type: user.ErrorNotFound, Err: wErr}
 	} else {
 		return fmt.Errorf("failed to retrieve user: %w", wErr)
@@ -65,7 +65,7 @@ func (s *UserService) Exists(ctx context.Context, username string) (bool, error)
 	_, err := s.UserDbService.Retrieve(ctx, "username", username)
 	if err != nil {
 		var dbErr *domain.DbError
-		if errors.As(err, &dbErr) && dbErr.Type == domain.DbNotFoundError {
+		if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
 			return false, nil
 		} else {
 			return false, fmt.Errorf("failed to retrieve user: %w", err)
@@ -96,9 +96,9 @@ func (s *UserService) Authenticate(ctx context.Context, username string, passwor
 func handleUpdateError(err error) error {
 	var dbErr *domain.DbError
 	wErr := fmt.Errorf("failed to update user: %w", err)
-	if errors.As(err, &dbErr) && dbErr.Type == domain.DbNotFoundError {
+	if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
 		return &user.Error{Type: user.ErrorNotFound, Err: wErr}
-	} else if errors.As(err, &dbErr) && dbErr.Type == domain.DbConflictError {
+	} else if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbConflict {
 		return &user.Error{Type: user.ErrorConflict, Err: wErr}
 	} else {
 		return fmt.Errorf("failed to update user: %w", wErr)
@@ -133,7 +133,7 @@ func (s *UserService) Create(ctx context.Context, u *user.User) (*user.User, err
 	if err != nil {
 		var dbErr *domain.DbError
 		wErr := fmt.Errorf("failed to create user %w", err)
-		if errors.As(err, &dbErr) && dbErr.Type == domain.DbConflictError {
+		if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbConflict {
 			return nil, &user.Error{Type: user.ErrorConflict, Err: wErr}
 		} else {
 			return nil, wErr

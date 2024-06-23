@@ -16,7 +16,7 @@ func seedUsers(ctx context.Context, db user.UserDbService, bcryptCost int, us []
 		newUser.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(u.Password), bcryptCost)
 		if _, err := db.Create(ctx, newUser); err != nil {
 			var dbErr *domain.DbError
-			if errors.As(err, &dbErr) && dbErr.Type == domain.DbConflictError {
+			if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbConflict {
 				log.Fatal(err)
 			}
 		}
@@ -29,8 +29,9 @@ func InitUser(ctx context.Context, db user.UserDbService, bcryptCost int) {
 
 func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, whs []*warhammer.Wh) {
 	for _, wh := range whs {
-		if _, dbErr := db.Create(ctx, t, wh.Copy()); dbErr != nil {
-			if dbErr.Type != domain.DbConflictError {
+		if _, err := db.Create(ctx, t, wh.Copy()); err != nil {
+			var dbErr *domain.DbError
+			if errors.As(err, &dbErr) && dbErr.Type != domain.ErrorDbConflict {
 				log.Fatal(dbErr)
 			}
 		}
@@ -38,9 +39,10 @@ func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, w
 }
 
 func seedGenProps(ctx context.Context, db warhammer.WhDbService, genProps *warhammer.GenProps) {
-	if _, dbErr := db.CreateGenerationProps(ctx, genProps); dbErr != nil {
-		if dbErr.Type != domain.DbConflictError {
-			log.Fatal(dbErr)
+	if _, err := db.CreateGenerationProps(ctx, genProps); err != nil {
+		var dbErr *domain.DbError
+		if errors.As(err, &dbErr) && dbErr.Type != domain.ErrorDbConflict {
+			log.Fatal(err)
 		}
 	}
 }
