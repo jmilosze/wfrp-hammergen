@@ -2,6 +2,7 @@ package gin
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
@@ -46,26 +47,31 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 		}
 
 		var whRead *warhammer.Wh
-		var whErr *warhammer.WhError
 		if isCreate {
-			whRead, whErr = s.Create(c.Request.Context(), t, &whWrite, claims)
+			whRead, err = s.Create(c.Request.Context(), t, &whWrite, claims)
 		} else {
 			whWrite.Id = c.Param("whId")
-			whRead, whErr = s.Update(c.Request.Context(), t, &whWrite, claims)
+			whRead, err = s.Update(c.Request.Context(), t, &whWrite, claims)
 		}
 
-		if whErr != nil {
-			log.Println("error handling create or update wh", whErr)
-			switch whErr.ErrType {
-			case warhammer.ErrorInvalidArguments:
-				c.JSON(BadRequestErrResp(whErr.Error()))
-			case warhammer.ErrorUnauthorized:
-				c.JSON(UnauthorizedErrResp(""))
-			case warhammer.ErrorNotFound:
-				c.JSON(NotFoundErrResp(""))
-			default:
-				c.JSON(ServerErrResp(""))
+		if err != nil {
+			log.Println("error handling create or update wh", err)
+			var whErr *warhammer.WhError
+			if errors.As(err, &whErr) {
+				if whErr.ErrType == warhammer.ErrorInvalidArguments {
+					c.JSON(BadRequestErrResp(whErr.Error()))
+					return
+				}
+				if whErr.ErrType == warhammer.ErrorUnauthorized {
+					c.JSON(UnauthorizedErrResp(""))
+					return
+				}
+				if whErr.ErrType == warhammer.ErrorNotFound {
+					c.JSON(NotFoundErrResp(""))
+					return
+				}
 			}
+			c.JSON(ServerErrResp(""))
 			return
 		}
 
@@ -98,14 +104,14 @@ func whGetHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) 
 			full = true
 		}
 
-		wh, whErr := s.Get(c.Request.Context(), t, claims, full, true, []string{whId})
+		wh, err := s.Get(c.Request.Context(), t, claims, full, true, []string{whId})
 
-		if whErr != nil {
-			log.Println("error handling get wh", whErr)
-			switch whErr.ErrType {
-			case warhammer.ErrorNotFound:
+		if err != nil {
+			log.Println("error handling get wh", err)
+			var whErr *warhammer.WhError
+			if errors.As(err, &whErr) && whErr.ErrType == warhammer.ErrorNotFound {
 				c.JSON(NotFoundErrResp(""))
-			default:
+			} else {
 				c.JSON(ServerErrResp(""))
 			}
 			return
@@ -145,14 +151,14 @@ func whDeleteHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Contex
 			return
 		}
 
-		whErr := s.Delete(c.Request.Context(), t, whId, claims)
+		err := s.Delete(c.Request.Context(), t, whId, claims)
 
-		if whErr != nil {
-			log.Println("error handling delete wh", whErr)
-			switch whErr.ErrType {
-			case warhammer.ErrorUnauthorized:
+		if err != nil {
+			log.Println("error handling delete wh", err)
+			var whErr *warhammer.WhError
+			if errors.As(err, &whErr) && whErr.ErrType == warhammer.ErrorUnauthorized {
 				c.JSON(UnauthorizedErrResp(""))
-			default:
+			} else {
 				c.JSON(ServerErrResp(""))
 			}
 			return
@@ -176,14 +182,14 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 			full = true
 		}
 
-		whs, whErr := s.Get(c.Request.Context(), t, claims, full, true, ids)
+		whs, err := s.Get(c.Request.Context(), t, claims, full, true, ids)
 
-		if whErr != nil {
-			log.Println("error handling list wh", whErr)
-			switch whErr.ErrType {
-			case warhammer.ErrorNotFound:
+		if err != nil {
+			log.Println("error handling list wh", err)
+			var whErr *warhammer.WhError
+			if errors.As(err, &whErr) && whErr.ErrType == warhammer.ErrorNotFound {
 				c.JSON(NotFoundErrResp(""))
-			default:
+			} else {
 				c.JSON(ServerErrResp(""))
 			}
 			return
@@ -202,14 +208,14 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 
 func whGenerationPropsHandler(s warhammer.WhService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		generationPropsMap, whErr := s.GetGenerationProps(c.Request.Context())
+		generationPropsMap, err := s.GetGenerationProps(c.Request.Context())
 
-		if whErr != nil {
-			log.Println("error handling generation props", whErr)
-			switch whErr.ErrType {
-			case warhammer.ErrorNotFound:
+		if err != nil {
+			log.Println("error handling generation props", err)
+			var whErr *warhammer.WhError
+			if errors.As(err, &whErr) && whErr.ErrType == warhammer.ErrorNotFound {
 				c.JSON(NotFoundErrResp(""))
-			default:
+			} else {
 				c.JSON(ServerErrResp(""))
 			}
 			return

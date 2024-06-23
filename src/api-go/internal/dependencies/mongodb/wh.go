@@ -222,9 +222,9 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.G
 	err := s.Collections[warhammer.WhTypeOther].FindOne(ctx, filter).Decode(&genProps)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, &d.DbError{Type: d.ErrorDbNotFound, Err: fmt.Errorf("wh not found in db")}
+			return nil, &d.DbError{Type: d.ErrorDbNotFound, Err: fmt.Errorf("generationProps not found in db: %w", err)}
 		} else {
-			return nil, fmt.Errorf("wh not found in db")
+			return nil, fmt.Errorf("failed to get generationProps from db")
 		}
 	}
 
@@ -237,7 +237,7 @@ func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.G
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, &d.DbError{Type: d.ErrorDbConflict, Err: fmt.Errorf("generationProps already exists: %w", err)}
 		}
-		return nil, fmt.Errorf("failed to created generationProps: %w", err)
+		return nil, fmt.Errorf("failed to create generationProps: %w", err)
 	}
 
 	return gp, nil

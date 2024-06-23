@@ -101,7 +101,7 @@ func handleUpdateError(err error) error {
 	} else if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbConflict {
 		return &user.Error{Type: user.ErrorConflict, Err: wErr}
 	} else {
-		return fmt.Errorf("failed to update user: %w", wErr)
+		return wErr
 	}
 }
 
