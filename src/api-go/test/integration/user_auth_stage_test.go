@@ -11,11 +11,12 @@ import (
 )
 
 type userAuthTestStage struct {
-	t           *testing.T
-	client      *http.Client
-	testUrl     string
-	accessToken string
-	response    *http.Response
+	t            *testing.T
+	client       *http.Client
+	testUrl      string
+	accessToken  string
+	responseBody []byte
+	responseCode int
 }
 
 func userAuthTestTest(t *testing.T, testUrl string) (*userAuthTestStage, *userAuthTestStage, *userAuthTestStage) {
@@ -74,12 +75,15 @@ func (s *userAuthTestStage) performing_get_user_admin() *userAuthTestStage {
 	resp, err := s.client.Do(req)
 	require.NoError(s.t, err)
 
-	s.response = resp
+	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
 
 	return s
 }
 
 func (s *userAuthTestStage) status_code_is(statusCode int) *userAuthTestStage {
-	require.Equal(s.t, s.response.StatusCode, statusCode)
+	require.Equal(s.t, s.responseCode, statusCode)
 	return s
 }
