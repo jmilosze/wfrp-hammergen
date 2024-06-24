@@ -21,3 +21,16 @@ services:
       - 8080:8080
     depends_on:
       - mongodb
+
+  wfrp-memdb:
+    container_name: wfrp-memdb
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VERSION: wfrp_memdb
+    environment:
+      HAMMERGEN_USERSERVICE_CREATE_MOCKS: "true"
+      HAMMERGEN_WHSERVICE_CREATE_MOCKS: "true"
+    ports:
+      - 8081:8080
