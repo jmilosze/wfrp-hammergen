@@ -13,32 +13,25 @@ import (
 	"testing"
 )
 
-type userCreate struct {
+type user struct {
 	Username       string   `json:"username,omitempty"`
 	Password       string   `json:"password,omitempty"`
 	SharedAccounts []string `json:"sharedAccounts,omitempty"`
 	Captcha        string   `json:"captcha,omitempty"`
-}
-
-type userRetrieve struct {
-	Id             string
-	Username       string
-	Admin          bool
-	CreatedOn      string
-	LastAuthOn     string
-	SharedAccounts []string
+	Id             string   `json:"id,omitempty"`
+	Admin          bool     `json:"admin,omitempty"`
 }
 
 type userRetrieveResponse struct {
-	Data *userRetrieve
+	Data *user
 }
 
 type userTestStage struct {
 	t                   *testing.T
 	client              *http.Client
 	testUrl             string
-	newUser             *userCreate
-	createdUserId       string
+	newUser             *user
+	adminUser           *user
 	responseBody        []byte
 	responseCode        int
 	authorizationHeader string
@@ -64,11 +57,20 @@ func (s *userTestStage) nothing() *userTestStage {
 }
 
 func (s *userTestStage) new_user() *userTestStage {
-	s.newUser = &userCreate{
-		Username:       uuid.NewString() + "@test.com",
+	s.newUser = &user{
+		Username: uuid.NewString() + "@test.com",
+		Password: "123456",
+		Captcha:  "success",
+	}
+	return s
+}
+
+func (s *userTestStage) already_present_admin_user() *userTestStage {
+	s.adminUser = &user{
+		Username:       "user0@test.com",
 		Password:       "123456",
-		Captcha:        "success",
 		SharedAccounts: []string{"user0@test.com", "non-existing-user@test.com"},
+		Id:             "000000000000000000000000",
 	}
 	return s
 }
@@ -80,6 +82,16 @@ func (s *userTestStage) invalid_captcha() *userTestStage {
 
 func (s *userTestStage) missing_username() *userTestStage {
 	s.newUser.Username = ""
+	return s
+}
+
+func (s *userTestStage) non_existing_user_in_shared_accounts() *userTestStage {
+	s.newUser.SharedAccounts = append(s.newUser.SharedAccounts, "non-existing-user@test.com")
+	return s
+}
+
+func (s *userTestStage) admin_user_in_shared_accounts() *userTestStage {
+	s.newUser.SharedAccounts = append(s.newUser.SharedAccounts, s.adminUser.Username)
 	return s
 }
 
@@ -129,30 +141,30 @@ func (s *userTestStage) status_code_is_404() *userTestStage {
 	return s
 }
 
-func (s *userTestStage) response_body_contains_new_user_name_id_and_existing_shared_accounts() *userTestStage {
+func (s *userTestStage) response_body_contains_new_user_name() *userTestStage {
+	createdUser := s.parseResponseBody()
+	require.Equal(s.t, s.newUser.Username, createdUser.Username)
+	return s
+}
+
+func (s *userTestStage) parseResponseBody() *user {
 	createdUser := userRetrieveResponse{}
 	err := json.Unmarshal(s.responseBody, &createdUser)
 	require.NoError(s.t, err)
 	require.NotNil(s.t, createdUser.Data)
-
 	require.True(s.t, len(createdUser.Data.Id) > 0)
-	require.Equal(s.t, s.newUser.Username, createdUser.Data.Username)
-	require.Equal(s.t, []string{"user0@test.com"}, createdUser.Data.SharedAccounts)
+	return createdUser.Data
+}
 
-	s.createdUserId = createdUser.Data.Id
-
+func (s *userTestStage) response_body_contains_admin_user_in_shared_accounts() *userTestStage {
+	createdUser := s.parseResponseBody()
+	require.Equal(s.t, []string{s.adminUser.Username}, createdUser.SharedAccounts)
 	return s
 }
 
 func (s *userTestStage) response_body_contains_new_user_id() *userTestStage {
-	createdUser := userRetrieveResponse{}
-	err := json.Unmarshal(s.responseBody, &createdUser)
-	require.NoError(s.t, err)
-	require.NotNil(s.t, createdUser.Data)
-
-	require.True(s.t, len(createdUser.Data.Id) > 0)
-	s.createdUserId = createdUser.Data.Id
-
+	createdUser := s.parseResponseBody()
+	s.newUser.Id = createdUser.Id
 	return s
 }
 
@@ -164,7 +176,7 @@ func (s *userTestStage) new_user_is_authenticated() *userTestStage {
 }
 
 func (s *userTestStage) admin_user_is_authenticated() *userTestStage {
-	accessToken, err := authUser(s.testUrl+"/api/token", s.client, "user0@test.com", "123456")
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.adminUser.Username, s.adminUser.Password)
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
 	return s
@@ -218,7 +230,7 @@ func authUser(authUrl string, client *http.Client, username string, password str
 }
 
 func (s *userTestStage) new_user_is_retrieved() *userTestStage {
-	s.getUser(s.testUrl + "/api/user/" + s.createdUserId)
+	s.getUser(s.testUrl + "/api/user/" + s.newUser.Id)
 	return s
 }
 
@@ -241,12 +253,12 @@ func (s *userTestStage) authenticated_user_is_retrieved() *userTestStage {
 }
 
 func (s *userTestStage) admin_user_is_retrieved() *userTestStage {
-	s.getUser(s.testUrl + "/api/user/000000000000000000000000")
+	s.getUser(s.testUrl + "/api/user/" + s.adminUser.Id)
 	return s
 }
 
 func (s *userTestStage) non_existing_user_is_retrieved() *userTestStage {
-	s.getUser(s.testUrl + "/api/user/000000000000111000000000")
+	s.getUser(s.testUrl + "/api/user/123")
 	return s
 }
 
@@ -256,7 +268,7 @@ func (s *userTestStage) invalid_token() *userTestStage {
 }
 
 func (s *userTestStage) new_user_is_deleted() *userTestStage {
-	s.deleteUser(s.testUrl+"/api/user/"+s.createdUserId, s.newUser.Password)
+	s.deleteUser(s.testUrl+"/api/user/"+s.newUser.Id, s.newUser.Password)
 	return s
 }
 
@@ -284,17 +296,17 @@ func (s *userTestStage) deleteUser(userUrl string, password string) {
 }
 
 func (s *userTestStage) new_user_is_deleted_without_password() *userTestStage {
-	s.deleteUser(s.testUrl+"/api/user/"+s.createdUserId, "")
+	s.deleteUser(s.testUrl+"/api/user/"+s.newUser.Id, "")
 	return s
 }
 
 func (s *userTestStage) admin_user_is_deleted() *userTestStage {
-	s.deleteUser(s.testUrl+"/api/user/000000000000000000000000", "123456")
+	s.deleteUser(s.testUrl+"/api/user/"+s.adminUser.Id, s.adminUser.Password)
 	return s
 }
 
 func (s *userTestStage) new_user_is_deleted_with_invalid_password() *userTestStage {
-	s.deleteUser(s.testUrl+"/api/user/"+s.createdUserId, "invalid password")
+	s.deleteUser(s.testUrl+"/api/user/"+s.newUser.Id, "invalid password")
 	return s
 }
 

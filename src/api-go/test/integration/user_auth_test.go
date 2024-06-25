@@ -10,14 +10,17 @@ func TestCreateUser(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl)
 
 	given.
-		new_user()
+		new_user().and().
+		already_present_admin_user().and().
+		non_existing_user_in_shared_accounts().and().
+		admin_user_in_shared_accounts()
 
 	when.
 		new_user_is_created()
 
 	then.
 		status_code_is_200().and().
-		response_body_contains_new_user_name_id_and_existing_shared_accounts()
+		response_body_contains_new_user_name()
 }
 
 func TestCreateUserNoCaptcha(t *testing.T) {
@@ -62,7 +65,7 @@ func TestGetSpecificUser(t *testing.T) {
 
 	then.
 		status_code_is_200().and().
-		response_body_contains_new_user_name_id_and_existing_shared_accounts()
+		response_body_contains_new_user_name()
 }
 
 func TestGetCurrentUser(t *testing.T) {
@@ -78,14 +81,15 @@ func TestGetCurrentUser(t *testing.T) {
 
 	then.
 		status_code_is_200().and().
-		response_body_contains_new_user_name_id_and_existing_shared_accounts()
+		response_body_contains_new_user_name()
 }
 
 func TestGetCurrentUserUnauthenticated(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl)
 
 	given.
-		new_user()
+		new_user().and().
+		already_present_admin_user()
 
 	when.
 		new_user_is_created().and().
@@ -99,7 +103,8 @@ func TestGetNonSelfUser(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl)
 
 	given.
-		new_user()
+		new_user().and().
+		already_present_admin_user()
 
 	when.
 		new_user_is_created().and().
@@ -114,7 +119,8 @@ func TestGetNonSelfUserByAdmin(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl)
 
 	given.
-		new_user()
+		new_user().and().
+		already_present_admin_user()
 
 	when.
 		new_user_is_created().and().
@@ -124,7 +130,7 @@ func TestGetNonSelfUserByAdmin(t *testing.T) {
 
 	then.
 		status_code_is_200().and().
-		response_body_contains_new_user_name_id_and_existing_shared_accounts()
+		response_body_contains_new_user_name()
 }
 
 func TestGetNonExistingUser(t *testing.T) {
@@ -231,7 +237,8 @@ func TestDeleteNonSelfUser(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl)
 
 	given.
-		new_user()
+		new_user().and().
+		already_present_admin_user()
 
 	when.
 		new_user_is_created().and().
@@ -250,7 +257,8 @@ func TestDeleteNonSelfUserByAdmin(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl)
 
 	given.
-		new_user()
+		new_user().and().
+		already_present_admin_user()
 
 	when.
 		new_user_is_created().and().
