@@ -8,3 +8,7 @@ dev-down:
 
 .PHONY: dev-restart
 dev-restart: dev-down dev-up
+
+.PHONY: test
+test:
+	cd ./api-go && go test -v -count=1 ./test/integration/

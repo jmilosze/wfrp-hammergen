@@ -74,7 +74,7 @@ func TestGetCurrentUser(t *testing.T) {
 	when.
 		new_user_is_created().and().
 		new_user_is_authenticated().and().
-		current_user_is_retrieved()
+		authenticated_user_is_retrieved()
 
 	then.
 		status_code_is_200().and().
@@ -108,6 +108,23 @@ func TestGetNonSelfUser(t *testing.T) {
 
 	then.
 		status_code_is_401()
+}
+
+func TestGetNonSelfUserByAdmin(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl)
+
+	given.
+		new_user()
+
+	when.
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		admin_user_is_authenticated().and().
+		new_user_is_retrieved()
+
+	then.
+		status_code_is_200().and().
+		response_body_contains_new_user_name_id_and_existing_shared_accounts()
 }
 
 func TestGetNonExistingUser(t *testing.T) {
@@ -148,7 +165,7 @@ func TestDeleteUser(t *testing.T) {
 
 	when.
 		new_user_is_created().and().
-		response_body_contains_new_user_name_id().and().
+		response_body_contains_new_user_id().and().
 		new_user_is_authenticated().and().
 		new_user_is_deleted()
 
@@ -156,6 +173,22 @@ func TestDeleteUser(t *testing.T) {
 		status_code_is_200().and().
 		new_user_is_retrieved().and().
 		status_code_is_404()
+}
+
+func TestDeleteNonExistingUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl)
+
+	given.
+		new_user()
+
+	when.
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_is_authenticated().and().
+		new_user_is_deleted()
+
+	then.
+		status_code_is_200()
 }
 
 func TestDeleteUserWithoutPassword(t *testing.T) {
@@ -166,7 +199,7 @@ func TestDeleteUserWithoutPassword(t *testing.T) {
 
 	when.
 		new_user_is_created().and().
-		response_body_contains_new_user_name_id().and().
+		response_body_contains_new_user_id().and().
 		new_user_is_authenticated().and().
 		new_user_is_deleted_without_password()
 
@@ -184,12 +217,49 @@ func TestDeleteUserWithInvalidPassword(t *testing.T) {
 
 	when.
 		new_user_is_created().and().
-		response_body_contains_new_user_name_id().and().
+		response_body_contains_new_user_id().and().
 		new_user_is_authenticated().and().
 		new_user_is_deleted_with_invalid_password()
 
 	then.
 		status_code_is_403().and().
+		new_user_is_retrieved().and().
+		status_code_is_200()
+}
+
+func TestDeleteNonSelfUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl)
+
+	given.
+		new_user()
+
+	when.
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_is_authenticated().and().
+		admin_user_is_deleted()
+
+	then.
+		status_code_is_401().and().
+		admin_user_is_authenticated().and().
+		admin_user_is_retrieved().and().
+		status_code_is_200()
+}
+
+func TestDeleteNonSelfUserByAdmin(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl)
+
+	given.
+		new_user()
+
+	when.
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		admin_user_is_authenticated().and().
+		new_user_is_deleted()
+
+	then.
+		status_code_is_401().and().
 		new_user_is_retrieved().and().
 		status_code_is_200()
 }

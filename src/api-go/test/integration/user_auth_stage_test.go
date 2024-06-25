@@ -68,7 +68,7 @@ func (s *userTestStage) new_user() *userTestStage {
 		Username:       uuid.NewString() + "@test.com",
 		Password:       "123456",
 		Captcha:        "success",
-		SharedAccounts: []string{"user1@test.com", "user3@test.com", "non-existing-user@test.com"},
+		SharedAccounts: []string{"user0@test.com", "non-existing-user@test.com"},
 	}
 	return s
 }
@@ -137,14 +137,14 @@ func (s *userTestStage) response_body_contains_new_user_name_id_and_existing_sha
 
 	require.True(s.t, len(createdUser.Data.Id) > 0)
 	require.Equal(s.t, s.newUser.Username, createdUser.Data.Username)
-	require.Equal(s.t, []string{"user1@test.com", "user3@test.com"}, createdUser.Data.SharedAccounts)
+	require.Equal(s.t, []string{"user0@test.com"}, createdUser.Data.SharedAccounts)
 
 	s.createdUserId = createdUser.Data.Id
 
 	return s
 }
 
-func (s *userTestStage) response_body_contains_new_user_name_id() *userTestStage {
+func (s *userTestStage) response_body_contains_new_user_id() *userTestStage {
 	createdUser := userRetrieveResponse{}
 	err := json.Unmarshal(s.responseBody, &createdUser)
 	require.NoError(s.t, err)
@@ -158,6 +158,13 @@ func (s *userTestStage) response_body_contains_new_user_name_id() *userTestStage
 
 func (s *userTestStage) new_user_is_authenticated() *userTestStage {
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.newUser.Username, s.newUser.Password)
+	require.NoError(s.t, err)
+	s.authorizationHeader = "Bearer " + accessToken
+	return s
+}
+
+func (s *userTestStage) admin_user_is_authenticated() *userTestStage {
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, "user0@test.com", "123456")
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
 	return s
@@ -228,7 +235,7 @@ func (s *userTestStage) getUser(userUrl string) {
 	require.NoError(s.t, err)
 }
 
-func (s *userTestStage) current_user_is_retrieved() *userTestStage {
+func (s *userTestStage) authenticated_user_is_retrieved() *userTestStage {
 	s.getUser(s.testUrl + "/api/user")
 	return s
 }
@@ -281,7 +288,17 @@ func (s *userTestStage) new_user_is_deleted_without_password() *userTestStage {
 	return s
 }
 
+func (s *userTestStage) admin_user_is_deleted() *userTestStage {
+	s.deleteUser(s.testUrl+"/api/user/000000000000000000000000", "123456")
+	return s
+}
+
 func (s *userTestStage) new_user_is_deleted_with_invalid_password() *userTestStage {
 	s.deleteUser(s.testUrl+"/api/user/"+s.createdUserId, "invalid password")
+	return s
+}
+
+func (s *userTestStage) non_existing_user_is_deleted() *userTestStage {
+	s.deleteUser(s.testUrl+"/api/user/123", s.newUser.Password)
 	return s
 }
