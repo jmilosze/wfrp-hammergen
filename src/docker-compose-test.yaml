@@ -9,10 +9,12 @@ services:
       - 27017:27017
 
   wfrp:
-    container_name: wfrp
+    container_name: wfrp-mongodb
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        VERSION: wfrp_mock_mongodb
     environment:
       HAMMERGEN_USERSERVICE_CREATE_MOCKS: "true"
       HAMMERGEN_WHSERVICE_CREATE_MOCKS: "true"
@@ -28,7 +30,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        VERSION: wfrp_memdb
+        VERSION: wfrp_mock_memdb
     environment:
       HAMMERGEN_USERSERVICE_CREATE_MOCKS: "true"
       HAMMERGEN_WHSERVICE_CREATE_MOCKS: "true"
