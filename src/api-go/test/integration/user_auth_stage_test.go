@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -32,6 +33,7 @@ type userTestStage struct {
 	testUrl             string
 	newUser             *user
 	adminUser           *user
+	otherUser           *user
 	responseBody        []byte
 	responseCode        int
 	authorizationHeader string
@@ -67,10 +69,18 @@ func (s *userTestStage) new_user() *userTestStage {
 
 func (s *userTestStage) already_present_admin_user() *userTestStage {
 	s.adminUser = &user{
-		Username:       "user0@test.com",
-		Password:       "123456",
-		SharedAccounts: []string{"user0@test.com", "non-existing-user@test.com"},
-		Id:             "000000000000000000000000",
+		Username: "user0@test.com",
+		Password: "123456",
+		Id:       "000000000000000000000000",
+	}
+	return s
+}
+
+func (s *userTestStage) already_present_other_user() *userTestStage {
+	s.otherUser = &user{
+		Username: "user1@test.com",
+		Password: "111111",
+		Id:       "000000000000000000000001",
 	}
 	return s
 }
@@ -92,6 +102,11 @@ func (s *userTestStage) non_existing_user_in_shared_accounts() *userTestStage {
 
 func (s *userTestStage) admin_user_in_shared_accounts() *userTestStage {
 	s.newUser.SharedAccounts = append(s.newUser.SharedAccounts, s.adminUser.Username)
+	return s
+}
+
+func (s *userTestStage) other_user_in_shared_accounts() *userTestStage {
+	s.newUser.SharedAccounts = append(s.newUser.SharedAccounts, s.otherUser.Username)
 	return s
 }
 
@@ -144,6 +159,19 @@ func (s *userTestStage) status_code_is_404() *userTestStage {
 func (s *userTestStage) response_body_contains_new_user_name() *userTestStage {
 	createdUser := s.parseResponseBody()
 	require.Equal(s.t, s.newUser.Username, createdUser.Username)
+	return s
+}
+
+func (s *userTestStage) response_body_contains_admin_and_other_users_in_shared_accounts() *userTestStage {
+	createdUser := s.parseResponseBody()
+
+	expected := []string{s.otherUser.Username, s.adminUser.Username}
+	slices.Sort(expected)
+
+	actual := createdUser.SharedAccounts
+	slices.Sort(actual)
+
+	require.Equal(s.t, expected, actual)
 	return s
 }
 
