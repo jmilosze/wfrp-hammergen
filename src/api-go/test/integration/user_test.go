@@ -1,13 +1,20 @@
 package integration
 
 import (
+	"flag"
 	"testing"
 )
 
-const wfrpUrl = "http://localhost:8080"
+var wfrpUrl string
+var parallel bool
+
+func init() {
+	flag.StringVar(&wfrpUrl, "url", "http://localhost:8080", "wfrp api url")
+	flag.BoolVar(&parallel, "parallel", false, "run tests in parallel")
+}
 
 func TestCreateUser(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
@@ -26,8 +33,27 @@ func TestCreateUser(t *testing.T) {
 		response_body_contains_admin_and_other_users_in_shared_accounts()
 }
 
+func TestCreateDuplicateUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		new_user_is_created().and().
+		status_code_is_200().and().
+		response_body_contains_new_user_id()
+	when.
+		new_user_is_created()
+
+	then.
+		status_code_is_409().and().
+		new_user_is_authenticated().and().
+		new_user_is_retrieved().and().
+		status_code_is_200()
+
+}
+
 func TestCreateUserNoCaptcha(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
@@ -41,7 +67,7 @@ func TestCreateUserNoCaptcha(t *testing.T) {
 }
 
 func TestCreateUserMissingUsername(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
@@ -56,11 +82,12 @@ func TestCreateUserMissingUsername(t *testing.T) {
 
 func TestGetSpecificUser(t *testing.T) {
 
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
 		new_user_is_authenticated()
 
 	when.
@@ -72,7 +99,7 @@ func TestGetSpecificUser(t *testing.T) {
 }
 
 func TestGetCurrentUser(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
@@ -88,12 +115,12 @@ func TestGetCurrentUser(t *testing.T) {
 }
 
 func TestGetCurrentUserUnauthenticated(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		already_present_admin_user().and().
-		new_user_is_created().and()
+		new_user_is_created()
 
 	when.
 		admin_user_is_retrieved()
@@ -103,13 +130,13 @@ func TestGetCurrentUserUnauthenticated(t *testing.T) {
 }
 
 func TestGetNonSelfUser(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		already_present_admin_user().and().
 		new_user_is_created().and().
-		new_user_is_authenticated().and()
+		new_user_is_authenticated()
 
 	when.
 		admin_user_is_retrieved()
@@ -119,14 +146,14 @@ func TestGetNonSelfUser(t *testing.T) {
 }
 
 func TestGetNonSelfUserByAdmin(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		already_present_admin_user().and().
 		new_user_is_created().and().
 		response_body_contains_new_user_id().and().
-		admin_user_is_authenticated().and()
+		admin_user_is_authenticated()
 
 	when.
 		new_user_is_retrieved()
@@ -137,12 +164,12 @@ func TestGetNonSelfUserByAdmin(t *testing.T) {
 }
 
 func TestGetNonExistingUser(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		new_user_is_created().and().
-		new_user_is_authenticated().and()
+		new_user_is_authenticated()
 
 	when.
 		non_existing_user_is_retrieved()
@@ -152,12 +179,13 @@ func TestGetNonExistingUser(t *testing.T) {
 }
 
 func TestGetSpecificUserInvalidToken(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		invalid_token().and().
-		new_user_is_created().and()
+		new_user_is_created().and().
+		response_body_contains_new_user_id()
 
 	when.
 		new_user_is_retrieved()
@@ -166,14 +194,14 @@ func TestGetSpecificUserInvalidToken(t *testing.T) {
 		status_code_is_401()
 }
 
-func TestDeleteUser(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+func TestDeleteSpecificUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		new_user_is_created().and().
 		response_body_contains_new_user_id().and().
-		new_user_is_authenticated().and()
+		new_user_is_authenticated()
 
 	when.
 		new_user_is_deleted()
@@ -184,14 +212,32 @@ func TestDeleteUser(t *testing.T) {
 		status_code_is_404()
 }
 
-func TestDeleteNonExistingUser(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+func TestDeleteCurrentUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		new_user_is_created().and().
 		response_body_contains_new_user_id().and().
-		new_user_is_authenticated().and()
+		new_user_is_authenticated()
+
+	when.
+		authenticated_user_is_deleted()
+
+	then.
+		status_code_is_200().and().
+		new_user_is_retrieved().and().
+		status_code_is_404()
+}
+
+func TestDeleteNonExistingUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_is_authenticated()
 
 	when.
 		new_user_is_deleted()
@@ -201,13 +247,13 @@ func TestDeleteNonExistingUser(t *testing.T) {
 }
 
 func TestDeleteUserWithoutPassword(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		new_user_is_created().and().
 		response_body_contains_new_user_id().and().
-		new_user_is_authenticated().and()
+		new_user_is_authenticated()
 
 	when.
 		new_user_is_deleted_without_password()
@@ -219,13 +265,13 @@ func TestDeleteUserWithoutPassword(t *testing.T) {
 }
 
 func TestDeleteUserWithInvalidPassword(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		new_user_is_created().and().
 		response_body_contains_new_user_id().and().
-		new_user_is_authenticated().and()
+		new_user_is_authenticated()
 
 	when.
 		new_user_is_deleted_with_invalid_password()
@@ -237,14 +283,14 @@ func TestDeleteUserWithInvalidPassword(t *testing.T) {
 }
 
 func TestDeleteNonSelfUser(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		already_present_admin_user().and().
 		new_user_is_created().and().
 		response_body_contains_new_user_id().and().
-		new_user_is_authenticated().and()
+		new_user_is_authenticated()
 
 	when.
 		admin_user_is_deleted()
@@ -257,14 +303,14 @@ func TestDeleteNonSelfUser(t *testing.T) {
 }
 
 func TestDeleteNonSelfUserByAdmin(t *testing.T) {
-	given, when, then := userTest(t, wfrpUrl)
+	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
 		new_user().and().
 		already_present_admin_user().and().
 		new_user_is_created().and().
 		response_body_contains_new_user_id().and().
-		admin_user_is_authenticated().and()
+		admin_user_is_authenticated()
 
 	when.
 		new_user_is_deleted()
@@ -273,4 +319,44 @@ func TestDeleteNonSelfUserByAdmin(t *testing.T) {
 		status_code_is_401().and().
 		new_user_is_retrieved().and().
 		status_code_is_200()
+}
+
+func TestUpdateSpecificUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		already_present_other_user().and().
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_is_authenticated()
+
+	when.
+		new_user_is_updated_with_shared_accounts_of_admin_and_other_user()
+
+	then.
+		status_code_is_200().and().
+		new_user_is_retrieved().and().
+		response_body_contains_admin_and_other_users_in_shared_accounts()
+}
+
+func TestUpdateCurrentUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		already_present_other_user().and().
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_is_authenticated()
+
+	when.
+		authenticated_user_is_updated_with_shared_accounts_of_admin_and_other_user()
+
+	then.
+		status_code_is_200().and().
+		new_user_is_retrieved().and().
+		response_body_contains_admin_and_other_users_in_shared_accounts()
 }

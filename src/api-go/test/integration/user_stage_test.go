@@ -39,7 +39,11 @@ type userTestStage struct {
 	authorizationHeader string
 }
 
-func userTest(t *testing.T, testUrl string) (*userTestStage, *userTestStage, *userTestStage) {
+func userTest(t *testing.T, testUrl string, parallel bool) (*userTestStage, *userTestStage, *userTestStage) {
+	if parallel {
+		t.Parallel()
+	}
+
 	client := &http.Client{}
 	s := &userTestStage{
 		t:       t,
@@ -156,6 +160,11 @@ func (s *userTestStage) status_code_is_404() *userTestStage {
 	return s
 }
 
+func (s *userTestStage) status_code_is_409() *userTestStage {
+	require.Equal(s.t, http.StatusConflict, s.responseCode)
+	return s
+}
+
 func (s *userTestStage) response_body_contains_new_user_name() *userTestStage {
 	createdUser := s.parseResponseBody()
 	require.Equal(s.t, s.newUser.Username, createdUser.Username)
@@ -258,6 +267,7 @@ func authUser(authUrl string, client *http.Client, username string, password str
 }
 
 func (s *userTestStage) new_user_is_retrieved() *userTestStage {
+	require.True(s.t, s.newUser.Id != "")
 	s.getUser(s.testUrl + "/api/user/" + s.newUser.Id)
 	return s
 }
@@ -281,6 +291,7 @@ func (s *userTestStage) authenticated_user_is_retrieved() *userTestStage {
 }
 
 func (s *userTestStage) admin_user_is_retrieved() *userTestStage {
+	require.True(s.t, s.adminUser.Id != "")
 	s.getUser(s.testUrl + "/api/user/" + s.adminUser.Id)
 	return s
 }
@@ -296,7 +307,15 @@ func (s *userTestStage) invalid_token() *userTestStage {
 }
 
 func (s *userTestStage) new_user_is_deleted() *userTestStage {
+	require.True(s.t, s.newUser.Id != "")
+	require.True(s.t, s.newUser.Password != "")
 	s.deleteUser(s.testUrl+"/api/user/"+s.newUser.Id, s.newUser.Password)
+	return s
+}
+
+func (s *userTestStage) authenticated_user_is_deleted() *userTestStage {
+	require.True(s.t, s.newUser.Password != "")
+	s.deleteUser(s.testUrl+"/api/user", s.newUser.Password)
 	return s
 }
 
@@ -318,9 +337,10 @@ func (s *userTestStage) deleteUser(userUrl string, password string) {
 	req.Header.Set("Authorization", s.authorizationHeader)
 
 	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
 
 	s.responseCode = resp.StatusCode
-	require.NoError(s.t, err)
+
 }
 
 func (s *userTestStage) new_user_is_deleted_without_password() *userTestStage {
@@ -341,4 +361,35 @@ func (s *userTestStage) new_user_is_deleted_with_invalid_password() *userTestSta
 func (s *userTestStage) non_existing_user_is_deleted() *userTestStage {
 	s.deleteUser(s.testUrl+"/api/user/123", s.newUser.Password)
 	return s
+}
+
+func (s *userTestStage) new_user_is_updated_with_shared_accounts_of_admin_and_other_user() {
+	require.True(s.t, s.newUser.Id != "")
+	require.True(s.t, s.adminUser.Username != "")
+	require.True(s.t, s.otherUser.Username != "")
+
+	s.updateUser(s.testUrl+"/api/user/"+s.newUser.Id, []string{s.adminUser.Username, s.otherUser.Username})
+}
+
+func (s *userTestStage) updateUser(url string, sharedAccounts []string) {
+	payload := map[string][]string{"sharedAccounts": sharedAccounts}
+	payloadBytes, err := json.Marshal(payload)
+	require.NoError(s.t, err)
+	req, err := http.NewRequest("PUT", url, bytes.NewReader(payloadBytes))
+
+	require.NoError(s.t, err)
+
+	req.Header.Set("Authorization", s.authorizationHeader)
+
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+}
+
+func (s *userTestStage) authenticated_user_is_updated_with_shared_accounts_of_admin_and_other_user() {
+	require.True(s.t, s.adminUser.Username != "")
+	require.True(s.t, s.otherUser.Username != "")
+
+	s.updateUser(s.testUrl+"/api/user", []string{s.adminUser.Username, s.otherUser.Username})
 }

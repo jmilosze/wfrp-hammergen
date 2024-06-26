@@ -11,4 +11,4 @@ dev-restart: dev-down dev-up
 
 .PHONY: test
 test:
-	cd ./api-go && go test -v -count=1 ./test/integration/
+	cd ./api-go/test/integration && go test -v -count=1

@@ -40,7 +40,7 @@ func generateToken(claims *auth.Claims, expiryTime time.Duration, hmacSecret []b
 
 	signedToken, err := token.SignedString(hmacSecret)
 	if err != nil {
-		return "", fmt.Errorf("could not sing token: %w", err)
+		return "", fmt.Errorf("could not sign token: %w", err)
 	}
 
 	return signedToken, nil

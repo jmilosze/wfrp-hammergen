@@ -18,6 +18,7 @@ services:
     environment:
       HAMMERGEN_USERSERVICE_CREATE_MOCKS: "true"
       HAMMERGEN_WHSERVICE_CREATE_MOCKS: "true"
+      HAMMERGEN_MONGODB_CREATE_USER_INDEXES: "true"
       HAMMERGEN_MONGODB_URI: "mongodb://admin:admin@mongodb:27017/"
     ports:
       - 8080:8080
