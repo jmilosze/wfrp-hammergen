@@ -218,6 +218,24 @@ func TestDeleteSpecificUser(t *testing.T) {
 		status_code_is_404()
 }
 
+func TestDeleteUserUnauthenticated(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id()
+
+	when.
+		new_user_is_deleted()
+
+	then.
+		status_code_is_401().and().
+		new_user_is_authenticated().and().
+		new_user_is_retrieved().and().
+		status_code_is_200()
+}
+
 func TestDeleteCurrentUser(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl, parallel)
 
@@ -349,6 +367,25 @@ func TestUpdateSpecificUser(t *testing.T) {
 		response_body_contains_admin_and_other_users_in_shared_accounts()
 }
 
+func TestUpdateSpecificUserUnauthenticated(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id()
+
+	when.
+		new_user_is_updated_with_admin_user_shared_account()
+
+	then.
+		status_code_is_401().and().
+		new_user_is_authenticated().and().
+		new_user_is_retrieved().and().
+		response_body_does_not_contain_any_shared_accounts()
+}
+
 func TestUpdateCurrentUser(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl, parallel)
 
@@ -416,7 +453,7 @@ func TestUpdateNonSelfUserByAdmin(t *testing.T) {
 		admin_user_is_authenticated()
 
 	when.
-		non_existing_user_is_updated_with_new_user_shared_account()
+		new_user_is_updated_with_admin_user_shared_account()
 
 	then.
 		status_code_is_401().and().
@@ -445,6 +482,26 @@ func TestUpdateUsernameAndPasswordOfSpecificUser(t *testing.T) {
 		new_user_is_retrieved().and().
 		response_body_contains_new_user_id().and().
 		response_body_contains_changed_user_name()
+}
+
+func TestUpdateUsernameOfSpecificUserUnauthenticated(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		changed_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id()
+
+	when.
+		new_user_is_updated_with_changed_user_username_and_password()
+
+	then.
+		status_code_is_401().and().
+		new_user_is_authenticated().and().
+		new_user_is_retrieved().and().
+		response_body_contains_new_user_id().and().
+		response_body_contains_new_user_name()
 }
 
 func TestUpdateUsernameAndPasswordOfCurrentUser(t *testing.T) {
@@ -636,3 +693,43 @@ func TestUserExistsWhenUserDonesNotExist(t *testing.T) {
 		status_code_is_200().and().
 		response_body_contains_exists_equal(false)
 }
+
+// User list
+
+func TestListUsers(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_is_authenticated()
+
+	when.
+		users_are_retrieved()
+
+	then.
+		status_code_is_401()
+}
+
+func TestListUsersByAdmin(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		admin_user_is_authenticated()
+
+	when.
+		users_are_retrieved()
+
+	then.
+		status_code_is_200().and().
+		response_body_contains_new_user_and_admin_user()
+}
+
+// User send reset password
+
+// User reset password
