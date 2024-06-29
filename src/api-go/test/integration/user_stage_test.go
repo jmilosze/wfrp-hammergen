@@ -14,6 +14,9 @@ import (
 	"testing"
 )
 
+const nonExistingUsername = "non-existing-user@test.com"
+const nonExistingId = "123"
+
 type user struct {
 	Username       string   `json:"username,omitempty"`
 	Password       string   `json:"password,omitempty"`
@@ -27,13 +30,20 @@ type userRetrieveResponse struct {
 	Data *user
 }
 
+type userExistsResponse struct {
+	Data *struct {
+		Exists bool `json:"exists,omitempty"`
+	}
+}
+
 type userTestStage struct {
 	t                   *testing.T
 	client              *http.Client
 	testUrl             string
-	newUser             *user
-	adminUser           *user
-	otherUser           *user
+	newUser             user
+	adminUser           user
+	otherUser           user
+	changedUser         user
 	responseBody        []byte
 	responseCode        int
 	authorizationHeader string
@@ -63,7 +73,7 @@ func (s *userTestStage) nothing() *userTestStage {
 }
 
 func (s *userTestStage) new_user() *userTestStage {
-	s.newUser = &user{
+	s.newUser = user{
 		Username: uuid.NewString() + "@test.com",
 		Password: "123456",
 		Captcha:  "success",
@@ -72,7 +82,7 @@ func (s *userTestStage) new_user() *userTestStage {
 }
 
 func (s *userTestStage) already_present_admin_user() *userTestStage {
-	s.adminUser = &user{
+	s.adminUser = user{
 		Username: "user0@test.com",
 		Password: "123456",
 		Id:       "000000000000000000000000",
@@ -81,7 +91,7 @@ func (s *userTestStage) already_present_admin_user() *userTestStage {
 }
 
 func (s *userTestStage) already_present_other_user() *userTestStage {
-	s.otherUser = &user{
+	s.otherUser = user{
 		Username: "user1@test.com",
 		Password: "111111",
 		Id:       "000000000000000000000001",
@@ -100,7 +110,7 @@ func (s *userTestStage) missing_username() *userTestStage {
 }
 
 func (s *userTestStage) non_existing_user_in_shared_accounts() *userTestStage {
-	s.newUser.SharedAccounts = append(s.newUser.SharedAccounts, "non-existing-user@test.com")
+	s.newUser.SharedAccounts = append(s.newUser.SharedAccounts, nonExistingUsername)
 	return s
 }
 
@@ -189,13 +199,18 @@ func (s *userTestStage) parseResponseBody() *user {
 	err := json.Unmarshal(s.responseBody, &createdUser)
 	require.NoError(s.t, err)
 	require.NotNil(s.t, createdUser.Data)
-	require.True(s.t, len(createdUser.Data.Id) > 0)
 	return createdUser.Data
 }
 
 func (s *userTestStage) response_body_contains_admin_user_in_shared_accounts() *userTestStage {
 	createdUser := s.parseResponseBody()
 	require.Equal(s.t, []string{s.adminUser.Username}, createdUser.SharedAccounts)
+	return s
+}
+
+func (s *userTestStage) response_body_does_not_contain_any_shared_accounts() *userTestStage {
+	createdUser := s.parseResponseBody()
+	require.Equal(s.t, []string{}, createdUser.SharedAccounts)
 	return s
 }
 
@@ -279,10 +294,13 @@ func (s *userTestStage) getUser(userUrl string) {
 	req.Header.Set("Authorization", s.authorizationHeader)
 
 	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
 
 	s.responseBody, err = io.ReadAll(resp.Body)
-	s.responseCode = resp.StatusCode
 	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+
 }
 
 func (s *userTestStage) authenticated_user_is_retrieved() *userTestStage {
@@ -297,7 +315,7 @@ func (s *userTestStage) admin_user_is_retrieved() *userTestStage {
 }
 
 func (s *userTestStage) non_existing_user_is_retrieved() *userTestStage {
-	s.getUser(s.testUrl + "/api/user/123")
+	s.getUser(s.testUrl + "/api/user/" + nonExistingId)
 	return s
 }
 
@@ -359,16 +377,16 @@ func (s *userTestStage) new_user_is_deleted_with_invalid_password() *userTestSta
 }
 
 func (s *userTestStage) non_existing_user_is_deleted() *userTestStage {
-	s.deleteUser(s.testUrl+"/api/user/123", s.newUser.Password)
+	s.deleteUser(s.testUrl+"/api/user/"+nonExistingId, s.newUser.Password)
 	return s
 }
 
-func (s *userTestStage) new_user_is_updated_with_shared_accounts_of_admin_and_other_user() {
+func (s *userTestStage) new_user_is_updated_with_admin_other_non_existing_user_shared_accounts() {
 	require.True(s.t, s.newUser.Id != "")
 	require.True(s.t, s.adminUser.Username != "")
 	require.True(s.t, s.otherUser.Username != "")
 
-	s.updateUser(s.testUrl+"/api/user/"+s.newUser.Id, []string{s.adminUser.Username, s.otherUser.Username})
+	s.updateUser(s.testUrl+"/api/user/"+s.newUser.Id, []string{s.adminUser.Username, s.otherUser.Username, nonExistingUsername})
 }
 
 func (s *userTestStage) updateUser(url string, sharedAccounts []string) {
@@ -387,9 +405,195 @@ func (s *userTestStage) updateUser(url string, sharedAccounts []string) {
 	s.responseCode = resp.StatusCode
 }
 
-func (s *userTestStage) authenticated_user_is_updated_with_shared_accounts_of_admin_and_other_user() {
+func (s *userTestStage) authenticated_user_is_updated_with_admin_and_other_user_shared_accounts() {
 	require.True(s.t, s.adminUser.Username != "")
 	require.True(s.t, s.otherUser.Username != "")
 
 	s.updateUser(s.testUrl+"/api/user", []string{s.adminUser.Username, s.otherUser.Username})
+}
+
+func (s *userTestStage) new_user_is_updated_with_admin_user_shared_account() {
+	require.True(s.t, s.newUser.Id != "")
+	require.True(s.t, s.adminUser.Username != "")
+
+	s.updateUser(s.testUrl+"/api/user/"+s.newUser.Id, []string{s.adminUser.Username})
+}
+
+func (s *userTestStage) admin_user_is_updated_with_new_user_shared_account() {
+	require.True(s.t, s.adminUser.Id != "")
+	require.True(s.t, s.newUser.Username != "")
+
+	s.updateUser(s.testUrl+"/api/user/"+s.adminUser.Id, []string{s.newUser.Username})
+}
+
+func (s *userTestStage) non_existing_user_is_updated_with_new_user_shared_account() {
+	require.True(s.t, s.newUser.Username != "")
+
+	s.updateUser(s.testUrl+"/api/user/"+nonExistingId, []string{s.newUser.Username})
+}
+
+func (s *userTestStage) changed_user() *userTestStage {
+	s.changedUser = user{
+		Username: uuid.NewString() + "@test.com",
+		Password: "789012",
+	}
+	return s
+}
+
+func (s *userTestStage) new_user_is_updated_with_changed_user_username_and_password() {
+	require.True(s.t, s.newUser.Id != "")
+	require.True(s.t, s.changedUser.Username != "")
+
+	s.updateUserCredentials(s.testUrl+"/api/user/credentials/"+s.newUser.Id, s.changedUser.Username, s.changedUser.Password, s.newUser.Password)
+}
+
+func (s *userTestStage) updateUserCredentials(url string, username string, password string, currentPassword string) {
+	payload := map[string]string{}
+
+	if currentPassword != "" {
+		payload["CurrentPassword"] = currentPassword
+	}
+
+	if password != "" {
+		payload["password"] = password
+	}
+
+	if username != "" {
+		payload["username"] = username
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	require.NoError(s.t, err)
+	req, err := http.NewRequest("PUT", url, bytes.NewReader(payloadBytes))
+
+	require.NoError(s.t, err)
+
+	req.Header.Set("Authorization", s.authorizationHeader)
+
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+}
+
+func (s *userTestStage) response_body_contains_changed_user_name() *userTestStage {
+	createdUser := s.parseResponseBody()
+	require.Equal(s.t, s.changedUser.Username, createdUser.Username)
+	return s
+}
+
+func (s *userTestStage) changed_user_is_authenticated() *userTestStage {
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.changedUser.Username, s.changedUser.Password)
+	require.NoError(s.t, err)
+	s.authorizationHeader = "Bearer " + accessToken
+	return s
+}
+
+func (s *userTestStage) authenticated_user_is_updated_with_changed_user_username_and_password() {
+	require.True(s.t, s.changedUser.Username != "")
+	s.updateUserCredentials(s.testUrl+"/api/user/credentials/", s.changedUser.Username, s.changedUser.Password, s.newUser.Password)
+}
+
+func (s *userTestStage) new_user_is_updated_without_providing_current_password() {
+	require.True(s.t, s.newUser.Id != "")
+	require.True(s.t, s.changedUser.Username != "")
+
+	s.updateUserCredentials(s.testUrl+"/api/user/credentials/"+s.newUser.Id, s.changedUser.Username, s.changedUser.Password, "")
+}
+
+func (s *userTestStage) new_user_is_updated_with_changed_user_username() {
+	require.True(s.t, s.newUser.Id != "")
+	require.True(s.t, s.changedUser.Username != "")
+
+	s.updateUserCredentials(s.testUrl+"/api/user/credentials/"+s.newUser.Id, s.changedUser.Username, "", s.newUser.Password)
+}
+
+func (s *userTestStage) non_existing_user_is_updated_with_changed_user_username_and_password() {
+	require.True(s.t, s.newUser.Id != "")
+	require.True(s.t, s.changedUser.Username != "")
+
+	s.updateUserCredentials(s.testUrl+"/api/user/credentials/"+nonExistingId, s.changedUser.Username, s.changedUser.Password, s.newUser.Password)
+}
+
+func (s *userTestStage) admin_user_is_updated_with_changed_user_username_and_password() {
+	require.True(s.t, s.adminUser.Id != "")
+	require.True(s.t, s.changedUser.Username != "")
+
+	s.updateUserCredentials(s.testUrl+"/api/user/credentials/"+s.adminUser.Id, s.changedUser.Username, s.changedUser.Password, s.adminUser.Password)
+}
+
+func (s *userTestStage) response_body_contains_admin_user_name() *userTestStage {
+	require.True(s.t, s.adminUser.Username != "")
+	createdUser := s.parseResponseBody()
+	require.Equal(s.t, s.adminUser.Username, createdUser.Username)
+	return s
+}
+
+func (s *userTestStage) new_user_is_made_admin() *userTestStage {
+	s.updateUserClaims(s.testUrl+"/api/user/claims/"+s.newUser.Id, true)
+	return s
+}
+
+func (s *userTestStage) updateUserClaims(url string, admin bool) {
+	payload := map[string]bool{"admin": admin}
+
+	payloadBytes, err := json.Marshal(payload)
+	require.NoError(s.t, err)
+	req, err := http.NewRequest("PUT", url, bytes.NewReader(payloadBytes))
+
+	require.NoError(s.t, err)
+
+	req.Header.Set("Authorization", s.authorizationHeader)
+
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+}
+
+func (s *userTestStage) response_body_contains_admin_false() *userTestStage {
+	createdUser := s.parseResponseBody()
+	require.False(s.t, createdUser.Admin)
+	return s
+}
+
+func (s *userTestStage) response_body_contains_admin_true() *userTestStage {
+	createdUser := s.parseResponseBody()
+	require.True(s.t, createdUser.Admin)
+	return s
+}
+
+func (s *userTestStage) new_user_is_being_checked() *userTestStage {
+	s.checkIfUserExists(s.testUrl + "/api/user/exists/" + s.newUser.Username)
+	return s
+}
+
+func (s *userTestStage) checkIfUserExists(userUrl string) {
+	req, err := http.NewRequest("GET", userUrl, nil)
+	require.NoError(s.t, err)
+
+	req.Header.Set("Authorization", s.authorizationHeader)
+
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+
+	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+}
+
+func (s *userTestStage) response_body_contains_exists_equal(exists bool) *userTestStage {
+	userExists := userExistsResponse{}
+	err := json.Unmarshal(s.responseBody, &userExists)
+	require.NoError(s.t, err)
+	require.NotNil(s.t, userExists.Data)
+
+	require.Equal(s.t, exists, userExists.Data.Exists)
+	return s
+}
+
+func (s *userTestStage) non_existing_user_is_being_checked() *userTestStage {
+	s.checkIfUserExists(s.testUrl + "/api/user/exists/" + nonExistingUsername)
+	return s
 }
