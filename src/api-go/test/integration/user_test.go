@@ -732,4 +732,32 @@ func TestListUsersByAdmin(t *testing.T) {
 
 // User send reset password
 
+func TestSendRestPassword(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id()
+
+	when.
+		send_reset_password_of_new_user_is_called()
+
+	then.
+		status_code_is_200()
+}
+
+func TestSendRestPasswordOfNonExitingUser(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		nothing()
+
+	when.
+		send_reset_password_of_non_existing_user_is_called()
+
+	then.
+		status_code_is_404()
+}
+
 // User reset password

@@ -645,3 +645,30 @@ func (s *userTestStage) response_body_contains_new_user_and_admin_user() *userTe
 
 	return s
 }
+
+func (s *userTestStage) send_reset_password_of_new_user_is_called() {
+	s.sendResetPassword(s.newUser.Username, s.newUser.Captcha)
+}
+
+func (s *userTestStage) sendResetPassword(username string, captcha string) {
+	payload := map[string]string{"username": username, "captcha": captcha}
+
+	payloadBytes, err := json.Marshal(payload)
+	require.NoError(s.t, err)
+	req, err := http.NewRequest("POST", s.testUrl+"/api/user/sendResetPassword", bytes.NewReader(payloadBytes))
+	require.NoError(s.t, err)
+
+	req.Header.Set("Authorization", s.authorizationHeader)
+
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+
+	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+}
+
+func (s *userTestStage) send_reset_password_of_non_existing_user_is_called() {
+	s.sendResetPassword(nonExistingUsername, "success")
+}
