@@ -54,7 +54,7 @@ func TestCreateDuplicateUser(t *testing.T) {
 
 }
 
-func TestCreateUserNoCaptcha(t *testing.T) {
+func TestCreateUserInvalidCaptcha(t *testing.T) {
 	given, when, then := userTest(t, wfrpUrl, parallel)
 
 	given.
@@ -761,3 +761,73 @@ func TestSendRestPasswordOfNonExitingUser(t *testing.T) {
 }
 
 // User reset password
+
+func TestResetPassword(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		changed_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_reset_password_token_is_generated()
+
+	when.
+		new_user_reset_password_is_called_to_change_password_to_changed_user_password()
+
+	then.
+		status_code_is_200().and().
+		new_user_is_authenticated_with_changed_user_passowrd()
+}
+
+func TestResetPasswordNewPasswordMissing(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_reset_password_token_is_generated()
+
+	when.
+		new_user_reset_password_is_called_without_new_password()
+
+	then.
+		status_code_is_400().and().
+		new_user_is_authenticated()
+}
+
+func TestResetPasswordInvalidToken(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		changed_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id()
+
+	when.
+		new_user_reset_password_is_called_with_invalid_token()
+
+	then.
+		status_code_is_403().and().
+		new_user_is_authenticated()
+}
+
+func TestResetPasswordExpiredToken(t *testing.T) {
+	given, when, then := userTest(t, wfrpUrl, parallel)
+
+	given.
+		new_user().and().
+		changed_user().and().
+		new_user_is_created().and().
+		response_body_contains_new_user_id().and().
+		new_user_reset_password_expired_token_is_generated()
+
+	when.
+		new_user_reset_password_is_called_to_change_password_to_changed_user_password()
+
+	then.
+		status_code_is_403().and().
+		new_user_is_authenticated()
+}

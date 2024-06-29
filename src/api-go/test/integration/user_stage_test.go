@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/golangjwt"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
@@ -12,10 +15,13 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 )
 
 const nonExistingUsername = "non-existing-user@test.com"
 const nonExistingId = "123"
+const captchaBypass = "success"
+const invalidToken = "invalidtoken"
 
 type user struct {
 	Username       string   `json:"username,omitempty"`
@@ -51,6 +57,7 @@ type userTestStage struct {
 	responseBody        []byte
 	responseCode        int
 	authorizationHeader string
+	resetToken          string
 }
 
 func userTest(t *testing.T, testUrl string, parallel bool) (*userTestStage, *userTestStage, *userTestStage) {
@@ -80,7 +87,7 @@ func (s *userTestStage) new_user() *userTestStage {
 	s.newUser = &user{
 		Username: uuid.NewString() + "@test.com",
 		Password: "123456",
-		Captcha:  "success",
+		Captcha:  captchaBypass,
 	}
 	return s
 }
@@ -658,8 +665,6 @@ func (s *userTestStage) sendResetPassword(username string, captcha string) {
 	req, err := http.NewRequest("POST", s.testUrl+"/api/user/sendResetPassword", bytes.NewReader(payloadBytes))
 	require.NoError(s.t, err)
 
-	req.Header.Set("Authorization", s.authorizationHeader)
-
 	resp, err := s.client.Do(req)
 	require.NoError(s.t, err)
 
@@ -670,5 +675,70 @@ func (s *userTestStage) sendResetPassword(username string, captcha string) {
 }
 
 func (s *userTestStage) send_reset_password_of_non_existing_user_is_called() {
-	s.sendResetPassword(nonExistingUsername, "success")
+	s.sendResetPassword(nonExistingUsername, captchaBypass)
+}
+
+func (s *userTestStage) new_user_reset_password_token_is_generated() {
+	require.NotNil(s.t, s.newUser)
+	s.generateResetToken(s.newUser.Id, time.Hour)
+}
+
+func (s *userTestStage) generateResetToken(id string, duration time.Duration) {
+	claims := auth.Claims{Id: id, Admin: false, SharedAccounts: []string{}, ResetPassword: true}
+	cfg := config.NewConfig()
+	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, time.Hour, duration)
+
+	resetToken, err := jwtService.GenerateResetPasswordToken(&claims)
+	require.NoError(s.t, err)
+
+	s.resetToken = resetToken
+}
+
+func (s *userTestStage) new_user_reset_password_is_called_to_change_password_to_changed_user_password() {
+	require.NotNil(s.t, s.changedUser)
+	s.resetPassword(s.resetToken, s.changedUser.Password)
+}
+
+func (s *userTestStage) resetPassword(token string, password string) {
+	payload := map[string]string{"token": token}
+
+	if password != "" {
+		payload["password"] = password
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	require.NoError(s.t, err)
+	req, err := http.NewRequest("POST", s.testUrl+"/api/user/resetPassword", bytes.NewReader(payloadBytes))
+	require.NoError(s.t, err)
+
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+
+	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+}
+
+func (s *userTestStage) new_user_is_authenticated_with_changed_user_passowrd() *userTestStage {
+	require.NotNil(s.t, s.newUser)
+	require.NotNil(s.t, s.changedUser)
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.newUser.Username, s.changedUser.Password)
+	require.NoError(s.t, err)
+	s.authorizationHeader = "Bearer " + accessToken
+	return s
+}
+
+func (s *userTestStage) new_user_reset_password_is_called_without_new_password() {
+	s.resetPassword(s.resetToken, "")
+}
+
+func (s *userTestStage) new_user_reset_password_is_called_with_invalid_token() {
+	require.NotNil(s.t, s.changedUser)
+	s.resetPassword(invalidToken, s.changedUser.Password)
+}
+
+func (s *userTestStage) new_user_reset_password_expired_token_is_generated() {
+	require.NotNil(s.t, s.newUser)
+	s.generateResetToken(s.newUser.Id, -1*time.Hour)
 }
