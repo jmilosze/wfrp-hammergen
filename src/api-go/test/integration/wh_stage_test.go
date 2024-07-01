@@ -15,6 +15,7 @@ type whTestStage struct {
 	client              *http.Client
 	testUrl             string
 	user                *user
+	adminUser           *user
 	authorizationHeader string
 	newWhProperty       *warhammer.Property
 	responseCode        int
@@ -54,6 +55,11 @@ func (s *whTestStage) status_code_is_200() *whTestStage {
 	return s
 }
 
+func (s *whTestStage) status_code_is_401() *whTestStage {
+	require.Equal(s.t, http.StatusUnauthorized, s.responseCode)
+	return s
+}
+
 func (s *whTestStage) new_wh_property() *whTestStage {
 	s.newWhProperty = &warhammer.Property{
 		Name:         "new_wh_property",
@@ -78,9 +84,28 @@ func (s *whTestStage) already_present_user() *whTestStage {
 	return s
 }
 
+func (s *whTestStage) already_present_admin_user() *whTestStage {
+	s.adminUser = &user{
+		Id:             "000000000000000000000000",
+		Username:       "user0@test.com",
+		Password:       "123456",
+		SharedAccounts: []string{"user0@test.com"},
+	}
+
+	return s
+}
+
 func (s *whTestStage) user_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.user)
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.user.Username, s.user.Password)
+	require.NoError(s.t, err)
+	s.authorizationHeader = "Bearer " + accessToken
+	return s
+}
+
+func (s *whTestStage) admin_user_is_authenticated() *whTestStage {
+	require.NotNil(s.t, s.adminUser)
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.adminUser.Username, s.adminUser.Password)
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
 	return s
@@ -136,8 +161,15 @@ func (s *whTestStage) response_wh_object_is_new_wh_property() *whTestStage {
 	return s
 }
 
-func (s *whTestStage) user_is_response_wh_owner_and_has_edit_right() *whTestStage {
+func (s *whTestStage) owner_id_is_user_id_and_can_edit() *whTestStage {
 	require.Equal(s.t, s.user.Id, s.responseWh.OwnerId)
+	require.Equal(s.t, true, s.responseWh.CanEdit)
+
+	return s
+}
+
+func (s *whTestStage) owner_id_is_admin_and_can_edit() *whTestStage {
+	require.Equal(s.t, "admin", s.responseWh.OwnerId)
 	require.Equal(s.t, true, s.responseWh.CanEdit)
 
 	return s
