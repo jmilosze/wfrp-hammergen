@@ -2,7 +2,6 @@ package memdb
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/hashicorp/go-memdb"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
@@ -46,21 +45,25 @@ func createNewUserMemDb() (*memdb.MemDB, error) {
 	return memdb.NewMemDB(schema)
 }
 
-func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*user.User, *domain.DbError) {
+func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*user.User, error) {
 	if fieldName != "username" && fieldName != "id" {
-		return nil, &domain.DbError{Type: domain.DbInvalidUserFieldError, Err: fmt.Errorf("invalid field name %s", fieldName)}
+		return nil, fmt.Errorf("invalid field name %s", fieldName)
 	}
 
 	txn := s.Db.Txn(false)
 	userRaw, err := txn.First("user", fieldName, fieldValue)
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("could not get first object from memdb : %w", err)
 	}
 
 	if userRaw == nil {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user %s not found", fieldValue)}
 	}
-	udb := userRaw.(*user.User)
+	udb, ok := userRaw.(*user.User)
+	if !ok {
+		return nil, fmt.Errorf("could not populate wh from object %v", userRaw)
+	}
+
 	u := udb.Copy()
 
 	linkedUsers, dbErr := getManyUsers(s.Db, "id", u.SharedAccountIds)
@@ -73,7 +76,7 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	return u, nil
 }
 
-func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*user.User, *domain.DbError) {
+func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*user.User, error) {
 	getAll := false
 	if fieldValues == nil {
 		getAll = true
@@ -87,12 +90,15 @@ func getManyUsers(db *memdb.MemDB, fieldName string, fieldValues []string) ([]*u
 
 	it, err := txn.Get("user", "id")
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("could not get result iterator in memdb: %w", err)
 	}
 
 	var users []*user.User
 	for obj := it.Next(); obj != nil; obj = it.Next() {
-		u := obj.(*user.User)
+		u, ok := obj.(*user.User)
+		if !ok {
+			return nil, fmt.Errorf("could not populate wh from object %v", obj)
+		}
 		if getAll {
 			users = append(users, u.Copy())
 		} else {
@@ -122,7 +128,7 @@ func idsToUsernames(ids []string, us []*user.User) []string {
 	return usernames
 }
 
-func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, *domain.DbError) {
+func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, error) {
 	users, err := getManyUsers(s.Db, "username", nil)
 	if err != nil {
 		return nil, err
@@ -135,15 +141,15 @@ func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, *domain.
 	return users, nil
 }
 
-func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
+func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, error) {
 	return upsertUser(s, u, false)
 }
 
-func (s *UserDbService) Update(ctx context.Context, u *user.User) (*user.User, *domain.DbError) {
+func (s *UserDbService) Update(ctx context.Context, u *user.User) (*user.User, error) {
 	return upsertUser(s, u, true)
 }
 
-func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, *domain.DbError) {
+func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, error) {
 	userUpsert := u.Copy()
 
 	linkedUsers, dbErr := getManyUsers(s.Db, "username", userUpsert.SharedAccountNames)
@@ -158,12 +164,16 @@ func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, *dom
 
 	it, err := txn.Get("user", "id")
 	if err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("could not get result iterator in memdb: %w", err)
 	}
 
 	var currentUsers []*user.User
 	for obj := it.Next(); obj != nil; obj = it.Next() {
-		currentUsers = append(currentUsers, obj.(*user.User))
+		nextUser, ok := obj.(*user.User)
+		if !ok {
+			return nil, fmt.Errorf("could not populate wh from object %v", obj)
+		}
+		currentUsers = append(currentUsers, nextUser)
 	}
 
 	indexFound := false
@@ -172,20 +182,20 @@ func upsertUser(s *UserDbService, u *user.User, isUpdate bool) (*user.User, *dom
 			indexFound = true
 		}
 		if currentUser.Id != userUpsert.Id && currentUser.Username == userUpsert.Username {
-			return nil, &domain.DbError{Type: domain.DbConflictError, Err: errors.New("user with this username already exists")}
+			return nil, &domain.DbError{Type: domain.ErrorDbConflict, Err: fmt.Errorf("user %s already exists", userUpsert.Username)}
 		}
 	}
 
 	if !indexFound && isUpdate {
-		return nil, &domain.DbError{Type: domain.DbNotFoundError, Err: errors.New("user not found")}
+		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user %s not found", userUpsert.Username)}
 	}
 
 	if indexFound && !isUpdate {
-		return nil, &domain.DbError{Type: domain.DbConflictError, Err: errors.New("user with this id already exists")}
+		return nil, &domain.DbError{Type: domain.ErrorDbConflict, Err: fmt.Errorf("user %s already exists", userUpsert.Id)}
 	}
 
 	if err := txn.Insert("user", userUpsert); err != nil {
-		return nil, &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return nil, fmt.Errorf("cloud not inset into memdb: %w", err)
 	}
 	txn.Commit()
 
@@ -207,11 +217,11 @@ func usernamesToIds(usernames []string, us []*user.User) []string {
 	return ids
 }
 
-func (s *UserDbService) Delete(ctx context.Context, id string) *domain.DbError {
+func (s *UserDbService) Delete(ctx context.Context, id string) error {
 	txn := s.Db.Txn(true)
 	defer txn.Abort()
 	if _, err := txn.DeleteAll("user", "id", id); err != nil {
-		return &domain.DbError{Type: domain.DbInternalError, Err: err}
+		return fmt.Errorf("cloud not delete from memdb: %w", err)
 	}
 	txn.Commit()
 

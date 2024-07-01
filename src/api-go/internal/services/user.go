@@ -38,64 +38,71 @@ func NewUserService(cfg *config.UserService, db user.UserDbService, email domain
 
 }
 
-func (s *UserService) Get(ctx context.Context, c *auth.Claims, id string) (*user.User, *user.UserError) {
+func (s *UserService) Get(ctx context.Context, c *auth.Claims, id string) (*user.User, error) {
 	if c.Id == "anonymous" || !(id == c.Id || c.Admin) {
-		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &user.Error{Type: user.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to get user: %s", id)}
 	}
 
-	u, dbErr := s.UserDbService.Retrieve(ctx, "id", id)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	u, err := s.UserDbService.Retrieve(ctx, "id", id)
+	if err != nil {
+		return nil, handleRetrieveError(err)
 	}
 
 	return u, nil
 }
 
-func (s *UserService) Exists(ctx context.Context, username string) (bool, *user.UserError) {
-	_, dbErr := s.UserDbService.Retrieve(ctx, "username", username)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
+func handleRetrieveError(err error) error {
+	var dbErr *domain.DbError
+	wErr := fmt.Errorf("failed to retrieve user: %w", err)
+	if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
+		return &user.Error{Type: user.ErrorNotFound, Err: wErr}
+	} else {
+		return fmt.Errorf("failed to retrieve user: %w", wErr)
+	}
+}
+
+func (s *UserService) Exists(ctx context.Context, username string) (bool, error) {
+	_, err := s.UserDbService.Retrieve(ctx, "username", username)
+	if err != nil {
+		var dbErr *domain.DbError
+		if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
 			return false, nil
-		default:
-			return false, &user.UserError{Type: user.InternalError, Err: dbErr}
+		} else {
+			return false, fmt.Errorf("failed to retrieve user: %w", err)
 		}
 	}
 	return true, nil
 }
 
-func (s *UserService) Authenticate(ctx context.Context, username string, password string) (*user.User, *user.UserError) {
-	u, dbErr := s.UserDbService.Retrieve(ctx, "username", username)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+func (s *UserService) Authenticate(ctx context.Context, username string, password string) (*user.User, error) {
+	u, err := s.UserDbService.Retrieve(ctx, "username", username)
+	if err != nil {
+		return nil, handleRetrieveError(err)
 	}
 
 	if !authenticate(u, password) {
-		return nil, &user.UserError{Type: user.IncorrectPasswordError, Err: errors.New("incorrect password")}
+		return nil, &user.Error{Type: user.ErrorIncorrectPassword, Err: fmt.Errorf("incorrect password")}
 	}
 
 	u.LastAuthOn = time.Now()
 
-	if _, dbErr = s.UserDbService.Update(ctx, u); dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	if _, err = s.UserDbService.Update(ctx, u); err != nil {
+		return nil, handleUpdateError(err)
 	}
 
 	return u, nil
+}
+
+func handleUpdateError(err error) error {
+	var dbErr *domain.DbError
+	wErr := fmt.Errorf("failed to update user: %w", err)
+	if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
+		return &user.Error{Type: user.ErrorNotFound, Err: wErr}
+	} else if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbConflict {
+		return &user.Error{Type: user.ErrorConflict, Err: wErr}
+	} else {
+		return wErr
+	}
 }
 
 func authenticate(u *user.User, password string) (success bool) {
@@ -105,30 +112,31 @@ func authenticate(u *user.User, password string) (success bool) {
 	return false
 }
 
-func (s *UserService) Create(ctx context.Context, u *user.User) (*user.User, *user.UserError) {
+func (s *UserService) Create(ctx context.Context, u *user.User) (*user.User, error) {
 	if len(u.Username) == 0 || len(u.Password) == 0 {
-		return nil, &user.UserError{Type: user.InvalidArgumentsError, Err: errors.New("missing username or password")}
+		return nil, &user.Error{Type: user.ErrorInvalidArguments, Err: fmt.Errorf("missing username or password")}
 	}
 
 	if err := validateCreateUser(s.Validator, u); err != nil {
-		return nil, &user.UserError{Type: user.InvalidArgumentsError, Err: err}
+		return nil, &user.Error{Type: user.ErrorInvalidArguments, Err: fmt.Errorf("invalid create user data: %w", err)}
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(u.Password), s.BcryptCost)
 	if err != nil {
-		return nil, &user.UserError{Type: user.InternalError, Err: err}
+		return nil, fmt.Errorf("failed to create passowrd hash %w", err)
 	}
 	u.PasswordHash = passwordHash
 	u.Id = hex.EncodeToString(xid.New().Bytes())
 	u.CreatedOn = time.Now()
 
-	createdUser, dbErr := s.UserDbService.Create(ctx, u)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbConflictError:
-			return nil, &user.UserError{Type: user.ConflictError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
+	createdUser, err := s.UserDbService.Create(ctx, u)
+	if err != nil {
+		var dbErr *domain.DbError
+		wErr := fmt.Errorf("failed to create user %w", err)
+		if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbConflict {
+			return nil, &user.Error{Type: user.ErrorConflict, Err: wErr}
+		} else {
+			return nil, wErr
 		}
 	}
 
@@ -148,37 +156,27 @@ func validateCreateUser(v *validator.Validate, u *user.User) error {
 	return nil
 }
 
-func (s *UserService) Update(ctx context.Context, c *auth.Claims, u *user.User) (*user.User, *user.UserError) {
+func (s *UserService) Update(ctx context.Context, c *auth.Claims, u *user.User) (*user.User, error) {
 	if c.Id == "anonymous" || u.Id != c.Id {
-		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &user.Error{Type: user.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to update user: %s", u.Id)}
 	}
 
 	if err := validateUpdateUser(s.Validator, u); err != nil {
-		return nil, &user.UserError{Type: user.InvalidArgumentsError, Err: err}
+		return nil, &user.Error{Type: user.ErrorInvalidArguments, Err: err}
 	}
 
-	currentUser, dbErr := s.UserDbService.Retrieve(ctx, "id", u.Id)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	currentUser, err := s.UserDbService.Retrieve(ctx, "id", u.Id)
+	if err != nil {
+		return nil, handleRetrieveError(err)
 	}
 
 	currentUser.SharedAccountNames = make([]string, len(u.SharedAccountNames))
 	copy(currentUser.SharedAccountNames, u.SharedAccountNames)
 
-	updatedUser, dbErr := s.UserDbService.Update(ctx, currentUser)
+	updatedUser, err := s.UserDbService.Update(ctx, currentUser)
 
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	if err != nil {
+		return nil, handleUpdateError(err)
 	}
 
 	return updatedUser, nil
@@ -191,42 +189,33 @@ func validateUpdateUser(v *validator.Validate, u *user.User) error {
 	return nil
 }
 
-func (s *UserService) UpdateCredentials(ctx context.Context, c *auth.Claims, currentPasswd string, u *user.User) (*user.User, *user.UserError) {
+func (s *UserService) UpdateCredentials(ctx context.Context, c *auth.Claims, currentPasswd string, u *user.User) (*user.User, error) {
 	if c.Id == "anonymous" || u.Id != c.Id {
-		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &user.Error{Type: user.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to update user credentials: %s", u.Id)}
 	}
 
-	currentUser, dbErr := s.UserDbService.Retrieve(ctx, "id", u.Id)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	currentUser, err := s.UserDbService.Retrieve(ctx, "id", u.Id)
+	if err != nil {
+		return nil, handleRetrieveError(err)
 	}
 
 	if !authenticate(currentUser, currentPasswd) {
-		return nil, &user.UserError{Type: user.IncorrectPasswordError, Err: errors.New("incorrect password")}
+		return nil, &user.Error{Type: user.ErrorIncorrectPassword, Err: fmt.Errorf("incorrect password")}
 	}
 
 	if err := validateUpdateCredentials(s.Validator, u); err != nil {
-		return nil, &user.UserError{Type: user.InvalidArgumentsError, Err: err}
+		return nil, &user.Error{Type: user.ErrorInvalidArguments, Err: fmt.Errorf("invalid update user creds data: %w", err)}
 	}
 
 	currentUser.Username = u.Username
-	currentUser.PasswordHash, _ = bcrypt.GenerateFromPassword([]byte(u.Password), s.BcryptCost)
+	currentUser.PasswordHash, err = bcrypt.GenerateFromPassword([]byte(u.Password), s.BcryptCost)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create passowrd hash %w", err)
+	}
 
-	updatedUser, dbErr := s.UserDbService.Update(ctx, currentUser)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbConflictError:
-			return nil, &user.UserError{Type: user.ConflictError, Err: dbErr}
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	updatedUser, err := s.UserDbService.Update(ctx, currentUser)
+	if err != nil {
+		return nil, handleUpdateError(err)
 	}
 
 	return updatedUser, nil
@@ -242,105 +231,85 @@ func validateUpdateCredentials(v *validator.Validate, u *user.User) error {
 	return nil
 }
 
-func (s *UserService) UpdateClaims(ctx context.Context, c *auth.Claims, u *user.User) (*user.User, *user.UserError) {
+func (s *UserService) UpdateClaims(ctx context.Context, c *auth.Claims, u *user.User) (*user.User, error) {
 	if !c.Admin {
-		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &user.Error{Type: user.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to update user claims: %s", u.Id)}
 	}
 
-	currentUser, dbErr := s.UserDbService.Retrieve(ctx, "id", u.Id)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	currentUser, err := s.UserDbService.Retrieve(ctx, "id", u.Id)
+	if err != nil {
+		return nil, handleRetrieveError(err)
 	}
 
 	currentUser.Admin = u.Admin
 
-	updatedUser, dbErr := s.UserDbService.Update(ctx, currentUser)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	updatedUser, err := s.UserDbService.Update(ctx, currentUser)
+	if err != nil {
+		return nil, handleUpdateError(err)
 	}
 
 	return updatedUser, nil
 }
 
-func (s *UserService) Delete(ctx context.Context, c *auth.Claims, password string, id string) *user.UserError {
+func (s *UserService) Delete(ctx context.Context, c *auth.Claims, password string, id string) error {
 	if c.Id == "anonymous" || id != c.Id {
-		return &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
+		return &user.Error{Type: user.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to delete user: %s", id)}
 	}
 
-	u, dbErr := s.UserDbService.Retrieve(ctx, "id", id)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	u, err := s.UserDbService.Retrieve(ctx, "id", id)
+	if err != nil {
+		return handleRetrieveError(err)
 	}
 
 	if !authenticate(u, password) {
-		return &user.UserError{Type: user.IncorrectPasswordError, Err: errors.New("incorrect password")}
+		return &user.Error{Type: user.ErrorIncorrectPassword, Err: fmt.Errorf("incorrect password")}
 	}
 
-	if dbErr := s.UserDbService.Delete(ctx, id); dbErr != nil {
-		return &user.UserError{Type: user.InternalError, Err: dbErr}
+	if err := s.UserDbService.Delete(ctx, id); err != nil {
+		return fmt.Errorf("failed to delete user: %w", err)
 
 	} else {
 		return nil
 	}
 }
 
-func (s *UserService) List(ctx context.Context, c *auth.Claims) ([]*user.User, *user.UserError) {
+func (s *UserService) List(ctx context.Context, c *auth.Claims) ([]*user.User, error) {
 	if !c.Admin {
-		return nil, &user.UserError{Type: user.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &user.Error{Type: user.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to list users")}
 	}
 
-	users, dbErr := s.UserDbService.RetrieveAll(ctx)
-	if dbErr != nil {
-		return nil, &user.UserError{Type: user.InternalError, Err: dbErr}
+	users, err := s.UserDbService.RetrieveAll(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list users: %w", err)
 	}
 
 	return users, nil
 }
 
-func (s *UserService) SendResetPassword(ctx context.Context, username string) *user.UserError {
+func (s *UserService) SendResetPassword(ctx context.Context, username string) error {
 	if len(username) == 0 {
-		return &user.UserError{Type: user.InvalidArgumentsError, Err: errors.New("missing username")}
+		return &user.Error{Type: user.ErrorInvalidArguments, Err: fmt.Errorf("missing username")}
 	}
 
-	u, dbErr := s.UserDbService.Retrieve(ctx, "username", username)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	u, err := s.UserDbService.Retrieve(ctx, "username", username)
+	if err != nil {
+		return handleRetrieveError(err)
 	}
 
 	if u == nil {
-		return &user.UserError{Type: user.NotFoundError, Err: errors.New("user not found")}
+		return &user.Error{Type: user.ErrorNotFound, Err: fmt.Errorf("user %s not found", username)}
 	}
 
 	claims := auth.Claims{Id: u.Id, Admin: false, SharedAccounts: []string{}, ResetPassword: true}
-	resetToken, authErr := s.JwtService.GenerateResetPasswordToken(&claims)
+	resetToken, err := s.JwtService.GenerateResetPasswordToken(&claims)
 
-	if authErr != nil {
-		return &user.UserError{Type: user.InternalError, Err: authErr}
+	if err != nil {
+		return fmt.Errorf("failed to generate password token: %w", err)
 	}
 
 	clickUrl, err := url.ParseRequestURI(s.FrontEndUrl.String())
 	if err != nil {
-		return &user.UserError{Type: user.InternalError, Err: err}
+		return fmt.Errorf("failed to parse frontend url: %w", err)
 	}
 
 	resetTokenPath := fmt.Sprintf("/resetpassword/%s", resetToken)
@@ -354,53 +323,43 @@ func (s *UserService) SendResetPassword(ctx context.Context, username string) *u
 	}
 
 	if err := s.EmailService.Send(ctx, &email); err != nil {
-		return &user.UserError{Type: user.SendEmailError, Err: err}
+		return fmt.Errorf("failed send email: %w", err)
 	}
 
 	return nil
 }
 
-func (s *UserService) ResetPassword(ctx context.Context, token string, newPassword string) *user.UserError {
+func (s *UserService) ResetPassword(ctx context.Context, token string, newPassword string) error {
 	if len(token) == 0 || len(newPassword) == 0 {
-		return &user.UserError{Type: user.InvalidArgumentsError, Err: errors.New("missing token or username")}
+		return &user.Error{Type: user.ErrorInvalidArguments, Err: fmt.Errorf("missing token or username")}
 	}
 
-	claims, authErr := s.JwtService.ParseToken(token)
-	if authErr != nil {
-		if authErr.Type == auth.ErrorExpiredToken {
-			return &user.UserError{Type: user.TokenExpiredError, Err: authErr}
+	claims, err := s.JwtService.ParseToken(token)
+	if err != nil {
+		var aErr *auth.Error
+		if errors.As(err, &aErr) && aErr.Type == auth.ErrorExpiredToken {
+			return &user.Error{Type: user.ErrorTokenExpired, Err: fmt.Errorf("token is expired: %w", err)}
 		}
-		return &user.UserError{Type: user.InvalidArgumentsError, Err: authErr}
+		return &user.Error{Type: user.ErrorInvalidToken, Err: fmt.Errorf("error parsing token: %w", err)}
 	}
 
 	if !claims.ResetPassword {
-		return &user.UserError{Type: user.InvalidArgumentsError, Err: errors.New("invalid token")}
+		return &user.Error{Type: user.ErrorInvalidToken, Err: fmt.Errorf("this token cannot be used to reset password")}
 	}
 
-	currentUser, dbErr := s.UserDbService.Retrieve(ctx, "id", claims.Id)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	currentUser, err := s.UserDbService.Retrieve(ctx, "id", claims.Id)
+	if err != nil {
+		return handleRetrieveError(err)
 	}
 
-	var err error
 	currentUser.PasswordHash, err = bcrypt.GenerateFromPassword([]byte(newPassword), s.BcryptCost)
 	if err != nil {
-		return &user.UserError{Type: user.InternalError, Err: err}
+		return fmt.Errorf("failed to create passowrd hash %w", err)
 	}
 
-	_, dbErr = s.UserDbService.Update(ctx, currentUser)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return &user.UserError{Type: user.NotFoundError, Err: dbErr}
-		default:
-			return &user.UserError{Type: user.InternalError, Err: dbErr}
-		}
+	_, err = s.UserDbService.Update(ctx, currentUser)
+	if err != nil {
+		return handleUpdateError(err)
 	}
 
 	return nil

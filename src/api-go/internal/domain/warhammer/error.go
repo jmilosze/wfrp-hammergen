@@ -1,12 +1,9 @@
 package warhammer
 
-import "fmt"
-
 const (
-	InvalidArgumentsError = iota
-	NotFoundError
-	InternalError
-	UnauthorizedError
+	ErrorInvalidArguments = iota
+	ErrorNotFound
+	ErrorUnauthorized
 )
 
 type WhError struct {
@@ -20,5 +17,5 @@ func (e *WhError) Unwrap() error {
 }
 
 func (e *WhError) Error() string {
-	return fmt.Sprintf("wh error, %s", e.Err)
+	return e.Err.Error()
 }

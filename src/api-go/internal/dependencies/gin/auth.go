@@ -1,6 +1,7 @@
 package gin
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
@@ -19,17 +20,21 @@ func tokenHandler(us user.UserService, js auth.JwtService) func(*gin.Context) {
 		username := c.PostForm("username")
 		password := c.PostForm("password")
 
-		u, uErr := us.Authenticate(c.Request.Context(), username, password)
+		u, err := us.Authenticate(c.Request.Context(), username, password)
 
-		if uErr != nil {
-			switch uErr.Type {
-			case user.NotFoundError:
-				c.JSON(NotFoundErrResp("user not found"))
-			case user.IncorrectPasswordError:
-				c.JSON(ForbiddenErrResp("invalid password"))
-			default:
-				c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
+		if err != nil {
+			var uErr *user.Error
+			if errors.As(err, &uErr) {
+				if uErr.Type == user.ErrorNotFound {
+					c.JSON(NotFoundErrResp("user not found"))
+					return
+				}
+				if uErr.Type == user.ErrorIncorrectPassword {
+					c.JSON(ForbiddenErrResp("invalid password"))
+					return
+				}
 			}
+			c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "message": "internal server error"})
 			return
 		}
 
