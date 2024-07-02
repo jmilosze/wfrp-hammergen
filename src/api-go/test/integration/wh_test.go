@@ -54,3 +54,62 @@ func TestCreateWhByAdmin(t *testing.T) {
 		response_wh_object_is_new_wh_property().and().
 		owner_id_is_admin_and_can_edit()
 }
+
+// Get
+
+func TestGetOwnedWhByAnonymous(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id()
+
+	when.
+		new_wh_property_is_querried_without_auth()
+
+	then.
+		status_code_is_404()
+}
+
+func TestGetPublicWhByAnonymous(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		new_wh_property().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id()
+
+	when.
+		new_wh_property_is_querried_without_auth()
+
+	then.
+		status_code_is_200().and().
+		response_body_contains_wh_property().and().
+		response_wh_object_is_new_wh_property().and().
+		owner_id_is_admin_and_can_not_edit()
+}
+
+func TestGetOwnedWh(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id()
+
+	when.
+		new_wh_property_is_querried()
+
+	then.
+		status_code_is_200().and().
+		response_body_contains_wh_property().and().
+		response_wh_object_is_new_wh_property().and().
+		owner_id_is_user_id_and_can_edit()
+}

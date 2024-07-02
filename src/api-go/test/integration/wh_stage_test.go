@@ -18,6 +18,8 @@ type whTestStage struct {
 	adminUser           *user
 	authorizationHeader string
 	newWhProperty       *warhammer.Property
+	newWhPropertyId     string
+	newWh               *warhammer.Wh
 	responseCode        int
 	responseBody        []byte
 	responseWh          *warhammer.Wh
@@ -60,6 +62,11 @@ func (s *whTestStage) status_code_is_401() *whTestStage {
 	return s
 }
 
+func (s *whTestStage) status_code_is_404() *whTestStage {
+	require.Equal(s.t, http.StatusNotFound, s.responseCode)
+	return s
+}
+
 func (s *whTestStage) new_wh_property() *whTestStage {
 	s.newWhProperty = &warhammer.Property{
 		Name:         "new_wh_property",
@@ -77,6 +84,17 @@ func (s *whTestStage) already_present_user() *whTestStage {
 	s.user = &user{
 		Id:             "000000000000000000000001",
 		Username:       "user1@test.com",
+		Password:       "111111",
+		SharedAccounts: []string{"user0@test.com"},
+	}
+
+	return s
+}
+
+func (s *whTestStage) already_present_other_user() *whTestStage {
+	s.user = &user{
+		Id:             "000000000000000000000002",
+		Username:       "user2@test.com",
 		Password:       "111111",
 		SharedAccounts: []string{"user0@test.com"},
 	}
@@ -172,5 +190,54 @@ func (s *whTestStage) owner_id_is_admin_and_can_edit() *whTestStage {
 	require.Equal(s.t, "admin", s.responseWh.OwnerId)
 	require.Equal(s.t, true, s.responseWh.CanEdit)
 
+	return s
+}
+
+func (s *whTestStage) new_wh_property_is_querried_without_auth() *whTestStage {
+	require.True(s.t, len(s.newWhPropertyId) > 1)
+	s.getWh(false, s.testUrl+"/api/wh/property/"+s.newWhPropertyId)
+	return s
+}
+
+func (s *whTestStage) getWh(auth bool, url string) {
+	req, err := http.NewRequest("GET", url, nil)
+	require.NoError(s.t, err)
+
+	if auth {
+		req.Header.Set("Authorization", s.authorizationHeader)
+	}
+
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
+}
+
+func (s *whTestStage) owner_id_is_admin_and_can_not_edit() *whTestStage {
+	require.Equal(s.t, "admin", s.responseWh.OwnerId)
+	require.Equal(s.t, false, s.responseWh.CanEdit)
+
+	return s
+}
+
+func (s *whTestStage) response_body_contains_new_wh_id() *whTestStage {
+	responseFull := whResponseFull{
+		Data: &warhammer.Wh{
+			Object: &warhammer.Property{},
+		},
+	}
+	err := json.Unmarshal(s.responseBody, &responseFull)
+	require.NoError(s.t, err)
+	require.NotNil(s.t, responseFull.Data)
+	s.newWhPropertyId = responseFull.Data.Id
+
+	return s
+}
+
+func (s *whTestStage) new_wh_property_is_querried() *whTestStage {
+	require.True(s.t, len(s.newWhPropertyId) > 1)
+	s.getWh(true, s.testUrl+"/api/wh/property/"+s.newWhPropertyId)
 	return s
 }
