@@ -7,26 +7,48 @@ import (
 	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
+	"slices"
 	"testing"
 )
 
+type whUser struct {
+	Username string
+	Password string
+	Id       string
+}
+
 type whTestStage struct {
-	t                   *testing.T
-	client              *http.Client
-	testUrl             string
-	user                *user
-	adminUser           *user
-	authorizationHeader string
-	newWhProperty       *warhammer.Property
-	newWhPropertyId     string
-	newWh               *warhammer.Wh
-	responseCode        int
-	responseBody        []byte
-	responseWh          *warhammer.Wh
+	t                      *testing.T
+	client                 *http.Client
+	testUrl                string
+	user                   *whUser
+	adminUser              *whUser
+	otherUser              *whUser
+	userWithSharedAccounts *whUser
+	authorizationHeader    string
+	newWhProperty          *warhammer.Property
+	anotherNewWhProperty   *warhammer.Property
+	newWhPropertyId        string
+	anotherNewWhPropertyId string
+	newWh                  *whProperty
+	responseCode           int
+	responseBody           []byte
+	responseWh             *whProperty
+}
+
+type whProperty struct {
+	Id      string              `json:"id"`
+	OwnerId string              `json:"ownerId"`
+	CanEdit bool                `json:"canEdit"`
+	Object  *warhammer.Property `json:"object"`
 }
 
 type whResponseFull struct {
-	Data *warhammer.Wh
+	Data *whProperty
+}
+
+type whResponseList struct {
+	Data []*whProperty
 }
 
 func whTest(t *testing.T, testUrl string, parallel bool) (*whTestStage, *whTestStage, *whTestStage) {
@@ -80,34 +102,67 @@ func (s *whTestStage) new_wh_property() *whTestStage {
 	return s
 }
 
+func (s *whTestStage) another_new_wh_property() *whTestStage {
+	s.anotherNewWhProperty = &warhammer.Property{
+		Name:         "another_new_wh_property",
+		Description:  "another_new_wh_property description",
+		Type:         warhammer.PropertyTypeQuality,
+		ApplicableTo: []warhammer.ItemType{warhammer.ItemTypeMelee, warhammer.ItemTypeArmour},
+		Shared:       true,
+		Source:       map[warhammer.Source]string{warhammer.SourceCustom: "", warhammer.SourceAltdorf: "123"},
+	}
+
+	return s
+}
+
+func (s *whTestStage) new_wh_property_not_shared() *whTestStage {
+	s.newWhProperty = &warhammer.Property{
+		Name:         "new_wh_property",
+		Description:  "new_wh_property description",
+		Type:         warhammer.PropertyTypeQuality,
+		ApplicableTo: []warhammer.ItemType{warhammer.ItemTypeMelee, warhammer.ItemTypeArmour},
+		Shared:       false,
+		Source:       map[warhammer.Source]string{warhammer.SourceCustom: "", warhammer.SourceAltdorf: "123"},
+	}
+
+	return s
+}
+
 func (s *whTestStage) already_present_user() *whTestStage {
-	s.user = &user{
-		Id:             "000000000000000000000001",
-		Username:       "user1@test.com",
-		Password:       "111111",
-		SharedAccounts: []string{"user0@test.com"},
+	s.user = &whUser{
+		Id:       "000000000000000000000001",
+		Username: "user1@test.com",
+		Password: "111111",
 	}
 
 	return s
 }
 
 func (s *whTestStage) already_present_other_user() *whTestStage {
-	s.user = &user{
-		Id:             "000000000000000000000002",
-		Username:       "user2@test.com",
-		Password:       "111111",
-		SharedAccounts: []string{"user0@test.com"},
+	s.otherUser = &whUser{
+		Id:       "000000000000000000000002",
+		Username: "user2@test.com",
+		Password: "111111",
+	}
+
+	return s
+}
+
+func (s *whTestStage) already_present_user_with_shared_accounts() *whTestStage {
+	s.userWithSharedAccounts = &whUser{
+		Id:       "000000000000000000000003",
+		Username: "user3@test.com",
+		Password: "111111",
 	}
 
 	return s
 }
 
 func (s *whTestStage) already_present_admin_user() *whTestStage {
-	s.adminUser = &user{
-		Id:             "000000000000000000000000",
-		Username:       "user0@test.com",
-		Password:       "123456",
-		SharedAccounts: []string{"user0@test.com"},
+	s.adminUser = &whUser{
+		Id:       "000000000000000000000000",
+		Username: "user0@test.com",
+		Password: "123456",
 	}
 
 	return s
@@ -115,6 +170,7 @@ func (s *whTestStage) already_present_admin_user() *whTestStage {
 
 func (s *whTestStage) user_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.user)
+
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.user.Username, s.user.Password)
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
@@ -123,6 +179,7 @@ func (s *whTestStage) user_is_authenticated() *whTestStage {
 
 func (s *whTestStage) admin_user_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.adminUser)
+
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.adminUser.Username, s.adminUser.Password)
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
@@ -130,14 +187,13 @@ func (s *whTestStage) admin_user_is_authenticated() *whTestStage {
 }
 
 func (s *whTestStage) new_wh_property_is_created() *whTestStage {
-	s.createWh(s.testUrl + "/api/wh/property")
+	require.NotNil(s.t, s.newWhProperty)
+	s.createWh(s.newWhProperty, s.testUrl+"/api/wh/property")
 	return s
 }
 
-func (s *whTestStage) createWh(url string) {
-	require.NotNil(s.t, s.newWhProperty)
-
-	payloadBytes, err := json.Marshal(s.newWhProperty)
+func (s *whTestStage) createWh(hwProperty *warhammer.Property, url string) {
+	payloadBytes, err := json.Marshal(hwProperty)
 	require.NoError(s.t, err)
 	req, err := http.NewRequest("POST", url, bytes.NewReader(payloadBytes))
 	require.NoError(s.t, err)
@@ -152,11 +208,7 @@ func (s *whTestStage) createWh(url string) {
 }
 
 func (s *whTestStage) response_body_contains_wh_property() *whTestStage {
-	responseFull := whResponseFull{
-		Data: &warhammer.Wh{
-			Object: &warhammer.Property{},
-		},
-	}
+	responseFull := whResponseFull{}
 	err := json.Unmarshal(s.responseBody, &responseFull)
 	require.NoError(s.t, err)
 	require.NotNil(s.t, responseFull.Data)
@@ -166,27 +218,26 @@ func (s *whTestStage) response_body_contains_wh_property() *whTestStage {
 }
 
 func (s *whTestStage) response_wh_object_is_new_wh_property() *whTestStage {
-	whPropertyFromResponse, ok := s.responseWh.Object.(*warhammer.Property)
-	require.True(s.t, ok)
-
-	require.Equal(s.t, s.newWhProperty.Name, whPropertyFromResponse.Name)
-	require.Equal(s.t, s.newWhProperty.Description, whPropertyFromResponse.Description)
-	require.Equal(s.t, s.newWhProperty.Type, whPropertyFromResponse.Type)
-	require.Equal(s.t, s.newWhProperty.Shared, whPropertyFromResponse.Shared)
-	require.Equal(s.t, s.newWhProperty.ApplicableTo, whPropertyFromResponse.ApplicableTo)
-	require.Equal(s.t, s.newWhProperty.Source, whPropertyFromResponse.Source)
+	require.Equal(s.t, s.newWhProperty.Name, s.responseWh.Object.Name)
+	require.Equal(s.t, s.newWhProperty.Description, s.responseWh.Object.Description)
+	require.Equal(s.t, s.newWhProperty.Type, s.responseWh.Object.Type)
+	require.Equal(s.t, s.newWhProperty.Shared, s.responseWh.Object.Shared)
+	require.Equal(s.t, s.newWhProperty.ApplicableTo, s.responseWh.Object.ApplicableTo)
+	require.Equal(s.t, s.newWhProperty.Source, s.responseWh.Object.Source)
 
 	return s
 }
 
-func (s *whTestStage) owner_id_is_user_id_and_can_edit() *whTestStage {
+func (s *whTestStage) owner_is_user_and_can_edit() *whTestStage {
+	require.NotNil(s.t, s.user)
+
 	require.Equal(s.t, s.user.Id, s.responseWh.OwnerId)
 	require.Equal(s.t, true, s.responseWh.CanEdit)
 
 	return s
 }
 
-func (s *whTestStage) owner_id_is_admin_and_can_edit() *whTestStage {
+func (s *whTestStage) owner_is_admin_literal_and_can_edit() *whTestStage {
 	require.Equal(s.t, "admin", s.responseWh.OwnerId)
 	require.Equal(s.t, true, s.responseWh.CanEdit)
 
@@ -223,21 +274,88 @@ func (s *whTestStage) owner_id_is_admin_and_can_not_edit() *whTestStage {
 }
 
 func (s *whTestStage) response_body_contains_new_wh_id() *whTestStage {
-	responseFull := whResponseFull{
-		Data: &warhammer.Wh{
-			Object: &warhammer.Property{},
-		},
-	}
+	s.newWhPropertyId = s.getIdFromBody()
+	return s
+}
+
+func (s *whTestStage) getIdFromBody() string {
+	responseFull := whResponseFull{}
 	err := json.Unmarshal(s.responseBody, &responseFull)
 	require.NoError(s.t, err)
 	require.NotNil(s.t, responseFull.Data)
-	s.newWhPropertyId = responseFull.Data.Id
+	return responseFull.Data.Id
+}
+
+func (s *whTestStage) new_wh_property_is_querried_with_authentication() *whTestStage {
+	require.True(s.t, len(s.newWhPropertyId) > 1)
+
+	s.getWh(true, s.testUrl+"/api/wh/property/"+s.newWhPropertyId)
+	return s
+}
+
+func (s *whTestStage) other_user_is_authenticated() *whTestStage {
+	require.NotNil(s.t, s.otherUser)
+
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.otherUser.Username, s.otherUser.Password)
+	require.NoError(s.t, err)
+	s.authorizationHeader = "Bearer " + accessToken
+	return s
+}
+
+func (s *whTestStage) user_with_shared_accounts_is_authenticated() *whTestStage {
+	require.NotNil(s.t, s.userWithSharedAccounts)
+
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.userWithSharedAccounts.Username, s.userWithSharedAccounts.Password)
+	require.NoError(s.t, err)
+	s.authorizationHeader = "Bearer " + accessToken
+	return s
+}
+
+func (s *whTestStage) owner_is_user_and_can_not_edit() *whTestStage {
+	require.NotNil(s.t, s.user)
+
+	require.Equal(s.t, s.user.Id, s.responseWh.OwnerId)
+	require.Equal(s.t, false, s.responseWh.CanEdit)
 
 	return s
 }
 
-func (s *whTestStage) new_wh_property_is_querried() *whTestStage {
-	require.True(s.t, len(s.newWhPropertyId) > 1)
-	s.getWh(true, s.testUrl+"/api/wh/property/"+s.newWhPropertyId)
+func (s *whTestStage) another_new_wh_property_is_created() *whTestStage {
+	require.NotNil(s.t, s.anotherNewWhProperty)
+	s.createWh(s.anotherNewWhProperty, s.testUrl+"/api/wh/property")
 	return s
+}
+
+func (s *whTestStage) response_body_contains_another_new_wh_id() *whTestStage {
+	s.anotherNewWhPropertyId = s.getIdFromBody()
+	return s
+}
+
+func (s *whTestStage) wh_property_is_listed_with_authentication() *whTestStage {
+	s.getWh(true, s.testUrl+"/api/wh/property/")
+	return s
+}
+
+func (s *whTestStage) response_body_contains_new_wh_and_another_new_wh() *whTestStage {
+	ids := s.getIdsFromBody()
+
+	require.True(s.t, slices.Contains(ids, s.newWhPropertyId))
+	require.True(s.t, slices.Contains(ids, s.anotherNewWhPropertyId))
+	return s
+}
+
+func (s *whTestStage) getIdsFromBody() []string {
+	response := whResponseList{}
+
+	err := json.Unmarshal(s.responseBody, &response)
+	require.NoError(s.t, err)
+	require.NotNil(s.t, response.Data)
+
+	var ids []string
+
+	for _, item := range response.Data {
+		ids = append(ids, item.Id)
+	}
+
+	return ids
 }
