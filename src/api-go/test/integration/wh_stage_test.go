@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
-	"slices"
 	"testing"
 )
 
@@ -30,10 +29,10 @@ type whTestStage struct {
 	anotherNewWhProperty   *warhammer.Property
 	newWhPropertyId        string
 	anotherNewWhPropertyId string
-	newWh                  *whProperty
 	responseCode           int
 	responseBody           []byte
 	responseWh             *whProperty
+	responseWhMap          map[string]*whProperty
 }
 
 type whProperty struct {
@@ -58,9 +57,10 @@ func whTest(t *testing.T, testUrl string, parallel bool) (*whTestStage, *whTestS
 
 	client := &http.Client{}
 	s := &whTestStage{
-		t:       t,
-		client:  client,
-		testUrl: testUrl,
+		t:             t,
+		client:        client,
+		testUrl:       testUrl,
+		responseWhMap: make(map[string]*whProperty),
 	}
 
 	return s, s, s
@@ -188,16 +188,25 @@ func (s *whTestStage) admin_user_is_authenticated() *whTestStage {
 
 func (s *whTestStage) new_wh_property_is_created() *whTestStage {
 	require.NotNil(s.t, s.newWhProperty)
-	s.createWh(s.newWhProperty, s.testUrl+"/api/wh/property")
+	s.upsertWh(s.newWhProperty, s.testUrl+"/api/wh/property", true)
 	return s
 }
 
-func (s *whTestStage) createWh(hwProperty *warhammer.Property, url string) {
-	payloadBytes, err := json.Marshal(hwProperty)
+func (s *whTestStage) upsertWh(whProperty *warhammer.Property, url string, create bool) {
+	var method string
+	if create {
+		method = "POST"
+	} else {
+		method = "PUT"
+	}
+
+	payloadBytes, err := json.Marshal(whProperty)
 	require.NoError(s.t, err)
-	req, err := http.NewRequest("POST", url, bytes.NewReader(payloadBytes))
+	req, err := http.NewRequest(method, url, bytes.NewReader(payloadBytes))
 	require.NoError(s.t, err)
-	req.Header.Set("Authorization", s.authorizationHeader)
+	if s.authorizationHeader != "" {
+		req.Header.Set("Authorization", s.authorizationHeader)
+	}
 	resp, err := s.client.Do(req)
 	require.NoError(s.t, err)
 
@@ -218,14 +227,19 @@ func (s *whTestStage) response_body_contains_wh_property() *whTestStage {
 }
 
 func (s *whTestStage) response_wh_object_is_new_wh_property() *whTestStage {
-	require.Equal(s.t, s.newWhProperty.Name, s.responseWh.Object.Name)
-	require.Equal(s.t, s.newWhProperty.Description, s.responseWh.Object.Description)
-	require.Equal(s.t, s.newWhProperty.Type, s.responseWh.Object.Type)
-	require.Equal(s.t, s.newWhProperty.Shared, s.responseWh.Object.Shared)
-	require.Equal(s.t, s.newWhProperty.ApplicableTo, s.responseWh.Object.ApplicableTo)
-	require.Equal(s.t, s.newWhProperty.Source, s.responseWh.Object.Source)
+	require.NotNil(s.t, s.newWhProperty)
 
+	s.compareWhProperty(s.newWhProperty, s.responseWh.Object)
 	return s
+}
+
+func (s *whTestStage) compareWhProperty(wh1 *warhammer.Property, wh2 *warhammer.Property) {
+	require.Equal(s.t, wh1.Name, wh2.Name)
+	require.Equal(s.t, wh1.Description, wh2.Description)
+	require.Equal(s.t, wh1.Type, wh2.Type)
+	require.Equal(s.t, wh1.Shared, wh2.Shared)
+	require.Equal(s.t, wh1.ApplicableTo, wh2.ApplicableTo)
+	require.Equal(s.t, wh1.Source, wh2.Source)
 }
 
 func (s *whTestStage) owner_is_user_and_can_edit() *whTestStage {
@@ -244,17 +258,16 @@ func (s *whTestStage) owner_is_admin_literal_and_can_edit() *whTestStage {
 	return s
 }
 
-func (s *whTestStage) new_wh_property_is_querried_without_auth() *whTestStage {
-	require.True(s.t, len(s.newWhPropertyId) > 1)
-	s.getWh(false, s.testUrl+"/api/wh/property/"+s.newWhPropertyId)
+func (s *whTestStage) new_wh_property_is_querried() *whTestStage {
+	s.getWh(s.testUrl + "/api/wh/property/" + s.newWhPropertyId)
 	return s
 }
 
-func (s *whTestStage) getWh(auth bool, url string) {
+func (s *whTestStage) getWh(url string) {
 	req, err := http.NewRequest("GET", url, nil)
 	require.NoError(s.t, err)
 
-	if auth {
+	if s.authorizationHeader != "" {
 		req.Header.Set("Authorization", s.authorizationHeader)
 	}
 
@@ -266,7 +279,7 @@ func (s *whTestStage) getWh(auth bool, url string) {
 	require.NoError(s.t, err)
 }
 
-func (s *whTestStage) owner_id_is_admin_and_can_not_edit() *whTestStage {
+func (s *whTestStage) owner_is_admin_and_can_not_edit() *whTestStage {
 	require.Equal(s.t, "admin", s.responseWh.OwnerId)
 	require.Equal(s.t, false, s.responseWh.CanEdit)
 
@@ -284,13 +297,6 @@ func (s *whTestStage) getIdFromBody() string {
 	require.NoError(s.t, err)
 	require.NotNil(s.t, responseFull.Data)
 	return responseFull.Data.Id
-}
-
-func (s *whTestStage) new_wh_property_is_querried_with_authentication() *whTestStage {
-	require.True(s.t, len(s.newWhPropertyId) > 1)
-
-	s.getWh(true, s.testUrl+"/api/wh/property/"+s.newWhPropertyId)
-	return s
 }
 
 func (s *whTestStage) other_user_is_authenticated() *whTestStage {
@@ -322,7 +328,8 @@ func (s *whTestStage) owner_is_user_and_can_not_edit() *whTestStage {
 
 func (s *whTestStage) another_new_wh_property_is_created() *whTestStage {
 	require.NotNil(s.t, s.anotherNewWhProperty)
-	s.createWh(s.anotherNewWhProperty, s.testUrl+"/api/wh/property")
+
+	s.upsertWh(s.anotherNewWhProperty, s.testUrl+"/api/wh/property", true)
 	return s
 }
 
@@ -331,31 +338,91 @@ func (s *whTestStage) response_body_contains_another_new_wh_id() *whTestStage {
 	return s
 }
 
-func (s *whTestStage) wh_property_is_listed_with_authentication() *whTestStage {
-	s.getWh(true, s.testUrl+"/api/wh/property/")
+func (s *whTestStage) wh_property_is_listed() *whTestStage {
+	s.getWh(s.testUrl + "/api/wh/property/")
 	return s
 }
 
-func (s *whTestStage) response_body_contains_new_wh_and_another_new_wh() *whTestStage {
-	ids := s.getIdsFromBody()
+func (s *whTestStage) response_body_contains_new_wh() *whTestStage {
+	require.NotNil(s.t, s.newWhProperty)
 
-	require.True(s.t, slices.Contains(ids, s.newWhPropertyId))
-	require.True(s.t, slices.Contains(ids, s.anotherNewWhPropertyId))
+	wh, ok := s.responseWhMap[s.newWhPropertyId]
+	require.True(s.t, ok)
+	s.compareWhProperty(s.newWhProperty, wh.Object)
 	return s
 }
 
-func (s *whTestStage) getIdsFromBody() []string {
+func (s *whTestStage) response_body_contains_another_new_wh() *whTestStage {
+	require.NotNil(s.t, s.anotherNewWhProperty)
+
+	wh, ok := s.responseWhMap[s.anotherNewWhPropertyId]
+	require.True(s.t, ok)
+	s.compareWhProperty(s.anotherNewWhProperty, wh.Object)
+	return s
+}
+
+func (s *whTestStage) response_contains_wh_list() *whTestStage {
 	response := whResponseList{}
 
 	err := json.Unmarshal(s.responseBody, &response)
 	require.NoError(s.t, err)
 	require.NotNil(s.t, response.Data)
 
-	var ids []string
-
 	for _, item := range response.Data {
-		ids = append(ids, item.Id)
+		s.responseWhMap[item.Id] = item
 	}
 
-	return ids
+	return s
+}
+
+func (s *whTestStage) response_body_does_not_contain_new_wh() *whTestStage {
+	_, ok := s.responseWhMap[s.newWhPropertyId]
+	require.False(s.t, ok)
+	return s
+}
+
+func (s *whTestStage) new_wh_in_list_owner_is_admin_and_can_not_edit() *whTestStage {
+	require.Equal(s.t, "admin", s.responseWhMap[s.newWhPropertyId].OwnerId)
+	require.Equal(s.t, false, s.responseWhMap[s.newWhPropertyId].CanEdit)
+
+	return s
+}
+
+func (s *whTestStage) new_wh_in_list_owner_is_user_and_can_edit() *whTestStage {
+	require.Equal(s.t, s.user.Id, s.responseWhMap[s.newWhPropertyId].OwnerId)
+	require.Equal(s.t, true, s.responseWhMap[s.newWhPropertyId].CanEdit)
+
+	return s
+}
+
+func (s *whTestStage) another_new_wh_in_list_owner_is_user_and_can_edit() *whTestStage {
+	require.Equal(s.t, s.user.Id, s.responseWhMap[s.anotherNewWhPropertyId].OwnerId)
+	require.Equal(s.t, true, s.responseWhMap[s.anotherNewWhPropertyId].CanEdit)
+
+	return s
+}
+
+func (s *whTestStage) new_wh_in_list_owner_is_user_and_can_not_edit() *whTestStage {
+	require.Equal(s.t, s.user.Id, s.responseWhMap[s.newWhPropertyId].OwnerId)
+	require.Equal(s.t, false, s.responseWhMap[s.newWhPropertyId].CanEdit)
+
+	return s
+}
+
+func (s *whTestStage) new_wh_property_is_updated_with_another_new_wh_property() *whTestStage {
+	require.NotNil(s.t, s.anotherNewWhProperty)
+	s.upsertWh(s.anotherNewWhProperty, s.testUrl+"/api/wh/property/"+s.newWhPropertyId, false)
+	return s
+}
+
+func (s *whTestStage) user_is_not_authenticated() *whTestStage {
+	s.authorizationHeader = ""
+	return s
+}
+
+func (s *whTestStage) response_wh_object_is_another_new_wh_property() *whTestStage {
+	require.NotNil(s.t, s.anotherNewWhProperty)
+
+	s.compareWhProperty(s.anotherNewWhProperty, s.responseWh.Object)
+	return s
 }

@@ -65,10 +65,11 @@ func TestGetOwnedWhByAnonymous(t *testing.T) {
 		new_wh_property().and().
 		user_is_authenticated().and().
 		new_wh_property_is_created().and().
-		response_body_contains_new_wh_id()
+		response_body_contains_new_wh_id().and().
+		user_is_not_authenticated()
 
 	when.
-		new_wh_property_is_querried_without_auth()
+		new_wh_property_is_querried()
 
 	then.
 		status_code_is_404()
@@ -87,7 +88,7 @@ func TestGetOwnedWhByOtherUser(t *testing.T) {
 		other_user_is_authenticated()
 
 	when.
-		new_wh_property_is_querried_with_authentication()
+		new_wh_property_is_querried()
 
 	then.
 		status_code_is_404()
@@ -101,16 +102,17 @@ func TestGetPublicWhByAnonymous(t *testing.T) {
 		new_wh_property().and().
 		admin_user_is_authenticated().and().
 		new_wh_property_is_created().and().
-		response_body_contains_new_wh_id()
+		response_body_contains_new_wh_id().and().
+		user_is_not_authenticated()
 
 	when.
-		new_wh_property_is_querried_without_auth()
+		new_wh_property_is_querried()
 
 	then.
 		status_code_is_200().and().
 		response_body_contains_wh_property().and().
 		response_wh_object_is_new_wh_property().and().
-		owner_id_is_admin_and_can_not_edit()
+		owner_is_admin_and_can_not_edit()
 }
 
 func TestGetOwnedWh(t *testing.T) {
@@ -124,7 +126,7 @@ func TestGetOwnedWh(t *testing.T) {
 		response_body_contains_new_wh_id()
 
 	when.
-		new_wh_property_is_querried_with_authentication()
+		new_wh_property_is_querried()
 
 	then.
 		status_code_is_200().and().
@@ -146,7 +148,7 @@ func TestGetOwnedWhOtherSharedUser(t *testing.T) {
 		user_with_shared_accounts_is_authenticated()
 
 	when.
-		new_wh_property_is_querried_with_authentication()
+		new_wh_property_is_querried()
 
 	then.
 		status_code_is_200().and().
@@ -168,7 +170,7 @@ func TestGetOwnedWhOtherSharedUserWhNotShared(t *testing.T) {
 		user_with_shared_accounts_is_authenticated()
 
 	when.
-		new_wh_property_is_querried_with_authentication()
+		new_wh_property_is_querried()
 
 	then.
 		status_code_is_404()
@@ -176,7 +178,69 @@ func TestGetOwnedWhOtherSharedUserWhNotShared(t *testing.T) {
 
 // List
 
-func TestList(t *testing.T) {
+func TestListOwnedWhByAnonymous(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_is_not_authenticated()
+
+	when.
+		wh_property_is_listed()
+
+	then.
+		status_code_is_200().and().
+		response_contains_wh_list().and().
+		response_body_does_not_contain_new_wh()
+}
+
+func TestListOwnedWhOtherUser(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		already_present_other_user().and().
+		new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		other_user_is_authenticated()
+
+	when.
+		wh_property_is_listed()
+
+	then.
+		status_code_is_200().and().
+		response_contains_wh_list().and().
+		response_body_does_not_contain_new_wh()
+}
+
+func TestListPublicWhByAnonymous(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		new_wh_property().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_is_not_authenticated()
+
+	when.
+		wh_property_is_listed()
+
+	then.
+		status_code_is_200().and().
+		response_contains_wh_list().and().
+		response_body_contains_new_wh().and().
+		new_wh_in_list_owner_is_admin_and_can_not_edit()
+}
+
+func TestListOwnedWh(t *testing.T) {
 	given, when, then := whTest(t, wfrpUrl, parallel)
 
 	given.
@@ -190,9 +254,138 @@ func TestList(t *testing.T) {
 		response_body_contains_another_new_wh_id()
 
 	when.
-		wh_property_is_listed_with_authentication()
+		wh_property_is_listed()
 
 	then.
 		status_code_is_200().and().
-		response_body_contains_new_wh_and_another_new_wh()
+		response_contains_wh_list().and().
+		response_body_contains_new_wh().and().
+		response_body_contains_another_new_wh().and().
+		new_wh_in_list_owner_is_user_and_can_edit().and().
+		another_new_wh_in_list_owner_is_user_and_can_edit()
+}
+
+func TestListWhOtherSharedUser(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		already_present_user_with_shared_accounts().and().
+		new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_with_shared_accounts_is_authenticated()
+
+	when.
+		wh_property_is_listed()
+
+	then.
+		status_code_is_200().and().
+		response_contains_wh_list().and().
+		response_body_contains_new_wh().and().
+		new_wh_in_list_owner_is_user_and_can_not_edit()
+}
+
+func TestListWhOtherSharedUserWhNotShared(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		already_present_user_with_shared_accounts().and().
+		new_wh_property_not_shared().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_with_shared_accounts_is_authenticated()
+
+	when.
+		wh_property_is_listed()
+
+	then.
+		status_code_is_200().and().
+		response_contains_wh_list().and().
+		response_body_does_not_contain_new_wh()
+}
+
+// Update
+
+func TestUpdateWh(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id()
+
+	when.
+		new_wh_property_is_updated_with_another_new_wh_property()
+
+	then.
+		status_code_is_200().and().
+		response_body_contains_wh_property().and().
+		response_wh_object_is_another_new_wh_property()
+
+}
+
+func TestUpdatePublicWh(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		already_present_user().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_is_authenticated()
+
+	when.
+		new_wh_property_is_updated_with_another_new_wh_property()
+
+	then.
+		status_code_is_404()
+}
+
+func TestUpdateWhByAnonymous(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_is_not_authenticated()
+
+	when.
+		new_wh_property_is_updated_with_another_new_wh_property()
+
+	then.
+		status_code_is_401()
+}
+
+func TestUpdateWhByOtherUserWhShared(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		already_present_user_with_shared_accounts().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_with_shared_accounts_is_authenticated()
+
+	when.
+		new_wh_property_is_updated_with_another_new_wh_property()
+
+	then.
+		status_code_is_404()
 }

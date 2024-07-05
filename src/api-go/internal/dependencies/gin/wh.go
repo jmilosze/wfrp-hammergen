@@ -11,16 +11,16 @@ import (
 	"log"
 )
 
-func RegisterWhRoutes(router *gin.Engine, ms warhammer.WhService, js auth.JwtService) {
+func RegisterWhRoutes(router *gin.Engine, ws warhammer.WhService, js auth.JwtService) {
 	for _, v := range warhammer.WhCoreTypes {
-		router.POST(fmt.Sprintf("api/wh/%s", v), RequireJwt(js), whCreateOrUpdateHandler(true, ms, v))
-		router.GET(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whGetHandler(ms, v))
-		router.PUT(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whCreateOrUpdateHandler(false, ms, v))
-		router.DELETE(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whDeleteHandler(ms, v))
-		router.GET(fmt.Sprintf("api/wh/%s", v), RequireJwt(js), whListHandler(ms, v))
+		router.POST(fmt.Sprintf("api/wh/%s", v), RequireJwt(js), whCreateOrUpdateHandler(true, ws, v))
+		router.GET(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whGetHandler(ws, v))
+		router.PUT(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whCreateOrUpdateHandler(false, ws, v))
+		router.DELETE(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whDeleteHandler(ws, v))
+		router.GET(fmt.Sprintf("api/wh/%s", v), RequireJwt(js), whListHandler(ws, v))
 	}
 
-	router.GET("api/wh/generation", whGenerationPropsHandler(ms))
+	router.GET("api/wh/generation", whGenerationPropsHandler(ws))
 }
 
 func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.WhType) func(*gin.Context) {
