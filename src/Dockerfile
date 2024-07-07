@@ -1,10 +1,8 @@
 FROM golang:1.22.2-alpine3.18 AS build
 
-ARG VERSION="wfrp"
-
 WORKDIR /src
 ADD api-go /src
-RUN CGO_ENABLED=0 go build -o ./bin/wfrp ./cmd/$VERSION/main.go
+RUN CGO_ENABLED=0 go build -o ./bin/wfrp ./cmd/wfrp/main.go
 RUN echo "nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin" > passwd && chmod 644 passwd
 
 FROM scratch

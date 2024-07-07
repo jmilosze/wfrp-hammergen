@@ -15,4 +15,4 @@ test:
 
 .PHONY: test-memdb
 test-memdb:
-	cd ./api-go/test/integration && go test -v -count=1  -args -parallel -url "http://localhost:8080"
+	cd ./api-go/test/integration && go test -v -count=1  -args -parallel -url "http://localhost:8082"
