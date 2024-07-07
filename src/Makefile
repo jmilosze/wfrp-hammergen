@@ -8,3 +8,11 @@ dev-down:
 
 .PHONY: dev-restart
 dev-restart: dev-down dev-up
+
+.PHONY: test
+test:
+	cd ./api-go/test/integration && go test -v -count=1  -args -parallel
+
+.PHONY: test-memdb
+test-memdb:
+	cd ./api-go/test/integration && go test -v -count=1  -args -parallel -url "http://localhost:8080"

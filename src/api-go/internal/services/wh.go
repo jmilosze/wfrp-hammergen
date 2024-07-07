@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/rs/xid"
 	"golang.org/x/exp/slices"
@@ -23,22 +23,22 @@ func NewWhService(v *validator.Validate, db wh.WhDbService) *WhService {
 	return &WhService{Validator: v, WhDbService: db}
 }
 
-func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, *wh.WhError) {
+func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, error) {
 	if c.Id == "anonymous" {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to create wh")}
 	}
 
 	newWh := w.Copy()
 	if err := newWh.InitNilPointers(); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: err}
+		return nil, fmt.Errorf("failed to nil pointers: %w", err)
 	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
 	if err := extraCharacterValidation(t, newWh, s.Validator); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
 	if c.Admin {
@@ -48,9 +48,9 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 	newWh.Id = hex.EncodeToString(xid.New().Bytes())
 
-	createdWh, dbErr := s.WhDbService.Create(ctx, t, newWh)
-	if dbErr != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: dbErr}
+	createdWh, err := s.WhDbService.Create(ctx, t, newWh)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create wh: %w", err)
 	}
 
 	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
@@ -90,22 +90,22 @@ func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []strin
 	return false
 }
 
-func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, *wh.WhError) {
+func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, error) {
 	if c.Id == "anonymous" {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to update wh %s", w.Id)}
 	}
 
 	newWh := w.Copy()
 	if err := newWh.InitNilPointers(); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: user.InternalError, Err: err}
+		return nil, fmt.Errorf("failed to initialize nil pointers: %w", err)
 	}
 
 	if err := s.Validator.Struct(newWh); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
 	if err := extraCharacterValidation(t, newWh, s.Validator); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.InvalidArgumentsError, Err: err}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
 	ownerId := c.Id
@@ -114,13 +114,14 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	newWh.OwnerId = ownerId
-	updatedWh, dbErr := s.WhDbService.Update(ctx, t, newWh, ownerId)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: dbErr}
-		default:
-			return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
+	updatedWh, err := s.WhDbService.Update(ctx, t, newWh, ownerId)
+	if err != nil {
+		var dbErr *domain.DbError
+		wErr := fmt.Errorf("failed to update wh: %w", err)
+		if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
+			return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: wErr}
+		} else {
+			return nil, wErr
 		}
 	}
 
@@ -128,9 +129,9 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	return updatedWh.Copy(), nil
 }
 
-func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) *wh.WhError {
+func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) error {
 	if c.Id == "anonymous" {
-		return &wh.WhError{WhType: t, ErrType: wh.UnauthorizedError, Err: errors.New("unauthorized")}
+		return &wh.WhError{ErrType: wh.ErrorUnauthorized, WhType: t, Err: fmt.Errorf("unauthorized to delete wh %s", whId)}
 	}
 
 	ownerId := c.Id
@@ -138,35 +139,34 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 		ownerId = "admin"
 	}
 
-	dbErr := s.WhDbService.Delete(ctx, t, whId, ownerId)
-	if dbErr != nil {
-		return &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
+	err := s.WhDbService.Delete(ctx, t, whId, ownerId)
+	if err != nil {
+		return fmt.Errorf("failed to delete wh: %w", err)
 	}
 
 	return nil
 }
 
-func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, whIds []string) ([]*wh.Wh, *wh.WhError) {
+func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, whIds []string) ([]*wh.Wh, error) {
 	users := []string{"admin", c.Id}
 
-	whs, dbErr := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, whIds)
-
-	if dbErr != nil {
-		return nil, &wh.WhError{ErrType: wh.InternalError, WhType: t, Err: dbErr}
+	whs, err := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, whIds)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retreive wh: %w", err)
 	}
 
 	whsRet := make([]*wh.Wh, 0)
 	for _, v := range whs {
 		err := v.InitNilPointers()
 		if err != nil {
-			continue
+			return nil, fmt.Errorf("failed to initialize nil pointers: %w", err)
 		}
 		v.CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 		whsRet = append(whsRet, v)
 	}
 
 	if full {
-		var whErr *wh.WhError
+		var whErr error
 		if t == wh.WhTypeItem {
 			whsRet, whErr = retrieveFullItems(ctx, s, c, whsRet)
 		} else if t == wh.WhTypeCharacter {
@@ -178,19 +178,19 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 	}
 
 	if errIfNotFound && len(whIds) != 0 && len(whsRet) != len(whIds) {
-		return nil, &wh.WhError{ErrType: wh.NotFoundError, WhType: t, Err: errors.New("not all id found")}
+		return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("not all ids found")}
 	}
 
 	return whsRet, nil
 }
 
-func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.Claims, items []*wh.Wh) ([]*wh.Wh, *wh.WhError) {
+func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.Claims, items []*wh.Wh) ([]*wh.Wh, error) {
 	allPropertyIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range items {
 		item, ok := v.Object.(*wh.Item)
 		if !ok {
-			return nil, &wh.WhError{WhType: wh.WhTypeItem, ErrType: wh.InternalError, Err: errors.New("non-item stored as item")}
+			return nil, fmt.Errorf("failed to cast object to item")
 		}
 		allPropertyIds = mergeStrAndRemoveDuplicates(allPropertyIds, item.Properties)
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, item.Grimoire.Spells)
@@ -200,14 +200,14 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	wg.Add(2)
 
 	var allProperties []*wh.Wh
-	var propertyWhErr *wh.WhError
+	var propertyWhErr error
 	go func() {
 		defer wg.Done()
 		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, false, allPropertyIds)
 	}()
 
 	var allSpells []*wh.Wh
-	var spellWhErr *wh.WhError
+	var spellWhErr error
 	go func() {
 		defer wg.Done()
 		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, false, allSpellIds)
@@ -216,24 +216,24 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	wg.Wait()
 
 	if propertyWhErr != nil {
-		return nil, propertyWhErr
+		return nil, fmt.Errorf("failed to get wh-properties: %w", propertyWhErr)
 	}
 
 	if spellWhErr != nil {
-		return nil, spellWhErr
+		return nil, fmt.Errorf("failed to get wh-spells: %w", spellWhErr)
 	}
 
 	fullItems := make([]*wh.Wh, 0)
 	for _, v := range items {
 		item, ok := v.Object.(*wh.Item)
 		if !ok {
-			continue
+			return nil, fmt.Errorf("failed to cast object to item")
 		}
 		var err error
 		fullItem := v.CopyHeaders()
 		fullItem.Object, err = item.ToFull(allProperties, allSpells)
 		if err != nil {
-			continue
+			return nil, fmt.Errorf("failed convert wh-item to full item")
 		}
 		fullItems = append(fullItems, fullItem)
 	}
@@ -259,7 +259,7 @@ func mergeStrAndRemoveDuplicates(slice1 []string, slice2 []string) []string {
 	return mergedUnique
 }
 
-func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, *wh.WhError) {
+func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, error) {
 	allItemIds := make([]string, 0)
 	allTalentIds := make([]string, 0)
 	allCareerIds := make([]string, 0)
@@ -269,7 +269,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	for _, v := range characters {
 		character, ok := v.Object.(*wh.Character)
 		if !ok {
-			return nil, &wh.WhError{WhType: wh.WhTypeCharacter, ErrType: wh.InternalError, Err: errors.New("non-character stored as character")}
+			return nil, fmt.Errorf("failed to cast object to character")
 		}
 		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.EquippedItems)
 		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.CarriedItems)
@@ -289,7 +289,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	wg.Add(7)
 
 	components := map[wh.WhType]*struct {
-		err  *wh.WhError
+		err  error
 		full bool
 		wh   []*wh.Wh
 		ids  []string
@@ -316,7 +316,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 
 	for _, v := range components {
 		if v.err != nil {
-			return nil, v.err
+			return nil, fmt.Errorf("failed to get wh: %w", v.err)
 		}
 	}
 
@@ -324,20 +324,13 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	for _, v := range characters {
 		character, ok := v.Object.(*wh.Character)
 		if !ok {
-			continue
+			return nil, fmt.Errorf("failed to cast object to character")
 		}
 		fullCharacter := v.CopyHeaders()
 		var err error
-		fullCharacter.Object, err = character.ToFull(
-			components[wh.WhTypeItem].wh,
-			components[wh.WhTypeSkill].wh,
-			components[wh.WhTypeTalent].wh,
-			components[wh.WhTypeMutation].wh,
-			components[wh.WhTypeSpell].wh,
-			components[wh.WhTypePrayer].wh,
-			components[wh.WhTypeCareer].wh)
+		fullCharacter.Object, err = character.ToFull(components[wh.WhTypeItem].wh, components[wh.WhTypeSkill].wh, components[wh.WhTypeTalent].wh, components[wh.WhTypeMutation].wh, components[wh.WhTypeSpell].wh, components[wh.WhTypePrayer].wh, components[wh.WhTypeCareer].wh)
 		if err != nil {
-			continue
+			return nil, fmt.Errorf("failed convert wh-character to full character")
 		}
 
 		fullCharacters = append(fullCharacters, fullCharacter)
@@ -369,16 +362,16 @@ func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []*wh.IdNu
 	return result
 }
 
-func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, *wh.WhError) {
-	generationPropsMap, dbErr := s.WhDbService.RetrieveGenerationProps(ctx)
-	if dbErr != nil {
-		switch dbErr.Type {
-		case domain.DbNotFoundError:
-			return nil, &wh.WhError{ErrType: wh.NotFoundError, Err: dbErr}
-		default:
-			return nil, &wh.WhError{ErrType: wh.InternalError, Err: dbErr}
+func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, error) {
+	generationPropsMap, err := s.WhDbService.RetrieveGenerationProps(ctx)
+	if err != nil {
+		var dbErr *domain.DbError
+		wErr := fmt.Errorf("failed to get generationProps: %w", err)
+		if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
+			return nil, &wh.WhError{ErrType: wh.ErrorNotFound, Err: wErr}
+		} else {
+			return nil, wErr
 		}
 	}
-
 	return generationPropsMap, nil
 }

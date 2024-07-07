@@ -15,7 +15,7 @@ var user1 = user.User{
 	Username:           "user1@test.com",
 	Password:           "111111",
 	Admin:              false,
-	SharedAccountNames: []string{"user0@test.com"},
+	SharedAccountNames: []string{},
 }
 
 var user2 = user.User{
@@ -23,7 +23,7 @@ var user2 = user.User{
 	Username:           "user2@test.com",
 	Password:           "111111",
 	Admin:              false,
-	SharedAccountNames: []string{"user1@test.com"},
+	SharedAccountNames: []string{},
 }
 
 var user3 = user.User{
