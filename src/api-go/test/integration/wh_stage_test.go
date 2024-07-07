@@ -3,11 +3,15 @@ package integration
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/golangjwt"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
 	"testing"
+	"time"
 )
 
 type whUser struct {
@@ -20,6 +24,7 @@ type whTestStage struct {
 	t                      *testing.T
 	client                 *http.Client
 	testUrl                string
+	genProps               *warhammer.GenProps
 	user                   *whUser
 	adminUser              *whUser
 	otherUser              *whUser
@@ -48,6 +53,10 @@ type whResponseFull struct {
 
 type whResponseList struct {
 	Data []*whProperty
+}
+
+type whGenPropsResponseFull struct {
+	Data *warhammer.GenProps
 }
 
 func whTest(t *testing.T, testUrl string, parallel bool) (*whTestStage, *whTestStage, *whTestStage) {
@@ -449,5 +458,69 @@ func (s *whTestStage) deleteWh(url string) {
 
 	s.responseCode = resp.StatusCode
 	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
+}
+
+func (s *whTestStage) generation_props_are_retrieved() *whTestStage {
+	s.getWh(s.testUrl + "/api/wh/generation/" + s.newWhPropertyId)
+	return s
+}
+
+func (s *whTestStage) already_present_generation_props() *whTestStage {
+	s.genProps = &warhammer.GenProps{
+		Name: "generationProps",
+		ClassItems: map[warhammer.CareerClass]*warhammer.GenItems{
+			warhammer.CareerClassBurghers: {
+				Equipped: warhammer.IdStringMap{"400000000000000000000000": "1", "400000000000000000000003": "1"},
+				Carried:  warhammer.IdStringMap{"400000000000000000000006": "2"},
+				Stored:   warhammer.IdStringMap{"400000000000000000000006": "2"},
+			},
+		},
+		RandomTalents: []*warhammer.GenRandomTalent{
+			{
+				Id:      "500000000000000000000001",
+				MinRoll: 1,
+				MaxRoll: 50,
+			},
+			{
+				Id:      "500000000000000000000000",
+				MinRoll: 51,
+				MaxRoll: 101,
+			},
+		},
+		SpeciesTalents: map[warhammer.CharacterSpecies][]string{
+			warhammer.CharacterSpeciesDwarfAltdorf: {"500000000000000000000000", "500000000000000000000001", "500000000000000000000000" + "," + "500000000000000000000001", "500000000000000000000000" + "," + "500000000000000000000001"},
+		},
+		SpeciesSkills: map[warhammer.CharacterSpecies][]string{
+			warhammer.CharacterSpeciesDwarfNorse: {"600000000000000000000000", "600000000000000000000001"},
+		},
+	}
+
+	return s
+}
+
+func (s *whTestStage) response_body_contains_expected_generation_props() *whTestStage {
+	responseFull := whGenPropsResponseFull{}
+	err := json.Unmarshal(s.responseBody, &responseFull)
+	require.NoError(s.t, err)
+	require.NotNil(s.t, responseFull.Data)
+	require.Equal(s.t, s.genProps, responseFull.Data)
+
+	return s
+}
+
+func (s *whTestStage) user_authentication_token_is_expired() *whTestStage {
+	require.NotNil(s.t, s.user)
+	s.generateAccessToken(s.user.Id, -1*time.Hour)
+	return s
+}
+
+func (s *whTestStage) generateAccessToken(id string, duration time.Duration) {
+	claims := auth.Claims{Id: id, Admin: false, SharedAccounts: []string{}, ResetPassword: false}
+	cfg := config.NewConfig()
+	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, duration, time.Hour)
+
+	token, err := jwtService.GenerateAccessToken(&claims)
+	s.authorizationHeader = "Bearer " + token
 	require.NoError(s.t, err)
 }
