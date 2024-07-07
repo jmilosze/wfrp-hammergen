@@ -9,7 +9,7 @@ var wfrpUrl string
 var parallel bool
 
 func init() {
-	flag.StringVar(&wfrpUrl, "url", "http://localhost:8080", "wfrp api url")
+	flag.StringVar(&wfrpUrl, "url", "http://localhost:8081", "wfrp api url")
 	flag.BoolVar(&parallel, "parallel", false, "run tests in parallel")
 }
 

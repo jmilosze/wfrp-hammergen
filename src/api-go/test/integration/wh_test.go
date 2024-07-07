@@ -69,7 +69,7 @@ func TestGetOwnedWhByAnonymous(t *testing.T) {
 		user_is_not_authenticated()
 
 	when.
-		new_wh_property_is_querried()
+		new_wh_property_is_retrieved()
 
 	then.
 		status_code_is_404()
@@ -88,7 +88,7 @@ func TestGetOwnedWhByOtherUser(t *testing.T) {
 		other_user_is_authenticated()
 
 	when.
-		new_wh_property_is_querried()
+		new_wh_property_is_retrieved()
 
 	then.
 		status_code_is_404()
@@ -106,7 +106,7 @@ func TestGetPublicWhByAnonymous(t *testing.T) {
 		user_is_not_authenticated()
 
 	when.
-		new_wh_property_is_querried()
+		new_wh_property_is_retrieved()
 
 	then.
 		status_code_is_200().and().
@@ -126,7 +126,7 @@ func TestGetOwnedWh(t *testing.T) {
 		response_body_contains_new_wh_id()
 
 	when.
-		new_wh_property_is_querried()
+		new_wh_property_is_retrieved()
 
 	then.
 		status_code_is_200().and().
@@ -148,7 +148,7 @@ func TestGetOwnedWhOtherSharedUser(t *testing.T) {
 		user_with_shared_accounts_is_authenticated()
 
 	when.
-		new_wh_property_is_querried()
+		new_wh_property_is_retrieved()
 
 	then.
 		status_code_is_200().and().
@@ -170,7 +170,7 @@ func TestGetOwnedWhOtherSharedUserWhNotShared(t *testing.T) {
 		user_with_shared_accounts_is_authenticated()
 
 	when.
-		new_wh_property_is_querried()
+		new_wh_property_is_retrieved()
 
 	then.
 		status_code_is_404()
@@ -351,6 +351,26 @@ func TestUpdatePublicWh(t *testing.T) {
 		status_code_is_404()
 }
 
+func TestUpdatePublicWhByAdmin(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and()
+
+	when.
+		new_wh_property_is_updated_with_another_new_wh_property()
+
+	then.
+		status_code_is_200().and().
+		response_body_contains_wh_property().and().
+		response_wh_object_is_another_new_wh_property()
+}
+
 func TestUpdateWhByAnonymous(t *testing.T) {
 	given, when, then := whTest(t, wfrpUrl, parallel)
 
@@ -388,4 +408,109 @@ func TestUpdateWhByOtherUserWhShared(t *testing.T) {
 
 	then.
 		status_code_is_404()
+}
+
+// Delete
+
+func TestDeleteWh(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id()
+
+	when.
+		new_wh_property_is_deleted()
+
+	then.
+		status_code_is_200().and().
+		new_wh_property_is_retrieved().and().
+		status_code_is_404()
+}
+
+func TestDeletePublicWh(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		already_present_user().and().
+		new_wh_property().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_is_authenticated()
+
+	when.
+		new_wh_property_is_deleted()
+
+	then.
+		status_code_is_200().and().
+		new_wh_property_is_retrieved().and().
+		response_body_contains_wh_property().and().
+		response_wh_object_is_new_wh_property()
+}
+
+func TestDeletePublicWhByAdmin(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id()
+
+	when.
+		new_wh_property_is_deleted()
+
+	then.
+		status_code_is_200().and().
+		new_wh_property_is_retrieved().and().
+		status_code_is_404()
+}
+
+func TestDeletePublicWhByAnonymous(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		new_wh_property().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_is_not_authenticated()
+
+	when.
+		new_wh_property_is_deleted()
+
+	then.
+		status_code_is_401()
+}
+
+func TestDeletePublicWhByOtherUserWhShared(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		already_present_user_with_shared_accounts().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		user_with_shared_accounts_is_authenticated()
+
+	when.
+		new_wh_property_is_deleted()
+
+	then.
+		status_code_is_200().and().
+		new_wh_property_is_retrieved().and().
+		response_body_contains_wh_property().and().
+		response_wh_object_is_new_wh_property()
 }

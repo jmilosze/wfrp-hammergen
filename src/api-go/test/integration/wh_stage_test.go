@@ -89,6 +89,11 @@ func (s *whTestStage) status_code_is_404() *whTestStage {
 	return s
 }
 
+func (s *whTestStage) status_code_is_500() *whTestStage {
+	require.Equal(s.t, http.StatusInternalServerError, s.responseCode)
+	return s
+}
+
 func (s *whTestStage) new_wh_property() *whTestStage {
 	s.newWhProperty = &warhammer.Property{
 		Name:         "new_wh_property",
@@ -258,7 +263,7 @@ func (s *whTestStage) owner_is_admin_literal_and_can_edit() *whTestStage {
 	return s
 }
 
-func (s *whTestStage) new_wh_property_is_querried() *whTestStage {
+func (s *whTestStage) new_wh_property_is_retrieved() *whTestStage {
 	s.getWh(s.testUrl + "/api/wh/property/" + s.newWhPropertyId)
 	return s
 }
@@ -425,4 +430,24 @@ func (s *whTestStage) response_wh_object_is_another_new_wh_property() *whTestSta
 
 	s.compareWhProperty(s.anotherNewWhProperty, s.responseWh.Object)
 	return s
+}
+
+func (s *whTestStage) new_wh_property_is_deleted() *whTestStage {
+	s.deleteWh(s.testUrl + "/api/wh/property/" + s.newWhPropertyId)
+	return s
+}
+
+func (s *whTestStage) deleteWh(url string) {
+
+	req, err := http.NewRequest("DELETE", url, nil)
+	require.NoError(s.t, err)
+	if s.authorizationHeader != "" {
+		req.Header.Set("Authorization", s.authorizationHeader)
+	}
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+
+	s.responseCode = resp.StatusCode
+	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
 }

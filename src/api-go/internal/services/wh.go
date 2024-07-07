@@ -131,7 +131,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 
 func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) error {
 	if c.Id == "anonymous" {
-		return fmt.Errorf("unauthorized to delete wh %s", whId)
+		return &wh.WhError{ErrType: wh.ErrorUnauthorized, WhType: t, Err: fmt.Errorf("unauthorized to delete wh %s", whId)}
 	}
 
 	ownerId := c.Id
