@@ -13,9 +13,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        VERSION: wfrp_mock_mongodb
     environment:
+      HAMMERGEN_SERVICES_EMAIL: "mockemail"
+      HAMMERGEN_SERVICES_CAPTCHA: "mockcaptcha"
       HAMMERGEN_USERSERVICE_CREATE_MOCKS: "true"
       HAMMERGEN_WHSERVICE_CREATE_MOCKS: "true"
       HAMMERGEN_MONGODB_CREATE_USER_INDEXES: "true"
@@ -30,9 +30,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        VERSION: wfrp_mock_memdb
     environment:
+      HAMMERGEN_SERVICES_EMAIL: "mockemail"
+      HAMMERGEN_SERVICES_CAPTCHA: "mockcaptcha"
+      HAMMERGEN_SERVICES_DB: "memdb"
       HAMMERGEN_USERSERVICE_CREATE_MOCKS: "true"
       HAMMERGEN_WHSERVICE_CREATE_MOCKS: "true"
     ports:
