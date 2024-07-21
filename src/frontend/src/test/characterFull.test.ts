@@ -925,9 +925,9 @@ const characterFull = {
   run: 28,
   wounds: 7,
   talents: [
-    { name: "talent_1", rank: 6 },
-    { name: "talent_2", rank: 6 },
-    { name: "talent_3", rank: 1 },
+    { name: "talent_1", rank: 6, id: "id6" },
+    { name: "talent_2", rank: 6, id: "id7" },
+    { name: "talent_3", rank: 1, id: "id8" },
   ],
   basicSkills: [
     {

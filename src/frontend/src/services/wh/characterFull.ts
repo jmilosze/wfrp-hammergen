@@ -107,6 +107,7 @@ export interface CharacterFullCareer {
 }
 
 export interface CharacterFullTalent {
+  id: string;
   name: string;
   rank: number;
 }
@@ -410,7 +411,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     run: 4 * getMovementFormula(fullCharacterApi.object.species, movementModifier),
     wounds: getWoundsFormula(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
 
-    talents: fullCharacterApi.object.talents.map((x) => ({ name: x.wh.object.name, rank: x.number })),
+    talents: fullCharacterApi.object.talents.map((x) => ({ id: x.wh.id, name: x.wh.object.name, rank: x.number })),
     basicSkills: basicSkills,
     advancedSkills: advancedSkills,
 

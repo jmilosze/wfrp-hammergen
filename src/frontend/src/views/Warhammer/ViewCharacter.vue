@@ -271,6 +271,7 @@ const displayTalents = ref({
   items: character.value.talents.map((x) => ({
     name: addSpaces(x.name),
     rank: x.rank,
+    id: x.id,
   })),
 });
 
@@ -561,7 +562,11 @@ const grimoiresDisp = ref(
       :fields="displayAdvancedSkills.fields"
       class="grow"
     />
-    <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow" />
+    <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow">
+      <template #name="item: Record<string, string | number>">
+        <TextLink routeName="talent" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      </template>
+    </ViewCharacterTable>
   </div>
   <ViewCharacterTable
     title="Equipped armour"
