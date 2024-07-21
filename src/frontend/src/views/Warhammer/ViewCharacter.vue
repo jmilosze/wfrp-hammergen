@@ -238,6 +238,7 @@ const displayBasicSkills = ref({
     { name: "skill", displayName: "Skill" },
   ],
   items: character.value.basicSkills.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     attributeName: addSpaces(x.attributeName),
     attributeValue: x.attributeValue,
@@ -255,6 +256,7 @@ const displayAdvancedSkills = ref({
     { name: "skill", displayName: "Skill" },
   ],
   items: character.value.advancedSkills.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     attributeName: addSpaces(x.attributeName),
     attributeValue: x.attributeValue,
@@ -547,13 +549,21 @@ const grimoiresDisp = ref(
       :items="displayBasicSkills.items.slice(0, Math.floor(character.basicSkills.length / 2))"
       :fields="displayBasicSkills.fields"
       class="grow"
-    />
+    >
+      <template #name="item: Record<string, string | number>">
+        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      </template>
+    </ViewCharacterTable>
     <ViewCharacterTable
       title="Basic skills 2"
       :items="displayBasicSkills.items.slice(Math.floor(character.basicSkills.length / 2))"
       :fields="displayBasicSkills.fields"
       class="grow"
-    />
+    >
+      <template #name="item: Record<string, string | number>">
+        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      </template>
+    </ViewCharacterTable>
   </div>
   <div class="flex justify-between text-left gap-5 my-5" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable
@@ -561,7 +571,11 @@ const grimoiresDisp = ref(
       :items="displayAdvancedSkills.items"
       :fields="displayAdvancedSkills.fields"
       class="grow"
-    />
+    >
+      <template #name="item: Record<string, string | number>">
+        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      </template>
+    </ViewCharacterTable>
     <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow">
       <template #name="item: Record<string, string | number>">
         <TextLink routeName="talent" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>

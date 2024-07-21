@@ -931,6 +931,7 @@ const characterFull = {
   ],
   basicSkills: [
     {
+      id: "id4",
       name: "basic (Any)",
       attributeName: "S",
       attributeValue: 51,
@@ -940,6 +941,7 @@ const characterFull = {
   ],
   advancedSkills: [
     {
+      id: "id5",
       name: "advanced",
       attributeName: "WS",
       attributeValue: 47,

@@ -113,6 +113,7 @@ export interface CharacterFullTalent {
 }
 
 export interface CharacterFullSkill {
+  id: string;
   name: string;
   attributeName: string;
   attributeValue: number;
@@ -473,6 +474,7 @@ function getSkills(characterSkills: WhNumber<SkillApiData>[], attributes: Attrib
 
 function skillForDisplay(rawSkill: ApiResponse<SkillApiData>, skillRank: number, attributes: Attributes) {
   return {
+    id: rawSkill.id,
     name: rawSkill.object.isGroup ? `${rawSkill.object.name} (Any)` : rawSkill.object.name,
     attributeName: printAttributeName(rawSkill.object.attribute),
     attributeValue: getAttributeValue(rawSkill.object.attribute, attributes),
