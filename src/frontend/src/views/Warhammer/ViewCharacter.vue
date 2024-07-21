@@ -19,6 +19,7 @@ import ViewCharacterTable from "../../components/ViewCharacterTable.vue";
 import { usePrint } from "../../composables/print.ts";
 import { useAuth } from "../../composables/auth.ts";
 import AlertBlock from "../../components/AlertBlock.vue";
+import TextLink from "../../components/TextLink.vue";
 
 const props = defineProps<{
   id: string;
@@ -466,13 +467,15 @@ const grimoiresDisp = ref(
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Current</span>
-                <span class="mr-3"> {{ addSpaces(character.careerName) }}</span>
+                <TextLink routeName="career" :params="{ id: character.currentCareer.id }" :noColour="true" class="mr-3">
+                  {{ addSpaces(character.currentCareer.name) }}
+                </TextLink>
               </div>
             </td>
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Class</span>
-                <span class="mr-3"> {{ addSpaces(character.className) }}</span>
+                <span class="mr-3"> {{ addSpaces(character.currentCareer.className) }}</span>
               </div>
             </td>
             <td class="border border-neutral-400 p-2">
@@ -486,7 +489,16 @@ const grimoiresDisp = ref(
             <td colspan="3" class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Past Careers</span>
-                <span class="mr-3"> {{ addSpaces(character.pastCareers.join(", ")) }}</span>
+                <TextLink
+                  v-for="(pastCareer, i) in character.pastCareers"
+                  :key="i"
+                  routeName="career"
+                  :params="{ id: pastCareer.id }"
+                  :noColour="true"
+                  class="mr-3"
+                >
+                  {{ addSpaces(pastCareer.name) }}
+                </TextLink>
               </div>
             </td>
           </tr>

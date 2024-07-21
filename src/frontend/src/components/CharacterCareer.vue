@@ -11,6 +11,7 @@ import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
+import { addSpaces } from "../utils/string.ts";
 
 type CareerWithSelect = {
   id: string;
@@ -187,12 +188,16 @@ function emitPastSelected(id: string) {
     <div v-else class="border border-neutral-300 rounded p-2">
       <div class="mb-1">Current career</div>
       <div v-if="selectedCurrentCareer">
-        {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} - {{ selectedCurrentCareer.levelName }}
+        <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }" :noColour="true" class="mr-3">
+          {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} - {{ selectedCurrentCareer.levelName }}
+        </TextLink>
       </div>
       <div class="border-t border-neutral-300 my-1"></div>
       <div class="mb-1">Past careers</div>
       <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
-        <div>{{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}</div>
+        <TextLink routeName="career" :params="{ id: pastCareer.careerId }" :noColour="true" class="mr-3">
+          {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}
+        </TextLink>
       </div>
     </div>
     <ModalWindow id="modifyCareersModal" size="md">

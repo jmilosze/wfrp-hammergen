@@ -6,7 +6,7 @@ import {
   printSpeciesWithRegion,
   SpeciesWithRegion,
 } from "./characterUtils.ts";
-import { CareerApiData, CareerClass, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
+import { CareerApiData, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
 import {
   Attributes,
   getAttributes,
@@ -99,6 +99,13 @@ export interface CharacterFullApiData {
   shared: boolean;
 }
 
+export interface CharacterFullCareer {
+  name: string;
+  levelName: string;
+  id: string;
+  className: string;
+}
+
 export interface CharacterFullTalent {
   name: string;
   rank: number;
@@ -175,10 +182,8 @@ export interface CharacterFull {
   status: string;
   standing: StatusStanding;
 
-  careerName: string;
-  careerLevelName: string;
-  className: string;
-  pastCareers: string[];
+  currentCareer: CharacterFullCareer;
+  pastCareers: CharacterFullCareer[];
 
   baseAttributes: Attributes;
   attributeAdvances: Attributes;
@@ -233,10 +238,8 @@ export function newCharacterFull({
   corruption = 0,
   status = printStatusTier(StatusTier.Brass),
   standing = 0 as StatusStanding,
-  careerName = "",
-  careerLevelName = "",
-  className = printClassName(CareerClass.Academic),
-  pastCareers = [] as string[],
+  currentCareer = {} as CharacterFullCareer,
+  pastCareers = [] as CharacterFullCareer[],
   baseAttributes = getAttributes(),
   attributeAdvances = getAttributes(),
   otherAttributes = getAttributes(),
@@ -284,9 +287,7 @@ export function newCharacterFull({
     corruption: corruption,
     status: status,
     standing: standing,
-    careerName: careerName,
-    careerLevelName: careerLevelName,
-    className: className,
+    currentCareer: currentCareer,
     pastCareers: pastCareers,
     baseAttributes: baseAttributes,
     attributeAdvances: attributeAdvances,
@@ -386,10 +387,18 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     status: printStatusTier(fullCharacterApi.object.status),
     standing: fullCharacterApi.object.standing,
 
-    careerName: getCareerName(fullCharacterApi.object.career),
-    careerLevelName: getCareerLevel(fullCharacterApi.object.career),
-    className: printClassName(fullCharacterApi.object.career.wh.object.class),
-    pastCareers: fullCharacterApi.object.careerPath.map((x) => `${getCareerName(x)}`),
+    currentCareer: {
+      id: fullCharacterApi.object.career.wh.id,
+      name: getCareerName(fullCharacterApi.object.career),
+      levelName: getCareerLevel(fullCharacterApi.object.career),
+      className: printClassName(fullCharacterApi.object.career.wh.object.class),
+    },
+    pastCareers: fullCharacterApi.object.careerPath.map((x) => ({
+      id: x.wh.id,
+      name: getCareerName(x),
+      levelName: getCareerLevel(x),
+      className: printClassName(x.wh.object.class),
+    })),
 
     baseAttributes: fullCharacterApi.object.baseAttributes,
     attributeAdvances: fullCharacterApi.object.attributeAdvances,
@@ -568,13 +577,13 @@ export function CharacterFullToCsv(characterFull: CharacterFull): string {
   let csv = "Name,Species,Career,Class,Status,,,,,,\n";
   csv += csvStr(characterFull.name) + ",";
   csv += csvStr(characterFull.species) + ",";
-  csv += csvStr(`${characterFull.careerName} (${characterFull.careerLevelName})`) + ",";
-  csv += csvStr(characterFull.className) + ",";
+  csv += csvStr(`${characterFull.currentCareer.name} (${characterFull.currentCareer.levelName})`) + ",";
+  csv += csvStr(characterFull.currentCareer.className) + ",";
   csv += csvStr(characterFull.status + " " + characterFull.standing) + ",";
   csv += ",,,,,\n";
 
   csv += "Past Careers,";
-  csv += csvStr(characterFull.pastCareers.join(", ")) + ",";
+  csv += csvStr(characterFull.pastCareers.map((x) => x.name).join(", ")) + ",";
   csv += ",,,,,,,,\n";
   csv += "Description,";
   csv += csvStr(characterFull.description) + ",";

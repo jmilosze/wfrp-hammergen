@@ -1,5 +1,16 @@
 <script setup lang="ts">
-defineProps<{ routeName?: string; params?: any; href?: string; sameWindow?: boolean }>();
+const props = defineProps<{
+  routeName?: string;
+  params?: any;
+  href?: string;
+  sameWindow?: boolean;
+  noColour?: boolean;
+}>();
+
+const linkClass = ["hover:underline"];
+if (!props.noColour) {
+  linkClass.push("text-blue-600");
+}
 </script>
 
 <template>
@@ -7,7 +18,7 @@ defineProps<{ routeName?: string; params?: any; href?: string; sameWindow?: bool
     v-if="routeName"
     :to="{ name: routeName, params: params }"
     :target="sameWindow ? '' : '_blank'"
-    class="text-blue-600 hover:underline"
+    :class="linkClass"
   >
     <slot />
   </RouterLink>
