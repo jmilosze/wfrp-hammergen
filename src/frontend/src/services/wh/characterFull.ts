@@ -145,6 +145,7 @@ export interface CharacterFullMutation {
 }
 
 export interface CharacterFullItem {
+  id: string;
   name: string;
   enc: number;
   qualitiesFlawsRunes: string[];
@@ -493,6 +494,7 @@ function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attri
 
   for (const charItem of characterItems) {
     const item = {
+      id: charItem.wh.id,
       name: charItem.wh.object.name,
       enc: charItem.wh.object.enc,
       qualitiesFlawsRunes: charItem.wh.object.properties.map((x) => x.object.name),

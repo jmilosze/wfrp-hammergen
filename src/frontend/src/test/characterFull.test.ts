@@ -951,6 +951,7 @@ const characterFull = {
   ],
   equippedArmor: [
     {
+      id: "id12",
       name: "item_4",
       enc: 2,
       qualitiesFlawsRunes: ["item_4_property_1"],
@@ -964,6 +965,7 @@ const characterFull = {
   ],
   equippedWeapon: [
     {
+      id: "id9",
       name: "item_1",
       enc: 1.5,
       qualitiesFlawsRunes: ["item_1_property_1"],
@@ -975,6 +977,7 @@ const characterFull = {
       dmg: "12",
     },
     {
+      id: "id10",
       name: "item_2",
       enc: 1,
       qualitiesFlawsRunes: ["item_2_property_1", "item_2_property_2"],
@@ -986,6 +989,7 @@ const characterFull = {
       dmg: "8",
     },
     {
+      id: "id11",
       name: "item_3",
       enc: 0.5,
       qualitiesFlawsRunes: [],
@@ -1000,6 +1004,7 @@ const characterFull = {
   equippedOther: [],
   carried: [
     {
+      id: "id13",
       name: "item_5",
       enc: 2,
       qualitiesFlawsRunes: ["item_5_property_1", "item_5_property_2"],
@@ -1008,6 +1013,7 @@ const characterFull = {
       type: "Container",
     },
     {
+      id: "id14",
       name: "item_6",
       enc: 0,
       qualitiesFlawsRunes: [],
@@ -1016,6 +1022,7 @@ const characterFull = {
       type: "Other",
     },
     {
+      id: "id14a",
       number: 1,
       name: "spellbook",
       enc: 1,
@@ -1042,7 +1049,17 @@ const characterFull = {
       ],
     },
   ],
-  stored: [{ name: "item_7", enc: 7, qualitiesFlawsRunes: [], number: 5, description: "item_7_desc", type: "Other" }],
+  stored: [
+    {
+      id: "id15",
+      name: "item_7",
+      enc: 7,
+      qualitiesFlawsRunes: [],
+      number: 5,
+      description: "item_7_desc",
+      type: "Other",
+    },
+  ],
   spells: [
     {
       name: "spell_1",
