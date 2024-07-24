@@ -375,6 +375,7 @@ const spellFields = [
 
 function formatSpell(spell: CharacterFullSpell) {
   return {
+    id: spell.id,
     name: addSpaces(spell.name),
     cn: spell.cn,
     range: addSpaces(spell.range),
@@ -396,6 +397,7 @@ const prayerDisp = ref({
     { name: "duration", displayName: "Duration" },
   ],
   items: character.value.prayers.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     range: addSpaces(x.range),
     target: addSpaces(x.target),
@@ -695,14 +697,22 @@ const grimoiresDisp = ref(
     :items="spellsDisp.items"
     :fields="spellsDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="spell" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
   <ViewCharacterTable
     title="Known prayers"
     :stack="!isEqualOrGreater && !printing"
     :items="prayerDisp.items"
     :fields="prayerDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="prayer" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
   <ViewCharacterTable
     v-for="book in grimoiresDisp"
     :key="book.name"
@@ -711,7 +721,11 @@ const grimoiresDisp = ref(
     :items="book.items"
     :fields="book.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="spell" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
 </template>
 
 <style scoped></style>

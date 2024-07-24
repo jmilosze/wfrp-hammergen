@@ -122,6 +122,7 @@ export interface CharacterFullSkill {
 }
 
 export interface CharacterFullSpell {
+  id: string;
   name: string;
   range: string;
   target: string;
@@ -131,6 +132,7 @@ export interface CharacterFullSpell {
 }
 
 export interface CharacterFullPrayer {
+  id: string;
   name: string;
   range: string;
   target: string;
@@ -559,6 +561,7 @@ function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attri
 
 function getSpells(spells: ApiResponse<SpellApiData>[]): CharacterFullSpell[] {
   return spells.map((x) => ({
+    id: x.id,
     name: x.object.name,
     range: x.object.range,
     target: x.object.target,
@@ -570,6 +573,7 @@ function getSpells(spells: ApiResponse<SpellApiData>[]): CharacterFullSpell[] {
 
 function getPrayers(prayers: ApiResponse<PrayerApiData>[]): CharacterFullPrayer[] {
   return prayers.map((x) => ({
+    id: x.id,
     name: x.object.name,
     range: x.object.range,
     target: x.object.target,

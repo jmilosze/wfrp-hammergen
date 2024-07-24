@@ -1043,6 +1043,7 @@ const characterFull = {
       type: "Grimoire",
       spells: [
         {
+          id: "sid1",
           name: "spellbook_spell_1",
           range: "spellbook_spell_1_range",
           target: "spellbook_spell_1_target",
@@ -1051,6 +1052,7 @@ const characterFull = {
           cn: 1,
         },
         {
+          id: "sid2",
           name: "spellbook_spell_2",
           range: "spellbook_spell_2_range",
           target: "spellbook_spell_2_target",
@@ -1074,6 +1076,7 @@ const characterFull = {
   ],
   spells: [
     {
+      id: "id16",
       name: "spell_1",
       range: "spell_1_range",
       target: "spell_1_target",
@@ -1082,6 +1085,7 @@ const characterFull = {
       cn: 1,
     },
     {
+      id: "id17",
       name: "spell_2",
       range: "spell_2_range",
       target: "spell_2_target",
@@ -1092,6 +1096,7 @@ const characterFull = {
   ],
   prayers: [
     {
+      id: "id16a",
       name: "prayer_1",
       range: "prayer_1_range",
       target: "prayer_1_target",
@@ -1099,6 +1104,7 @@ const characterFull = {
       description: "prayer_1_desc",
     },
     {
+      id: "id17a",
       name: "prayer_2",
       range: "prayer_2_range",
       target: "prayer_2_target",
