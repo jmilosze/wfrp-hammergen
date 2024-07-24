@@ -139,6 +139,7 @@ export interface CharacterFullPrayer {
 }
 
 export interface CharacterFullMutation {
+  id: string;
   name: string;
   type: string;
   description: string;
@@ -478,7 +479,11 @@ function getSkills(characterSkills: WhNumber<SkillApiData>[], attributes: Attrib
   return [basicSkills.sort(sortByName), advancedSkills.sort(sortByName)];
 }
 
-function skillForDisplay(rawSkill: ApiResponse<SkillApiData>, skillRank: number, attributes: Attributes) {
+function skillForDisplay(
+  rawSkill: ApiResponse<SkillApiData>,
+  skillRank: number,
+  attributes: Attributes,
+): CharacterFullSkill {
   return {
     id: rawSkill.id,
     name: rawSkill.object.isGroup ? `${rawSkill.object.name} (Any)` : rawSkill.object.name,
@@ -493,7 +498,7 @@ function sortByName(x: { name: string }, y: { name: string }): -1 | 0 | 1 {
   return x.name === y.name ? 0 : x.name < y.name ? -1 : 1;
 }
 
-function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attributes) {
+function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attributes): CharacterFullItem[] {
   const SB = Math.floor(attributes.S / 10);
   const items = [] as CharacterFullItem[];
 
@@ -552,7 +557,7 @@ function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attri
   return items;
 }
 
-function getSpells(spells: ApiResponse<SpellApiData>[]) {
+function getSpells(spells: ApiResponse<SpellApiData>[]): CharacterFullSpell[] {
   return spells.map((x) => ({
     name: x.object.name,
     range: x.object.range,
@@ -563,7 +568,7 @@ function getSpells(spells: ApiResponse<SpellApiData>[]) {
   }));
 }
 
-function getPrayers(prayers: ApiResponse<PrayerApiData>[]) {
+function getPrayers(prayers: ApiResponse<PrayerApiData>[]): CharacterFullPrayer[] {
   return prayers.map((x) => ({
     name: x.object.name,
     range: x.object.range,
@@ -573,9 +578,10 @@ function getPrayers(prayers: ApiResponse<PrayerApiData>[]) {
   }));
 }
 
-function getMutations(mutations: ApiResponse<MutationApiData>[]) {
+function getMutations(mutations: ApiResponse<MutationApiData>[]): CharacterFullMutation[] {
   return mutations.map((x) => {
     return {
+      id: x.id,
       name: x.object.name,
       type: printMutationType(x.object.type),
       description: x.object.description,

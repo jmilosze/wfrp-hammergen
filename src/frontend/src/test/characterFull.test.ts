@@ -1107,8 +1107,8 @@ const characterFull = {
     },
   ],
   mutations: [
-    { name: "mut_1", type: "Physical", description: "mut_1_desc" },
-    { name: "mut_2", type: "Mental", description: "mut_2_desc" },
+    { id: "id18", name: "mut_1", type: "Physical", description: "mut_1_desc" },
+    { id: "id19", name: "mut_2", type: "Mental", description: "mut_2_desc" },
   ],
   encWeapon: 5,
   encArmor: 3,

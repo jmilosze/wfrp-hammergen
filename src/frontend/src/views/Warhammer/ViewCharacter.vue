@@ -358,6 +358,7 @@ const mutationDisp = ref({
     { name: "description", displayName: "Description" },
   ],
   items: character.value.mutations.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     type: x.type,
     description: addSpaces(x.description),
@@ -683,7 +684,11 @@ const grimoiresDisp = ref(
     :items="mutationDisp.items"
     :fields="mutationDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="mutation" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
   <ViewCharacterTable
     title="Known spells"
     :stack="!isEqualOrGreater && !printing"
