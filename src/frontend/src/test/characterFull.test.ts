@@ -896,10 +896,26 @@ const characterFull = {
   corruption: 2,
   shared: true,
   canEdit: true,
-  careerName: "career_3 3",
-  careerLevelName: "career_3_level_3",
-  className: "Peasant",
-  pastCareers: ["career_1 1", "career_2 2"],
+  currentCareer: {
+    id: "id3",
+    name: "career_3 3",
+    levelName: "career_3_level_3",
+    className: "Peasant",
+  },
+  pastCareers: [
+    {
+      id: "id1",
+      name: "career_1 1",
+      levelName: "career_1_level_1",
+      className: "Academic",
+    },
+    {
+      id: "id2",
+      name: "career_2 2",
+      levelName: "career_2_level_2",
+      className: "Courtier",
+    },
+  ],
   baseAttributes: { WS: 40, BS: 40, S: 30, T: 25, I: 50, Ag: 35, Dex: 50, Int: 35, WP: 35, Fel: 25 },
   attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   otherAttributes: { WS: 6, BS: 12, S: 18, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 8 },
@@ -909,12 +925,13 @@ const characterFull = {
   run: 28,
   wounds: 7,
   talents: [
-    { name: "talent_1", rank: 6 },
-    { name: "talent_2", rank: 6 },
-    { name: "talent_3", rank: 1 },
+    { name: "talent_1", rank: 6, id: "id6" },
+    { name: "talent_2", rank: 6, id: "id7" },
+    { name: "talent_3", rank: 1, id: "id8" },
   ],
   basicSkills: [
     {
+      id: "id4",
       name: "basic (Any)",
       attributeName: "S",
       attributeValue: 51,
@@ -924,6 +941,7 @@ const characterFull = {
   ],
   advancedSkills: [
     {
+      id: "id5",
       name: "advanced",
       attributeName: "WS",
       attributeValue: 47,
@@ -933,9 +951,10 @@ const characterFull = {
   ],
   equippedArmor: [
     {
+      id: "id12",
       name: "item_4",
       enc: 2,
-      qualitiesFlawsRunes: ["item_4_property_1"],
+      qualitiesFlawsRunes: [{ id: "pid4", name: "item_4_property_1" }],
       number: 3,
       description: "item_4_desc",
       type: "Armour",
@@ -946,9 +965,10 @@ const characterFull = {
   ],
   equippedWeapon: [
     {
+      id: "id9",
       name: "item_1",
       enc: 1.5,
-      qualitiesFlawsRunes: ["item_1_property_1"],
+      qualitiesFlawsRunes: [{ id: "pid1", name: "item_1_property_1" }],
       number: 1,
       description: "item_1_desc",
       type: "Melee",
@@ -957,9 +977,19 @@ const characterFull = {
       dmg: "12",
     },
     {
+      id: "id10",
       name: "item_2",
       enc: 1,
-      qualitiesFlawsRunes: ["item_2_property_1", "item_2_property_2"],
+      qualitiesFlawsRunes: [
+        {
+          id: "pid2",
+          name: "item_2_property_1",
+        },
+        {
+          id: "pid3",
+          name: "item_2_property_2",
+        },
+      ],
       number: 2,
       description: "item_2_desc",
       type: "Ranged",
@@ -968,6 +998,7 @@ const characterFull = {
       dmg: "8",
     },
     {
+      id: "id11",
       name: "item_3",
       enc: 0.5,
       qualitiesFlawsRunes: [],
@@ -982,14 +1013,19 @@ const characterFull = {
   equippedOther: [],
   carried: [
     {
+      id: "id13",
       name: "item_5",
       enc: 2,
-      qualitiesFlawsRunes: ["item_5_property_1", "item_5_property_2"],
+      qualitiesFlawsRunes: [
+        { id: "pid5", name: "item_5_property_1" },
+        { id: "pid6", name: "item_5_property_2" },
+      ],
       number: 1,
       description: "(Capacity 2) item_5_desc",
       type: "Container",
     },
     {
+      id: "id14",
       name: "item_6",
       enc: 0,
       qualitiesFlawsRunes: [],
@@ -998,6 +1034,7 @@ const characterFull = {
       type: "Other",
     },
     {
+      id: "id14a",
       number: 1,
       name: "spellbook",
       enc: 1,
@@ -1006,6 +1043,7 @@ const characterFull = {
       type: "Grimoire",
       spells: [
         {
+          id: "sid1",
           name: "spellbook_spell_1",
           range: "spellbook_spell_1_range",
           target: "spellbook_spell_1_target",
@@ -1014,6 +1052,7 @@ const characterFull = {
           cn: 1,
         },
         {
+          id: "sid2",
           name: "spellbook_spell_2",
           range: "spellbook_spell_2_range",
           target: "spellbook_spell_2_target",
@@ -1024,9 +1063,20 @@ const characterFull = {
       ],
     },
   ],
-  stored: [{ name: "item_7", enc: 7, qualitiesFlawsRunes: [], number: 5, description: "item_7_desc", type: "Other" }],
+  stored: [
+    {
+      id: "id15",
+      name: "item_7",
+      enc: 7,
+      qualitiesFlawsRunes: [],
+      number: 5,
+      description: "item_7_desc",
+      type: "Other",
+    },
+  ],
   spells: [
     {
+      id: "id16",
       name: "spell_1",
       range: "spell_1_range",
       target: "spell_1_target",
@@ -1035,6 +1085,7 @@ const characterFull = {
       cn: 1,
     },
     {
+      id: "id17",
       name: "spell_2",
       range: "spell_2_range",
       target: "spell_2_target",
@@ -1045,6 +1096,7 @@ const characterFull = {
   ],
   prayers: [
     {
+      id: "id16a",
       name: "prayer_1",
       range: "prayer_1_range",
       target: "prayer_1_target",
@@ -1052,6 +1104,7 @@ const characterFull = {
       description: "prayer_1_desc",
     },
     {
+      id: "id17a",
       name: "prayer_2",
       range: "prayer_2_range",
       target: "prayer_2_target",
@@ -1060,8 +1113,8 @@ const characterFull = {
     },
   ],
   mutations: [
-    { name: "mut_1", type: "Physical", description: "mut_1_desc" },
-    { name: "mut_2", type: "Mental", description: "mut_2_desc" },
+    { id: "id18", name: "mut_1", type: "Physical", description: "mut_1_desc" },
+    { id: "id19", name: "mut_2", type: "Mental", description: "mut_2_desc" },
   ],
   encWeapon: 5,
   encArmor: 3,

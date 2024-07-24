@@ -19,6 +19,7 @@ import ViewCharacterTable from "../../components/ViewCharacterTable.vue";
 import { usePrint } from "../../composables/print.ts";
 import { useAuth } from "../../composables/auth.ts";
 import AlertBlock from "../../components/AlertBlock.vue";
+import TextLink from "../../components/TextLink.vue";
 
 const props = defineProps<{
   id: string;
@@ -220,11 +221,12 @@ const equippedArmourDisp = ref({
     { name: "qualities", displayName: "Qualities and runes" },
   ],
   items: character.value.equippedArmor.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     locations: x.locations ? x.locations.map((x) => addSpaces(x)).join(", ") : "",
     enc: x.enc,
     ap: x.ap ? x.ap : 0,
-    qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
+    qualities: x.qualitiesFlawsRunes,
   })),
 });
 
@@ -237,6 +239,7 @@ const displayBasicSkills = ref({
     { name: "skill", displayName: "Skill" },
   ],
   items: character.value.basicSkills.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     attributeName: addSpaces(x.attributeName),
     attributeValue: x.attributeValue,
@@ -254,6 +257,7 @@ const displayAdvancedSkills = ref({
     { name: "skill", displayName: "Skill" },
   ],
   items: character.value.advancedSkills.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     attributeName: addSpaces(x.attributeName),
     attributeValue: x.attributeValue,
@@ -270,6 +274,7 @@ const displayTalents = ref({
   items: character.value.talents.map((x) => ({
     name: addSpaces(x.name),
     rank: x.rank,
+    id: x.id,
   })),
 });
 
@@ -283,12 +288,13 @@ const equippedWeaponDisp = ref({
     { name: "qualities", displayName: "Qualities and runes" },
   ],
   items: character.value.equippedWeapon.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     group: addSpaces(x.group),
     enc: x.enc,
     rng: addSpaces(x.rng),
     dmg: addSpaces(x.dmg),
-    qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
+    qualities: x.qualitiesFlawsRunes,
   })),
 });
 
@@ -299,6 +305,7 @@ const equippedOtherDisp = ref({
     { name: "description", displayName: "Description" },
   ],
   items: character.value.equippedOther.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     enc: x.enc,
     description: addSpaces(x.description),
@@ -312,16 +319,19 @@ const carriedDisp = ref({
     { name: "description", displayName: "Description" },
   ],
   items: character.value.carried.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     enc: x.enc,
     description: addSpaces(x.description),
   })),
 });
 
-const storedItems = character.value.stored.map((x) => addSpaces(x.name)).join(", ");
 const storedDisp = ref({
-  fields: [{ name: "items", displayName: "Items", colspan: 0 }],
-  items: storedItems !== "" ? [{ items: storedItems }] : [],
+  fields: [{ name: "name", displayName: "Name", colspan: 0 }],
+  items: character.value.stored.map((x) => ({
+    id: x.id,
+    name: addSpaces(x.name),
+  })),
 });
 
 const encDisp = ref({
@@ -348,6 +358,7 @@ const mutationDisp = ref({
     { name: "description", displayName: "Description" },
   ],
   items: character.value.mutations.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     type: x.type,
     description: addSpaces(x.description),
@@ -364,6 +375,7 @@ const spellFields = [
 
 function formatSpell(spell: CharacterFullSpell) {
   return {
+    id: spell.id,
     name: addSpaces(spell.name),
     cn: spell.cn,
     range: addSpaces(spell.range),
@@ -385,6 +397,7 @@ const prayerDisp = ref({
     { name: "duration", displayName: "Duration" },
   ],
   items: character.value.prayers.map((x) => ({
+    id: x.id,
     name: addSpaces(x.name),
     range: addSpaces(x.range),
     target: addSpaces(x.target),
@@ -466,13 +479,15 @@ const grimoiresDisp = ref(
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Current</span>
-                <span class="mr-3"> {{ addSpaces(character.careerName) }}</span>
+                <TextLink routeName="career" :params="{ id: character.currentCareer.id }" :noColour="true" class="mr-3">
+                  {{ addSpaces(character.currentCareer.name) }}
+                </TextLink>
               </div>
             </td>
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Class</span>
-                <span class="mr-3"> {{ addSpaces(character.className) }}</span>
+                <span class="mr-3"> {{ addSpaces(character.currentCareer.className) }}</span>
               </div>
             </td>
             <td class="border border-neutral-400 p-2">
@@ -486,7 +501,16 @@ const grimoiresDisp = ref(
             <td colspan="3" class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Past Careers</span>
-                <span class="mr-3"> {{ addSpaces(character.pastCareers.join(", ")) }}</span>
+                <TextLink
+                  v-for="(pastCareer, i) in character.pastCareers"
+                  :key="i"
+                  routeName="career"
+                  :params="{ id: pastCareer.id }"
+                  :noColour="true"
+                  class="mr-3"
+                >
+                  {{ addSpaces(pastCareer.name) }}
+                </TextLink>
               </div>
             </td>
           </tr>
@@ -534,13 +558,21 @@ const grimoiresDisp = ref(
       :items="displayBasicSkills.items.slice(0, Math.floor(character.basicSkills.length / 2))"
       :fields="displayBasicSkills.fields"
       class="grow"
-    />
+    >
+      <template #name="item">
+        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      </template>
+    </ViewCharacterTable>
     <ViewCharacterTable
       title="Basic skills 2"
       :items="displayBasicSkills.items.slice(Math.floor(character.basicSkills.length / 2))"
       :fields="displayBasicSkills.fields"
       class="grow"
-    />
+    >
+      <template #name="item">
+        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      </template>
+    </ViewCharacterTable>
   </div>
   <div class="flex justify-between text-left gap-5 my-5" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
     <ViewCharacterTable
@@ -548,44 +580,99 @@ const grimoiresDisp = ref(
       :items="displayAdvancedSkills.items"
       :fields="displayAdvancedSkills.fields"
       class="grow"
-    />
-    <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow" />
+    >
+      <template #name="item">
+        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      </template>
+    </ViewCharacterTable>
+    <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow">
+      <template #name="item">
+        <TextLink routeName="talent" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      </template>
+    </ViewCharacterTable>
   </div>
+
   <ViewCharacterTable
     title="Equipped armour"
     :stack="!isEqualOrGreater && !printing"
     :items="equippedArmourDisp.items"
     :fields="equippedArmourDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+    <template #qualities="item: Record<string, any>">
+      <div v-if="item.qualities">
+        <span v-for="(quality, i) in item.qualities" :key="i">
+          <TextLink routeName="property" :params="{ id: quality.id }" :noColour="true">
+            {{ quality.name }}
+          </TextLink>
+          <span v-if="i != item.qualities.length - 1">, </span>
+        </span>
+      </div>
+    </template>
+  </ViewCharacterTable>
+
   <ViewCharacterTable
     title="Equipped weapon"
     :stack="!isEqualOrGreater && !printing"
     :items="equippedWeaponDisp.items"
     :fields="equippedWeaponDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+    <template #qualities="item: Record<string, any>">
+      <div v-if="item.qualities">
+        <span v-for="(quality, i) in item.qualities" :key="i">
+          <TextLink routeName="property" :params="{ id: quality.id }" :noColour="true">
+            {{ quality.name }}
+          </TextLink>
+          <span v-if="i != item.qualities.length - 1">, </span>
+        </span>
+      </div>
+    </template>
+  </ViewCharacterTable>
+
   <ViewCharacterTable
     title="Other equipped trappings"
     :stack="!isEqualOrGreater && !printing"
     :items="equippedOtherDisp.items"
     :fields="equippedOtherDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
+
   <ViewCharacterTable
     title="Carried trappings"
     :stack="!isEqualOrGreater && !printing"
     :items="carriedDisp.items"
     :fields="carriedDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
+
   <div class="flex justify-between text-left gap-5" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
-    <ViewCharacterTable
-      title="Owned and stored stuff"
-      :items="storedDisp.items"
-      :fields="storedDisp.fields"
-      class="grow"
-    />
+    <div class="text-left grow">
+      <div class="mb-1">Owned and stored stuff</div>
+
+      <div class="p-2 border border-neutral-400">
+        <span v-for="(item, i) in storedDisp.items" :key="i">
+          <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">
+            {{ item.name }}
+          </TextLink>
+          <span v-if="i != storedDisp.items.length - 1">, </span>
+        </span>
+      </div>
+    </div>
     <ViewCharacterTable
       title="Encumbrance (Equipped and Carried)"
       :items="encDisp.items"
@@ -599,21 +686,33 @@ const grimoiresDisp = ref(
     :items="mutationDisp.items"
     :fields="mutationDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="mutation" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
   <ViewCharacterTable
     title="Known spells"
     :stack="!isEqualOrGreater && !printing"
     :items="spellsDisp.items"
     :fields="spellsDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="spell" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
   <ViewCharacterTable
     title="Known prayers"
     :stack="!isEqualOrGreater && !printing"
     :items="prayerDisp.items"
     :fields="prayerDisp.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="prayer" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
   <ViewCharacterTable
     v-for="book in grimoiresDisp"
     :key="book.name"
@@ -622,7 +721,11 @@ const grimoiresDisp = ref(
     :items="book.items"
     :fields="book.fields"
     class="my-5"
-  />
+  >
+    <template #name="item">
+      <TextLink routeName="spell" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
 </template>
 
 <style scoped></style>

@@ -6,7 +6,7 @@ import {
   printSpeciesWithRegion,
   SpeciesWithRegion,
 } from "./characterUtils.ts";
-import { CareerApiData, CareerClass, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
+import { CareerApiData, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
 import {
   Attributes,
   getAttributes,
@@ -99,12 +99,21 @@ export interface CharacterFullApiData {
   shared: boolean;
 }
 
+export interface CharacterFullCareer {
+  name: string;
+  levelName: string;
+  id: string;
+  className: string;
+}
+
 export interface CharacterFullTalent {
+  id: string;
   name: string;
   rank: number;
 }
 
 export interface CharacterFullSkill {
+  id: string;
   name: string;
   attributeName: string;
   attributeValue: number;
@@ -113,6 +122,7 @@ export interface CharacterFullSkill {
 }
 
 export interface CharacterFullSpell {
+  id: string;
   name: string;
   range: string;
   target: string;
@@ -122,6 +132,7 @@ export interface CharacterFullSpell {
 }
 
 export interface CharacterFullPrayer {
+  id: string;
   name: string;
   range: string;
   target: string;
@@ -130,15 +141,22 @@ export interface CharacterFullPrayer {
 }
 
 export interface CharacterFullMutation {
+  id: string;
   name: string;
   type: string;
   description: string;
 }
 
+export interface CharacterFullItemProperty {
+  id: string;
+  name: string;
+}
+
 export interface CharacterFullItem {
+  id: string;
   name: string;
   enc: number;
-  qualitiesFlawsRunes: string[];
+  qualitiesFlawsRunes: CharacterFullItemProperty[];
   number: number;
   description: string;
   type: string;
@@ -175,10 +193,8 @@ export interface CharacterFull {
   status: string;
   standing: StatusStanding;
 
-  careerName: string;
-  careerLevelName: string;
-  className: string;
-  pastCareers: string[];
+  currentCareer: CharacterFullCareer;
+  pastCareers: CharacterFullCareer[];
 
   baseAttributes: Attributes;
   attributeAdvances: Attributes;
@@ -233,10 +249,8 @@ export function newCharacterFull({
   corruption = 0,
   status = printStatusTier(StatusTier.Brass),
   standing = 0 as StatusStanding,
-  careerName = "",
-  careerLevelName = "",
-  className = printClassName(CareerClass.Academic),
-  pastCareers = [] as string[],
+  currentCareer = {} as CharacterFullCareer,
+  pastCareers = [] as CharacterFullCareer[],
   baseAttributes = getAttributes(),
   attributeAdvances = getAttributes(),
   otherAttributes = getAttributes(),
@@ -284,9 +298,7 @@ export function newCharacterFull({
     corruption: corruption,
     status: status,
     standing: standing,
-    careerName: careerName,
-    careerLevelName: careerLevelName,
-    className: className,
+    currentCareer: currentCareer,
     pastCareers: pastCareers,
     baseAttributes: baseAttributes,
     attributeAdvances: attributeAdvances,
@@ -386,10 +398,18 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     status: printStatusTier(fullCharacterApi.object.status),
     standing: fullCharacterApi.object.standing,
 
-    careerName: getCareerName(fullCharacterApi.object.career),
-    careerLevelName: getCareerLevel(fullCharacterApi.object.career),
-    className: printClassName(fullCharacterApi.object.career.wh.object.class),
-    pastCareers: fullCharacterApi.object.careerPath.map((x) => `${getCareerName(x)}`),
+    currentCareer: {
+      id: fullCharacterApi.object.career.wh.id,
+      name: getCareerName(fullCharacterApi.object.career),
+      levelName: getCareerLevel(fullCharacterApi.object.career),
+      className: printClassName(fullCharacterApi.object.career.wh.object.class),
+    },
+    pastCareers: fullCharacterApi.object.careerPath.map((x) => ({
+      id: x.wh.id,
+      name: getCareerName(x),
+      levelName: getCareerLevel(x),
+      className: printClassName(x.wh.object.class),
+    })),
 
     baseAttributes: fullCharacterApi.object.baseAttributes,
     attributeAdvances: fullCharacterApi.object.attributeAdvances,
@@ -401,7 +421,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     run: 4 * getMovementFormula(fullCharacterApi.object.species, movementModifier),
     wounds: getWoundsFormula(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
 
-    talents: fullCharacterApi.object.talents.map((x) => ({ name: x.wh.object.name, rank: x.number })),
+    talents: fullCharacterApi.object.talents.map((x) => ({ id: x.wh.id, name: x.wh.object.name, rank: x.number })),
     basicSkills: basicSkills,
     advancedSkills: advancedSkills,
 
@@ -461,8 +481,13 @@ function getSkills(characterSkills: WhNumber<SkillApiData>[], attributes: Attrib
   return [basicSkills.sort(sortByName), advancedSkills.sort(sortByName)];
 }
 
-function skillForDisplay(rawSkill: ApiResponse<SkillApiData>, skillRank: number, attributes: Attributes) {
+function skillForDisplay(
+  rawSkill: ApiResponse<SkillApiData>,
+  skillRank: number,
+  attributes: Attributes,
+): CharacterFullSkill {
   return {
+    id: rawSkill.id,
     name: rawSkill.object.isGroup ? `${rawSkill.object.name} (Any)` : rawSkill.object.name,
     attributeName: printAttributeName(rawSkill.object.attribute),
     attributeValue: getAttributeValue(rawSkill.object.attribute, attributes),
@@ -475,15 +500,16 @@ function sortByName(x: { name: string }, y: { name: string }): -1 | 0 | 1 {
   return x.name === y.name ? 0 : x.name < y.name ? -1 : 1;
 }
 
-function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attributes) {
+function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attributes): CharacterFullItem[] {
   const SB = Math.floor(attributes.S / 10);
   const items = [] as CharacterFullItem[];
 
   for (const charItem of characterItems) {
     const item = {
+      id: charItem.wh.id,
       name: charItem.wh.object.name,
       enc: charItem.wh.object.enc,
-      qualitiesFlawsRunes: charItem.wh.object.properties.map((x) => x.object.name),
+      qualitiesFlawsRunes: charItem.wh.object.properties.map((x) => ({ name: x.object.name, id: x.id })),
       number: charItem.number,
       description: charItem.wh.object.description,
       type: printItemType(charItem.wh.object.type),
@@ -533,8 +559,9 @@ function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attri
   return items;
 }
 
-function getSpells(spells: ApiResponse<SpellApiData>[]) {
+function getSpells(spells: ApiResponse<SpellApiData>[]): CharacterFullSpell[] {
   return spells.map((x) => ({
+    id: x.id,
     name: x.object.name,
     range: x.object.range,
     target: x.object.target,
@@ -544,8 +571,9 @@ function getSpells(spells: ApiResponse<SpellApiData>[]) {
   }));
 }
 
-function getPrayers(prayers: ApiResponse<PrayerApiData>[]) {
+function getPrayers(prayers: ApiResponse<PrayerApiData>[]): CharacterFullPrayer[] {
   return prayers.map((x) => ({
+    id: x.id,
     name: x.object.name,
     range: x.object.range,
     target: x.object.target,
@@ -554,9 +582,10 @@ function getPrayers(prayers: ApiResponse<PrayerApiData>[]) {
   }));
 }
 
-function getMutations(mutations: ApiResponse<MutationApiData>[]) {
+function getMutations(mutations: ApiResponse<MutationApiData>[]): CharacterFullMutation[] {
   return mutations.map((x) => {
     return {
+      id: x.id,
       name: x.object.name,
       type: printMutationType(x.object.type),
       description: x.object.description,
@@ -568,13 +597,13 @@ export function CharacterFullToCsv(characterFull: CharacterFull): string {
   let csv = "Name,Species,Career,Class,Status,,,,,,\n";
   csv += csvStr(characterFull.name) + ",";
   csv += csvStr(characterFull.species) + ",";
-  csv += csvStr(`${characterFull.careerName} (${characterFull.careerLevelName})`) + ",";
-  csv += csvStr(characterFull.className) + ",";
+  csv += csvStr(`${characterFull.currentCareer.name} (${characterFull.currentCareer.levelName})`) + ",";
+  csv += csvStr(characterFull.currentCareer.className) + ",";
   csv += csvStr(characterFull.status + " " + characterFull.standing) + ",";
   csv += ",,,,,\n";
 
   csv += "Past Careers,";
-  csv += csvStr(characterFull.pastCareers.join(", ")) + ",";
+  csv += csvStr(characterFull.pastCareers.map((x) => x.name).join(", ")) + ",";
   csv += ",,,,,,,,\n";
   csv += "Description,";
   csv += csvStr(characterFull.description) + ",";
