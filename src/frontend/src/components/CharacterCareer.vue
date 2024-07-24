@@ -11,7 +11,6 @@ import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
-import { addSpaces } from "../utils/string.ts";
 
 type CareerWithSelect = {
   id: string;
