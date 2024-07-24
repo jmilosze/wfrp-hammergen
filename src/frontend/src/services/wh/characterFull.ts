@@ -144,11 +144,16 @@ export interface CharacterFullMutation {
   description: string;
 }
 
+export interface CharacterFullItemProperty {
+  id: string;
+  name: string;
+}
+
 export interface CharacterFullItem {
   id: string;
   name: string;
   enc: number;
-  qualitiesFlawsRunes: string[];
+  qualitiesFlawsRunes: CharacterFullItemProperty[];
   number: number;
   description: string;
   type: string;
@@ -497,7 +502,7 @@ function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attri
       id: charItem.wh.id,
       name: charItem.wh.object.name,
       enc: charItem.wh.object.enc,
-      qualitiesFlawsRunes: charItem.wh.object.properties.map((x) => x.object.name),
+      qualitiesFlawsRunes: charItem.wh.object.properties.map((x) => ({ name: x.object.name, id: x.id })),
       number: charItem.number,
       description: charItem.wh.object.description,
       type: printItemType(charItem.wh.object.type),

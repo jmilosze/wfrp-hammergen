@@ -2,7 +2,7 @@
 defineProps<{
   title: string;
   fields: { name: string; displayName: string; colspan?: number }[];
-  items: Record<string, string | number>[];
+  items: Record<string, any>[];
   stack?: boolean;
 }>();
 </script>
@@ -22,7 +22,7 @@ defineProps<{
             {{ field.displayName }}
           </th>
         </tr>
-        <tr v-for="item in items" :key="item.id">
+        <tr v-for="(item, i) in items" :key="i">
           <td v-for="field in fields" :key="field.name" class="border border-neutral-400 p-2">
             <slot :name="field.name" v-bind="item">{{ item[field.name] }}</slot>
           </td>
@@ -31,7 +31,7 @@ defineProps<{
     </table>
     <table v-else class="border-collapse w-full">
       <tbody>
-        <tr v-for="item in items" :key="item.id">
+        <tr v-for="(item, i) in items" :key="i">
           <td class="border border-neutral-400 p-2">
             <div v-for="field in fields" :key="field.name">
               <span class="font-semibold">{{ field.displayName }}: </span>

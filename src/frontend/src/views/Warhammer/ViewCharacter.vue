@@ -226,7 +226,7 @@ const equippedArmourDisp = ref({
     locations: x.locations ? x.locations.map((x) => addSpaces(x)).join(", ") : "",
     enc: x.enc,
     ap: x.ap ? x.ap : 0,
-    qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
+    qualities: x.qualitiesFlawsRunes,
   })),
 });
 
@@ -294,7 +294,7 @@ const equippedWeaponDisp = ref({
     enc: x.enc,
     rng: addSpaces(x.rng),
     dmg: addSpaces(x.dmg),
-    qualities: x.qualitiesFlawsRunes?.map((x) => addSpaces(x)).join(", "),
+    qualities: x.qualitiesFlawsRunes,
   })),
 });
 
@@ -556,7 +556,7 @@ const grimoiresDisp = ref(
       :fields="displayBasicSkills.fields"
       class="grow"
     >
-      <template #name="item: Record<string, string | number>">
+      <template #name="item">
         <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
       </template>
     </ViewCharacterTable>
@@ -566,7 +566,7 @@ const grimoiresDisp = ref(
       :fields="displayBasicSkills.fields"
       class="grow"
     >
-      <template #name="item: Record<string, string | number>">
+      <template #name="item">
         <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
       </template>
     </ViewCharacterTable>
@@ -578,12 +578,12 @@ const grimoiresDisp = ref(
       :fields="displayAdvancedSkills.fields"
       class="grow"
     >
-      <template #name="item: Record<string, string | number>">
+      <template #name="item">
         <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
       </template>
     </ViewCharacterTable>
     <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow">
-      <template #name="item: Record<string, string | number>">
+      <template #name="item">
         <TextLink routeName="talent" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
       </template>
     </ViewCharacterTable>
@@ -596,8 +596,18 @@ const grimoiresDisp = ref(
     :fields="equippedArmourDisp.fields"
     class="my-5"
   >
-    <template #name="item: Record<string, string | number>">
+    <template #name="item">
       <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+    <template #qualities="item: Record<string, any>">
+      <div v-if="item.qualities">
+        <span v-for="(quality, i) in item.qualities" :key="i">
+          <TextLink routeName="property" :params="{ id: quality.id }" :noColour="true">
+            {{ quality.name }}
+          </TextLink>
+          <span v-if="i != item.qualities.length - 1">, </span>
+        </span>
+      </div>
     </template>
   </ViewCharacterTable>
 
@@ -608,8 +618,18 @@ const grimoiresDisp = ref(
     :fields="equippedWeaponDisp.fields"
     class="my-5"
   >
-    <template #name="item: Record<string, string | number>">
+    <template #name="item">
       <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+    </template>
+    <template #qualities="item: Record<string, any>">
+      <div v-if="item.qualities">
+        <span v-for="(quality, i) in item.qualities" :key="i">
+          <TextLink routeName="property" :params="{ id: quality.id }" :noColour="true">
+            {{ quality.name }}
+          </TextLink>
+          <span v-if="i != item.qualities.length - 1">, </span>
+        </span>
+      </div>
     </template>
   </ViewCharacterTable>
 
@@ -620,7 +640,7 @@ const grimoiresDisp = ref(
     :fields="equippedOtherDisp.fields"
     class="my-5"
   >
-    <template #name="item: Record<string, string | number>">
+    <template #name="item">
       <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
@@ -632,7 +652,7 @@ const grimoiresDisp = ref(
     :fields="carriedDisp.fields"
     class="my-5"
   >
-    <template #name="item: Record<string, string | number>">
+    <template #name="item">
       <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
