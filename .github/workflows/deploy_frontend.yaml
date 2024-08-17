@@ -16,10 +16,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup Node 18
-        uses: actions/setup-node@v3
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: Build dist
         run: cd ./src/frontend && npm install && npm run-script build_gcp_${{ inputs.environment }} && mv ./dist ..
       - name: Create .firebaserc file
