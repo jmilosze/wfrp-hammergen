@@ -16,29 +16,29 @@
     "lint:js": "eslint src --ext .ts,.vue"
   },
   "dependencies": {
-    "@vueuse/core": "^10.9.0",
-    "axios": "^1.6.8",
+    "@vueuse/core": "^11.0.0",
+    "axios": "^1.7.4",
     "file-saver": "^2.0.5",
-    "vue": "^3.4.23",
+    "vue": "^3.4.38",
     "vue-recaptcha-v3": "^2.0.1",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.4.3"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
-    "@typescript-eslint/eslint-plugin": "^7.7.0",
-    "@typescript-eslint/parser": "^7.7.0",
-    "@vitejs/plugin-vue": "^5.0.4",
-    "autoprefixer": "^10.4.19",
-    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
+    "@vitejs/plugin-vue": "^5.1.2",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-vue": "^9.25.0",
-    "prettier": "^3.2.5",
-    "tailwindcss": "^3.4.3",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.9",
-    "vitest": "^1.5.0",
-    "vue-eslint-parser": "^9.4.2",
-    "vue-tsc": "^2.0.13"
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-vue": "^9.27.0",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.1",
+    "vitest": "^2.0.5",
+    "vue-eslint-parser": "^9.4.3",
+    "vue-tsc": "^2.0.29"
   }
 }
