@@ -57,6 +57,7 @@ func InitWh(ctx context.Context, db warhammer.WhDbService) {
 	seedWh(ctx, db, warhammer.WhTypeSkill, NewMockSkills())
 	seedWh(ctx, db, warhammer.WhTypeCareer, NewMockCareers())
 	seedWh(ctx, db, warhammer.WhTypeCharacter, NewMockCharacter())
+	seedWh(ctx, db, warhammer.WhTypeTrait, NewMockTraits())
 
 	seedGenProps(ctx, db, NewMockGenProps())
 }
