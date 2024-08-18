@@ -82,7 +82,7 @@ testIsEqualCommonProperties("talent", talentIndividual);
 testIsEqualCharacterModifiers("talent", talentIndividual);
 
 describe("isEqualTo returns true", () => {
-  test("when other talent has different value of tests, maxRank, attribute, and modifiers", () => {
+  test("when comparing group talents and other talent has different value of tests, maxRank, attribute, and modifiers", () => {
     const otherTalentGroup = talentGroup.copy();
     otherTalentGroup.tests = "otherTest";
     otherTalentGroup.maxRank = 5;
