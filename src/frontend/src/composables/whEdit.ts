@@ -27,7 +27,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
       wh.value = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(id);
       whOriginal.value = wh.value.copy() as T;
       initSources.value = copySource(wh.value.source);
-    } catch (error) {
+    } catch {
       apiError.value = "Error. Could not pull data from server.";
     }
   }

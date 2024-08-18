@@ -21,7 +21,7 @@ export function useGenerationProps(axiosInstance: AxiosInstance) {
     showApiError.value = true;
     try {
       generationProps.value = await auth.callAndLogoutIfUnauthorized(getGenerationProps)(axiosInstance);
-    } catch (error) {
+    } catch {
       apiError.value = "Error. Could not pull data from server.";
     }
   }

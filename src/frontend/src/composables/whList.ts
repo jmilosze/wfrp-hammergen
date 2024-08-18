@@ -26,7 +26,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
     showApiError.value = true;
     try {
       whList.value = await auth.callAndLogoutIfUnauthorized(elementApi.listElements)();
-    } catch (error) {
+    } catch {
       apiError.value = "Error. Could not pull data from server.";
     }
     loading.value = false;
@@ -47,7 +47,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
       whCopy.id = id;
       whCopy.canEdit = true;
       whList.value.push(whCopy);
-    } catch (error) {
+    } catch {
       apiError.value = "Error. Could not upload data to server.";
     }
   }
@@ -62,7 +62,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
           break;
         }
       }
-    } catch (error) {
+    } catch {
       apiError.value = "Error. Could not delete data from server.";
     }
   }
