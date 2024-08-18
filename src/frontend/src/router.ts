@@ -27,6 +27,8 @@ import ListItems from "./views/Warhammer/List/ListItems.vue";
 import ListCharacters from "./views/Warhammer/List/ListCharacters.vue";
 import CreateCharacter from "./views/Warhammer/Edit/CreateCharacter.vue";
 import ViewCharacter from "./views/Warhammer/ViewCharacter.vue";
+import ListTraits from "./views/Warhammer/List/ListTraits.vue";
+import CreateTrait from "./views/Warhammer/Edit/CreateTrait.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -185,6 +187,17 @@ export default createRouter({
       path: "/view/character/:id",
       name: "viewCharacter",
       component: ViewCharacter,
+      props: true,
+    },
+    {
+      path: "/traits",
+      name: "traits",
+      component: ListTraits,
+    },
+    {
+      path: "/trait/:id",
+      name: "trait",
+      component: CreateTrait,
       props: true,
     },
   ],

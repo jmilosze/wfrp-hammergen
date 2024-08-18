@@ -14,6 +14,10 @@ export default [
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      "vue/attribute-hyphenation": [1, "never"],
+      "vue/v-on-event-hyphenation": [1, "never"],
+      "vue/max-attributes-per-line": "off",
+      "vue/singleline-html-element-content-newline": "off"
     },
   },
 ];
