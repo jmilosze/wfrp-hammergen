@@ -57,7 +57,7 @@ const validDesc = computed(() => wh.value.validateDescription());
     </AlertBlock>
   </div>
 
-  <Header :title="id === 'create' ? 'Create trait' : wh.canEdit ? 'Edit trait' : wh.name" />
+  <Header :title="id === 'create' ? 'Create creature trait' : wh.canEdit ? 'Edit creature trait' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
