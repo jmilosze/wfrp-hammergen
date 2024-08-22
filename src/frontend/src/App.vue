@@ -100,6 +100,14 @@ function onListWhClick() {
         <NavLink routeName="skills" variant="side" @click="onListWhClick()">Skills</NavLink>
         <NavLink routeName="spells" variant="side" @click="onListWhClick()">Spells</NavLink>
         <NavLink routeName="talents" variant="side" @click="onListWhClick()">Talents</NavLink>
+        <NavLink
+          v-if="auth.getLoggedUserInfo().username === 'jacek.miloszewski@hotmail.com'"
+          routeName="traits"
+          variant="side"
+          @click="onListWhClick()"
+        >
+          Creature traits
+        </NavLink>
         <NavLink routeName="items" variant="side" @click="onListWhClick()">Trappings</NavLink>
       </div>
       <div v-if="auth.loggedIn.value" class="py-2">

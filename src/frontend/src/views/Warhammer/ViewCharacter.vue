@@ -40,7 +40,7 @@ await loadCharacter();
 async function loadCharacter() {
   try {
     character.value = await auth.callAndLogoutIfUnauthorized(characterApi.getElementForDisplay)(props.id);
-  } catch (error) {
+  } catch {
     apiError.value = "Error. Could not pull data from server.";
   }
 }

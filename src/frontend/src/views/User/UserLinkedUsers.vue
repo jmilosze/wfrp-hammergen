@@ -35,7 +35,7 @@ const validNewSharedAccount = computed(() => {
 try {
   user.value = await callAndLogoutIfUnauthorized(userApi.get)();
   originalUser.value = user.value.copy();
-} catch (error) {
+} catch {
   apiError.value = "Error. Could not pull data from server.";
 }
 

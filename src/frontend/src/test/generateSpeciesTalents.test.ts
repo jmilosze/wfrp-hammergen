@@ -27,7 +27,7 @@ describe("generateSpeciesTalents returns expected talents", () => {
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 
   test("non-group non-random multi talents", () => {
@@ -46,7 +46,7 @@ describe("generateSpeciesTalents returns expected talents", () => {
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 
   test("group talents, no multiple talents belonging to the same group", () => {
@@ -65,7 +65,7 @@ describe("generateSpeciesTalents returns expected talents", () => {
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 
   test("group talents, multiple talents belonging to the same group, group has enough elements", () => {
@@ -86,7 +86,7 @@ describe("generateSpeciesTalents returns expected talents", () => {
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 
   test("single and multi talents, random with no groups in random table", () => {
@@ -110,7 +110,7 @@ describe("generateSpeciesTalents returns expected talents", () => {
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 
   test("single and multi talents, random with no groups in random table, randomRoll selects in 2,3,1 order", () => {
@@ -134,7 +134,7 @@ describe("generateSpeciesTalents returns expected talents", () => {
       getSelectRandomTest(0),
       getRollInTableTest(30, 60, 20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 
   test("single and multi talents, random with groups in random table", () => {
@@ -160,7 +160,7 @@ describe("generateSpeciesTalents returns expected talents", () => {
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 });
 
@@ -182,7 +182,7 @@ describe("generateSpeciesTalents throws exception if not not enough talents to p
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 
   test("multi talent has group talents with not enough elements", () => {
@@ -202,7 +202,7 @@ describe("generateSpeciesTalents throws exception if not not enough talents to p
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 
   test("random table has not enough elements", () => {
@@ -225,7 +225,7 @@ describe("generateSpeciesTalents throws exception if not not enough talents to p
       getSelectRandomTest(0),
       getRollInTableTest(20),
     );
-    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).true;
+    expect(arraysAreEqualIgnoreOrder(actual, expected, compareIdNumber)).toBe(true);
   });
 });
 
