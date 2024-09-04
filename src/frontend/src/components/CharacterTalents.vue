@@ -108,7 +108,6 @@ watch(
   () => props.attributes,
   (newVal, oldVal) => {
     if (oldVal === undefined || !attributesAreEqual(newVal, oldVal)) {
-      console.log("updated");
       updateAttributes(newVal);
     }
   },

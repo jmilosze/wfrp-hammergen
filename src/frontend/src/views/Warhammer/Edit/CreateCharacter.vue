@@ -238,6 +238,9 @@ function rollCharacter() {
     generationPropsUtils.generationProps.value,
     selectedGenLevel.value as 1 | 2 | 3 | 4,
   );
+
+  wh.value.hydrateTalentModifiers(talentListUtils.whList.value);
+  wh.value.hydrateMutationModifiers(mutationListUtils.whList.value);
 }
 
 const attributes = computed(() => {
