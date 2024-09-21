@@ -94,9 +94,9 @@ async function submitForm() {
         :validationStatus="validCurrentPassword"
         class="mt-3"
       />
-      <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
-        >Update password</ActionButton
-      >
+      <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
+        Update password
+      </ActionButton>
     </div>
   </div>
 </template>

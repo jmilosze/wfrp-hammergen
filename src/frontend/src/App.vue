@@ -54,7 +54,7 @@ function onListWhClick() {
             <path
               fill-rule="evenodd"
               d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-            ></path>
+            />
           </svg>
         </button>
         <div v-if="auth.loggedIn.value" class="hidden lg:flex items-center">
@@ -84,7 +84,7 @@ function onListWhClick() {
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path
             d="M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 0-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z"
-          ></path>
+          />
         </svg>
       </button>
     </div>
@@ -134,7 +134,7 @@ function onListWhClick() {
           <template v-if="Component">
             <Suspense>
               <!-- main content -->
-              <component :is="Component"></component>
+              <component :is="Component" />
               <!-- loading state -->
               <template #fallback>
                 <div class="flex justify-center">
@@ -160,24 +160,14 @@ function onListWhClick() {
       v-show="showSideBar && !isEqualOrGreater"
       class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-40"
       @click="showSideBar = false"
-    ></div>
+    />
   </Transition>
   <!-- Modal with its own out of focus -->
   <Transition name="fade">
     <div v-show="modal.show.value" class="fixed top-0 w-full h-full z-40 bg-zinc-500 bg-opacity-40 transition">
-      <div id="modal" class="relative overflow-auto h-full" @click="modal.hideModal()"></div>
+      <div id="modal" class="relative overflow-auto h-full" @click="modal.hideModal()" />
     </div>
   </Transition>
 </template>
 
-<style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
+<style scoped></style>

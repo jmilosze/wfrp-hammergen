@@ -50,12 +50,12 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
         <tbody>
           <tr class="bg-white">
             <td v-for="attributeName in row" :key="attributeName" :class="tdClass">
-              <slot :name="attributeName"></slot>
+              <slot :name="attributeName" />
             </td>
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
   </div>
 </template>

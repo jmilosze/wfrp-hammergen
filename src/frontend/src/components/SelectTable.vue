@@ -133,7 +133,7 @@ function onModifyClick() {
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
     <ModalWindow :id="modalId">
       <template #header> {{ modalTitle }} </template>
@@ -167,7 +167,7 @@ function onModifyClick() {
               type="checkbox"
               class="w-5 h-5 accent-neutral-600 my-1"
               @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
-            />
+            >
           </div>
         </template>
       </TableWithSearch>

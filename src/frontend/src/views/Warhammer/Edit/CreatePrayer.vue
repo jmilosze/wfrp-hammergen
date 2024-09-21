@@ -112,7 +112,7 @@ const validDuration = computed(() => wh.value.validateDuration());
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!wh.canEdit"
-    ></EditControls>
+    />
   </div>
 </template>
 

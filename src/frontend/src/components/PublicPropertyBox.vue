@@ -31,7 +31,7 @@ defineProps<{
         type="checkbox"
         :disabled="disabled ? disabled : false"
         class="w-5 h-5 accent-neutral-600"
-      />
+      >
       <div class="ml-2">Public</div>
     </div>
   </div>

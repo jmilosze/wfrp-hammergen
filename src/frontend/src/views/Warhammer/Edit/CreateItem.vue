@@ -434,7 +434,7 @@ watch(
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!wh.canEdit"
-    ></EditControls>
+    />
   </div>
 </template>
 

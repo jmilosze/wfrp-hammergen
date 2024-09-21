@@ -191,7 +191,7 @@ function emitPastSelected(id: string) {
           {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} - {{ selectedCurrentCareer.levelName }}
         </TextLink>
       </div>
-      <div class="border-t border-neutral-300 my-1"></div>
+      <div class="border-t border-neutral-300 my-1" />
       <div class="mb-1">Past careers</div>
       <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
         <TextLink routeName="career" :params="{ id: pastCareer.careerId }" :noColour="true" class="mr-3">
@@ -233,7 +233,7 @@ function emitPastSelected(id: string) {
               :disabled="careersWithSelect[id].past"
               class="w-5 h-5 accent-neutral-600 my-1"
               @input="selectNewCurrent(id)"
-            />
+            >
           </div>
         </template>
         <template #past="{ id }: { id: string }">
@@ -244,7 +244,7 @@ function emitPastSelected(id: string) {
               :disabled="careersWithSelect[id].current"
               class="w-5 h-5 accent-neutral-600 my-1"
               @input="selectNewPast(id)"
-            />
+            >
           </div>
         </template>
       </TableWithSearch>

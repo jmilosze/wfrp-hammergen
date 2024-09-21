@@ -141,7 +141,7 @@ function newRolls() {
             </tr>
           </tbody>
         </table>
-        <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
       </div>
       <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
         <table class="w-full">
@@ -266,7 +266,7 @@ function newRolls() {
             </tr>
           </tbody>
         </table>
-        <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
       </div>
       <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
         <table class="w-full">
@@ -391,7 +391,7 @@ function newRolls() {
             </tr>
           </tbody>
         </table>
-        <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
       </div>
     </div>
     <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
@@ -679,7 +679,7 @@ function newRolls() {
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
     <div class="text-sm text-red-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
       {{ rollsValidationStatus.message }}

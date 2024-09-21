@@ -481,7 +481,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!wh.canEdit"
-    ></EditControls>
+    />
   </div>
 </template>
 

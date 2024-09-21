@@ -81,7 +81,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
           :options="applicableToOptions"
           :disabled="!wh.canEdit"
           title="Applicable to"
-        ></MultipleCheckboxInput>
+        />
       </div>
     </div>
     <div class="flex-1">
@@ -124,7 +124,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!wh.canEdit"
-    ></EditControls>
+    />
   </div>
 </template>
 

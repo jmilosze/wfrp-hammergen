@@ -436,8 +436,9 @@ const grimoiresDisp = ref(
       :size="'sm'"
       class="m-1"
       @click="router.push({ name: 'character', params: { id: id } })"
-      >Edit</ActionButton
     >
+      Edit
+    </ActionButton>
     <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
 

@@ -37,7 +37,7 @@ if (props.centered) {
   <div :class="centerClass">
     <div :class="blockClass">
       <div class="my-1">
-        <slot></slot>
+        <slot />
       </div>
       <button :class="btnClass" @click="emit('close')">
         <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">

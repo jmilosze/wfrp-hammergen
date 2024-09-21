@@ -28,7 +28,7 @@ const value = computed({
   <div class="w-full">
     <div class="flex items-center">
       <p v-if="title" class="mb-1 mr-2">{{ title }}</p>
-      <slot></slot>
+      <slot />
     </div>
     <textarea
       v-model="value"

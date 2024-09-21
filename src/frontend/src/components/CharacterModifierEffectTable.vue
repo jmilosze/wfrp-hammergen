@@ -83,7 +83,7 @@ function onModifyClick() {
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
     <ModalWindow id="modifyEffectsModal">
       <template #header> Modify sources </template>
@@ -99,7 +99,7 @@ function onModifyClick() {
                 type="checkbox"
                 class="w-5 h-5 accent-neutral-600"
                 @input="emit('selected', { id: id, selected: !effects[id].selected })"
-              />
+              >
             </div>
           </template>
         </TableWithSearch>

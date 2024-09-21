@@ -17,9 +17,11 @@ const modalId = props.modalId ? props.modalId : "hintModal";
 </script>
 
 <template>
-  <ActionButton :size="buttonSize" :variant="buttonVariant" @click="modal.showModal(modalId)">{{
-    buttonText
-  }}</ActionButton>
+  <ActionButton :size="buttonSize" :variant="buttonVariant" @click="modal.showModal(modalId)">
+    {{
+      buttonText
+    }}
+  </ActionButton>
 
   <ModalWindow :id="modalId">
     <template v-if="modalHeader" #header> {{ modalHeader }} </template>
@@ -27,7 +29,7 @@ const modalId = props.modalId ? props.modalId : "hintModal";
       <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
     </template>
     <div>
-      <slot></slot>
+      <slot />
     </div>
   </ModalWindow>
 </template>

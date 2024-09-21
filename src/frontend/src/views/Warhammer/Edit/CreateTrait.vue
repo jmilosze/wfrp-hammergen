@@ -103,7 +103,7 @@ const validDesc = computed(() => wh.value.validateDescription());
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!wh.canEdit"
-    ></EditControls>
+    />
   </div>
 </template>
 

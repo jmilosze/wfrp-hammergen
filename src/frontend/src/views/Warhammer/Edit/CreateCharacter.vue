@@ -382,9 +382,9 @@ const modiferAttributes = computed(() => {
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit">
-          <ActionButton v-if="wh.canEdit" size="sm" class="ml-2 h-full" @click="formGenerateName"
-            >Generate</ActionButton
-          >
+          <ActionButton v-if="wh.canEdit" size="sm" class="ml-2 h-full" @click="formGenerateName">
+            Generate
+          </ActionButton>
         </FormInput>
         <SelectInput
           v-model="wh.species"
@@ -438,8 +438,9 @@ const modiferAttributes = computed(() => {
             v-if="wh.canEdit && !careerListUtils.loading.value"
             size="sm"
             @click="formGenerateStatusStanding"
-            >Generate</ActionButton
           >
+            Generate
+          </ActionButton>
         </div>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
@@ -550,9 +551,9 @@ const modiferAttributes = computed(() => {
           :disabled="!wh.canEdit"
           :class="[isEqualOrGreater ? '' : 'mt-2']"
         >
-          <ActionButton v-if="wh.canEdit" class="mb-1" size="sm" @click="formGenerateDescription"
-            >Generate</ActionButton
-          >
+          <ActionButton v-if="wh.canEdit" class="mb-1" size="sm" @click="formGenerateDescription">
+            Generate
+          </ActionButton>
         </FormTextarea>
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!wh.canEdit" />
         <p class="-mb-3">Calculated</p>
@@ -712,7 +713,7 @@ const modiferAttributes = computed(() => {
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!wh.canEdit"
-    ></EditControls>
+    />
   </div>
 </template>
 

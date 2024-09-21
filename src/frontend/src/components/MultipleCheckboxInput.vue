@@ -46,7 +46,7 @@ function handleChange(event: Event) {
         :disabled="disabled ? disabled : false"
         class="w-5 h-5 accent-neutral-600"
         @change="handleChange"
-      />
+      >
       <div class="ml-2 mr-3">{{ option.text }}</div>
     </div>
   </div>

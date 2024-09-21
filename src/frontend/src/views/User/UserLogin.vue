@@ -75,9 +75,9 @@ async function submitForm() {
         class="mt-3"
       />
     </div>
-    <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
-      >Log in</ActionButton
-    >
+    <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
+      Log in
+    </ActionButton>
     <div class="mt-5">
       <TextLink routeName="forgotpassword" :sameWindow="true">Forgot your password?</TextLink>
     </div>

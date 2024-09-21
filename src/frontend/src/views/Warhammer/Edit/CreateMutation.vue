@@ -83,7 +83,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     </div>
   </div>
   <div class="my-4">
-    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit"></CharacterModifiersBlock>
+    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit" />
   </div>
   <div
     ref="contentContainerRef"
@@ -113,7 +113,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!wh.canEdit"
-    ></EditControls>
+    />
   </div>
 </template>
 

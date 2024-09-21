@@ -171,7 +171,7 @@ watch(
     </div>
   </div>
   <div class="my-4">
-    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit || wh.isGroup"></CharacterModifiersBlock>
+    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit || wh.isGroup" />
   </div>
   <div
     ref="contentContainerRef"
@@ -201,7 +201,7 @@ watch(
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!wh.canEdit"
-    ></EditControls>
+    />
   </div>
 </template>
 

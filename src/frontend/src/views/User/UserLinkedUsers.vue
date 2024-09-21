@@ -124,14 +124,14 @@ async function submitForm() {
               class="py-2 px-5 hover:bg-neutral-200 border-b border-neutral-200 bg-white flex flex-col items-stretch md:justify-between flex-wrap md:flex-row md:gap-2"
             >
               <span class="flex-auto text-center md:text-start">{{ sharedAccount }}</span>
-              <ActionButton variant="red" class="text-sm mt-2 md:mt-0" @click="removeUsername(sharedAccount)"
-                >Remove</ActionButton
-              >
+              <ActionButton variant="red" class="text-sm mt-2 md:mt-0" @click="removeUsername(sharedAccount)">
+                Remove
+              </ActionButton>
             </td>
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
   </div>
   <div class="pt-2 md:w-96">
@@ -153,13 +153,13 @@ async function submitForm() {
       :validationStatus="validNewSharedAccount"
       class="mt-3"
     >
-      <ActionButton class="ml-2" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername"
-        >Add</ActionButton
-      >
+      <ActionButton class="ml-2" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername">
+        Add
+      </ActionButton>
     </FormInput>
-    <ActionButton class="mt-3" :spinner="applyChangesSubmissionState.status === 'inProgress'" @click="submitForm"
-      >Apply changes</ActionButton
-    >
+    <ActionButton class="mt-3" :spinner="applyChangesSubmissionState.status === 'inProgress'" @click="submitForm">
+      Apply changes
+    </ActionButton>
   </div>
 </template>
 

@@ -167,7 +167,7 @@ function onModifyClick() {
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
     <div class="text-sm text-red-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}

@@ -155,7 +155,7 @@ function onModifyClick() {
                 type="checkbox"
                 class="w-5 h-5 accent-neutral-600"
                 @input="updateLabel(id, !labelsWithSelect[id])"
-              />
+              >
             </div>
           </template>
         </TableWithSearch>

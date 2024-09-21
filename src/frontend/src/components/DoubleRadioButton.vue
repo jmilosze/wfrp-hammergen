@@ -21,7 +21,7 @@ const model = defineModel<boolean>();
           :value="true"
           :disabled="disabled"
           class="mr-2 w-5 h-5 accent-neutral-600"
-        />
+        >
         <div class="mr-5">{{ trueText }}</div>
       </div>
       <div class="flex items-center">
@@ -31,7 +31,7 @@ const model = defineModel<boolean>();
           :value="false"
           :disabled="disabled"
           class="mr-2 w-5 h-5 accent-neutral-600"
-        />
+        >
         <div>{{ falseText }}</div>
       </div>
     </div>
@@ -43,7 +43,7 @@ const model = defineModel<boolean>();
           :value="false"
           :disabled="disabled"
           class="mr-2 w-5 h-5 accent-neutral-600"
-        />
+        >
         <div class="mr-5">{{ falseText }}</div>
       </div>
       <div class="flex items-center">
@@ -53,7 +53,7 @@ const model = defineModel<boolean>();
           :value="true"
           :disabled="disabled"
           class="mr-2 w-5 h-5 accent-neutral-600"
-        />
+        >
         <div>{{ trueText }}</div>
       </div>
     </div>

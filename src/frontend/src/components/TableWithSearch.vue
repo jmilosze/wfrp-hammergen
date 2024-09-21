@@ -123,7 +123,7 @@ onUpdated(() => {
         type="text"
         placeholder="Type to Search"
         class="border border-neutral-300 rounded h-10 px-2 grow w-36 focus:border-transparent focus:outline-neutral-700 focus:outline focus:outline-2"
-      />
+      >
     </div>
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
@@ -159,7 +159,7 @@ onUpdated(() => {
             <table v-else class="w-full">
               <thead>
                 <tr class="text-left">
-                  <th class="border-b border-neutral-300 py-2 px-5"></th>
+                  <th class="border-b border-neutral-300 py-2 px-5" />
                 </tr>
               </thead>
               <tbody>
@@ -173,12 +173,12 @@ onUpdated(() => {
                       <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
                       <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
                     </div>
-                    <div class="border-b-4 border-neutral-400"></div>
+                    <div class="border-b-4 border-neutral-400" />
                   </td>
                 </tr>
               </tbody>
             </table>
-            <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+            <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
           </div>
         </div>
         <TablePagination

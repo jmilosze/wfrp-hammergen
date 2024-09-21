@@ -131,3 +131,5 @@ const showAlert = ref(true);
     </p>
   </div>
 </template>
+
+<style scoped></style>

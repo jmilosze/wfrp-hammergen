@@ -75,8 +75,8 @@ async function submitForm() {
 
 <template>
   <div>
-    <Header title="Forgot your password?"
-      >Please submit email address you used as a account login. We will send you password reset link. If you cannot see
+    <Header title="Forgot your password?">
+      Please submit email address you used as a account login. We will send you password reset link. If you cannot see
       the email please check your junk/spam folders.
     </Header>
     <div class="text-xl mt-3">Please be advised</div>
@@ -94,9 +94,9 @@ async function submitForm() {
     <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
     <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" class="mt-3" />
   </div>
-  <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm"
-    >Submit</ActionButton
-  >
+  <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
+    Submit
+  </ActionButton>
 </template>
 
 <style scoped></style>

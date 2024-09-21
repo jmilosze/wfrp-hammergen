@@ -86,7 +86,7 @@ function onModifyClick() {
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full"></div>
+      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
     <p class="text-sm text-red-600 mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
       Some of the sources are invalid.
@@ -110,7 +110,7 @@ function onModifyClick() {
                 type="checkbox"
                 class="w-5 h-5 accent-neutral-600"
                 @input="emit('selected', { id: id, notes: sources[id].notes, selected: !sources[id].selected })"
-              />
+              >
             </div>
           </template>
 
@@ -119,7 +119,7 @@ function onModifyClick() {
               v-model="sources[id].notes"
               class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2"
               @input="emit('selected', { id: id, notes: sources[id].notes, selected: sources[id].selected })"
-            />
+            >
             <p class="text-sm text-red-600" :class="[validateSourceRecord(sources[id].notes).valid ? 'hidden' : '']">
               {{ validateSourceRecord(sources[id].notes).message }}
             </p>
