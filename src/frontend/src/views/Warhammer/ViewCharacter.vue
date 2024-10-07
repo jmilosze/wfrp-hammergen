@@ -480,7 +480,7 @@ const grimoiresDisp = ref(
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Current</span>
-                <TextLink routeName="career" :params="{ id: character.currentCareer.id }" :noColour="true" class="mr-3">
+                <TextLink routeName="career" :params="{ id: character.currentCareer.id }" class="mr-3">
                   {{ addSpaces(character.currentCareer.name) }}
                 </TextLink>
               </div>
@@ -507,7 +507,6 @@ const grimoiresDisp = ref(
                   :key="i"
                   routeName="career"
                   :params="{ id: pastCareer.id }"
-                  :noColour="true"
                   class="mr-3"
                 >
                   {{ addSpaces(pastCareer.name) }}
@@ -561,7 +560,7 @@ const grimoiresDisp = ref(
       class="grow"
     >
       <template #name="item">
-        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+        <TextLink routeName="skill" :params="{ id: item.id }">{{ item.name }}</TextLink>
       </template>
     </ViewCharacterTable>
     <ViewCharacterTable
@@ -571,7 +570,7 @@ const grimoiresDisp = ref(
       class="grow"
     >
       <template #name="item">
-        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+        <TextLink routeName="skill" :params="{ id: item.id }">{{ item.name }}</TextLink>
       </template>
     </ViewCharacterTable>
   </div>
@@ -583,12 +582,12 @@ const grimoiresDisp = ref(
       class="grow"
     >
       <template #name="item">
-        <TextLink routeName="skill" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+        <TextLink routeName="skill" :params="{ id: item.id }">{{ item.name }}</TextLink>
       </template>
     </ViewCharacterTable>
     <ViewCharacterTable title="Talents" :items="displayTalents.items" :fields="displayTalents.fields" class="grow">
       <template #name="item">
-        <TextLink routeName="talent" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+        <TextLink routeName="talent" :params="{ id: item.id }">{{ item.name }}</TextLink>
       </template>
     </ViewCharacterTable>
   </div>
@@ -601,12 +600,12 @@ const grimoiresDisp = ref(
     class="my-5"
   >
     <template #name="item">
-      <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
     <template #qualities="item: Record<string, any>">
       <div v-if="item.qualities">
         <span v-for="(quality, i) in item.qualities" :key="i">
-          <TextLink routeName="property" :params="{ id: quality.id }" :noColour="true">
+          <TextLink routeName="property" :params="{ id: quality.id }">
             {{ quality.name }}
           </TextLink>
           <span v-if="i != item.qualities.length - 1">, </span>
@@ -623,12 +622,12 @@ const grimoiresDisp = ref(
     class="my-5"
   >
     <template #name="item">
-      <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
     <template #qualities="item: Record<string, any>">
       <div v-if="item.qualities">
         <span v-for="(quality, i) in item.qualities" :key="i">
-          <TextLink routeName="property" :params="{ id: quality.id }" :noColour="true">
+          <TextLink routeName="property" :params="{ id: quality.id }">
             {{ quality.name }}
           </TextLink>
           <span v-if="i != item.qualities.length - 1">, </span>
@@ -645,7 +644,7 @@ const grimoiresDisp = ref(
     class="my-5"
   >
     <template #name="item">
-      <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
 
@@ -657,7 +656,7 @@ const grimoiresDisp = ref(
     class="my-5"
   >
     <template #name="item">
-      <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
 
@@ -667,7 +666,7 @@ const grimoiresDisp = ref(
 
       <div class="p-2 border border-neutral-400">
         <span v-for="(item, i) in storedDisp.items" :key="i">
-          <TextLink routeName="item" :params="{ id: item.id }" :noColour="true">
+          <TextLink routeName="item" :params="{ id: item.id }">
             {{ item.name }}
           </TextLink>
           <span v-if="i != storedDisp.items.length - 1">, </span>
@@ -689,7 +688,7 @@ const grimoiresDisp = ref(
     class="my-5"
   >
     <template #name="item">
-      <TextLink routeName="mutation" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      <TextLink routeName="mutation" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
   <ViewCharacterTable
@@ -700,7 +699,7 @@ const grimoiresDisp = ref(
     class="my-5"
   >
     <template #name="item">
-      <TextLink routeName="spell" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      <TextLink routeName="spell" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
   <ViewCharacterTable
@@ -711,7 +710,7 @@ const grimoiresDisp = ref(
     class="my-5"
   >
     <template #name="item">
-      <TextLink routeName="prayer" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      <TextLink routeName="prayer" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
   <ViewCharacterTable
@@ -724,7 +723,7 @@ const grimoiresDisp = ref(
     class="my-5"
   >
     <template #name="item">
-      <TextLink routeName="spell" :params="{ id: item.id }" :noColour="true">{{ item.name }}</TextLink>
+      <TextLink routeName="spell" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
 </template>
