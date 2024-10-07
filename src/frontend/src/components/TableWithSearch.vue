@@ -28,7 +28,7 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(props.stackedViewSize, contentContainerRef);
 
 const searchTerm: Ref<string> = computed({
@@ -123,7 +123,7 @@ onUpdated(() => {
         type="text"
         placeholder="Type to Search"
         class="border border-neutral-300 rounded h-10 px-2 grow w-36 focus:border-transparent focus:outline-neutral-700 focus:outline focus:outline-2"
-      >
+      />
     </div>
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />

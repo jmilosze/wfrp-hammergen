@@ -59,7 +59,7 @@ function saveCsv() {
   saveAs(blob, `${character.value.name}.csv`);
 }
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const displayMovement = ref({

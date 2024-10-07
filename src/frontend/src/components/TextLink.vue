@@ -7,9 +7,9 @@ const props = defineProps<{
   noColour?: boolean;
 }>();
 
-const linkClass = ["hover:underline"];
+const linkClass = ["hover:underline", "font-semibold"];
 if (!props.noColour) {
-  linkClass.push("text-blue-600");
+  linkClass.push("text-red-700");
 }
 </script>
 
@@ -22,8 +22,8 @@ if (!props.noColour) {
   >
     <slot />
   </RouterLink>
-  <a v-else-if="href" :href="href" target="_blank" class="text-blue-700 hover:underline"><slot /></a>
-  <p v-else class="text-blue-700 hover:underline"><slot /></p>
+  <a v-else-if="href" :href="href" target="_blank" :class="linkClass"><slot /></a>
+  <p v-else :class="linkClass"><slot /></p>
 </template>
 
 <style scoped></style>

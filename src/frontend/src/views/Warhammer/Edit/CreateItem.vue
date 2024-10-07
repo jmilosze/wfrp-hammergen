@@ -82,7 +82,7 @@ const propertyList = computed(() => {
 
 await loadWh(props.id);
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
@@ -119,6 +119,9 @@ watch(
     wh.value.resetDetails();
   },
 );
+
+const propertiesTableRef = ref<HTMLDivElement | null>(null);
+const propertiesTable = useElSize(380, propertiesTableRef);
 </script>
 
 <template>
@@ -182,7 +185,7 @@ watch(
         />
       </div>
     </div>
-    <div class="flex-1">
+    <div ref="propertiesTableRef" class="flex-1">
       <div v-if="wh.type === ItemType.Melee" class="flex flex-col gap-4">
         <div>
           <p class="mb-1">Weapon damage</p>
@@ -386,6 +389,7 @@ watch(
           :loading="spellListUtils.loading.value"
           routeName="spell"
           :truncateModalDescription="100"
+          :disableDescription="!propertiesTable.isEqualOrGreater.value"
           class="mt-4"
           @reload="spellListUtils.loadWhList"
           @selected="(e) => wh.updateSpells(e.id, e.selected)"
@@ -400,6 +404,7 @@ watch(
         :loading="propertyListUtils.loading.value"
         routeName="property"
         :truncateModalDescription="100"
+        :disableDescription="!propertiesTable.isEqualOrGreater.value"
         class="mt-4"
         @reload="propertyListUtils.loadWhList"
         @selected="(e) => wh.updateProperties(e.id, e.selected)"

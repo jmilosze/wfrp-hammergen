@@ -29,7 +29,7 @@ const props = defineProps<{
 const attributeRolls = defineModel<Attributes>("attributeRolls", { required: true });
 const attributeAdvances = defineModel<Attributes>("attributeAdvances", { required: true });
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const lgELSize = useElSize(ViewSize.lg, contentContainerRef);
 
 const racial = computed(() => {

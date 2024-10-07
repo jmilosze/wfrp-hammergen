@@ -67,7 +67,7 @@ watch(
 
 await loadWh(props.id);
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
@@ -97,6 +97,9 @@ watch(
   },
   { immediate: true },
 );
+
+const skillsTableRef = ref<HTMLDivElement | null>(null);
+const skillTable = useElSize(380, skillsTableRef);
 </script>
 
 <template>
@@ -146,7 +149,7 @@ watch(
         />
       </div>
     </div>
-    <div class="flex-1">
+    <div ref="skillsTableRef" class="flex-1">
       <div class="flex flex-col gap-4">
         <DoubleRadioButton
           v-model="wh.displayZero"
@@ -164,6 +167,7 @@ watch(
           :loading="skillListUtils.loading.value"
           routeName="skill"
           :truncateModalDescription="100"
+          :disableDescription="!skillTable.isEqualOrGreater.value"
           @reload="skillListUtils.loadWhList"
           @selected="(e) => wh.modifyGroup(e.id, e.selected)"
         />

@@ -94,7 +94,7 @@ generationPropsUtils.loadGenerationProps();
 
 await loadWh(props.id);
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const smSize = useElSize(ViewSize.sm, contentContainerRef);

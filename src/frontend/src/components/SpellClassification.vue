@@ -25,7 +25,7 @@ const emit = defineEmits<{
   (e: "update:simplifiedLabels", value: SpellLabel[]): void;
 }>();
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const sm = useElSize(ViewSize.sm, contentContainerRef);
 
 const modal = useModal();
@@ -155,7 +155,7 @@ function onModifyClick() {
                 type="checkbox"
                 class="w-5 h-5 accent-neutral-600"
                 @input="updateLabel(id, !labelsWithSelect[id])"
-              >
+              />
             </div>
           </template>
         </TableWithSearch>

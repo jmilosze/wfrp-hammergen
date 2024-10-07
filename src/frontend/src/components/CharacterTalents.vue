@@ -172,7 +172,7 @@ function onModifyClick() {
         <tbody>
           <tr v-for="src in selectedTalents" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-2 border-b border-neutral-300">
-              <TextLink routeName="talent" :params="{ id: src.id }" :noColour="true">
+              <TextLink routeName="talent" :params="{ id: src.id }">
                 {{ addSpaces(src.name) }}
               </TextLink>
             </td>

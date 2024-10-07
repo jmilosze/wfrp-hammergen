@@ -62,7 +62,7 @@ watch(
 
 await loadWh(props.id);
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
@@ -85,6 +85,9 @@ watch(
   },
   { immediate: true },
 );
+
+const talentTableRef = ref<HTMLDivElement | null>(null);
+const talentTable = useElSize(380, talentTableRef);
 </script>
 
 <template>
@@ -127,7 +130,7 @@ watch(
         />
       </div>
     </div>
-    <div class="flex-1">
+    <div ref="talentTableRef" class="flex-1">
       <div class="flex flex-col gap-4">
         <div>
           <p class="mb-1">Max rank</p>
@@ -164,6 +167,7 @@ watch(
           :loading="talentListUtils.loading.value"
           routeName="talent"
           :truncateModalDescription="100"
+          :disableDescription="!talentTable.isEqualOrGreater.value"
           @reload="talentListUtils.loadWhList"
           @selected="(e) => wh.updateGroup(e.id, e.selected)"
         />
