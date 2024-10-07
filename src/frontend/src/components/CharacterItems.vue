@@ -189,7 +189,7 @@ function onModifyClick() {
               <tbody>
                 <tr v-for="src in selectedEquipped" :key="src.id" class="bg-white hover:bg-neutral-200">
                   <td class="py-2 px-2 border-b border-neutral-300">
-                    <TextLink routeName="item" :params="{ id: src.id }" :noColour="true">
+                    <TextLink routeName="item" :params="{ id: src.id }">
                       {{ addSpaces(src.name) }}
                     </TextLink>
                   </td>
@@ -213,7 +213,7 @@ function onModifyClick() {
               <tbody>
                 <tr v-for="src in selectedCarried" :key="src.id" class="bg-white hover:bg-neutral-200">
                   <td class="py-2 px-2 border-b border-neutral-300">
-                    <TextLink routeName="item" :params="{ id: src.id }" :noColour="true">
+                    <TextLink routeName="item" :params="{ id: src.id }">
                       {{ addSpaces(src.name) }}
                     </TextLink>
                   </td>
@@ -237,7 +237,7 @@ function onModifyClick() {
               <tbody>
                 <tr v-for="src in selectedStored" :key="src.id" class="bg-white hover:bg-neutral-200">
                   <td class="py-2 px-2 border-b border-neutral-300">
-                    <TextLink routeName="item" :params="{ id: src.id }" :noColour="true">
+                    <TextLink routeName="item" :params="{ id: src.id }">
                       {{ addSpaces(src.name) }}
                     </TextLink>
                   </td>

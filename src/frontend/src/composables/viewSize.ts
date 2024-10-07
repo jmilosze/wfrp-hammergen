@@ -15,7 +15,7 @@ export function useScreenSize(size: ViewSize) {
   return { isEqualOrGreater };
 }
 
-export function useElSize(size: ViewSize, el: Ref<null>) {
+export function useElSize(size: ViewSize | number, el: Ref<HTMLDivElement | null>) {
   const { width } = useElementSize(el);
 
   const isEqualOrGreater = computed(() => {

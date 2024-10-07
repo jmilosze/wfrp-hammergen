@@ -125,7 +125,7 @@ function onModifyClick() {
         <tbody>
           <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-2 border-b border-neutral-300">
-              <TextLink :routeName="routeName" :params="{ id: src.id }" :noColour="true">
+              <TextLink :routeName="routeName" :params="{ id: src.id }">
                 {{ addSpaces(src.name) }}
               </TextLink>
             </td>
@@ -167,7 +167,7 @@ function onModifyClick() {
               type="checkbox"
               class="w-5 h-5 accent-neutral-600 my-1"
               @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
-            >
+            />
           </div>
         </template>
       </TableWithSearch>

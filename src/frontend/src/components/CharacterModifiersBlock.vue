@@ -23,7 +23,7 @@ const emit = defineEmits<{
 
 const modal = useModal();
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const sm = useElSize(ViewSize.sm, contentContainerRef);
 const lg = useElSize(ViewSize.lg, contentContainerRef);
 

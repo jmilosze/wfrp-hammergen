@@ -8,11 +8,7 @@ import {
   careerClassList,
   printClassName,
   printSpeciesName,
-  printStatusStanding,
-  printStatusTier,
   speciesList,
-  statusStandingList,
-  statusTierList,
 } from "../../../services/wh/career.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
@@ -27,11 +23,10 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import EditControls from "../../../components/EditControls.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
-import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import { SkillApi } from "../../../services/wh/skill.ts";
 import { TalentApi } from "../../../services/wh/talent.ts";
-import SelectTable from "../../../components/SelectTable.vue";
+import CareerLevel from "../../../components/CareerLevel.vue";
 
 const props = defineProps<{
   id: string;
@@ -66,7 +61,7 @@ talentListUtils.loadWhList();
 
 await loadWh(props.id);
 
-const contentContainerRef = ref(null);
+const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
@@ -82,11 +77,6 @@ const validLevel4Items = computed(() => wh.value.validateLevel4Items());
 
 const speciesOpts = speciesList.map((x) => ({ text: printSpeciesName(x), value: x }));
 const classOpts = careerClassList.map((x) => ({ text: printClassName(x), value: x }));
-const attributeOpts = attributeNameList
-  .filter((x) => x !== AttributeName.None && x !== AttributeName.Various)
-  .map((x) => ({ text: printAttributeName(x), value: x }));
-const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
-const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
 </script>
 
 <template>
@@ -141,323 +131,95 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
       </div>
     </div>
   </div>
-  <p class="text-xl mt-6">Level 1</p>
-  <div class="border border-neutral-300 rounded p-2">
-    <div
-      ref="contentContainerRef"
-      class="justify-between text-left gap-4 my-4"
-      :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
-    >
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormInput
-            v-model="wh.level1.name"
-            title="Name"
-            :validationStatus="validLevel1Name"
-            :disabled="!wh.canEdit"
-          />
-          <MultipleCheckboxInput
-            v-model="wh.level1.attributes"
-            title="Attributes"
-            :options="attributeOpts"
-            :disabled="!wh.canEdit"
-          />
-
-          <div class="flex flex-wrap gap-4 mt-2">
-            <SelectInput
-              v-model="wh.level1.status"
-              title="Status"
-              :options="statusTierOpts"
-              :disabled="!wh.canEdit"
-              class="min-w-24 flex-1"
-            />
-            <SelectInput
-              v-model="wh.level1.standing"
-              title="Standing"
-              :options="statusStandingOpts"
-              :disabled="!wh.canEdit"
-              class="min-w-24 flex-1"
-            />
-          </div>
-          <FormTextarea
-            v-model="wh.level1.items"
-            title="Trappings"
-            :validationStatus="validLevel1Items"
-            :disabled="!wh.canEdit"
-          />
-        </div>
-      </div>
-      <div class="flex-1" :class="[isEqualOrGreater ? '' : 'mt-3']">
-        <div class="flex flex-col gap-4">
-          <SelectTable
-            modalId="skill1"
-            :disabled="!wh.canEdit"
-            :initSelectedItems="wh.level1.skills"
-            :itemList="skillListUtils.whList.value"
-            title="Skills"
-            modalTitle="Add/remove skills"
-            :loading="skillListUtils.loading.value"
-            routeName="skill"
-            :truncateModalDescription="100"
-            @reload="skillListUtils.loadWhList"
-            @selected="(e) => wh.updateLevelSkills(1, e.id, e.selected)"
-          />
-          <SelectTable
-            modalId="talent1"
-            :disabled="!wh.canEdit"
-            :initSelectedItems="wh.level1.talents"
-            :itemList="talentListUtils.whList.value"
-            title="Talents"
-            modalTitle="Add/remove talents"
-            :loading="talentListUtils.loading.value"
-            routeName="talent"
-            :truncateModalDescription="100"
-            @reload="talentListUtils.loadWhList"
-            @selected="(e) => wh.updateLevelTalents(1, e.id, e.selected)"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <p class="text-xl mt-6">Level 2</p>
-  <div class="border border-neutral-300 rounded p-2">
-    <div
-      ref="contentContainerRef"
-      class="justify-between text-left gap-4 my-4"
-      :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
-    >
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormInput
-            v-model="wh.level2.name"
-            title="Name"
-            :validationStatus="validLevel2Name"
-            :disabled="!wh.canEdit"
-          />
-          <MultipleCheckboxInput
-            v-model="wh.level2.attributes"
-            title="Attributes"
-            :options="attributeOpts"
-            :disabled="!wh.canEdit"
-          />
-
-          <div class="flex flex-wrap gap-4">
-            <SelectInput
-              v-model="wh.level2.status"
-              title="Status"
-              :options="statusTierOpts"
-              :disabled="!wh.canEdit"
-              class="min-w-24 flex-1"
-            />
-            <SelectInput
-              v-model="wh.level2.standing"
-              title="Standing"
-              :options="statusStandingOpts"
-              :disabled="!wh.canEdit"
-              class="min-w-24 flex-1"
-            />
-          </div>
-          <FormTextarea
-            v-model="wh.level2.items"
-            title="Trappings"
-            :validationStatus="validLevel2Items"
-            :disabled="!wh.canEdit"
-          />
-        </div>
-      </div>
-      <div class="flex-1" :class="[isEqualOrGreater ? '' : 'mt-3']">
-        <div class="flex flex-col gap-4">
-          <SelectTable
-            modalId="skill2"
-            :disabled="!wh.canEdit"
-            :initSelectedItems="wh.level2.skills"
-            :itemList="skillListUtils.whList.value"
-            title="Skills"
-            modalTitle="Add/remove skills"
-            :loading="skillListUtils.loading.value"
-            routeName="skill"
-            :truncateModalDescription="100"
-            @reload="skillListUtils.loadWhList"
-            @selected="(e) => wh.updateLevelSkills(2, e.id, e.selected)"
-          />
-          <SelectTable
-            modalId="talent2"
-            :disabled="!wh.canEdit"
-            :initSelectedItems="wh.level2.talents"
-            :itemList="talentListUtils.whList.value"
-            title="Talents"
-            modalTitle="Add/remove talents"
-            :loading="talentListUtils.loading.value"
-            routeName="talent"
-            :truncateModalDescription="100"
-            @reload="talentListUtils.loadWhList"
-            @selected="(e) => wh.updateLevelTalents(2, e.id, e.selected)"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <p class="text-xl mt-6">Level 3</p>
-  <div class="border border-neutral-300 rounded p-2">
-    <div
-      ref="contentContainerRef"
-      class="justify-between text-left gap-4 my-4"
-      :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
-    >
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormInput
-            v-model="wh.level3.name"
-            title="Name"
-            :validationStatus="validLevel3Name"
-            :disabled="!wh.canEdit"
-          />
-          <MultipleCheckboxInput
-            v-model="wh.level3.attributes"
-            title="Attributes"
-            :options="attributeOpts"
-            :disabled="!wh.canEdit"
-          />
-
-          <div class="flex flex-wrap gap-4">
-            <SelectInput
-              v-model="wh.level3.status"
-              title="Status"
-              :options="statusTierOpts"
-              :disabled="!wh.canEdit"
-              class="min-w-24 flex-1"
-            />
-            <SelectInput
-              v-model="wh.level3.standing"
-              title="Standing"
-              :options="statusStandingOpts"
-              :disabled="!wh.canEdit"
-              class="min-w-24 flex-1"
-            />
-          </div>
-          <FormTextarea
-            v-model="wh.level3.items"
-            title="Trappings"
-            :validationStatus="validLevel3Items"
-            :disabled="!wh.canEdit"
-          />
-        </div>
-      </div>
-      <div class="flex-1" :class="[isEqualOrGreater ? '' : 'mt-3']">
-        <div class="flex flex-col gap-4">
-          <SelectTable
-            modalId="skill3"
-            :disabled="!wh.canEdit"
-            :initSelectedItems="wh.level3.skills"
-            :itemList="skillListUtils.whList.value"
-            title="Skills"
-            modalTitle="Add/remove skills"
-            :loading="skillListUtils.loading.value"
-            routeName="skill"
-            :truncateModalDescription="100"
-            @reload="skillListUtils.loadWhList"
-            @selected="(e) => wh.updateLevelSkills(3, e.id, e.selected)"
-          />
-          <SelectTable
-            modalId="talent3"
-            :disabled="!wh.canEdit"
-            :initSelectedItems="wh.level3.talents"
-            :itemList="talentListUtils.whList.value"
-            title="Talents"
-            modalTitle="Add/remove talents"
-            :loading="talentListUtils.loading.value"
-            routeName="talent"
-            :truncateModalDescription="100"
-            @reload="talentListUtils.loadWhList"
-            @selected="(e) => wh.updateLevelTalents(3, e.id, e.selected)"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <p class="text-xl mt-6">Level 4</p>
-  <div class="border border-neutral-300 rounded p-2">
-    <div
-      ref="contentContainerRef"
-      class="justify-between text-left gap-4 my-4"
-      :class="[isEqualOrGreater ? 'flex' : 'flex-col']"
-    >
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormInput
-            v-model="wh.level4.name"
-            title="Name"
-            :validationStatus="validLevel4Name"
-            :disabled="!wh.canEdit"
-          />
-          <MultipleCheckboxInput
-            v-model="wh.level4.attributes"
-            title="Attributes"
-            :options="attributeOpts"
-            :disabled="!wh.canEdit"
-          />
-
-          <div class="flex flex-wrap gap-4">
-            <SelectInput
-              v-model="wh.level4.status"
-              title="Status"
-              :options="statusTierOpts"
-              :disabled="!wh.canEdit"
-              class="min-w-24 flex-1"
-            />
-            <SelectInput
-              v-model="wh.level4.standing"
-              title="Standing"
-              :options="statusStandingOpts"
-              :disabled="!wh.canEdit"
-              class="min-w-24 flex-1"
-            />
-          </div>
-          <FormTextarea
-            v-model="wh.level4.items"
-            title="Trappings"
-            :validationStatus="validLevel4Items"
-            :disabled="!wh.canEdit"
-          />
-        </div>
-      </div>
-      <div class="flex-1" :class="[isEqualOrGreater ? '' : 'mt-3']">
-        <div class="flex flex-col gap-4">
-          <SelectTable
-            modalId="skill4"
-            :disabled="!wh.canEdit"
-            :initSelectedItems="wh.level4.skills"
-            :itemList="skillListUtils.whList.value"
-            title="Skills"
-            modalTitle="Add/remove skills"
-            :loading="skillListUtils.loading.value"
-            routeName="skill"
-            :truncateModalDescription="100"
-            @reload="skillListUtils.loadWhList"
-            @selected="(e) => wh.updateLevelSkills(4, e.id, e.selected)"
-          />
-          <SelectTable
-            modalId="talent4"
-            :disabled="!wh.canEdit"
-            :initSelectedItems="wh.level4.talents"
-            :itemList="talentListUtils.whList.value"
-            title="Talents"
-            modalTitle="Add/remove talents"
-            :loading="talentListUtils.loading.value"
-            routeName="talent"
-            :truncateModalDescription="100"
-            @reload="talentListUtils.loadWhList"
-            @selected="(e) => wh.updateLevelTalents(4, e.id, e.selected)"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <CareerLevel
+    v-model:name="wh.level1.name"
+    v-model:attributes="wh.level1.attributes"
+    v-model:status="wh.level1.status"
+    v-model:standing="wh.level1.standing"
+    v-model:items="wh.level1.items"
+    level="1"
+    :singleColumn="!isEqualOrGreater"
+    :canEdit="wh.canEdit"
+    :initialSkills="wh.level1.skills"
+    :initialTalents="wh.level1.talents"
+    :whSkillList="skillListUtils.whList.value"
+    :whSkillListLoading="skillListUtils.loading.value"
+    :whTalentList="talentListUtils.whList.value"
+    :whTalentListLoading="talentListUtils.loading.value"
+    :validName="validLevel1Name"
+    :validItems="validLevel1Items"
+    @reloadWhSkillList="skillListUtils.loadWhList"
+    @reloadWhTalentList="talentListUtils.loadWhList"
+    @updateSkill="(e) => wh.updateLevelSkills(1, e.id, e.selected)"
+    @updateTalent="(e) => wh.updateLevelTalents(1, e.id, e.selected)"
+  />
+  <CareerLevel
+    v-model:name="wh.level2.name"
+    v-model:attributes="wh.level2.attributes"
+    v-model:status="wh.level2.status"
+    v-model:standing="wh.level2.standing"
+    v-model:items="wh.level2.items"
+    level="2"
+    :singleColumn="!isEqualOrGreater"
+    :canEdit="wh.canEdit"
+    :initialSkills="wh.level2.skills"
+    :initialTalents="wh.level2.talents"
+    :whSkillList="skillListUtils.whList.value"
+    :whSkillListLoading="skillListUtils.loading.value"
+    :whTalentList="talentListUtils.whList.value"
+    :whTalentListLoading="talentListUtils.loading.value"
+    :validName="validLevel2Name"
+    :validItems="validLevel2Items"
+    @reloadWhSkillList="skillListUtils.loadWhList"
+    @reloadWhTalentList="talentListUtils.loadWhList"
+    @updateSkill="(e) => wh.updateLevelSkills(2, e.id, e.selected)"
+    @updateTalent="(e) => wh.updateLevelTalents(2, e.id, e.selected)"
+  />
+  <CareerLevel
+    v-model:name="wh.level3.name"
+    v-model:attributes="wh.level3.attributes"
+    v-model:status="wh.level3.status"
+    v-model:standing="wh.level3.standing"
+    v-model:items="wh.level3.items"
+    level="3"
+    :singleColumn="!isEqualOrGreater"
+    :canEdit="wh.canEdit"
+    :initialSkills="wh.level3.skills"
+    :initialTalents="wh.level3.talents"
+    :whSkillList="skillListUtils.whList.value"
+    :whSkillListLoading="skillListUtils.loading.value"
+    :whTalentList="talentListUtils.whList.value"
+    :whTalentListLoading="talentListUtils.loading.value"
+    :validName="validLevel3Name"
+    :validItems="validLevel3Items"
+    @reloadWhSkillList="skillListUtils.loadWhList"
+    @reloadWhTalentList="talentListUtils.loadWhList"
+    @updateSkill="(e) => wh.updateLevelSkills(3, e.id, e.selected)"
+    @updateTalent="(e) => wh.updateLevelTalents(3, e.id, e.selected)"
+  />
+  <CareerLevel
+    v-model:name="wh.level4.name"
+    v-model:attributes="wh.level4.attributes"
+    v-model:status="wh.level4.status"
+    v-model:standing="wh.level4.standing"
+    v-model:items="wh.level4.items"
+    level="4"
+    :singleColumn="!isEqualOrGreater"
+    :canEdit="wh.canEdit"
+    :initialSkills="wh.level4.skills"
+    :initialTalents="wh.level4.talents"
+    :whSkillList="skillListUtils.whList.value"
+    :whSkillListLoading="skillListUtils.loading.value"
+    :whTalentList="talentListUtils.whList.value"
+    :whTalentListLoading="talentListUtils.loading.value"
+    :validName="validLevel4Name"
+    :validItems="validLevel4Items"
+    @reloadWhSkillList="skillListUtils.loadWhList"
+    @reloadWhTalentList="talentListUtils.loadWhList"
+    @updateSkill="(e) => wh.updateLevelSkills(4, e.id, e.selected)"
+    @updateTalent="(e) => wh.updateLevelTalents(4, e.id, e.selected)"
+  />
+  <div class="flex justify-between text-left gap-4 my-4" :class="[isEqualOrGreater ? '' : 'flex-col']">
     <div class="my-3 flex-1">
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
