@@ -14,12 +14,13 @@ import { queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../u
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
+import ActionButton from "../../../components/ActionButton.vue";
 
 const whList = useWhList(new CharacterApi(authRequest));
 await whList.loadWhList();
 
 const router = useRouter();
-const queryParams = ref({ search: "", source: "" });
+const queryParams = ref({ search: "", source: "", sample: "" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
   () => queryParams,
@@ -52,6 +53,14 @@ function formatCharacterRow(character: Character) {
     id: character.id,
   };
 }
+
+function handleSampleCharacters() {
+  if (queryParams.value.sample !== "") {
+    queryParams.value.sample = "";
+  } else {
+    queryParams.value.sample = "true";
+  }
+}
 </script>
 
 <template>
@@ -63,7 +72,13 @@ function formatCharacterRow(character: Character) {
   >
     {{ whList.apiError.value }}
   </AlertBlock>
-  <Header title="Characters" />
+  <Header title="Characters">
+    <!--    <template #nextToHeader>-->
+    <!--      <ActionButton size="sm" variant="amber" @click="handleSampleCharacters">-->
+    <!--        {{ queryParams.sample ? "Hide" : "Show" }} sample characters-->
+    <!--      </ActionButton>-->
+    <!--    </template>-->
+  </Header>
   <TableWithSearch
     v-model="queryParams.search"
     :fields="columns"
