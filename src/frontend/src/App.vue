@@ -110,6 +110,9 @@ function onListWhClick() {
         </NavLink>
         <NavLink routeName="items" variant="side" @click="onListWhClick()">Trappings</NavLink>
       </div>
+      <div class="py-2">
+        <NavLink href="https://dice.hammergen.net/" variant="side" @click="onListWhClick()">Roll dice!</NavLink>
+      </div>
       <div v-if="auth.loggedIn.value" class="py-2">
         <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked users</NavLink>
         <NavLink routeName="manage" variant="side" @click="showSideBar = false">Manage account</NavLink>

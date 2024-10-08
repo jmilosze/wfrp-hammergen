@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import TextLink from "../components/TextLink.vue";
 import AlertBlock from "../components/AlertBlock.vue";
-import { ref } from "vue";
 
-const showAlert = ref(true);
+const showAlert = false;
 </script>
 
 <template>
