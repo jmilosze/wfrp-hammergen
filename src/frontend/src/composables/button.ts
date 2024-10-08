@@ -1,12 +1,12 @@
 export function useButton(variant?: "normal" | "red" | "amber", size?: "md" | "sm") {
-  const btnClass = ["rounded", "active:outline", "outline-2", "outline-neutral-400", "select-none"];
+  const btnClass = ["rounded", "active:outline", "outline-2", "outline-neutral-400", "select-none", "font-medium"];
 
   if (variant === "red") {
-    btnClass.push(...["bg-red-600", "hover:bg-red-800", "text-neutral-50"]);
+    btnClass.push(...["bg-red-600", "hover:bg-red-800", "text-neutral-100"]);
   } else if (variant === "amber") {
-    btnClass.push(...["bg-amber-300", "hover:bg-amber-400", "text-neutral-600"]);
+    btnClass.push(...["bg-amber-300", "hover:bg-amber-400", "text-neutral-700"]);
   } else {
-    btnClass.push(...["bg-neutral-600", "hover:bg-neutral-800", "text-neutral-50"]);
+    btnClass.push(...["bg-neutral-600", "hover:bg-neutral-800", "text-neutral-100"]);
   }
 
   if (size === "sm") {
