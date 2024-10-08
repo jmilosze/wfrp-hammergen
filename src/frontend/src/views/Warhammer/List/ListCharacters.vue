@@ -14,13 +14,14 @@ import { queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../u
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
-// import ActionButton from "../../../components/ActionButton.vue";
+import ActionButton from "../../../components/ActionButton.vue";
 
 const whList = useWhList(new CharacterApi(authRequest));
 await whList.loadWhList();
+const auth = useAuth();
 
 const router = useRouter();
-const queryParams = ref({ search: "", source: "", sample: "" });
+const queryParams = ref({ search: "", source: "", sample: auth.loggedIn.value ? "" : "true" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
   () => queryParams,
@@ -29,8 +30,6 @@ watch(
   },
   { deep: true },
 );
-
-const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
@@ -41,6 +40,7 @@ const columns = [
 const items = computed(() => {
   return whList.whList.value
     .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
+    .filter((wh) => (queryParams.value.sample === "" ? wh.ownerId !== "admin" : true))
     .map((x) => formatCharacterRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });
@@ -54,13 +54,13 @@ function formatCharacterRow(character: Character) {
   };
 }
 
-// function handleSampleCharacters() {
-//   if (queryParams.value.sample !== "") {
-//     queryParams.value.sample = "";
-//   } else {
-//     queryParams.value.sample = "true";
-//   }
-// }
+function handleSampleCharacters() {
+  if (queryParams.value.sample !== "") {
+    queryParams.value.sample = "";
+  } else {
+    queryParams.value.sample = "true";
+  }
+}
 </script>
 
 <template>
@@ -73,11 +73,11 @@ function formatCharacterRow(character: Character) {
     {{ whList.apiError.value }}
   </AlertBlock>
   <Header title="Characters">
-    <!--    <template #nextToHeader>-->
-    <!--      <ActionButton size="sm" variant="amber" @click="handleSampleCharacters">-->
-    <!--        {{ queryParams.sample ? "Hide" : "Show" }} sample characters-->
-    <!--      </ActionButton>-->
-    <!--    </template>-->
+    <template #nextToHeader>
+      <ActionButton size="sm" variant="amber" @click="handleSampleCharacters">
+        {{ queryParams.sample ? "Hide" : "Show" }} sample characters
+      </ActionButton>
+    </template>
   </Header>
   <TableWithSearch
     v-model="queryParams.search"

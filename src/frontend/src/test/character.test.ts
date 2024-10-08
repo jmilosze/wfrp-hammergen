@@ -69,6 +69,7 @@ const characterApiResponse: ApiResponse<CharacterApiData> = {
 
 const character = new Character({
   id: "id",
+  ownerId: "owner",
   canEdit: true,
   name: "char name",
   description: "character 1",
@@ -122,7 +123,6 @@ const character = new Character({
 });
 
 test("apiResponseToModel returns expected item", () => {
-  console.log(apiResponseToModel(characterApiResponse));
   expect(apiResponseToModel(characterApiResponse)).toMatchObject(character);
 });
 
