@@ -74,9 +74,7 @@ function handleSampleCharacters() {
   </AlertBlock>
   <Header title="Characters">
     <template #nextToHeader>
-      <ActionButton size="sm" variant="amber" @click="handleSampleCharacters">
-        {{ queryParams.sample ? "Hide" : "Show" }} sample characters
-      </ActionButton>
+      <ActionButton size="sm" variant="amber" @click="handleSampleCharacters"> Show sample characters </ActionButton>
     </template>
   </Header>
   <TableWithSearch
