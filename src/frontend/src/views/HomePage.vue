@@ -1,44 +1,26 @@
 <script setup lang="ts">
 import TextLink from "../components/TextLink.vue";
 import AlertBlock from "../components/AlertBlock.vue";
+import { ref } from "vue";
 
-const showAlert = false;
+const showAlert = ref(true);
 </script>
 
 <template>
   <div class="">
     <div class="text-center mt-5 font-hammergen text-6xl md:text-8xl">Hammergen</div>
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
-    <AlertBlock v-if="showAlert" alertType="blue" class="mt-5" @close="showAlert = false">
+    <AlertBlock v-if="showAlert" alertType="red" class="mt-5" @close="showAlert = false">
       <div class="pl-2">
-        <p class="text-2xl">New updates!</p>
-        <ul class="list-disc list-outside mt-2 ml-5">
-          <li>
-            We added all new items and spells from
-            <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-reikland-miscellanea" target="_blank">
-              Reikland Miscellanea
-            </TextLink>
-            and
-            <TextLink
-              href="https://cubicle7games.com/warhammer-fantasy-roleplay-tribes-and-tribulations"
-              target="_blank"
-            >
-              Tribes and Tribulations.
-            </TextLink>
-          </li>
-          <li>
-            Spells have now types and labels you can filter on. For example, a spell can have type of "Lore spell" and
-            labels "Ritual", "Lore of Light", and "Lore of Heavens". When filtering, this spell will show up if you
-            filter for "Ritual" or "Lore of Light" or "Lore of Heavens".
-          </li>
-          <li>
-            Some of the buttons, like "View/Edit" or "Create New" are now proper links. This means it is possible to
-            right click on them and "open in new tab".
-          </li>
-        </ul>
-        <p class="mt-2">
-          If you're enjoying using Hammergen please consider supporting it with donation at
-          <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>.
+        <p class="text-2xl font-semibold">Upcoming cleanup</p>
+        <p>
+          To reduce storage and improve the performance, we will be deleting inactive Hammergen accounts. On 9th of
+          September we will delete all accounts (and all their characters and other properties) that have not been
+          active in the last 2 years.
+        </p>
+        <p>
+          The account counts as inactive if no one has logged in to it in the last 2 years. To avoid having your account
+          deleted, please make sure you log in to your account (no need to do anything else).
         </p>
       </div>
     </AlertBlock>
