@@ -18,8 +18,8 @@ const auth = useAuth();
 
 <template>
   <div class="flex gap-2 my-1">
-    <LinkButton size="sm" routeName="viewCharacter" :params="{ id: id }">View</LinkButton>
-    <LinkButton v-if="canEdit" size="sm" routeName="character" :params="{ id: id }">Edit</LinkButton>
+    <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm">View</LinkButton>
+    <LinkButton v-if="canEdit" routeName="character" :params="{ id: id }" class="btn btn-sm">Edit</LinkButton>
     <ActionButton v-if="auth.loggedIn.value" class="btn btn-secondary btn-sm" @click="emit('copy', id)">
       Copy
     </ActionButton>

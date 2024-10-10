@@ -149,7 +149,7 @@ function onModifyClick() {
         :resetPagination="resetPaginationCounter"
         elementId="modal"
       >
-        <LinkButton class="mr-2 mb-2 shrink-0" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
+        <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
           Create new
         </LinkButton>
         <ReloadButton @click="emit('reload')" />

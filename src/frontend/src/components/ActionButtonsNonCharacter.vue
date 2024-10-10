@@ -19,7 +19,9 @@ const auth = useAuth();
 
 <template>
   <div class="flex gap-2 my-1">
-    <LinkButton size="sm" :routeName="routeName" :params="{ id: id }">{{ canEdit ? "View/Edit" : "View" }}</LinkButton>
+    <LinkButton :routeName="routeName" :params="{ id: id }" class="btn btn-sm">
+      {{ canEdit ? "View/Edit" : "View" }}
+    </LinkButton>
     <ActionButton v-if="auth.loggedIn.value" class="btn btn-secondary btn-sm" @click="emit('copy', id)">
       Copy
     </ActionButton>
