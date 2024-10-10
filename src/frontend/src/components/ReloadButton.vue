@@ -3,7 +3,7 @@ import ActionButton from "./ActionButton.vue";
 </script>
 
 <template>
-  <ActionButton class="mr-2 mb-2 shrink-0">
+  <ActionButton class="mr-2 mb-2 shrink-0 btn">
     <svg
       class="w-6 h-6"
       aria-hidden="true"

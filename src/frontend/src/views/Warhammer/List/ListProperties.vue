@@ -121,7 +121,12 @@ const filteredApplicableToOptions = computed(() => {
     :stackedViewSize="ViewSize.lg"
     class="mx-1"
   >
-    <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0" routeName="property" :params="{ id: 'create' }">
+    <LinkButton
+      v-if="auth.loggedIn.value"
+      class="mr-2 mb-2 shrink-0 btn"
+      routeName="property"
+      :params="{ id: 'create' }"
+    >
       Create new
     </LinkButton>
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">

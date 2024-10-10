@@ -60,7 +60,7 @@ function newRolls() {
 <template>
   <div class="flex flex-wrap items-center gap-2 mb-1">
     <div class="mb-1">{{ title }}</div>
-    <ActionButton v-if="!disabled" size="sm" @click="newRolls">Generate rolls</ActionButton>
+    <ActionButton v-if="!disabled" class="btn btn-sm" @click="newRolls">Generate rolls</ActionButton>
   </div>
   <div ref="contentContainerRef" class="w-full">
     <div v-if="!lgELSize.isEqualOrGreater.value" class="flex flex-col gap-4">

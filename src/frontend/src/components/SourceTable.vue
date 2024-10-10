@@ -69,7 +69,7 @@ function onModifyClick() {
   <div>
     <div class="flex items-center mb-1">
       <div class="mr-2">Sources</div>
-      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
+      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
     </div>
     <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
       <table class="w-full">
@@ -94,7 +94,7 @@ function onModifyClick() {
     <ModalWindow id="modifySourceModal">
       <template #header> Modify sources </template>
       <template #buttons>
-        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <div>
         <TableWithSearch
@@ -110,7 +110,7 @@ function onModifyClick() {
                 type="checkbox"
                 class="w-5 h-5 accent-neutral-600"
                 @input="emit('selected', { id: id, notes: sources[id].notes, selected: !sources[id].selected })"
-              >
+              />
             </div>
           </template>
 
@@ -119,7 +119,7 @@ function onModifyClick() {
               v-model="sources[id].notes"
               class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2"
               @input="emit('selected', { id: id, notes: sources[id].notes, selected: sources[id].selected })"
-            >
+            />
             <p class="text-sm text-red-600" :class="[validateSourceRecord(sources[id].notes).valid ? 'hidden' : '']">
               {{ validateSourceRecord(sources[id].notes).message }}
             </p>

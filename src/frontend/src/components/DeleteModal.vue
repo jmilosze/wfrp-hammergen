@@ -31,10 +31,10 @@ watch(
 
 <template>
   <ModalWindow id="deleteModal">
-    <template #header> Delete Prayer </template>
+    <template #header> Delete {{ elementToDelete.name }} </template>
     <template #buttons>
-      <ActionButton variant="red" @click="deleteElement()">Delete</ActionButton>
-      <ActionButton variant="normal" class="ml-3" @click="modal.hideModal()">Cancel</ActionButton>
+      <ActionButton class="btn btn-danger" @click="deleteElement()">Delete</ActionButton>
+      <ActionButton class="btn ml-3" @click="modal.hideModal()">Cancel</ActionButton>
     </template>
     <div>
       Are you sure you want to delete <span class="font-semibold">{{ elementToDelete.name }}?</span>

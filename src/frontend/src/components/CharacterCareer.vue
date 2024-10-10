@@ -179,7 +179,7 @@ function emitPastSelected(id: string) {
   <div>
     <div class="flex items-center mb-1">
       <div class="mr-1">Career</div>
-      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
+      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
     </div>
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
@@ -202,7 +202,7 @@ function emitPastSelected(id: string) {
     <ModalWindow id="modifyCareersModal" size="md">
       <template #header> Modify career </template>
       <template #buttons>
-        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <TableWithSearch
         v-model="searchTerm"
@@ -214,7 +214,7 @@ function emitPastSelected(id: string) {
         elementId="modal"
         @reload="emit('reload')"
       >
-        <LinkButton class="mr-2 mb-2 shrink-0" routeName="career" :params="{ id: 'create' }" :newWindow="true">
+        <LinkButton class="mr-2 mb-2 shrink-0 btn" routeName="career" :params="{ id: 'create' }" :newWindow="true">
           Create new
         </LinkButton>
         <ReloadButton @click="emit('reload')" />

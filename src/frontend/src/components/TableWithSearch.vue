@@ -109,14 +109,6 @@ onUpdated(() => {
 <template>
   <div ref="contentContainerRef">
     <div class="flex flex-wrap">
-      <!--      <LinkButton-->
-      <!--        v-if="addCreateNewBtn && routeName"-->
-      <!--        class="mr-2 mb-2 shrink-0"-->
-      <!--        :routeName="routeName"-->
-      <!--        :params="{ id: 'create' }"-->
-      <!--      >-->
-      <!--        Create new-->
-      <!--      </LinkButton>-->
       <slot />
       <input
         v-model="searchTerm"

@@ -120,7 +120,7 @@ async function submitForm() {
         class="mt-3"
       />
     </div>
-    <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
+    <ActionButton class="mt-3 btn" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
       Register
     </ActionButton>
   </div>

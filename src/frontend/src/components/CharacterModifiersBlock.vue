@@ -89,7 +89,7 @@ const validAtts = computed(() => {
   <div ref="contentContainerRef">
     <div class="flex items-center mb-2">
       <div class="mr-2">Character modifiers</div>
-      <ActionButton size="sm" @click="modal.showModal('modifiersHelpModal')">What are modifiers?</ActionButton>
+      <ActionButton class="btn btn-sm" @click="modal.showModal('modifiersHelpModal')">What are modifiers?</ActionButton>
     </div>
     <div class="border p-2 rounded border-neutral-400">
       <CharacterModifiersAttributes :rows="rows">
@@ -206,7 +206,7 @@ const validAtts = computed(() => {
   <ModalWindow id="modifiersHelpModal">
     <template #header> Character modifiers </template>
     <template #buttons>
-      <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+      <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
     </template>
     <div>
       Talent modifiers are automatically added to character sheet in both edit and view modes. For example, if you add a

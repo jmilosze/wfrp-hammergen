@@ -124,19 +124,13 @@ function onModifyClick() {
     <div class="flex items-center gap-2 mb-1 flex-wrap">
       <div>Skills</div>
       <div class="flex gap-2 flex-wrap">
-        <ActionButton v-if="!disabled" size="sm" class="flex-1" @click="onModifyClick">
+        <ActionButton v-if="!disabled" class="flex-1 btn btn-sm" @click="onModifyClick">
           <span class="flex-1">Modify</span>
         </ActionButton>
-        <ActionButton v-if="!disabled" size="sm" class="whitespace-nowrap flex-1" @click="emit('addSpeciesSkills')">
+        <ActionButton v-if="!disabled" class="whitespace-nowrap flex-1 btn btn-sm" @click="emit('addSpeciesSkills')">
           <span class="flex-1">Add species skills</span>
         </ActionButton>
-        <ActionButton
-          v-if="!disabled"
-          size="sm"
-          variant="red"
-          class="whitespace-nowrap flex-1"
-          @click="emit('clearAll')"
-        >
+        <ActionButton v-if="!disabled" class="whitespace-nowrap flex-1 btn btn-danger btn-sm" @click="emit('clearAll')">
           <span class="flex-1">Clear all</span>
         </ActionButton>
       </div>
@@ -175,7 +169,7 @@ function onModifyClick() {
     <ModalWindow id="modifySkillsModal">
       <template #header> Modify skills </template>
       <template #buttons>
-        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <TableWithSearch
         v-model="searchTerm"
@@ -187,7 +181,7 @@ function onModifyClick() {
         elementId="modal"
         @reload="emit('reload')"
       >
-        <LinkButton class="mr-2 mb-2 shrink-0" routeName="skill" :params="{ id: 'create' }" :newWindow="true">
+        <LinkButton class="mr-2 mb-2 shrink-0 btn" routeName="skill" :params="{ id: 'create' }" :newWindow="true">
           Create new
         </LinkButton>
         <ReloadButton @click="emit('reload')" />

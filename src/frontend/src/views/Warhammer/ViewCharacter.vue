@@ -428,18 +428,17 @@ const grimoiresDisp = ref(
   </AlertBlock>
   <Header :title="addSpaces(character.name)" />
   <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap">
-    <ActionButton :size="'sm'" class="m-1" @click="saveCsv()">Download CSV</ActionButton>
-    <ActionButton :size="'sm'" class="m-1" @click="saveJson()">Download JSON</ActionButton>
-    <ActionButton :size="'sm'" class="m-1" @click="print()">Print</ActionButton>
+    <ActionButton class="m-1 btn btn-sm" @click="saveCsv()">Download CSV</ActionButton>
+    <ActionButton class="m-1 btn btn-sm" @click="saveJson()">Download JSON</ActionButton>
+    <ActionButton class="m-1 btn btn-sm" @click="print()">Print</ActionButton>
     <ActionButton
       v-if="character.canEdit"
-      :size="'sm'"
-      class="m-1"
+      class="m-1 btn btn-sm"
       @click="router.push({ name: 'character', params: { id: id } })"
     >
       Edit
     </ActionButton>
-    <ActionButton :size="'sm'" class="m-1" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
+    <ActionButton class="m-1 btn btn-sm" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
 
   <div class="flex justify-between text-left gap-5 my-5" :class="[isEqualOrGreater ? '' : 'flex-wrap']">
