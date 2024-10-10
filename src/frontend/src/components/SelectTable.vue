@@ -106,8 +106,8 @@ function onModifyClick() {
   <div>
     <div class="flex items-center gap-2 mb-1">
       <div v-if="title">{{ title }}</div>
-      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
-      <ActionButton v-if="!disabled && clearAllBtn" size="sm" variant="red" @click="emit('clearAll')">
+      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
+      <ActionButton v-if="!disabled && clearAllBtn" class="btn btn-danger btn-sm" @click="emit('clearAll')">
         Clear all
       </ActionButton>
     </div>
@@ -138,7 +138,7 @@ function onModifyClick() {
     <ModalWindow :id="modalId">
       <template #header> {{ modalTitle }} </template>
       <template #buttons>
-        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <TableWithSearch
         v-model="searchTerm"

@@ -66,7 +66,7 @@ function onModifyClick() {
   <div>
     <div class="flex items-center mb-1">
       <div class="mr-2">Effects</div>
-      <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
+      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
     </div>
     <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
       <table class="w-full">
@@ -88,7 +88,7 @@ function onModifyClick() {
     <ModalWindow id="modifyEffectsModal">
       <template #header> Modify sources </template>
       <template #buttons>
-        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <div class="">
         <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="effectList" :stackedViewSize="ViewSize.sm">
@@ -99,7 +99,7 @@ function onModifyClick() {
                 type="checkbox"
                 class="w-5 h-5 accent-neutral-600"
                 @input="emit('selected', { id: id, selected: !effects[id].selected })"
-              >
+              />
             </div>
           </template>
         </TableWithSearch>

@@ -124,7 +124,7 @@ async function submitForm() {
               class="py-2 px-5 hover:bg-neutral-200 border-b border-neutral-200 bg-white flex flex-col items-stretch md:justify-between flex-wrap md:flex-row md:gap-2"
             >
               <span class="flex-auto text-center md:text-start">{{ sharedAccount }}</span>
-              <ActionButton variant="red" class="text-sm mt-2 md:mt-0" @click="removeUsername(sharedAccount)">
+              <ActionButton class="mt-2 md:mt-0 btn btn-sm btn-danger" @click="removeUsername(sharedAccount)">
                 Remove
               </ActionButton>
             </td>
@@ -153,11 +153,11 @@ async function submitForm() {
       :validationStatus="validNewSharedAccount"
       class="mt-3"
     >
-      <ActionButton class="ml-2" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername">
+      <ActionButton class="ml-2 btn" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername">
         Add
       </ActionButton>
     </FormInput>
-    <ActionButton class="mt-3" :spinner="applyChangesSubmissionState.status === 'inProgress'" @click="submitForm">
+    <ActionButton class="mt-3 btn" :spinner="applyChangesSubmissionState.status === 'inProgress'" @click="submitForm">
       Apply changes
     </ActionButton>
   </div>

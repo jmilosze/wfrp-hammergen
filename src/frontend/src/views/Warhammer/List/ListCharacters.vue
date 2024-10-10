@@ -74,7 +74,9 @@ function handleSampleCharacters() {
   </AlertBlock>
   <Header title="Characters">
     <template #nextToHeader>
-      <ActionButton size="sm" variant="amber" @click="handleSampleCharacters"> Show sample characters </ActionButton>
+      <ActionButton class="btn btn-secondary btn-sm" @click="handleSampleCharacters">
+        Show sample characters
+      </ActionButton>
     </template>
   </Header>
   <TableWithSearch

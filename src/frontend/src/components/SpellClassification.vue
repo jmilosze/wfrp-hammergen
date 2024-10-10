@@ -126,7 +126,7 @@ function onModifyClick() {
           <div class="flex-1">
             <div class="flex items-center mb-1">
               <div class="mr-2">Labels</div>
-              <ActionButton v-if="!disabled" size="sm" @click="onModifyClick">Modify</ActionButton>
+              <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
             </div>
             <span v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)" :key="i">
               {{ printSpellLabel(label) + (i !== simplifiedLabels.length - 1 ? ", " : "") }}
@@ -138,7 +138,7 @@ function onModifyClick() {
     <ModalWindow id="modifyClassificationModal" size="xs">
       <template #header> Modify labels</template>
       <template #buttons>
-        <ActionButton variant="normal" @click="modal.hideModal()">Close</ActionButton>
+        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
       </template>
       <div>
         <TableWithSearch
@@ -147,7 +147,7 @@ function onModifyClick() {
           :items="labelsWithSelectList"
           :stackedViewSize="ViewSize.zero"
         >
-          <ActionButton class="mr-2 mb-2 shrink-0" @click="selectAllLabels"> Select all </ActionButton>
+          <ActionButton class="mr-2 mb-2 shrink-0 btn" @click="selectAllLabels"> Select all </ActionButton>
           <template #selected="{ id }: { id: SpellLabel }">
             <div>
               <input

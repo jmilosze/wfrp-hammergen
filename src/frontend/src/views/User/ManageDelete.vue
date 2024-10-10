@@ -66,7 +66,7 @@ async function submitForm() {
         title="Current password"
         :validationStatus="validCurrentPassword"
       />
-      <ActionButton class="mt-3" :spinner="submissionState.status === 'inProgress'" variant="red" @click="submitForm">
+      <ActionButton class="mt-3 btn btn-danger" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
         Delete account
       </ActionButton>
     </div>

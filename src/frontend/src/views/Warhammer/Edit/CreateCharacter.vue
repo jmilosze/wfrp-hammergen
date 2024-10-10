@@ -342,12 +342,7 @@ const modiferAttributes = computed(() => {
       />
     </div>
     <div class="flex flex-wrap mt-4 gap-4">
-      <HintModal
-        buttonText="More details"
-        buttonSize="sm"
-        modalHeader="Character generation"
-        modalId="charGenerationHint"
-      >
+      <HintModal buttonText="More details" modalHeader="Character generation" modalId="charGenerationHint">
         <p class="my-1">
           The generation process of a level 1 character follows all steps from character chapter of the rulebook with
           the exception that species and career cannot be chosen as random at this moment.
@@ -371,7 +366,7 @@ const modiferAttributes = computed(() => {
         </p>
         <p class="my-1">Generating will override all current entries on the character sheet.</p>
       </HintModal>
-      <ActionButton size="sm" @click="rollCharacter">Generate</ActionButton>
+      <ActionButton class="btn btn-sm" @click="rollCharacter">Generate</ActionButton>
     </div>
   </div>
   <div
@@ -382,7 +377,7 @@ const modiferAttributes = computed(() => {
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit">
-          <ActionButton v-if="wh.canEdit" size="sm" class="ml-2 h-full" @click="formGenerateName">
+          <ActionButton v-if="wh.canEdit" class="ml-2 h-full btn btn-sm" @click="formGenerateName">
             Generate
           </ActionButton>
         </FormInput>
@@ -395,7 +390,7 @@ const modiferAttributes = computed(() => {
         />
         <div class="flex flex-wrap items-center gap-2 -mb-3">
           <p class="">Fate and resilience</p>
-          <ActionButton v-if="wh.canEdit" size="sm" @click="formGenerateFateResilience">Generate</ActionButton>
+          <ActionButton v-if="wh.canEdit" class="btn btn-sm" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
@@ -436,7 +431,7 @@ const modiferAttributes = computed(() => {
           <p class="">Status and standing</p>
           <ActionButton
             v-if="wh.canEdit && !careerListUtils.loading.value"
-            size="sm"
+            class="btn btn-sm"
             @click="formGenerateStatusStanding"
           >
             Generate
@@ -551,7 +546,7 @@ const modiferAttributes = computed(() => {
           :disabled="!wh.canEdit"
           :class="[isEqualOrGreater ? '' : 'mt-2']"
         >
-          <ActionButton v-if="wh.canEdit" class="mb-1" size="sm" @click="formGenerateDescription">
+          <ActionButton v-if="wh.canEdit" class="mb-1 btn btn-sm" @click="formGenerateDescription">
             Generate
           </ActionButton>
         </FormTextarea>
