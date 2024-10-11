@@ -40,6 +40,7 @@ export const source: Record<string, string> = {
   35: "Shrines Of Sigmar",
   36: "Sullasara's Spells",
   37: "Blood And Bramble",
+  38: "Dwarf Player's Guide",
 };
 
 export type Source = Record<string, string>;
