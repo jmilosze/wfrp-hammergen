@@ -14,6 +14,7 @@ var talent0 = wh.Wh{
 		Tests:       "tests",
 		MaxRank:     3,
 		Attribute:   wh.AttBS,
+		Attribute2:  wh.AttWS,
 		IsGroup:     false,
 		Modifiers: &wh.Modifiers{
 			Size:     1,

@@ -266,6 +266,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	allMutationIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	allPrayerIds := make([]string, 0)
+	allTraitIds := make([]string, 0)
 	for _, v := range characters {
 		character, ok := v.Object.(*wh.Character)
 		if !ok {
@@ -286,7 +287,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(7)
+	wg.Add(8)
 
 	components := map[wh.WhType]*struct {
 		err  error
@@ -301,6 +302,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		wh.WhTypeMutation: {err: nil, full: false, wh: nil, ids: allMutationIds},
 		wh.WhTypeSpell:    {err: nil, full: false, wh: nil, ids: allSpellIds},
 		wh.WhTypePrayer:   {err: nil, full: false, wh: nil, ids: allPrayerIds},
+		wh.WhTypeTrait:    {err: nil, full: false, wh: nil, ids: allTraitIds},
 	}
 
 	for k := range components {
@@ -328,7 +330,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		}
 		fullCharacter := v.CopyHeaders()
 		var err error
-		fullCharacter.Object, err = character.ToFull(components[wh.WhTypeItem].wh, components[wh.WhTypeSkill].wh, components[wh.WhTypeTalent].wh, components[wh.WhTypeMutation].wh, components[wh.WhTypeSpell].wh, components[wh.WhTypePrayer].wh, components[wh.WhTypeCareer].wh)
+		fullCharacter.Object, err = character.ToFull(components[wh.WhTypeItem].wh, components[wh.WhTypeSkill].wh, components[wh.WhTypeTalent].wh, components[wh.WhTypeMutation].wh, components[wh.WhTypeSpell].wh, components[wh.WhTypePrayer].wh, components[wh.WhTypeTrait].wh, components[wh.WhTypeCareer].wh)
 		if err != nil {
 			return nil, fmt.Errorf("failed convert wh-character to full character")
 		}

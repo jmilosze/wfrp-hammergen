@@ -31,18 +31,6 @@ def find_in_items(id):
     print(f"characters with carried: {carried}")
     print(f"characters with stored: {stored}")
 
-
-def find_in_skills(id):
-    used = []
-    chars = DB["character"].find()
-    for char in chars:
-        for skill in char["skills"]:
-            if skill["id"] == id:
-                used.append(char["name"])
-                break
-    print(f"characters with skill: {used}")
-
-
 def check_characters():
     not_converted = []
     chars = DB["character"].find()
@@ -65,5 +53,28 @@ def find_in_spells(id):
     print(f"characters with spell: {spells}")
 
 
+def find_property(id):
+    properties = []
+    items = DB["item"].find()
+    for item in items:
+        for property in item["object"]["properties"]:
+            if property == id:
+                properties.append(item["object"]["name"])
+                break
+
+    print(f"items with property: {properties}")
+
+
+def find_talents_in_characters(id):
+    used = []
+    chars = DB["character"].find()
+    for char in chars:
+        for talent in char["object"]["talents"]:
+            if talent["id"] == id:
+                used.append(char["object"]["name"])
+                break
+    print(f"characters with skill: {used}")
+
+
 if __name__ == "__main__":
-    find_in_spells("6649b99f49960d0001d12df4")
+    find_talents_in_characters("63b4a3ff76bd2da2010c5f76")
