@@ -41,6 +41,7 @@ import { MutationApiData, printMutationType } from "./mutation.ts";
 import { Source } from "./source.ts";
 import { ItemPropertyApiData } from "./itemproperty.ts";
 import { ModifierEffect } from "./characterModifiers.ts";
+import { TraitApiData } from "./trait.ts";
 
 export interface ItemFullApiData {
   name: string;
@@ -94,6 +95,7 @@ export interface CharacterFullApiData {
   storedItems: WhNumber<ItemFullApiData>[];
   spells: ApiResponse<SpellApiData>[];
   prayers: ApiResponse<PrayerApiData>[];
+  traits: ApiResponse<TraitApiData>[];
   mutations: ApiResponse<MutationApiData>[];
   careerPath: WhNumber<CareerApiData>[];
   shared: boolean;
@@ -137,6 +139,12 @@ export interface CharacterFullPrayer {
   range: string;
   target: string;
   duration: string;
+  description: string;
+}
+
+export interface CharacterFullTrait {
+  id: string;
+  name: string;
   description: string;
 }
 
@@ -218,6 +226,7 @@ export interface CharacterFull {
 
   spells: CharacterFullSpell[];
   prayers: CharacterFullPrayer[];
+  traits: CharacterFullTrait[];
   mutations: CharacterFullMutation[];
 
   encWeapon: number;
@@ -269,6 +278,7 @@ export function newCharacterFull({
   stored = [] as CharacterFullItem[],
   spells = [] as CharacterFullSpell[],
   prayers = [] as CharacterFullPrayer[],
+  traits = [] as CharacterFullTrait[],
   mutations = [] as CharacterFullMutation[],
   encWeapon = 0,
   encArmor = 0,
@@ -318,6 +328,7 @@ export function newCharacterFull({
     stored: stored,
     spells: spells,
     prayers: prayers,
+    traits: traits,
     mutations: mutations,
     encWeapon: encWeapon,
     encArmor: encArmor,
@@ -433,6 +444,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
 
     spells: getSpells(fullCharacterApi.object.spells),
     prayers: getPrayers(fullCharacterApi.object.prayers),
+    traits: getTraits(fullCharacterApi.object.traits),
     mutations: getMutations(fullCharacterApi.object.mutations),
 
     encWeapon: equippedWeapon.map((x) => x.wh.object.enc * x.number).reduce((x, y) => x + y, 0),
@@ -578,6 +590,14 @@ function getPrayers(prayers: ApiResponse<PrayerApiData>[]): CharacterFullPrayer[
     range: x.object.range,
     target: x.object.target,
     duration: x.object.duration,
+    description: x.object.description,
+  }));
+}
+
+function getTraits(traits: ApiResponse<TraitApiData>[]): CharacterFullTrait[] {
+  return traits.map((x) => ({
+    id: x.id,
+    name: x.object.name,
     description: x.object.description,
   }));
 }
@@ -767,6 +787,14 @@ export function CharacterFullToCsv(characterFull: CharacterFull): string {
 
   for (const item of characterFull.mutations) {
     csv += csvStr(item.name) + "," + item.type + "," + csvStr(item.description) + ",,,,,,,,\n";
+  }
+
+  csv += ",,,,,,,,,,\n";
+  csv += "Traits,,,,,,,,,,\n";
+  csv += "Name,Description,,,,,,,,,\n";
+
+  for (const item of characterFull.traits) {
+    csv += csvStr(item.name) + "," + csvStr(item.description) + ",,,,,,,,,\n";
   }
 
   csv += ",,,,,,,,,,\n";

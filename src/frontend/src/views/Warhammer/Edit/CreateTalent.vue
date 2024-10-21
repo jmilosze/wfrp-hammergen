@@ -134,20 +134,27 @@ const talentTable = useElSize(380, talentTableRef);
       <div class="flex flex-col gap-4">
         <div>
           <p class="mb-1">Max rank</p>
-          <div class="flex">
+          <div class="flex flex-wrap justify-left">
             <SelectInput
               v-model="wh.attribute"
               :options="attOptions"
               :disabled="!wh.canEdit || wh.isGroup"
-              class="min-w-24"
+              class="mb-2"
             />
-            <div class="shrink-0 mx-4 pt-2">Bonus +</div>
+            <div class="shrink-0 mx-2 pt-2 mb-2">Bonus +</div>
+            <SelectInput
+              v-model="wh.attribute2"
+              :options="attOptions"
+              :disabled="!wh.canEdit || wh.isGroup"
+              class="mb-2"
+            />
+            <div class="shrink-0 mx-2 pt-2 mb-2">Bonus +</div>
             <FormInput
               v-model="wh.maxRank"
               :validationStatus="validMaxRank"
               :disabled="!wh.canEdit || wh.isGroup"
               type="number"
-              class="min-w-14"
+              class="flex-auto w-14 mb-2"
             />
           </div>
         </div>
