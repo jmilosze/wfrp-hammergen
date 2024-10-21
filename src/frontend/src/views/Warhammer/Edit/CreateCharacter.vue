@@ -54,6 +54,7 @@ import CharacterSkills from "../../../components/CharacterSkills.vue";
 import CharacterTalents from "../../../components/CharacterTalents.vue";
 import { ItemApi } from "../../../services/wh/item.ts";
 import CharacterItems from "../../../components/CharacterItems.vue";
+import { TraitApi } from "../../../services/wh/trait.ts";
 
 const props = defineProps<{
   id: string;
@@ -81,6 +82,8 @@ const spellListUtils = useWhList(new SpellApi(authRequest));
 spellListUtils.loadWhList();
 const prayerListUtils = useWhList(new PrayerApi(authRequest));
 prayerListUtils.loadWhList();
+const traitListUtils = useWhList(new TraitApi(authRequest));
+traitListUtils.loadWhList();
 const mutationListUtils = useWhList(new MutationApi(authRequest));
 mutationListUtils.loadWhList();
 const skillListUtils = useWhList(new SkillApi(authRequest));
@@ -185,6 +188,14 @@ watch(
 );
 
 watch(
+  () => traitListUtils.whList.value,
+  (newVal) => {
+    wh.value.hydrateTraitModifiers(newVal);
+  },
+  { immediate: true },
+);
+
+watch(
   () => selectedGenSpecies.value,
   (newVal) => {
     careerOpts.value = setCareerOpts(newVal, careerListUtils.whList.value);
@@ -241,6 +252,7 @@ function rollCharacter() {
 
   wh.value.hydrateTalentModifiers(talentListUtils.whList.value);
   wh.value.hydrateMutationModifiers(mutationListUtils.whList.value);
+  wh.value.hydrateTraitModifiers(traitListUtils.whList.value);
 }
 
 const attributes = computed(() => {
@@ -669,6 +681,9 @@ const modiferAttributes = computed(() => {
       @selected="(e) => wh.updatePrayers(e.id, e.selected)"
       @clearAll="wh.clearPrayers(true)"
     />
+  </div>
+
+  <div class="flex justify-between text-left gap-4 my-4 flex-wrap">
     <SelectTable
       :disabled="!wh.canEdit"
       :initSelectedItems="wh.mutations"
@@ -685,6 +700,23 @@ const modiferAttributes = computed(() => {
       @reload="mutationListUtils.loadWhList"
       @selected="(e) => wh.updateMutations(e.id, e.selected, mutationListUtils.whList.value)"
       @clearAll="wh.clearMutations(true)"
+    />
+    <SelectTable
+      :disabled="!wh.canEdit"
+      :initSelectedItems="wh.traits"
+      :itemList="traitListUtils.whList.value"
+      title="Creature traits"
+      modalTitle="Modify traits"
+      modalId="characterTraits"
+      :loading="traitListUtils.loading.value"
+      :clearAllBtn="true"
+      :disableDescription="true"
+      routeName="trait"
+      :truncateModalDescription="100"
+      class="flex-1 min-w-56"
+      @reload="traitListUtils.loadWhList"
+      @selected="(e) => wh.updateTraits(e.id, e.selected, traitListUtils.whList.value)"
+      @clearAll="wh.clearTraits(true)"
     />
   </div>
 

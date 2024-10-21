@@ -365,6 +365,18 @@ const mutationDisp = ref({
   })),
 });
 
+const traitDisp = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "description", displayName: "Description" },
+  ],
+  items: character.value.traits.map((x) => ({
+    id: x.id,
+    name: addSpaces(x.name),
+    description: addSpaces(x.description),
+  })),
+});
+
 const spellFields = [
   { name: "name", displayName: "Name" },
   { name: "cn", displayName: "CN" },
@@ -680,17 +692,6 @@ const grimoiresDisp = ref(
     />
   </div>
   <ViewCharacterTable
-    title="Mutations"
-    :stack="!isEqualOrGreater && !printing"
-    :items="mutationDisp.items"
-    :fields="mutationDisp.fields"
-    class="my-5"
-  >
-    <template #name="item">
-      <TextLink routeName="mutation" :params="{ id: item.id }">{{ item.name }}</TextLink>
-    </template>
-  </ViewCharacterTable>
-  <ViewCharacterTable
     title="Known spells"
     :stack="!isEqualOrGreater && !printing"
     :items="spellsDisp.items"
@@ -723,6 +724,28 @@ const grimoiresDisp = ref(
   >
     <template #name="item">
       <TextLink routeName="spell" :params="{ id: item.id }">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
+  <ViewCharacterTable
+    title="Mutations"
+    :stack="!isEqualOrGreater && !printing"
+    :items="mutationDisp.items"
+    :fields="mutationDisp.fields"
+    class="my-5"
+  >
+    <template #name="item">
+      <TextLink routeName="mutation" :params="{ id: item.id }">{{ item.name }}</TextLink>
+    </template>
+  </ViewCharacterTable>
+  <ViewCharacterTable
+    title="Traits"
+    :stack="!isEqualOrGreater && !printing"
+    :items="traitDisp.items"
+    :fields="traitDisp.fields"
+    class="my-5"
+  >
+    <template #name="item">
+      <TextLink routeName="trait" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
 </template>
