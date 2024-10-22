@@ -12,6 +12,12 @@ const showAlert = ref(true);
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
     <AlertBlock v-if="showAlert" alertType="red" class="mt-5" @close="showAlert = false">
       <div class="pl-2">
+        <p class="text-2xl font-semibold">Creature traits are here!</p>
+        <p>
+          Creature traits are finally here on Hammergen! You can browse them in
+          <TextLink routeName="traits">Creature traits tab</TextLink> and attach them to characters. We added most of
+          the published Traits (about 150).
+        </p>
         <p class="text-2xl font-semibold">Upcoming cleanup</p>
         <p>
           To reduce storage and improve the performance, we will be deleting inactive Hammergen accounts. On 9th of
