@@ -332,7 +332,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		var err error
 		fullCharacter.Object, err = character.ToFull(components[wh.WhTypeItem].wh, components[wh.WhTypeSkill].wh, components[wh.WhTypeTalent].wh, components[wh.WhTypeMutation].wh, components[wh.WhTypeSpell].wh, components[wh.WhTypePrayer].wh, components[wh.WhTypeTrait].wh, components[wh.WhTypeCareer].wh)
 		if err != nil {
-			return nil, fmt.Errorf("failed convert wh-character to full character")
+			return nil, fmt.Errorf("failed convert wh-character to full character: %w", err)
 		}
 
 		fullCharacters = append(fullCharacters, fullCharacter)

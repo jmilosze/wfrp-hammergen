@@ -559,6 +559,7 @@ export class Character implements WhProperty {
     } else {
       this.traits.clear();
     }
+    this.modifiers.traits = {};
   }
 
   updateMutations(id: string, selected: boolean, mutations: Mutation[]): void {
@@ -581,6 +582,7 @@ export class Character implements WhProperty {
     } else {
       this.mutations.clear();
     }
+    this.modifiers.mutations = {};
   }
 
   updateSkills(id: string, number: number): void {
@@ -615,6 +617,7 @@ export class Character implements WhProperty {
     } else {
       clearObject(this.talents);
     }
+    this.modifiers.talents = {};
   }
 
   updateItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {

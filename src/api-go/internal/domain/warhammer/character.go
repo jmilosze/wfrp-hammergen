@@ -3,6 +3,7 @@ package warhammer
 import (
 	"errors"
 	"fmt"
+	"log"
 )
 
 type Character struct {
@@ -135,7 +136,17 @@ func (character *Character) ToFull(
 	careerPath := idNumberListToWhNumberList(character.CareerPath, allCareerIdMap)
 	career, err := idNumberToWhNumber(character.Career, allCareerIdMap)
 	if err != nil {
-		return nil, err
+		if character.Career != nil {
+			log.Printf("Error finding career %s, using empty career instead", character.Career.Id)
+			newCareer := &Career{}
+			err = newCareer.InitNilPointers()
+			if err != nil {
+				return nil, err
+			}
+			career = &WhNumber{Wh: &Wh{Id: "000000000000000000000000", Object: newCareer}, Number: 1}
+		} else {
+			return nil, err
+		}
 	}
 
 	return &CharacterFull{
@@ -325,7 +336,7 @@ func idNumberToWhNumber(idNumer *IdNumber, allIdWhMap map[string]*Wh) (*WhNumber
 		}
 	}
 
-	return nil, errors.New("no careers in allIdWhMap")
+	return nil, fmt.Errorf("could not find id %s in allIdWhMap", idNumer.Id)
 }
 
 type IdNumber struct {

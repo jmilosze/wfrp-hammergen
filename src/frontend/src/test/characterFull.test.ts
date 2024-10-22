@@ -866,6 +866,42 @@ const characterFullApiData: CharacterFullApiData = {
       },
     },
   ],
+  traits: [
+    {
+      id: "idT18",
+      canEdit: true,
+      ownerId: "owner",
+      object: {
+        name: "trait_1",
+        description: "trait_1_desc",
+        modifiers: {
+          size: -1,
+          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 2 },
+          movement: 1,
+          effects: [],
+        },
+        shared: true,
+        source: {},
+      },
+    },
+    {
+      id: "idT19",
+      canEdit: true,
+      ownerId: "owner",
+      object: {
+        name: "trait_2",
+        description: "trait_2_desc",
+        modifiers: {
+          size: 1,
+          attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+          movement: 0,
+          effects: [],
+        },
+        shared: true,
+        source: {},
+      },
+    },
+  ],
   shared: true,
 };
 
@@ -921,11 +957,11 @@ const characterFull = {
   ],
   baseAttributes: { WS: 40, BS: 40, S: 30, T: 25, I: 50, Ag: 35, Dex: 50, Int: 35, WP: 35, Fel: 25 },
   attributeAdvances: { WS: 1, BS: 2, S: 3, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-  otherAttributes: { WS: 6, BS: 12, S: 18, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 8 },
-  attributes: { Ag: 35, BS: 54, Dex: 50, Fel: 33, I: 50, Int: 37, S: 51, T: 25, WP: 37, WS: 47 },
-  movement: 7,
-  walk: 14,
-  run: 28,
+  otherAttributes: { WS: 6, BS: 12, S: 18, T: 0, I: 0, Ag: 0, Dex: 0, Int: 4, WP: 4, Fel: 10 },
+  attributes: { WS: 47, BS: 54, S: 51, T: 25, I: 50, Ag: 35, Dex: 50, Int: 39, WP: 39, Fel: 35 },
+  movement: 8,
+  walk: 16,
+  run: 32,
   wounds: 7,
   talents: [
     { name: "talent_1", rank: 6, id: "id6" },
@@ -1114,6 +1150,10 @@ const characterFull = {
       duration: "prayer_2_duration",
       description: "prayer_2_desc",
     },
+  ],
+  traits: [
+    { id: "idT18", name: "trait_1", description: "trait_1_desc" },
+    { id: "idT19", name: "trait_2", description: "trait_2_desc" },
   ],
   mutations: [
     { id: "id18", name: "mut_1", type: "Physical", description: "mut_1_desc" },

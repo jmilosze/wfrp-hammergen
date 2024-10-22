@@ -343,12 +343,17 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     getAttributes(),
   );
 
+  const traitAttributes: Attributes = fullCharacterApi.object.traits.reduce(
+    (a, v) => sumAttributes(a, v.object.modifiers.attributes),
+    getAttributes(),
+  );
+
   const talentAttributes: Attributes = fullCharacterApi.object.talents.reduce(
     (a, v) => sumAttributes(a, multiplyAttributes(v.number, v.wh.object.modifiers.attributes)),
     getAttributes(),
   );
 
-  const otherAttributes = sumAttributes(mutationAttributes, talentAttributes);
+  const otherAttributes = sumAttributes(mutationAttributes, traitAttributes, talentAttributes);
 
   const attributes = sumAttributes(
     fullCharacterApi.object.baseAttributes,
@@ -358,15 +363,21 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
 
   const sizeModifier: number =
     fullCharacterApi.object.mutations.reduce((a, v) => a + v.object.modifiers.size, 0) +
+    fullCharacterApi.object.traits.reduce((a, v) => a + v.object.modifiers.size, 0) +
     fullCharacterApi.object.talents.reduce((a, v) => a + v.number * v.wh.object.modifiers.size, 0);
   const movementModifier =
     fullCharacterApi.object.mutations.reduce((a, v) => a + v.object.modifiers.movement, 0) +
+    fullCharacterApi.object.traits.reduce((a, v) => a + v.object.modifiers.movement, 0) +
     fullCharacterApi.object.talents.reduce((a, v) => a + v.number * v.wh.object.modifiers.movement, 0);
 
   const size = getSizeFormula(sizeModifier);
 
   const hardyRanks =
     fullCharacterApi.object.mutations.reduce(
+      (a, v) => a + (v.object.modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
+      0,
+    ) +
+    fullCharacterApi.object.traits.reduce(
       (a, v) => a + (v.object.modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
       0,
     ) +
