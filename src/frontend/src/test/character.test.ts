@@ -490,6 +490,9 @@ test("getWounds returns correct value", () => {
   const mut1Attributes = { WS: 0, BS: 0, S: 1, T: 1, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 1, Fel: 0 };
   const mut2Attributes = { WS: 0, BS: 0, S: 2, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 };
 
+  const trait1Attributes = { WS: 0, BS: 0, S: 1, T: 1, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 1, Fel: 0 };
+  const trait2Attributes = { WS: 0, BS: 0, S: 2, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 };
+
   char.modifiers = {
     talents: {
       talent1: { number: 1, value: new CharacterModifiers({ size: -1, attributes: talent1Attributes }) },
@@ -498,6 +501,10 @@ test("getWounds returns correct value", () => {
     mutations: {
       mutation1: { value: new CharacterModifiers({ attributes: mut1Attributes }) },
       mutation2: { value: new CharacterModifiers({ attributes: mut2Attributes }) },
+    },
+    traits: {
+      trait1: { value: new CharacterModifiers({ attributes: trait1Attributes }) },
+      trait2: { value: new CharacterModifiers({ attributes: trait2Attributes }) },
     },
   };
 
@@ -525,6 +532,7 @@ describe("getMovement returns correct value", () => {
           talent1: { number: 1, value: new CharacterModifiers({ movement: -100 }) },
         },
         mutations: {} as Record<string, { value: CharacterModifiers }>,
+        traits: {} as Record<string, { value: CharacterModifiers }>,
       },
       expected: 0,
     },
@@ -534,6 +542,7 @@ describe("getMovement returns correct value", () => {
       modifiers: {
         talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
         mutations: {} as Record<string, { value: CharacterModifiers }>,
+        traits: {} as Record<string, { value: CharacterModifiers }>,
       },
       expected: 4,
     },
@@ -546,6 +555,7 @@ describe("getMovement returns correct value", () => {
           talent2: { number: 2, value: new CharacterModifiers({ movement: -1 }) },
         },
         mutations: {},
+        traits: {},
       },
       expected: 3,
     },
@@ -558,8 +568,12 @@ describe("getMovement returns correct value", () => {
           mutation1: { value: new CharacterModifiers({ movement: -1 }) },
           mutation2: { value: new CharacterModifiers({ movement: 2 }) },
         },
+        traits: {
+          trait1: { value: new CharacterModifiers({ movement: -1 }) },
+          trait2: { value: new CharacterModifiers({ movement: 2 }) },
+        },
       },
-      expected: 5,
+      expected: 6,
     },
     {
       name: printSpeciesWithRegion(SpeciesWithRegion.HalflingDefault),
@@ -567,6 +581,7 @@ describe("getMovement returns correct value", () => {
       modifiers: {
         talents: {},
         mutations: {},
+        traits: {},
       },
       expected: 3,
     },
@@ -576,6 +591,7 @@ describe("getMovement returns correct value", () => {
       modifiers: {
         talents: {},
         mutations: {},
+        traits: {},
       },
       expected: 3,
     },
@@ -585,6 +601,7 @@ describe("getMovement returns correct value", () => {
       modifiers: {
         talents: {},
         mutations: {},
+        traits: {},
       },
       expected: 5,
     },
@@ -594,6 +611,7 @@ describe("getMovement returns correct value", () => {
       modifiers: {
         talents: {},
         mutations: {},
+        traits: {},
       },
       expected: 5,
     },
@@ -603,6 +621,7 @@ describe("getMovement returns correct value", () => {
       modifiers: {
         talents: {},
         mutations: {},
+        traits: {},
       },
       expected: 3,
     },
@@ -612,6 +631,7 @@ describe("getMovement returns correct value", () => {
       modifiers: {
         talents: {},
         mutations: {},
+        traits: {},
       },
       expected: 6,
     },
@@ -630,6 +650,7 @@ describe("getSize returns correct value", () => {
       modifiers: {
         talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
         mutations: {} as Record<string, { value: CharacterModifiers }>,
+        traits: {} as Record<string, { value: CharacterModifiers }>,
       },
       expected: 3,
     },
@@ -638,14 +659,18 @@ describe("getSize returns correct value", () => {
       modifiers: {
         talents: {
           talent1: { number: 1, value: new CharacterModifiers({ size: 1 }) },
-          talent2: { number: 2, value: new CharacterModifiers({ size: -1 }) },
+          talent2: { number: 2, value: new CharacterModifiers({ size: -2 }) },
         },
         mutations: {
           mutation1: { value: new CharacterModifiers({ size: 1 }) },
           mutation2: { value: new CharacterModifiers({ size: 2 }) },
         },
+        traits: {
+          trait1: { value: new CharacterModifiers({ size: 1 }) },
+          trait2: { value: new CharacterModifiers({ size: 0 }) },
+        },
       },
-      expected: 5, // 3 + 1 - 2*1 + 1 + 2,
+      expected: 4, // 3 + 1 - 2*2 + 1 + 2 + 1 + 0,
     },
     {
       title: "can never be smaller than 0",
@@ -654,6 +679,7 @@ describe("getSize returns correct value", () => {
           talent1: { number: 1, value: new CharacterModifiers({ size: -10 }) },
         },
         mutations: {} as Record<string, { value: CharacterModifiers }>,
+        traits: {} as Record<string, { value: CharacterModifiers }>,
       },
       expected: 0,
     },
@@ -664,6 +690,7 @@ describe("getSize returns correct value", () => {
           talent1: { number: 1, value: new CharacterModifiers({ size: 10 }) },
         },
         mutations: {} as Record<string, { value: CharacterModifiers }>,
+        traits: {} as Record<string, { value: CharacterModifiers }>,
       },
       expected: 6,
     },
@@ -824,6 +851,9 @@ describe("getTotalAttributes returns correct value", () => {
   const mut1Attributes = { WS: 1, BS: 1, S: 1, T: 1, I: 0, Ag: 2, Dex: 1, Int: 0, WP: 0, Fel: 0 };
   const mut2Attributes = { WS: 0, BS: 0, S: 2, T: 1, I: 0, Ag: 2, Dex: 2, Int: 0, WP: 0, Fel: 0 };
 
+  const trait1Attributes = { WS: 1, BS: 1, S: 1, T: 1, I: 0, Ag: 2, Dex: 1, Int: 0, WP: 0, Fel: 0 };
+  const trait2Attributes = { WS: 0, BS: 0, S: 2, T: 1, I: 0, Ag: 2, Dex: 2, Int: 0, WP: 0, Fel: 0 };
+
   char.modifiers = {
     talents: {
       talent1: { number: 1, value: new CharacterModifiers({ attributes: talent1Attributes }) },
@@ -832,6 +862,10 @@ describe("getTotalAttributes returns correct value", () => {
     mutations: {
       mutation1: { value: new CharacterModifiers({ attributes: mut1Attributes }) },
       mutation2: { value: new CharacterModifiers({ attributes: mut2Attributes }) },
+    },
+    traits: {
+      mutation1: { value: new CharacterModifiers({ attributes: trait1Attributes }) },
+      mutation2: { value: new CharacterModifiers({ attributes: trait2Attributes }) },
     },
   };
 
