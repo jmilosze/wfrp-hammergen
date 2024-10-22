@@ -40,6 +40,11 @@ import TextLink from "../components/TextLink.vue";
   <div class="text-2xl font-semibold mt-5">Updates</div>
 
   <div>
+    <div class="text-xl mt-2 mb-1">22 Oct 2024</div>
+    <p class="mb-1">Added Creature ~150 traits. Creature traits can be attached to any character.</p>
+  </div>
+
+  <div>
     <div class="text-xl mt-2 mb-1">9 Jun 2024</div>
     <p class="mb-1">
       Added contents of

@@ -4,7 +4,6 @@ import {
   Attributes,
   copyAttributes,
   getAttributes,
-  getAttributeValue,
   multiplyAttributes,
   sumAttributes,
 } from "../attributes.ts";
@@ -108,17 +107,9 @@ export function getAllTalentsMaxRank(
 
   const talentsRank: Record<string, number> = {};
   for (const talent of listOfWhTalents) {
-    talentsRank[talent.id] = getMaxRank(talent, attributes);
+    talentsRank[talent.id] = talent.getMaxRank(attributes);
   }
   return talentsRank;
-}
-
-function getMaxRank(talent: Talent, atts: Attributes): number {
-  if (talent.attribute !== AttributeName.None && talent.attribute !== AttributeName.Various) {
-    return talent.maxRank + Math.floor(getAttributeValue(talent.attribute, atts) / 10);
-  } else {
-    return talent.maxRank;
-  }
 }
 
 function getTalentAtts(selectedTalents: IdNumber[], listOfWhTalents: Talent[]): Attributes {

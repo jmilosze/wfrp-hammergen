@@ -56,6 +56,7 @@ import { getTalentGroups } from "./characterGeneration/generateTalents.ts";
 import { generateSpeciesTalents } from "./characterGeneration/generateSpeciesTalents.ts";
 import { generateClassItems } from "./characterGeneration/generateCharacter.ts";
 import { Mutation } from "./mutation.ts";
+import { Trait } from "./trait.ts";
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
@@ -86,6 +87,7 @@ export interface CharacterApiData {
   storedItems: IdNumber[];
   spells: string[];
   prayers: string[];
+  traits: string[];
   mutations: string[];
   careerPath: IdNumber[];
   shared: boolean;
@@ -123,12 +125,14 @@ export class Character implements WhProperty {
   careerPath: IdNumber[];
   spells: Set<string>;
   prayers: Set<string>;
+  traits: Set<string>;
   mutations: Set<string>;
   shared: boolean;
   source: Source;
   modifiers: {
     talents: Record<string, { number: number; value: CharacterModifiers }>;
     mutations: Record<string, { value: CharacterModifiers }>;
+    traits: Record<string, { value: CharacterModifiers }>;
   };
 
   constructor({
@@ -163,12 +167,14 @@ export class Character implements WhProperty {
     careerPath = [] as IdNumber[],
     spells = new Set<string>(),
     prayers = new Set<string>(),
+    traits = new Set<string>(),
     mutations = new Set<string>(),
     shared = false,
     source = {},
     modifiers = {
       talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
       mutations: {} as Record<string, { value: CharacterModifiers }>,
+      traits: {} as Record<string, { value: CharacterModifiers }>,
     },
   } = {}) {
     this.id = id;
@@ -202,6 +208,7 @@ export class Character implements WhProperty {
     this.careerPath = careerPath;
     this.spells = spells;
     this.prayers = prayers;
+    this.traits = traits;
     this.mutations = mutations;
     this.shared = shared;
     this.source = source;
@@ -243,6 +250,7 @@ export class Character implements WhProperty {
       arraysAreEqualIgnoreOrder(this.careerPath, otherCharacter.careerPath, compareIdNumber) &&
       setsAreEqual(this.spells, otherCharacter.spells) &&
       setsAreEqual(this.prayers, otherCharacter.prayers) &&
+      setsAreEqual(this.traits, otherCharacter.traits) &&
       setsAreEqual(this.mutations, otherCharacter.mutations) &&
       this.shared === otherCharacter.shared &&
       objectsAreEqual(this.source, otherCharacter.source)
@@ -286,6 +294,7 @@ export class Character implements WhProperty {
       careerPath: copyIdNumberArray(this.careerPath),
       spells: new Set(this.spells),
       prayers: new Set(this.prayers),
+      traits: new Set(this.traits),
       mutations: new Set(this.mutations),
       shared: this.shared,
       source: copySource(this.source),
@@ -407,6 +416,9 @@ export class Character implements WhProperty {
         .reduce((a, b) => a + b, 0) +
       Object.values(this.modifiers.mutations)
         .map((x) => x.value.movement)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.traits)
+        .map((x) => x.value.movement)
         .reduce((a, b) => a + b, 0);
 
     return getMovementFormula(this.species, mods);
@@ -426,8 +438,9 @@ export class Character implements WhProperty {
     );
 
     const mutationAttributes = sumAttributes(...Object.values(this.modifiers.mutations).map((x) => x.value.attributes));
+    const traitAttributes = sumAttributes(...Object.values(this.modifiers.traits).map((x) => x.value.attributes));
 
-    return sumAttributes(talentAttributes, mutationAttributes);
+    return sumAttributes(talentAttributes, mutationAttributes, traitAttributes);
   }
 
   getTotalAttributes(): Attributes {
@@ -443,7 +456,8 @@ export class Character implements WhProperty {
       Object.values(this.modifiers.mutations).reduce(
         (a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
         0,
-      )
+      ) +
+      Object.values(this.modifiers.traits).reduce((a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0), 0)
     );
   }
 
@@ -453,6 +467,9 @@ export class Character implements WhProperty {
         .map((x) => x.number * x.value.size)
         .reduce((a, b) => a + b, 0) +
       Object.values(this.modifiers.mutations)
+        .map((x) => x.value.size)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.traits)
         .map((x) => x.value.size)
         .reduce((a, b) => a + b, 0);
 
@@ -522,6 +539,29 @@ export class Character implements WhProperty {
     }
   }
 
+  updateTraits(id: string, selected: boolean, traits: Trait[]): void {
+    updateSet(this.traits, id, selected);
+    if (!selected) {
+      delete this.modifiers.traits[id];
+      return;
+    }
+    for (const trait of traits) {
+      if (trait.id === id) {
+        this.modifiers.traits[id] = { value: trait.modifiers.copy() };
+        return;
+      }
+    }
+  }
+
+  clearTraits(replace = true): void {
+    if (replace) {
+      this.traits = new Set<string>();
+    } else {
+      this.traits.clear();
+    }
+    this.modifiers.traits = {};
+  }
+
   updateMutations(id: string, selected: boolean, mutations: Mutation[]): void {
     updateSet(this.mutations, id, selected);
     if (!selected) {
@@ -542,6 +582,7 @@ export class Character implements WhProperty {
     } else {
       this.mutations.clear();
     }
+    this.modifiers.mutations = {};
   }
 
   updateSkills(id: string, number: number): void {
@@ -576,6 +617,7 @@ export class Character implements WhProperty {
     } else {
       clearObject(this.talents);
     }
+    this.modifiers.talents = {};
   }
 
   updateItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {
@@ -715,6 +757,15 @@ export class Character implements WhProperty {
       }
     }
   }
+
+  hydrateTraitModifiers(traits: Trait[]): void {
+    this.modifiers.traits = {};
+    for (const trait of traits) {
+      if (this.traits.has(trait.id)) {
+        this.modifiers.traits[trait.id] = { value: trait.modifiers.copy() };
+      }
+    }
+  }
 }
 
 export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>): Character {
@@ -753,6 +804,7 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     careerPath: copyIdNumberArray(characterApi.object.careerPath),
     spells: new Set(characterApi.object.spells),
     prayers: new Set(characterApi.object.prayers),
+    traits: new Set(characterApi.object.traits),
     mutations: new Set(characterApi.object.mutations),
     shared: characterApi.object.shared,
   });
@@ -790,6 +842,7 @@ export function modelToApi(character: Character): CharacterApiData {
     careerPath: copyIdNumberArray(character.careerPath),
     spells: [...character.spells],
     prayers: [...character.prayers],
+    traits: [...character.traits],
     mutations: [...character.mutations],
     shared: character.shared,
   };

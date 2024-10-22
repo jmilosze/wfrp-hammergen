@@ -52,6 +52,7 @@ const characterApiData: CharacterApiData = {
   ],
   spells: ["spellId1", "spellId2"],
   prayers: ["prayerId1", "prayerId2"],
+  traits: ["traitId1", "traitId2"],
   mutations: ["mutationId1", "mutationId2"],
   careerPath: [
     { id: "careerId1", number: 1 },
@@ -114,6 +115,7 @@ const character = new Character({
   },
   spells: new Set(["spellId1", "spellId2"]),
   prayers: new Set(["prayerId1", "prayerId2"]),
+  traits: new Set(["traitId1", "traitId2"]),
   mutations: new Set(["mutationId1", "mutationId2"]),
   careerPath: [
     { id: "careerId1", number: 1 },
@@ -132,7 +134,7 @@ test("modelToApi returns expected api item data", () => {
 
 testIsEqualCommonProperties("character", character);
 
-test(" isEqualTo returns true when characters have different modifiers", () => {
+test("isEqualTo returns true when characters have different modifiers", () => {
   const otherCharacter = character.copy();
   otherCharacter.modifiers.mutations = { mutationId: { value: new CharacterModifiers({ size: 1 }) } };
   otherCharacter.modifiers.talents = { talentId: { number: 2, value: new CharacterModifiers({ movement: 1 }) } };
@@ -439,6 +441,15 @@ describe("isEqualTo returns false", () => {
   ])("when other character has a different value of prayers ($name)", (t) => {
     const otherCharacter = character.copy();
     otherCharacter.prayers = t.value;
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  });
+
+  test.each([
+    { name: "different value", value: new Set(["traitId1", "otherId"]) },
+    { name: "different number of elements", value: new Set(["traitId1"]) },
+  ])("when other character has a different value of traits ($name)", (t) => {
+    const otherCharacter = character.copy();
+    otherCharacter.traits = t.value;
     expect(character.isEqualTo(otherCharacter)).toBe(false);
   });
 

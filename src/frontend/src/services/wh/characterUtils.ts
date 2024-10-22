@@ -261,4 +261,4 @@ export function getSizeFormula(mods: number) {
   return size <= Size.Tiny ? Size.Tiny : size >= Size.Monstrous ? Size.Monstrous : size;
 }
 
-export const DEFAULT_CAREER_ID = "000000000000000000000000";
+export const DEFAULT_CAREER_ID = "5d16a8ad9ae1c87a18017578";

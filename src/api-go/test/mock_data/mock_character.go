@@ -73,6 +73,7 @@ var character0 = wh.Wh{
 		Gold:       1,
 		Spells:     []string{spell0.Id, spell1.Id},
 		Prayers:    []string{prayer0.Id, prayer1.Id},
+		Traits:     []string{trait0.Id, trait1.Id},
 		Sin:        0,
 		Corruption: 0,
 		Mutations:  []string{mutation0.Id, mutation1.Id},

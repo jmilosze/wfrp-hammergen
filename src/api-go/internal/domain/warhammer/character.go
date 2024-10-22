@@ -3,6 +3,7 @@ package warhammer
 import (
 	"errors"
 	"fmt"
+	"log"
 )
 
 type Character struct {
@@ -32,6 +33,7 @@ type Character struct {
 	Gold              int              `json:"gold" validate:"gte=0,lte=1000000"`
 	Spells            []string         `json:"spells" validate:"dive,id_valid"`
 	Prayers           []string         `json:"prayers" validate:"dive,id_valid"`
+	Traits            []string         `json:"traits" validate:"dive,id_valid"`
 	Sin               int              `json:"sin" validate:"gte=0,lte=1000"`
 	Corruption        int              `json:"corruption" validate:"gte=0,lte=1000"`
 	Mutations         []string         `json:"mutations" validate:"dive,id_valid"`
@@ -78,6 +80,7 @@ func (character *Character) Copy() WhObject {
 		Gold:              character.Gold,
 		Spells:            copyArray(character.Spells),
 		Prayers:           copyArray(character.Prayers),
+		Traits:            copyArray(character.Traits),
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
 		Mutations:         copyArray(character.Mutations),
@@ -87,7 +90,7 @@ func (character *Character) Copy() WhObject {
 
 func (character *Character) ToFull(
 	allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh,
-	allSpells []*Wh, allPrayers []*Wh, allCareers []*Wh,
+	allSpells []*Wh, allPrayers []*Wh, allTraits []*Wh, allCareers []*Wh,
 ) (*CharacterFull, error) {
 	if allItems == nil {
 		return nil, errors.New("allItems is nil")
@@ -107,6 +110,9 @@ func (character *Character) ToFull(
 	if allPrayers == nil {
 		return nil, errors.New("allPrayers is nil")
 	}
+	if allTraits == nil {
+		return nil, errors.New("allTraits is nil")
+	}
 	if allCareers == nil {
 		return nil, errors.New("allCareers is nil")
 	}
@@ -123,13 +129,24 @@ func (character *Character) ToFull(
 	talents := idNumberListToWhNumberList(character.Talents, whListToIdWhMap(allTalents))
 	spells := idListToWhList(character.Spells, whListToIdWhMap(allSpells))
 	prayers := idListToWhList(character.Prayers, whListToIdWhMap(allPrayers))
+	traits := idListToWhList(character.Traits, whListToIdWhMap(allTraits))
 	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
 
 	allCareerIdMap := whListToIdWhMap(allCareers)
 	careerPath := idNumberListToWhNumberList(character.CareerPath, allCareerIdMap)
 	career, err := idNumberToWhNumber(character.Career, allCareerIdMap)
 	if err != nil {
-		return nil, err
+		if character.Career != nil {
+			log.Printf("Error finding career %s, using empty career instead", character.Career.Id)
+			newCareer := &Career{}
+			err = newCareer.InitNilPointers()
+			if err != nil {
+				return nil, err
+			}
+			career = &WhNumber{Wh: &Wh{Id: "000000000000000000000000", Object: newCareer}, Number: 1}
+		} else {
+			return nil, err
+		}
 	}
 
 	return &CharacterFull{
@@ -159,6 +176,7 @@ func (character *Character) ToFull(
 		Gold:              character.Gold,
 		Spells:            spells,
 		Prayers:           prayers,
+		Traits:            traits,
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
 		Mutations:         mutations,
@@ -240,6 +258,10 @@ func (character *Character) InitNilPointers() error {
 		character.Prayers = []string{}
 	}
 
+	if character.Traits == nil {
+		character.Traits = []string{}
+	}
+
 	if character.Mutations == nil {
 		character.Mutations = []string{}
 	}
@@ -314,7 +336,7 @@ func idNumberToWhNumber(idNumer *IdNumber, allIdWhMap map[string]*Wh) (*WhNumber
 		}
 	}
 
-	return nil, errors.New("no careers in allIdWhMap")
+	return nil, fmt.Errorf("could not find id %s in allIdWhMap", idNumer.Id)
 }
 
 type IdNumber struct {
@@ -460,6 +482,7 @@ type CharacterFull struct {
 	Gold              int              `json:"gold"`
 	Spells            []*Wh            `json:"spells"`
 	Prayers           []*Wh            `json:"prayers"`
+	Traits            []*Wh            `json:"traits"`
 	Sin               int              `json:"sin"`
 	Corruption        int              `json:"corruption"`
 	Mutations         []*Wh            `json:"mutations"`
@@ -506,6 +529,7 @@ func (characterFull *CharacterFull) Copy() WhObject {
 		Gold:              characterFull.Gold,
 		Spells:            copyWhArray(characterFull.Spells),
 		Prayers:           copyWhArray(characterFull.Prayers),
+		Traits:            copyWhArray(characterFull.Traits),
 		Sin:               characterFull.Sin,
 		Corruption:        characterFull.Corruption,
 		Mutations:         copyWhArray(characterFull.Mutations),
@@ -598,6 +622,14 @@ func (characterFull *CharacterFull) InitNilPointers() error {
 		characterFull.Prayers = []*Wh{}
 	}
 	err = initNilPointersInWhList(characterFull.Prayers)
+	if err != nil {
+		return err
+	}
+
+	if characterFull.Traits == nil {
+		characterFull.Traits = []*Wh{}
+	}
+	err = initNilPointersInWhList(characterFull.Traits)
 	if err != nil {
 		return err
 	}

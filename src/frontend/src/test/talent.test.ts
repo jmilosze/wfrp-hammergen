@@ -11,7 +11,8 @@ const talentGroupApiData: TalentApiData = {
   description: "desc1",
   tests: "qwe",
   maxRank: 4,
-  attribute: Att.BS,
+  attribute: Att.BS.valueOf(),
+  attribute2: Att.WS.valueOf(),
   modifiers: {
     size: 0,
     movement: 1,
@@ -39,6 +40,7 @@ const talentGroup = new Talent({
   tests: "qwe",
   maxRank: 4,
   attribute: Att.BS,
+  attribute2: Att.WS,
   modifiers: new CharacterModifiers({
     size: 0,
     movement: 1,
@@ -57,7 +59,8 @@ const talentIndividual = new Talent({
   description: "desc2",
   tests: "asd",
   maxRank: 2,
-  attribute: Att.WS.valueOf(),
+  attribute: Att.BS.valueOf(),
+  attribute2: Att.WS.valueOf(),
   modifiers: new CharacterModifiers({
     size: 0,
     movement: 0,
@@ -118,6 +121,12 @@ describe("isEqualTo returns false", () => {
   test("when other talent is individual and has different value of attribute", () => {
     const otherTalentIndividual = talentIndividual.copy();
     otherTalentIndividual.attribute = Att.Dex;
+    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
+  });
+
+  test("when other talent is individual and has different value of attribute2", () => {
+    const otherTalentIndividual = talentIndividual.copy();
+    otherTalentIndividual.attribute2 = Att.Dex;
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
   });
 
