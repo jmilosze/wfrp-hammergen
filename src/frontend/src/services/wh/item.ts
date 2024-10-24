@@ -71,6 +71,7 @@ export const enum MeleeGroup {
   Parry,
   Polearm,
   TwoHanded,
+  Engineering,
 }
 
 export const meleeGroupList = [
@@ -82,6 +83,7 @@ export const meleeGroupList = [
   MeleeGroup.Parry,
   MeleeGroup.Polearm,
   MeleeGroup.TwoHanded,
+  MeleeGroup.Engineering,
 ];
 
 export function printMeleeGroup(meleeGroup: MeleeGroup) {
@@ -102,6 +104,8 @@ export function printMeleeGroup(meleeGroup: MeleeGroup) {
       return "Polearm";
     case MeleeGroup.TwoHanded:
       return "Two-Handed";
+    case MeleeGroup.Engineering:
+      return "Engineering";
     default:
       return "";
   }

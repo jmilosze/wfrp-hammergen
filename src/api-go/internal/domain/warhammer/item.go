@@ -363,14 +363,15 @@ func itemMeleeReachValues() string {
 type ItemMeleeGroup int
 
 const (
-	ItemMeleeGroupBasic     = 0
-	ItemMeleeGroupCavalry   = 1
-	ItemMeleeGroupFencing   = 2
-	ItemMeleeGroupBrawling  = 3
-	ItemMeleeGroupFlail     = 4
-	ItemMeleeGroupParry     = 5
-	ItemMeleeGroupPolearm   = 6
-	ItemMeleeGroupTwoHanded = 7
+	ItemMeleeGroupBasic       = 0
+	ItemMeleeGroupCavalry     = 1
+	ItemMeleeGroupFencing     = 2
+	ItemMeleeGroupBrawling    = 3
+	ItemMeleeGroupFlail       = 4
+	ItemMeleeGroupParry       = 5
+	ItemMeleeGroupPolearm     = 6
+	ItemMeleeGroupTwoHanded   = 7
+	ItemMeleeGroupEngineering = 8
 )
 
 func itemMeleeGroupValues() string {
@@ -383,6 +384,7 @@ func itemMeleeGroupValues() string {
 		ItemMeleeGroupParry,
 		ItemMeleeGroupPolearm,
 		ItemMeleeGroupTwoHanded,
+		ItemMeleeGroupEngineering,
 	})
 }
 
