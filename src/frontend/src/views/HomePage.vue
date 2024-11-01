@@ -20,9 +20,9 @@ const showAlert = ref(true);
         </p>
         <p class="text-2xl font-semibold">Upcoming cleanup</p>
         <p>
-          To reduce storage and improve the performance, we will be deleting inactive Hammergen accounts. On 9th of
-          September we will delete all accounts (and all their characters and other properties) that have not been
-          active in the last 2 years.
+          To reduce storage and improve the performance, we will be deleting inactive Hammergen accounts. On 15th of
+          November we will delete all accounts (and all their characters and other properties) that have not been active
+          in the last 2 years.
         </p>
         <p>
           The account counts as inactive if no one has logged in to it in the last 2 years. To avoid having your account
