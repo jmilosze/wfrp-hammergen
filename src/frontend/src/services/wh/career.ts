@@ -93,9 +93,9 @@ export function printStatusTier(statusTier: StatusTier): string {
   }
 }
 
-export type StatusStanding = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type StatusStanding = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export const statusStandingList: StatusStanding[] = [0, 1, 2, 3, 4, 5, 6, 7];
+export const statusStandingList: StatusStanding[] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 export function printStatusStanding(statusStanding: StatusStanding): string {
   return statusStanding.toString();

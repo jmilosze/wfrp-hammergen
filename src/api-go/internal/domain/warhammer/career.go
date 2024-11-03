@@ -162,6 +162,7 @@ const (
 	StandingFive  = 5
 	StandingSix   = 6
 	StandingSeven = 7
+	StandingEight = 8
 )
 
 func standingValues() string {
@@ -174,6 +175,7 @@ func standingValues() string {
 		StandingFive,
 		StandingSix,
 		StandingSeven,
+		StandingEight,
 	})
 }
 
