@@ -3,3 +3,7 @@ deployment/gcp/staging/config.json
 deployment/gcp/production/config.json
 src/frontend/node_modules/
 db/hammergen_*
+.env
+.firebaserc
+__pycache__
+.firebase

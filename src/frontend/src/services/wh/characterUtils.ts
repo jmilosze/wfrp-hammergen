@@ -1,9 +1,11 @@
+import { Species } from "./career.ts";
+
 export enum SpeciesWithRegion {
   HumanDefault = "0000",
   HumanReikland = "0001", // WFRP p. 25
   HumanAltdorfSouthBank = "0002", // Archives III p. 83
   HumanAltdorfEastend = "0003", // Archives III p. 83
-  AltdorfHexxerbezrik = "0004", // Archives III p. 84
+  HumanAltdorfHexxerbezrik = "0004", // Archives III p. 84
   HumanAltdorfDocklands = "0005", // Archives III p. 84
   HumanMiddenheim = "0006", // Middenheim p. 151
   HumanMiddenland = "0007", // Middenheim p. 152, Salzenmund p. 142
@@ -38,6 +40,34 @@ export enum SpeciesWithRegion {
   None = "9999",
 }
 
+export function getSpeciesWithRegionList(species: Species): SpeciesWithRegion[] {
+  const prefix = "0" + species.toString();
+  const ret: SpeciesWithRegion[] = [];
+
+  for (const speciesWithRegion of speciesWithRegionList) {
+    if (speciesWithRegion.substring(0, 2) === prefix) {
+      ret.push(speciesWithRegion);
+    }
+  }
+  return ret;
+}
+
+export function getDefaultSpeciesWithRegion(species: Species): SpeciesWithRegion {
+  if (species === 0) {
+    return SpeciesWithRegion.HumanReikland;
+  }
+  return ("0" + species.toString() + "00") as SpeciesWithRegion;
+}
+
+export function getSpeciesFromSpeciesWithRegion(speciesWithRegion: SpeciesWithRegion): Species {
+  return parseInt(speciesWithRegion.substring(0, 2));
+}
+
+export function printSpeciesRegion(species: SpeciesWithRegion) {
+  const match = printSpeciesWithRegion(species).match(/\((.*?)\)/);
+  return match ? match[1] : "Unspecified";
+}
+
 export function printSpeciesWithRegion(species: SpeciesWithRegion) {
   switch (species) {
     case SpeciesWithRegion.HumanDefault:
@@ -48,7 +78,7 @@ export function printSpeciesWithRegion(species: SpeciesWithRegion) {
       return "Human (Altdorf South Bank)";
     case SpeciesWithRegion.HumanAltdorfEastend:
       return "Human (Altdorf Eastend)";
-    case SpeciesWithRegion.AltdorfHexxerbezrik:
+    case SpeciesWithRegion.HumanAltdorfHexxerbezrik:
       return "Human (Altdorf Hexxerbezrik)";
     case SpeciesWithRegion.HumanAltdorfDocklands:
       return "Human (Altdorf Docklands)";
@@ -120,13 +150,11 @@ export function printSpeciesWithRegion(species: SpeciesWithRegion) {
 }
 
 export const HUMAN_LIST = [
-  SpeciesWithRegion.HumanDefault,
   SpeciesWithRegion.HumanReikland,
+  SpeciesWithRegion.HumanDefault,
   SpeciesWithRegion.HumanAltdorfSouthBank,
   SpeciesWithRegion.HumanAltdorfEastend,
-  SpeciesWithRegion.HumanAltdorfEastend,
-  SpeciesWithRegion.AltdorfHexxerbezrik,
-  SpeciesWithRegion.HumanAltdorfDocklands,
+  SpeciesWithRegion.HumanAltdorfHexxerbezrik,
   SpeciesWithRegion.HumanAltdorfDocklands,
   SpeciesWithRegion.HumanMiddenheim,
   SpeciesWithRegion.HumanMiddenland,

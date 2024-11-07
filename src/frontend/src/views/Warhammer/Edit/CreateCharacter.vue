@@ -15,10 +15,12 @@ import ActionButton from "../../../components/ActionButton.vue";
 import generateName from "../../../services/wh/characterGeneration/generateName.ts";
 import {
   DEFAULT_CAREER_ID,
+  getDefaultSpeciesWithRegion,
+  getSpeciesFromSpeciesWithRegion,
+  getSpeciesWithRegionList,
   printSize,
-  printSpeciesWithRegion,
+  printSpeciesRegion,
   SpeciesWithRegion,
-  speciesWithRegionList,
 } from "../../../services/wh/characterUtils.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
@@ -32,8 +34,11 @@ import {
   Career,
   CareerApi,
   isLevel,
+  printSpeciesName,
   printStatusStanding,
   printStatusTier,
+  speciesList,
+  speciesWithRegionToSpecies,
   statusStandingList,
   StatusTier,
   statusTierList,
@@ -69,7 +74,13 @@ const newCharacter = new Character({
   source: defaultSource(),
 });
 
-const selectedGenSpecies = ref(SpeciesWithRegion.HumanReikland);
+const selectedGenSpeciesWithRegion = ref(SpeciesWithRegion.HumanReikland);
+
+const selectedGenSpecies = ref(getSpeciesFromSpeciesWithRegion(selectedGenSpeciesWithRegion.value));
+const selectedGenSpeciesWithRegionOpts = computed(() =>
+  getSpeciesWithRegionList(selectedGenSpecies.value).map((x) => ({ text: printSpeciesRegion(x), value: x })),
+);
+
 const selectedGenLevel = ref(1);
 const selectedGenCareer = ref(DEFAULT_CAREER_ID);
 
@@ -101,6 +112,7 @@ const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const smSize = useElSize(ViewSize.sm, contentContainerRef);
+const lgSize = useElSize(ViewSize.lg, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -124,9 +136,13 @@ const validEquipped = computed(() => wh.value.validateEquippedItems());
 const validCarried = computed(() => wh.value.validateCarriedItems());
 const validStored = computed(() => wh.value.validateStoredItems());
 
-const speciesOpts = speciesWithRegionList
-  .filter((x) => x !== SpeciesWithRegion.HumanDefault)
-  .map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
+const speciesOpts = speciesList.map((x) => ({ text: printSpeciesName(x), value: x }));
+
+const species = ref(getSpeciesFromSpeciesWithRegion(wh.value.species));
+const speciesWithRegionOpts = computed(() =>
+  getSpeciesWithRegionList(species.value).map((x) => ({ text: printSpeciesRegion(x), value: x })),
+);
+
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
 const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
 const levelOpts = [
@@ -172,6 +188,29 @@ function formGenerateStatusStanding() {
 }
 
 watch(
+  () => selectedGenSpecies.value,
+  (newVal) => {
+    selectedGenSpeciesWithRegion.value = getDefaultSpeciesWithRegion(newVal);
+  },
+);
+
+watch(
+  () => species.value,
+  (newVal) => {
+    if (!getSpeciesWithRegionList(newVal).includes(wh.value.species)) {
+      wh.value.species = getDefaultSpeciesWithRegion(newVal);
+    }
+  },
+);
+
+watch(
+  () => wh.value.species,
+  (newVal) => {
+    species.value = speciesWithRegionToSpecies(newVal);
+  },
+);
+
+watch(
   () => talentListUtils.whList.value,
   (newVal) => {
     wh.value.hydrateTalentModifiers(newVal);
@@ -196,7 +235,7 @@ watch(
 );
 
 watch(
-  () => selectedGenSpecies.value,
+  () => selectedGenSpeciesWithRegion.value,
   (newVal) => {
     careerOpts.value = setCareerOpts(newVal, careerListUtils.whList.value);
     if (!careerOpts.value.some((x) => x.value === selectedGenCareer.value)) {
@@ -213,7 +252,7 @@ watch(
 watch(
   () => careerListUtils.whList.value,
   (newVal) => {
-    careerOpts.value = setCareerOpts(selectedGenSpecies.value, newVal);
+    careerOpts.value = setCareerOpts(selectedGenSpeciesWithRegion.value, newVal);
     if (!careerOpts.value.some((x) => x.value === selectedGenCareer.value)) {
       if (newVal.length > 0) {
         selectedGenCareer.value = careerOpts.value[0].value;
@@ -242,7 +281,7 @@ function rollCharacter() {
     return;
   }
   wh.value = generateCharacter(
-    selectedGenSpecies.value,
+    selectedGenSpeciesWithRegion.value,
     career,
     skillListUtils.whList.value,
     talentListUtils.whList.value,
@@ -259,7 +298,7 @@ const attributes = computed(() => {
   return wh.value.getTotalAttributes();
 });
 
-const modiferAttributes = computed(() => {
+const modifierAttributes = computed(() => {
   return wh.value.getModifierAttributes();
 });
 </script>
@@ -330,28 +369,39 @@ const modiferAttributes = computed(() => {
   <div v-if="wh.canEdit" class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
     <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
-    <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
-      <SelectInput
-        v-model="selectedGenSpecies"
-        title="Species"
-        :options="speciesOpts"
-        :disabled="!wh.canEdit"
-        class="min-w-24 flex-1"
-      />
-      <SelectInput
-        v-model="selectedGenLevel"
-        title="Level"
-        :options="levelOpts"
-        :disabled="!wh.canEdit"
-        class="min-w-24 flex-1"
-      />
-      <SelectInput
-        v-model="selectedGenCareer"
-        title="Career"
-        :options="careerOpts"
-        :disabled="!wh.canEdit"
-        class="min-w-24 flex-1"
-      />
+    <div class="flex gap-4" :class="lgSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+      <div class="flex-auto flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+        <SelectInput
+          v-model="selectedGenSpecies"
+          title="Species"
+          :options="speciesOpts"
+          :disabled="!wh.canEdit"
+          class="min-w-24 flex-1"
+        />
+        <SelectInput
+          v-model="selectedGenSpeciesWithRegion"
+          title="Region/Group"
+          :options="selectedGenSpeciesWithRegionOpts"
+          :disabled="!wh.canEdit || selectedGenSpeciesWithRegionOpts.length <= 1"
+          class="min-w-24 flex-1"
+        />
+      </div>
+      <div class="flex-auto flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+        <SelectInput
+          v-model="selectedGenLevel"
+          title="Level"
+          :options="levelOpts"
+          :disabled="!wh.canEdit"
+          class="min-w-24 flex-1"
+        />
+        <SelectInput
+          v-model="selectedGenCareer"
+          title="Career"
+          :options="careerOpts"
+          :disabled="!wh.canEdit"
+          class="min-w-24 flex-1"
+        />
+      </div>
     </div>
     <div class="flex flex-wrap mt-4 gap-4">
       <HintModal buttonText="More details" modalHeader="Character generation" modalId="charGenerationHint">
@@ -393,13 +443,25 @@ const modiferAttributes = computed(() => {
             Generate
           </ActionButton>
         </FormInput>
-        <SelectInput
-          v-model="wh.species"
-          title="Species"
-          :options="speciesOpts"
-          :disabled="!wh.canEdit"
-          class="min-w-24 flex-1"
-        />
+        <p class="-mb-3">Species</p>
+        <div class="border border-neutral-300 rounded p-2">
+          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+            <SelectInput
+              v-model="species"
+              title="Species"
+              :options="speciesOpts"
+              :disabled="!wh.canEdit"
+              class="min-w-24 flex-1"
+            />
+            <SelectInput
+              v-model="wh.species"
+              title="Region/Group"
+              :options="speciesWithRegionOpts"
+              :disabled="!wh.canEdit || speciesWithRegionOpts.length <= 1"
+              class="min-w-24 flex-1"
+            />
+          </div>
+        </div>
         <div class="flex flex-wrap items-center gap-2 -mb-3">
           <p class="">Fate and resilience</p>
           <ActionButton v-if="wh.canEdit" class="btn btn-sm" @click="formGenerateFateResilience">Generate</ActionButton>
@@ -586,7 +648,7 @@ const modiferAttributes = computed(() => {
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
     v-model:attributeAdvances="wh.attributeAdvances"
-    :otherAttributes="modiferAttributes"
+    :otherAttributes="modifierAttributes"
     :species="wh.species"
     :cols="isEqualOrGreater"
     title="Attributes"
