@@ -179,7 +179,7 @@ onUpdated(() => {
           :totalRows="searchedItems.length"
           :rowsPerPage="rowsPerPage"
           class="mt-3"
-          @update:modelValue="needToScroll = 'bottom'"
+          @update:modelValue="needToScroll = 'top'"
         />
       </div>
       <div v-else class="mt-2">No results found.</div>
