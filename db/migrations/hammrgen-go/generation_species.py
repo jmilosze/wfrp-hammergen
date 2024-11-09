@@ -44,7 +44,17 @@ def generate(db):
         DWARF_ALTDORF = "0201"  # Archives III p. 83
         DWARF_CRAGFORGE_CLAN = "0202"  # Salzenmund p. 142
         DWARF_GRUMSSON_CLAN = "0203"  # Salzenmund p. 142
-        DWARF_NORSE = "0204"  # Sea of Claws p. 41
+        DWARF_NORSE = "0204"  # Sea of Claws p. 41 Dwarf Players Guide p. 50
+        DWARF_KARAZ_A_KARAK = "0205"  # Dwarf Players Guide p. 48
+        DWARF_BARAK_VARR = "0206"  # Dwarf Players Guide p. 48
+        DWARF_KARAK_AZUL = "0207"  # Dwarf Players Guide p. 48
+        DWARF_KARAK_EIGHT_PEAKS = "0208"  # Dwarf Players Guide p. 49
+        DWARF_KARAK_KADRIN = "0209"  # Dwarf Players Guide p. 49
+        DWARF_ZHUFBAR = "0210"  # Dwarf Players Guide p. 49
+        DWARF_KARAK_HIRN = "0211"  # Dwarf Players Guide p. 49
+        DWARF_KARAK_IZOR = "0212"  # Dwarf Players Guide p. 49
+        DWARF_KARAK_NORN = "0213"  # Dwarf Players Guide p. 49
+        DWARF_IMPERIAL = "0214"  # Dwarf Players Guide p. 50
         HIGH_ELF_DEFAULT = "0300"  # WFRP p. 27
         WOOD_ELF_DEFAULT = "0400"  # WFRP p. 28
         GNOME_DEFAULT = "0500"  # Rough Nights and Hard Days p. 86
@@ -310,6 +320,78 @@ def generate(db):
             "Magic Resistance",
             "Night Vision",
             ["Read/Write", "Relentless"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_KARAZ_A_KARAK.value): [
+            ["Ancestral Grudge", "Resolute"],
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write", "Relentless"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_BARAK_VARR.value): [
+            ["Dealmaker", "Strong-minded"],
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write", "Resolute"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_KARAK_AZUL.value): [
+            ["Hatred - Greenskins", "Resolute"],
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write", "Relentless"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_KARAK_EIGHT_PEAKS.value): [
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write", "Resolute"],
+            ["Strong-minded", "Tenacious"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_KARAK_KADRIN.value): [
+            ["Iron Jaw", "Read/Write"],
+            "Magic Resistance",
+            "Night Vision",
+            ["Resolute", "Strong-minded"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_ZHUFBAR.value): [
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write", "Relentless"],
+            ["Strong-minded", "Tinker"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_KARAK_HIRN.value): [
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write",
+             "Relentless"],
+            ["Scale Sheer Surface",
+             "Strong-minded"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_KARAK_IZOR.value): [
+            ["Enclosed Fighter", "Resolute"],
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write", "Relentless"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_KARAK_NORN.value): [
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write", "Relentless"],
+            ["Resolute", "Stone Soup"],
+            "Sturdy",
+        ],
+        str(Species.DWARF_IMPERIAL.value): [
+            "Magic Resistance",
+            "Night Vision",
+            ["Read/Write", "Relentless"],
+            ["Resolute", "Strong-minded"],
             "Sturdy",
         ],
         str(Species.HIGH_ELF_DEFAULT.value): [
@@ -810,9 +892,149 @@ def generate(db):
             "Sail",
             "Trade",
         ],
+        str(Species.DWARF_KARAZ_A_KARAK.value): [
+            "Consume Alcohol",
+            "Cool",
+            "Endurance",
+            "Entertain - Storytelling",
+            "Evaluate",
+            "Language - Khazalid",
+            "Leadership",
+            "Lore - Dwarfs",
+            "Lore - Geology",
+            "Lore - Metallurgy",
+            "Melee - Basic",
+            "Trade",
+        ],
+        str(Species.DWARF_BARAK_VARR.value): [
+            "Consume Alcohol",
+            "Cool",
+            "Endurance",
+            "Entertain - Storytelling",
+            "Evaluate",
+            "Haggle",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Melee - Basic",
+            "Navigation",
+            "Sail",
+            "Trade",
+        ],
+        str(Species.DWARF_KARAK_AZUL.value): [
+            "Climb",
+            "Consume Alcohol",
+            "Cool",
+            "Endurance",
+            "Evaluate",
+            "Haggle",
+            "Intimidate",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Lore - Metallurgy",
+            "Melee - Basic",
+            "Trade",
+        ],
+        str(Species.DWARF_KARAK_EIGHT_PEAKS.value): [
+            "Consume Alcohol",
+            "Cool",
+            "Endurance",
+            "Evaluate",
+            "Intuition",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Lore - Geology",
+            "Lore - Warfare",
+            "Melee - Basic",
+            "Set Trap",
+            "Trade",
+        ],
+        str(Species.DWARF_KARAK_KADRIN.value): [
+            "Consume Alcohol",
+            "Cool",
+            "Endurance",
+            "Entertain - Storytelling",
+            "Evaluate",
+            "Gamble",
+            "Intimidate",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Lore - Metallurgy",
+            "Melee - Basic",
+            "Trade",
+        ],
+        str(Species.DWARF_ZHUFBAR.value): [
+            "Consume Alcohol",
+            "Cool",
+            "Endurance",
+            "Entertain - Storytelling",
+            "Evaluate",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Lore - Engineering",
+            "Lore - Geology",
+            "Lore - Metallurgy",
+            "Melee - Basic",
+            "Trade",
+        ],
+        str(Species.DWARF_KARAK_HIRN.value): [
+            "Consume Alcohol",
+            "Climb",
+            "Cool",
+            "Endurance",
+            "Entertain - Storytelling",
+            "Evaluate",
+            "Haggle",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Melee - Basic",
+            "Play - Horn",
+            "Trade",
+        ],
+        str(Species.DWARF_KARAK_IZOR.value): [
+            "Consume Alcohol",
+            "Climb",
+            "Cool",
+            "Endurance",
+            "Entertain - Storytelling",
+            "Evaluate",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Lore - Geology",
+            "Melee - Basic",
+            "Outdoor Survival",
+            "Trade",
+        ],
+        str(Species.DWARF_KARAK_NORN.value): [
+            "Consume Alcohol",
+            "Climb",
+            "Cool",
+            "Endurance",
+            "Entertain - Storytelling",
+            "Evaluate",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Melee - Basic",
+            "Perception",
+            "Ranged - Crossbow",
+            "Trade",
+        ],
+        str(Species.DWARF_IMPERIAL.value): [
+            "Consume Alcohol",
+            "Cool",
+            "Endurance",
+            "Entertain - Storytelling",
+            "Evaluate",
+            "Intimidate",
+            "Language - Khazalid",
+            "Lore - Dwarfs",
+            "Lore - Geology",
+            "Lore - Metallurgy",
+            "Melee - Basic",
+            "Trade",
+        ],
         str(Species.HIGH_ELF_DEFAULT.value): [
             "Cool",
-            "Entertain - Sing",
+            "Entertain - Singing",
             "Evaluate",
             "Language - Eltharin",
             "Leadership",
@@ -828,7 +1050,7 @@ def generate(db):
             "Athletics",
             "Climb",
             "Endurance",
-            "Entertain - Sing",
+            "Entertain - Singing",
             "Intimidate",
             "Language - Eltharin",
             "Melee - Basic",
@@ -881,9 +1103,7 @@ def generate(db):
 
 if __name__ == "__main__":
     MONGO_URI = os.environ["MONGO_URI"]
-    SOURCE_DB_NAME = os.environ["DB_NAME"]
-    TARGET_DB_NAME = f"{SOURCE_DB_NAME}-go"
-
-    TARGET_DB = MongoClient(MONGO_URI, 27017).get_database(name=TARGET_DB_NAME)
+    DB_NAME = os.environ["DB_NAME"]
+    TARGET_DB = MongoClient(MONGO_URI, 27017).get_database(name=DB_NAME)
 
     generate(TARGET_DB)

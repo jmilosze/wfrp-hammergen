@@ -402,6 +402,16 @@ const (
 	CharacterSpeciesDwarfCragforgeClan       = "0202"
 	CharacterSpeciesDwarfGrumssonClan        = "0203"
 	CharacterSpeciesDwarfNorse               = "0204"
+	CharacterSpeciesDwarfKarazAKarak         = "0205"
+	CharacterSpeciesDwarfBarakVarr           = "0206"
+	CharacterSpeciesDwarfKarakAzul           = "0207"
+	CharacterSpeciesDwarfKarakEightPeaks     = "0208"
+	CharacterSpeciesDwarfKarakKadrin         = "0209"
+	CharacterSpeciesDwarfZhufbar             = "0210"
+	CharacterSpeciesDwarfKarakHirn           = "0211"
+	CharacterSpeciesDwarfKarakIzor           = "0212"
+	CharacterSpeciesDwarfKarakNorn           = "0213"
+	CharacterSpeciesDwarfImperial            = "0214"
 	CharacterSpeciesHighElfDefault           = "0300"
 	CharacterSpeciesWoodElfDefault           = "0400"
 	CharacterSpeciesGnomeDefault             = "0500"
@@ -442,6 +452,16 @@ func characterSpeciesValues() string {
 		CharacterSpeciesDwarfCragforgeClan,
 		CharacterSpeciesDwarfGrumssonClan,
 		CharacterSpeciesDwarfNorse,
+		CharacterSpeciesDwarfKarazAKarak,
+		CharacterSpeciesDwarfBarakVarr,
+		CharacterSpeciesDwarfKarakAzul,
+		CharacterSpeciesDwarfKarakEightPeaks,
+		CharacterSpeciesDwarfKarakKadrin,
+		CharacterSpeciesDwarfZhufbar,
+		CharacterSpeciesDwarfKarakHirn,
+		CharacterSpeciesDwarfKarakIzor,
+		CharacterSpeciesDwarfKarakNorn,
+		CharacterSpeciesDwarfImperial,
 		CharacterSpeciesHighElfDefault,
 		CharacterSpeciesWoodElfDefault,
 		CharacterSpeciesGnomeDefault,
