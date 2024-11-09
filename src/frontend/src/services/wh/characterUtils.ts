@@ -213,6 +213,7 @@ export const HALFLING_LIST = [
 ];
 
 export const DWARF_LIST = [
+  SpeciesWithRegion.DwarfImperial,
   SpeciesWithRegion.DwarfDefault,
   SpeciesWithRegion.DwarfAtldorf,
   SpeciesWithRegion.DwarfCragforgeClan,
@@ -227,7 +228,6 @@ export const DWARF_LIST = [
   SpeciesWithRegion.DwarfKarakHirn,
   SpeciesWithRegion.DwarfKarakIzor,
   SpeciesWithRegion.DwarfKarakNorn,
-  SpeciesWithRegion.DwarfImperial,
 ];
 
 export const HIGH_ELF_LIST = [SpeciesWithRegion.HighElfDefault];
