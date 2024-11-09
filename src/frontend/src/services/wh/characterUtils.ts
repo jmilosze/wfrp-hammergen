@@ -63,8 +63,11 @@ export function getSpeciesWithRegionList(species: Species): SpeciesWithRegion[] 
 }
 
 export function getDefaultSpeciesWithRegion(species: Species): SpeciesWithRegion {
-  if (species === 0) {
+  if (species === Species.Human) {
     return SpeciesWithRegion.HumanReikland;
+  }
+  if (species === Species.Dwarf) {
+    return SpeciesWithRegion.DwarfImperial;
   }
   return ("0" + species.toString() + "00") as SpeciesWithRegion;
 }
