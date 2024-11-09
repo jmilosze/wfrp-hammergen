@@ -150,7 +150,7 @@ export function printSpeciesWithRegion(species: SpeciesWithRegion) {
     case SpeciesWithRegion.DwarfKarazAKarak:
       return "Dwarf (Karaz-a-Karak)";
     case SpeciesWithRegion.DwarfBarakVarr:
-      return "Dwarf (KBarak Varr)";
+      return "Dwarf (Barak Varr)";
     case SpeciesWithRegion.DwarfKarakAzul:
       return "Dwarf (Karak Azul)";
     case SpeciesWithRegion.DwarfKarakEightPeaks:
