@@ -324,7 +324,7 @@ def generate(db):
         ],
         str(Species.DWARF_KARAZ_A_KARAK.value): [
             ["Ancestral Grudge", "Resolute"],
-            "Magic Resistance"
+            "Magic Resistance",
             "Night Vision",
             ["Read/Write", "Relentless"],
             "Sturdy",
@@ -1034,7 +1034,7 @@ def generate(db):
         ],
         str(Species.HIGH_ELF_DEFAULT.value): [
             "Cool",
-            "Entertain - Sing",
+            "Entertain - Singing",
             "Evaluate",
             "Language - Eltharin",
             "Leadership",
@@ -1050,7 +1050,7 @@ def generate(db):
             "Athletics",
             "Climb",
             "Endurance",
-            "Entertain - Sing",
+            "Entertain - Singing",
             "Intimidate",
             "Language - Eltharin",
             "Melee - Basic",
@@ -1103,9 +1103,7 @@ def generate(db):
 
 if __name__ == "__main__":
     MONGO_URI = os.environ["MONGO_URI"]
-    SOURCE_DB_NAME = os.environ["DB_NAME"]
-    TARGET_DB_NAME = f"{SOURCE_DB_NAME}-go"
-
-    TARGET_DB = MongoClient(MONGO_URI, 27017).get_database(name=TARGET_DB_NAME)
+    DB_NAME = os.environ["DB_NAME"]
+    TARGET_DB = MongoClient(MONGO_URI, 27017).get_database(name=DB_NAME)
 
     generate(TARGET_DB)
