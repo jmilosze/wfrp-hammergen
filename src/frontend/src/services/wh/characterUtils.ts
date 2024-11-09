@@ -32,7 +32,17 @@ export enum SpeciesWithRegion {
   DwarfAtldorf = "0201", // Archives III p. 83
   DwarfCragforgeClan = "0202", // Salzenmund p. 142
   DwarfGrumssonClan = "0203", // Salzenmund p. 142
-  DwarfNorse = "0204", // Sea of Claws p. 41
+  DwarfNorse = "0204", // Sea of Claws p. 41 Dwarf Players Guide p. 50
+  DwarfKarazAKarak = "0205", // Dwarf Players Guide p. 48
+  DwarfBarakVarr = "0206", // Dwarf Players Guide p. 48
+  DwarfKarakAzul = "0207", // Dwarf Players Guide p. 48
+  DwarfKarakEightPeaks = "0208", // Dwarf Players Guide p. 49
+  DwarfKarakKadrin = "0209", // Dwarf Players Guide p. 49
+  DwarfZhufbar = "0210", // Dwarf Players Guide p. 49
+  DwarfKarakHirn = "0211", // Dwarf Players Guide p. 49
+  DwarfKarakIzor = "0212", // Dwarf Players Guide p. 49
+  DwarfKarakNorn = "0213", // Dwarf Players Guide p. 49
+  DwarfImperial = "0214", // Dwarf Players Guide p. 50
   HighElfDefault = "0300", // WFRP p. 27
   WoodElfDefault = "0400", // WFRP p. 28
   GnomeDefault = "0500", // Rough Nights and Hard Days p. 86
@@ -134,6 +144,26 @@ export function printSpeciesWithRegion(species: SpeciesWithRegion) {
       return "Dwarf (Grumsson Clan)";
     case SpeciesWithRegion.DwarfNorse:
       return "Dwarf (Norse)";
+    case SpeciesWithRegion.DwarfKarazAKarak:
+      return "Dwarf (Karaz-a-Karak)";
+    case SpeciesWithRegion.DwarfBarakVarr:
+      return "Dwarf (KBarak Varr)";
+    case SpeciesWithRegion.DwarfKarakAzul:
+      return "Dwarf (Karak Azul)";
+    case SpeciesWithRegion.DwarfKarakEightPeaks:
+      return "Dwarf (Karak Eight Peaks)";
+    case SpeciesWithRegion.DwarfKarakKadrin:
+      return "Dwarf (Karak Kadrin)";
+    case SpeciesWithRegion.DwarfZhufbar:
+      return "Dwarf (Zhufbar)";
+    case SpeciesWithRegion.DwarfKarakHirn:
+      return "Dwarf (Karak Hirn/Black Mountains)";
+    case SpeciesWithRegion.DwarfKarakIzor:
+      return "Dwarf (Karak Izor/The Vaults)";
+    case SpeciesWithRegion.DwarfKarakNorn:
+      return "Dwarf (Karak Norn/Grey Mountains)";
+    case SpeciesWithRegion.DwarfImperial:
+      return "Dwarf (Imperial)";
     case SpeciesWithRegion.HighElfDefault:
       return "High Elf";
     case SpeciesWithRegion.WoodElfDefault:
@@ -188,6 +218,16 @@ export const DWARF_LIST = [
   SpeciesWithRegion.DwarfCragforgeClan,
   SpeciesWithRegion.DwarfGrumssonClan,
   SpeciesWithRegion.DwarfNorse,
+  SpeciesWithRegion.DwarfKarazAKarak,
+  SpeciesWithRegion.DwarfBarakVarr,
+  SpeciesWithRegion.DwarfKarakAzul,
+  SpeciesWithRegion.DwarfKarakEightPeaks,
+  SpeciesWithRegion.DwarfKarakKadrin,
+  SpeciesWithRegion.DwarfZhufbar,
+  SpeciesWithRegion.DwarfKarakHirn,
+  SpeciesWithRegion.DwarfKarakIzor,
+  SpeciesWithRegion.DwarfKarakNorn,
+  SpeciesWithRegion.DwarfImperial,
 ];
 
 export const HIGH_ELF_LIST = [SpeciesWithRegion.HighElfDefault];
