@@ -29,6 +29,8 @@ import CreateCharacter from "./views/Warhammer/Edit/CreateCharacter.vue";
 import ViewCharacter from "./views/Warhammer/ViewCharacter.vue";
 import ListTraits from "./views/Warhammer/List/ListTraits.vue";
 import CreateTrait from "./views/Warhammer/Edit/CreateTrait.vue";
+import ListRunes from "./views/Warhammer/List/ListRunes.vue";
+import CreateRune from "./views/Warhammer/Edit/CreateRune.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -137,6 +139,17 @@ export default createRouter({
       path: "/property/:id",
       name: "property",
       component: CreateProperty,
+      props: true,
+    },
+    {
+      path: "/runes",
+      name: "runes",
+      component: ListRunes,
+    },
+    {
+      path: "/rune/:id",
+      name: "rune",
+      component: CreateRune,
       props: true,
     },
     {
