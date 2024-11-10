@@ -22,7 +22,7 @@ const whList = useWhList(new RuneApi(authRequest));
 await whList.loadWhList();
 
 const router = useRouter();
-const queryParams = ref({ search: "", source: "", type: "", applicableTo: "" });
+const queryParams = ref({ search: "", source: "", label: "", applicableTo: "" });
 queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
   () => queryParams,
@@ -37,7 +37,6 @@ const auth = useAuth();
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
   { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "type", displayName: "Type", skipStackedTitle: false },
   { name: "applicableTo", displayName: "Applicable to", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
@@ -92,7 +91,7 @@ const filteredApplicableToOptions = computed(() => {
   >
     {{ whList.apiError.value }}
   </AlertBlock>
-  <Header title="Qualities and Runes" />
+  <Header title="Runes" />
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
     <SelectInput v-model="queryParams.applicableTo" :options="filteredApplicableToOptions" class="grow mb-2 mx-1" />

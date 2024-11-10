@@ -104,7 +104,7 @@ watch(
 );
 
 function onModifyClick() {
-  modal.showModal("modifyClassificationModal");
+  modal.showModal("modifySpellLabelsModal");
   searchTerm.value = "";
 }
 </script>
@@ -135,8 +135,8 @@ function onModifyClick() {
         </div>
       </div>
     </div>
-    <ModalWindow id="modifyClassificationModal" size="xs">
-      <template #header> Modify labels</template>
+    <ModalWindow id="modifySpellLabelsModal" size="xs">
+      <template #header>Modify labels</template>
       <template #buttons>
         <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
       </template>
@@ -147,7 +147,7 @@ function onModifyClick() {
           :items="labelsWithSelectList"
           :stackedViewSize="ViewSize.zero"
         >
-          <ActionButton class="mr-2 mb-2 shrink-0 btn" @click="selectAllLabels"> Select all </ActionButton>
+          <ActionButton class="mr-2 mb-2 shrink-0 btn" @click="selectAllLabels">Select all</ActionButton>
           <template #selected="{ id }: { id: SpellLabel }">
             <div>
               <input

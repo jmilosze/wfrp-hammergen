@@ -15,6 +15,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
 import SpellClassification from "../../../components/SpellClassification.vue";
+import DisplayLabels from "../../../components/DisplayLabels.vue";
 
 const props = defineProps<{
   id: string;
@@ -64,15 +65,7 @@ const validCn = computed(() => wh.value.validateCn());
   </div>
   <Header :title="id === 'create' ? 'Create spell' : wh.canEdit ? 'Edit spell' : wh.name" />
   <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
-  <div class="flex flex-wrap gap-1 mt-1">
-    <div
-      v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)"
-      :key="i"
-      class="border p-1 border-neutral-500 rounded bg-amber-200"
-    >
-      {{ printSpellLabel(label) }}
-    </div>
-  </div>
+  <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="mt-1" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -142,5 +135,3 @@ const validCn = computed(() => wh.value.validateCn());
     />
   </div>
 </template>
-
-<style scoped></style>

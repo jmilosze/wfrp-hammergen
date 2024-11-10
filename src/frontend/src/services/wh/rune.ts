@@ -33,7 +33,7 @@ export const runeLabelList = [
   RuneLabel.RuneLabelMaster,
 ];
 
-export function printItemType(runeLabel: RuneLabel) {
+export function printRuneLabel(runeLabel: RuneLabel) {
   switch (runeLabel) {
     case RuneLabel.RuneLabelWeapon:
       return "Weapon Rune";
