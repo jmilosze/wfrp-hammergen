@@ -9,7 +9,7 @@ type Property struct {
 	Name         string            `json:"name" validate:"name_valid"`
 	Description  string            `json:"description" validate:"desc_valid"`
 	Type         PropertyType      `json:"type" validate:"property_type_valid"`
-	ApplicableTo []ItemType        `json:"applicableTo" validate:"dive,item_type_valid"`
+	ApplicableTo []ItemType        `json:"applicableTo" validate:"unique,dive,item_type_valid"`
 	Shared       bool              `json:"shared" validate:"shared_valid"`
 	Source       map[Source]string `json:"source" validate:"source_valid"`
 }

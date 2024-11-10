@@ -169,7 +169,7 @@ func (spell *Spell) InitNilPointers() error {
 	return nil
 }
 
-func CustomClassificationValidator(fl validator.FieldLevel) bool {
+func SpellClassificationValidator(fl validator.FieldLevel) bool {
 	sc, ok := fl.Field().Interface().(SpellClassification)
 	if !ok {
 		return false

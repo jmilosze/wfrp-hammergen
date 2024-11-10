@@ -28,6 +28,7 @@ const (
 	WhTypeItemFull      = "itemFull"
 	WhTypeCharacterFull = "characterFull"
 	WhTypeTrait         = "trait"
+	WhTypeRune          = "rune"
 )
 
 type WhType string
@@ -43,6 +44,7 @@ var WhCoreTypes = []WhType{
 	WhTypeCareer,
 	WhTypeCharacter,
 	WhTypeTrait,
+	WhTypeRune,
 }
 
 func (w *Wh) Copy() *Wh {
@@ -113,6 +115,8 @@ func NewWhObject(t WhType) WhObject {
 		return &CharacterFull{}
 	case WhTypeTrait:
 		return &Trait{}
+	case WhTypeRune:
+		return &Rune{}
 	}
 
 	return &Character{}

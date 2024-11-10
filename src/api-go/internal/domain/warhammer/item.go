@@ -11,7 +11,8 @@ type Item struct {
 	Price        float64           `json:"price" validate:"gte=0,lte=1000000000"`
 	Enc          float64           `json:"enc" validate:"gte=0,lte=1000"`
 	Availability ItemAvailability  `json:"availability" validate:"item_availability_valid"`
-	Properties   []string          `json:"properties" validate:"dive,id_valid"`
+	Properties   []string          `json:"properties" validate:"unique,dive,id_valid"`
+	Runes        []string          `json:"runes" validate:"unique,dive,id_valid"`
 	Type         ItemType          `json:"type" validate:"item_type_valid"`
 	Shared       bool              `json:"shared" validate:"shared_valid"`
 	Source       map[Source]string `json:"source" validate:"source_valid"`
@@ -45,6 +46,7 @@ func (item *Item) Copy() WhObject {
 		Enc:          item.Enc,
 		Availability: item.Availability,
 		Properties:   copyArray(item.Properties),
+		Runes:        copyArray(item.Runes),
 		Type:         item.Type,
 		Shared:       item.Shared,
 		Source:       copySourceMap(item.Source),
@@ -59,15 +61,19 @@ func (item *Item) Copy() WhObject {
 	}
 }
 
-func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) (*ItemFull, error) {
+func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh, allRunes []*Wh) (*ItemFull, error) {
 	if allProperties == nil {
 		return nil, errors.New("allProperties is nil")
 	}
 	if allSpells == nil {
 		return nil, errors.New("allSpells is nil")
 	}
+	if allRunes == nil {
+		return nil, errors.New("allRunes is nil")
+	}
 
 	itemProperties := idListToWhList(item.Properties, whListToIdWhMap(allProperties))
+	itemRunes := idListToWhList(item.Runes, whListToIdWhMap(allRunes))
 
 	grimoire := &ItemGrimoireFull{}
 	grimoire.Spells = idListToWhList(item.Grimoire.Spells, whListToIdWhMap(allSpells))
@@ -79,6 +85,7 @@ func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh) (*ItemFull, error
 		Enc:          item.Enc,
 		Availability: item.Availability,
 		Properties:   itemProperties,
+		Runes:        itemRunes,
 		Type:         item.Type,
 		Shared:       item.Shared,
 		Source:       copySourceMap(item.Source),
@@ -100,6 +107,10 @@ func (item *Item) InitNilPointers() error {
 
 	if item.Properties == nil {
 		item.Properties = []string{}
+	}
+
+	if item.Runes == nil {
+		item.Runes = []string{}
 	}
 
 	if item.Source == nil {
@@ -519,6 +530,7 @@ type ItemFull struct {
 	Enc          float64           `json:"enc"`
 	Availability ItemAvailability  `json:"availability"`
 	Properties   []*Wh             `json:"properties"`
+	Runes        []*Wh             `json:"runes"`
 	Type         ItemType          `json:"type"`
 	Shared       bool              `json:"shared"`
 	Source       map[Source]string `json:"source"`
@@ -552,6 +564,7 @@ func (itemFull *ItemFull) Copy() WhObject {
 		Enc:          itemFull.Enc,
 		Availability: itemFull.Availability,
 		Properties:   copyWhArray(itemFull.Properties),
+		Runes:        copyWhArray(itemFull.Runes),
 		Type:         itemFull.Type,
 		Shared:       itemFull.Shared,
 		Source:       copySourceMap(itemFull.Source),
@@ -575,6 +588,16 @@ func (itemFull *ItemFull) InitNilPointers() error {
 		itemFull.Properties = []*Wh{}
 	}
 	for _, v := range itemFull.Properties {
+		err := v.InitNilPointers()
+		if err != nil {
+			return err
+		}
+	}
+
+	if itemFull.Runes == nil {
+		itemFull.Runes = []*Wh{}
+	}
+	for _, v := range itemFull.Runes {
 		err := v.InitNilPointers()
 		if err != nil {
 			return err

@@ -186,6 +186,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 
 func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.Claims, items []*wh.Wh) ([]*wh.Wh, error) {
 	allPropertyIds := make([]string, 0)
+	allRuneIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range items {
 		item, ok := v.Object.(*wh.Item)
@@ -193,11 +194,12 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 			return nil, fmt.Errorf("failed to cast object to item")
 		}
 		allPropertyIds = mergeStrAndRemoveDuplicates(allPropertyIds, item.Properties)
+		allRuneIds = mergeStrAndRemoveDuplicates(allRuneIds, item.Runes)
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, item.Grimoire.Spells)
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(3)
 
 	var allProperties []*wh.Wh
 	var propertyWhErr error
@@ -213,6 +215,13 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, false, allSpellIds)
 	}()
 
+	var allRunes []*wh.Wh
+	var runesWhErr error
+	go func() {
+		defer wg.Done()
+		allRunes, runesWhErr = whService.Get(ctx, wh.WhTypeRune, claims, false, false, allRuneIds)
+	}()
+
 	wg.Wait()
 
 	if propertyWhErr != nil {
@@ -223,6 +232,10 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 		return nil, fmt.Errorf("failed to get wh-spells: %w", spellWhErr)
 	}
 
+	if runesWhErr != nil {
+		return nil, fmt.Errorf("failed to get wh-runes: %w", runesWhErr)
+	}
+
 	fullItems := make([]*wh.Wh, 0)
 	for _, v := range items {
 		item, ok := v.Object.(*wh.Item)
@@ -231,7 +244,7 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 		}
 		var err error
 		fullItem := v.CopyHeaders()
-		fullItem.Object, err = item.ToFull(allProperties, allSpells)
+		fullItem.Object, err = item.ToFull(allProperties, allSpells, allRunes)
 		if err != nil {
 			return nil, fmt.Errorf("failed convert wh-item to full item")
 		}

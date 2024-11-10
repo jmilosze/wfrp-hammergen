@@ -15,6 +15,7 @@ var itemMelee = wh.Wh{
 		Enc:          1.5,
 		Availability: wh.ItemAvailabilityCommon,
 		Properties:   []string{property0.Id, property1.Id},
+		Runes:        []string{rune0.Id, rune1.Id},
 		Type:         wh.ItemTypeMelee,
 		Shared:       true,
 		Source: map[wh.Source]string{
@@ -136,6 +137,7 @@ var itemGrimoire = wh.Wh{
 		Enc:          0,
 		Availability: wh.ItemAvailabilityCommon,
 		Properties:   []string{property0.Id},
+		Runes:        []string{rune0.Id},
 		Type:         wh.ItemTypeGrimoire,
 		Shared:       true,
 		Source: map[wh.Source]string{

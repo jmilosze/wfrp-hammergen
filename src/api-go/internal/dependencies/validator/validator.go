@@ -43,8 +43,11 @@ func configure(v *v.Validate) {
 	for k, r := range warhammer.GetModifierValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
+	for k, r := range warhammer.GetRuneValidationAliases() {
+		v.RegisterAlias(k, r)
+	}
 
-	if err := v.RegisterValidation("spell_classification_valid", warhammer.CustomClassificationValidator); err != nil {
+	if err := v.RegisterValidation("spell_classification_valid", warhammer.SpellClassificationValidator); err != nil {
 		log.Fatal(err)
 	}
 }
