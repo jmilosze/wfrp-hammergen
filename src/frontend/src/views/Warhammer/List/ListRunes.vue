@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
-import { Rune, RuneApi } from "../../../services/wh/rune.ts";
+import { printRuneLabel, Rune, RuneApi, runeLabelList } from "../../../services/wh/rune.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -48,6 +48,7 @@ const items = computed(() => {
     .filter(
       (wh) => queryParams.value.applicableTo === "" || wh.applicableTo.includes(Number(queryParams.value.applicableTo)),
     )
+    .filter((wh) => queryParams.value.label === "" || wh.labels.includes(Number(queryParams.value.label)))
     .map((x) => formatRuneRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });
@@ -80,6 +81,10 @@ const filteredApplicableToOptions = computed(() => {
     "Applicable to any",
   );
 });
+
+const filteredLabelOptions = computed(() => {
+  return getOptions(runeLabelList, whList.whList.value.map((wh) => wh.labels).flat(), printRuneLabel, "Any label");
+});
 </script>
 
 <template>
@@ -95,6 +100,7 @@ const filteredApplicableToOptions = computed(() => {
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
     <SelectInput v-model="queryParams.applicableTo" :options="filteredApplicableToOptions" class="grow mb-2 mx-1" />
+    <SelectInput v-model="queryParams.label" :options="filteredLabelOptions" class="grow mb-2 mx-1" />
   </div>
   <TableWithSearch
     v-model="queryParams.search"
