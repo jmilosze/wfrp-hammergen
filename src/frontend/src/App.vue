@@ -98,16 +98,20 @@ function onListWhClick() {
         <NavLink routeName="mutations" variant="side" @click="onListWhClick()">Mutations</NavLink>
         <NavLink routeName="prayers" variant="side" @click="onListWhClick()">Prayers</NavLink>
         <NavLink routeName="properties" variant="side" @click="onListWhClick()">Qualities and runes</NavLink>
+        <NavLink
+          v-if="auth.getLoggedUserInfo().username === 'jacek.miloszewski@hotmail.com'"
+          routeName="runes"
+          variant="side"
+          @click="onListWhClick()"
+        >
+          Runes
+        </NavLink>
         <NavLink routeName="skills" variant="side" @click="onListWhClick()">Skills</NavLink>
         <NavLink routeName="spells" variant="side" @click="onListWhClick()">Spells</NavLink>
         <NavLink routeName="talents" variant="side" @click="onListWhClick()">Talents</NavLink>
         <NavLink routeName="items" variant="side" @click="onListWhClick()">Trappings</NavLink>
       </div>
-      <div class="py-2">
-        <NavLink href="https://dice.hammergen.net/" variant="side" @click="onListWhClick()">Roll dice!</NavLink>
-      </div>
       <div v-if="auth.loggedIn.value" class="py-2">
-        <NavLink routeName="linkedusers" variant="side" @click="showSideBar = false">Linked users</NavLink>
         <NavLink routeName="manage" variant="side" @click="showSideBar = false">Manage account</NavLink>
         <NavLink variant="side" @click="auth.logout">Logout</NavLink>
       </div>
@@ -116,7 +120,7 @@ function onListWhClick() {
         <NavLink routeName="login" variant="side" @click="showSideBar = false">Login</NavLink>
       </div>
       <div class="pt-2">
-        <NavLink routeName="howto" variant="side" @click="showSideBar = false">How to use Hammergen</NavLink>
+        <NavLink href="https://dice.hammergen.net/" variant="side" @click="onListWhClick()">Roll dice!</NavLink>
         <NavLink routeName="about" variant="side" @click="showSideBar = false">About</NavLink>
       </div>
     </div>

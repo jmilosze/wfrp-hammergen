@@ -183,7 +183,7 @@ const skillTable = useElSize(380, skillsTableRef);
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" propertyName="Skill" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

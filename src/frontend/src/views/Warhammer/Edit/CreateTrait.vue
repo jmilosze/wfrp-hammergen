@@ -84,7 +84,7 @@ const validDesc = computed(() => wh.value.validateDescription());
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" propertyName="Creature trait" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

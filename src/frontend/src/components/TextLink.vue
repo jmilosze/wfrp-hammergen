@@ -2,6 +2,7 @@
 const props = defineProps<{
   routeName?: string;
   params?: any;
+  query?: any;
   href?: string;
   sameWindow?: boolean;
   noColour?: boolean;
@@ -16,7 +17,7 @@ if (!props.noColour) {
 <template>
   <RouterLink
     v-if="routeName"
-    :to="{ name: routeName, params: params }"
+    :to="{ name: routeName, params: params, query: query }"
     :target="sameWindow ? '' : '_blank'"
     :class="linkClass"
   >

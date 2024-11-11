@@ -16,7 +16,7 @@ import { computed, ref } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
-import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
+import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
@@ -110,7 +110,16 @@ const classOpts = careerClassList.map((x) => ({ text: printClassName(x), value: 
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-        <MultipleCheckboxInput v-model="wh.species" title="Species" :options="speciesOpts" :disabled="!wh.canEdit" />
+        <MultipleCheckboxColumnInput
+          v-model="wh.species"
+          title="Species"
+          :options="speciesOpts"
+          :disabled="!wh.canEdit"
+          :viewBreakpoint="[
+            { columns: 3, view: ViewSize.xs },
+            { columns: 2, view: ViewSize.xxs },
+          ]"
+        />
       </div>
     </div>
     <div class="flex-1">
@@ -224,7 +233,7 @@ const classOpts = careerClassList.map((x) => ({ text: printClassName(x), value: 
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" propertyName="Career" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

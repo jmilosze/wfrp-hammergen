@@ -1,11 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AboutHammergen from "./views/AboutHammergen.vue";
+import AboutHammergen from "./views/About/AboutHammergen.vue";
 import HomePage from "./views/HomePage.vue";
-import HowTo from "./views/HowTo.vue";
 import UserForgotPassword from "./views/User/UserForgotPassword.vue";
-import UserLinkedUsers from "./views/User/UserLinkedUsers.vue";
 import UserLogin from "./views/User/UserLogin.vue";
-import UserManage from "./views/User/UserManage.vue";
+import UserManageAccount from "./views/User/UserManageAccount.vue";
 import UserRegister from "./views/User/UserRegister.vue";
 import UserResetPassword from "./views/User/UserResetPassword.vue";
 import ListPrayers from "./views/Warhammer/List/ListPrayers.vue";
@@ -29,6 +27,8 @@ import CreateCharacter from "./views/Warhammer/Edit/CreateCharacter.vue";
 import ViewCharacter from "./views/Warhammer/ViewCharacter.vue";
 import ListTraits from "./views/Warhammer/List/ListTraits.vue";
 import CreateTrait from "./views/Warhammer/Edit/CreateTrait.vue";
+import ListRunes from "./views/Warhammer/List/ListRunes.vue";
+import CreateRune from "./views/Warhammer/Edit/CreateRune.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -47,11 +47,6 @@ export default createRouter({
       path: "/about",
       name: "about",
       component: AboutHammergen,
-    },
-    {
-      path: "/howto",
-      name: "howto",
-      component: HowTo,
     },
     {
       path: "/register",
@@ -77,12 +72,7 @@ export default createRouter({
     {
       path: "/manage",
       name: "manage",
-      component: UserManage,
-    },
-    {
-      path: "/linkedusers",
-      name: "linkedusers",
-      component: UserLinkedUsers,
+      component: UserManageAccount,
     },
     {
       path: "/prayers",
@@ -137,6 +127,17 @@ export default createRouter({
       path: "/property/:id",
       name: "property",
       component: CreateProperty,
+      props: true,
+    },
+    {
+      path: "/runes",
+      name: "runes",
+      component: ListRunes,
+    },
+    {
+      path: "/rune/:id",
+      name: "rune",
+      component: CreateRune,
       props: true,
     },
     {

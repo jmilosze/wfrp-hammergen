@@ -20,7 +20,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
 import SelectInput from "../../../components/SelectInput.vue";
-import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
+import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
 import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
 
 const props = defineProps<{
@@ -76,10 +76,14 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
         <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type" />
-        <MultipleCheckboxInput
+        <MultipleCheckboxColumnInput
           v-model="wh.applicableTo"
           :options="applicableToOptions"
           :disabled="!wh.canEdit"
+          :viewBreakpoint="[
+            { columns: 3, view: ViewSize.xs },
+            { columns: 2, view: ViewSize.xxs },
+          ]"
           title="Applicable to"
         />
       </div>

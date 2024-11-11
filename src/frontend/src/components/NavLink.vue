@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
+import { computed } from "vue";
 
 const SIDE_VARIANT = {
   static: [
@@ -25,7 +26,7 @@ const props = defineProps<{ routeName?: string; href?: string; variant: "top" | 
 
 const route = useRoute();
 
-function setClass() {
+const linkClass = computed(() => {
   if (props.variant == "top") {
     if (route.name == props.routeName && route.name != "placeholder") {
       return TOP_VARIANT.static.concat(TOP_VARIANT.selected);
@@ -37,15 +38,19 @@ function setClass() {
     }
     return SIDE_VARIANT.static.concat(SIDE_VARIANT.unselected);
   }
-}
+});
 </script>
 
 <template>
-  <RouterLink v-if="routeName" :to="{ name: routeName }" :class="setClass()">
+  <RouterLink v-if="routeName" :to="{ name: routeName }" :class="linkClass">
     <slot />
   </RouterLink>
-  <a v-else-if="href" :href="href" target="_blank" :class="setClass()"><slot /></a>
-  <button v-else :class="[...setClass(), 'w-full', 'h-fit']"><slot /></button>
+  <a v-else-if="href" :href="href" target="_blank" :class="linkClass">
+    <slot />
+  </a>
+  <button v-else :class="[...linkClass, 'w-full', 'h-fit']">
+    <slot />
+  </button>
 </template>
 
 <style scoped></style>

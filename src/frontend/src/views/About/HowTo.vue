@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Header from "../components/PageHeader.vue";
-import TextLink from "../components/TextLink.vue";
+import Header from "../../components/PageHeader.vue";
+import TextLink from "../../components/TextLink.vue";
 </script>
 
 <template>
-  <Header title="How to use Hammergen" />
+  <Header title="How to Use Hammergen?" />
   <p class="my-2 text-2xl">Warhammer 4th ed database</p>
   <p>
     The most basic was to use Hammergen is to treat it as a large online index of all skills, talents, trappings,
@@ -45,9 +45,9 @@ import TextLink from "../components/TextLink.vue";
     Any character or property (skill, talent, trapping, etc.) you make, you can share with other Hammergen users. In
     order for them to use it, you must mark your character/property as "public". Next, they will need to add you to
     "linked users". It can be done in
-    <TextLink routeName="linkedusers">Linked Users</TextLink> tab visible in the left-hand navigation menu after logging
-    in. Every shared character and property are in read-only mode. It means that only the original owner can modify or
-    delete it.
+    <TextLink routeName="manage" :query="{ view: 'linked' }">Linked Users</TextLink> tab visible in the left-hand
+    navigation menu after logging in. Every shared character and property are in read-only mode. It means that only the
+    original owner can modify or delete it.
   </p>
 </template>
 

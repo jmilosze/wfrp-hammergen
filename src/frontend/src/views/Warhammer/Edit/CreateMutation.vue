@@ -94,7 +94,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" propertyName="Mutation" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

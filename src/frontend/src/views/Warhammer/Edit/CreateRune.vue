@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Header from "../../../components/PageHeader.vue";
-import { printSpellLabel, printSpellType, Spell, SpellApi, SpellLabel } from "../../../services/wh/spell.ts";
+import { printRuneLabel, Rune, RuneApi, runeLabelList } from "../../../services/wh/rune.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import { useElSize } from "../../../composables/viewSize.ts";
@@ -14,15 +14,16 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
-import SpellClassification from "../../../components/SpellClassification.vue";
+import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
+import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
 import DisplayLabels from "../../../components/DisplayLabels.vue";
 
 const props = defineProps<{
   id: string;
 }>();
 
-const newSpell = new Spell({
-  name: "New spell",
+const newRune = new Rune({
+  name: "New rune",
   canEdit: true,
   id: "create",
   shared: true,
@@ -40,21 +41,18 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newSpell, new SpellApi(authRequest));
+} = useWhEdit(newRune, new RuneApi(authRequest));
 
 await loadWh(props.id);
 
 const contentContainerRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
-const simplifiedLabels = ref(new Array<SpellLabel>());
-
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
-const validRange = computed(() => wh.value.validateRange());
-const validTarget = computed(() => wh.value.validateTarget());
-const validDuration = computed(() => wh.value.validateDuration());
-const validCn = computed(() => wh.value.validateCn());
+
+const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x), value: x })));
+const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), value: x })));
 </script>
 
 <template>
@@ -63,9 +61,8 @@ const validCn = computed(() => wh.value.validateCn());
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create spell' : wh.canEdit ? 'Edit spell' : wh.name" />
-  <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
-  <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="mt-1" />
+  <Header :title="id === 'create' ? 'Create rune' : wh.canEdit ? 'Edit rune' : wh.name" />
+  <DisplayLabels :labelList="wh.labels.map((x) => printRuneLabel(x))" class="mt-1" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -74,6 +71,28 @@ const validCn = computed(() => wh.value.validateCn());
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <MultipleCheckboxColumnInput
+          v-model="wh.applicableTo"
+          :options="applicableToOptions"
+          :disabled="!wh.canEdit"
+          :viewBreakpoint="[
+            { columns: 3, view: ViewSize.xs },
+            { columns: 2, view: ViewSize.xxs },
+          ]"
+          title="Applicable to"
+        />
+        <MultipleCheckboxColumnInput
+          v-model="wh.labels"
+          :options="labelOptions"
+          :disabled="!wh.canEdit"
+          :viewBreakpoint="[{ columns: 2, view: ViewSize.xs }]"
+          :columns="2"
+          title="Labels"
+        />
+      </div>
+    </div>
+    <div class="flex-1">
+      <div class="flex flex-col gap-4">
         <FormTextarea
           v-model="wh.description"
           title="Description"
@@ -82,27 +101,7 @@ const validCn = computed(() => wh.value.validateCn());
         />
       </div>
     </div>
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!wh.canEdit" />
-        <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!wh.canEdit" />
-        <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!wh.canEdit" />
-        <FormInput
-          v-model="wh.cn"
-          title="Casting number"
-          type="number"
-          :validationStatus="validCn"
-          :disabled="!wh.canEdit"
-        />
-      </div>
-    </div>
   </div>
-
-  <SpellClassification
-    v-model="wh.classification"
-    :disabled="!wh.canEdit"
-    @update:simplifiedLabels="simplifiedLabels = $event"
-  />
 
   <div
     ref="contentContainerRef"
@@ -113,7 +112,7 @@ const validCn = computed(() => wh.value.validateCn());
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Spell" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" propertyName="Rune" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -126,7 +125,7 @@ const validCn = computed(() => wh.value.validateCn());
 
     <EditControls
       :saving="submissionState.status === 'inProgress'"
-      list="spells"
+      list="runes"
       :allowAddAnother="id === 'create'"
       :confirmExit="hasChanged"
       :submitForm="submitForm"
@@ -135,3 +134,5 @@ const validCn = computed(() => wh.value.validateCn());
     />
   </div>
 </template>
+
+<style scoped></style>
