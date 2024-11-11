@@ -67,7 +67,7 @@ const showAlert = ref(true);
     <p class="mt-1 text-xl">Warhammer database</p>
     <p>
       Hammergen has almost all trappings, careers, skills, talents, mutations, spells, and qualities from WFRP 4th ed
-      Rulebook and all other 4th ed books published. Full list of included source books can be fond in
+      Rulebook and all other 4th ed books published. Full list of included source books can be found in
       <TextLink routeName="about">About</TextLink>
       section. Each of them has a reference to the source book and page they are from. Some examples of what you can use
       filters for are:
@@ -98,12 +98,14 @@ const showAlert = ref(true);
     <p>
       You can share any custom property (character, skill, trapping, etc.) you made with other players! When a property
       is marked as <span class="font-bold">Public</span>, anyone you give your username to, can see that item in
-      read-only mode. Sharing is explained in the <TextLink routeName="linkedusers">Linked Users</TextLink> tab
-      available after logging in.
+      read-only mode. Sharing is explained in the
+      <TextLink routeName="manage" :query="{ view: 'linked' }">Manage account/Linked users</TextLink> sections available
+      after logging in. You can also get there by clicking <TextLink routeName="manage">Manage account</TextLink> tab in
+      the navigation bar and then selecting <span class="font-semibold">Linked users</span> section.
     </p>
     <p>
       More in-depth description of how to use Hammergen features can be found in
-      <TextLink routeName="howto">How to use Hammergen</TextLink>.
+      <TextLink routeName="about" :query="{ view: 'howto' }">How to use Hammergen</TextLink>.
     </p>
     <div class="text-2xl font-semibold mt-5">About</div>
     <p>

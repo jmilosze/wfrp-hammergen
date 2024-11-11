@@ -1,11 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AboutHammergen from "./views/AboutHammergen.vue";
+import AboutHammergen from "./views/About/AboutHammergen.vue";
 import HomePage from "./views/HomePage.vue";
-import HowTo from "./views/HowTo.vue";
 import UserForgotPassword from "./views/User/UserForgotPassword.vue";
-import UserLinkedUsers from "./views/User/UserLinkedUsers.vue";
 import UserLogin from "./views/User/UserLogin.vue";
-import UserManage from "./views/User/UserManage.vue";
+import UserManageAccount from "./views/User/UserManageAccount.vue";
 import UserRegister from "./views/User/UserRegister.vue";
 import UserResetPassword from "./views/User/UserResetPassword.vue";
 import ListPrayers from "./views/Warhammer/List/ListPrayers.vue";
@@ -51,11 +49,6 @@ export default createRouter({
       component: AboutHammergen,
     },
     {
-      path: "/howto",
-      name: "howto",
-      component: HowTo,
-    },
-    {
       path: "/register",
       name: "register",
       component: UserRegister,
@@ -79,12 +72,7 @@ export default createRouter({
     {
       path: "/manage",
       name: "manage",
-      component: UserManage,
-    },
-    {
-      path: "/linkedusers",
-      name: "linkedusers",
-      component: UserLinkedUsers,
+      component: UserManageAccount,
     },
     {
       path: "/prayers",
