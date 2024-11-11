@@ -70,10 +70,10 @@ const filteredLabelOptions = computed(() => {
     return [];
   }
 
-  const anyGroup = { text: "Any label", value: "" };
   const sortedLabels = getAllowedLabels(parseInt(queryParams.value.type)).sort((a, b) => a - b);
   return [
-    anyGroup,
+    { text: "Any label", value: "" },
+    { text: "No label", value: "no" },
     ...sortedLabels.map((x) => ({
       text: printSpellLabel(x),
       value: x.toString(),
@@ -85,7 +85,12 @@ const items = computed(() => {
   return whList.whList.value
     .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
     .filter((wh) => queryParams.value.type === "" || queryParams.value.type === wh.classification.type.toString())
-    .filter((wh) => queryParams.value.label === "" || wh.classification.labels.has(parseInt(queryParams.value.label)))
+    .filter(
+      (wh) =>
+        queryParams.value.label === "" ||
+        (queryParams.value.label === "no" && wh.classification.labels.size == 0) ||
+        wh.classification.labels.has(parseInt(queryParams.value.label)),
+    )
     .map((x) => formatSpellRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });

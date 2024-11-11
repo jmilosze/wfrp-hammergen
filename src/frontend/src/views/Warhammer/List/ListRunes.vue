@@ -48,7 +48,12 @@ const items = computed(() => {
     .filter(
       (wh) => queryParams.value.applicableTo === "" || wh.applicableTo.includes(Number(queryParams.value.applicableTo)),
     )
-    .filter((wh) => queryParams.value.label === "" || wh.labels.includes(Number(queryParams.value.label)))
+    .filter(
+      (wh) =>
+        queryParams.value.label === "" ||
+        (queryParams.value.label === "no" && wh.labels.length === 0) ||
+        wh.labels.includes(Number(queryParams.value.label)),
+    )
     .map((x) => formatRuneRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });
@@ -83,7 +88,13 @@ const filteredApplicableToOptions = computed(() => {
 });
 
 const filteredLabelOptions = computed(() => {
-  return getOptions(runeLabelList, whList.whList.value.map((wh) => wh.labels).flat(), printRuneLabel, "Any label");
+  return getOptions(
+    runeLabelList,
+    whList.whList.value.map((wh) => wh.labels).flat(),
+    printRuneLabel,
+    "Any label",
+    "No label",
+  );
 });
 </script>
 
