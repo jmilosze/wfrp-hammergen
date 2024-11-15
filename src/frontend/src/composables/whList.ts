@@ -77,5 +77,18 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
     return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
   });
 
-  return { whList, apiError, showApiError, loadWhList, loading, copyWh, deleteWh, filteredSourceOptions, whToDelete };
+  const sourceValues = sourceOptions.map((x) => x.value);
+
+  return {
+    whList,
+    apiError,
+    showApiError,
+    loadWhList,
+    loading,
+    copyWh,
+    deleteWh,
+    filteredSourceOptions,
+    whToDelete,
+    sourceValues,
+  };
 }

@@ -21,14 +21,14 @@ export function queryParamsToRouterQuery(queryParams: SimpleQuery): LocationQuer
 }
 
 export function getOptions<T extends number>(
-  allOptions: T[],
-  whOptions: T[],
+  allValues: T[],
+  whValues: T[],
   printFn: (x: T) => string,
   anyText: string,
   noText?: string,
 ): { text: string; value: string }[] {
-  const setWhOptions = new Set(whOptions);
-  const commonOptions = allOptions.filter((element) => setWhOptions.has(element));
+  const setWhOptions = new Set(whValues);
+  const commonOptions = allValues.filter((element) => setWhOptions.has(element));
 
   const options: { text: string; value: string }[] = [{ text: anyText, value: "" }];
   if (noText) {
@@ -40,4 +40,8 @@ export function getOptions<T extends number>(
   }
 
   return options;
+}
+
+export function getListOfAllValues<T extends number>(allValues: T[]) {
+  return ["", "no", ...allValues.map((x) => x.toString())];
 }
