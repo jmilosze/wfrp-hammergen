@@ -6,30 +6,21 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
-import { useRouter } from "vue-router";
 import DeleteModal from "../../../components/DeleteModal.vue";
-import { queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
+import { useQueryParams } from "../../../composables/useQueryParams.ts";
 
 const whList = useWhList(new TraitApi(authRequest));
 await whList.loadWhList();
 
-const router = useRouter();
-const queryParams = ref({ search: "", source: "" });
-queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
-watch(
-  () => queryParams,
-  (newValue) => {
-    router.replace({ query: queryParamsToRouterQuery(newValue.value) });
-  },
-  { deep: true },
-);
+const searchTerm = useQueryParams("search");
+const sourceTerm = useQueryParams("source", whList.sourceValues);
 
 const auth = useAuth();
 
@@ -42,7 +33,7 @@ const columns = [
 
 const items = computed(() => {
   return whList.whList.value
-    .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
+    .filter((wh) => sourceTerm.value === "" || sourceTerm.value in wh.source)
     .map((x) => formatTraitRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });
@@ -70,14 +61,8 @@ function formatTraitRow(trait: Trait) {
     {{ whList.apiError.value }}
   </AlertBlock>
   <Header title="Creature traits" />
-  <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
-  <TableWithSearch
-    v-model="queryParams.search"
-    :fields="columns"
-    :items="items"
-    :stackedViewSize="ViewSize.lg"
-    class="mx-1"
-  >
+  <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
+  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" :stackedViewSize="ViewSize.lg" class="mx-1">
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="trait" :params="{ id: 'create' }">
       Create new
     </LinkButton>

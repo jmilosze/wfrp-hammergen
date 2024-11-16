@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
 import {
+  allSpellLabelList,
   getAllowedLabels,
   getSimplifiedLabels,
   printSpellLabel,
@@ -14,22 +15,27 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
-import { computed, ref, watch } from "vue";
+import { computed, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
-import { useRouter } from "vue-router";
 import DeleteModal from "../../../components/DeleteModal.vue";
-import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
+import { getListOfAllValues, getOptions } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
+import { useQueryParams } from "../../../composables/useQueryParams.ts";
 
 const whList = useWhList(new SpellApi(authRequest));
 await whList.loadWhList();
 
-const router = useRouter();
-const queryParams = ref({ search: "", source: "", type: "", label: "" });
+const allSpellTypes = getListOfAllValues(spellTypeList);
+const allSpellLabels = getListOfAllValues(allSpellLabelList);
+
+const searchTerm = useQueryParams("search");
+const sourceTerm = useQueryParams("source", whList.sourceValues);
+const typeTerm = useQueryParams("type", allSpellTypes);
+const labelTerm = useQueryParams("group", allSpellLabels);
 
 const auth = useAuth();
 
@@ -40,19 +46,10 @@ const columns = [
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
-queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
 watch(
-  () => queryParams,
-  (newValue) => {
-    router.replace({ query: queryParamsToRouterQuery(newValue.value) });
-  },
-  { deep: true },
-);
-
-watch(
-  () => queryParams.value.type,
+  () => typeTerm.value,
   () => {
-    queryParams.value.label = "";
+    labelTerm.value = "";
   },
 );
 
@@ -66,11 +63,11 @@ const filteredTypeOptions = computed(() => {
 });
 
 const filteredLabelOptions = computed(() => {
-  if (queryParams.value.type === "") {
+  if (typeTerm.value === "") {
     return [];
   }
 
-  const sortedLabels = getAllowedLabels(parseInt(queryParams.value.type)).sort((a, b) => a - b);
+  const sortedLabels = getAllowedLabels(parseInt(typeTerm.value)).sort((a, b) => a - b);
   return [
     { text: "Any label", value: "" },
     { text: "No label", value: "no" },
@@ -83,13 +80,13 @@ const filteredLabelOptions = computed(() => {
 
 const items = computed(() => {
   return whList.whList.value
-    .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
-    .filter((wh) => queryParams.value.type === "" || queryParams.value.type === wh.classification.type.toString())
+    .filter((wh) => sourceTerm.value === "" || sourceTerm.value in wh.source)
+    .filter((wh) => typeTerm.value === "" || typeTerm.value === wh.classification.type.toString())
     .filter(
       (wh) =>
-        queryParams.value.label === "" ||
-        (queryParams.value.label === "no" && wh.classification.labels.size == 0) ||
-        wh.classification.labels.has(parseInt(queryParams.value.label)),
+        labelTerm.value === "" ||
+        (labelTerm.value === "no" && wh.classification.labels.size == 0) ||
+        wh.classification.labels.has(parseInt(labelTerm.value)),
     )
     .map((x) => formatSpellRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -125,22 +122,16 @@ function formatSpellRow(spell: Spell) {
   </AlertBlock>
   <Header title="Spells" />
   <div class="flex flex-wrap justify-between">
-    <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
-    <SelectInput v-model="queryParams.type" :options="filteredTypeOptions" class="grow mb-2 mx-1" />
+    <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
+    <SelectInput v-model="typeTerm" :options="filteredTypeOptions" class="grow mb-2 mx-1" />
     <SelectInput
-      v-model="queryParams.label"
+      v-model="labelTerm"
       :options="filteredLabelOptions"
-      :disabled="!(queryParams.type != '')"
+      :disabled="!(typeTerm != '')"
       class="grow mb-2 mx-1 w-32"
     />
   </div>
-  <TableWithSearch
-    v-model="queryParams.search"
-    :fields="columns"
-    :items="items"
-    :stackedViewSize="ViewSize.lg"
-    class="mx-1"
-  >
+  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" :stackedViewSize="ViewSize.lg" class="mx-1">
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="spell" :params="{ id: 'create' }">
       Create new
     </LinkButton>

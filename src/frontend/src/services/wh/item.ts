@@ -374,6 +374,10 @@ export function printCarryType(carryType: CarryType): string {
   }
 }
 
+export const itemGroupList = [
+  ...new Set([...meleeGroupList, ...rangedGroupList, ...ammoGroupList, ...armourGroupList]),
+];
+
 const API_BASE_PATH = "/api/wh/item";
 
 export type MeleeType = {

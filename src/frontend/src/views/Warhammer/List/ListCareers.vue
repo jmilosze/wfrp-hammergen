@@ -13,30 +13,28 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
-import { useRouter } from "vue-router";
+
 import DeleteModal from "../../../components/DeleteModal.vue";
-import { getOptions, queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
+import { getListOfAllValues, getOptions } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
+import { useQueryParams } from "../../../composables/useQueryParams.ts";
 
 const whList = useWhList(new CareerApi(authRequest));
 await whList.loadWhList();
 
-const router = useRouter();
-const queryParams = ref({ search: "", source: "", class: "", species: "" });
-queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
-watch(
-  () => queryParams,
-  (newValue) => {
-    router.replace({ query: queryParamsToRouterQuery(newValue.value) });
-  },
-  { deep: true },
-);
+const allCareerClasses = getListOfAllValues(careerClassList);
+const allCareerSpecies = getListOfAllValues(speciesList);
+
+const searchTerm = useQueryParams("search");
+const sourceTerm = useQueryParams("source", whList.sourceValues);
+const classTerm = useQueryParams("class", allCareerClasses);
+const speciesTerm = useQueryParams("species", allCareerSpecies);
 
 const auth = useAuth();
 
@@ -50,9 +48,9 @@ const columns = [
 
 const items = computed(() => {
   return whList.whList.value
-    .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
-    .filter((wh) => queryParams.value.class === "" || queryParams.value.class === wh.careerClass.toString())
-    .filter((wh) => queryParams.value.species === "" || wh.species.includes(Number(queryParams.value.species)))
+    .filter((wh) => sourceTerm.value === "" || sourceTerm.value in wh.source)
+    .filter((wh) => classTerm.value === "" || classTerm.value === wh.careerClass.toString())
+    .filter((wh) => speciesTerm.value === "" || wh.species.includes(Number(speciesTerm.value)))
     .map((x) => formatCareerRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });
@@ -102,17 +100,11 @@ const filteredSpeciesOptions = computed(() => {
   </AlertBlock>
   <Header title="Careers" />
   <div class="flex flex-wrap justify-between">
-    <SelectInput v-model="queryParams.source" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
-    <SelectInput v-model="queryParams.class" :options="filteredClassOptions" class="grow mb-2 mx-1" />
-    <SelectInput v-model="queryParams.species" :options="filteredSpeciesOptions" class="grow mb-2 mx-1" />
+    <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
+    <SelectInput v-model="classTerm" :options="filteredClassOptions" class="grow mb-2 mx-1" />
+    <SelectInput v-model="speciesTerm" :options="filteredSpeciesOptions" class="grow mb-2 mx-1" />
   </div>
-  <TableWithSearch
-    v-model="queryParams.search"
-    :fields="columns"
-    :items="items"
-    :stackedViewSize="ViewSize.lg"
-    class="mx-1"
-  >
+  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" :stackedViewSize="ViewSize.lg" class="mx-1">
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="career" :params="{ id: 'create' }">
       Create new
     </LinkButton>
