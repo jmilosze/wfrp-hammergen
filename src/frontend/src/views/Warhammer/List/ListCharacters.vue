@@ -5,31 +5,23 @@ import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { addSpaces } from "../../../utils/string.ts";
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsCharacter from "../../../components/ActionButtonsCharacter.vue";
-import { useRouter } from "vue-router";
 import DeleteModal from "../../../components/DeleteModal.vue";
-import { queryParamsFromRouterQuery, queryParamsToRouterQuery } from "../../../utils/whList.ts";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import ActionButton from "../../../components/ActionButton.vue";
+import { useQueryParams } from "../../../composables/useQueryParams.ts";
 
 const whList = useWhList(new CharacterApi(authRequest));
 await whList.loadWhList();
 const auth = useAuth();
 
-const router = useRouter();
-const queryParams = ref({ search: "", source: "", sample: auth.loggedIn.value ? "" : "true" });
-queryParamsFromRouterQuery(queryParams.value, router.currentRoute.value.query);
-watch(
-  () => queryParams,
-  (newValue) => {
-    router.replace({ query: queryParamsToRouterQuery(newValue.value) });
-  },
-  { deep: true },
-);
+const searchTerm = useQueryParams("search");
+const showSampleTerm = useQueryParams("sample");
+showSampleTerm.value = auth.loggedIn.value ? "" : "true";
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
@@ -39,8 +31,7 @@ const columns = [
 
 const items = computed(() => {
   return whList.whList.value
-    .filter((wh) => queryParams.value.source === "" || queryParams.value.source in wh.source)
-    .filter((wh) => (queryParams.value.sample === "" ? wh.ownerId !== "admin" : true))
+    .filter((wh) => (showSampleTerm.value === "" ? wh.ownerId !== "admin" : true))
     .map((x) => formatCharacterRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });
@@ -55,10 +46,10 @@ function formatCharacterRow(character: Character) {
 }
 
 function handleSampleCharacters() {
-  if (queryParams.value.sample !== "") {
-    queryParams.value.sample = "";
+  if (showSampleTerm.value !== "") {
+    showSampleTerm.value = "";
   } else {
-    queryParams.value.sample = "true";
+    showSampleTerm.value = "true";
   }
 }
 </script>
@@ -79,13 +70,7 @@ function handleSampleCharacters() {
       </ActionButton>
     </template>
   </Header>
-  <TableWithSearch
-    v-model="queryParams.search"
-    :fields="columns"
-    :items="items"
-    :stackedViewSize="ViewSize.lg"
-    class="mx-1"
-  >
+  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" :stackedViewSize="ViewSize.lg" class="mx-1">
     <LinkButton
       v-if="auth.loggedIn.value"
       class="mr-2 mb-2 shrink-0 btn"

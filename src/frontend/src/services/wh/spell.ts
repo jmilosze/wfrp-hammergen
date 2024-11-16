@@ -202,6 +202,15 @@ export const allLores = new Set(
   ),
 );
 
+export const allSpellLabelList = [
+  SpellLabel.SpellLabelSkaven,
+  SpellLabel.SpellLabelChaos,
+  SpellLabel.SpellLabelFimirMarsh,
+  SpellLabel.SpellLabelCustom,
+  ...allLores,
+  SpellLabel.SpellLabelRitual,
+];
+
 export function getAllowedLabels(spellType: SpellType): SpellLabel[] {
   if (spellType === SpellType.SpellTypePetty || spellType === SpellType.SpellTypeArcane) {
     return [SpellLabel.SpellLabelSkaven, SpellLabel.SpellLabelChaos];
