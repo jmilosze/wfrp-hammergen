@@ -40,7 +40,10 @@ async function onSave() {
     props.resetForm();
   } else {
     saveClicked.value = true;
-    await router.push({ name: props.list });
+    const previousState = router.options.history.state.back as string;
+    const queryParams = new URLSearchParams(previousState?.split("?")[1] || "");
+    const allParams = Object.fromEntries(queryParams.entries());
+    await router.push({ name: props.list, query: allParams });
   }
 }
 </script>
