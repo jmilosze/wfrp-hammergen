@@ -42,6 +42,7 @@ import { Source } from "./source.ts";
 import { ItemPropertyApiData } from "./itemproperty.ts";
 import { ModifierEffect } from "./characterModifiers.ts";
 import { TraitApiData } from "./trait.ts";
+import { RuneApiData } from "./rune.ts";
 
 export interface ItemFullApiData {
   name: string;
@@ -50,6 +51,7 @@ export interface ItemFullApiData {
   enc: number;
   availability: Availability;
   properties: ApiResponse<ItemPropertyApiData>[];
+  runes: WhNumber<RuneApiData>[];
   type: ItemType;
   melee: MeleeType;
   ranged: RangedType;
@@ -160,11 +162,18 @@ export interface CharacterFullItemProperty {
   name: string;
 }
 
+export interface CharacterFullRune {
+  id: string;
+  name: string;
+  number: number;
+}
+
 export interface CharacterFullItem {
   id: string;
   name: string;
   enc: number;
-  qualitiesFlawsRunes: CharacterFullItemProperty[];
+  qualitiesFlaws: CharacterFullItemProperty[];
+  runes: CharacterFullRune[];
   number: number;
   description: string;
   type: string;
@@ -532,7 +541,8 @@ function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attri
       id: charItem.wh.id,
       name: charItem.wh.object.name,
       enc: charItem.wh.object.enc,
-      qualitiesFlawsRunes: charItem.wh.object.properties.map((x) => ({ name: x.object.name, id: x.id })),
+      qualitiesFlaws: charItem.wh.object.properties.map((x) => ({ name: x.object.name, id: x.id })),
+      runes: charItem.wh.object.runes.map((x) => ({ name: x.wh.object.name, id: x.wh.id, number: x.number })),
       number: charItem.number,
       description: charItem.wh.object.description,
       type: printItemType(charItem.wh.object.type),
@@ -743,7 +753,7 @@ export function CharacterFullToCsv(characterFull: CharacterFull): string {
 
   for (const armour of characterFull.equippedArmor) {
     csv += csvStr(armour.name) + "," + csvStr(armour.locations?.join(", ")) + "," + armour.enc + ",";
-    csv += armour.ap + "," + csvStr(armour.qualitiesFlawsRunes.join(", ")) + "," + armour.number + ",,,,,\n";
+    csv += armour.ap + "," + csvStr(armour.qualitiesFlaws.join(", ")) + "," + armour.number + ",,,,,\n";
   }
 
   csv += ",,,,,,,,,,\n";
@@ -752,7 +762,7 @@ export function CharacterFullToCsv(characterFull: CharacterFull): string {
 
   for (const weapon of characterFull.equippedWeapon) {
     csv += csvStr(weapon.name) + "," + weapon.group + "," + weapon.enc + "," + weapon.rng + ",";
-    csv += weapon.dmg + "," + csvStr(weapon.qualitiesFlawsRunes.join(", ")) + "," + weapon.number + ",,,,\n";
+    csv += weapon.dmg + "," + csvStr(weapon.qualitiesFlaws.join(", ")) + "," + weapon.number + ",,,,\n";
   }
 
   csv += ",,,,,,,,,,\n";

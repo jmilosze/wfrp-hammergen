@@ -33,6 +33,10 @@ const itemApiData: ItemApiData = {
   enc: 2,
   availability: Availability.Exotic,
   properties: ["prop1", "prop2"],
+  runes: [
+    { id: "rune1", number: 1 },
+    { id: "rune2", number: 2 },
+  ],
   type: ItemType.Ranged,
   melee: {
     hands: WeaponHands.OneHanded,
@@ -78,6 +82,7 @@ const item = new Item({
   enc: 2,
   availability: Availability.Exotic,
   properties: new Set(["prop1", "prop2"]),
+  runes: { rune1: 1, rune2: 2 },
   type: ItemType.Ranged,
   melee: {
     hands: WeaponHands.OneHanded,
@@ -357,5 +362,30 @@ describe("isEqualTo returns false", () => {
       otherItem.other.carryType = CarryType.NotCarriableAndNotWearable;
       expect(other.isEqualTo(otherItem)).toBe(false);
     });
+  });
+
+  test.each([
+    {
+      name: "different id",
+      value: {
+        rune1: 1,
+        otherId: 2,
+      } as Record<string, number>,
+    },
+    {
+      name: "different number",
+      value: {
+        rune1: 2,
+        rune2: 3,
+      } as Record<string, number>,
+    },
+    {
+      name: "different number of elements",
+      value: { rune1: 1 } as Record<string, number>,
+    },
+  ])("when other item has a different value of runes ($name)", (t) => {
+    const otherItem = item.copy();
+    otherItem.runes = t.value;
+    expect(item.isEqualTo(otherItem)).toBe(false);
   });
 });

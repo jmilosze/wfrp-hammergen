@@ -218,7 +218,7 @@ const equippedArmourDisp = ref({
     { name: "locations", displayName: "Locations" },
     { name: "enc", displayName: "Enc" },
     { name: "ap", displayName: "AP" },
-    { name: "qualities", displayName: "Qualities and runes" },
+    { name: "qualities", displayName: "Qualities and flaws" },
   ],
   items: character.value.equippedArmor.map((x) => ({
     id: x.id,
@@ -226,7 +226,7 @@ const equippedArmourDisp = ref({
     locations: x.locations ? x.locations.map((x) => addSpaces(x)).join(", ") : "",
     enc: x.enc,
     ap: x.ap ? x.ap : 0,
-    qualities: x.qualitiesFlawsRunes,
+    qualities: x.qualitiesFlaws,
   })),
 });
 
@@ -285,7 +285,7 @@ const equippedWeaponDisp = ref({
     { name: "enc", displayName: "Enc" },
     { name: "rng", displayName: "Range / reach" },
     { name: "dmg", displayName: "Damage" },
-    { name: "qualities", displayName: "Qualities and runes" },
+    { name: "qualities", displayName: "Qualities and flaws" },
   ],
   items: character.value.equippedWeapon.map((x) => ({
     id: x.id,
@@ -294,7 +294,7 @@ const equippedWeaponDisp = ref({
     enc: x.enc,
     rng: addSpaces(x.rng),
     dmg: addSpaces(x.dmg),
-    qualities: x.qualitiesFlawsRunes,
+    qualities: x.qualitiesFlaws,
   })),
 });
 

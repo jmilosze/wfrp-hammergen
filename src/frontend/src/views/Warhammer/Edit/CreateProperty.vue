@@ -66,7 +66,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create quality/rune' : wh.canEdit ? 'Edit quality/rune' : wh.name" />
+  <Header :title="id === 'create' ? 'Create quality/flaw' : wh.canEdit ? 'Edit quality/flaw' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -109,7 +109,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/rune" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/flaw" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">
