@@ -1,4 +1,5 @@
 import os
+
 from pymongo import MongoClient
 
 MONGO_URI = os.environ["MONGO_URI"]
@@ -30,6 +31,7 @@ def find_in_items(id):
     print(f"characters with equipped: {equipped}")
     print(f"characters with carried: {carried}")
     print(f"characters with stored: {stored}")
+
 
 def check_characters():
     not_converted = []
@@ -76,5 +78,44 @@ def find_talents_in_characters(id):
     print(f"characters with skill: {used}")
 
 
+def find_and_replace_properties_in_items(id_pairs):
+    items = list(DB["item"].find())
+    for id_pair in id_pairs:
+        prop_id = id_pair["prop_id"]
+        rune_id = id_pair["rune_id"]
+        used = []
+        for item in items:
+            found = False
+            for property in item["object"]["properties"]:
+                if property == prop_id:
+                    used.append({"property_id": prop_id,
+                                 "name": item["object"]["name"],
+                                 "id": str(item["_id"]),
+                                 "owner": item["ownerid"]})
+                    found = True
+                    break
+            if found:
+                new_properties = list(item["object"]["properties"])
+                new_properties.remove(prop_id)
+                new_runes = [{"id": rune_id, "number": 1}]
+                print(f'Updating {item["object"]["name"]}, property_id: {prop_id}')
+                print(f'Old properties: {item["object"]["properties"]}')
+                print(f'New properties: {new_properties}')
+                print(f'New runes: {new_runes}')
+                # DB["item"].find_one_and_update({"_id": item["_id"]}, {"$set": {"object.properties": new_properties}}, {"$set": {"object.runes": new_runes}})
+    return
+
+
 if __name__ == "__main__":
-    find_talents_in_characters("63b4a3ff76bd2da2010c5f76")
+    find_and_replace_properties_in_items([
+        {"prop_id": "6520381d49960d0001346ebe", "rune_id": "6737a65b49960d000106de96"},  # Rune of Clear Seeing
+        {"prop_id": "6520395449960d0001346ec2", "rune_id": "6738679549960d00017aac68"},
+        {"prop_id": "651e966849960d00017d8750", "rune_id": "673626b449960d0001998c59"},
+        {"prop_id": "651e967449960d00017d8751", "rune_id": "6739c2ff49960d0001005681"},
+        {"prop_id": "6550cfc649960d00016b3aea", "rune_id": "6739c31249960d0001005682"},
+        {"prop_id": "652038a249960d0001346ebf", "rune_id": "6736293649960d0001998c5d"},
+        {"prop_id": "651e96e049960d00017d8752", "rune_id": "673a0a6649960d00010cc678"},
+        {"prop_id": "651e974749960d00017d8753", "rune_id": "673a0b7549960d00010cc679"},
+        {"prop_id": "652038fc49960d0001346ec0", "rune_id": "6736298249960d0001998c5e"},
+        {"prop_id": "651e97c749960d00017d8754", "rune_id": "673a0ba449960d00010cc67a"},
+    ])
