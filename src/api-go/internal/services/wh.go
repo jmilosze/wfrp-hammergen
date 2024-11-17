@@ -194,7 +194,7 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 			return nil, fmt.Errorf("failed to cast object to item")
 		}
 		allPropertyIds = mergeStrAndRemoveDuplicates(allPropertyIds, item.Properties)
-		allRuneIds = mergeStrAndRemoveDuplicates(allRuneIds, item.Runes)
+		allRuneIds = mergeStrAndIdNumberAndRemoveDuplicates(allRuneIds, item.Runes)
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, item.Grimoire.Spells)
 	}
 
