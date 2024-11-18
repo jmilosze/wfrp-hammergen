@@ -43,8 +43,8 @@ const emit = defineEmits<{
   (e: "addSpeciesSkills"): void;
 }>();
 
-function anySelected(skillsWithNumber: SkillWithNumber): boolean {
-  return skillsWithNumber.number !== 0;
+function isNonzero(skillWithNumber: SkillWithNumber): boolean {
+  return skillWithNumber.number !== 0;
 }
 
 const skillsWithNumber: Ref<Record<string, SkillWithNumber>> = ref({});
@@ -69,7 +69,7 @@ function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillLis
     }
   }
   skillsWithNumberList.value = Object.values(skillsWithNumber.value).sort((a, b) => {
-    return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
+    return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
   });
 }
 
@@ -97,7 +97,7 @@ watch(
   { immediate: true },
 );
 
-const selectedSkills = computed(() => skillsWithNumberList.value.filter((x) => anySelected(x)));
+const selectedSkills = computed(() => skillsWithNumberList.value.filter((x) => isNonzero(x)));
 
 const modal = useModal();
 const searchTerm = ref("");
@@ -114,7 +114,7 @@ function onModifyClick() {
   modal.showModal("modifySkillsModal");
   searchTerm.value = "";
   skillsWithNumberList.value.sort((a, b) => {
-    return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
+    return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
   });
 }
 </script>

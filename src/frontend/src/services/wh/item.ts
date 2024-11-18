@@ -11,6 +11,7 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import {
   ApiResponse,
+  validateIdNumber,
   validFloatFn,
   validIntegerFn,
   validLongDescFn,
@@ -622,6 +623,10 @@ export class Item implements WhProperty {
     return validIntegerFn(this.container.capacity, 0, 1000);
   }
 
+  validateRunes(): ValidationStatus {
+    return validateIdNumber("Rune number", this.runes, 1, 1000);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -700,6 +705,7 @@ export class Item implements WhProperty {
 
   resetDetails() {
     this.properties = new Set<string>();
+    this.runes = {} as Record<string, number>;
 
     if (this.type !== ItemType.Melee) {
       this.melee = {
@@ -747,7 +753,7 @@ export class Item implements WhProperty {
     updateSet(this.properties, id, selected);
   }
 
-  updateTalents(id: string, number: number): void {
+  updateRunes(id: string, number: number): void {
     updateIdNumberRecord(this.runes, { id: id, number: number });
   }
 

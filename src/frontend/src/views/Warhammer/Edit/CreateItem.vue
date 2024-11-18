@@ -44,6 +44,8 @@ import { ItemPropertyApi } from "../../../services/wh/itemproperty.ts";
 import SelectTable from "../../../components/SelectTable.vue";
 import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
 import { SpellApi } from "../../../services/wh/spell.ts";
+import { RuneApi } from "../../../services/wh/rune.ts";
+import SelectIdNumberTable from "../../../components/SelectIdNumberTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -76,8 +78,15 @@ propertyListUtils.loadWhList();
 const spellListUtils = useWhList(new SpellApi(authRequest));
 spellListUtils.loadWhList();
 
+const runeListUtils = useWhList(new RuneApi(authRequest));
+runeListUtils.loadWhList();
+
 const propertyList = computed(() => {
   return propertyListUtils.whList.value.filter((x) => x.applicableTo.includes(wh.value.type));
+});
+
+const runeList = computed(() => {
+  return runeListUtils.whList.value.filter((x) => x.applicableTo.includes(wh.value.type));
 });
 
 await loadWh(props.id);
@@ -101,6 +110,7 @@ const validAmmunitionRngMult = computed(() => wh.value.validateAmmunitionRngMult
 const validAmmunitionRng = computed(() => wh.value.validateAmmunitionRng());
 const validArmourPoints = computed(() => wh.value.validateArmourPoints());
 const validContainerCapacity = computed(() => wh.value.validateContainerCapacity());
+const validRunes = computed(() => wh.value.validateRunes());
 
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
@@ -408,6 +418,21 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         class="mt-4"
         @reload="propertyListUtils.loadWhList"
         @selected="(e) => wh.updateProperties(e.id, e.selected)"
+      />
+      <SelectIdNumberTable
+        :disabled="!wh.canEdit"
+        :initItems="wh.runes"
+        :allItemList="runeList"
+        title="Runes"
+        modalTitle="Modify runes"
+        :loading="runeListUtils.loading.value"
+        routeName="rune"
+        :truncateModalDescription="100"
+        :disableDescription="!propertiesTable.isEqualOrGreater.value"
+        :validationStatus="validRunes"
+        class="mt-4"
+        @reload="runeListUtils.loadWhList"
+        @updated="(e) => wh.updateRunes(e.id, e.number)"
       />
     </div>
   </div>

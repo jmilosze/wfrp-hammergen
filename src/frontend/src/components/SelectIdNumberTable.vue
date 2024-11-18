@@ -10,6 +10,8 @@ import { addSpaces, truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import LinkButton from "./LinkButton.vue";
 import ReloadButton from "./ReloadButton.vue";
+import FormInput from "./FormInput.vue";
+import { ValidationStatus } from "../utils/validation.ts";
 
 type ItemWithNumber = {
   id: string;
@@ -20,16 +22,16 @@ type ItemWithNumber = {
 
 const props = defineProps<{
   title: string;
-  itemList: { name: string; id: string; description: string }[];
+  allItemList: { name: string; id: string; description: string }[];
   initItems: Record<string, number>;
   routeName: string;
   disabled?: boolean;
   modalTitle?: string;
   loading?: boolean;
-  modalId?: string;
   clearAllBtn?: boolean;
   disableDescription?: boolean;
   truncateModalDescription?: number;
+  validationStatus: ValidationStatus;
 }>();
 
 const emit = defineEmits<{
@@ -44,52 +46,55 @@ const itemsWithNumberList: Ref<ItemWithNumber[]> = ref([]);
 watch(
   () => props.initItems,
   (newVal) => {
-    updateItemsWithSelect(newVal, props.itemList);
+    updateItemsWithNumber(newVal, props.allItemList);
   },
   { immediate: true },
 );
 
 watch(
-  () => props.itemList,
+  () => props.allItemList,
   (newVal) => {
-    updateItemsWithSelect(props.initItems, newVal);
+    updateItemsWithNumber(props.initItems, newVal);
   },
   { immediate: true },
 );
 
-function updateItemsWithSelect(
-  selectedItems: Set<string>,
-  itemList: { name: string; id: string; description: string }[],
+function isNonzero(itemWithNumber: ItemWithNumber): boolean {
+  return itemWithNumber.number !== 0;
+}
+
+function updateItemsWithNumber(
+  selectedItems: Record<string, number>,
+  allItemList: { name: string; id: string; description: string }[],
 ) {
   itemsWithNumber.value = {};
-  for (const item of itemList) {
+  for (const item of allItemList) {
     itemsWithNumber.value[item.id] = {
       id: item.id,
       name: addSpaces(item.name),
       description: truncate(addSpaces(item.description), props.truncateModalDescription),
-      selected: false,
+      number: 0,
     };
-    if (selectedItems && selectedItems.has(item.id)) {
-      itemsWithNumber.value[item.id].selected = true;
+    if (selectedItems && item.id in selectedItems) {
+      itemsWithNumber.value[item.id].number = selectedItems[item.id];
     }
   }
   itemsWithNumberList.value = Object.values(itemsWithNumber.value).sort((a, b) => {
-    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
+    return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
   });
 }
 
-const selectedItems = computed(() => itemsWithNumberList.value.filter((x) => x.selected));
+const nonzeroItems = computed(() => itemsWithNumberList.value.filter((x) => isNonzero(x)));
 
 const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
   { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
+  { name: "number", displayName: "Number", skipStackedTitle: false },
 ];
 
-const modalId = props.modalId ? props.modalId : "modifyItemsModal";
-
+const modalId = window.crypto.randomUUID();
 const resetPaginationCounter = ref(0);
 
 function onModifyClick() {
@@ -97,7 +102,7 @@ function onModifyClick() {
   modal.showModal(modalId);
   searchTerm.value = "";
   itemsWithNumberList.value.sort((a, b) => {
-    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
+    return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
   });
 }
 </script>
@@ -120,20 +125,25 @@ function onModifyClick() {
           <tr class="text-left">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
             <th v-if="!disableDescription" class="border-b border-neutral-300 py-2 px-2">Description</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Number</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
+          <tr v-for="src in nonzeroItems" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-2 border-b border-neutral-300">
               <TextLink :routeName="routeName" :params="{ id: src.id }">
                 {{ addSpaces(src.name) }}
               </TextLink>
             </td>
             <td v-if="!disableDescription" class="py-2 px-2 border-b border-neutral-300">{{ src.description }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
           </tr>
         </tbody>
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
+    </div>
+    <div class="text-sm text-red-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+      {{ validationStatus.message }}
     </div>
     <ModalWindow :id="modalId">
       <template #header> {{ modalTitle }} </template>
@@ -160,15 +170,13 @@ function onModifyClick() {
           </TextLink>
         </template>
 
-        <template #selected="{ id }: { id: string }">
-          <div>
-            <input
-              v-model="itemsWithNumber[id].selected"
-              type="checkbox"
-              class="w-5 h-5 accent-neutral-600 my-1"
-              @input="emit('selected', { id: id, selected: !itemsWithNumber[id].selected })"
-            />
-          </div>
+        <template #number="{ id }: { id: string }">
+          <FormInput
+            v-model="itemsWithNumber[id].number"
+            type="number"
+            class="min-w-16 w-full"
+            @update:modelValue="emit('updated', { id: id, number: itemsWithNumber[id].number })"
+          />
         </template>
       </TableWithSearch>
     </ModalWindow>
