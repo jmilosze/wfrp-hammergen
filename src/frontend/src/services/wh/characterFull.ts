@@ -749,20 +749,36 @@ export function CharacterFullToCsv(characterFull: CharacterFull): string {
 
   csv += ",,,,,,,,,,\n";
   csv += "Equipped Armor,,,,,,,,,,\n";
-  csv += "Name,Group,Locations,Enc,AP,Qualities,Number,,,,\n";
+  csv += "Name,Group,Locations,Enc,AP,Qualities,Runes,Number,,,\n";
 
   for (const armour of characterFull.equippedArmor) {
     csv += csvStr(armour.name) + "," + csvStr(armour.locations?.join(", ")) + "," + armour.enc + ",";
-    csv += armour.ap + "," + csvStr(armour.qualitiesFlaws.join(", ")) + "," + armour.number + ",,,,,\n";
+    csv +=
+      armour.ap +
+      "," +
+      csvStr(armour.qualitiesFlaws.map((x) => x.name).join(", ")) +
+      "," +
+      csvStr(armour.runes.map((x) => x.name + `(x${x.number})`).join(", ")) +
+      "," +
+      armour.number +
+      ",,,,\n";
   }
 
   csv += ",,,,,,,,,,\n";
   csv += "Equipped Weapons,,,,,,,,,,\n";
-  csv += "Name,Group,Enc,Range/Reach,Damage,Qualities,Number,,,,\n";
+  csv += "Name,Group,Enc,Range/Reach,Damage,Qualities,Runes,Number,,,\n";
 
   for (const weapon of characterFull.equippedWeapon) {
     csv += csvStr(weapon.name) + "," + weapon.group + "," + weapon.enc + "," + weapon.rng + ",";
-    csv += weapon.dmg + "," + csvStr(weapon.qualitiesFlaws.join(", ")) + "," + weapon.number + ",,,,\n";
+    csv +=
+      weapon.dmg +
+      "," +
+      csvStr(weapon.qualitiesFlaws.map((x) => x.name).join(", ")) +
+      "," +
+      csvStr(weapon.runes.map((x) => x.name + `(x${x.number})`).join(", ")) +
+      "," +
+      weapon.number +
+      ",,,\n";
   }
 
   csv += ",,,,,,,,,,\n";

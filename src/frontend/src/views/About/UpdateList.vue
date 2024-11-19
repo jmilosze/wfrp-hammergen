@@ -6,6 +6,22 @@ import TextLink from "../../components/TextLink.vue";
 <template>
   <Header title="Updates" />
   <div>
+    <div class="text-xl mt-2 mb-1">22 Nov 2024</div>
+    <p class="mb-1">
+      Added contents of
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-dwarf-player-s-guide" target="_blank">
+        Dwarf Player's Guide
+      </TextLink>
+    </p>
+    <p>
+      In this updated we removed all Dwarf runes from <span class="font-semibold">Qualities and runes</span> tab and
+      renamed it to <span class="font-semibold">Qualities and flaws</span>. Now, Dwarf runes have their own tab
+      <span class="font-semibold">Runes</span>. New runes can be attached to items in a similarly to qualities and
+      flaws. The main difference that the the same rune can be attached to an items multiple times.
+    </p>
+  </div>
+
+  <div>
     <div class="text-xl mt-2 mb-1">22 Oct 2024</div>
     <p class="mb-1">Added Creature ~150 traits. Creature traits can be attached to any character.</p>
   </div>

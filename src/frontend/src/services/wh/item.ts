@@ -644,7 +644,8 @@ export class Item implements WhProperty {
       this.validateAmmunitionRngMult().valid &&
       this.validateAmmunitionRng().valid &&
       this.validateArmourPoints().valid &&
-      this.validateContainerCapacity().valid
+      this.validateContainerCapacity().valid &&
+      this.validateRunes().valid
     );
   }
 
