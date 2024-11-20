@@ -79,8 +79,8 @@ def find_talents_in_characters(id):
 
 
 def find_and_replace_properties_in_items(id_pairs):
-    items = list(DB["item"].find())
     for id_pair in id_pairs:
+        items = list(DB["item"].find())
         prop_id = id_pair["prop_id"]
         rune_id = id_pair["rune_id"]
         used = []
@@ -97,12 +97,13 @@ def find_and_replace_properties_in_items(id_pairs):
             if found:
                 new_properties = list(item["object"]["properties"])
                 new_properties.remove(prop_id)
-                new_runes = [{"id": rune_id, "number": 1}]
-                print(f'Updating {item["object"]["name"]}, property_id: {prop_id}')
+                new_runes = list(item["object"]["runes"]) if "runes" in item["object"] else []
+                new_runes.append({"id": rune_id, "number": 1})
+                print(f'Updating {item["object"]["name"]}, item_id: {item["_id"]}, property_id: {prop_id}')
                 print(f'Old properties: {item["object"]["properties"]}')
                 print(f'New properties: {new_properties}')
                 print(f'New runes: {new_runes}')
-                # DB["item"].find_one_and_update({"_id": item["_id"]}, {"$set": {"object.properties": new_properties}}, {"$set": {"object.runes": new_runes}})
+                DB["item"].find_one_and_update({"_id": item["_id"]}, {"$set": {"object.properties": new_properties, "object.runes": new_runes}})
     return
 
 
