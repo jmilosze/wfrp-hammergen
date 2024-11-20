@@ -58,7 +58,7 @@ describe("isEqualTo returns true", () => {
 describe("isEqualTo returns false", () => {
   test("when other item property has different value of type", () => {
     const otherItemProperty = itemProperty.copy();
-    otherItemProperty.type = ItemPropertyType.DwarfRune;
+    otherItemProperty.type = ItemPropertyType.Flaw;
     expect(itemProperty.isEqualTo(otherItemProperty)).toBe(false);
   });
 

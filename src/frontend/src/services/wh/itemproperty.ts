@@ -16,9 +16,8 @@ import { ValidationStatus } from "../../utils/validation.ts";
 export const enum ItemPropertyType {
   Quality = 0,
   Flaw,
-  DwarfRune,
 }
-export const itemPropertyTypeList = [ItemPropertyType.Quality, ItemPropertyType.Flaw, ItemPropertyType.DwarfRune];
+export const itemPropertyTypeList = [ItemPropertyType.Quality, ItemPropertyType.Flaw];
 
 export function printItemPropertyType(itemPropertyType: ItemPropertyType) {
   switch (itemPropertyType) {
@@ -26,8 +25,6 @@ export function printItemPropertyType(itemPropertyType: ItemPropertyType) {
       return "Quality";
     case ItemPropertyType.Flaw:
       return "Flaw";
-    case ItemPropertyType.DwarfRune:
-      return "Dwarf rune";
     default:
       return "";
   }
