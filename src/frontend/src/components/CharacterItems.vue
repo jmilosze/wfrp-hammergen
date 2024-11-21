@@ -151,25 +151,21 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="border border-neutral-300 rounded p-2 min-w-fit">
-      <div class="flex items-center gap-2 mb-1 flex-wrap">
-        <div>Trappings</div>
-        <div class="flex gap-2 flex-wrap">
-          <ActionButton v-if="!disabled" class="flex-1 btn btn-sm" @click="onModifyClick">
-            <span class="flex-1">Modify</span>
-          </ActionButton>
-          <ActionButton v-if="!disabled" class="whitespace-nowrap flex-1 btn btn-sm" @click="emit('addClassItems')">
-            <span class="flex-1">Add class items</span>
-          </ActionButton>
-          <ActionButton
-            v-if="!disabled"
-            class="whitespace-nowrap flex-1 btn btn-danger btn-sm"
-            @click="emit('clearAll')"
-          >
-            <span class="flex-1">Clear all</span>
-          </ActionButton>
-        </div>
+    <div class="flex items-center gap-2 mb-1 flex-wrap">
+      <div>Trappings</div>
+      <div class="flex gap-2 flex-wrap">
+        <ActionButton v-if="!disabled" class="flex-1 btn btn-sm" @click="onModifyClick">
+          <span class="flex-1">Modify</span>
+        </ActionButton>
+        <ActionButton v-if="!disabled" class="whitespace-nowrap flex-1 btn btn-sm" @click="emit('addClassItems')">
+          <span class="flex-1">Add class items</span>
+        </ActionButton>
+        <ActionButton v-if="!disabled" class="whitespace-nowrap flex-1 btn btn-danger btn-sm" @click="emit('clearAll')">
+          <span class="flex-1">Clear all</span>
+        </ActionButton>
       </div>
+    </div>
+    <div class="border border-neutral-300 rounded p-2 min-w-fit">
       <div v-if="props.loading" class="flex justify-center">
         <SpinnerAnimation class="w-14 m-2" />
       </div>

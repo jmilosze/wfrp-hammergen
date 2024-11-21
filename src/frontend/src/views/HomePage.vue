@@ -10,23 +10,30 @@ const showAlert = ref(true);
   <div class="">
     <div class="text-center mt-5 font-hammergen text-6xl md:text-8xl">Hammergen</div>
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
-    <AlertBlock v-if="showAlert" alertType="red" class="mt-5" @close="showAlert = false">
+    <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
       <div class="pl-2">
-        <p class="text-2xl font-semibold">Creature traits are here!</p>
+        <p class="text-2xl font-semibold">Dwarf's Player guide is here!</p>
         <p>
-          Creature traits are finally here on Hammergen! You can browse them in
-          <TextLink routeName="traits">Creature traits tab</TextLink> and attach them to characters. We added most of
-          the published Traits (about 150).
+          We have just added most of the contents from the newest Warhammer book
+          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-dwarf-player-s-guide" target="_blank">
+            Dwarf Player's Guide.
+          </TextLink>
         </p>
-        <p class="text-2xl font-semibold">Upcoming cleanup</p>
-        <p>
-          To reduce storage and improve the performance, we will be deleting inactive Hammergen accounts. On 15th of
-          November we will delete all accounts (and all their characters and other properties) that have not been active
-          in the last 2 years.
-        </p>
-        <p>
-          The account counts as inactive if no one has logged in to it in the last 2 years. To avoid having your account
-          deleted, please make sure you log in to your account (no need to do anything else).
+        <p>This includes:</p>
+        <ul class="list-disc ml-6 mt-1">
+          <li>For character creation, all new Dwarf regions such as Kazak-a-Karak or Karak Eight Peaks</li>
+          <li>New Dwarf specific trappings</li>
+          <li>New Dwarf Careers and Dwarf flavours of old WFRP careers, for example Miner with Karak Miner level</li>
+          <li>
+            We removed all Dwarf runes from <span class="font-semibold">Qualities and runes</span> tab and renamed it to
+            <span class="font-semibold">Qualities and flaws</span>. Now, Dwarf runes have their own tab
+            <span class="font-semibold">Runes</span>. New runes can be attached to items in a similarly to qualities and
+            flaws. The main difference that the the same rune can be attached to an items multiple times.
+          </li>
+        </ul>
+        <p class="mt-5">
+          As always if you enjoy Hammergen, please consider supporting us on
+          <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>. Any donations will help to cover hosting costs.
         </p>
       </div>
     </AlertBlock>

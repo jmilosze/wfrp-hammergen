@@ -212,24 +212,6 @@ const displayAttributes2 = ref({
   ],
 });
 
-const equippedArmourDisp = ref({
-  fields: [
-    { name: "name", displayName: "Name" },
-    { name: "locations", displayName: "Locations" },
-    { name: "enc", displayName: "Enc" },
-    { name: "ap", displayName: "AP" },
-    { name: "qualities", displayName: "Qualities and runes" },
-  ],
-  items: character.value.equippedArmor.map((x) => ({
-    id: x.id,
-    name: addSpaces(x.name),
-    locations: x.locations ? x.locations.map((x) => addSpaces(x)).join(", ") : "",
-    enc: x.enc,
-    ap: x.ap ? x.ap : 0,
-    qualities: x.qualitiesFlawsRunes,
-  })),
-});
-
 const displayBasicSkills = ref({
   fields: [
     { name: "name", displayName: "Name" },
@@ -278,6 +260,25 @@ const displayTalents = ref({
   })),
 });
 
+const equippedArmourDisp = ref({
+  fields: [
+    { name: "name", displayName: "Name" },
+    { name: "locations", displayName: "Locations" },
+    { name: "enc", displayName: "Enc" },
+    { name: "ap", displayName: "AP" },
+    { name: "qualities", displayName: "Qualities/flaws/runes" },
+  ],
+  items: character.value.equippedArmor.map((x) => ({
+    id: x.id,
+    name: addSpaces(x.name),
+    locations: x.locations ? x.locations.map((x) => addSpaces(x)).join(", ") : "",
+    enc: x.enc,
+    ap: x.ap ? x.ap : 0,
+    qualities: x.qualitiesFlaws,
+    runes: x.runes.map((x) => ({ id: x.id, name: x.name + `(x${x.number})` })),
+  })),
+});
+
 const equippedWeaponDisp = ref({
   fields: [
     { name: "name", displayName: "Name" },
@@ -285,7 +286,7 @@ const equippedWeaponDisp = ref({
     { name: "enc", displayName: "Enc" },
     { name: "rng", displayName: "Range / reach" },
     { name: "dmg", displayName: "Damage" },
-    { name: "qualities", displayName: "Qualities and runes" },
+    { name: "qualities", displayName: "Qualities/flaws/runes" },
   ],
   items: character.value.equippedWeapon.map((x) => ({
     id: x.id,
@@ -294,7 +295,8 @@ const equippedWeaponDisp = ref({
     enc: x.enc,
     rng: addSpaces(x.rng),
     dmg: addSpaces(x.dmg),
-    qualities: x.qualitiesFlawsRunes,
+    qualities: x.qualitiesFlaws,
+    runes: x.runes.map((x) => ({ id: x.id, name: x.name + `(x${x.number})` })),
   })),
 });
 
@@ -614,14 +616,20 @@ const grimoiresDisp = ref(
       <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
     <template #qualities="item: Record<string, any>">
-      <div v-if="item.qualities">
+      <span v-if="item.qualities">
         <span v-for="(quality, i) in item.qualities" :key="i">
           <TextLink routeName="property" :params="{ id: quality.id }">
             {{ quality.name }}
           </TextLink>
-          <span v-if="i != item.qualities.length - 1">, </span>
+          <span v-if="i != item.qualities.length - 1 || item.runes.length != 0">, </span>
         </span>
-      </div>
+      </span>
+      <span v-for="(rune, i) in item.runes" :key="i">
+        <TextLink routeName="rune" :params="{ id: rune.id }">
+          {{ rune.name }}
+        </TextLink>
+        <span v-if="i != item.runes.length - 1">, </span>
+      </span>
     </template>
   </ViewCharacterTable>
 
@@ -636,14 +644,20 @@ const grimoiresDisp = ref(
       <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
     <template #qualities="item: Record<string, any>">
-      <div v-if="item.qualities">
+      <span v-if="item.qualities">
         <span v-for="(quality, i) in item.qualities" :key="i">
           <TextLink routeName="property" :params="{ id: quality.id }">
             {{ quality.name }}
           </TextLink>
-          <span v-if="i != item.qualities.length - 1">, </span>
+          <span v-if="i != item.qualities.length - 1 || item.runes.length != 0">, </span>
         </span>
-      </div>
+      </span>
+      <span v-for="(rune, i) in item.runes" :key="i">
+        <TextLink routeName="rune" :params="{ id: rune.id }">
+          {{ rune.name }}
+        </TextLink>
+        <span v-if="i != item.runes.length - 1">, </span>
+      </span>
     </template>
   </ViewCharacterTable>
 

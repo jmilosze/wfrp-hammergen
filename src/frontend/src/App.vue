@@ -97,15 +97,8 @@ function onListWhClick() {
         <NavLink routeName="traits" variant="side" @click="onListWhClick()"> Creature traits </NavLink>
         <NavLink routeName="mutations" variant="side" @click="onListWhClick()">Mutations</NavLink>
         <NavLink routeName="prayers" variant="side" @click="onListWhClick()">Prayers</NavLink>
-        <NavLink routeName="properties" variant="side" @click="onListWhClick()">Qualities and runes</NavLink>
-        <NavLink
-          v-if="auth.getLoggedUserInfo().username === 'jacek.miloszewski@hotmail.com'"
-          routeName="runes"
-          variant="side"
-          @click="onListWhClick()"
-        >
-          Runes
-        </NavLink>
+        <NavLink routeName="properties" variant="side" @click="onListWhClick()">Qualities and flaws</NavLink>
+        <NavLink routeName="runes" variant="side" @click="onListWhClick()"> Runes </NavLink>
         <NavLink routeName="skills" variant="side" @click="onListWhClick()">Skills</NavLink>
         <NavLink routeName="spells" variant="side" @click="onListWhClick()">Spells</NavLink>
         <NavLink routeName="talents" variant="side" @click="onListWhClick()">Talents</NavLink>

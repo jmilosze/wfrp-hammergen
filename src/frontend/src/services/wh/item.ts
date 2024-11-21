@@ -11,6 +11,7 @@ import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
 import {
   ApiResponse,
+  validateIdNumber,
   validFloatFn,
   validIntegerFn,
   validLongDescFn,
@@ -20,6 +21,7 @@ import {
 } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
+import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
 
 export const enum ItemType {
   Melee = 0,
@@ -426,6 +428,7 @@ export interface ItemApiData {
   enc: number;
   availability: Availability;
   properties: string[];
+  runes: IdNumber[];
   type: ItemType;
   melee: MeleeType;
   ranged: RangedType;
@@ -447,6 +450,7 @@ export class Item implements WhProperty {
   enc: number;
   availability: Availability;
   properties: Set<string>;
+  runes: Record<string, number>;
   type: ItemType;
   melee: MeleeType;
   ranged: RangedType;
@@ -467,6 +471,7 @@ export class Item implements WhProperty {
     enc = 0,
     availability = Availability.Common,
     properties = new Set<string>(),
+    runes = {} as Record<string, number>,
     type = ItemType.Melee,
     melee = {
       hands: WeaponHands.OneHanded,
@@ -499,6 +504,7 @@ export class Item implements WhProperty {
     this.enc = enc;
     this.availability = availability;
     this.properties = properties;
+    this.runes = runes;
     this.type = type;
     this.melee = melee;
     this.ranged = ranged;
@@ -521,6 +527,7 @@ export class Item implements WhProperty {
       enc: this.enc,
       availability: this.availability,
       properties: new Set(this.properties),
+      runes: { ...this.runes },
       type: this.type,
       melee: {
         hands: this.melee.hands,
@@ -616,6 +623,10 @@ export class Item implements WhProperty {
     return validIntegerFn(this.container.capacity, 0, 1000);
   }
 
+  validateRunes(): ValidationStatus {
+    return validateIdNumber("Rune number", this.runes, 1, 1000);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -633,7 +644,8 @@ export class Item implements WhProperty {
       this.validateAmmunitionRngMult().valid &&
       this.validateAmmunitionRng().valid &&
       this.validateArmourPoints().valid &&
-      this.validateContainerCapacity().valid
+      this.validateContainerCapacity().valid &&
+      this.validateRunes().valid
     );
   }
 
@@ -653,7 +665,8 @@ export class Item implements WhProperty {
       this.type !== otherItem.type ||
       !setsAreEqual(this.properties, otherItem.properties) ||
       this.shared !== otherItem.shared ||
-      !objectsAreEqual(this.source, otherItem.source)
+      !objectsAreEqual(this.source, otherItem.source) ||
+      !objectsAreEqual(this.runes, otherItem.runes)
     ) {
       return false;
     }
@@ -693,6 +706,7 @@ export class Item implements WhProperty {
 
   resetDetails() {
     this.properties = new Set<string>();
+    this.runes = {} as Record<string, number>;
 
     if (this.type !== ItemType.Melee) {
       this.melee = {
@@ -738,6 +752,10 @@ export class Item implements WhProperty {
 
   updateProperties(id: string, selected: boolean): void {
     updateSet(this.properties, id, selected);
+  }
+
+  updateRunes(id: string, number: number): void {
+    updateIdNumberRecord(this.runes, { id: id, number: number });
   }
 
   updateSpells(id: string, selected: boolean): void {
@@ -791,6 +809,7 @@ export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
     enc: itemApi.object.enc,
     availability: itemApi.object.availability,
     properties: new Set(itemApi.object.properties),
+    runes: idNumberArrayToRecord(itemApi.object.runes),
     type: itemApi.object.type,
     melee: itemApi.object.melee,
     ranged: itemApi.object.ranged,
@@ -814,6 +833,7 @@ export function modelToApi(item: Item): ItemApiData {
     enc: item.enc,
     availability: item.availability,
     properties: [...item.properties],
+    runes: Object.entries(item.runes).map((x) => ({ id: x[0], number: x[1] })),
     type: item.type,
     melee: {
       hands: item.melee.hands,
