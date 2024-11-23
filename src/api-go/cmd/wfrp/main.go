@@ -20,6 +20,7 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
 	mock "github.com/jmilosze/wfrp-hammergen-go/test/mock_data"
 	"log"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,6 +33,7 @@ func main() {
 }
 
 func run() error {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	cfg := config.NewConfig()
 
@@ -87,10 +89,10 @@ func run() error {
 	}
 
 	router := gin.NewRouter(cfg.Server.RequestTimeout)
-	gin.RegisterUserRoutes(router, userService, jwtService, captchaService)
-	gin.RegisterAuthRoutes(router, userService, jwtService)
-	gin.RegisterWhRoutes(router, whService, jwtService)
-	gin.RegisterOtherRoutes(router, jwtService)
+	gin.RegisterUserRoutes(router, userService, jwtService, captchaService, logger)
+	gin.RegisterAuthRoutes(router, userService, jwtService, logger)
+	gin.RegisterWhRoutes(router, whService, jwtService, logger)
+	gin.RegisterOtherRoutes(router, jwtService, logger)
 
 	server := http.NewServer(&cfg.Server, router)
 

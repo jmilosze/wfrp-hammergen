@@ -7,11 +7,12 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 )
 
-func RegisterAuthRoutes(router *gin.Engine, us user.UserService, js auth.JwtService) {
+func RegisterAuthRoutes(router *gin.Engine, us user.UserService, js auth.JwtService, logger *slog.Logger) {
 	router.POST("api/token", tokenHandler(us, js))
 }
 
@@ -50,13 +51,15 @@ func tokenHandler(us user.UserService, js auth.JwtService) func(*gin.Context) {
 	}
 }
 
-func RequireJwt(js auth.JwtService) gin.HandlerFunc {
+func RequireJwt(js auth.JwtService, logger *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
+		traceHeader := c.Request.Header.Get("X-Cloud-Trace-Context")
 
 		token, err := parseAuthHeader(authHeader)
 		if err != nil {
 			setAnonymous(c)
+			logger.Info("user info", "user", "anonymous", "traceId", traceHeader)
 			return
 		}
 
@@ -64,13 +67,17 @@ func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 		if authErr != nil {
 			log.Println("error handling parsing auth token", authErr)
 			setInvalid(c)
+			logger.Info("user info", "user", "invalid", "traceId", traceHeader)
 			return
 		}
 
 		if claims.ResetPassword {
 			setAnonymous(c)
+			logger.Info("user info", "user", "anonymous", "traceId", traceHeader)
 			return
 		}
+
+		logger.Info("user info", "user", claims.Id, "traceId", traceHeader)
 
 		c.Set("ClaimsId", claims.Id)
 		c.Set("ClaimsAdmin", claims.Admin)

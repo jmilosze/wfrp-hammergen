@@ -7,22 +7,23 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"log"
+	"log/slog"
 	"time"
 )
 
-func RegisterUserRoutes(router *gin.Engine, us user.UserService, js auth.JwtService, cs domain.CaptchaService) {
+func RegisterUserRoutes(router *gin.Engine, us user.UserService, js auth.JwtService, cs domain.CaptchaService, logger *slog.Logger) {
 	router.POST("api/user", userCreateHandler(us, cs))
-	router.GET("api/user/:userId", RequireJwt(js), userGetHandler(us))
-	router.GET("api/user", RequireJwt(js), userGetHandler(us))
+	router.GET("api/user/:userId", RequireJwt(js, logger), userGetHandler(us))
+	router.GET("api/user", RequireJwt(js, logger), userGetHandler(us))
 	router.GET("api/user/exists/:userName", userGetExistsHandler(us))
-	router.GET("api/user/list", RequireJwt(js), userListHandler(us))
-	router.PUT("api/user/:userId", RequireJwt(js), userUpdateHandler(us))
-	router.PUT("api/user", RequireJwt(js), userUpdateHandler(us))
-	router.PUT("api/user/credentials/:userId", RequireJwt(js), userUpdateCredentialsHandler(us))
-	router.PUT("api/user/credentials", RequireJwt(js), userUpdateCredentialsHandler(us))
-	router.PUT("api/user/claims/:userId", RequireJwt(js), userUpdateClaimsHandler(us))
-	router.DELETE("api/user/:userId", RequireJwt(js), userDeleteHandler(us))
-	router.DELETE("api/user", RequireJwt(js), userDeleteHandler(us))
+	router.GET("api/user/list", RequireJwt(js, logger), userListHandler(us))
+	router.PUT("api/user/:userId", RequireJwt(js, logger), userUpdateHandler(us))
+	router.PUT("api/user", RequireJwt(js, logger), userUpdateHandler(us))
+	router.PUT("api/user/credentials/:userId", RequireJwt(js, logger), userUpdateCredentialsHandler(us))
+	router.PUT("api/user/credentials", RequireJwt(js, logger), userUpdateCredentialsHandler(us))
+	router.PUT("api/user/claims/:userId", RequireJwt(js, logger), userUpdateClaimsHandler(us))
+	router.DELETE("api/user/:userId", RequireJwt(js, logger), userDeleteHandler(us))
+	router.DELETE("api/user", RequireJwt(js, logger), userDeleteHandler(us))
 	router.POST("api/user/sendResetPassword", resetSendPasswordHandler(us, cs))
 	router.POST("api/user/resetPassword", resetPasswordHandler(us))
 }
