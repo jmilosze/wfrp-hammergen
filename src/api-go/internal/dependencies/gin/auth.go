@@ -1,7 +1,6 @@
 package gin
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -55,11 +54,12 @@ func tokenHandler(us user.UserService, js auth.JwtService) func(*gin.Context) {
 func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
+		traceHeader := c.Request.Header.Get("X-Cloud-Trace-Context")
 
 		token, err := parseAuthHeader(authHeader)
 		if err != nil {
 			setAnonymous(c)
-			slog.InfoContext(context.WithValue(c.Request.Context(), "user", "anonymous"), "user log")
+			slog.InfoContext(c.Request.Context(), "user log", "user", "anonymous", "TraceID", traceHeader)
 			return
 		}
 
@@ -67,17 +67,17 @@ func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 		if authErr != nil {
 			log.Println("error handling parsing auth token", authErr)
 			setInvalid(c)
-			slog.InfoContext(context.WithValue(c.Request.Context(), "user", "invalid"), "user log")
+			slog.InfoContext(c.Request.Context(), "user log", "user", "invalid", "TraceID", traceHeader)
 			return
 		}
 
 		if claims.ResetPassword {
 			setAnonymous(c)
-			slog.InfoContext(context.WithValue(c.Request.Context(), "user", "anonymous"), "user log")
+			slog.InfoContext(c.Request.Context(), "user log", "user", "anonymous", "TraceID", traceHeader)
 			return
 		}
 
-		slog.InfoContext(context.WithValue(c.Request.Context(), "user", claims.Id), "user log")
+		slog.InfoContext(c.Request.Context(), "user log", "user", claims.Id, "TraceID", traceHeader)
 
 		c.Set("ClaimsId", claims.Id)
 		c.Set("ClaimsAdmin", claims.Admin)
