@@ -21,7 +21,6 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
 	mock "github.com/jmilosze/wfrp-hammergen-go/test/mock_data"
 	"log"
-	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -35,7 +34,7 @@ func main() {
 
 func run() error {
 	cfg := config.NewConfig()
-	slog.SetDefault(internal.SetupLogger(cfg.Logging.GcpProjectId))
+	internal.SetupLogger(cfg.Logging.GcpProjectId)
 
 	val := validator.NewValidator()
 	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, cfg.Jwt.AccessExpiry, cfg.Jwt.ResetExpiry)
