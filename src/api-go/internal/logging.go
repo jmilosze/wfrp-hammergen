@@ -4,61 +4,41 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"time"
 )
 
-func handlerWithSpanContext(handler slog.Handler) *spanContextLogHandler {
-	return &spanContextLogHandler{Handler: handler}
+// customHandler extends slog.JSONHandler to add extra fields
+type customHandler struct {
+	*slog.JSONHandler
 }
 
-// spanContextLogHandler is an slog.Handler which adds attributes from the
-// span context.
-type spanContextLogHandler struct {
-	slog.Handler
-}
-
-// Handle overrides slog.Handler's Handle method. This adds attributes from the
-// span context to the slog.Record.
-func (t *spanContextLogHandler) Handle(ctx context.Context, record slog.Record) error {
-	// Get the SpanContext from the golang Context.
-	if s := trace.SpanContextFromContext(ctx); s.IsValid() {
-		// Add trace context attributes following Cloud Logging structured log format described
-		// in https://cloud.google.com/logging/docs/structured-logging#special-payload-fields
-		record.AddAttrs(
-			slog.Any("logging.googleapis.com/trace", s.TraceID()),
-		)
-		record.AddAttrs(
-			slog.Any("logging.googleapis.com/spanId", s.SpanID()),
-		)
-		record.AddAttrs(
-			slog.Bool("logging.googleapis.com/trace_sampled", s.TraceFlags().IsSampled()),
-		)
+func (h *customHandler) Handle(ctx context.Context, r slog.Record) error {
+	// Add trace ID if available from Cloud Run request
+	if traceHeader := ctx.Value("X-Cloud-Trace-Context"); traceHeader != nil {
+		r.Add("logging.googleapis.com/trace", slog.StringValue(traceHeader.(string)))
 	}
-	return t.Handler.Handle(ctx, record)
+
+	return h.JSONHandler.Handle(ctx, r)
 }
 
-func replacer(groups []string, a slog.Attr) slog.Attr {
-	// Rename attribute keys to match Cloud Logging structured log format
-	switch a.Key {
-	case slog.LevelKey:
-		a.Key = "severity"
-		// Map slog.Level string values to Cloud Logging LogSeverity
-		// https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogSeverity
-		if level := a.Value.Any().(slog.Level); level == slog.LevelWarn {
-			a.Value = slog.StringValue("WARNING")
-		}
-	case slog.TimeKey:
-		a.Key = "timestamp"
-	case slog.MessageKey:
-		a.Key = "message"
+func SetupLogger() *slog.Logger {
+	opts := &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			// Convert time to RFC3339 format
+			if a.Key == "time" {
+				return slog.Attr{
+					Key:   "timestamp",
+					Value: slog.StringValue(a.Value.Time().Format(time.RFC3339)),
+				}
+			}
+			return a
+		},
 	}
-	return a
-}
 
-func setupLogging() {
-	// Use json as our base logging format.
-	jsonHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{ReplaceAttr: replacer})
-	// Add span context attributes when Context is passed to logging calls.
-	instrumentedHandler := handlerWithSpanContext(jsonHandler)
-	// Set this handler as the global slog handler.
-	slog.SetDefault(slog.New(instrumentedHandler))
+	handler := &customHandler{
+		JSONHandler: slog.NewJSONHandler(os.Stdout, opts),
+	}
+
+	return slog.New(handler)
 }
