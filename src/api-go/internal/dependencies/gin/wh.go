@@ -9,16 +9,15 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"golang.org/x/exp/slices"
 	"log"
-	"log/slog"
 )
 
-func RegisterWhRoutes(router *gin.Engine, ws warhammer.WhService, js auth.JwtService, logger *slog.Logger) {
+func RegisterWhRoutes(router *gin.Engine, ws warhammer.WhService, js auth.JwtService) {
 	for _, v := range warhammer.WhCoreTypes {
-		router.POST(fmt.Sprintf("api/wh/%s", v), RequireJwt(js, logger), whCreateOrUpdateHandler(true, ws, v))
-		router.GET(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js, logger), whGetHandler(ws, v))
-		router.PUT(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js, logger), whCreateOrUpdateHandler(false, ws, v))
-		router.DELETE(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js, logger), whDeleteHandler(ws, v))
-		router.GET(fmt.Sprintf("api/wh/%s", v), RequireJwt(js, logger), whListHandler(ws, v))
+		router.POST(fmt.Sprintf("api/wh/%s", v), RequireJwt(js), whCreateOrUpdateHandler(true, ws, v))
+		router.GET(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whGetHandler(ws, v))
+		router.PUT(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whCreateOrUpdateHandler(false, ws, v))
+		router.DELETE(fmt.Sprintf("api/wh/%s/:whId", v), RequireJwt(js), whDeleteHandler(ws, v))
+		router.GET(fmt.Sprintf("api/wh/%s", v), RequireJwt(js), whListHandler(ws, v))
 	}
 
 	router.GET("api/wh/generation", whGenerationPropsHandler(ws))

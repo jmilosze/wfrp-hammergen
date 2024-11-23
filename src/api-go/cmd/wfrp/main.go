@@ -33,7 +33,7 @@ func main() {
 }
 
 func run() error {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
 
 	cfg := config.NewConfig()
 
@@ -89,10 +89,10 @@ func run() error {
 	}
 
 	router := gin.NewRouter(cfg.Server.RequestTimeout)
-	gin.RegisterUserRoutes(router, userService, jwtService, captchaService, logger)
-	gin.RegisterAuthRoutes(router, userService, jwtService, logger)
-	gin.RegisterWhRoutes(router, whService, jwtService, logger)
-	gin.RegisterOtherRoutes(router, jwtService, logger)
+	gin.RegisterUserRoutes(router, userService, jwtService, captchaService)
+	gin.RegisterAuthRoutes(router, userService, jwtService)
+	gin.RegisterWhRoutes(router, whService, jwtService)
+	gin.RegisterOtherRoutes(router, jwtService)
 
 	server := http.NewServer(&cfg.Server, router)
 
