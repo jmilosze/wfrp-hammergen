@@ -34,9 +34,8 @@ func main() {
 }
 
 func run() error {
-	slog.SetDefault(internal.SetupLogger())
-
 	cfg := config.NewConfig()
+	slog.SetDefault(internal.SetupLogger(cfg.Logging.GcpProjectId))
 
 	val := validator.NewValidator()
 	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, cfg.Jwt.AccessExpiry, cfg.Jwt.ResetExpiry)
