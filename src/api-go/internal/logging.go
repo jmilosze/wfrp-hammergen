@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"os"
 	"strings"
-	"time"
 )
 
 // customHandler extends slog.JSONHandler to add extra fields
@@ -29,25 +28,10 @@ func (h *customHandler) Handle(ctx context.Context, r slog.Record) error {
 	return h.JSONHandler.Handle(ctx, r)
 }
 
-func SetupLogger(gcpProjectId string) *slog.Logger {
-	opts := &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
-			// Convert time to RFC3339 format
-			if a.Key == "time" {
-				return slog.Attr{
-					Key:   "timestamp",
-					Value: slog.StringValue(a.Value.Time().Format(time.RFC3339)),
-				}
-			}
-			return a
-		},
-	}
-
+func SetupLogger(gcpProjectId string) {
 	handler := &customHandler{
-		JSONHandler:  slog.NewJSONHandler(os.Stdout, opts),
+		JSONHandler:  slog.NewJSONHandler(os.Stdout, nil),
 		GcpProjectId: gcpProjectId,
 	}
-
-	return slog.New(handler)
+	slog.SetDefault(slog.New(handler))
 }
