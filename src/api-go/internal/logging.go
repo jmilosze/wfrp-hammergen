@@ -23,7 +23,6 @@ func (h *customHandler) Handle(ctx context.Context, r slog.Record) error {
 		)
 
 		r.Add("logging.googleapis.com/trace", slog.StringValue(fullTracePath))
-		r.Add("logging.googleapis.com/severity", "INFO")
 	}
 
 	return h.JSONHandler.Handle(ctx, r)
