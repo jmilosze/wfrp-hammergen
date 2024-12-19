@@ -478,7 +478,7 @@ const grimoiresDisp = ref(
             <td colspan="2" class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Description</span>
-                <span class="mr-3"> {{ addSpaces(character.description) }}</span>
+                <span class="mr-3 whitespace-pre-wrap"> {{ addSpaces(character.description) }}</span>
               </div>
             </td>
           </tr>
@@ -762,6 +762,12 @@ const grimoiresDisp = ref(
       <TextLink routeName="trait" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
+  <div v-if="character.notes.length > 0" class="">
+    <div class="mb-1">Notes</div>
+    <div class="p-2 border border-neutral-400 whitespace-pre-wrap">
+      {{ addSpaces(character.notes) }}
+    </div>
+  </div>
 </template>
 
 <style scoped></style>
