@@ -3,6 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/jmilosze/wfrp-hammergen-go/internal"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/config"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/gin"
@@ -20,10 +25,6 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/http"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
 	mock "github.com/jmilosze/wfrp-hammergen-go/test/mock_data"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {
