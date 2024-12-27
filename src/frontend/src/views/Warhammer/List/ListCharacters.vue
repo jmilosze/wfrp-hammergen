@@ -27,37 +27,27 @@ const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
-  // { name: "state", displayName: "State", skipStackedTitle: true },
 ];
 
 const items = computed(() => {
   return whList.whList.value
     .filter((wh) => (showSampleTerm.value === "" ? wh.ownerId !== "admin" : true))
     .map((x) => formatCharacterRow(x))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.name.data.localeCompare(b.name));
 });
 
 function formatCharacterRow(character: Character) {
-  const tooltip = character.shared ? "This character is shared" : "This character is not shared";
-
+  let sharedTile = character.shared ? "📤" : "🔒";
+  let sharedTooltip = character.shared ? "This item is shared with linked accounts" : "This item is private";
+  if (character.ownerId == "admin") {
+    sharedTile = "";
+    sharedTooltip = "";
+  }
   return {
-    name: addSpaces(character.name),
+    name: { data: addSpaces(character.name), icons: [{ tile: sharedTile, content: sharedTooltip }] },
     description: character.description,
     canEdit: character.canEdit,
     id: character.id,
-
-    // state: {
-    //   data: "dt",
-    //   icons: [
-    //     {
-    //       tile: "long",
-    //       content:
-    //         "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat",
-    //     },
-    //     { tile: "🙂", content: "Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus" },
-    //     { tile: "🙂", content: "です" },
-    //   ],
-    // },
   };
 }
 
