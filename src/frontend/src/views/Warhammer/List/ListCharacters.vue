@@ -91,7 +91,7 @@ function handleSampleCharacters() {
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="whList.whToDelete.value = { name: name, id: id }"
+        @delete="whList.whToDelete.value = { name: name.data || name, id: id }"
       />
     </template>
   </TableWithSearch>
