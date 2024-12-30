@@ -12,26 +12,18 @@ const showAlert = ref(true);
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
     <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
       <div class="pl-2">
-        <p class="text-2xl font-semibold">Dwarf's Player guide is here!</p>
+        <p class="text-2xl font-semibold">Deft Steps Light Fingers is here!</p>
         <p>
-          We have just added most of the contents from the newest Warhammer book
-          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-dwarf-player-s-guide" target="_blank">
-            Dwarf Player's Guide.
+          We have just added most of the contents from the newest Warhammer supplement
+          <TextLink
+            href="https://cubicle7games.com/warhammer-fantasy-roleplay-deft-steps-light-fingers"
+            target="_blank"
+          >
+            Deft Steps Light Fingers.
           </TextLink>
+          This includes 9 new careers and thief and hunter trappings.
         </p>
-        <p>This includes:</p>
-        <ul class="list-disc ml-6 mt-1">
-          <li>For character creation, all new Dwarf regions such as Kazak-a-Karak or Karak Eight Peaks</li>
-          <li>New Dwarf specific trappings</li>
-          <li>New Dwarf Careers and Dwarf flavours of old WFRP careers, for example Miner with Karak Miner level</li>
-          <li>
-            We removed all Dwarf runes from <span class="font-semibold">Qualities and runes</span> tab and renamed it to
-            <span class="font-semibold">Qualities and flaws</span>. Now, Dwarf runes have their own tab
-            <span class="font-semibold">Runes</span>. New runes can be attached to items in a similarly to qualities and
-            flaws. The main difference that the the same rune can be attached to an items multiple times.
-          </li>
-        </ul>
-        <p class="mt-5">
+        <p class="mt-3">
           As always if you enjoy Hammergen, please consider supporting us on
           <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>. Any donations will help to cover hosting costs.
         </p>
