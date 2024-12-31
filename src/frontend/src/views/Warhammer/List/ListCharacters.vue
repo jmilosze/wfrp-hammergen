@@ -36,15 +36,11 @@ const items = computed(() => {
     .sort((a, b) => a.name.data.localeCompare(b.name));
 });
 
+import { getSharedItemTooltip } from "../../../utils/tooltip.ts";
+
 function formatCharacterRow(character: Character) {
-  let sharedTile = character.shared ? "📤" : "🔒";
-  let sharedTooltip = character.shared ? "This item is shared with linked accounts" : "This item is private";
-  if (character.ownerId == "admin") {
-    sharedTile = "";
-    sharedTooltip = "";
-  }
   return {
-    name: { data: addSpaces(character.name), icons: [{ tile: sharedTile, content: sharedTooltip }] },
+    name: { data: addSpaces(character.name), icons: [getSharedItemTooltip(character)] },
     description: character.description,
     canEdit: character.canEdit,
     id: character.id,
