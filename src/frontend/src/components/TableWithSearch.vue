@@ -7,6 +7,7 @@ import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { addSpaces } from "../utils/string.ts";
+import ToolTip from "./ToolTip.vue";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -143,7 +144,18 @@ onUpdated(() => {
               <tbody>
                 <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
                   <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
-                    <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
+                    <div v-if="item[field.name]?.data" class="flex flex-nowrap">
+                      <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name].data)) }}</slot>
+                      <div v-for="icon in item[field.name].icons" :key="icon.tile">
+                        <ToolTip>
+                          <template v-slot:tile> {{ addSpaces(String(icon.tile)) }} </template>
+                          <template v-slot:content> {{ addSpaces(String(icon.content)) }} </template>
+                        </ToolTip>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -163,7 +175,19 @@ onUpdated(() => {
                       class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
                     >
                       <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
-                      <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
+                      <div v-if="item[field.name]?.data" class="flex flex-nowrap">
+                        <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name].data)) }}</slot>
+                        <div v-for="icon in item[field.name].icons" :key="icon.tile">
+                          <ToolTip>
+                            <template v-slot:tile> {{ addSpaces(String(icon.tile)) }} </template>
+                            <template v-slot:content> {{ addSpaces(String(icon.content)) }} </template>
+                          </ToolTip>
+                        </div>
+                      </div>
+                      <div v-else>
+                        <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
+                      </div>
+                      <!--  -->
                     </div>
                     <div class="border-b-4 border-neutral-400" />
                   </td>
