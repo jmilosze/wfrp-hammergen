@@ -152,6 +152,7 @@ async function submitForm() {
       title="Add new user (email)"
       :validationStatus="validNewSharedAccount"
       class="mt-3"
+      @input="newSharedAccount = ($event.target as HTMLInputElement).value.trim()"
     >
       <ActionButton class="ml-2 btn" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername">
         Add
