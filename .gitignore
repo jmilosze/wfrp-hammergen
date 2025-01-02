@@ -10,3 +10,4 @@ __pycache__
 .firebase
 __*
 
+src/frontend/pnpm-lock.yaml

@@ -33,12 +33,14 @@ const items = computed(() => {
   return whList.whList.value
     .filter((wh) => (showSampleTerm.value === "" ? wh.ownerId !== "admin" : true))
     .map((x) => formatCharacterRow(x))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.name.data.localeCompare(b.name));
 });
+
+import { getSharedItemTooltip } from "../../../utils/tooltip.ts";
 
 function formatCharacterRow(character: Character) {
   return {
-    name: addSpaces(character.name),
+    name: { data: addSpaces(character.name), icons: [getSharedItemTooltip(character)] },
     description: character.description,
     canEdit: character.canEdit,
     id: character.id,
@@ -63,6 +65,7 @@ function handleSampleCharacters() {
   >
     {{ whList.apiError.value }}
   </AlertBlock>
+
   <Header title="Characters">
     <template #nextToHeader>
       <ActionButton class="btn btn-secondary btn-sm" @click="handleSampleCharacters">
@@ -84,7 +87,7 @@ function handleSampleCharacters() {
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="whList.whToDelete.value = { name: name, id: id }"
+        @delete="whList.whToDelete.value = { name: name.data || name, id: id }"
       />
     </template>
   </TableWithSearch>
