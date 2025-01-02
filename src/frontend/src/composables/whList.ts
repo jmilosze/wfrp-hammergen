@@ -74,7 +74,15 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
         sourcesInData.add(source);
       }
     }
-    return sourceOptions.filter((x) => sourcesInData.has(x.value) || x.value === "");
+    return sourceOptions
+      .filter((x) => sourcesInData.has(x.value) || x.value === "")
+      .sort((a, b) => {
+        if (a.text === "Any source") return -1;
+        if (b.text === "Any source") return 1;
+        if (a.text === "Custom") return -1;
+        if (b.text === "Custom") return 1;
+        return a.text.localeCompare(b.text);
+      });
   });
 
   const sourceValues = sourceOptions.map((x) => x.value);

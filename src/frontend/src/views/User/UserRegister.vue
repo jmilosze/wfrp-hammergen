@@ -104,7 +104,13 @@ async function submitForm() {
     </Header>
     <div class="pt-2 md:w-96">
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-      <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" class="mt-3" />
+      <FormInput
+        v-model="user.email"
+        title="Email"
+        :validationStatus="validEmail"
+        class="mt-3"
+        @input="user.email = ($event.target as HTMLInputElement).value.trim()"
+      />
       <FormInput
         v-model="user.newPassword"
         type="password"

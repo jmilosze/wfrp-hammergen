@@ -41,6 +41,7 @@ export const source: Record<string, string> = {
   36: "Sullasara's Spells",
   37: "Blood And Bramble",
   38: "Dwarf Player's Guide",
+  39: "Deft Steps Light Fingers",
 };
 
 export type Source = Record<string, string>;
