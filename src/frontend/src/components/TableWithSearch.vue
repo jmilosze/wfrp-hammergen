@@ -8,6 +8,7 @@ import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { addSpaces } from "../utils/string.ts";
 import ToolTip from "./ToolTip.vue";
+import { Tooltip } from "../utils/tooltip";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -105,6 +106,10 @@ onUpdated(() => {
     return;
   }
 });
+
+function isTooltip(value: unknown): value is Tooltip {
+  return typeof value === "object" && value !== null && "tile" in value && "content" in value;
+}
 </script>
 
 <template>
@@ -131,7 +136,7 @@ onUpdated(() => {
           class="mt-3"
           @update:modelValue="needToScroll = 'top'"
         />
-        <div class="overflow-x-auto">
+        <div>
           <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
             <table v-if="isEqualOrGreater" class="w-full">
               <thead>
@@ -144,14 +149,13 @@ onUpdated(() => {
               <tbody>
                 <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
                   <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
-                    <div v-if="item[field.name]?.data" class="flex flex-nowrap">
-                      <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name].data)) }}</slot>
-                      <div v-for="icon in item[field.name].icons" :key="icon.tile">
-                        <ToolTip>
-                          <template v-slot:tile> {{ addSpaces(String(icon.tile)) }} </template>
-                          <template v-slot:content> {{ addSpaces(String(icon.content)) }} </template>
-                        </ToolTip>
-                      </div>
+                    <div v-if="isTooltip(item[field.name])">
+                      <ToolTip>
+                        <template v-slot:tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
+                        <template v-slot:content>
+                          {{ addSpaces(String((item[field.name] as Tooltip).content)) }}
+                        </template>
+                      </ToolTip>
                     </div>
                     <div v-else>
                       <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
@@ -175,14 +179,13 @@ onUpdated(() => {
                       class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
                     >
                       <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
-                      <div v-if="item[field.name]?.data" class="flex flex-nowrap">
-                        <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name].data)) }}</slot>
-                        <div v-for="icon in item[field.name].icons" :key="icon.tile">
-                          <ToolTip>
-                            <template v-slot:tile> {{ addSpaces(String(icon.tile)) }} </template>
-                            <template v-slot:content> {{ addSpaces(String(icon.content)) }} </template>
-                          </ToolTip>
-                        </div>
+                      <div v-if="isTooltip(item[field.name])">
+                        <ToolTip>
+                          <template v-slot:tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
+                          <template v-slot:content>
+                            {{ addSpaces(String((item[field.name] as Tooltip).content)) }}
+                          </template>
+                        </ToolTip>
                       </div>
                       <div v-else>
                         <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
