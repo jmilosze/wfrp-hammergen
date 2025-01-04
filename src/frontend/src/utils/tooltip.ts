@@ -18,7 +18,7 @@ export function getSharedItemTooltip({ shared, canEdit, ownerId }: SharedItemToo
       sharedTile = "⬆";
       sharedTooltip = "This item is shared with linked accounts";
     } else {
-      sharedTile = "⬇";
+      sharedTile = "🔽";
       sharedTooltip = "This item is being shared from a linked account";
     }
   } else {
