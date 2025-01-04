@@ -25,6 +25,7 @@ showSampleTerm.value = auth.loggedIn.value ? "" : "true";
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "tooltip", displayName: "", skipStackedTitle: true },
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
@@ -33,14 +34,15 @@ const items = computed(() => {
   return whList.whList.value
     .filter((wh) => (showSampleTerm.value === "" ? wh.ownerId !== "admin" : true))
     .map((x) => formatCharacterRow(x))
-    .sort((a, b) => a.name.data.localeCompare(b.name));
+    .sort((a, b) => a.name.localeCompare(b.name));
 });
 
 import { getSharedItemTooltip } from "../../../utils/tooltip.ts";
 
 function formatCharacterRow(character: Character) {
   return {
-    name: { data: addSpaces(character.name), icons: [getSharedItemTooltip(character)] },
+    name: addSpaces(character.name),
+    tooltip: getSharedItemTooltip(character),
     description: character.description,
     canEdit: character.canEdit,
     id: character.id,
@@ -87,7 +89,7 @@ function handleSampleCharacters() {
         :id="id"
         :canEdit="canEdit"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="whList.whToDelete.value = { name: name.data || name, id: id }"
+        @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>
   </TableWithSearch>
