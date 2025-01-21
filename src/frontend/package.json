@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "vue-tsc": "vue-tsc",
     "build": "vue-tsc && vite build",
     "build_gcp_production": "vue-tsc && vite build --mode gcp_production",
     "build_gcp_staging": "vue-tsc && vite build --mode gcp_staging",
@@ -13,7 +12,7 @@
     "build_container_staging": "vue-tsc && vite build --mode --mode container_staging",
     "preview": "vite preview",
     "test": "vitest",
-    "lint:js": "eslint src --ext .ts,.vue"
+    "lint": "vue-tsc && eslint src"
   },
   "dependencies": {
     "@eslint/js": "^9.14.0",

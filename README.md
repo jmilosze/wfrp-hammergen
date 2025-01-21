@@ -11,7 +11,7 @@ The projects consists of two parts:
 - [Frontend](./src/frontend) - Static Vue.js application served from CDN that makes API requests to the backend
 - [Backend](./src/api-go) - Go application that serves the frontend and makes database requests
 
-## Development
+c
 
 To run the project locally, you need to serve the frontend and backend independently.
 
@@ -44,3 +44,47 @@ The backend can be configured to run either with in-memory database or with Mong
   ```
 
   To stop the containers, run `make dev-down`.
+
+## Running tests
+
+Go to the source directory:
+
+```
+cd ./src
+```
+
+### Frontend
+
+```
+npm run test --prefix ./frontend
+```
+
+### Backend
+
+Before running tests, you have to start the backend. You can do this by running `make dev-up` command or `make dev-restart` command.
+
+To run tests with in-memory database, you can use `make test-memdb` command.
+
+```
+make test-memdb
+```
+
+To run tests with MongoDB, you can use `make test` command.
+
+```
+make test
+```
+
+## Linting
+
+Go to the source directory:
+
+```
+cd ./src
+```
+
+To run linting, you can use `make lint` command.
+
+```
+npm run lint --prefix ./frontend
+```
