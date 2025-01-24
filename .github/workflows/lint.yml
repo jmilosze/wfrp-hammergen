@@ -1,4 +1,4 @@
-name: Lint
+name: Lint and test
 
 on:
   pull_request:
@@ -6,10 +6,9 @@ on:
       - "*"
 
 jobs:
-  lint:
-    name: Run linter
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,5 +24,45 @@ jobs:
         working-directory: ./src/frontend
         run: npm ci
 
+      - name: Cache node_modules
+        uses: actions/cache/save@v4
+        with:
+          path: ./src/frontend/node_modules
+          key: node-modules-${{ github.sha }}
+
+  lint:
+    name: Run linter
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore node_modules
+        uses: actions/cache/restore@v4
+        with:
+          path: ./src/frontend/node_modules
+          key: node-modules-${{ github.sha }}
+          fail-on-cache-miss: true
+
       - name: Run linter
         run: npm run lint --prefix ./src/frontend
+
+  test:
+    name: Run tests
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore node_modules
+        uses: actions/cache/restore@v4
+        with:
+          path: ./src/frontend/node_modules
+          key: node-modules-${{ github.sha }}
+          fail-on-cache-miss: true
+
+      - name: Run tests
+        working-directory: ./src/frontend
+        run: npm test
