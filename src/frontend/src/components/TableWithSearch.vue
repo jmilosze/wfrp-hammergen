@@ -151,8 +151,8 @@ function isTooltip(value: unknown): value is Tooltip {
                   <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
                     <div v-if="isTooltip(item[field.name])">
                       <ToolTip>
-                        <template v-slot:tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
-                        <template v-slot:content>
+                        <template #tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
+                        <template #content>
                           {{ addSpaces(String((item[field.name] as Tooltip).content)) }}
                         </template>
                       </ToolTip>
@@ -181,8 +181,8 @@ function isTooltip(value: unknown): value is Tooltip {
                       <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
                       <div v-if="isTooltip(item[field.name])">
                         <ToolTip>
-                          <template v-slot:tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
-                          <template v-slot:content>
+                          <template #tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
+                          <template #content>
                             {{ addSpaces(String((item[field.name] as Tooltip).content)) }}
                           </template>
                         </ToolTip>
