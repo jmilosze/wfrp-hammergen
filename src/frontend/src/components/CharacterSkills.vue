@@ -175,7 +175,7 @@ function onModifyClick() {
         v-model="searchTerm"
         :fields="modalColumns"
         :items="skillsWithNumberList"
-        :stackedViewSize="ViewSize.sm"
+        :stackedViewSize="ViewSize.xs"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         elementId="modal"

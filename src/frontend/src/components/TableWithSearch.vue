@@ -120,35 +120,65 @@ function isTooltip(value: unknown): value is Tooltip {
         v-model="searchTerm"
         type="text"
         placeholder="Type to Search"
-        class="border border-neutral-300 rounded h-10 px-2 grow w-36 focus:border-transparent focus:outline-neutral-700 focus:outline focus:outline-2"
+        class="border border-neutral-300 rounded h-10 px-2 grow focus:border-transparent focus:outline-neutral-700 focus:outline-2"
       />
     </div>
+
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
     </div>
-    <div v-else>
-      <div v-if="searchedItems.length > 0">
-        <TablePagination
-          v-if="searchedItems.length > rowsPerPage"
-          v-model="startRow"
-          :totalRows="searchedItems.length"
-          :rowsPerPage="rowsPerPage"
-          class="mt-3"
-          @update:modelValue="needToScroll = 'top'"
-        />
-        <div>
-          <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-            <table v-if="isEqualOrGreater" class="w-full">
-              <thead>
-                <tr class="text-left">
-                  <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
-                    {{ field.displayName }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
-                  <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
+    <div v-if="searchedItems.length > 0">
+      <TablePagination
+        v-if="searchedItems.length > rowsPerPage"
+        v-model="startRow"
+        :totalRows="searchedItems.length"
+        :rowsPerPage="rowsPerPage"
+        class="mt-3"
+        @update:modelValue="needToScroll = 'top'"
+      />
+      <div>
+        <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+          <table v-if="isEqualOrGreater" class="w-full">
+            <thead>
+              <tr class="text-left">
+                <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
+                  {{ field.displayName }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
+                <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
+                  <div v-if="isTooltip(item[field.name])">
+                    <ToolTip>
+                      <template #tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
+                      <template #content>
+                        {{ addSpaces(String((item[field.name] as Tooltip).content)) }}
+                      </template>
+                    </ToolTip>
+                  </div>
+                  <div v-else>
+                    <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table v-else class="w-full">
+            <thead>
+              <tr class="text-left">
+                <th class="border-b border-neutral-300 py-2 px-5" />
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
+                <td class="text-sm">
+                  <div
+                    v-for="field in fields"
+                    :key="field.name"
+                    class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
+                  >
+                    <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
                     <div v-if="isTooltip(item[field.name])">
                       <ToolTip>
                         <template #tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
@@ -160,57 +190,26 @@ function isTooltip(value: unknown): value is Tooltip {
                     <div v-else>
                       <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <table v-else class="w-full">
-              <thead>
-                <tr class="text-left">
-                  <th class="border-b border-neutral-300 py-2 px-5" />
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
-                  <td class="text-sm">
-                    <div
-                      v-for="field in fields"
-                      :key="field.name"
-                      class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
-                    >
-                      <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
-                      <div v-if="isTooltip(item[field.name])">
-                        <ToolTip>
-                          <template #tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
-                          <template #content>
-                            {{ addSpaces(String((item[field.name] as Tooltip).content)) }}
-                          </template>
-                        </ToolTip>
-                      </div>
-                      <div v-else>
-                        <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
-                      </div>
-                      <!--  -->
-                    </div>
-                    <div class="border-b-4 border-neutral-400" />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-          </div>
+                    <!--  -->
+                  </div>
+                  <div class="border-b-4 border-neutral-400" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
         </div>
-        <TablePagination
-          v-if="searchedItems.length > rowsPerPage"
-          v-model="startRow"
-          :totalRows="searchedItems.length"
-          :rowsPerPage="rowsPerPage"
-          class="mt-3"
-          @update:modelValue="needToScroll = 'top'"
-        />
       </div>
-      <div v-else class="mt-2">No results found.</div>
+      <TablePagination
+        v-if="searchedItems.length > rowsPerPage"
+        v-model="startRow"
+        :totalRows="searchedItems.length"
+        :rowsPerPage="rowsPerPage"
+        class="mt-3"
+        @update:modelValue="needToScroll = 'top'"
+      />
     </div>
+    <div v-else class="mt-2">No results found.</div>
   </div>
 </template>
 

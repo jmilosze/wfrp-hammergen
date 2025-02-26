@@ -31,6 +31,22 @@ watch(isEqualOrGreater, () => {
   }
 });
 
+watch(showSideBar, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+});
+
+watch(modal.show, (showModal) => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+});
+
 onMounted(async () => {
   if (auth.loggedIn.value) {
     await auth.callAndLogoutIfUnauthorized(userApi.get, false)();
@@ -147,20 +163,41 @@ function onListWhClick() {
       </div>
     </div>
   </div>
-  <!-- Out of focus -->
+  <!-- Shade for side bar -->
   <Transition name="fade">
     <div
       v-show="showSideBar && !isEqualOrGreater"
-      class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-40"
+      class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-50 duration-500"
       @click="showSideBar = false"
     />
   </Transition>
-  <!-- Modal with its own out of focus -->
+  <!-- Modal with shade -->
   <Transition name="fade">
-    <div v-show="modal.show.value" class="fixed top-0 w-full h-full z-40 bg-zinc-500 bg-opacity-40 transition">
-      <div id="modal" class="relative overflow-auto h-full" @click="modal.hideModal()" />
+    <div
+      v-show="modal.show.value"
+      class="fixed top-0 w-full h-full z-40 bg-zinc-500 opacity-60"
+      @click="modal.hideModal()"
+    />
+  </Transition>
+  <Transition name="fade">
+    <div v-show="modal.show.value" class="fixed top-0 w-full h-full z-50">
+      <div
+        id="modal"
+        class="relative overflow-auto h-full flex items-center justify-center"
+        @click="modal.hideModal()"
+      />
     </div>
   </Transition>
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 150ms ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

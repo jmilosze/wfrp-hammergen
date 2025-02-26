@@ -20,8 +20,12 @@ if (props.size === "md") {
 
 <template>
   <Teleport v-if="id === modal.modalId.value" to="#modal">
-    <div class="flex justify-center">
-      <div class="bg-white rounded-lg shadow border m-5 border-neutral-500 flex-auto" :class="[modalSize]" @click.stop>
+    <div class="w-full flex justify-center">
+      <div
+        class="bg-white rounded-lg shadow border mx-5 my-5 border-neutral-500 flex flex-col max-h-[95vh] w-full"
+        :class="[modalSize]"
+        @click.stop
+      >
         <div class="p-3 flex justify-between">
           <div class="text-xl font-semibold text-gray-900 dark:text-white"><slot name="header" /></div>
           <button
@@ -40,12 +44,12 @@ if (props.size === "md") {
           </button>
         </div>
         <div class="border-b border-neutral-200 w-full" />
-        <div class="p-3">
+        <div class="p-3 overflow-auto">
           <slot />
         </div>
         <div class="border-b border-neutral-200 w-full" />
         <div class="p-3">
-          <slot name="buttons"><div class="h-7" /></slot>
+          <slot name="buttons"></slot>
         </div>
       </div>
     </div>
