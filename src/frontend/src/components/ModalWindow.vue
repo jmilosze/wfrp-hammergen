@@ -22,7 +22,7 @@ if (props.size === "md") {
   <Teleport v-if="id === modal.modalId.value" to="#modal">
     <div class="w-full flex justify-center">
       <div
-        class="bg-white rounded-lg shadow border mx-5 my-5 border-neutral-500 flex flex-col max-h-[95vh] w-full"
+        class="bg-white rounded-lg shadow border mx-5 my-5 border-neutral-500 flex flex-col max-h-[95svh] w-full"
         :class="[modalSize]"
         @click.stop
       >
