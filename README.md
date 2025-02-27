@@ -11,8 +11,6 @@ The projects consists of two parts:
 - [Frontend](./src/frontend) - Static Vue.js application served from CDN that makes API requests to the backend
 - [Backend](./src/api-go) - Go application that serves the frontend and makes database requests
 
-c
-
 To run the project locally, you need to serve the frontend and backend independently.
 
 ### Frontend

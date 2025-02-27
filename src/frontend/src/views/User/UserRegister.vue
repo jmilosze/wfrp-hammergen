@@ -43,7 +43,8 @@ const passwordMatch = computed(() => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
+  await recaptcha.recaptchaLoaded();
   recaptcha.instance.value?.showBadge();
 });
 
