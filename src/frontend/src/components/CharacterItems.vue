@@ -255,9 +255,6 @@ function onModifyClick() {
     </div>
     <ModalWindow id="modifyItemsModal" size="lg">
       <template #header> Modify trappings </template>
-      <template #buttons>
-        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
-      </template>
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"

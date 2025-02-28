@@ -201,9 +201,6 @@ function emitPastSelected(id: string) {
     </div>
     <ModalWindow id="modifyCareersModal" size="md">
       <template #header> Modify career </template>
-      <template #buttons>
-        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
-      </template>
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"

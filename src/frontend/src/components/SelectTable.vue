@@ -137,9 +137,6 @@ function onModifyClick() {
     </div>
     <ModalWindow :id="modalId">
       <template #header> {{ modalTitle }} </template>
-      <template #buttons>
-        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
-      </template>
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"

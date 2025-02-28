@@ -93,9 +93,6 @@ function onModifyClick() {
     </p>
     <ModalWindow id="modifySourceModal">
       <template #header> Modify sources </template>
-      <template #buttons>
-        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
-      </template>
       <div>
         <TableWithSearch
           v-model="searchTerm"

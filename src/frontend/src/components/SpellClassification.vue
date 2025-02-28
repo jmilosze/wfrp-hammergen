@@ -137,9 +137,6 @@ function onModifyClick() {
     </div>
     <ModalWindow id="modifySpellLabelsModal" size="xs">
       <template #header>Modify labels</template>
-      <template #buttons>
-        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
-      </template>
       <div>
         <TableWithSearch
           v-model="searchTerm"

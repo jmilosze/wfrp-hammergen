@@ -181,9 +181,6 @@ function onModifyClick() {
     </div>
     <ModalWindow id="modifyTalentsModal">
       <template #header> Modify talents </template>
-      <template #buttons>
-        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
-      </template>
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"

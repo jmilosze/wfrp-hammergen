@@ -87,9 +87,6 @@ function onModifyClick() {
     </div>
     <ModalWindow id="modifyEffectsModal">
       <template #header> Modify sources </template>
-      <template #buttons>
-        <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
-      </template>
       <div class="">
         <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="effectList" :stackedViewSize="ViewSize.sm">
           <template #selected="{ id }: { id: number }">
