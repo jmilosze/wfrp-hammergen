@@ -95,7 +95,9 @@ function onListWhClick() {
     ]"
   >
     <div class="pl-1 lg:p-0 mt-2 mb-8 flex items-center justify-between lg:justify-center lg:ml-0">
-      <NavLink routeName="home" variant="side" class="text-3xl font-hammergen">Hammergen</NavLink>
+      <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="onListWhClick()"
+        >Hammergen</NavLink
+      >
       <button
         v-if="!isEqualOrGreater && showSideBar"
         class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
