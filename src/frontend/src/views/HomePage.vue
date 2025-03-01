@@ -2,13 +2,17 @@
 import TextLink from "../components/TextLink.vue";
 import AlertBlock from "../components/AlertBlock.vue";
 import { ref } from "vue";
+import { Icon } from "@iconify/vue";
 
 const showAlert = ref(true);
 </script>
 
 <template>
-  <div class="">
-    <div class="text-center mt-5 font-hammergen text-6xl md:text-8xl">Hammergen</div>
+  <div>
+    <div class="text-center mt-5 mb-2 font-hammergen text-6xl md:text-8xl flex justify-center items-center gap-3">
+      <Icon icon="game-icons:warhammer" />
+      <div>Hammergen</div>
+    </div>
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
     <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
       <div class="pl-2">

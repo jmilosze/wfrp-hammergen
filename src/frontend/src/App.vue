@@ -10,6 +10,7 @@ import { useModal } from "./composables/modal.ts";
 import { useRouter } from "vue-router";
 import { usePrint } from "./composables/print.ts";
 import { useAuth } from "./composables/auth.ts";
+import { Icon } from "@iconify/vue";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
@@ -96,18 +97,17 @@ function onListWhClick() {
   >
     <div class="pl-1 lg:p-0 mt-2 mb-8 flex items-center justify-between lg:justify-center lg:ml-0">
       <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="onListWhClick()">
-        Hammergen
+        <div class="flex items-center gap-2">
+          <Icon icon="game-icons:warhammer" />
+          <div>Hammergen</div>
+        </div>
       </NavLink>
       <button
         v-if="!isEqualOrGreater && showSideBar"
         class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
         @click="showSideBar = false"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path
-            d="M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 0-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z"
-          />
-        </svg>
+        <Icon icon="lucide:x" class="size-6" />
       </button>
     </div>
     <div class="pl-3 pr-3 divide-y divide-neutral-700">
