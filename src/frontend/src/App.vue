@@ -274,7 +274,7 @@ function onListWhClick() {
   <Transition name="fade">
     <div
       v-show="showSideBar && !isEqualOrGreater"
-      class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-50 duration-500"
+      class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-70 duration-500"
       @click="showSideBar = false"
     />
   </Transition>
@@ -282,7 +282,7 @@ function onListWhClick() {
   <Transition name="fade">
     <div
       v-show="modal.show.value"
-      class="fixed top-0 w-full h-full z-40 bg-zinc-500 opacity-60"
+      class="fixed top-0 w-full h-full z-40 bg-zinc-500 opacity-70"
       @click="modal.hideModal()"
     />
   </Transition>
