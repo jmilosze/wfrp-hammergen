@@ -95,9 +95,9 @@ function onListWhClick() {
     ]"
   >
     <div class="pl-1 lg:p-0 mt-2 mb-8 flex items-center justify-between lg:justify-center lg:ml-0">
-      <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="onListWhClick()"
-        >Hammergen</NavLink
-      >
+      <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="onListWhClick()">
+        Hammergen
+      </NavLink>
       <button
         v-if="!isEqualOrGreater && showSideBar"
         class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
@@ -115,8 +115,8 @@ function onListWhClick() {
         <NavLink
           routeName="characters"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
+          @click="onListWhClick()"
         >
           Characters
         </NavLink>
@@ -125,119 +125,132 @@ function onListWhClick() {
         <NavLink
           routeName="careers"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Careers</NavLink
+          @click="onListWhClick()"
         >
+          Careers
+        </NavLink>
         <NavLink
           routeName="traits"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
+          @click="onListWhClick()"
         >
           Creature traits
         </NavLink>
         <NavLink
           routeName="mutations"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Mutations</NavLink
+          @click="onListWhClick()"
         >
+          Mutations
+        </NavLink>
         <NavLink
           routeName="prayers"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Prayers</NavLink
+          @click="onListWhClick()"
         >
+          Prayers
+        </NavLink>
         <NavLink
           routeName="properties"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Qualities and flaws</NavLink
+          @click="onListWhClick()"
         >
+          Qualities and flaws
+        </NavLink>
         <NavLink
           routeName="runes"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
+          @click="onListWhClick()"
         >
           Runes
         </NavLink>
         <NavLink
           routeName="skills"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Skills</NavLink
+          @click="onListWhClick()"
         >
+          Skills
+        </NavLink>
         <NavLink
           routeName="spells"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Spells</NavLink
+          @click="onListWhClick()"
         >
+          Spells
+        </NavLink>
         <NavLink
           routeName="talents"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Talents</NavLink
+          @click="onListWhClick()"
         >
+          Talents
+        </NavLink>
         <NavLink
           routeName="items"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Trappings</NavLink
+          @click="onListWhClick()"
         >
+          Trappings
+        </NavLink>
       </div>
       <div v-if="auth.loggedIn.value" class="py-2">
         <NavLink
           routeName="manage"
           variant="side"
-          @click="showSideBar = false"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Manage account</NavLink
+          @click="showSideBar = false"
         >
-        <NavLink variant="side" @click="auth.logout" :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Logout</NavLink
-        >
+          Manage account
+        </NavLink>
+        <NavLink variant="side" :class="isEqualOrGreater ? 'text-start' : 'text-end'" @click="auth.logout">
+          Logout
+        </NavLink>
       </div>
       <div v-else class="py-2">
         <NavLink
           routeName="register"
           variant="side"
-          @click="showSideBar = false"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Register</NavLink
+          @click="showSideBar = false"
         >
+          Register
+        </NavLink>
         <NavLink
           routeName="login"
           variant="side"
-          @click="showSideBar = false"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Login</NavLink
+          @click="showSideBar = false"
         >
+          Login
+        </NavLink>
       </div>
       <div class="pt-2">
         <NavLink
           href="https://dice.hammergen.net/"
           variant="side"
-          @click="onListWhClick()"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >Roll dice!</NavLink
+          @click="onListWhClick()"
         >
+          Roll dice!
+        </NavLink>
         <NavLink
           routeName="about"
           variant="side"
-          @click="showSideBar = false"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          >About</NavLink
+          @click="showSideBar = false"
         >
+          About
+        </NavLink>
       </div>
     </div>
   </div>
