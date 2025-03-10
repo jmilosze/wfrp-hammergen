@@ -7,8 +7,6 @@ import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { addSpaces } from "../utils/string.ts";
-import ToolTip from "./ToolTip.vue";
-import { Tooltip } from "../utils/tooltip";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -106,10 +104,6 @@ onUpdated(() => {
     return;
   }
 });
-
-function isTooltip(value: unknown): value is Tooltip {
-  return typeof value === "object" && value !== null && "tile" in value && "content" in value;
-}
 </script>
 
 <template>
@@ -149,17 +143,7 @@ function isTooltip(value: unknown): value is Tooltip {
             <tbody>
               <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
                 <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
-                  <div v-if="isTooltip(item[field.name])">
-                    <ToolTip>
-                      <template #tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
-                      <template #content>
-                        {{ addSpaces(String((item[field.name] as Tooltip).content)) }}
-                      </template>
-                    </ToolTip>
-                  </div>
-                  <div v-else>
-                    <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
-                  </div>
+                  <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
                 </td>
               </tr>
             </tbody>
@@ -179,18 +163,7 @@ function isTooltip(value: unknown): value is Tooltip {
                     class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
                   >
                     <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
-                    <div v-if="isTooltip(item[field.name])">
-                      <ToolTip>
-                        <template #tile> {{ addSpaces(String((item[field.name] as Tooltip).tile)) }} </template>
-                        <template #content>
-                          {{ addSpaces(String((item[field.name] as Tooltip).content)) }}
-                        </template>
-                      </ToolTip>
-                    </div>
-                    <div v-else>
-                      <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
-                    </div>
-                    <!--  -->
+                    <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
                   </div>
                   <div class="border-b-4 border-neutral-400" />
                 </td>

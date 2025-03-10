@@ -37,15 +37,16 @@ const items = computed(() => {
     .sort((a, b) => a.name.localeCompare(b.name));
 });
 
-import { getSharedItemTooltip } from "../../../utils/tooltip.ts";
+import ToolTip from "../../../components/ToolTip.vue";
 
 function formatCharacterRow(character: Character) {
   return {
     name: addSpaces(character.name),
-    tooltip: getSharedItemTooltip(character),
     description: character.description,
     canEdit: character.canEdit,
     id: character.id,
+    shared: character.shared,
+    ownerId: character.ownerId,
   };
 }
 
@@ -91,6 +92,10 @@ function handleSampleCharacters() {
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
+    </template>
+
+    <template #tooltip="{ shared, canEdit, ownerId }: { shared: boolean; canEdit: boolean; ownerId: string }">
+      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" />
     </template>
   </TableWithSearch>
 
