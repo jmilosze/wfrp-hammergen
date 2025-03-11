@@ -114,7 +114,7 @@ onUpdated(() => {
         v-model="searchTerm"
         type="text"
         placeholder="Type to Search"
-        class="border border-neutral-300 rounded h-10 px-2 grow focus:border-transparent focus:outline-neutral-700 focus:outline-2"
+        class="border border-neutral-300 rounded h-10 px-2 grow focus:border-transparent focus:outline-neutral-700 focus:outline-2 w-32"
       />
     </div>
 
