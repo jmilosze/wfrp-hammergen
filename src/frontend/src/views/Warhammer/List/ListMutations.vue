@@ -19,7 +19,6 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useQueryParams } from "../../../composables/useQueryParams.ts";
 import ToolTip from "../../../components/ToolTip.vue";
 import TextLink from "../../../components/TextLink.vue";
-import ActionButtonsCharacter from "../../../components/ActionButtonsCharacter.vue";
 
 const whList = useWhList(new MutationApi(authRequest));
 await whList.loadWhList();
