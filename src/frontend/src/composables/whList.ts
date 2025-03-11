@@ -32,7 +32,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
     loading.value = false;
   }
 
-  async function copyWh(whId: string): Promise<void> {
+  async function copyWh(whId: string, userId: string): Promise<void> {
     showApiError.value = true;
     try {
       const whCopy: T = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
@@ -46,6 +46,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
 
       whCopy.id = id;
       whCopy.canEdit = true;
+      whCopy.ownerId = userId;
       whList.value.push(whCopy);
     } catch {
       apiError.value = "Error. Could not upload data to server.";

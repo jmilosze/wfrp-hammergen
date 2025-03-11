@@ -2,6 +2,7 @@ import axios, { InternalAxiosRequestConfig } from "axios";
 
 const LOCAL_STORAGE_KEY_ACCESS_TOKEN = "accessToken";
 const LOCALS_STORAGE_KEY_USERNAME = "username";
+const LOCAL_STORAGE_KEY_USER_ID = "userId";
 
 export const anonRequest = axios.create({
   baseURL: import.meta.env.VITE_ROOT_API,
@@ -27,13 +28,23 @@ export const loginUser = async (username: string, password: string) => {
       headers: { "Content-Type": "multipart/form-data" },
     },
   );
-  localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, response.data.accessToken);
+  const accessToken = response.data.accessToken;
+  localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, accessToken);
   localStorage.setItem(LOCALS_STORAGE_KEY_USERNAME, username);
+
+  // Extract and save the sub field from the JWT token
+  try {
+    const payload = JSON.parse(atob(accessToken.split(".")[1]));
+    localStorage.setItem(LOCAL_STORAGE_KEY_USER_ID, payload.sub);
+  } catch (error) {
+    console.error("Failed to extract user ID from token:", error);
+  }
 };
 
 export const logoutUser = () => {
   localStorage.removeItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN);
   localStorage.removeItem(LOCALS_STORAGE_KEY_USERNAME);
+  localStorage.removeItem(LOCAL_STORAGE_KEY_USER_ID);
 };
 
 const authHeaderInterceptor = (requestConfig: InternalAxiosRequestConfig) => {
@@ -47,9 +58,11 @@ authRequest.interceptors.request.use(authHeaderInterceptor);
 
 export const getUserInfo = () => {
   const usernameInStorage = localStorage.getItem(LOCALS_STORAGE_KEY_USERNAME);
+  const userIdInStorage = localStorage.getItem(LOCAL_STORAGE_KEY_USER_ID);
 
   return {
     username: usernameInStorage !== null ? usernameInStorage : "",
+    userId: userIdInStorage !== null ? userIdInStorage : "",
   };
 };
 

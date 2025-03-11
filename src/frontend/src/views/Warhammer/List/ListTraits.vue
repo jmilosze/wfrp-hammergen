@@ -54,6 +54,8 @@ function formatTraitRow(trait: Trait) {
     ownerId: trait.ownerId,
   };
 }
+
+const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -81,7 +83,7 @@ function formatTraitRow(trait: Trait) {
         :id="id"
         :canEdit="canEdit"
         routeName="trait"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
+        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>

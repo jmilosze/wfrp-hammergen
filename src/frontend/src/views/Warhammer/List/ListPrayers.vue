@@ -17,6 +17,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useQueryParams } from "../../../composables/useQueryParams.ts";
 import ToolTip from "../../../components/ToolTip.vue";
 import TextLink from "../../../components/TextLink.vue";
+import ActionButtonsCharacter from "../../../components/ActionButtonsCharacter.vue";
 
 const whList = useWhList(new PrayerApi(authRequest));
 await whList.loadWhList();
@@ -54,6 +55,8 @@ function formatPrayerRow(prayer: Prayer) {
     ownerId: prayer.ownerId,
   };
 }
+
+const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -81,7 +84,7 @@ function formatPrayerRow(prayer: Prayer) {
         :id="id"
         :canEdit="canEdit"
         routeName="prayer"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
+        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>

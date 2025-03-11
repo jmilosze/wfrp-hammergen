@@ -86,6 +86,8 @@ const filteredAttributeOptions = computed(() => {
     "Any attribute",
   );
 });
+
+const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -117,7 +119,7 @@ const filteredAttributeOptions = computed(() => {
         :id="id"
         :canEdit="canEdit"
         routeName="skill"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
+        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>

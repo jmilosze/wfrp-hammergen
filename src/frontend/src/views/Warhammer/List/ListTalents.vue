@@ -56,6 +56,8 @@ function formatTalentRow(talent: Talent) {
     ownerId: talent.ownerId,
   };
 }
+
+const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -83,7 +85,7 @@ function formatTalentRow(talent: Talent) {
         :id="id"
         :canEdit="canEdit"
         routeName="talent"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
+        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>

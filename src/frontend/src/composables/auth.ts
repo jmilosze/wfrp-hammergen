@@ -55,7 +55,7 @@ export function useAuth() {
     }
   }
 
-  function getLoggedUserInfo(): { username: string } {
+  function getLoggedUserInfo(): { username: string; userId: string } {
     return getUserInfo();
   }
 

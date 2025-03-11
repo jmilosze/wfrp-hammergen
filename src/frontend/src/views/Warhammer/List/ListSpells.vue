@@ -114,6 +114,8 @@ function formatSpellRow(spell: Spell) {
     ownerId: spell.ownerId,
   };
 }
+
+const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -150,7 +152,7 @@ function formatSpellRow(spell: Spell) {
         :id="id"
         :canEdit="canEdit"
         routeName="spell"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
+        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>

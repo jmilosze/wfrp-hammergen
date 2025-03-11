@@ -96,6 +96,8 @@ const filteredLabelOptions = computed(() => {
     "No label",
   );
 });
+
+const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -127,7 +129,7 @@ const filteredLabelOptions = computed(() => {
         :id="id"
         :canEdit="canEdit"
         routeName="rune"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
+        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>

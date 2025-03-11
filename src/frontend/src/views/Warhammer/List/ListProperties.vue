@@ -96,6 +96,8 @@ const filteredApplicableToOptions = computed(() => {
     "Applicable to any",
   );
 });
+
+const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -132,7 +134,7 @@ const filteredApplicableToOptions = computed(() => {
         :id="id"
         :canEdit="canEdit"
         routeName="property"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
+        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>
