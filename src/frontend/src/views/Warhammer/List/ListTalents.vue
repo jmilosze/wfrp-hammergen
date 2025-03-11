@@ -15,6 +15,8 @@ import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import ToolTip from "../../../components/ToolTip.vue";
+import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new TalentApi(authRequest));
 await whList.loadWhList();
@@ -26,6 +28,7 @@ const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "tooltip", displayName: "", skipStackedTitle: true },
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "maxRank", displayName: "Max rank", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
@@ -49,6 +52,8 @@ function formatTalentRow(talent: Talent) {
     description: talent.description,
     canEdit: talent.canEdit,
     id: talent.id,
+    shared: talent.shared,
+    ownerId: talent.ownerId,
   };
 }
 </script>
@@ -68,6 +73,11 @@ function formatTalentRow(talent: Talent) {
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="talent" :params="{ id: 'create' }">
       Create new
     </LinkButton>
+
+    <template #name="{ name, id }: { name: string; id: string }">
+      <TextLink routeName="talent" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
+    </template>
+
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
@@ -82,6 +92,10 @@ function formatTalentRow(talent: Talent) {
       <div class="text-nowrap">
         {{ maxRank }}
       </div>
+    </template>
+
+    <template #tooltip="{ shared, canEdit, ownerId }: { shared: boolean; canEdit: boolean; ownerId: string }">
+      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" />
     </template>
   </TableWithSearch>
 

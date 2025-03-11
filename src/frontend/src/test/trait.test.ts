@@ -26,6 +26,7 @@ const traitGroupApiResponse: ApiResponse<TraitApiData> = {
 
 const traitGroup = new Trait({
   id: "id1",
+  ownerId: "owner",
   canEdit: true,
   name: "trait1",
   description: "desc1",
@@ -40,6 +41,7 @@ const traitGroup = new Trait({
 
 const traitIndividual = new Trait({
   id: "id2",
+  ownerId: "owner2",
   canEdit: true,
   name: "trait2",
   description: "desc2",

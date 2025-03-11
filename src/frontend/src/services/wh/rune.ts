@@ -67,6 +67,7 @@ export interface RuneApiData {
 
 export class Rune implements WhProperty {
   id: string;
+  ownerId: string;
   canEdit: boolean;
   name: string;
   description: string;
@@ -77,6 +78,7 @@ export class Rune implements WhProperty {
 
   constructor({
     id = "",
+    ownerId = "",
     canEdit = false,
     name = "",
     description = "",
@@ -86,6 +88,7 @@ export class Rune implements WhProperty {
     source = {},
   } = {}) {
     this.id = id;
+    this.ownerId = ownerId;
     this.canEdit = canEdit;
     this.name = name;
     this.description = description;
@@ -98,6 +101,7 @@ export class Rune implements WhProperty {
   copy(): Rune {
     return new Rune({
       id: this.id,
+      ownerId: this.ownerId,
       canEdit: this.canEdit,
       name: this.name,
       description: this.description,
@@ -146,6 +150,7 @@ export class Rune implements WhProperty {
 export function apiResponseToModel(itemRuneApi: ApiResponse<RuneApiData>): Rune {
   const newRune = new Rune({
     id: itemRuneApi.id,
+    ownerId: itemRuneApi.ownerId,
     canEdit: itemRuneApi.canEdit,
     name: itemRuneApi.object.name,
     description: itemRuneApi.object.description,

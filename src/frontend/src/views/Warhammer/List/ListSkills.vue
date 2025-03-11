@@ -18,6 +18,8 @@ import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import ToolTip from "../../../components/ToolTip.vue";
+import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new SkillApi(authRequest));
 await whList.loadWhList();
@@ -34,6 +36,7 @@ const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "tooltip", displayName: "", skipStackedTitle: true },
   { name: "description", displayName: "Description", skipStackedTitle: false },
   { name: "type", displayName: "Type", skipStackedTitle: false },
   { name: "attribute", displayName: "Attr", skipStackedTitle: false },
@@ -61,6 +64,8 @@ function formatSkillRow(skill: Skill) {
     description: skill.description,
     canEdit: skill.canEdit,
     id: skill.id,
+    shared: skill.shared,
+    ownerId: skill.ownerId,
   };
 }
 
@@ -102,6 +107,11 @@ const filteredAttributeOptions = computed(() => {
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="skill" :params="{ id: 'create' }">
       Create new
     </LinkButton>
+
+    <template #name="{ name, id }: { name: string; id: string }">
+      <TextLink routeName="skill" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
+    </template>
+
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
@@ -110,6 +120,10 @@ const filteredAttributeOptions = computed(() => {
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
+    </template>
+
+    <template #tooltip="{ shared, canEdit, ownerId }: { shared: boolean; canEdit: boolean; ownerId: string }">
+      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" />
     </template>
   </TableWithSearch>
 

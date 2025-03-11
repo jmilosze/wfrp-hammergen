@@ -32,6 +32,7 @@ export interface TalentApiData {
 
 export class Talent implements WhProperty {
   id: string;
+  ownerId: string;
   canEdit: boolean;
   name: string;
   description: string;
@@ -47,6 +48,7 @@ export class Talent implements WhProperty {
 
   constructor({
     id = "",
+    ownerId = "",
     canEdit = false,
     name = "",
     description = "",
@@ -61,6 +63,7 @@ export class Talent implements WhProperty {
     source = {},
   } = {}) {
     this.id = id;
+    this.ownerId = ownerId;
     this.canEdit = canEdit;
     this.name = name;
     this.description = description;
@@ -78,6 +81,7 @@ export class Talent implements WhProperty {
   copy(): Talent {
     return new Talent({
       id: this.id,
+      ownerId: this.ownerId,
       canEdit: this.canEdit,
       name: this.name,
       description: this.description,
@@ -193,6 +197,7 @@ export class Talent implements WhProperty {
 export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talent {
   const newTalent = new Talent({
     id: talentApi.id,
+    ownerId: talentApi.ownerId,
     canEdit: talentApi.canEdit,
     name: talentApi.object.name,
     description: talentApi.object.description,

@@ -24,6 +24,8 @@ import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import ToolTip from "../../../components/ToolTip.vue";
+import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new CareerApi(authRequest));
 await whList.loadWhList();
@@ -40,6 +42,7 @@ const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "tooltip", displayName: "", skipStackedTitle: true },
   { name: "class", displayName: "Class", skipStackedTitle: false },
   { name: "species", displayName: "Species", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
@@ -72,6 +75,8 @@ function formatCareerRow(career: Career) {
       .join(", "),
     canEdit: career.canEdit,
     id: career.id,
+    shared: career.shared,
+    ownerId: career.ownerId,
   };
 }
 
@@ -108,6 +113,11 @@ const filteredSpeciesOptions = computed(() => {
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="career" :params="{ id: 'create' }">
       Create new
     </LinkButton>
+
+    <template #name="{ name, id }: { name: string; id: string }">
+      <TextLink routeName="career" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
+    </template>
+
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsNonCharacter
         :id="id"
@@ -116,6 +126,10 @@ const filteredSpeciesOptions = computed(() => {
         @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
+    </template>
+
+    <template #tooltip="{ shared, canEdit, ownerId }: { shared: boolean; canEdit: boolean; ownerId: string }">
+      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" />
     </template>
   </TableWithSearch>
 

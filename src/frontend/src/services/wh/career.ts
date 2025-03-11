@@ -225,6 +225,7 @@ export function isLevel(x: number): x is 1 | 2 | 3 | 4 {
 
 export class Career implements WhProperty {
   id: string;
+  ownerId: string;
   canEdit: boolean;
   name: string;
   description: string;
@@ -239,6 +240,7 @@ export class Career implements WhProperty {
 
   constructor({
     id = "",
+    ownerId = "",
     canEdit = false,
     name = "",
     description = "",
@@ -252,6 +254,7 @@ export class Career implements WhProperty {
     source = {},
   } = {}) {
     this.id = id;
+    this.ownerId = ownerId;
     this.canEdit = canEdit;
     this.name = name;
     this.description = description;
@@ -268,6 +271,7 @@ export class Career implements WhProperty {
   copy(): Career {
     return new Career({
       id: this.id,
+      ownerId: this.ownerId,
       canEdit: this.canEdit,
       name: this.name,
       description: this.description,
@@ -408,6 +412,7 @@ function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
 export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Career {
   return new Career({
     id: careerApi.id,
+    ownerId: careerApi.ownerId,
     canEdit: careerApi.canEdit,
     name: careerApi.object.name,
     description: careerApi.object.description,

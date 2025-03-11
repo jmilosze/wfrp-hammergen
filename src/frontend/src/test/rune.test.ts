@@ -22,6 +22,7 @@ const runeApiDataResponse: ApiResponse<RuneApiData> = {
 
 const rune = new Rune({
   id: "id",
+  ownerId: "owner",
   canEdit: true,
   name: "rune",
   description: "desc",

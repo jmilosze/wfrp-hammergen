@@ -24,6 +24,7 @@ const spellApiResponse: ApiResponse<SpellApiData> = {
 
 const spell = new Spell({
   id: "id",
+  ownerId: "owner",
   canEdit: true,
   name: "spell",
   cn: 1,

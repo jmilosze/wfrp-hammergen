@@ -69,6 +69,7 @@ const careerApiResponse: ApiResponse<CareerApiData> = {
 const career = new Career({
   id: "id",
   canEdit: true,
+  ownerId: "owner",
   name: "career",
   description: "some desc",
   species: [Species.Dwarf, Species.Human],

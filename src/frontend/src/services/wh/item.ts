@@ -443,6 +443,7 @@ export interface ItemApiData {
 
 export class Item implements WhProperty {
   id: string;
+  ownerId: string;
   canEdit: boolean;
   name: string;
   description: string;
@@ -464,6 +465,7 @@ export class Item implements WhProperty {
 
   constructor({
     id = "",
+    ownerId = "",
     canEdit = false,
     name = "",
     description = "",
@@ -497,6 +499,7 @@ export class Item implements WhProperty {
     source = {},
   } = {}) {
     this.id = id;
+    this.ownerId = ownerId;
     this.canEdit = canEdit;
     this.name = name;
     this.description = description;
@@ -520,6 +523,7 @@ export class Item implements WhProperty {
   copy(): Item {
     return new Item({
       id: this.id,
+      ownerId: this.ownerId,
       canEdit: this.canEdit,
       name: this.name,
       description: this.description,
@@ -802,6 +806,7 @@ export class Item implements WhProperty {
 export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
   const newItem = new Item({
     id: itemApi.id,
+    ownerId: itemApi.ownerId,
     canEdit: itemApi.canEdit,
     name: itemApi.object.name,
     description: itemApi.object.description,

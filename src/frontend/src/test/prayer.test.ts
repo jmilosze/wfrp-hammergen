@@ -22,6 +22,7 @@ const prayerApiResponse: ApiResponse<PrayerApiData> = {
 
 const prayer = new Prayer({
   id: "id",
+  ownerId: "owner",
   canEdit: true,
   name: "prayer",
   range: "range",

@@ -28,6 +28,7 @@ const itemPropertyApiDataResponse: ApiResponse<ItemPropertyApiData> = {
 
 const itemProperty = new ItemProperty({
   id: "id",
+  ownerId: "owner",
   canEdit: true,
   name: "itemProperty",
   description: "desc",

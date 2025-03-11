@@ -43,6 +43,7 @@ export interface MutationApiData {
 
 export class Mutation implements WhProperty {
   id: string;
+  ownerId: string;
   canEdit: boolean;
   name: string;
   description: string;
@@ -53,6 +54,7 @@ export class Mutation implements WhProperty {
 
   constructor({
     id = "",
+    ownerId = "",
     canEdit = false,
     name = "",
     description = "",
@@ -62,6 +64,7 @@ export class Mutation implements WhProperty {
     source = {},
   } = {}) {
     this.id = id;
+    this.ownerId = ownerId;
     this.canEdit = canEdit;
     this.name = name;
     this.description = description;
@@ -74,6 +77,7 @@ export class Mutation implements WhProperty {
   copy(): Mutation {
     return new Mutation({
       id: this.id,
+      ownerId: this.ownerId,
       canEdit: this.canEdit,
       name: this.name,
       description: this.description,
@@ -125,6 +129,7 @@ export class Mutation implements WhProperty {
 export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): Mutation {
   const newMutation = new Mutation({
     id: mutationApi.id,
+    ownerId: mutationApi.ownerId,
     canEdit: mutationApi.canEdit,
     name: mutationApi.object.name,
     description: mutationApi.object.description,

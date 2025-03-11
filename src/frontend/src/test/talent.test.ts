@@ -34,6 +34,7 @@ const talentGroupApiResponse: ApiResponse<TalentApiData> = {
 
 const talentGroup = new Talent({
   id: "id1",
+  ownerId: "owner",
   canEdit: true,
   name: "talent1",
   description: "desc1",

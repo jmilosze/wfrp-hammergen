@@ -27,6 +27,7 @@ const mutationApiResponse: ApiResponse<MutationApiData> = {
 
 const mutation = new Mutation({
   id: "id",
+  ownerId: "owner",
   canEdit: true,
   name: "mutation",
   description: "desc",

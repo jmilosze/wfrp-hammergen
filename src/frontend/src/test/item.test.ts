@@ -73,6 +73,7 @@ const itemApiResponse: ApiResponse<ItemApiData> = {
 
 const item = new Item({
   id: "id",
+  ownerId: "owner",
   canEdit: true,
   name: "item",
   description: "desc",

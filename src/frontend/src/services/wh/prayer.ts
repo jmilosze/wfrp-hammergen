@@ -25,6 +25,7 @@ export interface PrayerApiData {
 
 export class Prayer implements WhProperty {
   id: string;
+  ownerId: string;
   canEdit: boolean;
   name: string;
   description: string;
@@ -36,6 +37,7 @@ export class Prayer implements WhProperty {
 
   constructor({
     id = "",
+    ownerId = "",
     name = "",
     range = "",
     target = "",
@@ -46,6 +48,7 @@ export class Prayer implements WhProperty {
     source = {},
   } = {}) {
     this.id = id;
+    this.ownerId = ownerId;
     this.name = name;
     this.range = range;
     this.target = target;
@@ -59,6 +62,7 @@ export class Prayer implements WhProperty {
   copy(): Prayer {
     return new Prayer({
       id: this.id,
+      ownerId: this.ownerId,
       name: this.name,
       range: this.range,
       target: this.target,
@@ -126,6 +130,7 @@ export class Prayer implements WhProperty {
 export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Prayer {
   const newPrayer = new Prayer({
     id: prayerApi.id,
+    ownerId: prayerApi.ownerId,
     canEdit: prayerApi.canEdit,
     name: prayerApi.object.name,
     range: prayerApi.object.range,

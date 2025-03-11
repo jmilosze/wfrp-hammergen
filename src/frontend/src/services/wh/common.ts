@@ -5,6 +5,7 @@ import { isKey } from "../../utils/object.ts";
 
 export interface WhProperty {
   id: string;
+  ownerId: string;
   canEdit: boolean;
   name: string;
   description: string;

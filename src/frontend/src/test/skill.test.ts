@@ -25,6 +25,7 @@ const skillApiResponse: ApiResponse<SkillApiData> = {
 
 const skill = new Skill({
   id: "id",
+  ownerId: "owner",
   canEdit: true,
   name: "skill",
   description: "desc",

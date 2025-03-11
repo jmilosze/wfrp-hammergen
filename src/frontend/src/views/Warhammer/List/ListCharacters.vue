@@ -14,6 +14,8 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import ActionButton from "../../../components/ActionButton.vue";
 import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import ToolTip from "../../../components/ToolTip.vue";
+import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new CharacterApi(authRequest));
 await whList.loadWhList();
@@ -36,8 +38,6 @@ const items = computed(() => {
     .map((x) => formatCharacterRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });
-
-import ToolTip from "../../../components/ToolTip.vue";
 
 function formatCharacterRow(character: Character) {
   return {
@@ -85,6 +85,11 @@ function handleSampleCharacters() {
     >
       Create new
     </LinkButton>
+
+    <template #name="{ name, id }: { name: string; id: string }">
+      <TextLink routeName="character" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
+    </template>
+
     <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
       <ActionButtonsCharacter
         :id="id"

@@ -313,6 +313,7 @@ export type SpellClassification = {
 
 export class Spell implements WhProperty {
   id: string;
+  ownerId: string;
   canEdit: boolean;
   name: string;
   description: string;
@@ -326,6 +327,7 @@ export class Spell implements WhProperty {
 
   constructor({
     id = "",
+    ownerId = "",
     name = "",
     cn = 0,
     range = "",
@@ -338,6 +340,7 @@ export class Spell implements WhProperty {
     source = {},
   } = {}) {
     this.id = id;
+    this.ownerId = ownerId;
     this.name = name;
     this.cn = cn;
     this.range = range;
@@ -353,6 +356,7 @@ export class Spell implements WhProperty {
   copy(): Spell {
     return new Spell({
       id: this.id,
+      ownerId: this.ownerId,
       name: this.name,
       cn: this.cn,
       range: this.range,
@@ -433,6 +437,7 @@ export class Spell implements WhProperty {
 export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
   const newSpell = new Spell({
     id: spellApi.id,
+    ownerId: spellApi.ownerId,
     canEdit: spellApi.canEdit,
     name: spellApi.object.name,
     cn: spellApi.object.cn,
