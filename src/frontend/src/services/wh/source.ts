@@ -42,6 +42,7 @@ export const source: Record<string, string> = {
   37: "Blood And Bramble",
   38: "Dwarf Player's Guide",
   39: "Deft Steps Light Fingers",
+  40: "High Elf Player's Guide",
 };
 
 export type Source = Record<string, string>;

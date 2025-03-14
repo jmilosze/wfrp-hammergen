@@ -47,6 +47,7 @@ const (
 	SourceBloodAndBramble               = "37"
 	SourceDwarfPlayersGuide             = "38"
 	SourceDeftStepsLightFingers         = "39"
+	SourceHighElfPlayersGuide           = "40"
 )
 
 func sourceValues() string {
@@ -91,6 +92,7 @@ func sourceValues() string {
 		SourceBloodAndBramble,
 		SourceDwarfPlayersGuide,
 		SourceDeftStepsLightFingers,
+		SourceHighElfPlayersGuide,
 	})
 }
 
