@@ -517,6 +517,7 @@ const (
 	ItemAvailabilityScarce = 1
 	ItemAvailabilityRare   = 2
 	ItemAvailabilityExotic = 3
+	ItemAvailabilityUnique = 4
 )
 
 func itemAvailabilityValues() string {
@@ -525,6 +526,7 @@ func itemAvailabilityValues() string {
 		ItemAvailabilityScarce,
 		ItemAvailabilityRare,
 		ItemAvailabilityExotic,
+		ItemAvailabilityUnique,
 	})
 }
 

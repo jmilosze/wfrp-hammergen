@@ -332,9 +332,16 @@ export const enum Availability {
   Scarce,
   Rare,
   Exotic,
+  Unique = 4,
 }
 
-export const availabilityList = [Availability.Common, Availability.Scarce, Availability.Rare, Availability.Exotic];
+export const availabilityList = [
+  Availability.Common,
+  Availability.Scarce,
+  Availability.Rare,
+  Availability.Exotic,
+  Availability.Unique,
+];
 
 export function printAvailability(availability: Availability) {
   switch (availability) {
@@ -346,6 +353,8 @@ export function printAvailability(availability: Availability) {
       return "Rare";
     case Availability.Exotic:
       return "Exotic";
+    case Availability.Unique:
+      return "Unique";
     default:
       return "";
   }
