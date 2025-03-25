@@ -42,11 +42,14 @@ const (
 	SpellLabelStealth      = 21
 	SpellLabelGreatMaw     = 22
 
-	SpellLabelCustom     = 1000
-	SpellLabelRitual     = 1001
-	SpellLabelSkaven     = 1002
-	SpellLabelChaos      = 1003
-	SpellLabelFimirMarsh = 1004
+	SpellLabelCustom          = 1000
+	SpellLabelRitual          = 1001
+	SpellLabelSkaven          = 1002
+	SpellLabelChaos           = 1003
+	SpellLabelFimirMarsh      = 1004
+	SpellLabelMagicOfVaul     = 1005
+	SpellLabelHighElfSeaMagic = 1006
+	SpellLabelMagicOfHoeth    = 1007
 )
 
 var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeArcane, SpellTypeLore}
@@ -85,6 +88,9 @@ var SpellLabels = map[SpellType][]SpellLabel{
 		SpellLabelStealth,
 		SpellLabelRuin,
 		SpellLabelRitual,
+		SpellLabelMagicOfVaul,
+		SpellLabelHighElfSeaMagic,
+		SpellLabelMagicOfHoeth,
 	},
 	SpellTypeOther: []SpellLabel{
 		SpellLabelFimirMarsh,

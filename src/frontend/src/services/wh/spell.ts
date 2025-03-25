@@ -6,7 +6,7 @@ import {
   updateElementFunc,
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
-import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
+import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
@@ -75,6 +75,9 @@ export const enum SpellLabel {
   SpellLabelSkaven = 1002,
   SpellLabelChaos = 1003,
   SpellLabelFimirMarsh = 1004,
+  SpellLabelMagicOfVaul = 1005,
+  SpellLabelHighElfSeaMagic = 1006,
+  SpellLabelMagicOfHoeth = 1007,
   // Derived labels
   SpellLabelLoreAny = 100,
   SpellLabelLoreColour = 101,
@@ -144,6 +147,12 @@ export function printSpellLabel(spellLabel: SpellLabel): string {
       return "Custom Spell";
     case SpellLabel.SpellLabelRitual:
       return "Ritual";
+    case SpellLabel.SpellLabelMagicOfVaul:
+      return "Magic of Vaul";
+    case SpellLabel.SpellLabelHighElfSeaMagic:
+      return "High Elf Sea Magic";
+    case SpellLabel.SpellLabelMagicOfHoeth:
+      return "Magic of Hoeth";
     case SpellLabel.SpellLabelLoreAny:
       return "Any Lore";
     case SpellLabel.SpellLabelLoreColour:
@@ -209,6 +218,9 @@ export const allSpellLabelList = [
   SpellLabel.SpellLabelCustom,
   ...allLores,
   SpellLabel.SpellLabelRitual,
+  SpellLabel.SpellLabelMagicOfVaul,
+  SpellLabel.SpellLabelHighElfSeaMagic,
+  SpellLabel.SpellLabelMagicOfHoeth,
 ];
 
 export function getAllowedLabels(spellType: SpellType): SpellLabel[] {
@@ -217,7 +229,13 @@ export function getAllowedLabels(spellType: SpellType): SpellLabel[] {
   } else if (spellType === SpellType.SpellTypeOther) {
     return [SpellLabel.SpellLabelFimirMarsh, SpellLabel.SpellLabelCustom];
   } else if (spellType === SpellType.SpellTypeLore) {
-    return [...allLores, SpellLabel.SpellLabelRitual];
+    return [
+      ...allLores,
+      SpellLabel.SpellLabelHighElfSeaMagic,
+      SpellLabel.SpellLabelMagicOfHoeth,
+      SpellLabel.SpellLabelMagicOfVaul,
+      SpellLabel.SpellLabelRitual,
+    ];
   } else {
     return [];
   }

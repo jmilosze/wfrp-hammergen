@@ -36,7 +36,7 @@ if (props.centered) {
 <template>
   <div :class="centerClass">
     <div :class="blockClass">
-      <div class="my-1">
+      <div class="my-1 pt-1">
         <slot />
       </div>
       <button :class="btnClass" @click="emit('close')">
