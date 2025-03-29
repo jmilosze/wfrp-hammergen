@@ -20,6 +20,7 @@ export const enum SpellType {
   SpellTypePetty = 1,
   SpellTypeArcane = 2,
   SpellTypeLore = 3,
+  SpellTypeElvenArcane = 4,
 }
 
 export const spellTypeList = [
@@ -27,6 +28,7 @@ export const spellTypeList = [
   SpellType.SpellTypeArcane,
   SpellType.SpellTypeLore,
   SpellType.SpellTypeOther,
+  SpellType.SpellTypeElvenArcane,
 ];
 
 export function printSpellType(spellType: SpellType): string {
@@ -39,6 +41,8 @@ export function printSpellType(spellType: SpellType): string {
       return "Arcane spell";
     case SpellType.SpellTypeLore:
       return "Lore spell";
+    case SpellType.SpellTypeElvenArcane:
+      return "Elven Arcane spell";
     default:
       return "";
   }
@@ -236,6 +240,8 @@ export function getAllowedLabels(spellType: SpellType): SpellLabel[] {
       SpellLabel.SpellLabelMagicOfVaul,
       SpellLabel.SpellLabelRitual,
     ];
+  } else if (spellType === SpellType.SpellTypeElvenArcane) {
+    return [...colourLores];
   } else {
     return [];
   }

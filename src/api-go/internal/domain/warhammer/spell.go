@@ -9,10 +9,11 @@ import (
 type SpellType int
 
 const (
-	SpellTypeOther  = 0
-	SpellTypePetty  = 1
-	SpellTypeArcane = 2
-	SpellTypeLore   = 3
+	SpellTypeOther       = 0
+	SpellTypePetty       = 1
+	SpellTypeArcane      = 2
+	SpellTypeLore        = 3
+	SpellTypeElvenArcane = 4
 )
 
 type SpellLabel int
@@ -52,18 +53,18 @@ const (
 	SpellLabelMagicOfHoeth    = 1007
 )
 
-var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeArcane, SpellTypeLore}
+var SpellTypes = []SpellType{SpellTypeOther, SpellTypePetty, SpellTypeArcane, SpellTypeLore, SpellTypeElvenArcane}
 
 var SpellLabels = map[SpellType][]SpellLabel{
-	SpellTypePetty: []SpellLabel{
+	SpellTypePetty: {
 		SpellLabelSkaven,
 		SpellLabelChaos,
 	},
-	SpellTypeArcane: []SpellLabel{
+	SpellTypeArcane: {
 		SpellLabelSkaven,
 		SpellLabelChaos,
 	},
-	SpellTypeLore: []SpellLabel{
+	SpellTypeLore: {
 		SpellLabelLight,
 		SpellLabelMetal,
 		SpellLabelLife,
@@ -92,9 +93,19 @@ var SpellLabels = map[SpellType][]SpellLabel{
 		SpellLabelHighElfSeaMagic,
 		SpellLabelMagicOfHoeth,
 	},
-	SpellTypeOther: []SpellLabel{
+	SpellTypeOther: {
 		SpellLabelFimirMarsh,
 		SpellLabelCustom,
+	},
+	SpellTypeElvenArcane: {
+		SpellLabelLight,
+		SpellLabelMetal,
+		SpellLabelLife,
+		SpellLabelHeavens,
+		SpellLabelShadows,
+		SpellLabelDeath,
+		SpellLabelFire,
+		SpellLabelBeasts,
 	},
 }
 
