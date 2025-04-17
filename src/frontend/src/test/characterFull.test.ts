@@ -50,6 +50,7 @@ const characterFullApiData: CharacterFullApiData = {
           source: {},
           class: CareerClass.Academic,
           level1: {
+            exists: true,
             name: "career_1_level_1",
             status: StatusTier.Gold,
             standing: 1,
@@ -59,6 +60,7 @@ const characterFullApiData: CharacterFullApiData = {
             items: "",
           },
           level2: {
+            exists: true,
             name: "career_2_level_2",
             status: StatusTier.Gold,
             standing: 1,
@@ -68,6 +70,7 @@ const characterFullApiData: CharacterFullApiData = {
             items: "",
           },
           level3: {
+            exists: true,
             name: "career_3_level_3",
             status: StatusTier.Gold,
             standing: 1,
@@ -77,9 +80,20 @@ const characterFullApiData: CharacterFullApiData = {
             items: "",
           },
           level4: {
+            exists: true,
             name: "career_4_level_4",
             status: StatusTier.Gold,
             standing: 1,
+            skills: [],
+            talents: [],
+            attributes: [],
+            items: "",
+          },
+          level5: {
+            exists: false,
+            name: "",
+            status: StatusTier.Brass,
+            standing: 0,
             skills: [],
             talents: [],
             attributes: [],
@@ -102,6 +116,7 @@ const characterFullApiData: CharacterFullApiData = {
           source: {},
           class: CareerClass.Courtier,
           level1: {
+            exists: true,
             name: "career_2_level_1",
             status: StatusTier.Gold,
             standing: 1,
@@ -111,6 +126,7 @@ const characterFullApiData: CharacterFullApiData = {
             items: "",
           },
           level2: {
+            exists: true,
             name: "career_2_level_2",
             status: StatusTier.Gold,
             standing: 1,
@@ -120,6 +136,7 @@ const characterFullApiData: CharacterFullApiData = {
             items: "",
           },
           level3: {
+            exists: true,
             name: "career_2_level_3",
             status: StatusTier.Gold,
             standing: 1,
@@ -129,9 +146,20 @@ const characterFullApiData: CharacterFullApiData = {
             items: "",
           },
           level4: {
+            exists: true,
             name: "career_2_level_4",
             status: StatusTier.Gold,
             standing: 1,
+            skills: [],
+            talents: [],
+            attributes: [],
+            items: "",
+          },
+          level5: {
+            exists: false,
+            name: "",
+            status: StatusTier.Brass,
+            standing: 0,
             skills: [],
             talents: [],
             attributes: [],
@@ -155,6 +183,7 @@ const characterFullApiData: CharacterFullApiData = {
         shared: true,
         source: {},
         level1: {
+          exists: true,
           name: "career_3_level_1",
           status: StatusTier.Gold,
           standing: 1,
@@ -164,6 +193,7 @@ const characterFullApiData: CharacterFullApiData = {
           items: "",
         },
         level2: {
+          exists: true,
           name: "career_3_level_2",
           status: StatusTier.Gold,
           standing: 1,
@@ -173,6 +203,7 @@ const characterFullApiData: CharacterFullApiData = {
           items: "",
         },
         level3: {
+          exists: true,
           name: "career_3_level_3",
           status: StatusTier.Gold,
           standing: 1,
@@ -182,9 +213,20 @@ const characterFullApiData: CharacterFullApiData = {
           items: "",
         },
         level4: {
+          exists: true,
           name: "career_3_level_4",
           status: StatusTier.Gold,
           standing: 1,
+          skills: [],
+          talents: [],
+          attributes: [],
+          items: "",
+        },
+        level5: {
+          exists: false,
+          name: "",
+          status: StatusTier.Brass,
+          standing: 0,
           skills: [],
           talents: [],
           attributes: [],

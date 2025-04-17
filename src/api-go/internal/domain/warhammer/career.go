@@ -14,6 +14,7 @@ type Career struct {
 	Level2      *CareerLevel      `json:"level2"`
 	Level3      *CareerLevel      `json:"level3"`
 	Level4      *CareerLevel      `json:"level4"`
+	Level5      *CareerLevel      `json:"level5"`
 	Shared      bool              `json:"shared" validate:"shared_valid"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
@@ -40,6 +41,7 @@ func (career *Career) Copy() WhObject {
 		Level2:      career.Level2.Copy(),
 		Level3:      career.Level3.Copy(),
 		Level4:      career.Level4.Copy(),
+		Level5:      career.Level5.Copy(),
 		Shared:      career.Shared,
 		Source:      copySourceMap(career.Source),
 	}
@@ -86,6 +88,14 @@ func (career *Career) InitNilPointers() error {
 		return err
 	}
 
+	if career.Level5 == nil {
+		career.Level5 = &CareerLevel{}
+	}
+	err = career.Level5.InitNilPointers()
+	if err != nil {
+		return err
+	}
+
 	if career.Source == nil {
 		career.Source = map[Source]string{}
 	}
@@ -94,6 +104,7 @@ func (career *Career) InitNilPointers() error {
 }
 
 type CareerLevel struct {
+	Exists     bool        `json:"exists" validate:"boolean"`
 	Name       string      `json:"name" validate:"name_valid"`
 	Status     Status      `json:"status" validate:"status_valid"`
 	Standing   Standing    `json:"standing" validate:"standing_valid"`
@@ -109,6 +120,7 @@ func (careerLevel *CareerLevel) Copy() *CareerLevel {
 	}
 
 	return &CareerLevel{
+		Exists:     careerLevel.Exists,
 		Name:       careerLevel.Name,
 		Status:     careerLevel.Status,
 		Standing:   careerLevel.Standing,

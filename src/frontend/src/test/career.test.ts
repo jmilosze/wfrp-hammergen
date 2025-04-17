@@ -22,6 +22,7 @@ const careerApiData: CareerApiData = {
   shared: false,
   source: { 1: "page 2", 3: "page 5-10" },
   level1: {
+    exists: true,
     name: "l1",
     status: StatusTier.Brass,
     standing: 1,
@@ -31,6 +32,7 @@ const careerApiData: CareerApiData = {
     items: "items1",
   } as CareerLevelApiData,
   level2: {
+    exists: true,
     name: "l2",
     status: StatusTier.Silver,
     standing: 2,
@@ -40,6 +42,7 @@ const careerApiData: CareerApiData = {
     items: "items2",
   } as CareerLevelApiData,
   level3: {
+    exists: true,
     name: "l3",
     status: StatusTier.Silver,
     standing: 4,
@@ -49,6 +52,7 @@ const careerApiData: CareerApiData = {
     items: "items3",
   } as CareerLevelApiData,
   level4: {
+    exists: true,
     name: "l4",
     status: StatusTier.Silver,
     standing: 5,
@@ -56,6 +60,16 @@ const careerApiData: CareerApiData = {
     skills: ["skill41", "skill42"],
     talents: ["talent41", "talent42"],
     items: "items4",
+  } as CareerLevelApiData,
+  level5: {
+    exists: true,
+    name: "l5",
+    status: StatusTier.Silver,
+    standing: 5,
+    attributes: [AttributeName.WS, AttributeName.BS],
+    skills: ["skill51", "skill52"],
+    talents: ["talent51", "talent52"],
+    items: "items5",
   } as CareerLevelApiData,
 };
 
@@ -77,6 +91,7 @@ const career = new Career({
   shared: false,
   source: { 1: "page 2", 3: "page 5-10" },
   level1: {
+    exists: true,
     name: "l1",
     status: StatusTier.Brass,
     standing: 1,
@@ -86,6 +101,7 @@ const career = new Career({
     items: "items1",
   } as CareerLevel,
   level2: {
+    exists: true,
     name: "l2",
     status: StatusTier.Silver,
     standing: 2,
@@ -95,6 +111,7 @@ const career = new Career({
     items: "items2",
   } as CareerLevel,
   level3: {
+    exists: true,
     name: "l3",
     status: StatusTier.Silver,
     standing: 4,
@@ -104,6 +121,7 @@ const career = new Career({
     items: "items3",
   } as CareerLevel,
   level4: {
+    exists: true,
     name: "l4",
     status: StatusTier.Silver,
     standing: 5,
@@ -111,6 +129,16 @@ const career = new Career({
     skills: new Set(["skill41", "skill42"]),
     talents: new Set(["talent41", "talent42"]),
     items: "items4",
+  } as CareerLevel,
+  level5: {
+    exists: true,
+    name: "l5",
+    status: StatusTier.Silver,
+    standing: 5,
+    attributes: [AttributeName.WS, AttributeName.BS],
+    skills: new Set(["skill51", "skill52"]),
+    talents: new Set(["talent51", "talent52"]),
+    items: "items5",
   } as CareerLevel,
 });
 
@@ -147,6 +175,7 @@ describe("isEqualTo returns true", () => {
     { name: "level2", level: otherCareer.level2 },
     { name: "level3", level: otherCareer.level3 },
     { name: "level4", level: otherCareer.level4 },
+    { name: "level5", level: otherCareer.level5 },
   ])(`when other career has different $name`, (t) => {
     test("attributes are in different order", () => {
       const currentValue = [...t.level.attributes];
@@ -164,7 +193,15 @@ describe("isEqualTo returns false", () => {
     { name: "level2", level: otherCareer.level2 },
     { name: "level3", level: otherCareer.level3 },
     { name: "level4", level: otherCareer.level4 },
+    { name: "level5", level: otherCareer.level5 },
   ])(`when other career has different $name`, (t) => {
+    test("the difference is exists", () => {
+      const currentValue = t.level.exists;
+      t.level.exists = false;
+      expect(career.isEqualTo(otherCareer)).toBe(false);
+      t.level.exists = currentValue;
+    });
+
     test("the difference is name", () => {
       const currentValue = t.level.name;
       t.level.name = "otherLevelName";

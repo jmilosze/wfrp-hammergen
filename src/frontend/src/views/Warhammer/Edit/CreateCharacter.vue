@@ -271,6 +271,7 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
 
   return careerList
     .filter((x) => x.allowedForSpeciesWithRegion(species))
+    .filter((x) => x.level1.exists && x.level2.exists && x.level3.exists && x.level4.exists)
     .map((x) => ({ text: x.name, value: x.id }))
     .sort((a, b) => a.text.localeCompare(b.text));
 }

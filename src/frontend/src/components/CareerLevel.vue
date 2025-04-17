@@ -16,7 +16,7 @@ import {
 import type { Skill } from "../services/wh/skill.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { ValidationStatus } from "../utils/validation.ts";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useElSize } from "../composables/viewSize.ts";
 
 const name = defineModel<string>("name", { required: true });
@@ -24,6 +24,7 @@ const attributes = defineModel<AttributeName[]>("attributes", { required: true }
 const status = defineModel<StatusTier>("status", { required: true });
 const standing = defineModel<StatusStanding>("standing", { required: true });
 const items = defineModel<string>("items", { required: true });
+const exists = defineModel<boolean>("exists", { required: true });
 
 defineProps<{
   level: string;
@@ -56,70 +57,85 @@ const skillsTableRef = ref<HTMLDivElement | null>(null);
 const { isEqualOrGreater } = useElSize(400, skillsTableRef);
 </script>
 <template>
-  <p class="text-xl mt-6">Level {{ level }}</p>
-  <div class="border border-neutral-300 rounded p-2">
-    <div class="justify-between text-left gap-4 my-4" :class="[singleColumn ? 'flex-col' : 'flex']">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormInput v-model="name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <MultipleCheckboxInput
-            v-model="attributes"
-            title="Attributes"
-            :options="attributeOpts"
-            :disabled="!canEdit"
-          />
-
-          <div class="flex flex-wrap gap-4 mt-2">
-            <SelectInput
-              v-model="status"
-              title="Status"
-              :options="statusTierOpts"
-              :disabled="!canEdit"
-              class="min-w-24 flex-1"
-            />
-            <SelectInput
-              v-model="standing"
-              title="Standing"
-              :options="statusStandingOpts"
-              :disabled="!canEdit"
-              class="min-w-24 flex-1"
-            />
-          </div>
-          <FormTextarea v-model="items" title="Trappings" :validationStatus="validItems" :disabled="!canEdit" />
-        </div>
-      </div>
-      <div ref="skillsTableRef" class="flex-1" :class="[singleColumn ? 'mt-3' : '']">
-        <div class="flex flex-col gap-4">
-          <SelectTable
-            :modalId="`skill${level}`"
-            :disabled="!canEdit"
-            :initSelectedItems="initialSkills"
-            :itemList="whSkillList"
-            title="Skills"
-            modalTitle="Add/remove skills"
-            :loading="whSkillListLoading"
-            routeName="skill"
-            :truncateModalDescription="100"
-            :disableDescription="!isEqualOrGreater"
-            @reload="emit('reloadWhSkillList')"
-            @selected="(e) => emit('updateSkill', { id: e.id, selected: e.selected })"
-          />
-          <SelectTable
-            :modalId="`talent${level}`"
-            :disabled="!canEdit"
-            :initSelectedItems="initialTalents"
-            :itemList="whTalentList"
-            title="Talents"
-            modalTitle="Add/remove talents"
-            :loading="whTalentListLoading"
-            routeName="talent"
-            :truncateModalDescription="100"
-            :disableDescription="!isEqualOrGreater"
-            @reload="emit('reloadWhTalentList')"
-            @selected="(e) => emit('updateTalent', { id: e.id, selected: e.selected })"
-          />
-        </div>
-      </div>
+  <div>
+    <div class="flex items-center gap-2">
+      <input v-model="exists" type="checkbox" class="w-5 h-5 accent-neutral-600" />
+      <div class="text-xl">Level {{ level }}</div>
     </div>
+    <Transition
+      enterActiveClass="transition-all duration-150 ease-out"
+      enterFromClass="opacity-0"
+      enterToClass="opacity-100"
+      leaveActiveClass="transition-all duration-150 ease-in"
+      leaveFromClass="opacity-100"
+      leaveToClass="opacity-0"
+    >
+      <div v-if="exists" class="border border-neutral-300 rounded p-2">
+        <div class="justify-between text-left gap-4 my-4" :class="[singleColumn ? 'flex-col' : 'flex']">
+          <div class="flex-1">
+            <div class="flex flex-col gap-4">
+              <FormInput v-model="name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+              <MultipleCheckboxInput
+                v-model="attributes"
+                title="Attributes"
+                F
+                :options="attributeOpts"
+                :disabled="!canEdit"
+              />
+
+              <div class="flex flex-wrap gap-4 mt-2">
+                <SelectInput
+                  v-model="status"
+                  title="Status"
+                  :options="statusTierOpts"
+                  :disabled="!canEdit"
+                  class="min-w-24 flex-1"
+                />
+                <SelectInput
+                  v-model="standing"
+                  title="Standing"
+                  :options="statusStandingOpts"
+                  :disabled="!canEdit"
+                  class="min-w-24 flex-1"
+                />
+              </div>
+              <FormTextarea v-model="items" title="Trappings" :validationStatus="validItems" :disabled="!canEdit" />
+            </div>
+          </div>
+          <div ref="skillsTableRef" class="flex-1" :class="[singleColumn ? 'mt-3' : '']">
+            <div class="flex flex-col gap-4">
+              <SelectTable
+                :modalId="`skill${level}`"
+                :disabled="!canEdit"
+                :initSelectedItems="initialSkills"
+                :itemList="whSkillList"
+                title="Skills"
+                modalTitle="Add/remove skills"
+                :loading="whSkillListLoading"
+                routeName="skill"
+                :truncateModalDescription="100"
+                :disableDescription="!isEqualOrGreater"
+                @reload="emit('reloadWhSkillList')"
+                @selected="(e) => emit('updateSkill', { id: e.id, selected: e.selected })"
+              />
+              <SelectTable
+                :modalId="`talent${level}`"
+                :disabled="!canEdit"
+                :initSelectedItems="initialTalents"
+                :itemList="whTalentList"
+                title="Talents"
+                modalTitle="Add/remove talents"
+                :loading="whTalentListLoading"
+                routeName="talent"
+                :truncateModalDescription="100"
+                :disableDescription="!isEqualOrGreater"
+                @reload="emit('reloadWhTalentList')"
+                @selected="(e) => emit('updateTalent', { id: e.id, selected: e.selected })"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>

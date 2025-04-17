@@ -163,6 +163,7 @@ export function speciesWithRegionToSpecies(speciesWithRegion: SpeciesWithRegion)
 }
 
 export type CareerLevel = {
+  exists: boolean;
   name: string;
   status: StatusTier;
   standing: StatusStanding;
@@ -173,6 +174,7 @@ export type CareerLevel = {
 };
 
 export type CareerLevelApiData = {
+  exists: boolean;
   name: string;
   status: StatusTier;
   standing: StatusStanding;
@@ -193,11 +195,13 @@ export interface CareerApiData {
   level2: CareerLevelApiData;
   level3: CareerLevelApiData;
   level4: CareerLevelApiData;
+  level5: CareerLevelApiData;
   shared: boolean;
   source: Source;
 }
 
-const zeroCareerLevel: CareerLevel = {
+export const zeroCareerLevel: CareerLevel = {
+  exists: false,
   name: "",
   status: StatusTier.Brass,
   standing: 0,
@@ -209,6 +213,7 @@ const zeroCareerLevel: CareerLevel = {
 
 const careerLevelEqual = (careerLevel: CareerLevel, OtherCareerLevel: CareerLevel): boolean => {
   return (
+    careerLevel.exists === OtherCareerLevel.exists &&
     careerLevel.name === OtherCareerLevel.name &&
     careerLevel.status === OtherCareerLevel.status &&
     careerLevel.standing === OtherCareerLevel.standing &&
@@ -219,8 +224,8 @@ const careerLevelEqual = (careerLevel: CareerLevel, OtherCareerLevel: CareerLeve
   );
 };
 
-export function isLevel(x: number): x is 1 | 2 | 3 | 4 {
-  return x === 1 || x === 2 || x === 3 || x === 4;
+export function isLevel(x: number): x is 1 | 2 | 3 | 4 | 5 {
+  return x === 1 || x === 2 || x === 3 || x === 4 || x === 5;
 }
 
 export class Career implements WhProperty {
@@ -235,6 +240,7 @@ export class Career implements WhProperty {
   level2: CareerLevel;
   level3: CareerLevel;
   level4: CareerLevel;
+  level5: CareerLevel;
   shared: boolean;
   source: Source;
 
@@ -250,6 +256,7 @@ export class Career implements WhProperty {
     level2 = copyCareerLevel(zeroCareerLevel),
     level3 = copyCareerLevel(zeroCareerLevel),
     level4 = copyCareerLevel(zeroCareerLevel),
+    level5 = copyCareerLevel(zeroCareerLevel),
     shared = false,
     source = {},
   } = {}) {
@@ -264,6 +271,7 @@ export class Career implements WhProperty {
     this.level2 = level2;
     this.level3 = level3;
     this.level4 = level4;
+    this.level5 = level5;
     this.shared = shared;
     this.source = source;
   }
@@ -281,6 +289,7 @@ export class Career implements WhProperty {
       level2: copyCareerLevel(this.level2),
       level3: copyCareerLevel(this.level3),
       level4: copyCareerLevel(this.level4),
+      level5: copyCareerLevel(this.level5),
       shared: this.shared,
       source: copySource(this.source),
     });
@@ -310,6 +319,10 @@ export class Career implements WhProperty {
     return validShortDescFn(this.level4.name);
   }
 
+  validateLevel5Name(): ValidationStatus {
+    return validShortDescFn(this.level5.name);
+  }
+
   validateLevel1Items(): ValidationStatus {
     return validLongDescFn(this.level1.items);
   }
@@ -326,6 +339,10 @@ export class Career implements WhProperty {
     return validLongDescFn(this.level4.items);
   }
 
+  validateLevel5Items(): ValidationStatus {
+    return validLongDescFn(this.level5.items);
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -335,10 +352,12 @@ export class Career implements WhProperty {
       this.validateLevel2Name().valid &&
       this.validateLevel3Name().valid &&
       this.validateLevel4Name().valid &&
+      this.validateLevel5Name().valid &&
       this.validateLevel1Items().valid &&
       this.validateLevel2Items().valid &&
       this.validateLevel3Items().valid &&
-      this.validateLevel4Items().valid
+      this.validateLevel4Items().valid &&
+      this.validateLevel5Items().valid
     );
   }
 
@@ -357,6 +376,7 @@ export class Career implements WhProperty {
       careerLevelEqual(this.level2, otherCareer.level2) &&
       careerLevelEqual(this.level3, otherCareer.level3) &&
       careerLevelEqual(this.level4, otherCareer.level4) &&
+      careerLevelEqual(this.level5, otherCareer.level5) &&
       this.shared === otherCareer.shared &&
       objectsAreEqual(this.source, otherCareer.source)
     );
@@ -366,7 +386,7 @@ export class Career implements WhProperty {
     updateSource(this.source, update);
   }
 
-  getLevel(level: 1 | 2 | 3 | 4): CareerLevel {
+  getLevel(level: 1 | 2 | 3 | 4 | 5): CareerLevel {
     switch (level) {
       case 1:
         return this.level1;
@@ -376,17 +396,19 @@ export class Career implements WhProperty {
         return this.level3;
       case 4:
         return this.level4;
+      case 5:
+        return this.level5;
       default:
         return zeroCareerLevel;
     }
   }
 
-  updateLevelSkills(level: 1 | 2 | 3 | 4, id: string, selected: boolean): void {
+  updateLevelSkills(level: 1 | 2 | 3 | 4 | 5, id: string, selected: boolean): void {
     const careerLevel = this.getLevel(level);
     updateSet(careerLevel.skills, id, selected);
   }
 
-  updateLevelTalents(level: 1 | 2 | 3 | 4, id: string, selected: boolean): void {
+  updateLevelTalents(level: 1 | 2 | 3 | 4 | 5, id: string, selected: boolean): void {
     const careerLevel = this.getLevel(level);
     updateSet(careerLevel.talents, id, selected);
   }
@@ -397,8 +419,9 @@ export class Career implements WhProperty {
   }
 }
 
-function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
+export function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
   return {
+    exists: careerLevel.exists,
     name: careerLevel.name,
     status: careerLevel.status,
     standing: careerLevel.standing,
@@ -422,6 +445,7 @@ export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Caree
     level2: careerLevelApiDataToCareerLevel(careerApi.object.level2),
     level3: careerLevelApiDataToCareerLevel(careerApi.object.level3),
     level4: careerLevelApiDataToCareerLevel(careerApi.object.level4),
+    level5: careerLevelApiDataToCareerLevel(careerApi.object.level5),
     shared: careerApi.object.shared,
     source: copySource(careerApi.object.source),
   });
@@ -429,6 +453,7 @@ export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Caree
 
 function careerLevelApiDataToCareerLevel(apiData: CareerLevelApiData): CareerLevel {
   return {
+    exists: apiData.exists,
     name: apiData.name,
     status: apiData.status,
     standing: apiData.standing,
@@ -449,6 +474,7 @@ export function modelToApi(career: Career): CareerApiData {
     level2: careerLevelToCareerLevelApiData(career.level2),
     level3: careerLevelToCareerLevelApiData(career.level3),
     level4: careerLevelToCareerLevelApiData(career.level4),
+    level5: careerLevelToCareerLevelApiData(career.level5),
     shared: career.shared,
     source: copySource(career.source),
   };
@@ -456,6 +482,7 @@ export function modelToApi(career: Career): CareerApiData {
 
 function careerLevelToCareerLevelApiData(careerLevel: CareerLevel): CareerLevelApiData {
   return {
+    exists: careerLevel.exists,
     name: careerLevel.name,
     status: careerLevel.status,
     standing: careerLevel.standing,

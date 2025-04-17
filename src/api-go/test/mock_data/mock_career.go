@@ -14,6 +14,7 @@ var career0 = wh.Wh{
 		Class:       wh.CareerClassRanger,
 		Species:     []wh.CareerSpecies{wh.CareerSpeciesDwarf, wh.CareerSpeciesHuman},
 		Level1: &wh.CareerLevel{
+			Exists:     true,
 			Name:       "career 0 level 1",
 			Status:     wh.StatusGold,
 			Standing:   wh.StandingTwo,
@@ -23,6 +24,7 @@ var career0 = wh.Wh{
 			Items:      "some items",
 		},
 		Level2: &wh.CareerLevel{
+			Exists:     true,
 			Name:       "career 0 level 2",
 			Status:     wh.StatusGold,
 			Standing:   wh.StandingFive,
@@ -32,6 +34,7 @@ var career0 = wh.Wh{
 			Items:      "more items",
 		},
 		Level3: &wh.CareerLevel{
+			Exists:     true,
 			Name:       "career 0 level 3",
 			Status:     wh.StatusGold,
 			Standing:   wh.StandingFive,
@@ -41,6 +44,7 @@ var career0 = wh.Wh{
 			Items:      "even more items",
 		},
 		Level4: &wh.CareerLevel{
+			Exists:     true,
 			Name:       "career 0 level 4",
 			Status:     wh.StatusGold,
 			Standing:   wh.StandingFive,

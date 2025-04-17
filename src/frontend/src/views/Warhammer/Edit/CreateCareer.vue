@@ -6,13 +6,16 @@ import {
   Career,
   CareerApi,
   careerClassList,
+  copyCareerLevel,
   printClassName,
   printSpeciesName,
   speciesList,
+  StatusTier,
+  zeroCareerLevel,
 } from "../../../services/wh/career.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useElSize } from "../../../composables/viewSize.ts";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
@@ -70,13 +73,56 @@ const validLevel1Name = computed(() => wh.value.validateLevel1Name());
 const validLevel2Name = computed(() => wh.value.validateLevel2Name());
 const validLevel3Name = computed(() => wh.value.validateLevel3Name());
 const validLevel4Name = computed(() => wh.value.validateLevel4Name());
+const validLevel5Name = computed(() => wh.value.validateLevel5Name());
 const validLevel1Items = computed(() => wh.value.validateLevel1Items());
 const validLevel2Items = computed(() => wh.value.validateLevel2Items());
 const validLevel3Items = computed(() => wh.value.validateLevel3Items());
 const validLevel4Items = computed(() => wh.value.validateLevel4Items());
+const validLevel5Items = computed(() => wh.value.validateLevel5Items());
 
 const speciesOpts = speciesList.map((x) => ({ text: printSpeciesName(x), value: x }));
 const classOpts = careerClassList.map((x) => ({ text: printClassName(x), value: x }));
+
+watch(
+  () => wh.value.level1.exists,
+  (newValue) => {
+    if (!newValue) {
+      wh.value.level1 = copyCareerLevel(zeroCareerLevel);
+    }
+  },
+);
+watch(
+  () => wh.value.level2.exists,
+  (newValue) => {
+    if (!newValue) {
+      wh.value.level2 = copyCareerLevel(zeroCareerLevel);
+    }
+  },
+);
+watch(
+  () => wh.value.level3.exists,
+  (newValue) => {
+    if (!newValue) {
+      wh.value.level3 = copyCareerLevel(zeroCareerLevel);
+    }
+  },
+);
+watch(
+  () => wh.value.level4.exists,
+  (newValue) => {
+    if (!newValue) {
+      wh.value.level4 = copyCareerLevel(zeroCareerLevel);
+    }
+  },
+);
+watch(
+  () => wh.value.level5.exists,
+  (newValue) => {
+    if (!newValue) {
+      wh.value.level5 = copyCareerLevel(zeroCareerLevel);
+    }
+  },
+);
 </script>
 
 <template>
@@ -140,94 +186,123 @@ const classOpts = careerClassList.map((x) => ({ text: printClassName(x), value: 
       </div>
     </div>
   </div>
-  <CareerLevel
-    v-model:name="wh.level1.name"
-    v-model:attributes="wh.level1.attributes"
-    v-model:status="wh.level1.status"
-    v-model:standing="wh.level1.standing"
-    v-model:items="wh.level1.items"
-    level="1"
-    :singleColumn="!isEqualOrGreater"
-    :canEdit="wh.canEdit"
-    :initialSkills="wh.level1.skills"
-    :initialTalents="wh.level1.talents"
-    :whSkillList="skillListUtils.whList.value"
-    :whSkillListLoading="skillListUtils.loading.value"
-    :whTalentList="talentListUtils.whList.value"
-    :whTalentListLoading="talentListUtils.loading.value"
-    :validName="validLevel1Name"
-    :validItems="validLevel1Items"
-    @reloadWhSkillList="skillListUtils.loadWhList"
-    @reloadWhTalentList="talentListUtils.loadWhList"
-    @updateSkill="(e) => wh.updateLevelSkills(1, e.id, e.selected)"
-    @updateTalent="(e) => wh.updateLevelTalents(1, e.id, e.selected)"
-  />
-  <CareerLevel
-    v-model:name="wh.level2.name"
-    v-model:attributes="wh.level2.attributes"
-    v-model:status="wh.level2.status"
-    v-model:standing="wh.level2.standing"
-    v-model:items="wh.level2.items"
-    level="2"
-    :singleColumn="!isEqualOrGreater"
-    :canEdit="wh.canEdit"
-    :initialSkills="wh.level2.skills"
-    :initialTalents="wh.level2.talents"
-    :whSkillList="skillListUtils.whList.value"
-    :whSkillListLoading="skillListUtils.loading.value"
-    :whTalentList="talentListUtils.whList.value"
-    :whTalentListLoading="talentListUtils.loading.value"
-    :validName="validLevel2Name"
-    :validItems="validLevel2Items"
-    @reloadWhSkillList="skillListUtils.loadWhList"
-    @reloadWhTalentList="talentListUtils.loadWhList"
-    @updateSkill="(e) => wh.updateLevelSkills(2, e.id, e.selected)"
-    @updateTalent="(e) => wh.updateLevelTalents(2, e.id, e.selected)"
-  />
-  <CareerLevel
-    v-model:name="wh.level3.name"
-    v-model:attributes="wh.level3.attributes"
-    v-model:status="wh.level3.status"
-    v-model:standing="wh.level3.standing"
-    v-model:items="wh.level3.items"
-    level="3"
-    :singleColumn="!isEqualOrGreater"
-    :canEdit="wh.canEdit"
-    :initialSkills="wh.level3.skills"
-    :initialTalents="wh.level3.talents"
-    :whSkillList="skillListUtils.whList.value"
-    :whSkillListLoading="skillListUtils.loading.value"
-    :whTalentList="talentListUtils.whList.value"
-    :whTalentListLoading="talentListUtils.loading.value"
-    :validName="validLevel3Name"
-    :validItems="validLevel3Items"
-    @reloadWhSkillList="skillListUtils.loadWhList"
-    @reloadWhTalentList="talentListUtils.loadWhList"
-    @updateSkill="(e) => wh.updateLevelSkills(3, e.id, e.selected)"
-    @updateTalent="(e) => wh.updateLevelTalents(3, e.id, e.selected)"
-  />
-  <CareerLevel
-    v-model:name="wh.level4.name"
-    v-model:attributes="wh.level4.attributes"
-    v-model:status="wh.level4.status"
-    v-model:standing="wh.level4.standing"
-    v-model:items="wh.level4.items"
-    level="4"
-    :singleColumn="!isEqualOrGreater"
-    :canEdit="wh.canEdit"
-    :initialSkills="wh.level4.skills"
-    :initialTalents="wh.level4.talents"
-    :whSkillList="skillListUtils.whList.value"
-    :whSkillListLoading="skillListUtils.loading.value"
-    :whTalentList="talentListUtils.whList.value"
-    :whTalentListLoading="talentListUtils.loading.value"
-    :validName="validLevel4Name"
-    :validItems="validLevel4Items"
-    @reloadWhSkillList="skillListUtils.loadWhList"
-    @reloadWhTalentList="talentListUtils.loadWhList"
-    @updateSkill="(e) => wh.updateLevelSkills(4, e.id, e.selected)"
-    @updateTalent="(e) => wh.updateLevelTalents(4, e.id, e.selected)"
-  />
+  <div class="flex flex-col gap-4">
+    <CareerLevel
+      v-model:name="wh.level1.name"
+      v-model:attributes="wh.level1.attributes"
+      v-model:status="wh.level1.status"
+      v-model:standing="wh.level1.standing"
+      v-model:items="wh.level1.items"
+      v-model:exists="wh.level1.exists"
+      level="1"
+      :singleColumn="!isEqualOrGreater"
+      :canEdit="wh.canEdit"
+      :initialSkills="wh.level1.skills"
+      :initialTalents="wh.level1.talents"
+      :whSkillList="skillListUtils.whList.value"
+      :whSkillListLoading="skillListUtils.loading.value"
+      :whTalentList="talentListUtils.whList.value"
+      :whTalentListLoading="talentListUtils.loading.value"
+      :validName="validLevel1Name"
+      :validItems="validLevel1Items"
+      @reloadWhSkillList="skillListUtils.loadWhList"
+      @reloadWhTalentList="talentListUtils.loadWhList"
+      @updateSkill="(e) => wh.updateLevelSkills(1, e.id, e.selected)"
+      @updateTalent="(e) => wh.updateLevelTalents(1, e.id, e.selected)"
+    />
+    <CareerLevel
+      v-model:name="wh.level2.name"
+      v-model:attributes="wh.level2.attributes"
+      v-model:status="wh.level2.status"
+      v-model:standing="wh.level2.standing"
+      v-model:items="wh.level2.items"
+      v-model:exists="wh.level2.exists"
+      level="2"
+      :singleColumn="!isEqualOrGreater"
+      :canEdit="wh.canEdit"
+      :initialSkills="wh.level2.skills"
+      :initialTalents="wh.level2.talents"
+      :whSkillList="skillListUtils.whList.value"
+      :whSkillListLoading="skillListUtils.loading.value"
+      :whTalentList="talentListUtils.whList.value"
+      :whTalentListLoading="talentListUtils.loading.value"
+      :validName="validLevel2Name"
+      :validItems="validLevel2Items"
+      @reloadWhSkillList="skillListUtils.loadWhList"
+      @reloadWhTalentList="talentListUtils.loadWhList"
+      @updateSkill="(e) => wh.updateLevelSkills(2, e.id, e.selected)"
+      @updateTalent="(e) => wh.updateLevelTalents(2, e.id, e.selected)"
+    />
+    <CareerLevel
+      v-model:name="wh.level3.name"
+      v-model:attributes="wh.level3.attributes"
+      v-model:status="wh.level3.status"
+      v-model:standing="wh.level3.standing"
+      v-model:items="wh.level3.items"
+      v-model:exists="wh.level3.exists"
+      level="3"
+      :singleColumn="!isEqualOrGreater"
+      :canEdit="wh.canEdit"
+      :initialSkills="wh.level3.skills"
+      :initialTalents="wh.level3.talents"
+      :whSkillList="skillListUtils.whList.value"
+      :whSkillListLoading="skillListUtils.loading.value"
+      :whTalentList="talentListUtils.whList.value"
+      :whTalentListLoading="talentListUtils.loading.value"
+      :validName="validLevel3Name"
+      :validItems="validLevel3Items"
+      @reloadWhSkillList="skillListUtils.loadWhList"
+      @reloadWhTalentList="talentListUtils.loadWhList"
+      @updateSkill="(e) => wh.updateLevelSkills(3, e.id, e.selected)"
+      @updateTalent="(e) => wh.updateLevelTalents(3, e.id, e.selected)"
+    />
+    <CareerLevel
+      v-model:name="wh.level4.name"
+      v-model:attributes="wh.level4.attributes"
+      v-model:status="wh.level4.status"
+      v-model:standing="wh.level4.standing"
+      v-model:items="wh.level4.items"
+      v-model:exists="wh.level4.exists"
+      level="4"
+      :singleColumn="!isEqualOrGreater"
+      :canEdit="wh.canEdit"
+      :initialSkills="wh.level4.skills"
+      :initialTalents="wh.level4.talents"
+      :whSkillList="skillListUtils.whList.value"
+      :whSkillListLoading="skillListUtils.loading.value"
+      :whTalentList="talentListUtils.whList.value"
+      :whTalentListLoading="talentListUtils.loading.value"
+      :validName="validLevel4Name"
+      :validItems="validLevel4Items"
+      @reloadWhSkillList="skillListUtils.loadWhList"
+      @reloadWhTalentList="talentListUtils.loadWhList"
+      @updateSkill="(e) => wh.updateLevelSkills(4, e.id, e.selected)"
+      @updateTalent="(e) => wh.updateLevelTalents(4, e.id, e.selected)"
+    />
+    <CareerLevel
+      v-model:name="wh.level5.name"
+      v-model:attributes="wh.level5.attributes"
+      v-model:status="wh.level5.status"
+      v-model:standing="wh.level5.standing"
+      v-model:items="wh.level5.items"
+      v-model:exists="wh.level5.exists"
+      level="5"
+      :singleColumn="!isEqualOrGreater"
+      :canEdit="wh.canEdit"
+      :initialSkills="wh.level5.skills"
+      :initialTalents="wh.level5.talents"
+      :whSkillList="skillListUtils.whList.value"
+      :whSkillListLoading="skillListUtils.loading.value"
+      :whTalentList="talentListUtils.whList.value"
+      :whTalentListLoading="talentListUtils.loading.value"
+      :validName="validLevel5Name"
+      :validItems="validLevel5Items"
+      @reloadWhSkillList="skillListUtils.loadWhList"
+      @reloadWhTalentList="talentListUtils.loadWhList"
+      @updateSkill="(e) => wh.updateLevelSkills(5, e.id, e.selected)"
+      @updateTalent="(e) => wh.updateLevelTalents(5, e.id, e.selected)"
+    />
+  </div>
   <div class="flex justify-between text-left gap-4 my-4" :class="[isEqualOrGreater ? '' : 'flex-col']">
     <div class="my-3 flex-1">
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />

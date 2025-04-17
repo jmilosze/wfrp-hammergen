@@ -77,28 +77,30 @@ function updateCareersWithSelect(
 ) {
   careersWithSelect.value = {};
   for (const career of careerList) {
-    for (const i of [1, 2, 3, 4]) {
-      const lvl = career.getLevel(i as 1 | 2 | 3 | 4);
-      careersWithSelect.value[career.id + "_" + i] = {
-        id: career.id + "_" + i,
-        careerId: career.id,
-        name: career.name,
-        description: career.description,
-        careerClass: printClassName(career.careerClass),
-        level: i,
-        levelName: lvl.name,
-        current: false,
-        past: false,
-      };
+    for (const i of [1, 2, 3, 4, 5]) {
+      const lvl = career.getLevel(i as 1 | 2 | 3 | 4 | 5);
+      if (lvl.exists) {
+        careersWithSelect.value[career.id + "_" + i] = {
+          id: career.id + "_" + i,
+          careerId: career.id,
+          name: career.name,
+          description: career.description,
+          careerClass: printClassName(career.careerClass),
+          level: i,
+          levelName: lvl.name,
+          current: false,
+          past: false,
+        };
 
-      if (selectedCurrentCareer && selectedCurrentCareer.id === career.id && selectedCurrentCareer.number === i) {
-        currentId = career.id + "_" + i;
-        careersWithSelect.value[career.id + "_" + i].current = true;
-      }
-      if (selectedPastCareers) {
-        for (const pastCareer of selectedPastCareers) {
-          if (pastCareer.id === career.id && pastCareer.number === i) {
-            careersWithSelect.value[career.id + "_" + i].past = true;
+        if (selectedCurrentCareer && selectedCurrentCareer.id === career.id && selectedCurrentCareer.number === i) {
+          currentId = career.id + "_" + i;
+          careersWithSelect.value[career.id + "_" + i].current = true;
+        }
+        if (selectedPastCareers) {
+          for (const pastCareer of selectedPastCareers) {
+            if (pastCareer.id === career.id && pastCareer.number === i) {
+              careersWithSelect.value[career.id + "_" + i].past = true;
+            }
           }
         }
       }

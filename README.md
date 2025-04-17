@@ -59,7 +59,7 @@ npm run test --prefix ./frontend
 
 ### Backend
 
-Before running tests, you have to start the backend. You can do this by running `make dev-up` command or `make dev-restart` command.
+Before running tests, you have to start the backend. You can do this by goint to `./src` and running `make dev-up` command or `make dev-restart` command.
 
 To run tests with in-memory database, you can use `make test-memdb` command.
 
