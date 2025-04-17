@@ -10,7 +10,6 @@ import {
   printClassName,
   printSpeciesName,
   speciesList,
-  StatusTier,
   zeroCareerLevel,
 } from "../../../services/wh/career.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";

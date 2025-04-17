@@ -16,7 +16,7 @@ import {
 import type { Skill } from "../services/wh/skill.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { ValidationStatus } from "../utils/validation.ts";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useElSize } from "../composables/viewSize.ts";
 
 const name = defineModel<string>("name", { required: true });
