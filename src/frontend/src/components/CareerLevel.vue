@@ -59,7 +59,7 @@ const { isEqualOrGreater } = useElSize(400, skillsTableRef);
 <template>
   <div>
     <div class="flex items-center gap-2">
-      <input v-model="exists" type="checkbox" class="w-5 h-5 accent-neutral-600" />
+      <input v-model="exists" type="checkbox" class="w-5 h-5 accent-neutral-600" :disabled="!canEdit" />
       <div class="text-xl">Level {{ level }}</div>
     </div>
     <Transition
