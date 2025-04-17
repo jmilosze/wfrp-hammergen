@@ -10,7 +10,7 @@ import TextLink from "../../components/TextLink.vue";
     <p class="mb-1">
       Added contents of
       <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-high-elf-player-s-guide" target="_blank">
-        High Elf Player's Guide are nopw available on Hammergen!
+        High Elf Player's Guide
       </TextLink>
     </p>
     <p>Added new careers, spells and trappings.</p>

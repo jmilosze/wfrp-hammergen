@@ -20,9 +20,9 @@ const showAlert = ref(true);
         <p>
           We are happy to announce that contents of
           <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-high-elf-player-s-guide" target="_blank">
-            High Elf Player's Guide are nopw available on Hammergen!
+            High Elf Player's Guide
           </TextLink>
-          This includes all new careers, spells and trappings.
+          are now available on Hammergen! This includes all new careers, spells and trappings.
         </p>
         <p class="mt-3">
           As always if you enjoy Hammergen, please consider supporting us on
