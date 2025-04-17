@@ -6,6 +6,21 @@ import TextLink from "../../components/TextLink.vue";
 <template>
   <Header title="Updates" />
   <div>
+    <div class="text-xl mt-2 mb-1">17 Apr 2025</div>
+    <p class="mb-1">
+      Added contents of
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-high-elf-player-s-guide" target="_blank">
+        High Elf Player's Guide are nopw available on Hammergen!
+      </TextLink>
+    </p>
+    <p>Added new careers, spells and trappings.</p>
+    <p>
+      We added option for Career to have some of up to 5 levels. This was necessary to accommodate Mage career (5
+      levels) and Smith-priest Of Vaul, Loremaster Of Hoeth, and Storm Weaver which have only 3 levels (3rd, 4th, 5th).
+    </p>
+  </div>
+
+  <div>
     <div class="text-xl mt-2 mb-1">30 Dec 2024</div>
     <p class="mb-1">
       Added contents of
