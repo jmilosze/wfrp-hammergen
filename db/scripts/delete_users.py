@@ -2,6 +2,7 @@ import os
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import pytz
+from bson import ObjectId
 
 MONGO_URI = os.environ["MONGO_URI"]
 DB_NAME = os.environ["DB_NAME"]
@@ -28,6 +29,8 @@ print(f"Found {len(inactive_users)} users who haven't authenticated in over 2 ye
 inactive_users_with_no_items = []
 
 for user in inactive_users:
+    if len(inactive_users_with_no_items) > 100:
+        break
     user_id = str(user['_id'])
     owns_items = False
     owned_items = {}
@@ -68,12 +71,8 @@ print("\n--- SUMMARY ---")
 print(f"Total inactive users: {len(inactive_users)}")
 print(f"Inactive users with no items: {len(inactive_users_with_no_items)}")
 
-# Optional: Save the results to a file
-with open('inactive_users_report.txt', 'w') as f:
-    f.write(f"Report generated on {datetime.now()}\n")
-    f.write(f"Total inactive users: {len(inactive_users)}\n")
-    f.write(f"Inactive users with no items: {len(inactive_users_with_no_items)}\n\n")
-
-    f.write("--- USERS WITH NO ITEMS ---\n")
-    for user in inactive_users_with_no_items:
-        f.write(f"ID: {user['user_id']}, Username: {user['username']}, Last Auth: {user['last_auth']}\n")
+# Delete inactive users who don't own any items using bulk delete
+user_ids = [ObjectId(user['user_id']) for user in inactive_users_with_no_items]
+if user_ids:
+    result = user_collection.delete_many({'_id': {'$in': user_ids}})
+    print(f"Bulk deleted {result.deleted_count} inactive users with no items")
