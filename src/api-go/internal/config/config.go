@@ -13,6 +13,7 @@ const appName = "Hammergen"
 
 type Config struct {
 	Server      Server
+	PprofServer PprofServer
 	UserService UserService
 	WhService   WhService
 	Jwt         Jwt
@@ -27,6 +28,11 @@ type Server struct {
 	Port            int           `default:"8080" split_words:"true"`
 	ShutdownTimeout time.Duration `default:"10s" split_words:"true"`
 	RequestTimeout  time.Duration `default:"10s" split_words:"true"`
+}
+
+type PprofServer struct {
+	Enabled bool `default:"false" split_words:"true"`
+	Port    int  `default:"6060" split_words:"true"`
 }
 
 type UserService struct {

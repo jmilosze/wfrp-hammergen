@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
+	_ "net/http/pprof" // Import pprof
 	"os"
 	"os/signal"
 	"syscall"
@@ -22,7 +24,7 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/http"
+	apphttp "github.com/jmilosze/wfrp-hammergen-go/internal/http"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/services"
 	mock "github.com/jmilosze/wfrp-hammergen-go/test/mock_data"
 )
@@ -94,7 +96,23 @@ func run() error {
 	gin.RegisterWhRoutes(router, whService, jwtService)
 	gin.RegisterOtherRoutes(router, jwtService)
 
-	server := http.NewServer(&cfg.Server, router)
+	server := apphttp.NewServer(&cfg.Server, router)
+
+	// Start pprof server if enabled
+	var pprofServer *http.Server
+	if cfg.PprofServer.Enabled {
+		pprofAddr := fmt.Sprintf(":%d", cfg.PprofServer.Port)
+		pprofServer = &http.Server{
+			Addr:    pprofAddr,
+			Handler: http.DefaultServeMux,
+		}
+		go func() {
+			log.Printf("pprof server starting on %s", pprofAddr)
+			if err := pprofServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				log.Printf("pprof server error: %v", err)
+			}
+		}()
+	}
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
@@ -102,6 +120,15 @@ func run() error {
 	server.Start()
 	<-done
 	server.Stop()
+
+	// Shutdown pprof server if it was started
+	if pprofServer != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout)
+		defer cancel()
+		if err := pprofServer.Shutdown(ctx); err != nil {
+			log.Printf("pprof server shutdown error: %v", err)
+		}
+	}
 
 	return nil
 }
