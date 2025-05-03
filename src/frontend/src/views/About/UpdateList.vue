@@ -6,6 +6,17 @@ import TextLink from "../../components/TextLink.vue";
 <template>
   <Header title="Updates" />
   <div>
+    <div class="text-xl mt-2 mb-1">3 May 2025</div>
+    <p class="mb-1">
+      Added contents of
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-lords-of-stone-and-steel" target="_blank">
+        Lords of Stone and Steel
+      </TextLink>
+    </p>
+    <p>Added a few new Creature Traits.</p>
+  </div>
+
+  <div>
     <div class="text-xl mt-2 mb-1">17 Apr 2025</div>
     <p class="mb-1">
       Added contents of
