@@ -413,7 +413,21 @@ const (
 	CharacterSpeciesDwarfKarakNorn           = "0213"
 	CharacterSpeciesDwarfImperial            = "0214"
 	CharacterSpeciesHighElfDefault           = "0300"
+	CharacterSpeciesHighElfCaledor           = "0301"
+	CharacterSpeciesHighElfEllyrion          = "0302"
+	CharacterSpeciesHighElfAvelorn           = "0303"
+	CharacterSpeciesHighElfSaphery           = "0304"
+	CharacterSpeciesHighElfEataine           = "0305"
+	CharacterSpeciesHighElfTiranoc           = "0306"
+	CharacterSpeciesHighElfShadowlands       = "0307"
+	CharacterSpeciesHighElfChrace            = "0308"
+	CharacterSpeciesHighElfCothique          = "0309"
+	CharacterSpeciesHighElfYvresse           = "0310"
+	CharacterSpeciesHighElfSeaElf            = "0311"
 	CharacterSpeciesWoodElfDefault           = "0400"
+	CharacterSpeciesWoodElfEonirCityborn     = "0401"
+	CharacterSpeciesWoodElfEonirForestborn   = "0402"
+	CharacterSpeciesWoodElfEonirYounger      = "0403"
 	CharacterSpeciesGnomeDefault             = "0500"
 	CharacterSpeciesOgreDefault              = "0600"
 )
@@ -463,7 +477,21 @@ func characterSpeciesValues() string {
 		CharacterSpeciesDwarfKarakNorn,
 		CharacterSpeciesDwarfImperial,
 		CharacterSpeciesHighElfDefault,
+		CharacterSpeciesHighElfCaledor,
+		CharacterSpeciesHighElfEllyrion,
+		CharacterSpeciesHighElfAvelorn,
+		CharacterSpeciesHighElfSaphery,
+		CharacterSpeciesHighElfEataine,
+		CharacterSpeciesHighElfTiranoc,
+		CharacterSpeciesHighElfShadowlands,
+		CharacterSpeciesHighElfChrace,
+		CharacterSpeciesHighElfCothique,
+		CharacterSpeciesHighElfYvresse,
+		CharacterSpeciesHighElfSeaElf,
 		CharacterSpeciesWoodElfDefault,
+		CharacterSpeciesWoodElfEonirCityborn,
+		CharacterSpeciesWoodElfEonirForestborn,
+		CharacterSpeciesWoodElfEonirYounger,
 		CharacterSpeciesGnomeDefault,
 		CharacterSpeciesOgreDefault,
 	})
