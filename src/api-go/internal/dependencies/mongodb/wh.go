@@ -135,7 +135,10 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 	}
 
 	cur, err := s.Collections[t].Find(ctx, filter)
-	defer cur.Close(ctx)
+
+	if cur != nil {
+		defer cur.Close(ctx)
+	}
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute find db: %w", err)

@@ -3,11 +3,12 @@ package mock_data
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"golang.org/x/crypto/bcrypt"
-	"log"
+	"log/slog"
 )
 
 func seedUsers(ctx context.Context, db user.UserDbService, bcryptCost int, us []*user.User) {
@@ -17,14 +18,13 @@ func seedUsers(ctx context.Context, db user.UserDbService, bcryptCost int, us []
 		if _, err := db.Create(ctx, newUser); err != nil {
 			var dbErr *domain.DbError
 			if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbConflict {
-				log.Fatal(err)
+				slog.Warn(fmt.Sprintf("seed user %s already exists, skipping", u.Username))
 			}
 		}
 	}
 }
 func InitUser(ctx context.Context, db user.UserDbService, bcryptCost int) {
 	seedUsers(ctx, db, bcryptCost, NewMockUsers())
-
 }
 
 func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, whs []*warhammer.Wh) {
@@ -32,7 +32,7 @@ func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, w
 		if _, err := db.Create(ctx, t, wh.Copy()); err != nil {
 			var dbErr *domain.DbError
 			if errors.As(err, &dbErr) && dbErr.Type != domain.ErrorDbConflict {
-				log.Fatal(dbErr)
+				slog.Warn("seed wh already exists, skipping")
 			}
 		}
 	}
@@ -42,7 +42,7 @@ func seedGenProps(ctx context.Context, db warhammer.WhDbService, genProps *warha
 	if _, err := db.CreateGenerationProps(ctx, genProps); err != nil {
 		var dbErr *domain.DbError
 		if errors.As(err, &dbErr) && dbErr.Type != domain.ErrorDbConflict {
-			log.Fatal(err)
+			slog.Warn(fmt.Sprintf("seed genProps %s already exists, skipping", genProps.Name))
 		}
 	}
 }

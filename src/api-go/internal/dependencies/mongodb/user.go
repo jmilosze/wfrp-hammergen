@@ -127,9 +127,12 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 	}
 
 	cur, err := coll.Find(ctx, query)
-	defer cur.Close(ctx)
+	if cur != nil {
+		defer cur.Close(ctx)
+	}
+
 	if err != nil {
-		return nil, fmt.Errorf("failed to executre find query: %w", err)
+		return nil, fmt.Errorf("failed to execute find query: %w", err)
 	}
 
 	users := make([]*Mongo, 0)
