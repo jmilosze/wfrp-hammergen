@@ -7,12 +7,14 @@
   "project": "",
   "concurrency": "",
   "env_variables": {
-    "ACCESS_TOKEN_EXPIRES_MINUTES": "120",
-    "REFRESH_TOKEN_EXPIRES_DAYS": "1",
-    "FLASK_SECRET_KEY": "",
-    "MONGO_URI": "",
-    "MAILJET_API_KEY": "",
-    "MAILJET_API_SECRET": "",
-    "RECAPTCHA_SECRET": ""
+     "HAMMERGEN_CAPTCHA_SECRET": "",
+     "HAMMERGEN_EMAIL_PRIVATE_API_KEY": "",
+     "HAMMERGEN_EMAIL_PUBLIC_API_KEY": "",
+     "HAMMERGEN_MONGODB_NAME": "",
+     "HAMMERGEN_MONGODB_URI": "",
+     "HAMMERGEN_JWT_HMAC_SECRET": "",
+     "HAMMERGEN_USERSERVICE_FRONT_END_URL": "",
+     "GIN_MODE": "",
+     "HAMMERGEN_LOGGING_GCP_PROJECT_ID": ""
   }
 }

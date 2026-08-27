@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+
 	d "github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type WhDbService struct {
@@ -21,8 +21,8 @@ type WhDbService struct {
 func NewWhDbService(db *DbService, createIndex bool) *WhDbService {
 	collections := map[warhammer.WhType]*mongo.Collection{}
 
-	for _, whType := range warhammer.WhCoreTypes {
-		collections[whType] = db.Client.Database(db.DbName).Collection(string(whType))
+	for _, whCoreType := range warhammer.WhCoreTypes {
+		collections[whCoreType] = db.Client.Database(db.DbName).Collection(string(whCoreType))
 	}
 	collections[warhammer.WhTypeOther] = db.Client.Database(db.DbName).Collection(warhammer.WhTypeOther)
 	if createIndex {
@@ -33,8 +33,10 @@ func NewWhDbService(db *DbService, createIndex bool) *WhDbService {
 }
 
 func createIndexOnField(fieldName string, collection *mongo.Collection) {
-	unique := true
-	mod := mongo.IndexModel{Keys: bson.M{fieldName: 1}, Options: &options.IndexOptions{Unique: &unique}}
+	mod := mongo.IndexModel{
+		Keys:    bson.D{{Key: fieldName, Value: 1}},
+		Options: options.Index().SetUnique(true),
+	}
 	_, err := collection.Indexes().CreateOne(context.TODO(), mod)
 	if err != nil {
 		log.Fatal(err)
@@ -70,7 +72,7 @@ func whToBsonM(w *warhammer.Wh) (bson.M, error) {
 		return nil, fmt.Errorf("failed to unmarshal object: %w", err)
 	}
 
-	id, err := primitive.ObjectIDFromHex(w.Id)
+	id, err := bson.ObjectIDFromHex(w.Id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate object id of %s: %w", w.Id, err)
 	}
@@ -83,7 +85,7 @@ func whToBsonM(w *warhammer.Wh) (bson.M, error) {
 }
 
 func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhammer.Wh, userId string) (*warhammer.Wh, error) {
-	id, err := primitive.ObjectIDFromHex(w.Id)
+	id, err := bson.ObjectIDFromHex(w.Id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate object id of %s: %w", w.Id, err)
 	}
@@ -108,7 +110,7 @@ func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhamm
 }
 
 func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId string, userId string) error {
-	id, err := primitive.ObjectIDFromHex(whId)
+	id, err := bson.ObjectIDFromHex(whId)
 	if err != nil {
 		return fmt.Errorf("failed to calculate object id of %s: %w", whId, err)
 	}
@@ -167,7 +169,7 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 func idsQuery(whIds []string) (bson.M, error) {
 	ids := bson.A{}
 	for _, v := range whIds {
-		id, err := primitive.ObjectIDFromHex(v)
+		id, err := bson.ObjectIDFromHex(v)
 		if err != nil {
 			return nil, fmt.Errorf("failed to calculate object id of %s: %w", v, err)
 		}
@@ -193,7 +195,7 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 }
 
 func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
-	id, ok := whMap["_id"].(primitive.ObjectID)
+	id, ok := whMap["_id"].(bson.ObjectID)
 	if !ok {
 		return nil, fmt.Errorf("invalid object id")
 	}

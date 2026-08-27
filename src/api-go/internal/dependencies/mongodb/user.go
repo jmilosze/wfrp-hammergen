@@ -4,25 +4,25 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"time"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const userCollectionName = "user"
 
 type Mongo struct {
-	Id                 primitive.ObjectID   `bson:"_id"`
-	Username           string               `bson:"username"`
-	PasswordHash       []byte               `bson:"passwordHash"`
-	Admin              bool                 `bson:"admin"`
-	SharedAccountIds   []primitive.ObjectID `bson:"sharedAccountIds"`
-	SharedAccountNames []string             `bson:"sharedAccountNames,omitempty"`
-	CreatedOn          time.Time            `bson:"createdOn"`
-	LastAuthOn         time.Time            `bson:"lastAuthOn"`
+	Id                 bson.ObjectID   `bson:"_id"`
+	Username           string          `bson:"username"`
+	PasswordHash       []byte          `bson:"passwordHash"`
+	Admin              bool            `bson:"admin"`
+	SharedAccountIds   []bson.ObjectID `bson:"sharedAccountIds"`
+	SharedAccountNames []string        `bson:"sharedAccountNames,omitempty"`
+	CreatedOn          time.Time       `bson:"createdOn"`
+	LastAuthOn         time.Time       `bson:"lastAuthOn"`
 }
 
 type UserDbService struct {
@@ -47,7 +47,7 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 
 	var matchStage bson.D
 	if fieldName == "id" {
-		id, err := primitive.ObjectIDFromHex(fieldValue)
+		id, err := bson.ObjectIDFromHex(fieldValue)
 		if err != nil {
 			return nil, fmt.Errorf("failed to calculate object id of %s: %w", fieldValue, err)
 		}
@@ -114,7 +114,7 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 			if fieldName == "username" {
 				queryValueList = append(queryValueList, bson.D{{"username", fieldValue}})
 			} else {
-				id, err := primitive.ObjectIDFromHex(fieldValue)
+				id, err := bson.ObjectIDFromHex(fieldValue)
 				if err != nil {
 					return nil, fmt.Errorf("failed to calculate object id of %s: %w", fieldValue, err)
 				}
@@ -198,7 +198,7 @@ func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts [
 }
 
 func newMongoFromUser(u *user.User, linkedUsers []*Mongo) (*Mongo, error) {
-	id, err := primitive.ObjectIDFromHex(u.Id)
+	id, err := bson.ObjectIDFromHex(u.Id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate object id of %s: %w", u.Id, err)
 	}
@@ -216,13 +216,13 @@ func newMongoFromUser(u *user.User, linkedUsers []*Mongo) (*Mongo, error) {
 	return &userMongo, nil
 }
 
-func usernamesToIds(usernames []string, us []*Mongo) []primitive.ObjectID {
-	userMap := map[string]primitive.ObjectID{}
+func usernamesToIds(usernames []string, us []*Mongo) []bson.ObjectID {
+	userMap := map[string]bson.ObjectID{}
 	for _, u := range us {
 		userMap[u.Username] = u.Id
 	}
 
-	ids := make([]primitive.ObjectID, 0)
+	ids := make([]bson.ObjectID, 0)
 	for _, u := range usernames {
 		if id, ok := userMap[u]; ok {
 			ids = append(ids, id)
@@ -261,8 +261,8 @@ func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *user.User {
 	return &user
 }
 
-func idsToUsernames(ids []primitive.ObjectID, users []*Mongo) []string {
-	userMap := map[primitive.ObjectID]string{}
+func idsToUsernames(ids []bson.ObjectID, users []*Mongo) []string {
+	userMap := map[bson.ObjectID]string{}
 	for _, u := range users {
 		userMap[u.Id] = u.Username
 	}
@@ -305,7 +305,7 @@ func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User
 }
 
 func (s *UserDbService) Delete(ctx context.Context, id string) error {
-	idObject, err := primitive.ObjectIDFromHex(id)
+	idObject, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return fmt.Errorf("failed to calculate object id of %s: %w", id, err)
 	}
