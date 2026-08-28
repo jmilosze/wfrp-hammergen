@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
           cache-dependency-path: "./src/frontend/package-lock.json"
 
@@ -46,7 +46,8 @@ jobs:
           fail-on-cache-miss: true
 
       - name: Run linter
-        run: npm run lint --prefix ./src/frontend
+        working-directory: ./src/frontend
+        run: npm run lint
 
   test:
     name: Run tests
@@ -65,4 +66,5 @@ jobs:
 
       - name: Run tests
         working-directory: ./src/frontend
-        run: npm test
+        run: npm run test -- --run
+

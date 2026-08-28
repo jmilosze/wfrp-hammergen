@@ -1,11 +1,12 @@
-FROM node:18.18.2
+FROM node:24-alpine
 ARG build=build_container_staging
 
 WORKDIR /frontend
 ADD ./frontend /frontend
 RUN rm -rf dist node_modules
-RUN npm install && npm run-script $build && rm -r node_modules
+RUN npm ci && npm run $build && rm -rf node_modules
 
 RUN mkdir /dist
 
-CMD bash -c "cp -r /frontend/dist/* /dist"
+CMD ["sh", "-c", "cp -r /frontend/dist/* /dist"]
+

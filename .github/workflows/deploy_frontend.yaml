@@ -16,12 +16,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup Node 20
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: "./src/frontend/package-lock.json"
+      - name: Install dependencies
+        working-directory: ./src/frontend
+        run: npm ci
       - name: Build dist
-        run: cd ./src/frontend && npm install && npm run-script build_gcp_${{ inputs.environment }} && mv ./dist ..
+        working-directory: ./src/frontend
+        run: |
+          npm run build_gcp_${{ inputs.environment }}
+          mv ./dist ..
       - name: Create .firebaserc file
         run: echo '${{ vars.FIREBASERC }}' > ./src/.firebaserc
       - name: Deploy to Firebase
@@ -33,3 +41,4 @@ jobs:
           target: ${{ inputs.environment }}
           entryPoint: ./src
           projectId: ${{ vars.PROJECT_ID }}
+
