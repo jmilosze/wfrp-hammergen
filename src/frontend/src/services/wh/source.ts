@@ -44,6 +44,8 @@ export const source: Record<string, string> = {
   39: "Deft Steps Light Fingers",
   40: "High Elf Player's Guide",
   41: "Lords of Stone and Steel",
+  42: "Temple of Spite",
+  43: "Sylvania The Cursed County",
 };
 
 export type Source = Record<string, string>;
