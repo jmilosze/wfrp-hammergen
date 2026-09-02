@@ -29,13 +29,17 @@ The Go backend uses a simplified two-layer architecture:
 
 ## Infrastructure & Deployment
 
-- [ ] **Database:** MongoDB (hosted in a GCP cluster for low-latency access)
-- [ ] **Backend Hosting:** GCP Cloud Run
-- [ ] **Frontend Hosting:** Cloudflare Pages
-- [ ] **CI/CD:** GitHub Actions (automated linting, tests, and deployments)
+- [x] **Database:** MongoDB (hosted in a GCP cluster for low-latency access)
+- [x] **Backend Hosting:** GCP Cloud Run
+- [x] **Frontend Hosting:** Cloudflare Pages
+- [x] **CI/CD:** GitHub Actions (automated linting, tests, and deployments)
+
+## UI & UX
+
+- [ ] Redesign UI
 
 ## Cleanup & Refactoring
 
-- [ ] Remove production data older than 4 years
-- [ ] Remove memdb support
+- [x] Remove production data older than 4 years
+- [x] Remove memdb support
 - [ ] Investigate merging service and database layers

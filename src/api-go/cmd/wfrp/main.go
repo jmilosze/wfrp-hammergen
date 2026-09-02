@@ -15,7 +15,6 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/golangjwt"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mailjet"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/memdb"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockcaptcha"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mockemail"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/mongodb"
@@ -69,9 +68,6 @@ func run() error {
 
 		userDbService = mongodb.NewUserDbService(mongoDbService, cfg.MongoDb.CreateUserIndexes)
 		whDbService = mongodb.NewWhDbService(mongoDbService, cfg.MongoDb.CreateWhIndexes)
-	} else if cfg.Services.Db == "memdb" {
-		userDbService = memdb.NewUserDbService()
-		whDbService = memdb.NewWhDbService()
 	} else {
 		return fmt.Errorf("unknown database service: %s", cfg.Services.Db)
 	}

@@ -23,7 +23,7 @@ This will serve the frontend on http://localhost:5173/ and make API requests to 
 
 ### Backend
 
-The backend can be configured to run either with in-memory database or with MongoDB. You have a few options to run it:
+The backend connects to MongoDB. You have a few options to run it:
 
 - Directly compile from source. If you are using this option, you have to manually configure the environment variables. The variables are described in [config.go](src/api-go/internal/config/config.go).
 
@@ -32,9 +32,7 @@ The backend can be configured to run either with in-memory database or with Mong
   go run ./cmd/wfrp/main.go
   ```
 
-- Use docker compose. This will deploy 2 containers: one with in-memory database and one with MongoDB. The in-memory database is served on port 8082, while the MongoDB is served on port 8081. They both come with sample data defined in [mock_data](src/api-go/test/mock_data) directory.
-
-  To use any of them by the frontend, you have to change the `VITE_ROOT_API` environment variable in [.env.development](src/frontend/.env.development).
+- Use docker compose. This will deploy MongoDB and the Go backend container served on port 8081. It comes with sample data defined in the [mock_data](src/api-go/test/mock_data) directory.
 
   ```
   cd ./src
@@ -59,13 +57,7 @@ npm run test --prefix ./frontend
 
 ### Backend
 
-Before running tests, you have to start the backend. You can do this by goint to `./src` and running `make dev-up` command or `make dev-restart` command.
-
-To run tests with in-memory database, you can use `make test-memdb` command.
-
-```
-make test-memdb
-```
+Before running tests, you have to start the backend. You can do this by going to `./src` and running `make dev-up` or `make dev-restart`.
 
 To run tests with MongoDB, you can use `make test` command.
 
