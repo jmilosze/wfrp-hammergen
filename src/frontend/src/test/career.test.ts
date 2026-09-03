@@ -10,7 +10,7 @@ import {
   StatusTier,
 } from "../services/wh/career.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
@@ -77,6 +77,7 @@ const careerApiResponse: ApiResponse<CareerApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Private,
   object: careerApiData,
 };
 

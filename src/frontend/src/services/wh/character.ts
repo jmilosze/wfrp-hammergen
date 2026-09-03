@@ -21,6 +21,7 @@ import {
   validIntegerFn,
   validLongDescFn,
   validShortDescFn,
+  Visibility,
   WhApi,
   WhProperty,
 } from "./common.ts";
@@ -91,12 +92,14 @@ export interface CharacterApiData {
   mutations: string[];
   careerPath: IdNumber[];
   shared: boolean;
+  visibility?: Visibility;
 }
 
 export class Character implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   notes: string;
@@ -170,6 +173,7 @@ export class Character implements WhProperty {
     traits = new Set<string>(),
     mutations = new Set<string>(),
     shared = false,
+    visibility = Visibility.Private,
     source = {},
     modifiers = {
       talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
@@ -180,6 +184,7 @@ export class Character implements WhProperty {
     this.id = id;
     this.ownerId = ownerId;
     this.canEdit = canEdit;
+    this.visibility = visibility;
     this.name = name;
     this.description = description;
     this.notes = notes;
@@ -222,6 +227,7 @@ export class Character implements WhProperty {
     return (
       this.id === otherCharacter.id &&
       this.canEdit === otherCharacter.canEdit &&
+      this.visibility === otherCharacter.visibility &&
       this.name === otherCharacter.name &&
       this.description === otherCharacter.description &&
       this.notes === otherCharacter.notes &&
@@ -266,6 +272,7 @@ export class Character implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       notes: this.notes,
@@ -773,6 +780,7 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     id: characterApi.id,
     ownerId: characterApi.ownerId,
     canEdit: characterApi.canEdit,
+    visibility: characterApi.visibility,
     name: characterApi.object.name,
     description: characterApi.object.description,
     notes: characterApi.object.notes,
@@ -845,6 +853,7 @@ export function modelToApi(character: Character): CharacterApiData {
     traits: [...character.traits],
     mutations: [...character.mutations],
     shared: character.shared,
+    visibility: character.visibility,
   };
 }
 

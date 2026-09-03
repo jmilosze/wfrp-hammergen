@@ -75,6 +75,7 @@ function formatRuneRow(rune: Rune) {
     id: rune.id,
     shared: rune.shared,
     ownerId: rune.ownerId,
+    visibility: rune.visibility,
   };
 }
 
@@ -134,8 +135,20 @@ const userId = auth.getLoggedUserInfo().userId;
       />
     </template>
 
-    <template #tooltip="{ shared, canEdit, ownerId }: { shared: boolean; canEdit: boolean; ownerId: string }">
-      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" />
+    <template
+      #tooltip="{
+        shared,
+        canEdit,
+        ownerId,
+        visibility,
+      }: {
+        shared: boolean;
+        canEdit: boolean;
+        ownerId: string;
+        visibility?: number;
+      }"
+    >
+      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

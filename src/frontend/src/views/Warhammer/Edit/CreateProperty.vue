@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Visibility } from "../../../services/wh/common.ts";
 import Header from "../../../components/PageHeader.vue";
 import {
   ItemProperty,
@@ -32,6 +33,7 @@ const newItemProperty = new ItemProperty({
   canEdit: true,
   id: "create",
   shared: true,
+  visibility: Visibility.Shared,
   source: defaultSource(),
 });
 
@@ -109,7 +111,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Quality/flaw" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Quality/flaw" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

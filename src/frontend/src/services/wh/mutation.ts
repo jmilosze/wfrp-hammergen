@@ -9,7 +9,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
@@ -21,7 +21,7 @@ export const enum MutationType {
 
 export const mutationTypeList = [MutationType.Physical, MutationType.Mental];
 
-export function printMutationType(mutationType: MutationType) {
+export function printMutationType(mutationType: MutationType): string {
   switch (mutationType) {
     case MutationType.Physical:
       return "Physical";
@@ -38,6 +38,7 @@ export interface MutationApiData {
   type: MutationType;
   modifiers: CharacterModifiersData;
   shared: boolean;
+  visibility?: Visibility;
   source: Source;
 }
 
@@ -45,6 +46,7 @@ export class Mutation implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   type: MutationType;
@@ -61,6 +63,7 @@ export class Mutation implements WhProperty {
     type = MutationType.Physical,
     modifiers = new CharacterModifiers(),
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
@@ -71,6 +74,7 @@ export class Mutation implements WhProperty {
     this.type = type;
     this.modifiers = modifiers;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -79,6 +83,7 @@ export class Mutation implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       type: this.type,
@@ -112,6 +117,7 @@ export class Mutation implements WhProperty {
     return (
       this.id === otherMutation.id &&
       this.canEdit === otherMutation.canEdit &&
+      this.visibility === otherMutation.visibility &&
       this.name === otherMutation.name &&
       this.description === otherMutation.description &&
       this.type === otherMutation.type &&
@@ -131,6 +137,7 @@ export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): M
     id: mutationApi.id,
     ownerId: mutationApi.ownerId,
     canEdit: mutationApi.canEdit,
+    visibility: mutationApi.visibility,
     name: mutationApi.object.name,
     description: mutationApi.object.description,
     type: mutationApi.object.type,
@@ -149,6 +156,7 @@ export function modelToApi(mutation: Mutation): MutationApiData {
     type: mutation.type,
     modifiers: mutation.modifiers.toData(),
     shared: mutation.shared,
+    visibility: mutation.visibility,
     source: copySource(mutation.source),
   };
 }

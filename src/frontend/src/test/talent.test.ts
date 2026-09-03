@@ -1,7 +1,7 @@
 import { Talent, TalentApiData, apiResponseToModel, modelToApi } from "../services/wh/talent.ts";
 import { describe, expect, test } from "vitest";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "./commonTests.ts";
 
 import { AttributeName as Att } from "../services/wh/attributes.ts";
@@ -22,6 +22,7 @@ const talentGroupApiData: TalentApiData = {
   isGroup: true,
   group: ["a", "b", "c"],
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -29,6 +30,7 @@ const talentGroupApiResponse: ApiResponse<TalentApiData> = {
   id: "id1",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: talentGroupApiData,
 };
 
@@ -50,6 +52,7 @@ const talentGroup = new Talent({
   isGroup: true,
   group: new Set(["a", "b", "c"]),
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
 
@@ -70,6 +73,7 @@ const talentIndividual = new Talent({
   isGroup: false,
   group: new Set(["a", "b"]),
   shared: true,
+  visibility: Visibility.Shared,
   source: {},
 });
 

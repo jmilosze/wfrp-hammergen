@@ -9,7 +9,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/trait";
@@ -19,6 +19,7 @@ export interface TraitApiData {
   description: string;
   modifiers: CharacterModifiersData;
   shared: boolean;
+  visibility?: Visibility;
   source: Source;
 }
 
@@ -26,6 +27,7 @@ export class Trait implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   modifiers: CharacterModifiers;
@@ -40,6 +42,7 @@ export class Trait implements WhProperty {
     description = "",
     modifiers = new CharacterModifiers(),
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
@@ -49,6 +52,7 @@ export class Trait implements WhProperty {
     this.description = description;
     this.modifiers = modifiers;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -57,6 +61,7 @@ export class Trait implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       modifiers: this.modifiers.copy(),
@@ -84,6 +89,7 @@ export class Trait implements WhProperty {
     if (
       this.id !== otherTrait.id ||
       this.canEdit !== otherTrait.canEdit ||
+      this.visibility !== otherTrait.visibility ||
       this.name !== otherTrait.name ||
       this.description !== otherTrait.description ||
       this.shared !== otherTrait.shared ||
@@ -105,6 +111,7 @@ export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>): Trait {
     id: traitApi.id,
     ownerId: traitApi.ownerId,
     canEdit: traitApi.canEdit,
+    visibility: traitApi.visibility,
     name: traitApi.object.name,
     description: traitApi.object.description,
     modifiers: new CharacterModifiers(traitApi.object.modifiers),
@@ -121,6 +128,7 @@ export function modelToApi(trait: Trait): TraitApiData {
     description: trait.description,
     modifiers: trait.modifiers.toData(),
     shared: trait.shared,
+    visibility: trait.visibility,
     source: copySource(trait.source),
   };
 }

@@ -1,6 +1,6 @@
 import { AttributeName } from "./attributes.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
@@ -197,6 +197,7 @@ export interface CareerApiData {
   level4: CareerLevelApiData;
   level5: CareerLevelApiData;
   shared: boolean;
+  visibility?: Visibility;
   source: Source;
 }
 
@@ -232,6 +233,7 @@ export class Career implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   species: Species[];
@@ -258,6 +260,7 @@ export class Career implements WhProperty {
     level4 = copyCareerLevel(zeroCareerLevel),
     level5 = copyCareerLevel(zeroCareerLevel),
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
@@ -273,6 +276,7 @@ export class Career implements WhProperty {
     this.level4 = level4;
     this.level5 = level5;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -281,6 +285,7 @@ export class Career implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       species: [...this.species],
@@ -368,6 +373,7 @@ export class Career implements WhProperty {
     return (
       this.id === otherCareer.id &&
       this.canEdit === otherCareer.canEdit &&
+      this.visibility === otherCareer.visibility &&
       this.name === otherCareer.name &&
       this.description === otherCareer.description &&
       arraysAreEqualIgnoreOrder(this.species, otherCareer.species) &&
@@ -437,6 +443,7 @@ export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Caree
     id: careerApi.id,
     ownerId: careerApi.ownerId,
     canEdit: careerApi.canEdit,
+    visibility: careerApi.visibility,
     name: careerApi.object.name,
     description: careerApi.object.description,
     careerClass: careerApi.object.class,
@@ -476,6 +483,7 @@ export function modelToApi(career: Career): CareerApiData {
     level4: careerLevelToCareerLevelApiData(career.level4),
     level5: careerLevelToCareerLevelApiData(career.level5),
     shared: career.shared,
+    visibility: career.visibility,
     source: copySource(career.source),
   };
 }

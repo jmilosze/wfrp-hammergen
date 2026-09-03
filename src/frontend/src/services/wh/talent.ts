@@ -9,7 +9,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { AttributeName, Attributes, getAttributeValue, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
@@ -27,6 +27,7 @@ export interface TalentApiData {
   group: string[];
   modifiers: CharacterModifiersData;
   shared: boolean;
+  visibility?: Visibility;
   source: Source;
 }
 
@@ -34,6 +35,7 @@ export class Talent implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   tests: string;
@@ -60,6 +62,7 @@ export class Talent implements WhProperty {
     group = new Set<string>(),
     modifiers = new CharacterModifiers(),
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
@@ -75,6 +78,7 @@ export class Talent implements WhProperty {
     this.group = group;
     this.modifiers = modifiers;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -83,6 +87,7 @@ export class Talent implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       tests: this.tests,
@@ -130,6 +135,7 @@ export class Talent implements WhProperty {
     if (
       this.id !== otherTalent.id ||
       this.canEdit !== otherTalent.canEdit ||
+      this.visibility !== otherTalent.visibility ||
       this.name !== otherTalent.name ||
       this.description !== otherTalent.description ||
       this.isGroup !== otherTalent.isGroup ||
@@ -199,6 +205,7 @@ export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talen
     id: talentApi.id,
     ownerId: talentApi.ownerId,
     canEdit: talentApi.canEdit,
+    visibility: talentApi.visibility,
     name: talentApi.object.name,
     description: talentApi.object.description,
     tests: talentApi.object.tests,
@@ -227,6 +234,7 @@ export function modelToApi(talent: Talent): TalentApiData {
     group: [...talent.group],
     modifiers: talent.modifiers.toData(),
     shared: talent.shared,
+    visibility: talent.visibility,
     source: copySource(talent.source),
   };
 }

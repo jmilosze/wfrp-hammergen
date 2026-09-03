@@ -7,11 +7,30 @@ import (
 	"strings"
 )
 
+type Visibility int
+
+const (
+	VisibilityPrivate Visibility = 0
+	VisibilityShared  Visibility = 1
+	VisibilityPublic  Visibility = 2
+)
+
+func getAllowedVisibilityValues() string {
+	return formatIntegerValues([]Visibility{VisibilityPrivate, VisibilityShared, VisibilityPublic})
+}
+
+func GetWhValidationAliases() map[string]string {
+	return map[string]string{
+		"visibility_valid": fmt.Sprintf("oneof=%s", getAllowedVisibilityValues()),
+	}
+}
+
 type Wh struct {
-	Id      string   `json:"id"`
-	OwnerId string   `json:"ownerId"`
-	CanEdit bool     `json:"canEdit"`
-	Object  WhObject `json:"object"`
+	Id         string     `json:"id"`
+	OwnerId    string     `json:"ownerId"`
+	Visibility Visibility `json:"visibility" validate:"visibility_valid"`
+	CanEdit    bool       `json:"canEdit"`
+	Object     WhObject   `json:"object"`
 }
 
 const (
@@ -53,9 +72,10 @@ func (w *Wh) Copy() *Wh {
 	}
 
 	wh := Wh{
-		Id:      strings.Clone(w.Id),
-		OwnerId: strings.Clone(w.OwnerId),
-		CanEdit: w.CanEdit,
+		Id:         strings.Clone(w.Id),
+		OwnerId:    strings.Clone(w.OwnerId),
+		Visibility: w.Visibility,
+		CanEdit:    w.CanEdit,
 	}
 
 	if w.Object != nil {
@@ -71,9 +91,10 @@ func (w *Wh) CopyHeaders() *Wh {
 	}
 
 	return &Wh{
-		Id:      strings.Clone(w.Id),
-		OwnerId: strings.Clone(w.OwnerId),
-		CanEdit: w.CanEdit,
+		Id:         strings.Clone(w.Id),
+		OwnerId:    strings.Clone(w.OwnerId),
+		Visibility: w.Visibility,
+		CanEdit:    w.CanEdit,
 	}
 }
 

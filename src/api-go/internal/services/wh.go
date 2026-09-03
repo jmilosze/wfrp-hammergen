@@ -5,13 +5,14 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"sync"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/rs/xid"
 	"golang.org/x/exp/slices"
-	"sync"
 )
 
 type WhService struct {
@@ -41,11 +42,11 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
-	if c.Admin {
-		newWh.OwnerId = "admin"
-	} else {
-		newWh.OwnerId = c.Id
+	if !c.Admin && newWh.Visibility == wh.VisibilityPublic {
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("non-admin cannot create public items")}
 	}
+
+	newWh.OwnerId = c.Id
 	newWh.Id = hex.EncodeToString(xid.New().Bytes())
 
 	createdWh, err := s.WhDbService.Create(ctx, t, newWh)
@@ -108,13 +109,22 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
-	ownerId := c.Id
-	if c.Admin {
-		ownerId = "admin"
+	if !c.Admin && newWh.Visibility == wh.VisibilityPublic {
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("non-admin cannot set visibility to public")}
 	}
 
-	newWh.OwnerId = ownerId
-	updatedWh, err := s.WhDbService.Update(ctx, t, newWh, ownerId)
+	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id, "admin"}, c.SharedAccounts, []string{newWh.Id})
+	if err != nil || len(existingWhs) == 0 {
+		return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("wh %s not found", newWh.Id)}
+	}
+	existingWh := existingWhs[0]
+
+	if !canEdit(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorNotFound, Err: fmt.Errorf("unauthorized to update wh %s", newWh.Id)}
+	}
+
+	newWh.OwnerId = existingWh.OwnerId
+	updatedWh, err := s.WhDbService.Update(ctx, t, newWh, existingWh.OwnerId)
 	if err != nil {
 		var dbErr *domain.DbError
 		wErr := fmt.Errorf("failed to update wh: %w", err)
@@ -134,12 +144,17 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 		return &wh.WhError{ErrType: wh.ErrorUnauthorized, WhType: t, Err: fmt.Errorf("unauthorized to delete wh %s", whId)}
 	}
 
-	ownerId := c.Id
-	if c.Admin {
-		ownerId = "admin"
+	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id, "admin"}, c.SharedAccounts, []string{whId})
+	if err != nil || len(existingWhs) == 0 {
+		return &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("wh %s not found", whId)}
+	}
+	existingWh := existingWhs[0]
+
+	if !canEdit(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
+		return nil
 	}
 
-	err := s.WhDbService.Delete(ctx, t, whId, ownerId)
+	err = s.WhDbService.Delete(ctx, t, whId, existingWh.OwnerId)
 	if err != nil {
 		return fmt.Errorf("failed to delete wh: %w", err)
 	}

@@ -1,6 +1,6 @@
 import { Skill, SkillApiData, apiResponseToModel, modelToApi, SkillType } from "../services/wh/skill.ts";
 import { describe, expect, test } from "vitest";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
 
@@ -13,6 +13,7 @@ const skillApiData: SkillApiData = {
   isGroup: true,
   group: ["a", "b"],
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 } as SkillApiData;
 
@@ -20,6 +21,7 @@ const skillApiResponse: ApiResponse<SkillApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: skillApiData,
 };
 
@@ -35,6 +37,7 @@ const skill = new Skill({
   isGroup: true,
   group: new Set(["a", "b"]),
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
 

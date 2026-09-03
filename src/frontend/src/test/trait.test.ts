@@ -1,7 +1,7 @@
 import { Trait, TraitApiData, apiResponseToModel, modelToApi } from "../services/wh/trait.ts";
 import { expect, test } from "vitest";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "./commonTests.ts";
 
 const traitGroupApiData: TraitApiData = {
@@ -14,6 +14,7 @@ const traitGroupApiData: TraitApiData = {
     effects: [],
   },
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -21,6 +22,7 @@ const traitGroupApiResponse: ApiResponse<TraitApiData> = {
   id: "id1",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: traitGroupApiData,
 };
 
@@ -36,6 +38,7 @@ const traitGroup = new Trait({
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
   }),
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
 
@@ -51,6 +54,7 @@ const traitIndividual = new Trait({
     attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   }),
   shared: true,
+  visibility: Visibility.Shared,
   source: {},
 });
 

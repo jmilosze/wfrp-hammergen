@@ -82,11 +82,12 @@ var character0 = wh.Wh{
 }
 
 var character1 = wh.Wh{
-	Id:      "800000000000000000000001",
-	OwnerId: "admin",
+	Id:         "800000000000000000000001",
+	OwnerId:    user0.Id,
+	Visibility: wh.VisibilityPublic,
 	Object: &wh.Character{
 		Name:        "character 1",
-		Description: "owned by admin",
+		Description: fmt.Sprintf("owned by %s", user0.Username),
 		Species:     wh.CharacterSpeciesDwarfAltdorf,
 		Career:      &wh.IdNumber{Id: career0.Id, Number: 1},
 	},

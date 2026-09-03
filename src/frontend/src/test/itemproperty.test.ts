@@ -6,7 +6,7 @@ import {
   modelToApi,
 } from "../services/wh/itemproperty.ts";
 import { ItemType } from "../services/wh/item.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
@@ -16,6 +16,7 @@ const itemPropertyApiData: ItemPropertyApiData = {
   type: ItemPropertyType.Quality,
   applicableTo: [ItemType.Melee, ItemType.Armour],
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -23,6 +24,7 @@ const itemPropertyApiDataResponse: ApiResponse<ItemPropertyApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: itemPropertyApiData,
 };
 
@@ -35,6 +37,7 @@ const itemProperty = new ItemProperty({
   type: ItemPropertyType.Quality,
   applicableTo: [ItemType.Melee, ItemType.Armour],
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
 

@@ -76,6 +76,7 @@ function formatItemPropertyRow(itemProperty: ItemProperty) {
     id: itemProperty.id,
     shared: itemProperty.shared,
     ownerId: itemProperty.ownerId,
+    visibility: itemProperty.visibility,
   };
 }
 
@@ -139,8 +140,20 @@ const userId = auth.getLoggedUserInfo().userId;
       />
     </template>
 
-    <template #tooltip="{ shared, canEdit, ownerId }: { shared: boolean; canEdit: boolean; ownerId: string }">
-      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" />
+    <template
+      #tooltip="{
+        shared,
+        canEdit,
+        ownerId,
+        visibility,
+      }: {
+        shared: boolean;
+        canEdit: boolean;
+        ownerId: string;
+        visibility?: number;
+      }"
+    >
+      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

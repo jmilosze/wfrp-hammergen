@@ -1,5 +1,5 @@
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
@@ -38,6 +38,7 @@ export interface ItemPropertyApiData {
   type: ItemPropertyType;
   applicableTo: ItemType[];
   shared: boolean;
+  visibility?: Visibility;
   source: Source;
 }
 
@@ -45,6 +46,7 @@ export class ItemProperty implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   type: ItemPropertyType;
@@ -61,6 +63,7 @@ export class ItemProperty implements WhProperty {
     type = ItemPropertyType.Quality,
     applicableTo = [] as ItemType[],
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
@@ -71,6 +74,7 @@ export class ItemProperty implements WhProperty {
     this.type = type;
     this.applicableTo = applicableTo;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -79,6 +83,7 @@ export class ItemProperty implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       type: this.type,
@@ -109,6 +114,7 @@ export class ItemProperty implements WhProperty {
     return (
       this.id === otherItemProperty.id &&
       this.canEdit === otherItemProperty.canEdit &&
+      this.visibility === otherItemProperty.visibility &&
       this.name === otherItemProperty.name &&
       this.description === otherItemProperty.description &&
       this.type === otherItemProperty.type &&
@@ -128,6 +134,7 @@ export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiD
     id: itemPropertyApi.id,
     ownerId: itemPropertyApi.ownerId,
     canEdit: itemPropertyApi.canEdit,
+    visibility: itemPropertyApi.visibility,
     name: itemPropertyApi.object.name,
     description: itemPropertyApi.object.description,
     type: itemPropertyApi.object.type,
@@ -146,6 +153,7 @@ export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
     type: itemProperty.type,
     applicableTo: [...itemProperty.applicableTo],
     shared: itemProperty.shared,
+    visibility: itemProperty.visibility,
     source: copySource(itemProperty.source),
   };
 }

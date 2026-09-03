@@ -8,7 +8,7 @@ import {
 } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { AttributeName, attributeNameList } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
@@ -45,6 +45,7 @@ export interface SkillApiData {
   isGroup: boolean;
   group: string[];
   shared: boolean;
+  visibility?: Visibility;
   source: Source;
 }
 
@@ -52,6 +53,7 @@ export class Skill implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   attribute: AttributeName;
@@ -74,6 +76,7 @@ export class Skill implements WhProperty {
     isGroup = false,
     group = new Set<string>(),
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
@@ -87,6 +90,7 @@ export class Skill implements WhProperty {
     this.isGroup = isGroup;
     this.group = group;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -95,6 +99,7 @@ export class Skill implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       attribute: this.attribute,
@@ -126,6 +131,7 @@ export class Skill implements WhProperty {
     return (
       this.id === otherSkill.id &&
       this.canEdit === otherSkill.canEdit &&
+      this.visibility === otherSkill.visibility &&
       this.name === otherSkill.name &&
       this.description === otherSkill.description &&
       this.attribute === otherSkill.attribute &&
@@ -152,6 +158,7 @@ export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>): Skill {
     id: skillApi.id,
     ownerId: skillApi.ownerId,
     canEdit: skillApi.canEdit,
+    visibility: skillApi.visibility,
     name: skillApi.object.name,
     description: skillApi.object.description,
     attribute: skillApi.object.attribute,
@@ -176,6 +183,7 @@ export function modelToApi(skill: Skill): SkillApiData {
     isGroup: skill.isGroup,
     group: [...skill.group],
     shared: skill.shared,
+    visibility: skill.visibility,
     source: copySource(skill.source),
   };
 }

@@ -12,6 +12,7 @@ import {
   speciesList,
   zeroCareerLevel,
 } from "../../../services/wh/career.ts";
+import { Visibility } from "../../../services/wh/common.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed, ref, watch } from "vue";
@@ -39,6 +40,7 @@ const newCareer = new Career({
   canEdit: true,
   id: "create",
   shared: true,
+  visibility: Visibility.Shared,
   source: defaultSource(),
 });
 
@@ -307,7 +309,7 @@ watch(
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Career" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Career" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

@@ -1,5 +1,5 @@
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import { AxiosInstance } from "axios";
@@ -62,6 +62,7 @@ export interface RuneApiData {
   labels: RuneLabel[];
   applicableTo: ItemType[];
   shared: boolean;
+  visibility?: Visibility;
   source: Source;
 }
 
@@ -69,6 +70,7 @@ export class Rune implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   labels: RuneLabel[];
@@ -85,6 +87,7 @@ export class Rune implements WhProperty {
     labels = [] as RuneLabel[],
     applicableTo = [] as ItemType[],
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
@@ -95,6 +98,7 @@ export class Rune implements WhProperty {
     this.labels = labels;
     this.applicableTo = applicableTo;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -103,6 +107,7 @@ export class Rune implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       labels: [...this.labels],
@@ -133,6 +138,7 @@ export class Rune implements WhProperty {
     return (
       this.id === otherRune.id &&
       this.canEdit === otherRune.canEdit &&
+      this.visibility === otherRune.visibility &&
       this.name === otherRune.name &&
       this.description === otherRune.description &&
       this.shared === otherRune.shared &&
@@ -152,6 +158,7 @@ export function apiResponseToModel(itemRuneApi: ApiResponse<RuneApiData>): Rune 
     id: itemRuneApi.id,
     ownerId: itemRuneApi.ownerId,
     canEdit: itemRuneApi.canEdit,
+    visibility: itemRuneApi.visibility,
     name: itemRuneApi.object.name,
     description: itemRuneApi.object.description,
     labels: itemRuneApi.object.labels,
@@ -170,6 +177,7 @@ export function modelToApi(itemRune: Rune): RuneApiData {
     labels: itemRune.labels,
     applicableTo: [...itemRune.applicableTo],
     shared: itemRune.shared,
+    visibility: itemRune.visibility,
     source: copySource(itemRune.source),
   };
 }

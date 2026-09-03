@@ -1,11 +1,16 @@
 import { computed, Ref, ref } from "vue";
 import { useAuth } from "./auth.ts";
-import { WhApi, WhProperty } from "../services/wh/common.ts";
+import { Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
 import { SubmissionState } from "../utils/submission.ts";
 import { copySource } from "../services/wh/source.ts";
 
 export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, elementApi: WhApi<T, TApiData>) {
   const auth = useAuth();
+
+  if (auth.isAdmin.value && whInstance.id === "create") {
+    whInstance.visibility = Visibility.Public;
+    whInstance.shared = true;
+  }
 
   const wh = ref(whInstance.copy()) as Ref<T>;
   const whOriginal = ref(whInstance.copy()) as Ref<T>;

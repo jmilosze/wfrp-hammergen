@@ -1,6 +1,6 @@
 import { apiResponseToModel, modelToApi, Rune, RuneApiData, RuneLabel } from "../services/wh/rune.ts";
 import { ItemType } from "../services/wh/item.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
@@ -10,6 +10,7 @@ const runeApiData: RuneApiData = {
   labels: [RuneLabel.RuneLabelMaster, RuneLabel.RuneLabelProtection],
   applicableTo: [ItemType.Melee, ItemType.Armour],
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -17,6 +18,7 @@ const runeApiDataResponse: ApiResponse<RuneApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: runeApiData,
 };
 
@@ -29,6 +31,7 @@ const rune = new Rune({
   labels: [RuneLabel.RuneLabelMaster, RuneLabel.RuneLabelProtection],
   applicableTo: [ItemType.Melee, ItemType.Armour],
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
 

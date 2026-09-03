@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { Prayer, PrayerApiData, apiResponseToModel, modelToApi } from "../services/wh/prayer.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
 const prayerApiData: PrayerApiData = {
@@ -10,6 +10,7 @@ const prayerApiData: PrayerApiData = {
   duration: "duration",
   description: "desc",
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -17,6 +18,7 @@ const prayerApiResponse: ApiResponse<PrayerApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: prayerApiData,
 };
 
@@ -30,6 +32,7 @@ const prayer = new Prayer({
   duration: "duration",
   description: "desc",
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
 

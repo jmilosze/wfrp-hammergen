@@ -1,9 +1,10 @@
 package validator
 
 import (
+	"log"
+
 	v "github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
-	"log"
 )
 
 func NewValidator() *v.Validate {
@@ -44,6 +45,9 @@ func configure(v *v.Validate) {
 		v.RegisterAlias(k, r)
 	}
 	for k, r := range warhammer.GetRuneValidationAliases() {
+		v.RegisterAlias(k, r)
+	}
+	for k, r := range warhammer.GetWhValidationAliases() {
 		v.RegisterAlias(k, r)
 	}
 

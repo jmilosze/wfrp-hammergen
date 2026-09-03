@@ -15,7 +15,7 @@ import {
   printAttributeName,
   sumAttributes,
 } from "./attributes.ts";
-import { ApiResponse } from "./common.ts";
+import { ApiResponse, Visibility } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
 import { TalentApiData } from "./talent.ts";
 import {
@@ -190,6 +190,7 @@ export interface CharacterFull {
   id: string;
   canEdit: boolean;
   shared: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   notes: string;
@@ -248,6 +249,7 @@ export function newCharacterFull({
   id = "",
   canEdit = false,
   shared = false,
+  visibility = Visibility.Private,
   name = "",
   description = "",
   notes = "",
@@ -298,6 +300,7 @@ export function newCharacterFull({
     id: id,
     canEdit: canEdit,
     shared: shared,
+    visibility: visibility,
     name: name,
     description: description,
     notes: notes,
@@ -409,6 +412,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     id: fullCharacterApi.id,
     canEdit: fullCharacterApi.canEdit,
     shared: fullCharacterApi.object.shared,
+    visibility: fullCharacterApi.visibility ?? Visibility.Private,
     name: fullCharacterApi.object.name,
     description: fullCharacterApi.object.description,
     notes: fullCharacterApi.object.notes,

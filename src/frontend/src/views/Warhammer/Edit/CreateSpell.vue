@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Visibility } from "../../../services/wh/common.ts";
 import Header from "../../../components/PageHeader.vue";
 import { printSpellLabel, printSpellType, Spell, SpellApi, SpellLabel } from "../../../services/wh/spell.ts";
 import { computed, ref } from "vue";
@@ -26,6 +27,7 @@ const newSpell = new Spell({
   canEdit: true,
   id: "create",
   shared: true,
+  visibility: Visibility.Shared,
   source: defaultSource(),
 });
 
@@ -113,7 +115,7 @@ const validCn = computed(() => wh.value.validateCn());
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Spell" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Spell" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

@@ -16,7 +16,7 @@ import {
 } from "../services/wh/item.ts";
 import { ItemPropertyType } from "../services/wh/itemproperty.ts";
 import { expect, test } from "vitest";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { SpellLabel, SpellType } from "../services/wh/spell.ts";
 
 const characterFullApiData: CharacterFullApiData = {
@@ -969,6 +969,7 @@ const characterFullApiResponse: ApiResponse<CharacterFullApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: characterFullApiData,
 };
 
@@ -994,6 +995,7 @@ const characterFull = {
   sin: 1,
   corruption: 2,
   shared: true,
+  visibility: Visibility.Shared,
   canEdit: true,
   currentCareer: {
     id: "id3",

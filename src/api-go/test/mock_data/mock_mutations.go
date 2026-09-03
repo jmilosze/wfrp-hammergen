@@ -6,11 +6,12 @@ import (
 )
 
 var mutation0 = wh.Wh{
-	Id:      "100000000000000000000000",
-	OwnerId: "admin",
+	Id:         "100000000000000000000000",
+	OwnerId:    user0.Id,
+	Visibility: wh.VisibilityPublic,
 	Object: &wh.Mutation{
 		Name:        "mutation 0",
-		Description: "owned by admin",
+		Description: fmt.Sprintf("owned by %s", user0.Username),
 		Type:        wh.MutationTypeMental,
 		Modifiers: &wh.Modifiers{
 			Size:     1,
@@ -38,11 +39,12 @@ var mutation0 = wh.Wh{
 }
 
 var mutation1 = wh.Wh{
-	Id:      "100000000000000000000001",
-	OwnerId: "admin",
+	Id:         "100000000000000000000001",
+	OwnerId:    user0.Id,
+	Visibility: wh.VisibilityPublic,
 	Object: &wh.Mutation{
 		Name:        "mutation 1",
-		Description: "owned by admin shared",
+		Description: fmt.Sprintf("owned by %s shared", user0.Username),
 		Shared:      true,
 	},
 }

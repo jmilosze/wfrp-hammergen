@@ -8,7 +8,7 @@ import {
 import { AxiosInstance } from "axios";
 import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
@@ -19,6 +19,7 @@ export interface PrayerApiData {
   range: string;
   duration: string;
   shared: boolean;
+  visibility?: Visibility;
   target: string;
   source: Source;
 }
@@ -27,6 +28,7 @@ export class Prayer implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   range: string;
@@ -38,24 +40,26 @@ export class Prayer implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
+    canEdit = false,
     name = "",
     range = "",
     target = "",
     duration = "",
     description = "",
-    canEdit = false,
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
+    this.canEdit = canEdit;
     this.name = name;
     this.range = range;
     this.target = target;
     this.duration = duration;
     this.description = description;
-    this.canEdit = canEdit;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -63,12 +67,13 @@ export class Prayer implements WhProperty {
     return new Prayer({
       id: this.id,
       ownerId: this.ownerId,
+      canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       range: this.range,
       target: this.target,
       duration: this.duration,
       description: this.description,
-      canEdit: this.canEdit,
       shared: this.shared,
       source: copySource(this.source),
     });
@@ -112,6 +117,7 @@ export class Prayer implements WhProperty {
     return (
       this.id === otherPrayer.id &&
       this.canEdit === otherPrayer.canEdit &&
+      this.visibility === otherPrayer.visibility &&
       this.name === otherPrayer.name &&
       this.range === otherPrayer.range &&
       this.target === otherPrayer.target &&
@@ -132,6 +138,7 @@ export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Praye
     id: prayerApi.id,
     ownerId: prayerApi.ownerId,
     canEdit: prayerApi.canEdit,
+    visibility: prayerApi.visibility,
     name: prayerApi.object.name,
     range: prayerApi.object.range,
     target: prayerApi.object.target,
@@ -152,6 +159,7 @@ export function modelToApi(prayer: Prayer): PrayerApiData {
     duration: prayer.duration,
     description: prayer.description,
     shared: prayer.shared,
+    visibility: prayer.visibility,
     source: copySource(prayer.source),
   };
 }

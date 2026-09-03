@@ -1,7 +1,7 @@
 import { Mutation, MutationApiData, MutationType, apiResponseToModel, modelToApi } from "../services/wh/mutation.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { describe, expect, test } from "vitest";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "./commonTests.ts";
 
 const mutationApiData: MutationApiData = {
@@ -15,6 +15,7 @@ const mutationApiData: MutationApiData = {
     effects: [],
   },
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -22,6 +23,7 @@ const mutationApiResponse: ApiResponse<MutationApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: mutationApiData,
 };
 
@@ -38,6 +40,7 @@ const mutation = new Mutation({
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
   }),
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
 
