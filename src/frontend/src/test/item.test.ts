@@ -20,7 +20,7 @@ import {
   RangedType,
   WeaponHands,
 } from "../services/wh/item.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
@@ -28,6 +28,7 @@ const itemApiData: ItemApiData = {
   name: "item",
   description: "desc",
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
   price: 12,
   enc: 2,
@@ -68,6 +69,7 @@ const itemApiResponse: ApiResponse<ItemApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: itemApiData,
 };
 
@@ -78,6 +80,7 @@ const item = new Item({
   name: "item",
   description: "desc",
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
   price: 12,
   enc: 2,

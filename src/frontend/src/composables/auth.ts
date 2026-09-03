@@ -1,4 +1,4 @@
-import { getUserInfo, isUserLoggedIn, loginUser, logoutUser, setUserInfo } from "../services/auth.ts";
+import { getUserInfo, isUserAdmin, isUserLoggedIn, loginUser, logoutUser, setUserInfo } from "../services/auth.ts";
 import { isAxiosError } from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -11,8 +11,12 @@ export class UnauthorizedError extends Error {
 }
 
 const loggedIn = ref(isUserLoggedIn());
+const isAdmin = ref(isUserAdmin());
 
 export function useAuth() {
+  loggedIn.value = isUserLoggedIn();
+  isAdmin.value = isUserAdmin();
+
   const router = useRouter();
   function callAndLogoutIfUnauthorized<T>(
     apiCall: (...args: any[]) => Promise<T>,
@@ -25,6 +29,7 @@ export function useAuth() {
         if (isAxiosError(error) && error.response && error.response?.status === 401) {
           logoutUser();
           loggedIn.value = false;
+          isAdmin.value = false;
 
           if (redirectToLogin && router.currentRoute.value.name !== "login") {
             await router.push({ name: "login" });
@@ -40,6 +45,7 @@ export function useAuth() {
   async function logout(): Promise<void> {
     logoutUser();
     loggedIn.value = false;
+    isAdmin.value = false;
 
     if (router.currentRoute.value.name !== "home") {
       await router.push({ name: "home" });
@@ -49,13 +55,14 @@ export function useAuth() {
   async function login(username: string, password: string): Promise<void> {
     await loginUser(username, password);
     loggedIn.value = true;
+    isAdmin.value = isUserAdmin();
 
     if (router.currentRoute.value.name !== "home") {
       await router.push({ name: "home" });
     }
   }
 
-  function getLoggedUserInfo(): { username: string; userId: string } {
+  function getLoggedUserInfo(): { username: string; userId: string; admin: boolean } {
     return getUserInfo();
   }
 
@@ -63,5 +70,5 @@ export function useAuth() {
     return setUserInfo(username);
   }
 
-  return { loggedIn, login, logout, callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo };
+  return { loggedIn, isAdmin, login, logout, callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo };
 }

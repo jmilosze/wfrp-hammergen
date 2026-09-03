@@ -37,6 +37,20 @@ func TestCreateWhUnauthenticated(t *testing.T) {
 		status_code_is_401()
 }
 
+func TestCreateWhInvalidVisibility(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_user().and().
+		user_is_authenticated()
+
+	when.
+		wh_property_with_invalid_visibility_is_created()
+
+	then.
+		status_code_is_400()
+}
+
 func TestCreateWhByAdmin(t *testing.T) {
 	given, when, then := whTest(t, wfrpUrl, parallel)
 

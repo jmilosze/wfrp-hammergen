@@ -3,10 +3,17 @@ import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts
 import { Attributes } from "./attributes.ts";
 import { isKey } from "../../utils/object.ts";
 
+export enum Visibility {
+  Private = 0,
+  Shared = 1,
+  Public = 2,
+}
+
 export interface WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   shared: boolean;
@@ -32,6 +39,7 @@ export interface ApiResponse<WhApiData> {
   id: string;
   canEdit: boolean;
   ownerId: string;
+  visibility?: Visibility;
   object: WhApiData;
 }
 

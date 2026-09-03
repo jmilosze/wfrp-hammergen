@@ -16,6 +16,7 @@ import {
   validIntegerFn,
   validLongDescFn,
   validShortDescFn,
+  Visibility,
   WhApi,
   WhProperty,
 } from "./common.ts";
@@ -447,6 +448,7 @@ export interface ItemApiData {
   container: ContainerType;
   other: OtherType;
   shared: boolean;
+  visibility?: Visibility;
   source: Source;
 }
 
@@ -454,6 +456,7 @@ export class Item implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   price: number;
@@ -505,6 +508,7 @@ export class Item implements WhProperty {
     container = { capacity: 1, carryType: CarryType.NotCarriableAndNotWearable } as ContainerType,
     other = { carryType: CarryType.NotCarriableAndNotWearable } as OtherType,
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
@@ -526,6 +530,7 @@ export class Item implements WhProperty {
     this.container = container;
     this.other = other;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -534,6 +539,7 @@ export class Item implements WhProperty {
       id: this.id,
       ownerId: this.ownerId,
       canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       description: this.description,
       price: this.price,
@@ -670,6 +676,7 @@ export class Item implements WhProperty {
     if (
       this.id !== otherItem.id ||
       this.canEdit !== otherItem.canEdit ||
+      this.visibility !== otherItem.visibility ||
       this.name !== otherItem.name ||
       this.description !== otherItem.description ||
       this.price !== otherItem.price ||
@@ -817,6 +824,7 @@ export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
     id: itemApi.id,
     ownerId: itemApi.ownerId,
     canEdit: itemApi.canEdit,
+    visibility: itemApi.visibility,
     name: itemApi.object.name,
     description: itemApi.object.description,
     price: itemApi.object.price,
@@ -879,6 +887,7 @@ export function modelToApi(item: Item): ItemApiData {
     container: { capacity: item.container.capacity, carryType: item.container.carryType },
     other: { carryType: item.other.carryType },
     shared: item.shared,
+    visibility: item.visibility,
     source: copySource(item.source),
   };
 }

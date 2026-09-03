@@ -6,11 +6,12 @@ import (
 )
 
 var property0 = wh.Wh{
-	Id:      "300000000000000000000000",
-	OwnerId: "admin",
+	Id:         "300000000000000000000000",
+	OwnerId:    user0.Id,
+	Visibility: wh.VisibilityPublic,
 	Object: &wh.Property{
 		Name:         "property 0",
-		Description:  "owned by admin",
+		Description:  fmt.Sprintf("owned by %s", user0.Username),
 		Type:         0,
 		ApplicableTo: []wh.ItemType{0, 1, 2},
 		Shared:       false,

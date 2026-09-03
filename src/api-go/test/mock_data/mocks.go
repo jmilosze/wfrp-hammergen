@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"golang.org/x/crypto/bcrypt"
-	"log/slog"
 )
 
 func seedUsers(ctx context.Context, db user.UserDbService, bcryptCost int, us []*user.User) {

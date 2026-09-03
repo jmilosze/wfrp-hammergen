@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { apiResponseToModel, modelToApi, Spell, SpellApiData, SpellLabel, SpellType } from "../services/wh/spell.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
 const spellApiData: SpellApiData = {
@@ -12,6 +12,7 @@ const spellApiData: SpellApiData = {
   description: "desc",
   classification: { type: SpellType.SpellTypeLore, labels: [SpellLabel.SpellLabelRuin, SpellLabel.SpellLabelStealth] },
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -19,6 +20,7 @@ const spellApiResponse: ApiResponse<SpellApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: spellApiData,
 };
 
@@ -37,6 +39,7 @@ const spell = new Spell({
     labels: new Set([SpellLabel.SpellLabelRuin, SpellLabel.SpellLabelStealth]),
   },
   shared: true,
+  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
 

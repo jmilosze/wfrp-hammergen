@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Visibility } from "../../../services/wh/common.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
@@ -26,6 +27,7 @@ const newMutation = new Mutation({
   canEdit: true,
   id: "create",
   shared: true,
+  visibility: Visibility.Shared,
   source: defaultSource(),
 });
 
@@ -94,7 +96,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" propertyName="Mutation" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Mutation" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

@@ -9,6 +9,7 @@ db/hammergen_*
 __pycache__
 .firebase
 __*
+.current_work.md
 
 src/frontend/dist/
 dist/

@@ -6,11 +6,12 @@ import (
 )
 
 var prayer0 = wh.Wh{
-	Id:      "900000000000000000000000",
-	OwnerId: "admin",
+	Id:         "900000000000000000000000",
+	OwnerId:    user0.Id,
+	Visibility: wh.VisibilityPublic,
 	Object: &wh.Prayer{
 		Name:        "prayer 0",
-		Description: "owned by admin",
+		Description: fmt.Sprintf("owned by %s", user0.Username),
 		Range:       "10",
 		Target:      "2",
 		Duration:    "5",

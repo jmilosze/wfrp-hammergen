@@ -6,11 +6,12 @@ import (
 )
 
 var rune0 = wh.Wh{
-	Id:      "rune00000000000000000000",
-	OwnerId: "admin",
+	Id:         "rune00000000000000000000",
+	OwnerId:    user0.Id,
+	Visibility: wh.VisibilityPublic,
 	Object: &wh.Rune{
 		Name:         "rune 0",
-		Description:  "owned by admin",
+		Description:  fmt.Sprintf("owned by %s", user0.Username),
 		Labels:       []wh.RuneLabel{wh.RuneLabelArmour, wh.RuneLabelMaster},
 		ApplicableTo: []wh.ItemType{0, 1, 2},
 		Shared:       false,

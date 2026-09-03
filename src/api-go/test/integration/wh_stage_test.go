@@ -41,10 +41,11 @@ type whTestStage struct {
 }
 
 type whProperty struct {
-	Id      string              `json:"id"`
-	OwnerId string              `json:"ownerId"`
-	CanEdit bool                `json:"canEdit"`
-	Object  *warhammer.Property `json:"object"`
+	Id         string              `json:"id"`
+	OwnerId    string              `json:"ownerId"`
+	Visibility int                 `json:"visibility"`
+	CanEdit    bool                `json:"canEdit"`
+	Object     *warhammer.Property `json:"object"`
 }
 
 type whResponseFull struct {
@@ -88,6 +89,11 @@ func (s *whTestStage) status_code_is_200() *whTestStage {
 	return s
 }
 
+func (s *whTestStage) status_code_is_400() *whTestStage {
+	require.Equal(s.t, http.StatusBadRequest, s.responseCode)
+	return s
+}
+
 func (s *whTestStage) status_code_is_401() *whTestStage {
 	require.Equal(s.t, http.StatusUnauthorized, s.responseCode)
 	return s
@@ -100,6 +106,30 @@ func (s *whTestStage) status_code_is_404() *whTestStage {
 
 func (s *whTestStage) status_code_is_500() *whTestStage {
 	require.Equal(s.t, http.StatusInternalServerError, s.responseCode)
+	return s
+}
+
+func (s *whTestStage) wh_property_with_invalid_visibility_is_created() *whTestStage {
+	payload := map[string]any{
+		"name":        "invalid visibility property",
+		"description": "test",
+		"type":        0,
+		"shared":      false,
+		"visibility":  99,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	require.NoError(s.t, err)
+
+	req, err := http.NewRequest("POST", s.testUrl+"/api/wh/property", bytes.NewReader(payloadBytes))
+	require.NoError(s.t, err)
+	if s.authorizationHeader != "" {
+		req.Header.Set("Authorization", s.authorizationHeader)
+	}
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+	s.responseCode = resp.StatusCode
+	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
 	return s
 }
 
@@ -266,7 +296,7 @@ func (s *whTestStage) owner_is_user_and_can_edit() *whTestStage {
 }
 
 func (s *whTestStage) owner_is_admin_literal_and_can_edit() *whTestStage {
-	require.Equal(s.t, "admin", s.responseWh.OwnerId)
+	require.Equal(s.t, s.adminUser.Id, s.responseWh.OwnerId)
 	require.Equal(s.t, true, s.responseWh.CanEdit)
 
 	return s
@@ -294,7 +324,7 @@ func (s *whTestStage) getWh(url string) {
 }
 
 func (s *whTestStage) owner_is_admin_and_can_not_edit() *whTestStage {
-	require.Equal(s.t, "admin", s.responseWh.OwnerId)
+	require.Equal(s.t, s.adminUser.Id, s.responseWh.OwnerId)
 	require.Equal(s.t, false, s.responseWh.CanEdit)
 
 	return s
@@ -396,7 +426,7 @@ func (s *whTestStage) response_body_does_not_contain_new_wh() *whTestStage {
 }
 
 func (s *whTestStage) new_wh_in_list_owner_is_admin_and_can_not_edit() *whTestStage {
-	require.Equal(s.t, "admin", s.responseWhMap[s.newWhPropertyId].OwnerId)
+	require.Equal(s.t, s.adminUser.Id, s.responseWhMap[s.newWhPropertyId].OwnerId)
 	require.Equal(s.t, false, s.responseWhMap[s.newWhPropertyId].CanEdit)
 
 	return s

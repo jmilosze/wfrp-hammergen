@@ -80,6 +80,7 @@ func whToBsonM(w *warhammer.Wh) (bson.M, error) {
 	delete(whMap, "canedit")
 	delete(whMap, "id")
 	whMap["_id"] = id
+	whMap["visibility"] = int(w.Visibility)
 
 	return whMap, err
 }
@@ -179,19 +180,37 @@ func idsQuery(whIds []string) (bson.M, error) {
 }
 
 func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
-	owners := bson.A{}
-	for _, v := range userIds {
-		owners = append(owners, bson.M{"ownerid": v})
+	allowedConditions := bson.A{
+		bson.M{"visibility": int(warhammer.VisibilityPublic)},
+		bson.M{"ownerid": "admin"},
 	}
 
-	if sharedUserIds != nil && len(sharedUserIds) > 0 {
+	for _, v := range userIds {
+		if v != "admin" {
+			allowedConditions = append(allowedConditions, bson.M{"ownerid": v})
+		}
+	}
+
+	if len(sharedUserIds) > 0 {
 		sharedOwners := bson.A{}
 		for _, v := range sharedUserIds {
 			sharedOwners = append(sharedOwners, bson.M{"ownerid": v})
 		}
-		owners = append(owners, bson.M{"$and": bson.A{bson.M{"object.shared": true}, bson.M{"$or": sharedOwners}}})
+		sharedFilter := bson.M{
+			"$and": bson.A{
+				bson.M{"$or": sharedOwners},
+				bson.M{
+					"$or": bson.A{
+						bson.M{"visibility": int(warhammer.VisibilityShared)},
+						bson.M{"object.shared": true},
+					},
+				},
+			},
+		}
+		allowedConditions = append(allowedConditions, sharedFilter)
 	}
-	return bson.M{"$or": owners}
+
+	return bson.M{"$or": allowedConditions}
 }
 
 func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
@@ -205,12 +224,28 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 		return nil, fmt.Errorf("invalid owner id")
 	}
 
+	var visibility warhammer.Visibility
+	switch v := whMap["visibility"].(type) {
+	case int32:
+		visibility = warhammer.Visibility(v)
+	case int64:
+		visibility = warhammer.Visibility(v)
+	case int:
+		visibility = warhammer.Visibility(v)
+	default:
+		if ownerId == "admin" {
+			visibility = warhammer.VisibilityPublic
+		} else {
+			visibility = warhammer.VisibilityPrivate
+		}
+	}
+
 	bsonRaw, err := bson.Marshal(whMap["object"])
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling object")
 	}
 
-	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, CanEdit: false}
+	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, Visibility: visibility, CanEdit: false}
 	wh.Object = warhammer.NewWhObject(t)
 
 	if err = bson.Unmarshal(bsonRaw, wh.Object); err != nil {

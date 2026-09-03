@@ -71,11 +71,12 @@ var career1 = wh.Wh{
 }
 
 var career2 = wh.Wh{
-	Id:      "700000000000000000000002",
-	OwnerId: "admin",
+	Id:         "700000000000000000000002",
+	OwnerId:    user0.Id,
+	Visibility: wh.VisibilityPublic,
 	Object: &wh.Career{
 		Name:        "career 2",
-		Description: fmt.Sprintf("owned by admin"),
+		Description: fmt.Sprintf("owned by %s", user0.Username),
 	},
 }
 

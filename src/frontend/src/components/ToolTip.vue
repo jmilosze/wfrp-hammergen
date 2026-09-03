@@ -1,17 +1,38 @@
 <script setup lang="ts">
-import { addSpaces } from "../utils/string";
 import { computed } from "vue";
 import { Icon } from "@iconify/vue";
+import { Visibility } from "../services/wh/common";
+import { addSpaces } from "../utils/string";
 
-const props = defineProps<{ shared: boolean; canEdit: boolean; ownerId: string }>();
+const props = defineProps<{
+  canEdit: boolean;
+  visibility?: Visibility;
+  shared?: boolean;
+  ownerId?: string;
+}>();
 
-const tileAndContent = computed(() => getSharedItemTooltip(props.shared, props.canEdit, props.ownerId));
+const tileAndContent = computed(() => {
+  let vis = props.visibility;
+  if (vis === undefined) {
+    if (props.ownerId === "admin") {
+      vis = Visibility.Public;
+    } else if (props.shared) {
+      vis = Visibility.Shared;
+    } else {
+      vis = Visibility.Private;
+    }
+  }
+  return getSharedItemTooltip(props.canEdit, vis);
+});
 
-function getSharedItemTooltip(shared: boolean, canEdit: boolean, ownerId: string): { tile: string; content: string } {
+function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): { tile: string; content: string } {
   let sharedTile;
   let sharedTooltip;
 
-  if (shared) {
+  if (visibility === Visibility.Public) {
+    sharedTile = "material-symbols:globe";
+    sharedTooltip = "This item is owned by Hammergen";
+  } else if (visibility === Visibility.Shared) {
     if (canEdit) {
       sharedTile = "material-symbols:backup";
       sharedTooltip = "This item is shared with linked accounts";
@@ -24,10 +45,6 @@ function getSharedItemTooltip(shared: boolean, canEdit: boolean, ownerId: string
     sharedTooltip = "This item is not shared";
   }
 
-  if (ownerId == "admin") {
-    sharedTile = "material-symbols:globe";
-    sharedTooltip = "This item is owned by Hammergen";
-  }
   return { tile: sharedTile, content: sharedTooltip };
 }
 </script>

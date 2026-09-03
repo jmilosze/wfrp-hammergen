@@ -1,7 +1,7 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
 import { getWoundsFormula, printSpeciesWithRegion, Size, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
-import { ApiResponse } from "../services/wh/common.ts";
+import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 import { IdNumber } from "../utils/idNumber.ts";
@@ -59,12 +59,14 @@ const characterApiData: CharacterApiData = {
     { id: "careerId2", number: 2 },
   ],
   shared: true,
+  visibility: Visibility.Shared,
 };
 
 const characterApiResponse: ApiResponse<CharacterApiData> = {
   id: "id",
   canEdit: true,
   ownerId: "owner",
+  visibility: Visibility.Shared,
   object: characterApiData,
 };
 
@@ -122,6 +124,7 @@ const character = new Character({
     { id: "careerId2", number: 2 },
   ],
   shared: true,
+  visibility: Visibility.Shared,
 });
 
 test("apiResponseToModel returns expected item", () => {

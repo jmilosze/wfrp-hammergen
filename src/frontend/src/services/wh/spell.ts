@@ -8,7 +8,7 @@ import {
 import { AxiosInstance } from "axios";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
 
@@ -325,6 +325,7 @@ export interface SpellApiData {
   range: string;
   duration: string;
   shared: boolean;
+  visibility?: Visibility;
   target: string;
   classification: SpellClassificationData;
   source: Source;
@@ -339,6 +340,7 @@ export class Spell implements WhProperty {
   id: string;
   ownerId: string;
   canEdit: boolean;
+  visibility: Visibility;
   name: string;
   description: string;
   cn: number;
@@ -352,6 +354,7 @@ export class Spell implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
+    canEdit = false,
     name = "",
     cn = 0,
     range = "",
@@ -359,12 +362,13 @@ export class Spell implements WhProperty {
     duration = "",
     description = "",
     classification = { type: SpellType.SpellTypeOther, labels: new Set() } as SpellClassification,
-    canEdit = false,
     shared = false,
+    visibility = Visibility.Private,
     source = {},
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
+    this.canEdit = canEdit;
     this.name = name;
     this.cn = cn;
     this.range = range;
@@ -372,8 +376,8 @@ export class Spell implements WhProperty {
     this.duration = duration;
     this.description = description;
     this.classification = classification;
-    this.canEdit = canEdit;
     this.shared = shared;
+    this.visibility = visibility;
     this.source = source;
   }
 
@@ -381,6 +385,8 @@ export class Spell implements WhProperty {
     return new Spell({
       id: this.id,
       ownerId: this.ownerId,
+      canEdit: this.canEdit,
+      visibility: this.visibility,
       name: this.name,
       cn: this.cn,
       range: this.range,
@@ -388,7 +394,6 @@ export class Spell implements WhProperty {
       duration: this.duration,
       description: this.description,
       classification: { type: this.classification.type, labels: new Set(this.classification.labels) },
-      canEdit: this.canEdit,
       shared: this.shared,
       source: copySource(this.source),
     });
@@ -440,6 +445,7 @@ export class Spell implements WhProperty {
     return (
       this.id === otherSpell.id &&
       this.canEdit === otherSpell.canEdit &&
+      this.visibility === otherSpell.visibility &&
       this.name === otherSpell.name &&
       this.cn === otherSpell.cn &&
       this.range === otherSpell.range &&
@@ -463,6 +469,7 @@ export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
     id: spellApi.id,
     ownerId: spellApi.ownerId,
     canEdit: spellApi.canEdit,
+    visibility: spellApi.visibility,
     name: spellApi.object.name,
     cn: spellApi.object.cn,
     range: spellApi.object.range,
@@ -490,6 +497,7 @@ export function modelToApi(spell: Spell): SpellApiData {
     description: spell.description,
     classification: { type: spell.classification.type, labels: [...spell.classification.labels] },
     shared: spell.shared,
+    visibility: spell.visibility,
     source: copySource(spell.source),
   };
 }

@@ -16,7 +16,7 @@ func GetCommonValidationAliases() map[string]string {
 }
 
 func formatIntegerValues[T ~int](list []T) string {
-	values := make([]string, len(list))
+	values := make([]string, 0, len(list))
 	for _, v := range list {
 		values = append(values, strconv.Itoa(int(v)))
 	}
@@ -24,7 +24,7 @@ func formatIntegerValues[T ~int](list []T) string {
 }
 
 func formatStringValues[T ~string](list []T) string {
-	values := make([]string, len(list))
+	values := make([]string, 0, len(list))
 	for _, v := range list {
 		values = append(values, string(v))
 	}
