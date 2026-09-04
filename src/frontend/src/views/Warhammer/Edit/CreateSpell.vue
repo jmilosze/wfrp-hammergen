@@ -26,7 +26,6 @@ const newSpell = new Spell({
   name: "New spell",
   canEdit: true,
   id: "create",
-  shared: true,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -115,7 +114,7 @@ const validCn = computed(() => wh.value.validateCn());
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Spell" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

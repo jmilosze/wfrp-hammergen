@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import HintModal from "./HintModal.vue";
 import TextLink from "./TextLink.vue";
 import { Visibility } from "../services/wh/common";
 import { useAuth } from "../composables/auth";
 
-const shared = defineModel<boolean>();
-const visibility = defineModel<Visibility>("visibility");
+const visibility = defineModel<Visibility>({ default: Visibility.Private });
 
 defineProps<{
   propertyName: string;
@@ -16,25 +15,9 @@ defineProps<{
 const auth = useAuth();
 const isAdmin = computed(() => auth.isAdmin.value);
 
-watch(
-  [isAdmin, visibility],
-  () => {
-    if (isAdmin.value) {
-      shared.value = true;
-    }
-  },
-  { immediate: true },
-);
-
 function onCheckboxChange(event: Event) {
   const isChecked = (event.target as HTMLInputElement).checked;
-  shared.value = isChecked;
   visibility.value = isChecked ? Visibility.Shared : Visibility.Private;
-}
-
-function onAdminVisibilityChange(val: Visibility) {
-  visibility.value = val;
-  shared.value = true;
 }
 </script>
 
@@ -52,7 +35,7 @@ function onAdminVisibilityChange(val: Visibility) {
             :checked="visibility === Visibility.Private"
             :disabled="disabled ? disabled : false"
             class="mr-2 w-5 h-5 accent-neutral-600"
-            @change="onAdminVisibilityChange(Visibility.Private)"
+            @change="visibility = Visibility.Private"
           />
           <span>Private</span>
         </label>
@@ -64,7 +47,7 @@ function onAdminVisibilityChange(val: Visibility) {
             :checked="visibility === Visibility.Shared"
             :disabled="disabled ? disabled : false"
             class="mr-2 w-5 h-5 accent-neutral-600"
-            @change="onAdminVisibilityChange(Visibility.Shared)"
+            @change="visibility = Visibility.Shared"
           />
           <span>Shared</span>
         </label>
@@ -76,7 +59,7 @@ function onAdminVisibilityChange(val: Visibility) {
             :checked="visibility === Visibility.Public"
             :disabled="disabled ? disabled : false"
             class="mr-2 w-5 h-5 accent-neutral-600"
-            @change="onAdminVisibilityChange(Visibility.Public)"
+            @change="visibility = Visibility.Public"
           />
           <span>Public</span>
         </label>
@@ -96,7 +79,7 @@ function onAdminVisibilityChange(val: Visibility) {
       </div>
       <div class="flex items-center">
         <input
-          :checked="shared || visibility === Visibility.Shared || visibility === Visibility.Public"
+          :checked="visibility === Visibility.Shared || visibility === Visibility.Public"
           type="checkbox"
           :disabled="disabled ? disabled : false"
           class="w-5 h-5 accent-neutral-600"

@@ -9,7 +9,6 @@ const runeApiData: RuneApiData = {
   description: "desc",
   labels: [RuneLabel.RuneLabelMaster, RuneLabel.RuneLabelProtection],
   applicableTo: [ItemType.Melee, ItemType.Armour],
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
@@ -30,7 +29,6 @@ const rune = new Rune({
   description: "desc",
   labels: [RuneLabel.RuneLabelMaster, RuneLabel.RuneLabelProtection],
   applicableTo: [ItemType.Melee, ItemType.Armour],
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });

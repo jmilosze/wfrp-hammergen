@@ -31,7 +31,6 @@ const newTalent = new Talent({
   name: "New talent",
   canEdit: true,
   id: "create",
-  shared: true,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -195,7 +194,7 @@ const talentTable = useElSize(380, talentTableRef);
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Talent" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Talent" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

@@ -324,7 +324,6 @@ export interface SpellApiData {
   cn: number;
   range: string;
   duration: string;
-  shared: boolean;
   visibility?: Visibility;
   target: string;
   classification: SpellClassificationData;
@@ -346,7 +345,6 @@ export class Spell implements WhProperty {
   cn: number;
   range: string;
   duration: string;
-  shared: boolean;
   target: string;
   classification: SpellClassification;
   source: Source;
@@ -362,7 +360,6 @@ export class Spell implements WhProperty {
     duration = "",
     description = "",
     classification = { type: SpellType.SpellTypeOther, labels: new Set() } as SpellClassification,
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -376,7 +373,6 @@ export class Spell implements WhProperty {
     this.duration = duration;
     this.description = description;
     this.classification = classification;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -394,7 +390,6 @@ export class Spell implements WhProperty {
       duration: this.duration,
       description: this.description,
       classification: { type: this.classification.type, labels: new Set(this.classification.labels) },
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -454,7 +449,6 @@ export class Spell implements WhProperty {
       this.description === otherSpell.description &&
       this.classification.type === otherSpell.classification.type &&
       setsAreEqual(this.classification.labels, otherSpell.classification.labels) &&
-      this.shared === otherSpell.shared &&
       objectsAreEqual(this.source, otherSpell.source)
     );
   }
@@ -480,7 +474,6 @@ export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
       type: spellApi.object.classification.type,
       labels: new Set(spellApi.object.classification.labels),
     },
-    shared: spellApi.object.shared,
     source: spellApi.object.source,
   });
 
@@ -496,7 +489,6 @@ export function modelToApi(spell: Spell): SpellApiData {
     duration: spell.duration,
     description: spell.description,
     classification: { type: spell.classification.type, labels: [...spell.classification.labels] },
-    shared: spell.shared,
     visibility: spell.visibility,
     source: copySource(spell.source),
   };

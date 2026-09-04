@@ -10,16 +10,7 @@ type Property struct {
 	Description  string            `json:"description" validate:"desc_valid"`
 	Type         PropertyType      `json:"type" validate:"property_type_valid"`
 	ApplicableTo []ItemType        `json:"applicableTo" validate:"unique,dive,item_type_valid"`
-	Shared       bool              `json:"shared" validate:"shared_valid"`
 	Source       map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (property *Property) IsShared() (bool, error) {
-	if property == nil {
-		return false, errors.New("property pointer is nil")
-	}
-
-	return property.Shared, nil
 }
 
 func (property *Property) Copy() WhObject {
@@ -32,7 +23,6 @@ func (property *Property) Copy() WhObject {
 		Description:  property.Description,
 		Type:         property.Type,
 		ApplicableTo: copyArray(property.ApplicableTo),
-		Shared:       property.Shared,
 		Source:       copySourceMap(property.Source),
 	}
 }

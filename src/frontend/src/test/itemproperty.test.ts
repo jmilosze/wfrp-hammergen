@@ -15,7 +15,6 @@ const itemPropertyApiData: ItemPropertyApiData = {
   description: "desc",
   type: ItemPropertyType.Quality,
   applicableTo: [ItemType.Melee, ItemType.Armour],
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
@@ -36,7 +35,6 @@ const itemProperty = new ItemProperty({
   description: "desc",
   type: ItemPropertyType.Quality,
   applicableTo: [ItemType.Melee, ItemType.Armour],
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });

@@ -91,7 +91,6 @@ export interface CharacterApiData {
   traits: string[];
   mutations: string[];
   careerPath: IdNumber[];
-  shared: boolean;
   visibility?: Visibility;
 }
 
@@ -130,7 +129,6 @@ export class Character implements WhProperty {
   prayers: Set<string>;
   traits: Set<string>;
   mutations: Set<string>;
-  shared: boolean;
   source: Source;
   modifiers: {
     talents: Record<string, { number: number; value: CharacterModifiers }>;
@@ -172,7 +170,6 @@ export class Character implements WhProperty {
     prayers = new Set<string>(),
     traits = new Set<string>(),
     mutations = new Set<string>(),
-    shared = false,
     visibility = Visibility.Private,
     source = {},
     modifiers = {
@@ -215,7 +212,6 @@ export class Character implements WhProperty {
     this.prayers = prayers;
     this.traits = traits;
     this.mutations = mutations;
-    this.shared = shared;
     this.source = source;
     this.modifiers = modifiers;
   }
@@ -258,7 +254,6 @@ export class Character implements WhProperty {
       setsAreEqual(this.prayers, otherCharacter.prayers) &&
       setsAreEqual(this.traits, otherCharacter.traits) &&
       setsAreEqual(this.mutations, otherCharacter.mutations) &&
-      this.shared === otherCharacter.shared &&
       objectsAreEqual(this.source, otherCharacter.source)
     );
   }
@@ -303,7 +298,6 @@ export class Character implements WhProperty {
       prayers: new Set(this.prayers),
       traits: new Set(this.traits),
       mutations: new Set(this.mutations),
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -814,7 +808,6 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     prayers: new Set(characterApi.object.prayers),
     traits: new Set(characterApi.object.traits),
     mutations: new Set(characterApi.object.mutations),
-    shared: characterApi.object.shared,
   });
 
   return newCharacter.copy();
@@ -852,7 +845,6 @@ export function modelToApi(character: Character): CharacterApiData {
     prayers: [...character.prayers],
     traits: [...character.traits],
     mutations: [...character.mutations],
-    shared: character.shared,
     visibility: character.visibility,
   };
 }

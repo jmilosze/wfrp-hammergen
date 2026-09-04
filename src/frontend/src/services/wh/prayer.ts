@@ -18,7 +18,6 @@ export interface PrayerApiData {
   description: string;
   range: string;
   duration: string;
-  shared: boolean;
   visibility?: Visibility;
   target: string;
   source: Source;
@@ -33,7 +32,6 @@ export class Prayer implements WhProperty {
   description: string;
   range: string;
   duration: string;
-  shared: boolean;
   target: string;
   source: Source;
 
@@ -46,7 +44,6 @@ export class Prayer implements WhProperty {
     target = "",
     duration = "",
     description = "",
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -58,7 +55,6 @@ export class Prayer implements WhProperty {
     this.target = target;
     this.duration = duration;
     this.description = description;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -74,7 +70,6 @@ export class Prayer implements WhProperty {
       target: this.target,
       duration: this.duration,
       description: this.description,
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -123,7 +118,6 @@ export class Prayer implements WhProperty {
       this.target === otherPrayer.target &&
       this.duration === otherPrayer.duration &&
       this.description === otherPrayer.description &&
-      this.shared === otherPrayer.shared &&
       objectsAreEqual(this.source, otherPrayer.source)
     );
   }
@@ -144,7 +138,6 @@ export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Praye
     target: prayerApi.object.target,
     duration: prayerApi.object.duration,
     description: prayerApi.object.description,
-    shared: prayerApi.object.shared,
     source: prayerApi.object.source,
   });
 
@@ -158,7 +151,6 @@ export function modelToApi(prayer: Prayer): PrayerApiData {
     target: prayer.target,
     duration: prayer.duration,
     description: prayer.description,
-    shared: prayer.shared,
     visibility: prayer.visibility,
     source: copySource(prayer.source),
   };

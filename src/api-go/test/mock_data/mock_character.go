@@ -77,7 +77,6 @@ var character0 = wh.Wh{
 		Sin:        0,
 		Corruption: 0,
 		Mutations:  []string{mutation0.Id, mutation1.Id},
-		Shared:     false,
 	},
 }
 

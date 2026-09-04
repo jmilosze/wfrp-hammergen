@@ -24,7 +24,6 @@ const newPrayer = new Prayer({
   name: "New prayer",
   canEdit: true,
   id: "create",
-  shared: true,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -95,7 +94,7 @@ const validDuration = computed(() => wh.value.validateDuration());
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Prayer" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Prayer" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

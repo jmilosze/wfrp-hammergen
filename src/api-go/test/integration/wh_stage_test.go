@@ -30,6 +30,8 @@ type whTestStage struct {
 	otherUser              *whUser
 	userWithSharedAccounts *whUser
 	authorizationHeader    string
+	whVisibility           *warhammer.Visibility
+	whVisibilityExplicit   bool
 	newWhProperty          *warhammer.Property
 	anotherNewWhProperty   *warhammer.Property
 	newWhPropertyId        string
@@ -114,7 +116,6 @@ func (s *whTestStage) wh_property_with_invalid_visibility_is_created() *whTestSt
 		"name":        "invalid visibility property",
 		"description": "test",
 		"type":        0,
-		"shared":      false,
 		"visibility":  99,
 	}
 	payloadBytes, err := json.Marshal(payload)
@@ -133,13 +134,36 @@ func (s *whTestStage) wh_property_with_invalid_visibility_is_created() *whTestSt
 	return s
 }
 
+func (s *whTestStage) wh_property_without_visibility_is_created() *whTestStage {
+	payload := map[string]any{
+		"name":        "no visibility property",
+		"description": "test",
+		"type":        0,
+	}
+	payloadBytes, err := json.Marshal(payload)
+	require.NoError(s.t, err)
+
+	req, err := http.NewRequest("POST", s.testUrl+"/api/wh/property", bytes.NewReader(payloadBytes))
+	require.NoError(s.t, err)
+	if s.authorizationHeader != "" {
+		req.Header.Set("Authorization", s.authorizationHeader)
+	}
+	resp, err := s.client.Do(req)
+	require.NoError(s.t, err)
+	s.responseCode = resp.StatusCode
+	s.responseBody, err = io.ReadAll(resp.Body)
+	require.NoError(s.t, err)
+	return s
+}
+
 func (s *whTestStage) new_wh_property() *whTestStage {
+	vis := warhammer.VisibilityShared
+	s.whVisibility = &vis
 	s.newWhProperty = &warhammer.Property{
 		Name:         "new_wh_property",
 		Description:  "new_wh_property description",
 		Type:         warhammer.PropertyTypeQuality,
 		ApplicableTo: []warhammer.ItemType{warhammer.ItemTypeMelee, warhammer.ItemTypeArmour},
-		Shared:       true,
 		Source:       map[warhammer.Source]string{warhammer.SourceCustom: "", warhammer.SourceAltdorf: "123"},
 	}
 
@@ -147,12 +171,13 @@ func (s *whTestStage) new_wh_property() *whTestStage {
 }
 
 func (s *whTestStage) another_new_wh_property() *whTestStage {
+	vis := warhammer.VisibilityShared
+	s.whVisibility = &vis
 	s.anotherNewWhProperty = &warhammer.Property{
 		Name:         "another_new_wh_property",
 		Description:  "another_new_wh_property description",
 		Type:         warhammer.PropertyTypeQuality,
 		ApplicableTo: []warhammer.ItemType{warhammer.ItemTypeMelee, warhammer.ItemTypeArmour},
-		Shared:       true,
 		Source:       map[warhammer.Source]string{warhammer.SourceCustom: "", warhammer.SourceAltdorf: "123"},
 	}
 
@@ -160,12 +185,14 @@ func (s *whTestStage) another_new_wh_property() *whTestStage {
 }
 
 func (s *whTestStage) new_wh_property_not_shared() *whTestStage {
+	vis := warhammer.VisibilityPrivate
+	s.whVisibility = &vis
+	s.whVisibilityExplicit = true
 	s.newWhProperty = &warhammer.Property{
 		Name:         "new_wh_property",
 		Description:  "new_wh_property description",
 		Type:         warhammer.PropertyTypeQuality,
 		ApplicableTo: []warhammer.ItemType{warhammer.ItemTypeMelee, warhammer.ItemTypeArmour},
-		Shared:       false,
 		Source:       map[warhammer.Source]string{warhammer.SourceCustom: "", warhammer.SourceAltdorf: "123"},
 	}
 
@@ -215,6 +242,11 @@ func (s *whTestStage) already_present_admin_user() *whTestStage {
 func (s *whTestStage) user_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.user)
 
+	if !s.whVisibilityExplicit {
+		vis := warhammer.VisibilityShared
+		s.whVisibility = &vis
+	}
+
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.user.Username, s.user.Password)
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
@@ -223,6 +255,11 @@ func (s *whTestStage) user_is_authenticated() *whTestStage {
 
 func (s *whTestStage) admin_user_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.adminUser)
+
+	if !s.whVisibilityExplicit {
+		vis := warhammer.VisibilityPublic
+		s.whVisibility = &vis
+	}
 
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.adminUser.Username, s.adminUser.Password)
 	require.NoError(s.t, err)
@@ -233,6 +270,7 @@ func (s *whTestStage) admin_user_is_authenticated() *whTestStage {
 func (s *whTestStage) new_wh_property_is_created() *whTestStage {
 	require.NotNil(s.t, s.newWhProperty)
 	s.upsertWh(s.newWhProperty, s.testUrl+"/api/wh/property", true)
+	s.whVisibilityExplicit = false
 	return s
 }
 
@@ -244,7 +282,17 @@ func (s *whTestStage) upsertWh(whProperty *warhammer.Property, url string, creat
 		method = "PUT"
 	}
 
-	payloadBytes, err := json.Marshal(whProperty)
+	payloadMap := make(map[string]any)
+	if whProperty != nil {
+		propBytes, err := json.Marshal(whProperty)
+		require.NoError(s.t, err)
+		require.NoError(s.t, json.Unmarshal(propBytes, &payloadMap))
+	}
+	if s.whVisibility != nil {
+		payloadMap["visibility"] = *s.whVisibility
+	}
+
+	payloadBytes, err := json.Marshal(payloadMap)
 	require.NoError(s.t, err)
 	req, err := http.NewRequest(method, url, bytes.NewReader(payloadBytes))
 	require.NoError(s.t, err)
@@ -281,7 +329,6 @@ func (s *whTestStage) compareWhProperty(wh1 *warhammer.Property, wh2 *warhammer.
 	require.Equal(s.t, wh1.Name, wh2.Name)
 	require.Equal(s.t, wh1.Description, wh2.Description)
 	require.Equal(s.t, wh1.Type, wh2.Type)
-	require.Equal(s.t, wh1.Shared, wh2.Shared)
 	require.Equal(s.t, wh1.ApplicableTo, wh2.ApplicableTo)
 	require.Equal(s.t, wh1.Source, wh2.Source)
 }
@@ -346,6 +393,9 @@ func (s *whTestStage) getIdFromBody() string {
 func (s *whTestStage) other_user_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.otherUser)
 
+	vis := warhammer.VisibilityShared
+	s.whVisibility = &vis
+
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.otherUser.Username, s.otherUser.Password)
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
@@ -354,6 +404,9 @@ func (s *whTestStage) other_user_is_authenticated() *whTestStage {
 
 func (s *whTestStage) user_with_shared_accounts_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.userWithSharedAccounts)
+
+	vis := warhammer.VisibilityShared
+	s.whVisibility = &vis
 
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.userWithSharedAccounts.Username, s.userWithSharedAccounts.Password)
 	require.NoError(s.t, err)

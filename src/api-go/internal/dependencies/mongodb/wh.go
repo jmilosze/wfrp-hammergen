@@ -182,13 +182,10 @@ func idsQuery(whIds []string) (bson.M, error) {
 func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 	allowedConditions := bson.A{
 		bson.M{"visibility": int(warhammer.VisibilityPublic)},
-		bson.M{"ownerid": "admin"},
 	}
 
 	for _, v := range userIds {
-		if v != "admin" {
-			allowedConditions = append(allowedConditions, bson.M{"ownerid": v})
-		}
+		allowedConditions = append(allowedConditions, bson.M{"ownerid": v})
 	}
 
 	if len(sharedUserIds) > 0 {
@@ -199,12 +196,7 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 		sharedFilter := bson.M{
 			"$and": bson.A{
 				bson.M{"$or": sharedOwners},
-				bson.M{
-					"$or": bson.A{
-						bson.M{"visibility": int(warhammer.VisibilityShared)},
-						bson.M{"object.shared": true},
-					},
-				},
+				bson.M{"visibility": int(warhammer.VisibilityShared)},
 			},
 		}
 		allowedConditions = append(allowedConditions, sharedFilter)
@@ -233,11 +225,7 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 	case int:
 		visibility = warhammer.Visibility(v)
 	default:
-		if ownerId == "admin" {
-			visibility = warhammer.VisibilityPublic
-		} else {
-			visibility = warhammer.VisibilityPrivate
-		}
+		visibility = warhammer.VisibilityPrivate
 	}
 
 	bsonRaw, err := bson.Marshal(whMap["object"])

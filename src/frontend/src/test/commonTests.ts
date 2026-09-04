@@ -1,13 +1,14 @@
 import { describe, expect, test } from "vitest";
 import { Source } from "../services/wh/source.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
+import { Visibility } from "../services/wh/common.ts";
 
 export interface WhPropertyExtended {
   id: string;
   canEdit: boolean;
   name: string;
   description: string;
-  shared: boolean;
+  visibility: Visibility;
   source: Source;
   isEqualTo(otherWhProperty: WhPropertyExtended): boolean;
   copy(): WhPropertyExtended;
@@ -85,11 +86,11 @@ export const testIsEqualCommonProperties = (name: string, whProperty: WhProperty
       expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
     });
 
-    test(`when other ${name} has different value of shared`, () => {
+    test(`when other ${name} has different value of visibility`, () => {
       const whProperty1 = whProperty.copy();
       const whProperty2 = whProperty.copy();
-      whProperty1.shared = true;
-      whProperty2.shared = false;
+      whProperty1.visibility = Visibility.Public;
+      whProperty2.visibility = Visibility.Private;
       expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
     });
 

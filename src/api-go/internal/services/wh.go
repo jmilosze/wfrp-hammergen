@@ -113,7 +113,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("non-admin cannot set visibility to public")}
 	}
 
-	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id, "admin"}, c.SharedAccounts, []string{newWh.Id})
+	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, []string{newWh.Id})
 	if err != nil || len(existingWhs) == 0 {
 		return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("wh %s not found", newWh.Id)}
 	}
@@ -144,7 +144,7 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 		return &wh.WhError{ErrType: wh.ErrorUnauthorized, WhType: t, Err: fmt.Errorf("unauthorized to delete wh %s", whId)}
 	}
 
-	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id, "admin"}, c.SharedAccounts, []string{whId})
+	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, []string{whId})
 	if err != nil || len(existingWhs) == 0 {
 		return &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("wh %s not found", whId)}
 	}
@@ -163,7 +163,7 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 }
 
 func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, whIds []string) ([]*wh.Wh, error) {
-	users := []string{"admin", c.Id}
+	users := []string{c.Id}
 
 	whs, err := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, whIds)
 	if err != nil {

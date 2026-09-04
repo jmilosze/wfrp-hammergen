@@ -13,7 +13,6 @@ const traitGroupApiData: TraitApiData = {
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
     effects: [],
   },
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
@@ -37,7 +36,6 @@ const traitGroup = new Trait({
     movement: 1,
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
   }),
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
@@ -53,7 +51,6 @@ const traitIndividual = new Trait({
     movement: 0,
     attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
   }),
-  shared: true,
   visibility: Visibility.Shared,
   source: {},
 });

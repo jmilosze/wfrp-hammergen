@@ -58,7 +58,6 @@ function formatMutationRow(mutation: Mutation) {
     description: mutation.description,
     canEdit: mutation.canEdit,
     id: mutation.id,
-    shared: mutation.shared,
     ownerId: mutation.ownerId,
     visibility: mutation.visibility,
   };
@@ -116,18 +115,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        shared,
         canEdit,
-        ownerId,
         visibility,
       }: {
-        shared: boolean;
         canEdit: boolean;
-        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" :visibility="visibility" />
+      <ToolTip :canEdit="canEdit" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

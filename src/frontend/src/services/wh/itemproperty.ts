@@ -37,7 +37,6 @@ export interface ItemPropertyApiData {
   description: string;
   type: ItemPropertyType;
   applicableTo: ItemType[];
-  shared: boolean;
   visibility?: Visibility;
   source: Source;
 }
@@ -51,7 +50,6 @@ export class ItemProperty implements WhProperty {
   description: string;
   type: ItemPropertyType;
   applicableTo: ItemType[];
-  shared: boolean;
   source: Source;
 
   constructor({
@@ -62,7 +60,6 @@ export class ItemProperty implements WhProperty {
     description = "",
     type = ItemPropertyType.Quality,
     applicableTo = [] as ItemType[],
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -73,7 +70,6 @@ export class ItemProperty implements WhProperty {
     this.description = description;
     this.type = type;
     this.applicableTo = applicableTo;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -88,7 +84,6 @@ export class ItemProperty implements WhProperty {
       description: this.description,
       type: this.type,
       applicableTo: [...this.applicableTo],
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -118,7 +113,6 @@ export class ItemProperty implements WhProperty {
       this.name === otherItemProperty.name &&
       this.description === otherItemProperty.description &&
       this.type === otherItemProperty.type &&
-      this.shared === otherItemProperty.shared &&
       arraysAreEqualIgnoreOrder(this.applicableTo, otherItemProperty.applicableTo) &&
       objectsAreEqual(this.source, otherItemProperty.source)
     );
@@ -139,7 +133,6 @@ export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiD
     description: itemPropertyApi.object.description,
     type: itemPropertyApi.object.type,
     applicableTo: itemPropertyApi.object.applicableTo,
-    shared: itemPropertyApi.object.shared,
     source: itemPropertyApi.object.source,
   });
 
@@ -152,7 +145,6 @@ export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
     description: itemProperty.description,
     type: itemProperty.type,
     applicableTo: [...itemProperty.applicableTo],
-    shared: itemProperty.shared,
     visibility: itemProperty.visibility,
     source: copySource(itemProperty.source),
   };

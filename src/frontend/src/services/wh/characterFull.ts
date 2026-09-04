@@ -60,7 +60,6 @@ export interface ItemFullApiData {
   grimoire: { spells: ApiResponse<SpellApiData>[] };
   container: ContainerType;
   other: OtherType;
-  shared: boolean;
   source: Source;
 }
 
@@ -100,7 +99,6 @@ export interface CharacterFullApiData {
   traits: ApiResponse<TraitApiData>[];
   mutations: ApiResponse<MutationApiData>[];
   careerPath: WhNumber<CareerApiData>[];
-  shared: boolean;
 }
 
 export interface CharacterFullCareer {
@@ -189,7 +187,6 @@ export interface CharacterFullItem {
 export interface CharacterFull {
   id: string;
   canEdit: boolean;
-  shared: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -248,7 +245,6 @@ export interface CharacterFull {
 export function newCharacterFull({
   id = "",
   canEdit = false,
-  shared = false,
   visibility = Visibility.Private,
   name = "",
   description = "",
@@ -299,7 +295,6 @@ export function newCharacterFull({
   return {
     id: id,
     canEdit: canEdit,
-    shared: shared,
     visibility: visibility,
     name: name,
     description: description,
@@ -411,7 +406,6 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
   return {
     id: fullCharacterApi.id,
     canEdit: fullCharacterApi.canEdit,
-    shared: fullCharacterApi.object.shared,
     visibility: fullCharacterApi.visibility ?? Visibility.Private,
     name: fullCharacterApi.object.name,
     description: fullCharacterApi.object.description,

@@ -11,7 +11,6 @@ const spellApiData: SpellApiData = {
   duration: "duration",
   description: "desc",
   classification: { type: SpellType.SpellTypeLore, labels: [SpellLabel.SpellLabelRuin, SpellLabel.SpellLabelStealth] },
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
@@ -38,7 +37,6 @@ const spell = new Spell({
     type: SpellType.SpellTypeLore,
     labels: new Set([SpellLabel.SpellLabelRuin, SpellLabel.SpellLabelStealth]),
   },
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });

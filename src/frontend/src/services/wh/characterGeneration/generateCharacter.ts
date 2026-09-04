@@ -34,7 +34,6 @@ export function generateCharacter(
   const character = new Character({
     canEdit: true,
     id: "create",
-    shared: false,
     source: defaultSource(),
   });
 

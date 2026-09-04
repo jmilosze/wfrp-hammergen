@@ -19,7 +19,7 @@ const careerApiData: CareerApiData = {
   description: "some desc",
   species: [Species.Dwarf, Species.Human],
   class: CareerClass.Academic,
-  shared: false,
+  visibility: Visibility.Private,
   source: { 1: "page 2", 3: "page 5-10" },
   level1: {
     exists: true,
@@ -89,7 +89,6 @@ const career = new Career({
   description: "some desc",
   species: [Species.Dwarf, Species.Human],
   careerClass: CareerClass.Academic,
-  shared: false,
   source: { 1: "page 2", 3: "page 5-10" },
   level1: {
     exists: true,

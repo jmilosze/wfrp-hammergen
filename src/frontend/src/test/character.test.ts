@@ -58,7 +58,6 @@ const characterApiData: CharacterApiData = {
     { id: "careerId1", number: 1 },
     { id: "careerId2", number: 2 },
   ],
-  shared: true,
   visibility: Visibility.Shared,
 };
 
@@ -123,7 +122,6 @@ const character = new Character({
     { id: "careerId1", number: 1 },
     { id: "careerId2", number: 2 },
   ],
-  shared: true,
   visibility: Visibility.Shared,
 });
 

@@ -17,7 +17,6 @@ var spell0 = wh.Wh{
 		Target:         "2",
 		Duration:       "5",
 		Classification: &wh.SpellClassification{Type: wh.SpellTypeLore, Labels: []wh.SpellLabel{wh.SpellLabelHedgecraft, wh.SpellLabelLight}},
-		Shared:         false,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
 			wh.SourceSeaOfClaws:              "e",
@@ -26,8 +25,9 @@ var spell0 = wh.Wh{
 }
 
 var spell1 = wh.Wh{
-	Id:      "200000000000000000000001",
-	OwnerId: user1.Id,
+	Id:         "200000000000000000000001",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityPrivate,
 	Object: &wh.Spell{
 		Name:        "spell 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),

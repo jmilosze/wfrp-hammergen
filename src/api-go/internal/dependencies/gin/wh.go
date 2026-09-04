@@ -49,17 +49,11 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 		var reqTop struct {
 			Visibility *warhammer.Visibility `json:"visibility"`
 		}
-		if err = json.Unmarshal(reqData, &reqTop); err == nil && reqTop.Visibility != nil {
-			whWrite.Visibility = *reqTop.Visibility
-		} else if isCreate && claims.Admin {
-			whWrite.Visibility = warhammer.VisibilityPublic
-		} else {
-			if shared, _ := whWrite.IsShared(); shared {
-				whWrite.Visibility = warhammer.VisibilityShared
-			} else {
-				whWrite.Visibility = warhammer.VisibilityPrivate
-			}
+		if err = json.Unmarshal(reqData, &reqTop); err != nil || reqTop.Visibility == nil {
+			c.JSON(BadRequestErrResp("visibility is required"))
+			return
 		}
+		whWrite.Visibility = *reqTop.Visibility
 
 		var whRead *warhammer.Wh
 		if isCreate {

@@ -26,7 +26,6 @@ export interface TalentApiData {
   isGroup: boolean;
   group: string[];
   modifiers: CharacterModifiersData;
-  shared: boolean;
   visibility?: Visibility;
   source: Source;
 }
@@ -45,7 +44,6 @@ export class Talent implements WhProperty {
   isGroup: boolean;
   group: Set<string>;
   modifiers: CharacterModifiers;
-  shared: boolean;
   source: Source;
 
   constructor({
@@ -61,7 +59,6 @@ export class Talent implements WhProperty {
     isGroup = false,
     group = new Set<string>(),
     modifiers = new CharacterModifiers(),
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -77,7 +74,6 @@ export class Talent implements WhProperty {
     this.isGroup = isGroup;
     this.group = group;
     this.modifiers = modifiers;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -97,7 +93,6 @@ export class Talent implements WhProperty {
       isGroup: this.isGroup,
       group: new Set(this.group),
       modifiers: this.modifiers.copy(),
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -139,7 +134,6 @@ export class Talent implements WhProperty {
       this.name !== otherTalent.name ||
       this.description !== otherTalent.description ||
       this.isGroup !== otherTalent.isGroup ||
-      this.shared !== otherTalent.shared ||
       !objectsAreEqual(this.source, otherTalent.source)
     ) {
       return false;
@@ -215,7 +209,6 @@ export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talen
     isGroup: talentApi.object.isGroup,
     group: new Set(talentApi.object.group),
     modifiers: new CharacterModifiers(talentApi.object.modifiers),
-    shared: talentApi.object.shared,
     source: talentApi.object.source,
   });
 
@@ -233,7 +226,6 @@ export function modelToApi(talent: Talent): TalentApiData {
     isGroup: talent.isGroup,
     group: [...talent.group],
     modifiers: talent.modifiers.toData(),
-    shared: talent.shared,
     visibility: talent.visibility,
     source: copySource(talent.source),
   };

@@ -13,16 +13,7 @@ type Skill struct {
 	IsGroup     bool              `json:"isGroup" validate:"boolean"`
 	DisplayZero bool              `json:"displayZero" validate:"boolean"`
 	Group       []string          `json:"group" validate:"dive,id_valid"`
-	Shared      bool              `json:"shared" validate:"shared_valid"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (skill *Skill) IsShared() (bool, error) {
-	if skill == nil {
-		return false, errors.New("skill pointer is nil")
-	}
-
-	return skill.Shared, nil
 }
 
 func (skill *Skill) Copy() WhObject {
@@ -38,7 +29,6 @@ func (skill *Skill) Copy() WhObject {
 		IsGroup:     skill.IsGroup,
 		DisplayZero: skill.DisplayZero,
 		Group:       copyArray(skill.Group),
-		Shared:      skill.Shared,
 		Source:      copySourceMap(skill.Source),
 	}
 }

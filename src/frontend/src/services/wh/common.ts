@@ -16,7 +16,6 @@ export interface WhProperty {
   visibility: Visibility;
   name: string;
   description: string;
-  shared: boolean;
   source: Source;
 
   copy: () => WhProperty;

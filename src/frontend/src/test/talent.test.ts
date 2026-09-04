@@ -21,7 +21,6 @@ const talentGroupApiData: TalentApiData = {
   },
   isGroup: true,
   group: ["a", "b", "c"],
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
@@ -51,7 +50,6 @@ const talentGroup = new Talent({
   }),
   isGroup: true,
   group: new Set(["a", "b", "c"]),
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
@@ -72,7 +70,6 @@ const talentIndividual = new Talent({
   }),
   isGroup: false,
   group: new Set(["a", "b"]),
-  shared: true,
   visibility: Visibility.Shared,
   source: {},
 });

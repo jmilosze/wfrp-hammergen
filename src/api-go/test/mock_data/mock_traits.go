@@ -27,7 +27,6 @@ var trait0 = wh.Wh{
 				Fel: 10,
 			},
 		},
-		Shared: false,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
 			wh.SourceSeaOfClaws:              "e",

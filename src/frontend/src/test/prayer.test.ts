@@ -9,7 +9,6 @@ const prayerApiData: PrayerApiData = {
   target: "target",
   duration: "duration",
   description: "desc",
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
@@ -31,7 +30,6 @@ const prayer = new Prayer({
   target: "target",
   duration: "duration",
   description: "desc",
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });

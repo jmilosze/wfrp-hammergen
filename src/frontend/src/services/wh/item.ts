@@ -447,7 +447,6 @@ export interface ItemApiData {
   grimoire: { spells: string[] };
   container: ContainerType;
   other: OtherType;
-  shared: boolean;
   visibility?: Visibility;
   source: Source;
 }
@@ -472,7 +471,6 @@ export class Item implements WhProperty {
   grimoire: { spells: Set<string> };
   container: ContainerType;
   other: OtherType;
-  shared: boolean;
   source: Source;
 
   constructor({
@@ -507,7 +505,6 @@ export class Item implements WhProperty {
     grimoire = { spells: new Set<string>() },
     container = { capacity: 1, carryType: CarryType.NotCarriableAndNotWearable } as ContainerType,
     other = { carryType: CarryType.NotCarriableAndNotWearable } as OtherType,
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -529,7 +526,6 @@ export class Item implements WhProperty {
     this.grimoire = grimoire;
     this.container = container;
     this.other = other;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -577,7 +573,6 @@ export class Item implements WhProperty {
       grimoire: { spells: new Set(this.grimoire.spells) },
       container: { capacity: this.container.capacity, carryType: this.container.carryType },
       other: { carryType: this.other.carryType },
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -684,7 +679,6 @@ export class Item implements WhProperty {
       this.availability !== otherItem.availability ||
       this.type !== otherItem.type ||
       !setsAreEqual(this.properties, otherItem.properties) ||
-      this.shared !== otherItem.shared ||
       !objectsAreEqual(this.source, otherItem.source) ||
       !objectsAreEqual(this.runes, otherItem.runes)
     ) {
@@ -840,7 +834,6 @@ export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
     grimoire: { spells: new Set(itemApi.object.grimoire.spells) },
     container: itemApi.object.container,
     other: itemApi.object.other,
-    shared: itemApi.object.shared,
     source: itemApi.object.source,
   });
 
@@ -886,7 +879,6 @@ export function modelToApi(item: Item): ItemApiData {
     grimoire: { spells: [...item.grimoire.spells] },
     container: { capacity: item.container.capacity, carryType: item.container.carryType },
     other: { carryType: item.other.carryType },
-    shared: item.shared,
     visibility: item.visibility,
     source: copySource(item.source),
   };

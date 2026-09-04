@@ -37,15 +37,6 @@ type Character struct {
 	Sin               int              `json:"sin" validate:"gte=0,lte=1000"`
 	Corruption        int              `json:"corruption" validate:"gte=0,lte=1000"`
 	Mutations         []string         `json:"mutations" validate:"dive,id_valid"`
-	Shared            bool             `json:"shared" validate:"shared_valid"`
-}
-
-func (character *Character) IsShared() (bool, error) {
-	if character == nil {
-		return false, errors.New("character pointer is nil")
-	}
-
-	return character.Shared, nil
 }
 
 func (character *Character) Copy() WhObject {
@@ -84,7 +75,6 @@ func (character *Character) Copy() WhObject {
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
 		Mutations:         copyArray(character.Mutations),
-		Shared:            character.Shared,
 	}
 }
 
@@ -180,7 +170,6 @@ func (character *Character) ToFull(
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
 		Mutations:         mutations,
-		Shared:            character.Shared,
 	}, nil
 }
 
@@ -534,15 +523,6 @@ type CharacterFull struct {
 	Sin               int              `json:"sin"`
 	Corruption        int              `json:"corruption"`
 	Mutations         []*Wh            `json:"mutations"`
-	Shared            bool             `json:"shared"`
-}
-
-func (characterFull *CharacterFull) IsShared() (bool, error) {
-	if characterFull == nil {
-		return false, errors.New("characterFull pointer is nil")
-	}
-
-	return characterFull.Shared, nil
 }
 
 func (characterFull *CharacterFull) Copy() WhObject {
@@ -581,7 +561,6 @@ func (characterFull *CharacterFull) Copy() WhObject {
 		Sin:               characterFull.Sin,
 		Corruption:        characterFull.Corruption,
 		Mutations:         copyWhArray(characterFull.Mutations),
-		Shared:            characterFull.Shared,
 	}
 }
 

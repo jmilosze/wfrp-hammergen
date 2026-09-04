@@ -14,7 +14,6 @@ var rune0 = wh.Wh{
 		Description:  fmt.Sprintf("owned by %s", user0.Username),
 		Labels:       []wh.RuneLabel{wh.RuneLabelArmour, wh.RuneLabelMaster},
 		ApplicableTo: []wh.ItemType{0, 1, 2},
-		Shared:       false,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
 			wh.SourceSeaOfClaws:              "e",
@@ -23,8 +22,9 @@ var rune0 = wh.Wh{
 }
 
 var rune1 = wh.Wh{
-	Id:      "rune00000000000000000001",
-	OwnerId: user1.Id,
+	Id:         "rune00000000000000000001",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityPrivate,
 	Object: &wh.Rune{
 		Name:        "rune 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
