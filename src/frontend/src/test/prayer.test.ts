@@ -15,7 +15,6 @@ const prayerApiData: PrayerApiData = {
 
 const prayerApiResponse: ApiResponse<PrayerApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: prayerApiData,
@@ -24,7 +23,6 @@ const prayerApiResponse: ApiResponse<PrayerApiData> = {
 const prayer = new Prayer({
   id: "id",
   ownerId: "owner",
-  canEdit: true,
   name: "prayer",
   range: "range",
   target: "target",

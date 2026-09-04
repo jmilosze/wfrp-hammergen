@@ -37,7 +37,6 @@ const props = defineProps<{
 
 const newCareer = new Career({
   name: "New career",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -45,6 +44,7 @@ const newCareer = new Career({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -147,7 +147,7 @@ watch(
       {{ talentListUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create career' : wh.canEdit ? 'Edit career' : wh.name" />
+  <Header :title="id === 'create' ? 'Create career' : canEdit ? 'Edit career' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -155,12 +155,12 @@ watch(
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
         <MultipleCheckboxColumnInput
           v-model="wh.species"
           title="Species"
           :options="speciesOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           :viewBreakpoint="[
             { columns: 3, view: ViewSize.xs },
             { columns: 2, view: ViewSize.xxs },
@@ -173,7 +173,7 @@ watch(
         <SelectInput
           v-model="wh.careerClass"
           :options="classOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Class"
           class="min-w-24"
         />
@@ -181,7 +181,7 @@ watch(
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
@@ -196,7 +196,7 @@ watch(
       v-model:exists="wh.level1.exists"
       level="1"
       :singleColumn="!isEqualOrGreater"
-      :canEdit="wh.canEdit"
+      :canEdit="canEdit"
       :initialSkills="wh.level1.skills"
       :initialTalents="wh.level1.talents"
       :whSkillList="skillListUtils.whList.value"
@@ -219,7 +219,7 @@ watch(
       v-model:exists="wh.level2.exists"
       level="2"
       :singleColumn="!isEqualOrGreater"
-      :canEdit="wh.canEdit"
+      :canEdit="canEdit"
       :initialSkills="wh.level2.skills"
       :initialTalents="wh.level2.talents"
       :whSkillList="skillListUtils.whList.value"
@@ -242,7 +242,7 @@ watch(
       v-model:exists="wh.level3.exists"
       level="3"
       :singleColumn="!isEqualOrGreater"
-      :canEdit="wh.canEdit"
+      :canEdit="canEdit"
       :initialSkills="wh.level3.skills"
       :initialTalents="wh.level3.talents"
       :whSkillList="skillListUtils.whList.value"
@@ -265,7 +265,7 @@ watch(
       v-model:exists="wh.level4.exists"
       level="4"
       :singleColumn="!isEqualOrGreater"
-      :canEdit="wh.canEdit"
+      :canEdit="canEdit"
       :initialSkills="wh.level4.skills"
       :initialTalents="wh.level4.talents"
       :whSkillList="skillListUtils.whList.value"
@@ -288,7 +288,7 @@ watch(
       v-model:exists="wh.level5.exists"
       level="5"
       :singleColumn="!isEqualOrGreater"
-      :canEdit="wh.canEdit"
+      :canEdit="canEdit"
       :initialSkills="wh.level5.skills"
       :initialTalents="wh.level5.talents"
       :whSkillList="skillListUtils.whList.value"
@@ -305,10 +305,10 @@ watch(
   </div>
   <div class="flex justify-between text-left gap-4 my-4" :class="[isEqualOrGreater ? '' : 'flex-col']">
     <div class="my-3 flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Career" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Career" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -326,7 +326,7 @@ watch(
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

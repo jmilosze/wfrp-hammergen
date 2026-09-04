@@ -45,7 +45,6 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
       )) as ApiResponse<TApiData>;
 
       whCopy.id = id;
-      whCopy.canEdit = true;
       whCopy.ownerId = userId;
       whList.value.push(whCopy);
     } catch {

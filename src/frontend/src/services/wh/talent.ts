@@ -33,7 +33,6 @@ export interface TalentApiData {
 export class Talent implements WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -49,7 +48,6 @@ export class Talent implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
-    canEdit = false,
     name = "",
     description = "",
     tests = "",
@@ -64,7 +62,6 @@ export class Talent implements WhProperty {
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
-    this.canEdit = canEdit;
     this.name = name;
     this.description = description;
     this.tests = tests;
@@ -82,7 +79,6 @@ export class Talent implements WhProperty {
     return new Talent({
       id: this.id,
       ownerId: this.ownerId,
-      canEdit: this.canEdit,
       visibility: this.visibility,
       name: this.name,
       description: this.description,
@@ -129,7 +125,6 @@ export class Talent implements WhProperty {
     }
     if (
       this.id !== otherTalent.id ||
-      this.canEdit !== otherTalent.canEdit ||
       this.visibility !== otherTalent.visibility ||
       this.name !== otherTalent.name ||
       this.description !== otherTalent.description ||
@@ -198,7 +193,6 @@ export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talen
   const newTalent = new Talent({
     id: talentApi.id,
     ownerId: talentApi.ownerId,
-    canEdit: talentApi.canEdit,
     visibility: talentApi.visibility,
     name: talentApi.object.name,
     description: talentApi.object.description,

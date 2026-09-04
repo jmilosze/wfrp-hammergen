@@ -75,7 +75,6 @@ const careerApiData: CareerApiData = {
 
 const careerApiResponse: ApiResponse<CareerApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Private,
   object: careerApiData,
@@ -83,7 +82,6 @@ const careerApiResponse: ApiResponse<CareerApiData> = {
 
 const career = new Career({
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   name: "career",
   description: "some desc",

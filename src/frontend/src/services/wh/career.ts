@@ -231,7 +231,6 @@ export function isLevel(x: number): x is 1 | 2 | 3 | 4 | 5 {
 export class Career implements WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -247,7 +246,6 @@ export class Career implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
-    canEdit = false,
     name = "",
     description = "",
     species = [Species.Human],
@@ -262,7 +260,6 @@ export class Career implements WhProperty {
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
-    this.canEdit = canEdit;
     this.name = name;
     this.description = description;
     this.species = species;
@@ -280,7 +277,6 @@ export class Career implements WhProperty {
     return new Career({
       id: this.id,
       ownerId: this.ownerId,
-      canEdit: this.canEdit,
       visibility: this.visibility,
       name: this.name,
       description: this.description,
@@ -367,7 +363,6 @@ export class Career implements WhProperty {
     }
     return (
       this.id === otherCareer.id &&
-      this.canEdit === otherCareer.canEdit &&
       this.visibility === otherCareer.visibility &&
       this.name === otherCareer.name &&
       this.description === otherCareer.description &&
@@ -436,7 +431,6 @@ export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Caree
   return new Career({
     id: careerApi.id,
     ownerId: careerApi.ownerId,
-    canEdit: careerApi.canEdit,
     visibility: careerApi.visibility,
     name: careerApi.object.name,
     description: careerApi.object.description,

@@ -24,7 +24,6 @@ const props = defineProps<{
 
 const newMutation = new Mutation({
   name: "New mutation",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -32,6 +31,7 @@ const newMutation = new Mutation({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -60,7 +60,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create mutation' : wh.canEdit ? 'Edit mutation' : wh.name" />
+  <Header :title="id === 'create' ? 'Create mutation' : canEdit ? 'Edit mutation' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -68,8 +68,8 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
       </div>
     </div>
     <div class="flex-1">
@@ -78,13 +78,13 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
   </div>
   <div class="my-4">
-    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit" />
+    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!canEdit" />
   </div>
   <div
     ref="contentContainerRef"
@@ -92,10 +92,10 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Mutation" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Mutation" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -113,7 +113,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

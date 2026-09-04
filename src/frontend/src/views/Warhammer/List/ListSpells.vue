@@ -108,7 +108,6 @@ function formatSpellRow(spell: Spell) {
       .map((x) => source[x])
       .join(", "),
     description: simplifiedLabels.join(", ") + ". " + spell.description,
-    canEdit: spell.canEdit,
     id: spell.id,
     ownerId: spell.ownerId,
     visibility: spell.visibility,
@@ -147,10 +146,10 @@ const userId = auth.getLoggedUserInfo().userId;
       <TextLink routeName="spell" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
     </template>
 
-    <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
+    <template #actions="{ name, id, ownerId }: { name: string; id: string; ownerId: string }">
       <ActionButtonsNonCharacter
         :id="id"
-        :canEdit="canEdit"
+        :ownerId="ownerId"
         routeName="spell"
         @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
@@ -159,14 +158,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        canEdit,
+        ownerId,
         visibility,
       }: {
-        canEdit: boolean;
+        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :canEdit="canEdit" :visibility="visibility" />
+      <ToolTip :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

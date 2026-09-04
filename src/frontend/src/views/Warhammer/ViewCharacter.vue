@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { CharacterApi } from "../../services/wh/character.ts";
 import { authRequest } from "../../services/auth.ts";
 import {
@@ -35,6 +35,7 @@ const { print, printing } = usePrint();
 const characterApi = new CharacterApi(authRequest);
 
 const character = ref(newCharacterFull());
+const canEdit = computed(() => auth.canEdit(character.value.ownerId));
 await loadCharacter();
 
 async function loadCharacter() {
@@ -446,7 +447,7 @@ const grimoiresDisp = ref(
     <ActionButton class="m-1 btn btn-sm" @click="saveJson()">Download JSON</ActionButton>
     <ActionButton class="m-1 btn btn-sm" @click="print()">Print</ActionButton>
     <ActionButton
-      v-if="character.canEdit"
+      v-if="canEdit"
       class="m-1 btn btn-sm"
       @click="router.push({ name: 'character', params: { id: id } })"
     >

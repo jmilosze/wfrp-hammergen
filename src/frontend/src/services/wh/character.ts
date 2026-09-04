@@ -97,7 +97,6 @@ export interface CharacterApiData {
 export class Character implements WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -139,7 +138,6 @@ export class Character implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
-    canEdit = false,
     name = "",
     description = "",
     notes = "",
@@ -180,7 +178,6 @@ export class Character implements WhProperty {
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
-    this.canEdit = canEdit;
     this.visibility = visibility;
     this.name = name;
     this.description = description;
@@ -222,7 +219,6 @@ export class Character implements WhProperty {
     }
     return (
       this.id === otherCharacter.id &&
-      this.canEdit === otherCharacter.canEdit &&
       this.visibility === otherCharacter.visibility &&
       this.name === otherCharacter.name &&
       this.description === otherCharacter.description &&
@@ -266,7 +262,6 @@ export class Character implements WhProperty {
     return new Character({
       id: this.id,
       ownerId: this.ownerId,
-      canEdit: this.canEdit,
       visibility: this.visibility,
       name: this.name,
       description: this.description,
@@ -773,7 +768,6 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
   const newCharacter = new Character({
     id: characterApi.id,
     ownerId: characterApi.ownerId,
-    canEdit: characterApi.canEdit,
     visibility: characterApi.visibility,
     name: characterApi.object.name,
     description: characterApi.object.description,

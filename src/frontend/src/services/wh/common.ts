@@ -12,7 +12,6 @@ export enum Visibility {
 export interface WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -36,7 +35,6 @@ export interface WhApi<T, TApiData> {
 
 export interface ApiResponse<WhApiData> {
   id: string;
-  canEdit: boolean;
   ownerId: string;
   visibility?: Visibility;
   object: WhApiData;

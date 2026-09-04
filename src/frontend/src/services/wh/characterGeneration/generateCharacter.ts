@@ -32,7 +32,6 @@ export function generateCharacter(
   level: 1 | 2 | 3 | 4,
 ) {
   const character = new Character({
-    canEdit: true,
     id: "create",
     source: defaultSource(),
   });

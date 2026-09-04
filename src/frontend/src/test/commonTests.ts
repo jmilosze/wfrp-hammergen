@@ -5,7 +5,6 @@ import { Visibility } from "../services/wh/common.ts";
 
 export interface WhPropertyExtended {
   id: string;
-  canEdit: boolean;
   name: string;
   description: string;
   visibility: Visibility;
@@ -78,13 +77,6 @@ export const testIsEqualCommonProperties = (name: string, whProperty: WhProperty
       expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
     });
 
-    test(`when other ${name} has different value of canEdit`, () => {
-      const whProperty1 = whProperty.copy();
-      const whProperty2 = whProperty.copy();
-      whProperty1.canEdit = true;
-      whProperty2.canEdit = false;
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
-    });
 
     test(`when other ${name} has different value of visibility`, () => {
       const whProperty1 = whProperty.copy();

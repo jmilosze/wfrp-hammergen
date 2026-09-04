@@ -70,5 +70,10 @@ export function useAuth() {
     return setUserInfo(username);
   }
 
-  return { loggedIn, isAdmin, login, logout, callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo };
+  return { loggedIn, isAdmin, login, logout, callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo, canEdit };
+}
+
+export function canEdit(ownerId?: string): boolean {
+  const userId = getUserInfo().userId;
+  return !!userId && ownerId === userId;
 }

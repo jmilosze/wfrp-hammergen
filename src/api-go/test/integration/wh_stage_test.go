@@ -27,6 +27,7 @@ type whTestStage struct {
 	genProps               *warhammer.GenProps
 	user                   *whUser
 	adminUser              *whUser
+	otherAdminUser         *whUser
 	otherUser              *whUser
 	userWithSharedAccounts *whUser
 	authorizationHeader    string
@@ -46,7 +47,6 @@ type whProperty struct {
 	Id         string              `json:"id"`
 	OwnerId    string              `json:"ownerId"`
 	Visibility int                 `json:"visibility"`
-	CanEdit    bool                `json:"canEdit"`
 	Object     *warhammer.Property `json:"object"`
 }
 
@@ -239,6 +239,16 @@ func (s *whTestStage) already_present_admin_user() *whTestStage {
 	return s
 }
 
+func (s *whTestStage) already_present_other_admin_user() *whTestStage {
+	s.otherAdminUser = &whUser{
+		Id:       "000000000000000000000005",
+		Username: "user5@test.com",
+		Password: "123456",
+	}
+
+	return s
+}
+
 func (s *whTestStage) user_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.user)
 
@@ -262,6 +272,20 @@ func (s *whTestStage) admin_user_is_authenticated() *whTestStage {
 	}
 
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.adminUser.Username, s.adminUser.Password)
+	require.NoError(s.t, err)
+	s.authorizationHeader = "Bearer " + accessToken
+	return s
+}
+
+func (s *whTestStage) other_admin_user_is_authenticated() *whTestStage {
+	require.NotNil(s.t, s.otherAdminUser)
+
+	if !s.whVisibilityExplicit {
+		vis := warhammer.VisibilityPublic
+		s.whVisibility = &vis
+	}
+
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.otherAdminUser.Username, s.otherAdminUser.Password)
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
 	return s
@@ -337,14 +361,12 @@ func (s *whTestStage) owner_is_user_and_can_edit() *whTestStage {
 	require.NotNil(s.t, s.user)
 
 	require.Equal(s.t, s.user.Id, s.responseWh.OwnerId)
-	require.Equal(s.t, true, s.responseWh.CanEdit)
 
 	return s
 }
 
 func (s *whTestStage) owner_is_admin_literal_and_can_edit() *whTestStage {
 	require.Equal(s.t, s.adminUser.Id, s.responseWh.OwnerId)
-	require.Equal(s.t, true, s.responseWh.CanEdit)
 
 	return s
 }
@@ -372,7 +394,6 @@ func (s *whTestStage) getWh(url string) {
 
 func (s *whTestStage) owner_is_admin_and_can_not_edit() *whTestStage {
 	require.Equal(s.t, s.adminUser.Id, s.responseWh.OwnerId)
-	require.Equal(s.t, false, s.responseWh.CanEdit)
 
 	return s
 }
@@ -418,7 +439,6 @@ func (s *whTestStage) owner_is_user_and_can_not_edit() *whTestStage {
 	require.NotNil(s.t, s.user)
 
 	require.Equal(s.t, s.user.Id, s.responseWh.OwnerId)
-	require.Equal(s.t, false, s.responseWh.CanEdit)
 
 	return s
 }
@@ -480,28 +500,24 @@ func (s *whTestStage) response_body_does_not_contain_new_wh() *whTestStage {
 
 func (s *whTestStage) new_wh_in_list_owner_is_admin_and_can_not_edit() *whTestStage {
 	require.Equal(s.t, s.adminUser.Id, s.responseWhMap[s.newWhPropertyId].OwnerId)
-	require.Equal(s.t, false, s.responseWhMap[s.newWhPropertyId].CanEdit)
 
 	return s
 }
 
 func (s *whTestStage) new_wh_in_list_owner_is_user_and_can_edit() *whTestStage {
 	require.Equal(s.t, s.user.Id, s.responseWhMap[s.newWhPropertyId].OwnerId)
-	require.Equal(s.t, true, s.responseWhMap[s.newWhPropertyId].CanEdit)
 
 	return s
 }
 
 func (s *whTestStage) another_new_wh_in_list_owner_is_user_and_can_edit() *whTestStage {
 	require.Equal(s.t, s.user.Id, s.responseWhMap[s.anotherNewWhPropertyId].OwnerId)
-	require.Equal(s.t, true, s.responseWhMap[s.anotherNewWhPropertyId].CanEdit)
 
 	return s
 }
 
 func (s *whTestStage) new_wh_in_list_owner_is_user_and_can_not_edit() *whTestStage {
 	require.Equal(s.t, s.user.Id, s.responseWhMap[s.newWhPropertyId].OwnerId)
-	require.Equal(s.t, false, s.responseWhMap[s.newWhPropertyId].CanEdit)
 
 	return s
 }

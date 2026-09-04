@@ -42,6 +42,14 @@ var user4 = user.User{
 	SharedAccountNames: []string{},
 }
 
+var user5 = user.User{
+	Id:                 "000000000000000000000005",
+	Username:           "user5@test.com",
+	Password:           "123456",
+	Admin:              true,
+	SharedAccountNames: []string{},
+}
+
 func NewMockUsers() []*user.User {
-	return []*user.User{&user0, &user1, &user2, &user3, &user4}
+	return []*user.User{&user0, &user1, &user2, &user3, &user4, &user5}
 }

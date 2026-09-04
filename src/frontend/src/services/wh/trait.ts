@@ -25,7 +25,6 @@ export interface TraitApiData {
 export class Trait implements WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -35,7 +34,6 @@ export class Trait implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
-    canEdit = false,
     name = "",
     description = "",
     modifiers = new CharacterModifiers(),
@@ -44,7 +42,6 @@ export class Trait implements WhProperty {
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
-    this.canEdit = canEdit;
     this.name = name;
     this.description = description;
     this.modifiers = modifiers;
@@ -56,7 +53,6 @@ export class Trait implements WhProperty {
     return new Trait({
       id: this.id,
       ownerId: this.ownerId,
-      canEdit: this.canEdit,
       visibility: this.visibility,
       name: this.name,
       description: this.description,
@@ -83,7 +79,6 @@ export class Trait implements WhProperty {
     }
     if (
       this.id !== otherTrait.id ||
-      this.canEdit !== otherTrait.canEdit ||
       this.visibility !== otherTrait.visibility ||
       this.name !== otherTrait.name ||
       this.description !== otherTrait.description ||
@@ -104,7 +99,6 @@ export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>): Trait {
   const newTrait = new Trait({
     id: traitApi.id,
     ownerId: traitApi.ownerId,
-    canEdit: traitApi.canEdit,
     visibility: traitApi.visibility,
     name: traitApi.object.name,
     description: traitApi.object.description,

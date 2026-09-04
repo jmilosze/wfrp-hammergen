@@ -66,7 +66,6 @@ const itemApiData: ItemApiData = {
 
 const itemApiResponse: ApiResponse<ItemApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: itemApiData,
@@ -75,7 +74,6 @@ const itemApiResponse: ApiResponse<ItemApiData> = {
 const item = new Item({
   id: "id",
   ownerId: "owner",
-  canEdit: true,
   name: "item",
   description: "desc",
   visibility: Visibility.Shared,

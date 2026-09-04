@@ -71,7 +71,6 @@ function formatRuneRow(rune: Rune) {
       .map((x) => source[x])
       .join(", "),
     description: rune.description,
-    canEdit: rune.canEdit,
     id: rune.id,
     ownerId: rune.ownerId,
     visibility: rune.visibility,
@@ -124,10 +123,10 @@ const userId = auth.getLoggedUserInfo().userId;
       <TextLink routeName="rune" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
     </template>
 
-    <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
+    <template #actions="{ name, id, ownerId }: { name: string; id: string; ownerId: string }">
       <ActionButtonsNonCharacter
         :id="id"
-        :canEdit="canEdit"
+        :ownerId="ownerId"
         routeName="rune"
         @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
@@ -136,14 +135,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        canEdit,
+        ownerId,
         visibility,
       }: {
-        canEdit: boolean;
+        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :canEdit="canEdit" :visibility="visibility" />
+      <ToolTip :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

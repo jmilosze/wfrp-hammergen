@@ -20,7 +20,6 @@ const mutationApiData: MutationApiData = {
 
 const mutationApiResponse: ApiResponse<MutationApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: mutationApiData,
@@ -29,7 +28,6 @@ const mutationApiResponse: ApiResponse<MutationApiData> = {
 const mutation = new Mutation({
   id: "id",
   ownerId: "owner",
-  canEdit: true,
   name: "mutation",
   description: "desc",
   type: MutationType.Physical,

@@ -40,7 +40,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 1,
       wh: {
         id: "id1",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "career_1",
@@ -105,7 +104,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 2,
       wh: {
         id: "id2",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "career_2",
@@ -171,7 +169,6 @@ const characterFullApiData: CharacterFullApiData = {
     number: 3,
     wh: {
       id: "id3",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "career_3",
@@ -238,7 +235,6 @@ const characterFullApiData: CharacterFullApiData = {
     {
       wh: {
         id: "id4",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "basic",
@@ -256,7 +252,6 @@ const characterFullApiData: CharacterFullApiData = {
     {
       wh: {
         id: "id5",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "advanced",
@@ -277,7 +272,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 6,
       wh: {
         id: "id6",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "talent_1",
@@ -302,7 +296,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 6,
       wh: {
         id: "id7",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "talent_2",
@@ -327,7 +320,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 1,
       wh: {
         id: "id8",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "talent_3",
@@ -354,7 +346,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 1,
       wh: {
         id: "id9",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "item_1",
@@ -383,7 +374,6 @@ const characterFullApiData: CharacterFullApiData = {
           properties: [
             {
               id: "pid1",
-              canEdit: true,
               ownerId: "owner",
               object: {
                 name: "item_1_property_1",
@@ -399,7 +389,6 @@ const characterFullApiData: CharacterFullApiData = {
               number: 1,
               wh: {
                 id: "rune1",
-                canEdit: true,
                 ownerId: "owner",
                 object: { name: "Rune1", description: "", applicableTo: [], labels: [], source: {} },
               },
@@ -416,7 +405,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 2,
       wh: {
         id: "id10",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "item_2",
@@ -445,7 +433,6 @@ const characterFullApiData: CharacterFullApiData = {
           properties: [
             {
               id: "pid2",
-              canEdit: true,
               ownerId: "owner",
               object: {
                 name: "item_2_property_1",
@@ -457,7 +444,6 @@ const characterFullApiData: CharacterFullApiData = {
             },
             {
               id: "pid3",
-              canEdit: true,
               ownerId: "owner",
               object: {
                 name: "item_2_property_2",
@@ -480,7 +466,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 3,
       wh: {
         id: "id11",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "item_3",
@@ -519,7 +504,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 3,
       wh: {
         id: "id12",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "item_4",
@@ -548,7 +532,6 @@ const characterFullApiData: CharacterFullApiData = {
           properties: [
             {
               id: "pid4",
-              canEdit: true,
               ownerId: "owner",
               object: {
                 name: "item_4_property_1",
@@ -573,7 +556,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 1,
       wh: {
         id: "id13",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "item_5",
@@ -602,7 +584,6 @@ const characterFullApiData: CharacterFullApiData = {
           properties: [
             {
               id: "pid5",
-              canEdit: true,
               ownerId: "owner",
               object: {
                 name: "item_5_property_1",
@@ -614,7 +595,6 @@ const characterFullApiData: CharacterFullApiData = {
             },
             {
               id: "pid6",
-              canEdit: true,
               ownerId: "owner",
               object: {
                 name: "item_5_property_2",
@@ -637,7 +617,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 2,
       wh: {
         id: "id14",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "item_6",
@@ -676,7 +655,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 1,
       wh: {
         id: "id14a",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "spellbook",
@@ -703,7 +681,6 @@ const characterFullApiData: CharacterFullApiData = {
             spells: [
               {
                 id: "sid1",
-                canEdit: true,
                 ownerId: "owner",
                 object: {
                   name: "spellbook_spell_1",
@@ -721,7 +698,6 @@ const characterFullApiData: CharacterFullApiData = {
               },
               {
                 id: "sid2",
-                canEdit: true,
                 ownerId: "owner",
                 object: {
                   name: "spellbook_spell_2",
@@ -756,7 +732,6 @@ const characterFullApiData: CharacterFullApiData = {
       number: 5,
       wh: {
         id: "id15",
-        canEdit: true,
         ownerId: "owner",
         object: {
           name: "item_7",
@@ -795,7 +770,6 @@ const characterFullApiData: CharacterFullApiData = {
   spells: [
     {
       id: "id16",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "spell_1",
@@ -813,7 +787,6 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       id: "id17",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "spell_2",
@@ -833,7 +806,6 @@ const characterFullApiData: CharacterFullApiData = {
   prayers: [
     {
       id: "id16a",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "prayer_1",
@@ -846,7 +818,6 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       id: "id17a",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "prayer_2",
@@ -863,7 +834,6 @@ const characterFullApiData: CharacterFullApiData = {
   mutations: [
     {
       id: "id18",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "mut_1",
@@ -880,7 +850,6 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       id: "id19",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "mut_2",
@@ -899,7 +868,6 @@ const characterFullApiData: CharacterFullApiData = {
   traits: [
     {
       id: "idT18",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "trait_1",
@@ -915,7 +883,6 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       id: "idT19",
-      canEdit: true,
       ownerId: "owner",
       object: {
         name: "trait_2",
@@ -934,7 +901,6 @@ const characterFullApiData: CharacterFullApiData = {
 
 const characterFullApiResponse: ApiResponse<CharacterFullApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: characterFullApiData,
@@ -962,7 +928,7 @@ const characterFull = {
   sin: 1,
   corruption: 2,
   visibility: Visibility.Shared,
-  canEdit: true,
+  ownerId: "owner",
   currentCareer: {
     id: "id3",
     name: "career_3 3",

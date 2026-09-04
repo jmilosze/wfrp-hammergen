@@ -51,7 +51,6 @@ export interface SkillApiData {
 export class Skill implements WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -65,7 +64,6 @@ export class Skill implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
-    canEdit = false,
     name = "",
     description = "",
     attribute = AttributeName.WS,
@@ -78,7 +76,6 @@ export class Skill implements WhProperty {
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
-    this.canEdit = canEdit;
     this.name = name;
     this.description = description;
     this.attribute = attribute;
@@ -94,7 +91,6 @@ export class Skill implements WhProperty {
     return new Skill({
       id: this.id,
       ownerId: this.ownerId,
-      canEdit: this.canEdit,
       visibility: this.visibility,
       name: this.name,
       description: this.description,
@@ -125,7 +121,6 @@ export class Skill implements WhProperty {
     }
     return (
       this.id === otherSkill.id &&
-      this.canEdit === otherSkill.canEdit &&
       this.visibility === otherSkill.visibility &&
       this.name === otherSkill.name &&
       this.description === otherSkill.description &&
@@ -151,7 +146,6 @@ export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>): Skill {
   const newSkill = new Skill({
     id: skillApi.id,
     ownerId: skillApi.ownerId,
-    canEdit: skillApi.canEdit,
     visibility: skillApi.visibility,
     name: skillApi.object.name,
     description: skillApi.object.description,

@@ -15,7 +15,6 @@ const runeApiData: RuneApiData = {
 
 const runeApiDataResponse: ApiResponse<RuneApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: runeApiData,
@@ -24,7 +23,6 @@ const runeApiDataResponse: ApiResponse<RuneApiData> = {
 const rune = new Rune({
   id: "id",
   ownerId: "owner",
-  canEdit: true,
   name: "rune",
   description: "desc",
   labels: [RuneLabel.RuneLabelMaster, RuneLabel.RuneLabelProtection],

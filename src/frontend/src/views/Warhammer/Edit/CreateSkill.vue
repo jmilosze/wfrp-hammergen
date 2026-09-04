@@ -34,7 +34,6 @@ const props = defineProps<{
 
 const newSkill = new Skill({
   name: "New skill",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -42,6 +41,7 @@ const newSkill = new Skill({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -117,7 +117,7 @@ const skillTable = useElSize(380, skillsTableRef);
       {{ skillListUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create skill' : wh.canEdit ? 'Edit skill' : wh.name" />
+  <Header :title="id === 'create' ? 'Create skill' : canEdit ? 'Edit skill' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -125,28 +125,28 @@ const skillTable = useElSize(380, skillsTableRef);
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
         <DoubleRadioButton
           v-model="wh.isGroup"
           title="Individual skill/group of skills"
           :invertOrder="true"
           trueText="Group"
           falseText="Individual"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
         <SelectInput
           v-model="wh.attribute"
           :options="attOptions"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Attribute"
           class="min-w-24"
         />
-        <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!wh.canEdit" title="Type" class="min-w-24" />
+        <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
         <FormTextarea
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
@@ -157,10 +157,10 @@ const skillTable = useElSize(380, skillsTableRef);
           title="Display if skill/group not taken?"
           trueText="Yes"
           falseText="No"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
         <SelectTable
-          :disabled="!wh.canEdit || wh.isGroup"
+          :disabled="!canEdit || wh.isGroup"
           :initSelectedItems="wh.group"
           :itemList="groupSkills"
           title="Belongs to group"
@@ -181,10 +181,10 @@ const skillTable = useElSize(380, skillsTableRef);
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="my-3 flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -202,7 +202,7 @@ const skillTable = useElSize(380, skillsTableRef);
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

@@ -3,15 +3,19 @@ import { computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { Visibility } from "../services/wh/common";
 import { addSpaces } from "../utils/string";
+import { useAuth } from "../composables/auth";
 
 const props = defineProps<{
-  canEdit: boolean;
+  ownerId?: string;
   visibility?: Visibility;
 }>();
 
+const auth = useAuth();
+const canEdit = computed(() => auth.canEdit(props.ownerId));
+
 const tileAndContent = computed(() => {
   const vis = props.visibility ?? Visibility.Private;
-  return getSharedItemTooltip(props.canEdit, vis);
+  return getSharedItemTooltip(canEdit.value, vis);
 });
 
 function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): { tile: string; content: string } {

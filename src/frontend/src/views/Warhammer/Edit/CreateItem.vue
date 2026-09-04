@@ -54,7 +54,6 @@ const props = defineProps<{
 
 const newItem = new Item({
   name: "New item",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -62,6 +61,7 @@ const newItem = new Item({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -157,7 +157,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
       {{ spellListUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create trapping' : wh.canEdit ? 'Edit trapping' : wh.name" />
+  <Header :title="id === 'create' ? 'Create trapping' : canEdit ? 'Edit trapping' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -165,12 +165,12 @@ const propertiesTable = useElSize(380, propertiesTableRef);
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!wh.canEdit" title="Type" class="min-w-24" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+        <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
         <SelectInput
           v-model="wh.availability"
           :options="availOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Availability"
           class="min-w-24"
         />
@@ -178,21 +178,21 @@ const propertiesTable = useElSize(380, propertiesTableRef);
           v-model="wh.price"
           title="Price (in brass)"
           :validationStatus="validPrice"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           type="number"
         />
         <FormInput
           v-model="wh.enc"
           title="Encumbrance"
           :validationStatus="validEnc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           type="number"
         />
         <FormTextarea
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
@@ -205,7 +205,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.melee.dmgSbMult"
               :validationStatus="validMeleeSbDmgMult"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -213,7 +213,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.melee.dmg"
               :validationStatus="validMeleeDmg"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -222,21 +222,21 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         <SelectInput
           v-model="wh.melee.group"
           :options="meleeGroupOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Weapon group"
           class="min-w-24"
         />
         <SelectInput
           v-model="wh.melee.hands"
           :options="weaponHandsOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="One/Two handed"
           class="min-w-24"
         />
         <SelectInput
           v-model="wh.melee.reach"
           :options="meleeReachOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Weapon reach"
           class="min-w-24"
         />
@@ -249,7 +249,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.ranged.dmgSbMult"
               :validationStatus="validRangedSbDmgMult"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -257,7 +257,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.ranged.dmg"
               :validationStatus="validRangedDmg"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -270,7 +270,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.ranged.rngSbMult"
               :validationStatus="validRangedSbRngMult"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -278,7 +278,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.ranged.rng"
               :validationStatus="validRangedRng"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -287,14 +287,14 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         <SelectInput
           v-model="wh.ranged.group"
           :options="rangedGroupOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Weapon group"
           class="min-w-24"
         />
         <SelectInput
           v-model="wh.ranged.hands"
           :options="weaponHandsOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="One/Two handed"
           class="min-w-24"
         />
@@ -307,7 +307,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.ammunition.dmg"
               :validationStatus="validAmmunitionDmg"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -320,7 +320,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.ammunition.rngMult"
               :validationStatus="validAmmunitionRngMult"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -328,7 +328,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
             <FormInput
               v-model="wh.ammunition.rng"
               :validationStatus="validAmmunitionRng"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               type="number"
               class="min-w-14"
             />
@@ -337,7 +337,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         <SelectInput
           v-model="wh.ammunition.group"
           :options="ammunitionGroupOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Ammunition group"
           class="min-w-24"
         />
@@ -346,7 +346,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         <MultipleCheckboxInput
           v-model="wh.armour.location"
           title="Armour location"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           :options="ArmourLocationOpts"
         />
         <FormInput
@@ -354,12 +354,12 @@ const propertiesTable = useElSize(380, propertiesTableRef);
           title="Armour points"
           :validationStatus="validArmourPoints"
           type="number"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
         <SelectInput
           v-model="wh.armour.group"
           :options="armourGroupOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Armour group"
           class="min-w-24"
         />
@@ -370,12 +370,12 @@ const propertiesTable = useElSize(380, propertiesTableRef);
           title="Container capacity"
           :validationStatus="validContainerCapacity"
           type="number"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
         <SelectInput
           v-model="wh.container.carryType"
           :options="carryTypeOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Can it be worn/carried?"
           class="min-w-24"
         />
@@ -384,7 +384,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         <SelectInput
           v-model="wh.other.carryType"
           :options="carryTypeOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           title="Can it be worn/carried?"
           class="min-w-24"
         />
@@ -392,7 +392,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
       <div v-else-if="wh.type === ItemType.Grimoire" class="flex flex-col gap-4">
         <SelectTable
           modalId="grimoire"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           :initSelectedItems="wh.grimoire.spells"
           :itemList="spellListUtils.whList.value"
           title="Spells"
@@ -407,7 +407,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         />
       </div>
       <SelectTable
-        :disabled="!wh.canEdit"
+        :disabled="!canEdit"
         :initSelectedItems="wh.properties"
         :itemList="propertyList"
         title="Qualities and flaws"
@@ -421,7 +421,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         @selected="(e) => wh.updateProperties(e.id, e.selected)"
       />
       <SelectIdNumberTable
-        :disabled="!wh.canEdit"
+        :disabled="!canEdit"
         :initItems="wh.runes"
         :allItemList="runeList"
         title="Runes"
@@ -443,10 +443,10 @@ const propertiesTable = useElSize(380, propertiesTableRef);
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="my-3 flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -464,7 +464,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

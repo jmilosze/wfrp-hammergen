@@ -12,7 +12,6 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/rs/xid"
-	"golang.org/x/exp/slices"
 )
 
 type WhService struct {
@@ -54,7 +53,6 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, fmt.Errorf("failed to create wh: %w", err)
 	}
 
-	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 	return createdWh.Copy(), nil
 }
 
@@ -75,20 +73,8 @@ func extraCharacterValidation(t wh.WhType, newWh *wh.Wh, validator *validator.Va
 	return nil
 }
 
-func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []string) bool {
-	if (ownerId != userId) && slices.Contains(sharedAccounts, ownerId) {
-		return false
-	}
-
-	if isAdmin {
-		return true
-	}
-
-	if ownerId == userId {
-		return true
-	}
-
-	return false
+func canModify(ownerId string, userId string) bool {
+	return ownerId == userId
 }
 
 func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, error) {
@@ -119,12 +105,12 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 	existingWh := existingWhs[0]
 
-	if !canEdit(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
+	if !canModify(existingWh.OwnerId, c.Id) {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorNotFound, Err: fmt.Errorf("unauthorized to update wh %s", newWh.Id)}
 	}
 
 	newWh.OwnerId = existingWh.OwnerId
-	updatedWh, err := s.WhDbService.Update(ctx, t, newWh, existingWh.OwnerId)
+	updatedWh, err := s.WhDbService.Update(ctx, t, newWh, c.Id)
 	if err != nil {
 		var dbErr *domain.DbError
 		wErr := fmt.Errorf("failed to update wh: %w", err)
@@ -135,7 +121,6 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		}
 	}
 
-	updatedWh.CanEdit = canEdit(updatedWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 	return updatedWh.Copy(), nil
 }
 
@@ -150,11 +135,11 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 	}
 	existingWh := existingWhs[0]
 
-	if !canEdit(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
+	if !canModify(existingWh.OwnerId, c.Id) {
 		return nil
 	}
 
-	err = s.WhDbService.Delete(ctx, t, whId, existingWh.OwnerId)
+	err = s.WhDbService.Delete(ctx, t, whId, c.Id)
 	if err != nil {
 		return fmt.Errorf("failed to delete wh: %w", err)
 	}
@@ -176,7 +161,6 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		if err != nil {
 			return nil, fmt.Errorf("failed to initialize nil pointers: %w", err)
 		}
-		v.CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 		whsRet = append(whsRet, v)
 	}
 
