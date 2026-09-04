@@ -53,7 +53,6 @@ var career0 = wh.Wh{
 			Talents:    []string{},
 			Items:      "more more more items",
 		},
-		Shared: false,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
 			wh.SourceSeaOfClaws:              "e",

@@ -70,7 +70,6 @@ const newCharacter = new Character({
   species: SpeciesWithRegion.HumanReikland,
   canEdit: true,
   id: "create",
-  shared: false,
   source: defaultSource(),
 });
 
@@ -784,7 +783,7 @@ const modifierAttributes = computed(() => {
   </div>
 
   <div class="my-4">
-    <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Character" :disabled="!wh.canEdit" />
+    <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!wh.canEdit" />
   </div>
 
   <div class="mt-4">

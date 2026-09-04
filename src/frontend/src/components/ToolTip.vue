@@ -7,21 +7,10 @@ import { addSpaces } from "../utils/string";
 const props = defineProps<{
   canEdit: boolean;
   visibility?: Visibility;
-  shared?: boolean;
-  ownerId?: string;
 }>();
 
 const tileAndContent = computed(() => {
-  let vis = props.visibility;
-  if (vis === undefined) {
-    if (props.ownerId === "admin") {
-      vis = Visibility.Public;
-    } else if (props.shared) {
-      vis = Visibility.Shared;
-    } else {
-      vis = Visibility.Private;
-    }
-  }
+  const vis = props.visibility ?? Visibility.Private;
   return getSharedItemTooltip(props.canEdit, vis);
 });
 

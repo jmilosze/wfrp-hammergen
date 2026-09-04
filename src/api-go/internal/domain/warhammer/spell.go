@@ -133,16 +133,7 @@ type Spell struct {
 	Target         string               `json:"target" validate:"medium_string_valid"`
 	Duration       string               `json:"duration" validate:"medium_string_valid"`
 	Classification *SpellClassification `json:"classification" validate:"spell_classification_valid"`
-	Shared         bool                 `json:"shared" validate:"shared_valid"`
 	Source         map[Source]string    `json:"source" validate:"source_valid"`
-}
-
-func (spell *Spell) IsShared() (bool, error) {
-	if spell == nil {
-		return false, errors.New("spell pointer is nil")
-	}
-
-	return spell.Shared, nil
 }
 
 func (spell *Spell) Copy() WhObject {
@@ -158,7 +149,6 @@ func (spell *Spell) Copy() WhObject {
 		Target:         spell.Target,
 		Duration:       spell.Duration,
 		Classification: spell.Classification.Copy(),
-		Shared:         spell.Shared,
 		Source:         copySourceMap(spell.Source),
 	}
 }

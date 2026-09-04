@@ -9,7 +9,6 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
 
   if (auth.isAdmin.value && whInstance.id === "create") {
     whInstance.visibility = Visibility.Public;
-    whInstance.shared = true;
   }
 
   const wh = ref(whInstance.copy()) as Ref<T>;

@@ -14,7 +14,6 @@ const mutationApiData: MutationApiData = {
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
     effects: [],
   },
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
@@ -39,7 +38,6 @@ const mutation = new Mutation({
     movement: 1,
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
   }),
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });

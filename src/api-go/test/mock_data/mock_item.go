@@ -6,8 +6,9 @@ import (
 )
 
 var itemMelee = wh.Wh{
-	Id:      "400000000000000000000000",
-	OwnerId: user1.Id,
+	Id:         "400000000000000000000000",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Item{
 		Name:         "melee item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
@@ -17,7 +18,6 @@ var itemMelee = wh.Wh{
 		Properties:   []string{property0.Id, property1.Id},
 		Runes:        []*wh.IdNumber{{Id: rune0.Id, Number: 1}, {Id: rune1.Id, Number: 2}},
 		Type:         wh.ItemTypeMelee,
-		Shared:       true,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "g",
 			wh.SourceUpInArms:                "f",
@@ -33,8 +33,9 @@ var itemMelee = wh.Wh{
 }
 
 var itemRanged = wh.Wh{
-	Id:      "400000000000000000000001",
-	OwnerId: user1.Id,
+	Id:         "400000000000000000000001",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Item{
 		Name:         "ranged item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
@@ -43,7 +44,6 @@ var itemRanged = wh.Wh{
 		Availability: wh.ItemAvailabilityScarce,
 		Properties:   []string{},
 		Type:         wh.ItemTypeRanged,
-		Shared:       true,
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},
@@ -59,8 +59,9 @@ var itemRanged = wh.Wh{
 }
 
 var itemAmmunition = wh.Wh{
-	Id:      "400000000000000000000002",
-	OwnerId: user1.Id,
+	Id:         "400000000000000000000002",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Item{
 		Name:         "ammunition item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
@@ -69,7 +70,6 @@ var itemAmmunition = wh.Wh{
 		Availability: wh.ItemAvailabilityRare,
 		Properties:   []string{property0.Id},
 		Type:         wh.ItemTypeAmmunition,
-		Shared:       true,
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
@@ -83,8 +83,9 @@ var itemAmmunition = wh.Wh{
 }
 
 var itemArmour = wh.Wh{
-	Id:      "400000000000000000000003",
-	OwnerId: user1.Id,
+	Id:         "400000000000000000000003",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Item{
 		Name:         "armour item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
@@ -93,7 +94,6 @@ var itemArmour = wh.Wh{
 		Availability: wh.ItemAvailabilityExotic,
 		Properties:   []string{property0.Id},
 		Type:         wh.ItemTypeArmour,
-		Shared:       true,
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
@@ -106,8 +106,9 @@ var itemArmour = wh.Wh{
 }
 
 var itemContainer = wh.Wh{
-	Id:      "400000000000000000000004",
-	OwnerId: user1.Id,
+	Id:         "400000000000000000000004",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Item{
 		Name:         "container item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
@@ -116,7 +117,6 @@ var itemContainer = wh.Wh{
 		Availability: wh.ItemAvailabilityCommon,
 		Properties:   []string{property0.Id},
 		Type:         wh.ItemTypeContainer,
-		Shared:       true,
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
@@ -128,8 +128,9 @@ var itemContainer = wh.Wh{
 }
 
 var itemGrimoire = wh.Wh{
-	Id:      "400000000000000000000005",
-	OwnerId: user1.Id,
+	Id:         "400000000000000000000005",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Item{
 		Name:         "grimoire item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
@@ -139,7 +140,6 @@ var itemGrimoire = wh.Wh{
 		Properties:   []string{property0.Id},
 		Runes:        []*wh.IdNumber{{Id: rune0.Id, Number: 1}},
 		Type:         wh.ItemTypeGrimoire,
-		Shared:       true,
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},
@@ -150,8 +150,9 @@ var itemGrimoire = wh.Wh{
 }
 
 var itemOther = wh.Wh{
-	Id:      "400000000000000000000006",
-	OwnerId: user1.Id,
+	Id:         "400000000000000000000006",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Item{
 		Name:         "other item",
 		Description:  fmt.Sprintf("owned by %s", user1.Username),
@@ -160,7 +161,6 @@ var itemOther = wh.Wh{
 		Availability: wh.ItemAvailabilityCommon,
 		Properties:   []string{property0.Id},
 		Type:         wh.ItemTypeOther,
-		Shared:       true,
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},

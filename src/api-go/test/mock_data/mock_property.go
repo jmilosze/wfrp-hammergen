@@ -14,7 +14,6 @@ var property0 = wh.Wh{
 		Description:  fmt.Sprintf("owned by %s", user0.Username),
 		Type:         0,
 		ApplicableTo: []wh.ItemType{0, 1, 2},
-		Shared:       false,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
 			wh.SourceSeaOfClaws:              "e",
@@ -23,8 +22,9 @@ var property0 = wh.Wh{
 }
 
 var property1 = wh.Wh{
-	Id:      "300000000000000000000001",
-	OwnerId: user1.Id,
+	Id:         "300000000000000000000001",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityPrivate,
 	Object: &wh.Property{
 		Name:        "property 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),

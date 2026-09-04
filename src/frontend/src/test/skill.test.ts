@@ -12,7 +12,6 @@ const skillApiData: SkillApiData = {
   displayZero: true,
   isGroup: true,
   group: ["a", "b"],
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 } as SkillApiData;
@@ -36,7 +35,6 @@ const skill = new Skill({
   displayZero: true,
   isGroup: true,
   group: new Set(["a", "b"]),
-  shared: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });

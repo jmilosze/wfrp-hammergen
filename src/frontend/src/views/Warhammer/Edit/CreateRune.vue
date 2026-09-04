@@ -27,7 +27,6 @@ const newRune = new Rune({
   name: "New rune",
   canEdit: true,
   id: "create",
-  shared: true,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -114,7 +113,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
       <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.shared" v-model:visibility="wh.visibility" propertyName="Rune" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!wh.canEdit" />
     </div>
   </div>
   <div class="mt-4">

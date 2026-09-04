@@ -61,7 +61,6 @@ export interface RuneApiData {
   description: string;
   labels: RuneLabel[];
   applicableTo: ItemType[];
-  shared: boolean;
   visibility?: Visibility;
   source: Source;
 }
@@ -75,7 +74,6 @@ export class Rune implements WhProperty {
   description: string;
   labels: RuneLabel[];
   applicableTo: ItemType[];
-  shared: boolean;
   source: Source;
 
   constructor({
@@ -86,7 +84,6 @@ export class Rune implements WhProperty {
     description = "",
     labels = [] as RuneLabel[],
     applicableTo = [] as ItemType[],
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -97,7 +94,6 @@ export class Rune implements WhProperty {
     this.description = description;
     this.labels = labels;
     this.applicableTo = applicableTo;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -112,7 +108,6 @@ export class Rune implements WhProperty {
       description: this.description,
       labels: [...this.labels],
       applicableTo: [...this.applicableTo],
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -141,7 +136,6 @@ export class Rune implements WhProperty {
       this.visibility === otherRune.visibility &&
       this.name === otherRune.name &&
       this.description === otherRune.description &&
-      this.shared === otherRune.shared &&
       arraysAreEqualIgnoreOrder(this.applicableTo, otherRune.applicableTo) &&
       arraysAreEqualIgnoreOrder(this.labels, otherRune.labels) &&
       objectsAreEqual(this.source, otherRune.source)
@@ -163,7 +157,6 @@ export function apiResponseToModel(itemRuneApi: ApiResponse<RuneApiData>): Rune 
     description: itemRuneApi.object.description,
     labels: itemRuneApi.object.labels,
     applicableTo: itemRuneApi.object.applicableTo,
-    shared: itemRuneApi.object.shared,
     source: itemRuneApi.object.source,
   });
 
@@ -176,7 +169,6 @@ export function modelToApi(itemRune: Rune): RuneApiData {
     description: itemRune.description,
     labels: itemRune.labels,
     applicableTo: [...itemRune.applicableTo],
-    shared: itemRune.shared,
     visibility: itemRune.visibility,
     source: copySource(itemRune.source),
   };

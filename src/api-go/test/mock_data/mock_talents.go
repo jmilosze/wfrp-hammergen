@@ -32,8 +32,7 @@ var talent0 = wh.Wh{
 				Fel: 10,
 			},
 		},
-		Group:  []string{talent1.Id},
-		Shared: false,
+		Group: []string{talent1.Id},
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
 			wh.SourceSeaOfClaws:              "e",

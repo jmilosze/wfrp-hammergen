@@ -14,7 +14,6 @@ type Item struct {
 	Properties   []string          `json:"properties" validate:"unique,dive,id_valid"`
 	Runes        []*IdNumber       `json:"runes" validate:"dive"`
 	Type         ItemType          `json:"type" validate:"item_type_valid"`
-	Shared       bool              `json:"shared" validate:"shared_valid"`
 	Source       map[Source]string `json:"source" validate:"source_valid"`
 
 	Melee      *ItemMelee      `json:"melee"`
@@ -24,14 +23,6 @@ type Item struct {
 	Container  *ItemContainer  `json:"container"`
 	Grimoire   *ItemGrimoire   `json:"grimoire"`
 	Other      *ItemOther      `json:"other"`
-}
-
-func (item *Item) IsShared() (bool, error) {
-	if item == nil {
-		return false, errors.New("item pointer is nil")
-	}
-
-	return item.Shared, nil
 }
 
 func (item *Item) Copy() WhObject {
@@ -48,7 +39,6 @@ func (item *Item) Copy() WhObject {
 		Properties:   copyArray(item.Properties),
 		Runes:        copyArrayIdNumber(item.Runes),
 		Type:         item.Type,
-		Shared:       item.Shared,
 		Source:       copySourceMap(item.Source),
 
 		Melee:      item.Melee.Copy(),
@@ -87,7 +77,6 @@ func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh, allRunes []*Wh) (
 		Properties:   itemProperties,
 		Runes:        itemRunes,
 		Type:         item.Type,
-		Shared:       item.Shared,
 		Source:       copySourceMap(item.Source),
 
 		Melee:      item.Melee.Copy(),
@@ -539,7 +528,6 @@ type ItemFull struct {
 	Properties   []*Wh             `json:"properties"`
 	Runes        []*WhNumber       `json:"runes"`
 	Type         ItemType          `json:"type"`
-	Shared       bool              `json:"shared"`
 	Source       map[Source]string `json:"source"`
 
 	Melee      *ItemMelee        `json:"melee"`
@@ -549,14 +537,6 @@ type ItemFull struct {
 	Container  *ItemContainer    `json:"container"`
 	Grimoire   *ItemGrimoireFull `json:"grimoire"`
 	Other      *ItemOther        `json:"other"`
-}
-
-func (itemFull *ItemFull) IsShared() (bool, error) {
-	if itemFull == nil {
-		return false, errors.New("itemFull pointer is nil")
-	}
-
-	return itemFull.Shared, nil
 }
 
 func (itemFull *ItemFull) Copy() WhObject {
@@ -573,7 +553,6 @@ func (itemFull *ItemFull) Copy() WhObject {
 		Properties:   copyWhArray(itemFull.Properties),
 		Runes:        copyWhNumberArray(itemFull.Runes),
 		Type:         itemFull.Type,
-		Shared:       itemFull.Shared,
 		Source:       copySourceMap(itemFull.Source),
 
 		Melee:      itemFull.Melee.Copy(),

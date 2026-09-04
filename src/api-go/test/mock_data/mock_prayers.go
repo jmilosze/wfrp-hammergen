@@ -15,7 +15,6 @@ var prayer0 = wh.Wh{
 		Range:       "10",
 		Target:      "2",
 		Duration:    "5",
-		Shared:      false,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
 			wh.SourceSeaOfClaws:              "e",
@@ -24,8 +23,9 @@ var prayer0 = wh.Wh{
 }
 
 var prayer1 = wh.Wh{
-	Id:      "900000000000000000000001",
-	OwnerId: user1.Id,
+	Id:         "900000000000000000000001",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityPrivate,
 	Object: &wh.Prayer{
 		Name:        "prayer 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),

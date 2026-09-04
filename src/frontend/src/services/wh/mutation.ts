@@ -37,7 +37,6 @@ export interface MutationApiData {
   description: string;
   type: MutationType;
   modifiers: CharacterModifiersData;
-  shared: boolean;
   visibility?: Visibility;
   source: Source;
 }
@@ -51,7 +50,6 @@ export class Mutation implements WhProperty {
   description: string;
   type: MutationType;
   modifiers: CharacterModifiers;
-  shared: boolean;
   source: Source;
 
   constructor({
@@ -62,7 +60,6 @@ export class Mutation implements WhProperty {
     description = "",
     type = MutationType.Physical,
     modifiers = new CharacterModifiers(),
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -73,7 +70,6 @@ export class Mutation implements WhProperty {
     this.description = description;
     this.type = type;
     this.modifiers = modifiers;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -88,7 +84,6 @@ export class Mutation implements WhProperty {
       description: this.description,
       type: this.type,
       modifiers: this.modifiers.copy(),
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -121,7 +116,6 @@ export class Mutation implements WhProperty {
       this.name === otherMutation.name &&
       this.description === otherMutation.description &&
       this.type === otherMutation.type &&
-      this.shared === otherMutation.shared &&
       this.modifiers.isEqualTo(otherMutation.modifiers) &&
       objectsAreEqual(this.source, otherMutation.source)
     );
@@ -142,7 +136,6 @@ export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): M
     description: mutationApi.object.description,
     type: mutationApi.object.type,
     modifiers: new CharacterModifiers(mutationApi.object.modifiers),
-    shared: mutationApi.object.shared,
     source: mutationApi.object.source,
   });
 
@@ -155,7 +148,6 @@ export function modelToApi(mutation: Mutation): MutationApiData {
     description: mutation.description,
     type: mutation.type,
     modifiers: mutation.modifiers.toData(),
-    shared: mutation.shared,
     visibility: mutation.visibility,
     source: copySource(mutation.source),
   };

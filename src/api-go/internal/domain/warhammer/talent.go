@@ -14,16 +14,7 @@ type Talent struct {
 	IsGroup     bool              `json:"isGroup" validate:"boolean"`
 	Modifiers   *Modifiers        `json:"modifiers"`
 	Group       []string          `json:"group" validate:"dive,id_valid"`
-	Shared      bool              `json:"shared" validate:"shared_valid"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (talent *Talent) IsShared() (bool, error) {
-	if talent == nil {
-		return false, errors.New("talent pointer is nil")
-	}
-
-	return talent.Shared, nil
 }
 
 func (talent *Talent) Copy() WhObject {
@@ -41,7 +32,6 @@ func (talent *Talent) Copy() WhObject {
 		IsGroup:     talent.IsGroup,
 		Modifiers:   talent.Modifiers.Copy(),
 		Group:       copyArray(talent.Group),
-		Shared:      talent.Shared,
 		Source:      copySourceMap(talent.Source),
 	}
 }

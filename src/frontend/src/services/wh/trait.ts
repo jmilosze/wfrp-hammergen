@@ -18,7 +18,6 @@ export interface TraitApiData {
   name: string;
   description: string;
   modifiers: CharacterModifiersData;
-  shared: boolean;
   visibility?: Visibility;
   source: Source;
 }
@@ -31,7 +30,6 @@ export class Trait implements WhProperty {
   name: string;
   description: string;
   modifiers: CharacterModifiers;
-  shared: boolean;
   source: Source;
 
   constructor({
@@ -41,7 +39,6 @@ export class Trait implements WhProperty {
     name = "",
     description = "",
     modifiers = new CharacterModifiers(),
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -51,7 +48,6 @@ export class Trait implements WhProperty {
     this.name = name;
     this.description = description;
     this.modifiers = modifiers;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -65,7 +61,6 @@ export class Trait implements WhProperty {
       name: this.name,
       description: this.description,
       modifiers: this.modifiers.copy(),
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -92,7 +87,6 @@ export class Trait implements WhProperty {
       this.visibility !== otherTrait.visibility ||
       this.name !== otherTrait.name ||
       this.description !== otherTrait.description ||
-      this.shared !== otherTrait.shared ||
       !objectsAreEqual(this.source, otherTrait.source)
     ) {
       return false;
@@ -115,7 +109,6 @@ export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>): Trait {
     name: traitApi.object.name,
     description: traitApi.object.description,
     modifiers: new CharacterModifiers(traitApi.object.modifiers),
-    shared: traitApi.object.shared,
     source: traitApi.object.source,
   });
 
@@ -127,7 +120,6 @@ export function modelToApi(trait: Trait): TraitApiData {
     name: trait.name,
     description: trait.description,
     modifiers: trait.modifiers.toData(),
-    shared: trait.shared,
     visibility: trait.visibility,
     source: copySource(trait.source),
   };

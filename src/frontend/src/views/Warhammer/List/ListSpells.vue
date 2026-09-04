@@ -110,7 +110,6 @@ function formatSpellRow(spell: Spell) {
     description: simplifiedLabels.join(", ") + ". " + spell.description,
     canEdit: spell.canEdit,
     id: spell.id,
-    shared: spell.shared,
     ownerId: spell.ownerId,
     visibility: spell.visibility,
   };
@@ -160,18 +159,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        shared,
         canEdit,
-        ownerId,
         visibility,
       }: {
-        shared: boolean;
         canEdit: boolean;
-        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" :visibility="visibility" />
+      <ToolTip :canEdit="canEdit" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

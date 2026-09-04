@@ -16,7 +16,6 @@ var advanced0 = wh.Wh{
 		IsGroup:     false,
 		DisplayZero: true,
 		Group:       []string{advanced1.Id},
-		Shared:      false,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "d",
 			wh.SourceSeaOfClaws:              "e",

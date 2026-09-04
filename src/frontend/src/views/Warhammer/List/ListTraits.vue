@@ -50,7 +50,6 @@ function formatTraitRow(trait: Trait) {
     description: trait.description,
     canEdit: trait.canEdit,
     id: trait.id,
-    shared: trait.shared,
     ownerId: trait.ownerId,
     visibility: trait.visibility,
   };
@@ -91,18 +90,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        shared,
         canEdit,
-        ownerId,
         visibility,
       }: {
-        shared: boolean;
         canEdit: boolean;
-        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" :visibility="visibility" />
+      <ToolTip :canEdit="canEdit" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

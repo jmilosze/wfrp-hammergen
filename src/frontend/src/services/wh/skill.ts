@@ -44,7 +44,6 @@ export interface SkillApiData {
   displayZero: boolean;
   isGroup: boolean;
   group: string[];
-  shared: boolean;
   visibility?: Visibility;
   source: Source;
 }
@@ -61,7 +60,6 @@ export class Skill implements WhProperty {
   displayZero: boolean;
   isGroup: boolean;
   group: Set<string>;
-  shared: boolean;
   source: Source;
 
   constructor({
@@ -75,7 +73,6 @@ export class Skill implements WhProperty {
     displayZero = false,
     isGroup = false,
     group = new Set<string>(),
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -89,7 +86,6 @@ export class Skill implements WhProperty {
     this.displayZero = displayZero;
     this.isGroup = isGroup;
     this.group = group;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -107,7 +103,6 @@ export class Skill implements WhProperty {
       displayZero: this.displayZero,
       isGroup: this.isGroup,
       group: new Set(this.group),
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -138,7 +133,6 @@ export class Skill implements WhProperty {
       this.type === otherSkill.type &&
       this.displayZero === otherSkill.displayZero &&
       this.isGroup === otherSkill.isGroup &&
-      this.shared === otherSkill.shared &&
       objectsAreEqual(this.source, otherSkill.source) &&
       setsAreEqual(this.group, otherSkill.group)
     );
@@ -166,7 +160,6 @@ export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>): Skill {
     displayZero: skillApi.object.displayZero,
     isGroup: skillApi.object.isGroup,
     group: new Set(skillApi.object.group),
-    shared: skillApi.object.shared,
     source: skillApi.object.source,
   });
 
@@ -182,7 +175,6 @@ export function modelToApi(skill: Skill): SkillApiData {
     displayZero: skill.displayZero,
     isGroup: skill.isGroup,
     group: [...skill.group],
-    shared: skill.shared,
     visibility: skill.visibility,
     source: copySource(skill.source),
   };

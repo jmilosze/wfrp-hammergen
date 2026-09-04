@@ -16,6 +16,7 @@ import ActionButton from "../../../components/ActionButton.vue";
 import { useQueryParams } from "../../../composables/useQueryParams.ts";
 import ToolTip from "../../../components/ToolTip.vue";
 import TextLink from "../../../components/TextLink.vue";
+import { Visibility } from "../../../services/wh/common.ts";
 
 const whList = useWhList(new CharacterApi(authRequest));
 await whList.loadWhList();
@@ -34,7 +35,7 @@ const columns = [
 
 const items = computed(() => {
   return whList.whList.value
-    .filter((wh) => (showSampleTerm.value === "" ? wh.ownerId !== "admin" : true))
+    .filter((wh) => (showSampleTerm.value === "" ? wh.visibility !== Visibility.Public : true))
     .map((x) => formatCharacterRow(x))
     .sort((a, b) => a.name.localeCompare(b.name));
 });
@@ -45,7 +46,6 @@ function formatCharacterRow(character: Character) {
     description: character.description,
     canEdit: character.canEdit,
     id: character.id,
-    shared: character.shared,
     ownerId: character.ownerId,
     visibility: character.visibility,
   };
@@ -75,7 +75,7 @@ const userId = auth.getLoggedUserInfo().userId;
   <Header title="Characters">
     <template #nextToHeader>
       <ActionButton class="btn btn-secondary btn-sm" @click="handleSampleCharacters">
-        Show sample characters
+        {{ showSampleTerm !== "" ? "Hide sample characters" : "Show sample characters" }}
       </ActionButton>
     </template>
   </Header>
@@ -104,18 +104,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        shared,
         canEdit,
-        ownerId,
         visibility,
       }: {
-        shared: boolean;
         canEdit: boolean;
-        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" :visibility="visibility" />
+      <ToolTip :canEdit="canEdit" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

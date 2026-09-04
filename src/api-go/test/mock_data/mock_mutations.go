@@ -30,7 +30,6 @@ var mutation0 = wh.Wh{
 			},
 			Effects: []wh.EffectType{wh.EffectTypeHardy},
 		},
-		Shared: false,
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "a",
 			wh.SourceWFRP:   "b",
@@ -45,67 +44,66 @@ var mutation1 = wh.Wh{
 	Object: &wh.Mutation{
 		Name:        "mutation 1",
 		Description: fmt.Sprintf("owned by %s shared", user0.Username),
-		Shared:      true,
 	},
 }
 
 var mutation2 = wh.Wh{
-	Id:      "100000000000000000000002",
-	OwnerId: user1.Id,
+	Id:         "100000000000000000000002",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityPrivate,
 	Object: &wh.Mutation{
 		Name:        "mutation 2",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Shared:      false,
 	},
 }
 
 var mutation3 = wh.Wh{
-	Id:      "100000000000000000000003",
-	OwnerId: user1.Id,
+	Id:         "100000000000000000000003",
+	OwnerId:    user1.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Mutation{
 		Name:        "mutation 3",
 		Description: fmt.Sprintf("owned by %s shared", user1.Username),
-		Shared:      true,
 	},
 }
 
 var mutation4 = wh.Wh{
-	Id:      "100000000000000000000004",
-	OwnerId: user2.Id,
+	Id:         "100000000000000000000004",
+	OwnerId:    user2.Id,
+	Visibility: wh.VisibilityPrivate,
 	Object: &wh.Mutation{
 		Name:        "mutation 4",
 		Description: fmt.Sprintf("owned by %s", user2.Username),
-		Shared:      false,
 	},
 }
 
 var mutation5 = wh.Wh{
-	Id:      "100000000000000000000005",
-	OwnerId: user2.Id,
+	Id:         "100000000000000000000005",
+	OwnerId:    user2.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Mutation{
 		Name:        "mutation 5",
 		Description: fmt.Sprintf("owned by %s shared", user2.Username),
-		Shared:      true,
 	},
 }
 
 var mutation6 = wh.Wh{
-	Id:      "100000000000000000000006",
-	OwnerId: user3.Id,
+	Id:         "100000000000000000000006",
+	OwnerId:    user3.Id,
+	Visibility: wh.VisibilityPrivate,
 	Object: &wh.Mutation{
 		Name:        "mutation 6",
 		Description: fmt.Sprintf("owned by %s", user3.Username),
-		Shared:      false,
 	},
 }
 
 var mutation7 = wh.Wh{
-	Id:      "100000000000000000000007",
-	OwnerId: user4.Id,
+	Id:         "100000000000000000000007",
+	OwnerId:    user4.Id,
+	Visibility: wh.VisibilityShared,
 	Object: &wh.Mutation{
 		Name:        "mutation 7",
 		Description: fmt.Sprintf("owned by %s shared", user4.Username),
-		Shared:      true,
 	},
 }
 

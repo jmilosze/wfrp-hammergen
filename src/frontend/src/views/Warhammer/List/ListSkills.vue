@@ -64,7 +64,6 @@ function formatSkillRow(skill: Skill) {
     description: skill.description,
     canEdit: skill.canEdit,
     id: skill.id,
-    shared: skill.shared,
     ownerId: skill.ownerId,
     visibility: skill.visibility,
   };
@@ -127,18 +126,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        shared,
         canEdit,
-        ownerId,
         visibility,
       }: {
-        shared: boolean;
         canEdit: boolean;
-        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" :visibility="visibility" />
+      <ToolTip :canEdit="canEdit" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

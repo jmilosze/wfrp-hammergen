@@ -98,18 +98,6 @@ func (w *Wh) CopyHeaders() *Wh {
 	}
 }
 
-func (w *Wh) IsShared() (bool, error) {
-	if w == nil {
-		return false, errors.New("wh is nil")
-	}
-
-	if w.Object == nil {
-		return false, errors.New("wh.object is nil")
-	}
-
-	return w.Object.IsShared()
-}
-
 func NewWhObject(t WhType) WhObject {
 	switch t {
 	case WhTypeMutation:
@@ -157,7 +145,6 @@ func (w *Wh) InitNilPointers() error {
 
 type WhObject interface {
 	Copy() WhObject
-	IsShared() (bool, error)
 	InitNilPointers() error
 }
 

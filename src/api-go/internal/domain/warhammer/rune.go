@@ -34,16 +34,7 @@ type Rune struct {
 	Description  string            `json:"description" validate:"desc_valid"`
 	Labels       []RuneLabel       `json:"labels" validate:"unique,dive,rune_label_valid"`
 	ApplicableTo []ItemType        `json:"applicableTo" validate:"unique,dive,item_type_valid"`
-	Shared       bool              `json:"shared" validate:"shared_valid"`
 	Source       map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (rune *Rune) IsShared() (bool, error) {
-	if rune == nil {
-		return false, errors.New("rune pointer is nil")
-	}
-
-	return rune.Shared, nil
 }
 
 func (rune *Rune) Copy() WhObject {
@@ -56,7 +47,6 @@ func (rune *Rune) Copy() WhObject {
 		Description:  rune.Description,
 		Labels:       copyArray(rune.Labels),
 		ApplicableTo: copyArray(rune.ApplicableTo),
-		Shared:       rune.Shared,
 		Source:       copySourceMap(rune.Source),
 	}
 }

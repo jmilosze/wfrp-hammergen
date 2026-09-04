@@ -196,7 +196,6 @@ export interface CareerApiData {
   level3: CareerLevelApiData;
   level4: CareerLevelApiData;
   level5: CareerLevelApiData;
-  shared: boolean;
   visibility?: Visibility;
   source: Source;
 }
@@ -243,7 +242,6 @@ export class Career implements WhProperty {
   level3: CareerLevel;
   level4: CareerLevel;
   level5: CareerLevel;
-  shared: boolean;
   source: Source;
 
   constructor({
@@ -259,7 +257,6 @@ export class Career implements WhProperty {
     level3 = copyCareerLevel(zeroCareerLevel),
     level4 = copyCareerLevel(zeroCareerLevel),
     level5 = copyCareerLevel(zeroCareerLevel),
-    shared = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -275,7 +272,6 @@ export class Career implements WhProperty {
     this.level3 = level3;
     this.level4 = level4;
     this.level5 = level5;
-    this.shared = shared;
     this.visibility = visibility;
     this.source = source;
   }
@@ -295,7 +291,6 @@ export class Career implements WhProperty {
       level3: copyCareerLevel(this.level3),
       level4: copyCareerLevel(this.level4),
       level5: copyCareerLevel(this.level5),
-      shared: this.shared,
       source: copySource(this.source),
     });
   }
@@ -383,7 +378,6 @@ export class Career implements WhProperty {
       careerLevelEqual(this.level3, otherCareer.level3) &&
       careerLevelEqual(this.level4, otherCareer.level4) &&
       careerLevelEqual(this.level5, otherCareer.level5) &&
-      this.shared === otherCareer.shared &&
       objectsAreEqual(this.source, otherCareer.source)
     );
   }
@@ -453,7 +447,6 @@ export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Caree
     level3: careerLevelApiDataToCareerLevel(careerApi.object.level3),
     level4: careerLevelApiDataToCareerLevel(careerApi.object.level4),
     level5: careerLevelApiDataToCareerLevel(careerApi.object.level5),
-    shared: careerApi.object.shared,
     source: copySource(careerApi.object.source),
   });
 }
@@ -482,7 +475,6 @@ export function modelToApi(career: Career): CareerApiData {
     level3: careerLevelToCareerLevelApiData(career.level3),
     level4: careerLevelToCareerLevelApiData(career.level4),
     level5: careerLevelToCareerLevelApiData(career.level5),
-    shared: career.shared,
     visibility: career.visibility,
     source: copySource(career.source),
   };

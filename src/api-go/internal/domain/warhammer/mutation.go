@@ -10,16 +10,7 @@ type Mutation struct {
 	Description string            `json:"description" validate:"desc_valid"`
 	Type        MutationType      `json:"type" validate:"mutation_type_valid"`
 	Modifiers   *Modifiers        `json:"modifiers"`
-	Shared      bool              `json:"shared" validate:"shared_valid"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (mutation *Mutation) IsShared() (bool, error) {
-	if mutation == nil {
-		return false, errors.New("mutation pointer is nil")
-	}
-
-	return mutation.Shared, nil
 }
 
 func (mutation *Mutation) Copy() WhObject {
@@ -32,7 +23,6 @@ func (mutation *Mutation) Copy() WhObject {
 		Description: mutation.Description,
 		Type:        mutation.Type,
 		Modifiers:   mutation.Modifiers.Copy(),
-		Shared:      mutation.Shared,
 		Source:      copySourceMap(mutation.Source),
 	}
 }

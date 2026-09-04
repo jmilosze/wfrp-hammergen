@@ -50,7 +50,6 @@ function formatPrayerRow(prayer: Prayer) {
     description: prayer.description,
     canEdit: prayer.canEdit,
     id: prayer.id,
-    shared: prayer.shared,
     ownerId: prayer.ownerId,
     visibility: prayer.visibility,
   };
@@ -91,18 +90,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        shared,
         canEdit,
-        ownerId,
         visibility,
       }: {
-        shared: boolean;
         canEdit: boolean;
-        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :shared="shared" :canEdit="canEdit" :ownerId="ownerId" :visibility="visibility" />
+      <ToolTip :canEdit="canEdit" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

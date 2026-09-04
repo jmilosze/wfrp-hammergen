@@ -15,16 +15,7 @@ type Career struct {
 	Level3      *CareerLevel      `json:"level3"`
 	Level4      *CareerLevel      `json:"level4"`
 	Level5      *CareerLevel      `json:"level5"`
-	Shared      bool              `json:"shared" validate:"shared_valid"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (career *Career) IsShared() (bool, error) {
-	if career == nil {
-		return false, errors.New("career pointer is nil")
-	}
-
-	return career.Shared, nil
 }
 
 func (career *Career) Copy() WhObject {
@@ -42,7 +33,6 @@ func (career *Career) Copy() WhObject {
 		Level3:      career.Level3.Copy(),
 		Level4:      career.Level4.Copy(),
 		Level5:      career.Level5.Copy(),
-		Shared:      career.Shared,
 		Source:      copySourceMap(career.Source),
 	}
 }
