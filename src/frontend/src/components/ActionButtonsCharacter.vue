@@ -3,12 +3,10 @@ import { computed } from "vue";
 import ActionButton from "./ActionButton.vue";
 import { useAuth } from "../composables/auth.ts";
 import LinkButton from "./LinkButton.vue";
-import { Visibility } from "../services/wh/common.ts";
 
 const props = defineProps<{
   id: string;
   ownerId?: string;
-  visibility?: Visibility;
   canEdit?: boolean;
 }>();
 
@@ -22,7 +20,7 @@ const canEdit = computed(() => {
   if (props.canEdit !== undefined) {
     return props.canEdit;
   }
-  return auth.canEdit(props.ownerId, props.visibility);
+  return auth.canEdit(props.ownerId);
 });
 </script>
 

@@ -113,23 +113,10 @@ const userId = auth.getLoggedUserInfo().userId;
       <TextLink routeName="skill" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
     </template>
 
-    <template
-      #actions="{
-        name,
-        id,
-        ownerId,
-        visibility,
-      }: {
-        name: string;
-        id: string;
-        ownerId: string;
-        visibility?: number;
-      }"
-    >
+    <template #actions="{ name, id, ownerId }: { name: string; id: string; ownerId: string }">
       <ActionButtonsNonCharacter
         :id="id"
         :ownerId="ownerId"
-        :visibility="visibility"
         routeName="skill"
         @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"

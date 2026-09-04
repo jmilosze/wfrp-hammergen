@@ -35,7 +35,7 @@ const { print, printing } = usePrint();
 const characterApi = new CharacterApi(authRequest);
 
 const character = ref(newCharacterFull());
-const canEdit = computed(() => auth.canEdit(character.value.ownerId, character.value.visibility));
+const canEdit = computed(() => auth.canEdit(character.value.ownerId));
 await loadCharacter();
 
 async function loadCharacter() {

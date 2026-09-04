@@ -16,7 +16,7 @@ const canEdit = computed(() => {
   if (props.canEdit !== undefined) {
     return props.canEdit;
   }
-  return auth.canEdit(props.ownerId, props.visibility);
+  return auth.canEdit(props.ownerId);
 });
 
 const tileAndContent = computed(() => {

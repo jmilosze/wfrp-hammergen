@@ -426,7 +426,7 @@ func TestUpdateWh(t *testing.T) {
 
 }
 
-func TestUpdatePublicWh(t *testing.T) {
+func TestUpdatePublicWhByUser(t *testing.T) {
 	given, when, then := whTest(t, wfrpUrl, parallel)
 
 	given.
@@ -446,7 +446,7 @@ func TestUpdatePublicWh(t *testing.T) {
 		status_code_is_404()
 }
 
-func TestUpdatePublicWhByAdmin(t *testing.T) {
+func TestUpdatePublicWhByAdminOwner(t *testing.T) {
 	given, when, then := whTest(t, wfrpUrl, parallel)
 
 	given.
@@ -464,6 +464,30 @@ func TestUpdatePublicWhByAdmin(t *testing.T) {
 		status_code_is_200().and().
 		response_body_contains_wh_property().and().
 		response_wh_object_is_another_new_wh_property()
+}
+
+func TestUpdatePublicWhByAdminWhenOwned(t *testing.T) {
+	given, when, then := whTest(t, wfrpUrl, parallel)
+
+	given.
+		already_present_admin_user().and().
+		already_present_other_admin_user().and().
+		new_wh_property().and().
+		another_new_wh_property().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_created().and().
+		response_body_contains_new_wh_id().and().
+		other_admin_user_is_authenticated()
+
+	when.
+		new_wh_property_is_updated_with_another_new_wh_property()
+
+	then.
+		status_code_is_404().and().
+		admin_user_is_authenticated().and().
+		new_wh_property_is_retrieved().and().
+		response_body_contains_wh_property().and().
+		response_wh_object_is_new_wh_property()
 }
 
 func TestUpdateWhByAnonymous(t *testing.T) {

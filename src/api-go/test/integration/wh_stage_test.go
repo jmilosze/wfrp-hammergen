@@ -27,6 +27,7 @@ type whTestStage struct {
 	genProps               *warhammer.GenProps
 	user                   *whUser
 	adminUser              *whUser
+	otherAdminUser         *whUser
 	otherUser              *whUser
 	userWithSharedAccounts *whUser
 	authorizationHeader    string
@@ -238,6 +239,16 @@ func (s *whTestStage) already_present_admin_user() *whTestStage {
 	return s
 }
 
+func (s *whTestStage) already_present_other_admin_user() *whTestStage {
+	s.otherAdminUser = &whUser{
+		Id:       "000000000000000000000005",
+		Username: "user5@test.com",
+		Password: "123456",
+	}
+
+	return s
+}
+
 func (s *whTestStage) user_is_authenticated() *whTestStage {
 	require.NotNil(s.t, s.user)
 
@@ -261,6 +272,20 @@ func (s *whTestStage) admin_user_is_authenticated() *whTestStage {
 	}
 
 	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.adminUser.Username, s.adminUser.Password)
+	require.NoError(s.t, err)
+	s.authorizationHeader = "Bearer " + accessToken
+	return s
+}
+
+func (s *whTestStage) other_admin_user_is_authenticated() *whTestStage {
+	require.NotNil(s.t, s.otherAdminUser)
+
+	if !s.whVisibilityExplicit {
+		vis := warhammer.VisibilityPublic
+		s.whVisibility = &vis
+	}
+
+	accessToken, err := authUser(s.testUrl+"/api/token", s.client, s.otherAdminUser.Username, s.otherAdminUser.Password)
 	require.NoError(s.t, err)
 	s.authorizationHeader = "Bearer " + accessToken
 	return s

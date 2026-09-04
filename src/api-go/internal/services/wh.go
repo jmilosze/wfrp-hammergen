@@ -12,7 +12,6 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/rs/xid"
-	"golang.org/x/exp/slices"
 )
 
 type WhService struct {
@@ -74,20 +73,8 @@ func extraCharacterValidation(t wh.WhType, newWh *wh.Wh, validator *validator.Va
 	return nil
 }
 
-func canModify(ownerId string, isAdmin bool, userId string, sharedAccounts []string) bool {
-	if (ownerId != userId) && slices.Contains(sharedAccounts, ownerId) {
-		return false
-	}
-
-	if isAdmin {
-		return true
-	}
-
-	if ownerId == userId {
-		return true
-	}
-
-	return false
+func canModify(ownerId string, userId string) bool {
+	return ownerId == userId
 }
 
 func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, error) {
@@ -118,12 +105,12 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 	existingWh := existingWhs[0]
 
-	if !canModify(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
+	if !canModify(existingWh.OwnerId, c.Id) {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorNotFound, Err: fmt.Errorf("unauthorized to update wh %s", newWh.Id)}
 	}
 
 	newWh.OwnerId = existingWh.OwnerId
-	updatedWh, err := s.WhDbService.Update(ctx, t, newWh, existingWh.OwnerId)
+	updatedWh, err := s.WhDbService.Update(ctx, t, newWh, c.Id)
 	if err != nil {
 		var dbErr *domain.DbError
 		wErr := fmt.Errorf("failed to update wh: %w", err)
@@ -148,11 +135,11 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 	}
 	existingWh := existingWhs[0]
 
-	if !canModify(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
+	if !canModify(existingWh.OwnerId, c.Id) {
 		return nil
 	}
 
-	err = s.WhDbService.Delete(ctx, t, whId, existingWh.OwnerId)
+	err = s.WhDbService.Delete(ctx, t, whId, c.Id)
 	if err != nil {
 		return fmt.Errorf("failed to delete wh: %w", err)
 	}

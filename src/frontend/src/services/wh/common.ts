@@ -10,17 +10,8 @@ export enum Visibility {
   Public = 2,
 }
 
-export function canEdit(ownerId?: string, visibility?: Visibility, userInfo = getUserInfo()): boolean {
-  if (!userInfo.userId) {
-    return false;
-  }
-  if (ownerId && ownerId === userInfo.userId) {
-    return true;
-  }
-  if (userInfo.admin && visibility === Visibility.Public) {
-    return true;
-  }
-  return false;
+export function canEdit(ownerId?: string, userInfo = getUserInfo()): boolean {
+  return !!userInfo.userId && ownerId === userInfo.userId;
 }
 
 export interface WhProperty {

@@ -1,5 +1,5 @@
 import { getUserInfo, isUserAdmin, isUserLoggedIn, loginUser, logoutUser, setUserInfo } from "../services/auth.ts";
-import { canEdit as canEditHelper, Visibility } from "../services/wh/common.ts";
+import { canEdit as canEditHelper } from "../services/wh/common.ts";
 import { isAxiosError } from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -71,8 +71,8 @@ export function useAuth() {
     return setUserInfo(username);
   }
 
-  function canEdit(ownerId?: string, visibility?: Visibility): boolean {
-    return canEditHelper(ownerId, visibility, getUserInfo());
+  function canEdit(ownerId?: string): boolean {
+    return canEditHelper(ownerId, getUserInfo());
   }
 
   return { loggedIn, isAdmin, login, logout, callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo, canEdit };
