@@ -38,6 +38,8 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
 
   const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
 
+  const canEdit = computed(() => wh.value.id === "create" || auth.canEdit(wh.value.ownerId, wh.value.visibility));
+
   async function submitForm(): Promise<boolean> {
     submissionState.value.setInProgress();
 
@@ -72,6 +74,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
 
   return {
     wh,
+    canEdit,
     whOriginal,
     initSources,
     apiError,

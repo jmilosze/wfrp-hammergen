@@ -29,7 +29,6 @@ const props = defineProps<{
 
 const newTalent = new Talent({
   name: "New talent",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -37,6 +36,7 @@ const newTalent = new Talent({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -106,7 +106,7 @@ const talentTable = useElSize(380, talentTableRef);
     </AlertBlock>
   </div>
 
-  <Header :title="id === 'create' ? 'Create talent' : wh.canEdit ? 'Edit talent' : wh.name" />
+  <Header :title="id === 'create' ? 'Create talent' : canEdit ? 'Edit talent' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -114,20 +114,20 @@ const talentTable = useElSize(380, talentTableRef);
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
         <DoubleRadioButton
           v-model="wh.isGroup"
           title="Individual talent/group of talents"
           :invertOrder="true"
           trueText="Group"
           falseText="Individual"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
         <FormTextarea
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
@@ -139,21 +139,21 @@ const talentTable = useElSize(380, talentTableRef);
             <SelectInput
               v-model="wh.attribute"
               :options="attOptions"
-              :disabled="!wh.canEdit || wh.isGroup"
+              :disabled="!canEdit || wh.isGroup"
               class="mb-2"
             />
             <div class="shrink-0 mx-2 pt-2 mb-2">Bonus +</div>
             <SelectInput
               v-model="wh.attribute2"
               :options="attOptions"
-              :disabled="!wh.canEdit || wh.isGroup"
+              :disabled="!canEdit || wh.isGroup"
               class="mb-2"
             />
             <div class="shrink-0 mx-2 pt-2 mb-2">Bonus +</div>
             <FormInput
               v-model="wh.maxRank"
               :validationStatus="validMaxRank"
-              :disabled="!wh.canEdit || wh.isGroup"
+              :disabled="!canEdit || wh.isGroup"
               type="number"
               class="flex-auto w-14 mb-2"
             />
@@ -164,10 +164,10 @@ const talentTable = useElSize(380, talentTableRef);
           title="Tests"
           :minH="24"
           :validationStatus="validTests"
-          :disabled="!wh.canEdit || wh.isGroup"
+          :disabled="!canEdit || wh.isGroup"
         />
         <SelectTable
-          :disabled="!wh.canEdit || wh.isGroup"
+          :disabled="!canEdit || wh.isGroup"
           :initSelectedItems="wh.group"
           :itemList="groupTalents"
           title="Belongs to group"
@@ -183,7 +183,7 @@ const talentTable = useElSize(380, talentTableRef);
     </div>
   </div>
   <div class="my-4">
-    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit || wh.isGroup" />
+    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!canEdit || wh.isGroup" />
   </div>
   <div
     ref="contentContainerRef"
@@ -191,10 +191,10 @@ const talentTable = useElSize(380, talentTableRef);
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="my-3 flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Talent" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Talent" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -212,7 +212,7 @@ const talentTable = useElSize(380, talentTableRef);
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

@@ -23,7 +23,6 @@ const props = defineProps<{
 
 const newTrait = new Trait({
   name: "New trait",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -31,6 +30,7 @@ const newTrait = new Trait({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -58,23 +58,23 @@ const validDesc = computed(() => wh.value.validateDescription());
     </AlertBlock>
   </div>
 
-  <Header :title="id === 'create' ? 'Create creature trait' : wh.canEdit ? 'Edit creature trait' : wh.name" />
+  <Header :title="id === 'create' ? 'Create creature trait' : canEdit ? 'Edit creature trait' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
-    <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" class="flex-1" />
+    <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" class="flex-1" />
     <FormTextarea
       v-model="wh.description"
       title="Description"
       :validationStatus="validDesc"
-      :disabled="!wh.canEdit"
+      :disabled="!canEdit"
       class="flex-1"
     />
   </div>
   <div class="my-4">
-    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!wh.canEdit" />
+    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!canEdit" />
   </div>
   <div
     ref="contentContainerRef"
@@ -82,10 +82,10 @@ const validDesc = computed(() => wh.value.validateDescription());
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="my-3 flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -103,7 +103,7 @@ const validDesc = computed(() => wh.value.validateDescription());
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

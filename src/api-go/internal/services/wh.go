@@ -54,7 +54,6 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, fmt.Errorf("failed to create wh: %w", err)
 	}
 
-	createdWh.CanEdit = canEdit(createdWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 	return createdWh.Copy(), nil
 }
 
@@ -75,7 +74,7 @@ func extraCharacterValidation(t wh.WhType, newWh *wh.Wh, validator *validator.Va
 	return nil
 }
 
-func canEdit(ownerId string, isAdmin bool, userId string, sharedAccounts []string) bool {
+func canModify(ownerId string, isAdmin bool, userId string, sharedAccounts []string) bool {
 	if (ownerId != userId) && slices.Contains(sharedAccounts, ownerId) {
 		return false
 	}
@@ -119,7 +118,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 	existingWh := existingWhs[0]
 
-	if !canEdit(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
+	if !canModify(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorNotFound, Err: fmt.Errorf("unauthorized to update wh %s", newWh.Id)}
 	}
 
@@ -135,7 +134,6 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		}
 	}
 
-	updatedWh.CanEdit = canEdit(updatedWh.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 	return updatedWh.Copy(), nil
 }
 
@@ -150,7 +148,7 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 	}
 	existingWh := existingWhs[0]
 
-	if !canEdit(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
+	if !canModify(existingWh.OwnerId, c.Admin, c.Id, c.SharedAccounts) {
 		return nil
 	}
 
@@ -176,7 +174,6 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		if err != nil {
 			return nil, fmt.Errorf("failed to initialize nil pointers: %w", err)
 		}
-		v.CanEdit = canEdit(v.OwnerId, c.Admin, c.Id, c.SharedAccounts)
 		whsRet = append(whsRet, v)
 	}
 

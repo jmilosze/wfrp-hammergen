@@ -29,7 +29,6 @@ type Wh struct {
 	Id         string     `json:"id"`
 	OwnerId    string     `json:"ownerId"`
 	Visibility Visibility `json:"visibility" validate:"visibility_valid"`
-	CanEdit    bool       `json:"canEdit"`
 	Object     WhObject   `json:"object"`
 }
 
@@ -75,7 +74,6 @@ func (w *Wh) Copy() *Wh {
 		Id:         strings.Clone(w.Id),
 		OwnerId:    strings.Clone(w.OwnerId),
 		Visibility: w.Visibility,
-		CanEdit:    w.CanEdit,
 	}
 
 	if w.Object != nil {
@@ -94,7 +92,6 @@ func (w *Wh) CopyHeaders() *Wh {
 		Id:         strings.Clone(w.Id),
 		OwnerId:    strings.Clone(w.OwnerId),
 		Visibility: w.Visibility,
-		CanEdit:    w.CanEdit,
 	}
 }
 

@@ -18,7 +18,6 @@ const skillApiData: SkillApiData = {
 
 const skillApiResponse: ApiResponse<SkillApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: skillApiData,
@@ -27,7 +26,6 @@ const skillApiResponse: ApiResponse<SkillApiData> = {
 const skill = new Skill({
   id: "id",
   ownerId: "owner",
-  canEdit: true,
   name: "skill",
   description: "desc",
   attribute: AttributeName.Ag,

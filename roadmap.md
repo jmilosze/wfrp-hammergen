@@ -44,4 +44,4 @@ The Go backend uses a simplified two-layer architecture:
 - [x] Remove memdb support
 - [ ] Investigate merging service and database layers
 - [ ] Refactor how public items are recognized
-- [ ] Refactor canEdit
+- [x] Refactor canEdit

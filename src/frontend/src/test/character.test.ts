@@ -63,7 +63,6 @@ const characterApiData: CharacterApiData = {
 
 const characterApiResponse: ApiResponse<CharacterApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: characterApiData,
@@ -72,7 +71,6 @@ const characterApiResponse: ApiResponse<CharacterApiData> = {
 const character = new Character({
   id: "id",
   ownerId: "owner",
-  canEdit: true,
   name: "char name",
   description: "character 1",
   notes: "some notes",

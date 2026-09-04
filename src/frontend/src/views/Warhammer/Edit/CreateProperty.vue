@@ -30,7 +30,6 @@ const props = defineProps<{
 
 const newItemProperty = new ItemProperty({
   name: "New quality",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -38,6 +37,7 @@ const newItemProperty = new ItemProperty({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -67,7 +67,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create quality/flaw' : wh.canEdit ? 'Edit quality/flaw' : wh.name" />
+  <Header :title="id === 'create' ? 'Create quality/flaw' : canEdit ? 'Edit quality/flaw' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -75,12 +75,12 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!wh.canEdit" title="Type" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
         <MultipleCheckboxColumnInput
           v-model="wh.applicableTo"
           :options="applicableToOptions"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           :viewBreakpoint="[
             { columns: 3, view: ViewSize.xs },
             { columns: 2, view: ViewSize.xxs },
@@ -95,7 +95,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
@@ -107,10 +107,10 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Quality/flaw" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Quality/flaw" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -128,7 +128,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

@@ -19,7 +19,6 @@ const traitGroupApiData: TraitApiData = {
 
 const traitGroupApiResponse: ApiResponse<TraitApiData> = {
   id: "id1",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: traitGroupApiData,
@@ -28,7 +27,6 @@ const traitGroupApiResponse: ApiResponse<TraitApiData> = {
 const traitGroup = new Trait({
   id: "id1",
   ownerId: "owner",
-  canEdit: true,
   name: "trait1",
   description: "desc1",
   modifiers: new CharacterModifiers({
@@ -43,7 +41,6 @@ const traitGroup = new Trait({
 const traitIndividual = new Trait({
   id: "id2",
   ownerId: "owner2",
-  canEdit: true,
   name: "trait2",
   description: "desc2",
   modifiers: new CharacterModifiers({

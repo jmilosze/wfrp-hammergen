@@ -68,7 +68,6 @@ const props = defineProps<{
 const newCharacter = new Character({
   name: "New character",
   species: SpeciesWithRegion.HumanReikland,
-  canEdit: true,
   id: "create",
   source: defaultSource(),
 });
@@ -83,8 +82,18 @@ const selectedGenSpeciesWithRegionOpts = computed(() =>
 const selectedGenLevel = ref(1);
 const selectedGenCareer = ref(DEFAULT_CAREER_ID);
 
-const { wh, apiError, showApiError, loadWh, submitForm, hasChanged, submissionState, resetForm, showSubmissionStatus } =
-  useWhEdit(newCharacter, new CharacterApi(authRequest));
+const {
+  wh,
+  canEdit,
+  apiError,
+  showApiError,
+  loadWh,
+  submitForm,
+  hasChanged,
+  submissionState,
+  resetForm,
+  showSubmissionStatus,
+} = useWhEdit(newCharacter, new CharacterApi(authRequest));
 
 const careerListUtils = useWhList(new CareerApi(authRequest));
 careerListUtils.loadWhList();
@@ -365,8 +374,8 @@ const modifierAttributes = computed(() => {
       {{ generationPropsUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create character' : wh.canEdit ? 'Edit character' : wh.name" />
-  <div v-if="wh.canEdit" class="border border-neutral-700 rounded p-2 my-4">
+  <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
+  <div v-if="canEdit" class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
     <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
     <div class="flex gap-4" :class="lgSize.isEqualOrGreater.value ? [''] : ['flex-col']">
@@ -375,14 +384,14 @@ const modifierAttributes = computed(() => {
           v-model="selectedGenSpecies"
           title="Species"
           :options="speciesOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           class="min-w-24 flex-1"
         />
         <SelectInput
           v-model="selectedGenSpeciesWithRegion"
           title="Region/Group"
           :options="selectedGenSpeciesWithRegionOpts"
-          :disabled="!wh.canEdit || selectedGenSpeciesWithRegionOpts.length <= 1"
+          :disabled="!canEdit || selectedGenSpeciesWithRegionOpts.length <= 1"
           class="min-w-24 flex-1"
         />
       </div>
@@ -391,14 +400,14 @@ const modifierAttributes = computed(() => {
           v-model="selectedGenLevel"
           title="Level"
           :options="levelOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           class="min-w-24 flex-1"
         />
         <SelectInput
           v-model="selectedGenCareer"
           title="Career"
           :options="careerOpts"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           class="min-w-24 flex-1"
         />
       </div>
@@ -438,8 +447,8 @@ const modifierAttributes = computed(() => {
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit">
-          <ActionButton v-if="wh.canEdit" class="ml-2 h-full btn btn-sm" @click="formGenerateName">
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit">
+          <ActionButton v-if="canEdit" class="ml-2 h-full btn btn-sm" @click="formGenerateName">
             Generate
           </ActionButton>
         </FormInput>
@@ -450,21 +459,21 @@ const modifierAttributes = computed(() => {
               v-model="species"
               title="Species"
               :options="speciesOpts"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               class="min-w-24 flex-1"
             />
             <SelectInput
               v-model="wh.species"
               title="Region/Group"
               :options="speciesWithRegionOpts"
-              :disabled="!wh.canEdit || speciesWithRegionOpts.length <= 1"
+              :disabled="!canEdit || speciesWithRegionOpts.length <= 1"
               class="min-w-24 flex-1"
             />
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2 -mb-3">
           <p class="">Fate and resilience</p>
-          <ActionButton v-if="wh.canEdit" class="btn btn-sm" @click="formGenerateFateResilience">Generate</ActionButton>
+          <ActionButton v-if="canEdit" class="btn btn-sm" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
@@ -473,14 +482,14 @@ const modifierAttributes = computed(() => {
               type="number"
               title="Fate"
               :validationStatus="validFate"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
             <FormInput
               v-model="wh.fortune"
               type="number"
               title="Fortune"
               :validationStatus="validFortune"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
           </div>
 
@@ -490,21 +499,21 @@ const modifierAttributes = computed(() => {
               type="number"
               title="Resilience"
               :validationStatus="validResilience"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
             <FormInput
               v-model="wh.resolve"
               type="number"
               title="Resolve"
               :validationStatus="validResolve"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2 -mb-3">
           <p class="">Status and standing</p>
           <ActionButton
-            v-if="wh.canEdit && !careerListUtils.loading.value"
+            v-if="canEdit && !careerListUtils.loading.value"
             class="btn btn-sm"
             @click="formGenerateStatusStanding"
           >
@@ -517,14 +526,14 @@ const modifierAttributes = computed(() => {
               v-model="wh.status"
               title="Status"
               :options="statusTierOpts"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               class="min-w-24 flex-1"
             />
             <SelectInput
               v-model="wh.standing"
               title="Standing"
               :options="statusStandingOpts"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
               class="min-w-24 flex-1"
             />
           </div>
@@ -537,21 +546,21 @@ const modifierAttributes = computed(() => {
               type="number"
               title="Brass"
               :validationStatus="validBrass"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
             <FormInput
               v-model="wh.silver"
               type="number"
               title="Silver"
               :validationStatus="validSilver"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
             <FormInput
               v-model="wh.gold"
               type="number"
               title="Gold"
               :validationStatus="validGold"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
           </div>
         </div>
@@ -563,14 +572,14 @@ const modifierAttributes = computed(() => {
               type="number"
               title="Sin"
               :validationStatus="validSin"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
             <FormInput
               v-model="wh.corruption"
               type="number"
               title="Corruption"
               :validationStatus="validCorruption"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
           </div>
         </div>
@@ -582,14 +591,14 @@ const modifierAttributes = computed(() => {
               type="number"
               title="Unspent"
               :validationStatus="validCurrentExp"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
             <FormInput
               v-model="wh.spentExp"
               type="number"
               title="Spent"
               :validationStatus="validSpentExp"
-              :disabled="!wh.canEdit"
+              :disabled="!canEdit"
             />
             <div>
               <p class="mb-3">Total</p>
@@ -602,7 +611,7 @@ const modifierAttributes = computed(() => {
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <CharacterCareer
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           :initSelectedCurrentCareer="wh.career"
           :initSelectedPastCareers="wh.careerPath"
           :careerList="careerListUtils.whList.value"
@@ -617,14 +626,14 @@ const modifierAttributes = computed(() => {
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           :class="[isEqualOrGreater ? '' : 'mt-2']"
         >
-          <ActionButton v-if="wh.canEdit" class="mb-1 btn btn-sm" @click="formGenerateDescription">
+          <ActionButton v-if="canEdit" class="mb-1 btn btn-sm" @click="formGenerateDescription">
             Generate
           </ActionButton>
         </FormTextarea>
-        <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!wh.canEdit" />
+        <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!canEdit" />
         <p class="-mb-3">Calculated</p>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
@@ -654,11 +663,11 @@ const modifierAttributes = computed(() => {
     title="Attributes"
     :rollsValidationStatus="validRolls"
     :advancesValidationStatus="validAdvances"
-    :disabled="!wh.canEdit"
+    :disabled="!canEdit"
   />
   <div class="flex justify-between text-left gap-4 my-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
     <CharacterSkills
-      :disabled="!wh.canEdit"
+      :disabled="!canEdit"
       :initSkills="wh.skills"
       :skillList="skillListUtils.whList.value"
       :loading="skillListUtils.loading.value"
@@ -673,7 +682,7 @@ const modifierAttributes = computed(() => {
       "
     />
     <CharacterTalents
-      :disabled="!wh.canEdit"
+      :disabled="!canEdit"
       :initTalents="wh.talents"
       :talentList="talentListUtils.whList.value"
       :loading="talentListUtils.loading.value"
@@ -690,7 +699,7 @@ const modifierAttributes = computed(() => {
   </div>
 
   <CharacterItems
-    :disabled="!wh.canEdit"
+    :disabled="!canEdit"
     :initEquipped="wh.equippedItems"
     :initCarried="wh.carriedItems"
     :initStored="wh.storedItems"
@@ -710,7 +719,7 @@ const modifierAttributes = computed(() => {
 
   <div class="flex justify-between text-left gap-4 my-4 flex-wrap">
     <SelectTable
-      :disabled="!wh.canEdit"
+      :disabled="!canEdit"
       :initSelectedItems="wh.spells"
       :itemList="spellListUtils.whList.value"
       title="Spells"
@@ -727,7 +736,7 @@ const modifierAttributes = computed(() => {
       @clearAll="wh.clearSpells(true)"
     />
     <SelectTable
-      :disabled="!wh.canEdit"
+      :disabled="!canEdit"
       :initSelectedItems="wh.prayers"
       :itemList="prayerListUtils.whList.value"
       title="Prayers"
@@ -747,7 +756,7 @@ const modifierAttributes = computed(() => {
 
   <div class="flex justify-between text-left gap-4 my-4 flex-wrap">
     <SelectTable
-      :disabled="!wh.canEdit"
+      :disabled="!canEdit"
       :initSelectedItems="wh.mutations"
       :itemList="mutationListUtils.whList.value"
       title="Mutations"
@@ -764,7 +773,7 @@ const modifierAttributes = computed(() => {
       @clearAll="wh.clearMutations(true)"
     />
     <SelectTable
-      :disabled="!wh.canEdit"
+      :disabled="!canEdit"
       :initSelectedItems="wh.traits"
       :itemList="traitListUtils.whList.value"
       title="Creature traits"
@@ -783,7 +792,7 @@ const modifierAttributes = computed(() => {
   </div>
 
   <div class="my-4">
-    <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!wh.canEdit" />
+    <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!canEdit" />
   </div>
 
   <div class="mt-4">
@@ -801,7 +810,7 @@ const modifierAttributes = computed(() => {
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

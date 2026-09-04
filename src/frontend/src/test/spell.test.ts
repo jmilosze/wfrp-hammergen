@@ -17,7 +17,6 @@ const spellApiData: SpellApiData = {
 
 const spellApiResponse: ApiResponse<SpellApiData> = {
   id: "id",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: spellApiData,
@@ -26,7 +25,6 @@ const spellApiResponse: ApiResponse<SpellApiData> = {
 const spell = new Spell({
   id: "id",
   ownerId: "owner",
-  canEdit: true,
   name: "spell",
   cn: 1,
   range: "range",

@@ -2,6 +2,7 @@ import { Source } from "./source.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 import { Attributes } from "./attributes.ts";
 import { isKey } from "../../utils/object.ts";
+import { getUserInfo } from "../auth.ts";
 
 export enum Visibility {
   Private = 0,
@@ -9,10 +10,22 @@ export enum Visibility {
   Public = 2,
 }
 
+export function canEdit(ownerId?: string, visibility?: Visibility, userInfo = getUserInfo()): boolean {
+  if (!userInfo.userId) {
+    return false;
+  }
+  if (ownerId && ownerId === userInfo.userId) {
+    return true;
+  }
+  if (userInfo.admin && visibility === Visibility.Public) {
+    return true;
+  }
+  return false;
+}
+
 export interface WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -36,7 +49,6 @@ export interface WhApi<T, TApiData> {
 
 export interface ApiResponse<WhApiData> {
   id: string;
-  canEdit: boolean;
   ownerId: string;
   visibility?: Visibility;
   object: WhApiData;

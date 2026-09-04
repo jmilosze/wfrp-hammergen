@@ -186,7 +186,7 @@ export interface CharacterFullItem {
 
 export interface CharacterFull {
   id: string;
-  canEdit: boolean;
+  ownerId: string;
   visibility: Visibility;
   name: string;
   description: string;
@@ -244,7 +244,7 @@ export interface CharacterFull {
 
 export function newCharacterFull({
   id = "",
-  canEdit = false,
+  ownerId = "",
   visibility = Visibility.Private,
   name = "",
   description = "",
@@ -294,7 +294,7 @@ export function newCharacterFull({
 } = {}): CharacterFull {
   return {
     id: id,
-    canEdit: canEdit,
+    ownerId: ownerId,
     visibility: visibility,
     name: name,
     description: description,
@@ -405,7 +405,7 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
 
   return {
     id: fullCharacterApi.id,
-    canEdit: fullCharacterApi.canEdit,
+    ownerId: fullCharacterApi.ownerId,
     visibility: fullCharacterApi.visibility ?? Visibility.Private,
     name: fullCharacterApi.object.name,
     description: fullCharacterApi.object.description,

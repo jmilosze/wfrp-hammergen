@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import ActionButton from "./ActionButton.vue";
 import { useAuth } from "../composables/auth.ts";
 import LinkButton from "./LinkButton.vue";
+import { Visibility } from "../services/wh/common.ts";
 
-defineProps<{
-  canEdit: boolean;
+const props = defineProps<{
   id: string;
   routeName: string;
+  ownerId?: string;
+  visibility?: Visibility;
+  canEdit?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -15,6 +19,12 @@ const emit = defineEmits<{
 }>();
 
 const auth = useAuth();
+const canEdit = computed(() => {
+  if (props.canEdit !== undefined) {
+    return props.canEdit;
+  }
+  return auth.canEdit(props.ownerId, props.visibility);
+});
 </script>
 
 <template>

@@ -44,7 +44,6 @@ export interface ItemPropertyApiData {
 export class ItemProperty implements WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -55,7 +54,6 @@ export class ItemProperty implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
-    canEdit = false,
     name = "",
     description = "",
     type = ItemPropertyType.Quality,
@@ -65,7 +63,6 @@ export class ItemProperty implements WhProperty {
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
-    this.canEdit = canEdit;
     this.name = name;
     this.description = description;
     this.type = type;
@@ -78,7 +75,6 @@ export class ItemProperty implements WhProperty {
     return new ItemProperty({
       id: this.id,
       ownerId: this.ownerId,
-      canEdit: this.canEdit,
       visibility: this.visibility,
       name: this.name,
       description: this.description,
@@ -108,7 +104,6 @@ export class ItemProperty implements WhProperty {
     }
     return (
       this.id === otherItemProperty.id &&
-      this.canEdit === otherItemProperty.canEdit &&
       this.visibility === otherItemProperty.visibility &&
       this.name === otherItemProperty.name &&
       this.description === otherItemProperty.description &&
@@ -127,7 +122,6 @@ export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiD
   const newProperty = new ItemProperty({
     id: itemPropertyApi.id,
     ownerId: itemPropertyApi.ownerId,
-    canEdit: itemPropertyApi.canEdit,
     visibility: itemPropertyApi.visibility,
     name: itemPropertyApi.object.name,
     description: itemPropertyApi.object.description,

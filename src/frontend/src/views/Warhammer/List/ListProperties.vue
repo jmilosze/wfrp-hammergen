@@ -72,7 +72,6 @@ function formatItemPropertyRow(itemProperty: ItemProperty) {
       .map((x) => source[x])
       .join(", "),
     description: itemProperty.description,
-    canEdit: itemProperty.canEdit,
     id: itemProperty.id,
     ownerId: itemProperty.ownerId,
     visibility: itemProperty.visibility,
@@ -129,10 +128,11 @@ const userId = auth.getLoggedUserInfo().userId;
       <TextLink routeName="property" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
     </template>
 
-    <template #actions="{ name, id, canEdit }: { name: string; id: string; canEdit: boolean }">
+    <template #actions="{ name, id, ownerId, visibility }: { name: string; id: string; ownerId: string; visibility?: number }">
       <ActionButtonsNonCharacter
         :id="id"
-        :canEdit="canEdit"
+        :ownerId="ownerId"
+        :visibility="visibility"
         routeName="property"
         @copy="(copiedId) => whList.copyWh(copiedId, userId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
@@ -141,14 +141,14 @@ const userId = auth.getLoggedUserInfo().userId;
 
     <template
       #tooltip="{
-        canEdit,
+        ownerId,
         visibility,
       }: {
-        canEdit: boolean;
+        ownerId: string;
         visibility?: number;
       }"
     >
-      <ToolTip :canEdit="canEdit" :visibility="visibility" />
+      <ToolTip :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>
 

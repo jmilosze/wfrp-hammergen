@@ -22,7 +22,6 @@ const props = defineProps<{
 
 const newPrayer = new Prayer({
   name: "New prayer",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -30,6 +29,7 @@ const newPrayer = new Prayer({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -59,7 +59,7 @@ const validDuration = computed(() => wh.value.validateDuration());
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create prayer' : wh.canEdit ? 'Edit prayer' : wh.name" />
+  <Header :title="id === 'create' ? 'Create prayer' : canEdit ? 'Edit prayer' : wh.name" />
   <div
     ref="contentContainerRef"
     class="flex justify-between text-left gap-4 my-4"
@@ -67,20 +67,20 @@ const validDuration = computed(() => wh.value.validateDuration());
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
         <FormTextarea
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!wh.canEdit" />
-        <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!wh.canEdit" />
-        <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!canEdit" />
+        <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!canEdit" />
+        <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!canEdit" />
       </div>
     </div>
   </div>
@@ -91,10 +91,10 @@ const validDuration = computed(() => wh.value.validateDuration());
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Prayer" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Prayer" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -112,7 +112,7 @@ const validDuration = computed(() => wh.value.validateDuration());
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

@@ -454,7 +454,6 @@ export interface ItemApiData {
 export class Item implements WhProperty {
   id: string;
   ownerId: string;
-  canEdit: boolean;
   visibility: Visibility;
   name: string;
   description: string;
@@ -476,7 +475,6 @@ export class Item implements WhProperty {
   constructor({
     id = "",
     ownerId = "",
-    canEdit = false,
     name = "",
     description = "",
     price = 0,
@@ -510,7 +508,6 @@ export class Item implements WhProperty {
   } = {}) {
     this.id = id;
     this.ownerId = ownerId;
-    this.canEdit = canEdit;
     this.name = name;
     this.description = description;
     this.price = price;
@@ -534,7 +531,6 @@ export class Item implements WhProperty {
     return new Item({
       id: this.id,
       ownerId: this.ownerId,
-      canEdit: this.canEdit,
       visibility: this.visibility,
       name: this.name,
       description: this.description,
@@ -670,7 +666,6 @@ export class Item implements WhProperty {
 
     if (
       this.id !== otherItem.id ||
-      this.canEdit !== otherItem.canEdit ||
       this.visibility !== otherItem.visibility ||
       this.name !== otherItem.name ||
       this.description !== otherItem.description ||
@@ -817,7 +812,6 @@ export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
   const newItem = new Item({
     id: itemApi.id,
     ownerId: itemApi.ownerId,
-    canEdit: itemApi.canEdit,
     visibility: itemApi.visibility,
     name: itemApi.object.name,
     description: itemApi.object.description,

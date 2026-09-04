@@ -24,7 +24,6 @@ const props = defineProps<{
 
 const newSpell = new Spell({
   name: "New spell",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -32,6 +31,7 @@ const newSpell = new Spell({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -64,7 +64,7 @@ const validCn = computed(() => wh.value.validateCn());
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create spell' : wh.canEdit ? 'Edit spell' : wh.name" />
+  <Header :title="id === 'create' ? 'Create spell' : canEdit ? 'Edit spell' : wh.name" />
   <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
   <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="mt-1" />
   <div
@@ -74,26 +74,26 @@ const validCn = computed(() => wh.value.validateCn());
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
         <FormTextarea
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!wh.canEdit" />
-        <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!wh.canEdit" />
-        <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!canEdit" />
+        <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!canEdit" />
+        <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!canEdit" />
         <FormInput
           v-model="wh.cn"
           title="Casting number"
           type="number"
           :validationStatus="validCn"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
@@ -101,7 +101,7 @@ const validCn = computed(() => wh.value.validateCn());
 
   <SpellClassification
     v-model="wh.classification"
-    :disabled="!wh.canEdit"
+    :disabled="!canEdit"
     @update:simplifiedLabels="simplifiedLabels = $event"
   />
 
@@ -111,10 +111,10 @@ const validCn = computed(() => wh.value.validateCn());
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -132,7 +132,7 @@ const validCn = computed(() => wh.value.validateCn());
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

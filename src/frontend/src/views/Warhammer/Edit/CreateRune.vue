@@ -25,7 +25,6 @@ const props = defineProps<{
 
 const newRune = new Rune({
   name: "New rune",
-  canEdit: true,
   id: "create",
   visibility: Visibility.Shared,
   source: defaultSource(),
@@ -33,6 +32,7 @@ const newRune = new Rune({
 
 const {
   wh,
+  canEdit,
   initSources,
   apiError,
   showApiError,
@@ -62,7 +62,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
       {{ apiError }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create rune' : wh.canEdit ? 'Edit rune' : wh.name" />
+  <Header :title="id === 'create' ? 'Create rune' : canEdit ? 'Edit rune' : wh.name" />
   <DisplayLabels :labelList="wh.labels.map((x) => printRuneLabel(x))" class="mt-1" />
   <div
     ref="contentContainerRef"
@@ -71,11 +71,11 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
   >
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!wh.canEdit" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
         <MultipleCheckboxColumnInput
           v-model="wh.applicableTo"
           :options="applicableToOptions"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           :viewBreakpoint="[
             { columns: 3, view: ViewSize.xs },
             { columns: 2, view: ViewSize.xxs },
@@ -85,7 +85,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
         <MultipleCheckboxColumnInput
           v-model="wh.labels"
           :options="labelOptions"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
           :viewBreakpoint="[{ columns: 2, view: ViewSize.xs }]"
           :columns="2"
           title="Labels"
@@ -98,7 +98,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
           v-model="wh.description"
           title="Description"
           :validationStatus="validDesc"
-          :disabled="!wh.canEdit"
+          :disabled="!canEdit"
         />
       </div>
     </div>
@@ -110,10 +110,10 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
     :class="[isEqualOrGreater ? '' : 'flex-col']"
   >
     <div class="flex-1">
-      <SourceTable :disabled="!wh.canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
     <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!wh.canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
     </div>
   </div>
   <div class="mt-4">
@@ -131,7 +131,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
       :confirmExit="hasChanged"
       :submitForm="submitForm"
       :resetForm="resetForm"
-      :readOnly="!wh.canEdit"
+      :readOnly="!canEdit"
     />
   </div>
 </template>

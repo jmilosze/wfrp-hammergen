@@ -233,7 +233,7 @@ func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
 		return nil, fmt.Errorf("error marshaling object")
 	}
 
-	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, Visibility: visibility, CanEdit: false}
+	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, Visibility: visibility}
 	wh.Object = warhammer.NewWhObject(t)
 
 	if err = bson.Unmarshal(bsonRaw, wh.Object); err != nil {

@@ -27,7 +27,6 @@ const talentGroupApiData: TalentApiData = {
 
 const talentGroupApiResponse: ApiResponse<TalentApiData> = {
   id: "id1",
-  canEdit: true,
   ownerId: "owner",
   visibility: Visibility.Shared,
   object: talentGroupApiData,
@@ -36,7 +35,6 @@ const talentGroupApiResponse: ApiResponse<TalentApiData> = {
 const talentGroup = new Talent({
   id: "id1",
   ownerId: "owner",
-  canEdit: true,
   name: "talent1",
   description: "desc1",
   tests: "qwe",
@@ -56,7 +54,7 @@ const talentGroup = new Talent({
 
 const talentIndividual = new Talent({
   id: "id2",
-  canEdit: true,
+  ownerId: "owner",
   name: "talent2",
   description: "desc2",
   tests: "asd",
