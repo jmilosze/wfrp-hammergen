@@ -466,7 +466,7 @@ func TestUpdatePublicWhByAdminOwner(t *testing.T) {
 		response_wh_object_is_another_new_wh_property()
 }
 
-func TestUpdatePublicWhByAdminWhenOwned(t *testing.T) {
+func TestUpdatePublicWhByAdminWhenOwnedByOtherAdmin(t *testing.T) {
 	given, when, then := whTest(t, wfrpUrl, parallel)
 
 	given.
