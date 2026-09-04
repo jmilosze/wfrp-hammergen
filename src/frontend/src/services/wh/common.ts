@@ -2,16 +2,11 @@ import { Source } from "./source.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 import { Attributes } from "./attributes.ts";
 import { isKey } from "../../utils/object.ts";
-import { getUserInfo } from "../auth.ts";
 
 export enum Visibility {
   Private = 0,
   Shared = 1,
   Public = 2,
-}
-
-export function canEdit(ownerId?: string, userInfo = getUserInfo()): boolean {
-  return !!userInfo.userId && ownerId === userInfo.userId;
 }
 
 export interface WhProperty {

@@ -8,16 +8,10 @@ import { useAuth } from "../composables/auth";
 const props = defineProps<{
   ownerId?: string;
   visibility?: Visibility;
-  canEdit?: boolean;
 }>();
 
 const auth = useAuth();
-const canEdit = computed(() => {
-  if (props.canEdit !== undefined) {
-    return props.canEdit;
-  }
-  return auth.canEdit(props.ownerId);
-});
+const canEdit = computed(() => auth.canEdit(props.ownerId));
 
 const tileAndContent = computed(() => {
   const vis = props.visibility ?? Visibility.Private;

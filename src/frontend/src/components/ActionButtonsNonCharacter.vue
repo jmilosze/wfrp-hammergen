@@ -8,7 +8,6 @@ const props = defineProps<{
   id: string;
   routeName: string;
   ownerId?: string;
-  canEdit?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -17,12 +16,7 @@ const emit = defineEmits<{
 }>();
 
 const auth = useAuth();
-const canEdit = computed(() => {
-  if (props.canEdit !== undefined) {
-    return props.canEdit;
-  }
-  return auth.canEdit(props.ownerId);
-});
+const canEdit = computed(() => auth.canEdit(props.ownerId));
 </script>
 
 <template>
