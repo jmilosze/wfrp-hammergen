@@ -207,6 +207,7 @@ export const enum ArmourGroup {
   Plate,
   SoftKit,
   Brigandine,
+  Other,
 }
 
 export const armourGroupList = [
@@ -216,6 +217,7 @@ export const armourGroupList = [
   ArmourGroup.Plate,
   ArmourGroup.SoftKit,
   ArmourGroup.Brigandine,
+  ArmourGroup.Other,
 ];
 
 export function printArmourGroup(armourGroup: ArmourGroup) {
@@ -232,6 +234,8 @@ export function printArmourGroup(armourGroup: ArmourGroup) {
       return "Soft kit";
     case ArmourGroup.Brigandine:
       return "Brigandine";
+    case ArmourGroup.Other:
+      return "Other";
     default:
       return "";
   }

@@ -16,6 +16,7 @@ import {
   MeleeType,
   modelToApi,
   OtherType,
+  printArmourGroup,
   RangedGroup,
   RangedType,
   WeaponHands,
@@ -389,3 +390,18 @@ describe("isEqualTo returns false", () => {
     expect(item.isEqualTo(otherItem)).toBe(false);
   });
 });
+
+describe("printArmourGroup", () => {
+  test.each([
+    { group: ArmourGroup.SoftLeather, expected: "Soft leather" },
+    { group: ArmourGroup.BoiledLeather, expected: "Boiled leather" },
+    { group: ArmourGroup.Mail, expected: "Mail" },
+    { group: ArmourGroup.Plate, expected: "Plate" },
+    { group: ArmourGroup.SoftKit, expected: "Soft kit" },
+    { group: ArmourGroup.Brigandine, expected: "Brigandine" },
+    { group: ArmourGroup.Other, expected: "Other" },
+  ])("formats $expected", ({ group, expected }) => {
+    expect(printArmourGroup(group)).toBe(expected);
+  });
+});
+

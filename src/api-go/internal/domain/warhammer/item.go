@@ -452,6 +452,7 @@ const (
 	ItemArmourGroupPlate         = 3
 	ItemArmourGroupSoftKit       = 4
 	ItemArmourGroupBrigandine    = 5
+	ItemArmourGroupOther         = 6
 )
 
 func itemArmourGroupValues() string {
@@ -462,6 +463,7 @@ func itemArmourGroupValues() string {
 		ItemArmourGroupPlate,
 		ItemArmourGroupSoftKit,
 		ItemArmourGroupBrigandine,
+		ItemArmourGroupOther,
 	})
 }
 
