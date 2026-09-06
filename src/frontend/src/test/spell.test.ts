@@ -1,5 +1,14 @@
 import { describe, expect, test } from "vitest";
-import { apiResponseToModel, modelToApi, Spell, SpellApiData, SpellLabel, SpellType } from "../services/wh/spell.ts";
+import {
+  apiResponseToModel,
+  getSimplifiedLabels,
+  modelToApi,
+  printSpellLabel,
+  Spell,
+  SpellApiData,
+  SpellLabel,
+  SpellType,
+} from "../services/wh/spell.ts";
 import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
@@ -102,3 +111,26 @@ describe("isEqualTo returns false", () => {
     expect(spell.isEqualTo(otherSpell)).toBe(false);
   });
 });
+
+describe("Dark Magic lore", () => {
+  test("printSpellLabel prints Lore of Dark Magic", () => {
+    expect(printSpellLabel(SpellLabel.SpellLabelDarkMagic)).toBe("Lore of Dark Magic");
+  });
+
+  test("getSimplifiedLabels simplifies to SpellLabelLoreDark when all dark lores are present", () => {
+    const labels = new Set([
+      SpellLabel.SpellLabelDaemonology,
+      SpellLabel.SpellLabelNecromancy,
+      SpellLabel.SpellLabelDarkMagic,
+    ]);
+    const simplified = getSimplifiedLabels(SpellType.SpellTypeLore, labels);
+    expect(simplified).toEqual(new Set([SpellLabel.SpellLabelLoreDark]));
+  });
+
+  test("getSimplifiedLabels retains individual dark lores when not all are present", () => {
+    const labels = new Set([SpellLabel.SpellLabelDarkMagic]);
+    const simplified = getSimplifiedLabels(SpellType.SpellTypeLore, labels);
+    expect(simplified).toEqual(new Set([SpellLabel.SpellLabelDarkMagic]));
+  });
+});
+

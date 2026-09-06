@@ -73,6 +73,7 @@ export const enum SpellLabel {
   SpellLabelRuin = 20,
   SpellLabelStealth = 21,
   SpellLabelGreatMaw = 22,
+  SpellLabelDarkMagic = 23,
   // Other labels
   SpellLabelCustom = 1000,
   SpellLabelRitual = 1001,
@@ -137,6 +138,8 @@ export function printSpellLabel(spellLabel: SpellLabel): string {
       return "Lore of High Magic (Slann)";
     case SpellLabel.SpellLabelGreatMaw:
       return "Lore of The Great Maw";
+    case SpellLabel.SpellLabelDarkMagic:
+      return "Lore of Dark Magic";
     case SpellLabel.SpellLabelLittleWaaagh:
       return "Lore of Little Waaagh!";
     case SpellLabel.SpellLabelBigWaaagh:
@@ -188,7 +191,11 @@ export const colourLores = new Set([
   SpellLabel.SpellLabelFire,
   SpellLabel.SpellLabelBeasts,
 ]);
-export const darkLores = new Set([SpellLabel.SpellLabelDaemonology, SpellLabel.SpellLabelNecromancy]);
+export const darkLores = new Set([
+  SpellLabel.SpellLabelDaemonology,
+  SpellLabel.SpellLabelNecromancy,
+  SpellLabel.SpellLabelDarkMagic,
+]);
 export const witchLores = new Set([SpellLabel.SpellLabelHedgecraft, SpellLabel.SpellLabelWitchcraft]);
 export const chaosLores = new Set([
   SpellLabel.SpellLabelNurgle,

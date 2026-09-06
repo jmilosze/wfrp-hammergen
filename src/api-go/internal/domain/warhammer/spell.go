@@ -42,6 +42,7 @@ const (
 	SpellLabelRuin         = 20
 	SpellLabelStealth      = 21
 	SpellLabelGreatMaw     = 22
+	SpellLabelDarkMagic    = 23
 
 	SpellLabelCustom          = 1000
 	SpellLabelRitual          = 1001
@@ -75,6 +76,7 @@ var SpellLabels = map[SpellType][]SpellLabel{
 		SpellLabelBeasts,
 		SpellLabelDaemonology,
 		SpellLabelNecromancy,
+		SpellLabelDarkMagic,
 		SpellLabelHedgecraft,
 		SpellLabelWitchcraft,
 		SpellLabelNurgle,
