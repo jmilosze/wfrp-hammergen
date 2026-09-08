@@ -52,6 +52,12 @@ const currentView = useQueryParams(
       <li>The Imperial Zoo</li>
       <li>Reikland Miscellanea</li>
       <li>Tribes and Tribulations</li>
+      <li>Dwarf Player's Guide</li>
+      <li>Deft Steps Light Fingers</li>
+      <li>High Elf Player's Guide</li>
+      <li>Lords of Stone and Steel</li>
+      <li>The Temple of Spite</li>
+      <li>Sylvania: The Cursed County</li>
     </ul>
   </div>
   <div v-else-if="currentView === viewNames[1].value">

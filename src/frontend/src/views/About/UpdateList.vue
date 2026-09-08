@@ -6,6 +6,23 @@ import TextLink from "../../components/TextLink.vue";
 <template>
   <Header title="Updates" />
   <div>
+    <div class="text-xl mt-2 mb-1">8 Sep 2026</div>
+    <p class="mb-1">
+      Added contents of
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-temple-of-spite" target="_blank">
+        The Temple of Spite
+      </TextLink>
+      and
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sylvania-setting-guide" target="_blank">
+        Sylvania: The Cursed County
+      </TextLink>
+    </p>
+    <p>
+      Added new Lore of Dark Magic spells, traits, talents, weapons, and trappings.
+    </p>
+  </div>
+
+  <div>
     <div class="text-xl mt-2 mb-1">3 May 2025</div>
     <p class="mb-1">
       Added contents of

@@ -4,7 +4,7 @@ import AlertBlock from "../components/AlertBlock.vue";
 import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 
-const showAlert = ref(false);
+const showAlert = ref(true);
 </script>
 
 <template>
@@ -16,13 +16,18 @@ const showAlert = ref(false);
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
     <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
       <div class="pl-2">
-        <p class="text-2xl font-semibold">High Elf Player's Guide</p>
+        <p class="text-2xl font-semibold">The Temple of Spite & Sylvania: The Cursed County</p>
         <p>
           We are happy to announce that contents of
-          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-high-elf-player-s-guide" target="_blank">
-            High Elf Player's Guide
+          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-temple-of-spite" target="_blank">
+            The Temple of Spite
           </TextLink>
-          are now available on Hammergen! This includes all new careers, spells and trappings.
+          and
+          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sylvania-setting-guide" target="_blank">
+            Sylvania: The Cursed County
+          </TextLink>
+          are now available on Hammergen! This includes the Lore of Dark Magic (with 24 new spells), traits, talents
+          (including Gifts of Khaine), weapons, and trappings.
         </p>
         <p class="mt-3">
           As always if you enjoy Hammergen, please consider supporting us on
