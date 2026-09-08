@@ -53,8 +53,6 @@ function formatTraitRow(trait: Trait) {
     visibility: trait.visibility,
   };
 }
-
-const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -82,7 +80,7 @@ const userId = auth.getLoggedUserInfo().userId;
         :id="id"
         :ownerId="ownerId"
         routeName="trait"
-        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
+        @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>

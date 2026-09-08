@@ -1,4 +1,4 @@
-import { ApiResponse, SHORT_DESC_REGEX, WhApi, WhProperty } from "../services/wh/common.ts";
+import { ApiResponse, SHORT_DESC_REGEX, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
 import { computed, Ref, ref } from "vue";
 import { source } from "../services/wh/source.ts";
 import { useAuth } from "./auth.ts";
@@ -32,7 +32,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
     loading.value = false;
   }
 
-  async function copyWh(whId: string, userId: string): Promise<void> {
+  async function copyWh(whId: string): Promise<void> {
     showApiError.value = true;
     try {
       const whCopy: T = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
@@ -40,12 +40,22 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
       if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(-SHORT_DESC_REGEX);
       }
-      const { id } = (await auth.callAndLogoutIfUnauthorized(elementApi.createElement)(
-        whCopy,
-      )) as ApiResponse<TApiData>;
 
-      whCopy.id = id;
-      whCopy.ownerId = userId;
+      whCopy.ownerId = auth.getLoggedUserInfo().userId;
+
+      if (!auth.isAdmin.value && whCopy.visibility === Visibility.Public) {
+        whCopy.visibility = Visibility.Private;
+      }
+
+      const res = (await auth.callAndLogoutIfUnauthorized(elementApi.createElement)(whCopy)) as ApiResponse<TApiData>;
+
+      whCopy.id = res.id;
+      if (res.ownerId) {
+        whCopy.ownerId = res.ownerId;
+      }
+      if (res.visibility !== undefined) {
+        whCopy.visibility = res.visibility;
+      }
       whList.value.push(whCopy);
     } catch {
       apiError.value = "Error. Could not upload data to server.";

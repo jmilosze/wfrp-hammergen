@@ -57,8 +57,6 @@ function handleSampleCharacters() {
     showSampleTerm.value = "true";
   }
 }
-
-const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -96,7 +94,7 @@ const userId = auth.getLoggedUserInfo().userId;
       <ActionButtonsCharacter
         :id="id"
         :ownerId="ownerId"
-        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
+        @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>

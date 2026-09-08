@@ -91,8 +91,6 @@ const filteredClassOptions = computed(() => {
 const filteredSpeciesOptions = computed(() => {
   return getOptions(speciesList, whList.whList.value.map((wh) => wh.species).flat(), printSpeciesName, "Any species");
 });
-
-const userId = auth.getLoggedUserInfo().userId;
 </script>
 
 <template>
@@ -124,7 +122,7 @@ const userId = auth.getLoggedUserInfo().userId;
         :id="id"
         :ownerId="ownerId"
         routeName="career"
-        @copy="(copiedId) => whList.copyWh(copiedId, userId)"
+        @copy="(copiedId) => whList.copyWh(copiedId)"
         @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>
