@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -143,30 +142,4 @@ func (w *Wh) InitNilPointers() error {
 type WhObject interface {
 	Copy() WhObject
 	InitNilPointers() error
-}
-
-func (w *Wh) ToMap() (map[string]any, error) {
-	whMap, err := structToMap(w)
-	if err != nil {
-		return map[string]any{}, fmt.Errorf("error while mapping wh structure %s", err)
-	}
-	return whMap, nil
-}
-
-func structToMap(m any) (map[string]any, error) {
-	a, err := json.Marshal(m)
-	if err != nil {
-		return nil, err
-	}
-	var res map[string]any
-	err = json.Unmarshal(a, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	if res == nil {
-		res = map[string]any{}
-	}
-
-	return res, nil
 }

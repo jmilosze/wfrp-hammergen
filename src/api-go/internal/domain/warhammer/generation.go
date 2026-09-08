@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -65,14 +64,6 @@ func (genProps *GenProps) Copy() *GenProps {
 		SpeciesTalents: speciesTalents,
 		SpeciesSkills:  speciesSkills,
 	}
-}
-
-func (genProps *GenProps) ToMap() (map[string]any, error) {
-	gMap, err := structToMap(genProps)
-	if err != nil {
-		return map[string]any{}, fmt.Errorf("error while mapping wh structure %s", err)
-	}
-	return gMap, nil
 }
 
 type IdStringMap map[string]string

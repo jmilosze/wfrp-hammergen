@@ -84,14 +84,7 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			return
 		}
 
-		returnData, err := whRead.ToMap()
-		if err != nil {
-			log.Println("error handling create or update wh", err)
-			c.JSON(ServerErrResp(""))
-			return
-		}
-
-		c.JSON(OkResp(returnData))
+		c.JSON(OkResp(whRead))
 	}
 }
 
@@ -126,29 +119,8 @@ func whGetHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) 
 			return
 		}
 
-		returnData, err := wh[0].ToMap()
-		if err != nil {
-			log.Println("error handling get wh", err)
-			c.JSON(ServerErrResp(""))
-			return
-		}
-
-		c.JSON(OkResp(returnData))
+		c.JSON(OkResp(wh[0]))
 	}
-}
-
-func whListToListMap(whs []*warhammer.Wh) ([]map[string]any, error) {
-	list := make([]map[string]any, len(whs))
-
-	var err error
-	for i, v := range whs {
-		list[i], err = v.ToMap()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return list, nil
 }
 
 func whDeleteHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) {
@@ -204,20 +176,13 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 			return
 		}
 
-		returnData, err := whListToListMap(whs)
-		if err != nil {
-			log.Println("error handling get wh", err)
-			c.JSON(ServerErrResp(""))
-			return
-		}
-
-		c.JSON(OkResp(returnData))
+		c.JSON(OkResp(whs))
 	}
 }
 
 func whGenerationPropsHandler(s warhammer.WhService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		generationPropsMap, err := s.GetGenerationProps(c.Request.Context())
+		generationProps, err := s.GetGenerationProps(c.Request.Context())
 
 		if err != nil {
 			log.Println("error handling generation props", err)
@@ -230,13 +195,6 @@ func whGenerationPropsHandler(s warhammer.WhService) func(*gin.Context) {
 			return
 		}
 
-		returnData, err := generationPropsMap.ToMap()
-		if err != nil {
-			log.Println("error handling generation props", err)
-			c.JSON(ServerErrResp(""))
-			return
-		}
-
-		c.JSON(OkResp(returnData))
+		c.JSON(OkResp(generationProps))
 	}
 }

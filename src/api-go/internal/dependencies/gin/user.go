@@ -74,19 +74,36 @@ func userCreateHandler(us user.UserService, cs domain.CaptchaService) func(*gin.
 			return
 		}
 
-		c.JSON(OkResp(userToMap(userRead)))
+		c.JSON(OkResp(newUserResponse(userRead)))
 	}
 }
 
-func userToMap(u *user.User) map[string]any {
-	return map[string]any{
-		"id":             u.Id,
-		"username":       u.Username,
-		"sharedAccounts": u.SharedAccountNames,
-		"admin":          u.Admin,
-		"createdOn":      u.CreatedOn,
-		"lastAuthOn":     u.LastAuthOn,
+type UserResponse struct {
+	Id             string    `json:"id"`
+	Username       string    `json:"username"`
+	SharedAccounts []string  `json:"sharedAccounts"`
+	Admin          bool      `json:"admin"`
+	CreatedOn      time.Time `json:"createdOn"`
+	LastAuthOn     time.Time `json:"lastAuthOn"`
+}
+
+func newUserResponse(u *user.User) UserResponse {
+	return UserResponse{
+		Id:             u.Id,
+		Username:       u.Username,
+		SharedAccounts: u.SharedAccountNames,
+		Admin:          u.Admin,
+		CreatedOn:      u.CreatedOn,
+		LastAuthOn:     u.LastAuthOn,
 	}
+}
+
+func newUsersResponse(users []*user.User) []UserResponse {
+	list := make([]UserResponse, len(users))
+	for i, v := range users {
+		list[i] = newUserResponse(v)
+	}
+	return list
 }
 
 func userGetHandler(us user.UserService) func(*gin.Context) {
@@ -121,7 +138,7 @@ func userGetHandler(us user.UserService) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(OkResp(userToMap(u)))
+		c.JSON(OkResp(newUserResponse(u)))
 	}
 }
 
@@ -171,25 +188,8 @@ func userListHandler(us user.UserService) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(OkResp(usersToListOfMaps(allUsers)))
+		c.JSON(OkResp(newUsersResponse(allUsers)))
 	}
-}
-
-func usersToListOfMaps(users []*user.User) []map[string]any {
-	list := make([]map[string]interface{}, len(users))
-
-	for i, v := range users {
-		list[i] = gin.H{
-			"id":             v.Id,
-			"username":       v.Username,
-			"sharedAccounts": v.SharedAccountNames,
-			"admin":          v.Admin,
-			"createdOn":      v.CreatedOn,
-			"lastAuthOn":     v.LastAuthOn,
-		}
-	}
-
-	return list
 }
 
 type UserUpdate struct {
@@ -242,7 +242,7 @@ func userUpdateHandler(users user.UserService) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(OkResp(userToMap(userRead)))
+		c.JSON(OkResp(newUserResponse(userRead)))
 	}
 }
 
@@ -308,7 +308,7 @@ func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(OkResp(userToMap(userRead)))
+		c.JSON(OkResp(newUserResponse(userRead)))
 	}
 }
 
@@ -359,7 +359,7 @@ func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 			return
 		}
 
-		c.JSON(OkResp(userToMap(userRead)))
+		c.JSON(OkResp(newUserResponse(userRead)))
 	}
 }
 

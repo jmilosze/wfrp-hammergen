@@ -4,30 +4,39 @@ import (
 	"net/http"
 )
 
-func ServerErrResp(details string) (int, *map[string]any) {
-	return http.StatusInternalServerError, &map[string]any{"message": "internal server error", "details": details}
+type Response[T any] struct {
+	Data T `json:"data"`
 }
 
-func UnauthorizedErrResp(details string) (int, *map[string]any) {
-	return http.StatusUnauthorized, &map[string]any{"message": "unauthorized", "details": details}
+type ErrorResponse struct {
+	Message string `json:"message"`
+	Details string `json:"details"`
 }
 
-func ForbiddenErrResp(details string) (int, *map[string]any) {
-	return http.StatusForbidden, &map[string]any{"message": "forbidden", "details": details}
+func ServerErrResp(details string) (int, ErrorResponse) {
+	return http.StatusInternalServerError, ErrorResponse{Message: "internal server error", Details: details}
 }
 
-func NotFoundErrResp(details string) (int, *map[string]any) {
-	return http.StatusNotFound, &map[string]any{"message": "not found", "details": details}
+func UnauthorizedErrResp(details string) (int, ErrorResponse) {
+	return http.StatusUnauthorized, ErrorResponse{Message: "unauthorized", Details: details}
 }
 
-func ConflictErrResp(details string) (int, *map[string]any) {
-	return http.StatusConflict, &map[string]any{"message": "bad request", "details": details}
+func ForbiddenErrResp(details string) (int, ErrorResponse) {
+	return http.StatusForbidden, ErrorResponse{Message: "forbidden", Details: details}
 }
 
-func BadRequestErrResp(details string) (int, *map[string]any) {
-	return http.StatusBadRequest, &map[string]any{"message": "bad request", "details": details}
+func NotFoundErrResp(details string) (int, ErrorResponse) {
+	return http.StatusNotFound, ErrorResponse{Message: "not found", Details: details}
 }
 
-func OkResp[M map[string]any | []map[string]any | string](data M) (int, *map[string]any) {
-	return http.StatusOK, &map[string]any{"data": data}
+func ConflictErrResp(details string) (int, ErrorResponse) {
+	return http.StatusConflict, ErrorResponse{Message: "bad request", Details: details}
+}
+
+func BadRequestErrResp(details string) (int, ErrorResponse) {
+	return http.StatusBadRequest, ErrorResponse{Message: "bad request", Details: details}
+}
+
+func OkResp[T any](data T) (int, Response[T]) {
+	return http.StatusOK, Response[T]{Data: data}
 }
