@@ -13,6 +13,11 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+type WhDbService struct {
+	Db          *DbService
+	Collections map[warhammer.WhType]*mongo.Collection
+}
+
 type whDocWrite struct {
 	Id         bson.ObjectID        `bson:"_id"`
 	OwnerId    string               `bson:"ownerid"`
@@ -20,9 +25,11 @@ type whDocWrite struct {
 	Object     warhammer.WhObject   `bson:"object"`
 }
 
-type WhDbService struct {
-	Db          *DbService
-	Collections map[warhammer.WhType]*mongo.Collection
+type whDocRead struct {
+	Id         bson.ObjectID        `bson:"_id"`
+	OwnerId    string               `bson:"ownerid"`
+	Visibility warhammer.Visibility `bson:"visibility"`
+	Object     bson.Raw             `bson:"object"`
 }
 
 func NewWhDbService(db *DbService, createIndex bool) *WhDbService {
@@ -194,13 +201,6 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 	}
 
 	return bson.M{"$or": allowedConditions}
-}
-
-type whDocRead struct {
-	Id         bson.ObjectID        `bson:"_id"`
-	OwnerId    string               `bson:"ownerid"`
-	Visibility warhammer.Visibility `bson:"visibility"`
-	Object     bson.Raw             `bson:"object"`
 }
 
 func whDocToWh(doc *whDocRead, t warhammer.WhType) (*warhammer.Wh, error) {

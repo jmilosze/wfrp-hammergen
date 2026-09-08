@@ -14,6 +14,11 @@ import (
 
 const userCollectionName = "user"
 
+type UserDbService struct {
+	Db         *DbService
+	Collection *mongo.Collection
+}
+
 type userDocWrite struct {
 	Id                 bson.ObjectID   `bson:"_id"`
 	Username           string          `bson:"username"`
@@ -23,11 +28,6 @@ type userDocWrite struct {
 	SharedAccountNames []string        `bson:"sharedAccountNames,omitempty"`
 	CreatedOn          time.Time       `bson:"createdOn"`
 	LastAuthOn         time.Time       `bson:"lastAuthOn"`
-}
-
-type UserDbService struct {
-	Db         *DbService
-	Collection *mongo.Collection
 }
 
 func NewUserDbService(db *DbService, createIndex bool) *UserDbService {
