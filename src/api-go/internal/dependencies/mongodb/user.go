@@ -14,7 +14,7 @@ import (
 
 const userCollectionName = "user"
 
-type Mongo struct {
+type userDocWrite struct {
 	Id                 bson.ObjectID   `bson:"_id"`
 	Username           string          `bson:"username"`
 	PasswordHash       []byte          `bson:"passwordHash"`
@@ -82,7 +82,7 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		return nil, fmt.Errorf("failed to query aggregate: %w", err)
 	}
 
-	var userMongo Mongo
+	var userMongo userDocWrite
 	ok := cur.Next(ctx)
 	if !ok {
 		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user not found db")}
@@ -97,13 +97,13 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	return newUser, nil
 }
 
-func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fieldValues []string) ([]*Mongo, error) {
+func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fieldValues []string) ([]*userDocWrite, error) {
 	getAll := false
 	if fieldValues == nil {
 		getAll = true
 	} else {
 		if len(fieldValues) == 0 {
-			return []*Mongo{}, nil
+			return []*userDocWrite{}, nil
 		}
 	}
 
@@ -135,9 +135,9 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 		return nil, fmt.Errorf("failed to execute find query: %w", err)
 	}
 
-	users := make([]*Mongo, 0)
+	users := make([]*userDocWrite, 0)
 	for cur.Next(ctx) {
-		var u Mongo
+		var u userDocWrite
 		if err := cur.Decode(&u); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal users: %w", err)
 		}
@@ -185,8 +185,8 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, e
 	return newUserFromMongo(userMongoDb, linkedUsers), nil
 }
 
-func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts []string) ([]*Mongo, error) {
-	linkedUsers := make([]*Mongo, 0)
+func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts []string) ([]*userDocWrite, error) {
+	linkedUsers := make([]*userDocWrite, 0)
 	if sharedAccounts != nil {
 		var err error
 		linkedUsers, err = getMany(ctx, col, "username", sharedAccounts)
@@ -197,13 +197,13 @@ func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts [
 	return linkedUsers, nil
 }
 
-func newMongoFromUser(u *user.User, linkedUsers []*Mongo) (*Mongo, error) {
+func newMongoFromUser(u *user.User, linkedUsers []*userDocWrite) (*userDocWrite, error) {
 	id, err := bson.ObjectIDFromHex(u.Id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate object id of %s: %w", u.Id, err)
 	}
 
-	userMongo := Mongo{
+	userMongo := userDocWrite{
 		Id:               id,
 		Username:         u.Username,
 		PasswordHash:     u.PasswordHash,
@@ -216,7 +216,7 @@ func newMongoFromUser(u *user.User, linkedUsers []*Mongo) (*Mongo, error) {
 	return &userMongo, nil
 }
 
-func usernamesToIds(usernames []string, us []*Mongo) []bson.ObjectID {
+func usernamesToIds(usernames []string, us []*userDocWrite) []bson.ObjectID {
 	userMap := map[string]bson.ObjectID{}
 	for _, u := range us {
 		userMap[u.Username] = u.Id
@@ -231,7 +231,7 @@ func usernamesToIds(usernames []string, us []*Mongo) []bson.ObjectID {
 	return ids
 }
 
-func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *user.User {
+func newUserFromMongo(u *userDocWrite, linkedUsers []*userDocWrite) *user.User {
 	var sharedAccountIds []string
 	if u.SharedAccountIds != nil {
 		sharedAccountIds = make([]string, len(u.SharedAccountIds))
@@ -261,7 +261,7 @@ func newUserFromMongo(u *Mongo, linkedUsers []*Mongo) *user.User {
 	return &user
 }
 
-func idsToUsernames(ids []bson.ObjectID, users []*Mongo) []string {
+func idsToUsernames(ids []bson.ObjectID, users []*userDocWrite) []string {
 	userMap := map[bson.ObjectID]string{}
 	for _, u := range users {
 		userMap[u.Id] = u.Username

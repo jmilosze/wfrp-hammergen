@@ -13,6 +13,13 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+type whDocWrite struct {
+	Id         bson.ObjectID        `bson:"_id"`
+	OwnerId    string               `bson:"ownerid"`
+	Visibility warhammer.Visibility `bson:"visibility"`
+	Object     warhammer.WhObject   `bson:"object"`
+}
+
 type WhDbService struct {
 	Db          *DbService
 	Collections map[warhammer.WhType]*mongo.Collection
@@ -43,62 +50,46 @@ func createIndexOnField(fieldName string, collection *mongo.Collection) {
 	}
 }
 
-func (s *WhDbService) Create(ctx context.Context, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, error) {
-	whBsonM, err := whToBsonM(w)
+func newWhDocWrite(w *warhammer.Wh) (*whDocWrite, error) {
+	id, err := bson.ObjectIDFromHex(w.Id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert wh to bson map: %w", err)
+		return nil, fmt.Errorf("failed to calculate object id of %s: %w", w.Id, err)
 	}
 
-	_, err = s.Collections[t].InsertOne(ctx, whBsonM)
+	return &whDocWrite{
+		Id:         id,
+		OwnerId:    w.OwnerId,
+		Visibility: w.Visibility,
+		Object:     w.Object,
+	}, nil
+}
+
+func (s *WhDbService) Create(ctx context.Context, t warhammer.WhType, w *warhammer.Wh) (*warhammer.Wh, error) {
+	whDoc, err := newWhDocWrite(w)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert wh to write doc: %w", err)
+	}
+
+	_, err = s.Collections[t].InsertOne(ctx, whDoc)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, &d.DbError{Type: d.ErrorDbConflict, Err: fmt.Errorf("failed to insert wh %v", whBsonM)}
+			return nil, &d.DbError{Type: d.ErrorDbConflict, Err: fmt.Errorf("failed to insert wh %v", w)}
 		}
-		return nil, fmt.Errorf("failed to insert wh %v", whBsonM)
+		return nil, fmt.Errorf("failed to insert wh %v: %w", w, err)
 	}
 
 	return w, nil
 }
 
-func whToBsonM(w *warhammer.Wh) (bson.M, error) {
-	wBson, err := bson.Marshal(w)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal object: %w", err)
-	}
-
-	var whMap bson.M
-	err = bson.Unmarshal(wBson, &whMap)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal object: %w", err)
-	}
-
-	id, err := bson.ObjectIDFromHex(w.Id)
-	if err != nil {
-		return nil, fmt.Errorf("failed to calculate object id of %s: %w", w.Id, err)
-	}
-
-	delete(whMap, "canedit")
-	delete(whMap, "id")
-	whMap["_id"] = id
-	whMap["visibility"] = int(w.Visibility)
-
-	return whMap, err
-}
-
 func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhammer.Wh, userId string) (*warhammer.Wh, error) {
-	id, err := bson.ObjectIDFromHex(w.Id)
+	whDoc, err := newWhDocWrite(w)
 	if err != nil {
-		return nil, fmt.Errorf("failed to calculate object id of %s: %w", w.Id, err)
+		return nil, fmt.Errorf("failed to convert wh to write doc: %w", err)
 	}
 
-	whBsonM, err := whToBsonM(w)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert wh to bson map: %w", err)
-	}
+	findByIdQuery := bson.M{"$and": bson.A{bson.M{"_id": whDoc.Id}, bson.M{"ownerid": userId}}}
 
-	findByIdQuery := bson.M{"$and": bson.A{bson.M{"_id": id}, bson.M{"ownerid": userId}}}
-
-	result, err := s.Collections[t].UpdateOne(ctx, findByIdQuery, bson.M{"$set": whBsonM})
+	result, err := s.Collections[t].ReplaceOne(ctx, findByIdQuery, whDoc)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update wh in db: %w", err)
 	}
@@ -150,15 +141,15 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 	var whList []*warhammer.Wh
 
 	for cur.Next(context.Background()) {
-		var whMap bson.M
-		err := cur.Decode(&whMap)
+		var doc whDocRead
+		err := cur.Decode(&doc)
 		if err != nil {
 			return nil, fmt.Errorf("failed to decode wh: %w", err)
 		}
 
-		wh, err := bsonMToWh(whMap, t)
+		wh, err := whDocToWh(&doc, t)
 		if err != nil {
-			return nil, fmt.Errorf("failed to convert bsonM to wh: %w", err)
+			return nil, fmt.Errorf("failed to convert doc to wh: %w", err)
 		}
 
 		whList = append(whList, wh)
@@ -205,39 +196,23 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 	return bson.M{"$or": allowedConditions}
 }
 
-func bsonMToWh(whMap bson.M, t warhammer.WhType) (*warhammer.Wh, error) {
-	id, ok := whMap["_id"].(bson.ObjectID)
-	if !ok {
-		return nil, fmt.Errorf("invalid object id")
+type whDocRead struct {
+	Id         bson.ObjectID        `bson:"_id"`
+	OwnerId    string               `bson:"ownerid"`
+	Visibility warhammer.Visibility `bson:"visibility"`
+	Object     bson.Raw             `bson:"object"`
+}
+
+func whDocToWh(doc *whDocRead, t warhammer.WhType) (*warhammer.Wh, error) {
+	wh := warhammer.Wh{
+		Id:         doc.Id.Hex(),
+		OwnerId:    doc.OwnerId,
+		Visibility: doc.Visibility,
+		Object:     warhammer.NewWhObject(t),
 	}
 
-	ownerId, ok := whMap["ownerid"].(string)
-	if !ok {
-		return nil, fmt.Errorf("invalid owner id")
-	}
-
-	var visibility warhammer.Visibility
-	switch v := whMap["visibility"].(type) {
-	case int32:
-		visibility = warhammer.Visibility(v)
-	case int64:
-		visibility = warhammer.Visibility(v)
-	case int:
-		visibility = warhammer.Visibility(v)
-	default:
-		visibility = warhammer.VisibilityPrivate
-	}
-
-	bsonRaw, err := bson.Marshal(whMap["object"])
-	if err != nil {
-		return nil, fmt.Errorf("error marshaling object")
-	}
-
-	wh := warhammer.Wh{Id: id.Hex(), OwnerId: ownerId, Visibility: visibility}
-	wh.Object = warhammer.NewWhObject(t)
-
-	if err = bson.Unmarshal(bsonRaw, wh.Object); err != nil {
-		return nil, fmt.Errorf("error marshaling object")
+	if err := bson.Unmarshal(doc.Object, wh.Object); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal object: %w", err)
 	}
 
 	return &wh, nil
