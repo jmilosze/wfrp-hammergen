@@ -28,24 +28,22 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to create wh")}
 	}
 
-	newWh := *w
-
-	if err := s.Validator.Struct(&newWh); err != nil {
+	if err := s.Validator.Struct(w); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
-	if err := extraCharacterValidation(t, &newWh, s.Validator); err != nil {
+	if err := extraCharacterValidation(t, w, s.Validator); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
-	if !c.Admin && newWh.Visibility == wh.VisibilityPublic {
+	if !c.Admin && w.Visibility == wh.VisibilityPublic {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("non-admin cannot create public items")}
 	}
 
-	newWh.OwnerId = c.Id
-	newWh.Id = hex.EncodeToString(xid.New().Bytes())
+	w.OwnerId = c.Id
+	w.Id = hex.EncodeToString(xid.New().Bytes())
 
-	createdWh, err := s.WhDbService.Create(ctx, t, &newWh)
+	createdWh, err := s.WhDbService.Create(ctx, t, w)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create wh: %w", err)
 	}
@@ -53,9 +51,9 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	return createdWh, nil
 }
 
-func extraCharacterValidation(t wh.WhType, newWh *wh.Wh, validator *validator.Validate) error {
+func extraCharacterValidation(t wh.WhType, w *wh.Wh, validator *validator.Validate) error {
 	if t == wh.WhTypeCharacter {
-		char := newWh.Object.(*wh.Character)
+		char := w.Object.(*wh.Character)
 		err := validator.Var(char.Career.Number, "gte=1,lte=4")
 		if err != nil {
 			return err
@@ -79,32 +77,30 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to update wh %s", w.Id)}
 	}
 
-	newWh := *w
-
-	if err := s.Validator.Struct(&newWh); err != nil {
+	if err := s.Validator.Struct(w); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
-	if err := extraCharacterValidation(t, &newWh, s.Validator); err != nil {
+	if err := extraCharacterValidation(t, w, s.Validator); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
-	if !c.Admin && newWh.Visibility == wh.VisibilityPublic {
+	if !c.Admin && w.Visibility == wh.VisibilityPublic {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("non-admin cannot set visibility to public")}
 	}
 
-	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, []string{newWh.Id})
+	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, []string{w.Id})
 	if err != nil || len(existingWhs) == 0 {
-		return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("wh %s not found", newWh.Id)}
+		return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("wh %s not found", w.Id)}
 	}
 	existingWh := existingWhs[0]
 
 	if !canModify(existingWh.OwnerId, c.Id) {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorNotFound, Err: fmt.Errorf("unauthorized to update wh %s", newWh.Id)}
+		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorNotFound, Err: fmt.Errorf("unauthorized to update wh %s", w.Id)}
 	}
 
-	newWh.OwnerId = existingWh.OwnerId
-	updatedWh, err := s.WhDbService.Update(ctx, t, &newWh, c.Id)
+	w.OwnerId = existingWh.OwnerId
+	updatedWh, err := s.WhDbService.Update(ctx, t, w, c.Id)
 	if err != nil {
 		var dbErr *domain.DbError
 		wErr := fmt.Errorf("failed to update wh: %w", err)
