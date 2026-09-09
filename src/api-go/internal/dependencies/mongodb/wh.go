@@ -218,8 +218,6 @@ func whDocToWh(doc *whDocRead, t warhammer.WhType) (*warhammer.Wh, error) {
 		return nil, fmt.Errorf("failed to unmarshal object: %w", err)
 	}
 
-	wh.Init()
-
 	return &wh, nil
 }
 
@@ -242,7 +240,10 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.G
 func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, error) {
 	_, err := s.Collections[warhammer.WhTypeOther].InsertOne(ctx, gp)
 	if err != nil {
-		return nil, fmt.Errorf("failed to insert generationProps to db: %w", err)
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, &d.DbError{Type: d.ErrorDbConflict, Err: fmt.Errorf("generationProps already exists: %w", err)}
+		}
+		return nil, fmt.Errorf("failed to create generationProps: %w", err)
 	}
 
 	return gp, nil
