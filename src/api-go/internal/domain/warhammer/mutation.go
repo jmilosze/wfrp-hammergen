@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -9,42 +8,8 @@ type Mutation struct {
 	Name        string            `json:"name" validate:"name_valid"`
 	Description string            `json:"description" validate:"desc_valid"`
 	Type        MutationType      `json:"type" validate:"mutation_type_valid"`
-	Modifiers   *Modifiers        `json:"modifiers"`
+	Modifiers   Modifiers         `json:"modifiers"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (mutation *Mutation) Copy() WhObject {
-	if mutation == nil {
-		return nil
-	}
-
-	return &Mutation{
-		Name:        mutation.Name,
-		Description: mutation.Description,
-		Type:        mutation.Type,
-		Modifiers:   mutation.Modifiers.Copy(),
-		Source:      copySourceMap(mutation.Source),
-	}
-}
-
-func (mutation *Mutation) InitNilPointers() error {
-	if mutation == nil {
-		return errors.New("mutation pointer is nil")
-	}
-
-	if mutation.Modifiers == nil {
-		mutation.Modifiers = &Modifiers{}
-	}
-	err := mutation.Modifiers.InitNilPointers()
-	if err != nil {
-		return err
-	}
-
-	if mutation.Source == nil {
-		mutation.Source = map[Source]string{}
-	}
-
-	return nil
 }
 
 type MutationType int

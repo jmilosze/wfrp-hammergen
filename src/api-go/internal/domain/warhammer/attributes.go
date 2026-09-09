@@ -56,22 +56,3 @@ type Attributes struct {
 	WP  int `json:"WP" validate:"min=-99,max=99"`
 	Fel int `json:"Fel" validate:"min=-99,max=99"`
 }
-
-func (attributes *Attributes) Copy() *Attributes {
-	if attributes == nil {
-		return nil
-	}
-
-	return &Attributes{
-		WS:  attributes.WS,
-		BS:  attributes.BS,
-		S:   attributes.S,
-		T:   attributes.T,
-		I:   attributes.I,
-		Ag:  attributes.Ag,
-		Dex: attributes.Dex,
-		Int: attributes.Int,
-		WP:  attributes.WP,
-		Fel: attributes.Fel,
-	}
-}

@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -35,40 +34,6 @@ type Rune struct {
 	Labels       []RuneLabel       `json:"labels" validate:"unique,dive,rune_label_valid"`
 	ApplicableTo []ItemType        `json:"applicableTo" validate:"unique,dive,item_type_valid"`
 	Source       map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (rune *Rune) Copy() WhObject {
-	if rune == nil {
-		return nil
-	}
-
-	return &Rune{
-		Name:         rune.Name,
-		Description:  rune.Description,
-		Labels:       copyArray(rune.Labels),
-		ApplicableTo: copyArray(rune.ApplicableTo),
-		Source:       copySourceMap(rune.Source),
-	}
-}
-
-func (rune *Rune) InitNilPointers() error {
-	if rune == nil {
-		return errors.New("rune pointer is nil")
-	}
-
-	if rune.Labels == nil {
-		rune.Labels = []RuneLabel{}
-	}
-
-	if rune.ApplicableTo == nil {
-		rune.ApplicableTo = []ItemType{}
-	}
-
-	if rune.Source == nil {
-		rune.Source = map[Source]string{}
-	}
-
-	return nil
 }
 
 func GetRuneValidationAliases() map[string]string {

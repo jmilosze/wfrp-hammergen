@@ -12,29 +12,29 @@ var character0 = wh.Wh{
 		Name:        "character 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Notes:       "some notes",
-		EquippedItems: []*wh.IdNumber{
+		EquippedItems: []wh.IdNumber{
 			{Id: itemArmour.Id, Number: 1},
 			{Id: itemMelee.Id, Number: 2},
 		},
-		CarriedItems: []*wh.IdNumber{
+		CarriedItems: []wh.IdNumber{
 			{Id: itemRanged.Id, Number: 1},
 			{Id: itemArmour.Id, Number: 1},
 			{Id: itemAmmunition.Id, Number: 200},
 		},
-		StoredItems: []*wh.IdNumber{
+		StoredItems: []wh.IdNumber{
 			{Id: itemGrimoire.Id, Number: 1},
 			{Id: itemOther.Id, Number: 100},
 		},
-		Skills: []*wh.IdNumber{
+		Skills: []wh.IdNumber{
 			{Id: advanced0.Id, Number: 1},
 			{Id: advanced1.Id, Number: 10},
 		},
-		Talents: []*wh.IdNumber{
+		Talents: []wh.IdNumber{
 			{Id: talent0.Id, Number: 1},
 			{Id: talent1.Id, Number: 5},
 		},
 		Species: wh.CharacterSpeciesHalflingBrandysnap,
-		BaseAttributes: &wh.Attributes{
+		BaseAttributes: wh.Attributes{
 			WS:  1,
 			BS:  2,
 			S:   3,
@@ -46,7 +46,7 @@ var character0 = wh.Wh{
 			WP:  9,
 			Fel: 10,
 		},
-		AttributeAdvances: &wh.Attributes{
+		AttributeAdvances: wh.Attributes{
 			WS:  10,
 			BS:  9,
 			S:   8,
@@ -58,8 +58,8 @@ var character0 = wh.Wh{
 			WP:  2,
 			Fel: 1,
 		},
-		CareerPath: []*wh.IdNumber{{Id: career0.Id, Number: 1}, {Id: career0.Id, Number: 2}},
-		Career:     &wh.IdNumber{Id: career1.Id, Number: 1},
+		CareerPath: []wh.IdNumber{{Id: career0.Id, Number: 1}, {Id: career0.Id, Number: 2}},
+		Career:     wh.IdNumber{Id: career1.Id, Number: 1},
 		Fate:       2,
 		Fortune:    1,
 		Resilience: 3,
@@ -88,7 +88,7 @@ var character1 = wh.Wh{
 		Name:        "character 1",
 		Description: fmt.Sprintf("owned by %s", user0.Username),
 		Species:     wh.CharacterSpeciesDwarfAltdorf,
-		Career:      &wh.IdNumber{Id: career0.Id, Number: 1},
+		Career:      wh.IdNumber{Id: career0.Id, Number: 1},
 	},
 }
 

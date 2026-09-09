@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -10,87 +9,12 @@ type Career struct {
 	Description string            `json:"description" validate:"desc_valid"`
 	Class       CareerClass       `json:"class" validate:"class_valid"`
 	Species     []CareerSpecies   `json:"species" validate:"dive,career_species_valid"`
-	Level1      *CareerLevel      `json:"level1"`
-	Level2      *CareerLevel      `json:"level2"`
-	Level3      *CareerLevel      `json:"level3"`
-	Level4      *CareerLevel      `json:"level4"`
-	Level5      *CareerLevel      `json:"level5"`
+	Level1      CareerLevel       `json:"level1"`
+	Level2      CareerLevel       `json:"level2"`
+	Level3      CareerLevel       `json:"level3"`
+	Level4      CareerLevel       `json:"level4"`
+	Level5      CareerLevel       `json:"level5"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
-}
-
-func (career *Career) Copy() WhObject {
-	if career == nil {
-		return nil
-	}
-
-	return &Career{
-		Name:        career.Name,
-		Description: career.Description,
-		Class:       career.Class,
-		Species:     copyArray(career.Species),
-		Level1:      career.Level1.Copy(),
-		Level2:      career.Level2.Copy(),
-		Level3:      career.Level3.Copy(),
-		Level4:      career.Level4.Copy(),
-		Level5:      career.Level5.Copy(),
-		Source:      copySourceMap(career.Source),
-	}
-}
-
-func (career *Career) InitNilPointers() error {
-	if career == nil {
-		return errors.New("career pointer is nil")
-	}
-
-	if career.Species == nil {
-		career.Species = []CareerSpecies{}
-	}
-
-	if career.Level1 == nil {
-		career.Level1 = &CareerLevel{}
-	}
-	err := career.Level1.InitNilPointers()
-	if err != nil {
-		return err
-	}
-
-	if career.Level2 == nil {
-		career.Level2 = &CareerLevel{}
-	}
-	err = career.Level2.InitNilPointers()
-	if err != nil {
-		return err
-	}
-
-	if career.Level3 == nil {
-		career.Level3 = &CareerLevel{}
-	}
-	err = career.Level3.InitNilPointers()
-	if err != nil {
-		return err
-	}
-
-	if career.Level4 == nil {
-		career.Level4 = &CareerLevel{}
-	}
-	err = career.Level4.InitNilPointers()
-	if err != nil {
-		return err
-	}
-
-	if career.Level5 == nil {
-		career.Level5 = &CareerLevel{}
-	}
-	err = career.Level5.InitNilPointers()
-	if err != nil {
-		return err
-	}
-
-	if career.Source == nil {
-		career.Source = map[Source]string{}
-	}
-
-	return nil
 }
 
 type CareerLevel struct {
@@ -102,43 +26,6 @@ type CareerLevel struct {
 	Skills     []string    `json:"skills" validate:"dive,id_valid"`
 	Talents    []string    `json:"talents" validate:"dive,id_valid"`
 	Items      string      `json:"items" validate:"desc_valid"`
-}
-
-func (careerLevel *CareerLevel) Copy() *CareerLevel {
-	if careerLevel == nil {
-		return nil
-	}
-
-	return &CareerLevel{
-		Exists:     careerLevel.Exists,
-		Name:       careerLevel.Name,
-		Status:     careerLevel.Status,
-		Standing:   careerLevel.Standing,
-		Attributes: copyArray(careerLevel.Attributes),
-		Skills:     copyArray(careerLevel.Skills),
-		Talents:    copyArray(careerLevel.Talents),
-		Items:      careerLevel.Items,
-	}
-}
-
-func (careerLevel *CareerLevel) InitNilPointers() error {
-	if careerLevel == nil {
-		return errors.New("careerLevel pointer is nil")
-	}
-
-	if careerLevel.Attributes == nil {
-		careerLevel.Attributes = []Attribute{}
-	}
-
-	if careerLevel.Skills == nil {
-		careerLevel.Skills = []string{}
-	}
-
-	if careerLevel.Talents == nil {
-		careerLevel.Talents = []string{}
-	}
-
-	return nil
 }
 
 type Status int

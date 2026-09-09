@@ -28,16 +28,13 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to create wh")}
 	}
 
-	newWh := w.Copy()
-	if err := newWh.InitNilPointers(); err != nil {
-		return nil, fmt.Errorf("failed to nil pointers: %w", err)
-	}
+	newWh := *w
 
-	if err := s.Validator.Struct(newWh); err != nil {
+	if err := s.Validator.Struct(&newWh); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
-	if err := extraCharacterValidation(t, newWh, s.Validator); err != nil {
+	if err := extraCharacterValidation(t, &newWh, s.Validator); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
@@ -48,12 +45,12 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	newWh.OwnerId = c.Id
 	newWh.Id = hex.EncodeToString(xid.New().Bytes())
 
-	createdWh, err := s.WhDbService.Create(ctx, t, newWh)
+	createdWh, err := s.WhDbService.Create(ctx, t, &newWh)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create wh: %w", err)
 	}
 
-	return createdWh.Copy(), nil
+	return createdWh, nil
 }
 
 func extraCharacterValidation(t wh.WhType, newWh *wh.Wh, validator *validator.Validate) error {
@@ -82,16 +79,13 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to update wh %s", w.Id)}
 	}
 
-	newWh := w.Copy()
-	if err := newWh.InitNilPointers(); err != nil {
-		return nil, fmt.Errorf("failed to initialize nil pointers: %w", err)
-	}
+	newWh := *w
 
-	if err := s.Validator.Struct(newWh); err != nil {
+	if err := s.Validator.Struct(&newWh); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
-	if err := extraCharacterValidation(t, newWh, s.Validator); err != nil {
+	if err := extraCharacterValidation(t, &newWh, s.Validator); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
 
@@ -110,7 +104,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	newWh.OwnerId = existingWh.OwnerId
-	updatedWh, err := s.WhDbService.Update(ctx, t, newWh, c.Id)
+	updatedWh, err := s.WhDbService.Update(ctx, t, &newWh, c.Id)
 	if err != nil {
 		var dbErr *domain.DbError
 		wErr := fmt.Errorf("failed to update wh: %w", err)
@@ -121,7 +115,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		}
 	}
 
-	return updatedWh.Copy(), nil
+	return updatedWh, nil
 }
 
 func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) error {
@@ -155,14 +149,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		return nil, fmt.Errorf("failed to retreive wh: %w", err)
 	}
 
-	whsRet := make([]*wh.Wh, 0)
-	for _, v := range whs {
-		err := v.InitNilPointers()
-		if err != nil {
-			return nil, fmt.Errorf("failed to initialize nil pointers: %w", err)
-		}
-		whsRet = append(whsRet, v)
-	}
+	whsRet := whs
 
 	if full {
 		var whErr error
@@ -291,7 +278,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		allTalentIds = mergeStrAndIdNumberAndRemoveDuplicates(allTalentIds, character.Talents)
 
 		allCareerIds = mergeStrAndIdNumberAndRemoveDuplicates(allCareerIds, character.CareerPath)
-		allCareerIds = mergeStrAndIdNumberAndRemoveDuplicates(allCareerIds, []*wh.IdNumber{character.Career})
+		allCareerIds = mergeStrAndIdNumberAndRemoveDuplicates(allCareerIds, []wh.IdNumber{character.Career})
 
 		allMutationIds = mergeStrAndRemoveDuplicates(allMutationIds, character.Mutations)
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, character.Spells)
@@ -353,7 +340,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	return fullCharacters, nil
 }
 
-func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []*wh.IdNumber) []string {
+func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []wh.IdNumber) []string {
 	// Create a map to store unique strings
 	uniqueStrings := make(map[string]bool)
 

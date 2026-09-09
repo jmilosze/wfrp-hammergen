@@ -11,10 +11,10 @@ var trait0 = wh.Wh{
 	Object: &wh.Trait{
 		Name:        "trait 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
-		Modifiers: &wh.Modifiers{
+		Modifiers: wh.Modifiers{
 			Size:     1,
 			Movement: 1,
-			Attributes: &wh.Attributes{
+			Attributes: wh.Attributes{
 				WS:  1,
 				BS:  2,
 				S:   3,

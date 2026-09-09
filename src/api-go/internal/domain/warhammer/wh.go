@@ -1,9 +1,7 @@
 package warhammer
 
 import (
-	"errors"
 	"fmt"
-	"strings"
 )
 
 type Visibility int
@@ -23,6 +21,8 @@ func GetWhValidationAliases() map[string]string {
 		"visibility_valid": fmt.Sprintf("oneof=%s", getAllowedVisibilityValues()),
 	}
 }
+
+type WhObject = any
 
 type Wh struct {
 	Id         string     `json:"id"`
@@ -64,32 +64,14 @@ var WhCoreTypes = []WhType{
 	WhTypeRune,
 }
 
-func (w *Wh) Copy() *Wh {
-	if w == nil {
-		return nil
-	}
-
-	wh := Wh{
-		Id:         strings.Clone(w.Id),
-		OwnerId:    strings.Clone(w.OwnerId),
-		Visibility: w.Visibility,
-	}
-
-	if w.Object != nil {
-		wh.Object = w.Object.Copy()
-	}
-
-	return &wh
-}
-
 func (w *Wh) CopyHeaders() *Wh {
 	if w == nil {
 		return nil
 	}
 
 	return &Wh{
-		Id:         strings.Clone(w.Id),
-		OwnerId:    strings.Clone(w.OwnerId),
+		Id:         w.Id,
+		OwnerId:    w.OwnerId,
 		Visibility: w.Visibility,
 	}
 }
@@ -97,49 +79,74 @@ func (w *Wh) CopyHeaders() *Wh {
 func NewWhObject(t WhType) WhObject {
 	switch t {
 	case WhTypeMutation:
-		return &Mutation{}
+		return &Mutation{Source: map[Source]string{}}
 	case WhTypeSpell:
-		return &Spell{}
+		return &Spell{Source: map[Source]string{}}
 	case WhTypePrayer:
-		return &Prayer{}
+		return &Prayer{Source: map[Source]string{}}
 	case WhTypeProperty:
-		return &Property{}
+		return &Property{ApplicableTo: []ItemType{}, Source: map[Source]string{}}
 	case WhTypeItem:
-		return &Item{}
+		return &Item{
+			Properties: []string{},
+			Runes:      []IdNumber{},
+			Source:     map[Source]string{},
+			Armour:     ItemArmour{Location: []ItemArmourLocation{}},
+			Grimoire:   ItemGrimoire{Spells: []string{}},
+		}
 	case WhTypeTalent:
-		return &Talent{}
+		return &Talent{Group: []string{}, Source: map[Source]string{}}
 	case WhTypeSkill:
-		return &Skill{}
+		return &Skill{Group: []string{}, Source: map[Source]string{}}
 	case WhTypeCareer:
-		return &Career{}
+		return &Career{
+			Species: []CareerSpecies{},
+			Source:  map[Source]string{},
+			Level1:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
+			Level2:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
+			Level3:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
+			Level4:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
+			Level5:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
+		}
 	case WhTypeCharacter:
-		return &Character{}
+		return &Character{
+			EquippedItems: []IdNumber{},
+			CarriedItems:  []IdNumber{},
+			StoredItems:   []IdNumber{},
+			Skills:        []IdNumber{},
+			Talents:       []IdNumber{},
+			CareerPath:    []IdNumber{},
+			Spells:        []string{},
+			Prayers:       []string{},
+			Traits:        []string{},
+			Mutations:     []string{},
+		}
 	case WhTypeItemFull:
-		return &ItemFull{}
+		return &ItemFull{
+			Properties: []*Wh{},
+			Runes:      []WhNumber{},
+			Source:     map[Source]string{},
+			Armour:     ItemArmour{Location: []ItemArmourLocation{}},
+			Grimoire:   ItemGrimoireFull{Spells: []*Wh{}},
+		}
 	case WhTypeCharacterFull:
-		return &CharacterFull{}
+		return &CharacterFull{
+			EquippedItems: []WhNumber{},
+			CarriedItems:  []WhNumber{},
+			StoredItems:   []WhNumber{},
+			Skills:        []WhNumber{},
+			Talents:       []WhNumber{},
+			CareerPath:    []WhNumber{},
+			Spells:        []*Wh{},
+			Prayers:       []*Wh{},
+			Traits:        []*Wh{},
+			Mutations:     []*Wh{},
+		}
 	case WhTypeTrait:
-		return &Trait{}
+		return &Trait{Source: map[Source]string{}}
 	case WhTypeRune:
-		return &Rune{}
+		return &Rune{Labels: []RuneLabel{}, ApplicableTo: []ItemType{}, Source: map[Source]string{}}
 	}
 
 	return &Character{}
-}
-
-func (w *Wh) InitNilPointers() error {
-	if w == nil {
-		return errors.New("wh pointer is nil")
-	}
-
-	if w.Object == nil {
-		return errors.New("wh.object pointer is nil")
-	}
-
-	return w.Object.InitNilPointers()
-}
-
-type WhObject interface {
-	Copy() WhObject
-	InitNilPointers() error
 }

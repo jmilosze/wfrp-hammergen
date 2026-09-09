@@ -16,13 +16,13 @@ var itemMelee = wh.Wh{
 		Enc:          1.5,
 		Availability: wh.ItemAvailabilityCommon,
 		Properties:   []string{property0.Id, property1.Id},
-		Runes:        []*wh.IdNumber{{Id: rune0.Id, Number: 1}, {Id: rune1.Id, Number: 2}},
+		Runes:        []wh.IdNumber{{Id: rune0.Id, Number: 1}, {Id: rune1.Id, Number: 2}},
 		Type:         wh.ItemTypeMelee,
 		Source: map[wh.Source]string{
 			wh.SourceArchivesOfTheEmpireVolI: "g",
 			wh.SourceUpInArms:                "f",
 		},
-		Melee: &wh.ItemMelee{
+		Melee: wh.ItemMelee{
 			Hands:     wh.ItemHandsOne,
 			Dmg:       5,
 			DmgSbMult: 1.0,
@@ -47,7 +47,7 @@ var itemRanged = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},
-		Ranged: &wh.ItemRanged{
+		Ranged: wh.ItemRanged{
 			Hands:     wh.ItemHandsOne,
 			Dmg:       2,
 			DmgSbMult: 2.0,
@@ -73,8 +73,8 @@ var itemAmmunition = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
-		Ammunition: &wh.ItemAmmunition{
-			Dmg:     1.0,
+		Ammunition: wh.ItemAmmunition{
+			Dmg:     1,
 			Rng:     50,
 			RngMult: 1.0,
 			Group:   wh.ItemAmmunitionGroupBow,
@@ -97,7 +97,7 @@ var itemArmour = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
-		Armour: &wh.ItemArmour{
+		Armour: wh.ItemArmour{
 			Points:   2,
 			Location: []wh.ItemArmourLocation{wh.ItemArmourLocationBody, wh.ItemArmourLocationHead},
 			Group:    wh.ItemArmourGroupMail,
@@ -120,7 +120,7 @@ var itemContainer = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
 		},
-		Container: &wh.ItemContainer{
+		Container: wh.ItemContainer{
 			Capacity:  2,
 			CarryType: wh.ItemCarryTypeCarriableAndWearable,
 		},
@@ -138,12 +138,12 @@ var itemGrimoire = wh.Wh{
 		Enc:          0,
 		Availability: wh.ItemAvailabilityCommon,
 		Properties:   []string{property0.Id},
-		Runes:        []*wh.IdNumber{{Id: rune0.Id, Number: 1}},
+		Runes:        []wh.IdNumber{{Id: rune0.Id, Number: 1}},
 		Type:         wh.ItemTypeGrimoire,
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},
-		Grimoire: &wh.ItemGrimoire{
+		Grimoire: wh.ItemGrimoire{
 			Spells: []string{spell0.Id, spell1.Id},
 		},
 	},
@@ -164,7 +164,7 @@ var itemOther = wh.Wh{
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
 		},
-		Other: &wh.ItemOther{CarryType: wh.ItemCarryTypeNotCarriableAndNotWearable},
+		Other: wh.ItemOther{CarryType: wh.ItemCarryTypeNotCarriableAndNotWearable},
 	},
 }
 

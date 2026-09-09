@@ -13,7 +13,7 @@ var career0 = wh.Wh{
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Class:       wh.CareerClassRanger,
 		Species:     []wh.CareerSpecies{wh.CareerSpeciesDwarf, wh.CareerSpeciesHuman},
-		Level1: &wh.CareerLevel{
+		Level1: wh.CareerLevel{
 			Exists:     true,
 			Name:       "career 0 level 1",
 			Status:     wh.StatusGold,
@@ -23,7 +23,7 @@ var career0 = wh.Wh{
 			Talents:    []string{talent0.Id, talent1.Id},
 			Items:      "some items",
 		},
-		Level2: &wh.CareerLevel{
+		Level2: wh.CareerLevel{
 			Exists:     true,
 			Name:       "career 0 level 2",
 			Status:     wh.StatusGold,
@@ -33,7 +33,7 @@ var career0 = wh.Wh{
 			Talents:    []string{talent0.Id},
 			Items:      "more items",
 		},
-		Level3: &wh.CareerLevel{
+		Level3: wh.CareerLevel{
 			Exists:     true,
 			Name:       "career 0 level 3",
 			Status:     wh.StatusGold,
@@ -43,7 +43,7 @@ var career0 = wh.Wh{
 			Talents:    []string{talent0.Id},
 			Items:      "even more items",
 		},
-		Level4: &wh.CareerLevel{
+		Level4: wh.CareerLevel{
 			Exists:     true,
 			Name:       "career 0 level 4",
 			Status:     wh.StatusGold,
