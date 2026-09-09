@@ -2,6 +2,7 @@ package mock_data
 
 import (
 	"fmt"
+
 	wh "github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 )
 
@@ -85,10 +86,20 @@ var character1 = wh.Wh{
 	OwnerId:    user0.Id,
 	Visibility: wh.VisibilityPublic,
 	Object: &wh.Character{
-		Name:        "character 1",
-		Description: fmt.Sprintf("owned by %s", user0.Username),
-		Species:     wh.CharacterSpeciesDwarfAltdorf,
-		Career:      wh.IdNumber{Id: career0.Id, Number: 1},
+		Name:          "character 1",
+		Description:   fmt.Sprintf("owned by %s", user0.Username),
+		Species:       wh.CharacterSpeciesDwarfAltdorf,
+		Career:        wh.IdNumber{Id: career0.Id, Number: 1},
+		EquippedItems: []wh.IdNumber{},
+		CarriedItems:  []wh.IdNumber{},
+		StoredItems:   []wh.IdNumber{},
+		Skills:        []wh.IdNumber{},
+		Talents:       []wh.IdNumber{},
+		CareerPath:    []wh.IdNumber{},
+		Spells:        []string{},
+		Prayers:       []string{},
+		Traits:        []string{},
+		Mutations:     []string{},
 	},
 }
 

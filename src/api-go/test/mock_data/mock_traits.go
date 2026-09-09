@@ -6,7 +6,7 @@ import (
 )
 
 var trait0 = wh.Wh{
-	Id:      "trait0000000000000000000",
+	Id:      "910000000000000000000000",
 	OwnerId: user1.Id,
 	Object: &wh.Trait{
 		Name:        "trait 0",
@@ -35,7 +35,7 @@ var trait0 = wh.Wh{
 }
 
 var trait1 = wh.Wh{
-	Id:      "trait0000000000000000001",
+	Id:      "910000000000000000000001",
 	OwnerId: user1.Id,
 	Object: &wh.Trait{
 		Name:        "trait 1",

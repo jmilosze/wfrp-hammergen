@@ -36,6 +36,18 @@ type Rune struct {
 	Source       map[Source]string `json:"source" validate:"source_valid"`
 }
 
+func (rune *Rune) Init() {
+	if rune.Labels == nil {
+		rune.Labels = []RuneLabel{}
+	}
+	if rune.ApplicableTo == nil {
+		rune.ApplicableTo = []ItemType{}
+	}
+	if rune.Source == nil {
+		rune.Source = map[Source]string{}
+	}
+}
+
 func GetRuneValidationAliases() map[string]string {
 	return map[string]string{
 		"rune_label_valid": fmt.Sprintf("oneof=%s", runeLabelValues()),

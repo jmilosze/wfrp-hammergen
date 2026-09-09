@@ -8,3 +8,9 @@ type Prayer struct {
 	Duration    string            `json:"duration" validate:"medium_string_valid"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
+
+func (prayer *Prayer) Init() {
+	if prayer.Source == nil {
+		prayer.Source = map[Source]string{}
+	}
+}

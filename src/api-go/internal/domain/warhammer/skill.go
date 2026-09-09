@@ -15,6 +15,15 @@ type Skill struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
+func (skill *Skill) Init() {
+	if skill.Group == nil {
+		skill.Group = []string{}
+	}
+	if skill.Source == nil {
+		skill.Source = map[Source]string{}
+	}
+}
+
 type SkillType int
 
 const (

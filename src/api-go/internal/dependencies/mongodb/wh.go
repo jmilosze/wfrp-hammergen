@@ -145,7 +145,7 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 		return nil, fmt.Errorf("failed to execute find db: %w", err)
 	}
 
-	var whList []*warhammer.Wh
+	whList := make([]*warhammer.Wh, 0)
 
 	for cur.Next(context.Background()) {
 		var doc whDocRead
@@ -170,9 +170,12 @@ func idsQuery(whIds []string) (bson.M, error) {
 	for _, v := range whIds {
 		id, err := bson.ObjectIDFromHex(v)
 		if err != nil {
-			return nil, fmt.Errorf("failed to calculate object id of %s: %w", v, err)
+			continue
 		}
 		ids = append(ids, bson.M{"_id": id})
+	}
+	if len(ids) == 0 {
+		return bson.M{"_id": bson.M{"$in": bson.A{}}}, nil
 	}
 	return bson.M{"$or": ids}, nil
 }
@@ -215,6 +218,8 @@ func whDocToWh(doc *whDocRead, t warhammer.WhType) (*warhammer.Wh, error) {
 		return nil, fmt.Errorf("failed to unmarshal object: %w", err)
 	}
 
+	wh.Init()
+
 	return &wh, nil
 }
 
@@ -237,10 +242,7 @@ func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.G
 func (s *WhDbService) CreateGenerationProps(ctx context.Context, gp *warhammer.GenProps) (*warhammer.GenProps, error) {
 	_, err := s.Collections[warhammer.WhTypeOther].InsertOne(ctx, gp)
 	if err != nil {
-		if mongo.IsDuplicateKeyError(err) {
-			return nil, &d.DbError{Type: d.ErrorDbConflict, Err: fmt.Errorf("generationProps already exists: %w", err)}
-		}
-		return nil, fmt.Errorf("failed to create generationProps: %w", err)
+		return nil, fmt.Errorf("failed to insert generationProps to db: %w", err)
 	}
 
 	return gp, nil

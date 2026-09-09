@@ -39,6 +39,39 @@ type Character struct {
 	Mutations         []string         `json:"mutations" validate:"dive,id_valid"`
 }
 
+func (character *Character) Init() {
+	if character.EquippedItems == nil {
+		character.EquippedItems = []IdNumber{}
+	}
+	if character.CarriedItems == nil {
+		character.CarriedItems = []IdNumber{}
+	}
+	if character.StoredItems == nil {
+		character.StoredItems = []IdNumber{}
+	}
+	if character.Skills == nil {
+		character.Skills = []IdNumber{}
+	}
+	if character.Talents == nil {
+		character.Talents = []IdNumber{}
+	}
+	if character.CareerPath == nil {
+		character.CareerPath = []IdNumber{}
+	}
+	if character.Spells == nil {
+		character.Spells = []string{}
+	}
+	if character.Prayers == nil {
+		character.Prayers = []string{}
+	}
+	if character.Traits == nil {
+		character.Traits = []string{}
+	}
+	if character.Mutations == nil {
+		character.Mutations = []string{}
+	}
+}
+
 func (character *Character) ToFull(
 	allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh,
 	allSpells []*Wh, allPrayers []*Wh, allTraits []*Wh, allCareers []*Wh,
@@ -89,13 +122,15 @@ func (character *Character) ToFull(
 	if err != nil {
 		if character.Career.Id != "" {
 			log.Printf("Error finding career %s, using empty career instead", character.Career.Id)
-			career = WhNumber{Wh: &Wh{Id: "000000000000000000000000", Object: &Career{}}, Number: 1}
+			careerWh := &Wh{Id: "000000000000000000000000", Object: &Career{}}
+			careerWh.Init()
+			career = WhNumber{Wh: careerWh, Number: 1}
 		} else {
 			return nil, err
 		}
 	}
 
-	return &CharacterFull{
+	fullChar := &CharacterFull{
 		Name:              character.Name,
 		Description:       character.Description,
 		Notes:             character.Notes,
@@ -126,7 +161,9 @@ func (character *Character) ToFull(
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
 		Mutations:         mutations,
-	}, nil
+	}
+	fullChar.Init()
+	return fullChar, nil
 }
 
 func idNumberListToWhNumberList(idNumberList []IdNumber, allIdWhMap map[string]*Wh) []WhNumber {
@@ -365,6 +402,39 @@ type CharacterFull struct {
 	Sin               int              `json:"sin"`
 	Corruption        int              `json:"corruption"`
 	Mutations         []*Wh            `json:"mutations"`
+}
+
+func (c *CharacterFull) Init() {
+	if c.EquippedItems == nil {
+		c.EquippedItems = []WhNumber{}
+	}
+	if c.CarriedItems == nil {
+		c.CarriedItems = []WhNumber{}
+	}
+	if c.StoredItems == nil {
+		c.StoredItems = []WhNumber{}
+	}
+	if c.Skills == nil {
+		c.Skills = []WhNumber{}
+	}
+	if c.Talents == nil {
+		c.Talents = []WhNumber{}
+	}
+	if c.CareerPath == nil {
+		c.CareerPath = []WhNumber{}
+	}
+	if c.Spells == nil {
+		c.Spells = []*Wh{}
+	}
+	if c.Prayers == nil {
+		c.Prayers = []*Wh{}
+	}
+	if c.Traits == nil {
+		c.Traits = []*Wh{}
+	}
+	if c.Mutations == nil {
+		c.Mutations = []*Wh{}
+	}
 }
 
 type WhNumber struct {

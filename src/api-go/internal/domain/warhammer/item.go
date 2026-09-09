@@ -25,6 +25,24 @@ type Item struct {
 	Other      ItemOther      `json:"other"`
 }
 
+func (item *Item) Init() {
+	if item.Properties == nil {
+		item.Properties = []string{}
+	}
+	if item.Runes == nil {
+		item.Runes = []IdNumber{}
+	}
+	if item.Source == nil {
+		item.Source = map[Source]string{}
+	}
+	if item.Armour.Location == nil {
+		item.Armour.Location = []ItemArmourLocation{}
+	}
+	if item.Grimoire.Spells == nil {
+		item.Grimoire.Spells = []string{}
+	}
+}
+
 func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh, allRunes []*Wh) (*ItemFull, error) {
 	if allProperties == nil {
 		return nil, errors.New("allProperties is nil")
@@ -43,7 +61,7 @@ func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh, allRunes []*Wh) (
 		Spells: idListToWhList(item.Grimoire.Spells, whListToIdWhMap(allSpells)),
 	}
 
-	return &ItemFull{
+	fullItem := &ItemFull{
 		Name:         item.Name,
 		Description:  item.Description,
 		Price:        item.Price,
@@ -61,7 +79,9 @@ func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh, allRunes []*Wh) (
 		Container:  item.Container,
 		Grimoire:   grimoire,
 		Other:      item.Other,
-	}, nil
+	}
+	fullItem.Init()
+	return fullItem, nil
 }
 
 type ItemMelee struct {
@@ -349,6 +369,24 @@ type ItemFull struct {
 
 type ItemGrimoireFull struct {
 	Spells []*Wh `json:"spells"`
+}
+
+func (item *ItemFull) Init() {
+	if item.Properties == nil {
+		item.Properties = []*Wh{}
+	}
+	if item.Runes == nil {
+		item.Runes = []WhNumber{}
+	}
+	if item.Source == nil {
+		item.Source = map[Source]string{}
+	}
+	if item.Armour.Location == nil {
+		item.Armour.Location = []ItemArmourLocation{}
+	}
+	if item.Grimoire.Spells == nil {
+		item.Grimoire.Spells = []*Wh{}
+	}
 }
 
 func GetItemValidationAliases() map[string]string {

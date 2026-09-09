@@ -279,6 +279,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		allMutationIds = mergeStrAndRemoveDuplicates(allMutationIds, character.Mutations)
 		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, character.Spells)
 		allPrayerIds = mergeStrAndRemoveDuplicates(allPrayerIds, character.Prayers)
+		allTraitIds = mergeStrAndRemoveDuplicates(allTraitIds, character.Traits)
 	}
 
 	var wg sync.WaitGroup
@@ -370,5 +371,6 @@ func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, error
 			return nil, wErr
 		}
 	}
+
 	return generationPropsMap, nil
 }

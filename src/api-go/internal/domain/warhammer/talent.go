@@ -12,3 +12,15 @@ type Talent struct {
 	Group       []string          `json:"group" validate:"dive,id_valid"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
+
+func (talent *Talent) Init() {
+	if talent.Group == nil {
+		talent.Group = []string{}
+	}
+	if talent.Source == nil {
+		talent.Source = map[Source]string{}
+	}
+	if talent.Modifiers.Effects == nil {
+		talent.Modifiers.Effects = []EffectType{}
+	}
+}

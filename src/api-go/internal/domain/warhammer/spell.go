@@ -126,6 +126,15 @@ type Spell struct {
 	Source         map[Source]string   `json:"source" validate:"source_valid"`
 }
 
+func (spell *Spell) Init() {
+	if spell.Classification.Labels == nil {
+		spell.Classification.Labels = []SpellLabel{}
+	}
+	if spell.Source == nil {
+		spell.Source = map[Source]string{}
+	}
+}
+
 func SpellClassificationValidator(fl validator.FieldLevel) bool {
 	sc, ok := fl.Field().Interface().(SpellClassification)
 	if !ok {

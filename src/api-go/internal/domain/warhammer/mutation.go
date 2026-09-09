@@ -12,6 +12,15 @@ type Mutation struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
+func (mutation *Mutation) Init() {
+	if mutation.Source == nil {
+		mutation.Source = map[Source]string{}
+	}
+	if mutation.Modifiers.Effects == nil {
+		mutation.Modifiers.Effects = []EffectType{}
+	}
+}
+
 type MutationType int
 
 const (

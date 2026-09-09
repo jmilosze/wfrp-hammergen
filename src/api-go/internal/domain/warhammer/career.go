@@ -17,6 +17,20 @@ type Career struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
+func (career *Career) Init() {
+	if career.Species == nil {
+		career.Species = []CareerSpecies{}
+	}
+	if career.Source == nil {
+		career.Source = map[Source]string{}
+	}
+	career.Level1.init()
+	career.Level2.init()
+	career.Level3.init()
+	career.Level4.init()
+	career.Level5.init()
+}
+
 type CareerLevel struct {
 	Exists     bool        `json:"exists" validate:"boolean"`
 	Name       string      `json:"name" validate:"name_valid"`
@@ -26,6 +40,18 @@ type CareerLevel struct {
 	Skills     []string    `json:"skills" validate:"dive,id_valid"`
 	Talents    []string    `json:"talents" validate:"dive,id_valid"`
 	Items      string      `json:"items" validate:"desc_valid"`
+}
+
+func (cl *CareerLevel) init() {
+	if cl.Attributes == nil {
+		cl.Attributes = []Attribute{}
+	}
+	if cl.Skills == nil {
+		cl.Skills = []string{}
+	}
+	if cl.Talents == nil {
+		cl.Talents = []string{}
+	}
 }
 
 type Status int

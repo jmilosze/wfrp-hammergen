@@ -66,6 +66,12 @@ var career1 = wh.Wh{
 	Object: &wh.Career{
 		Name:        "career 1",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
+		Species:     []wh.CareerSpecies{},
+		Level1:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
+		Level2:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
+		Level3:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
+		Level4:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
+		Level5:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
 	},
 }
 
@@ -76,6 +82,12 @@ var career2 = wh.Wh{
 	Object: &wh.Career{
 		Name:        "career 2",
 		Description: fmt.Sprintf("owned by %s", user0.Username),
+		Species:     []wh.CareerSpecies{},
+		Level1:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
+		Level2:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
+		Level3:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
+		Level4:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
+		Level5:      wh.CareerLevel{Attributes: []wh.Attribute{}, Skills: []string{}, Talents: []string{}},
 	},
 }
 

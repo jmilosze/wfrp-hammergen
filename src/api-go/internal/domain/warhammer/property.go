@@ -12,6 +12,15 @@ type Property struct {
 	Source       map[Source]string `json:"source" validate:"source_valid"`
 }
 
+func (property *Property) Init() {
+	if property.ApplicableTo == nil {
+		property.ApplicableTo = []ItemType{}
+	}
+	if property.Source == nil {
+		property.Source = map[Source]string{}
+	}
+}
+
 type PropertyType int
 
 const (

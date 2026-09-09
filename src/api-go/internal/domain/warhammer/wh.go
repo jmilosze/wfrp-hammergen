@@ -22,13 +22,21 @@ func GetWhValidationAliases() map[string]string {
 	}
 }
 
-type WhObject = any
+type WhObject interface {
+	Init()
+}
 
 type Wh struct {
 	Id         string     `json:"id"`
 	OwnerId    string     `json:"ownerId"`
 	Visibility Visibility `json:"visibility" validate:"visibility_valid"`
 	Object     WhObject   `json:"object"`
+}
+
+func (w *Wh) Init() {
+	if w != nil && w.Object != nil {
+		w.Object.Init()
+	}
 }
 
 const (
@@ -77,76 +85,37 @@ func (w *Wh) CopyHeaders() *Wh {
 }
 
 func NewWhObject(t WhType) WhObject {
+	var obj WhObject
 	switch t {
 	case WhTypeMutation:
-		return &Mutation{Source: map[Source]string{}}
+		obj = &Mutation{}
 	case WhTypeSpell:
-		return &Spell{Source: map[Source]string{}}
+		obj = &Spell{}
 	case WhTypePrayer:
-		return &Prayer{Source: map[Source]string{}}
+		obj = &Prayer{}
 	case WhTypeProperty:
-		return &Property{ApplicableTo: []ItemType{}, Source: map[Source]string{}}
+		obj = &Property{}
 	case WhTypeItem:
-		return &Item{
-			Properties: []string{},
-			Runes:      []IdNumber{},
-			Source:     map[Source]string{},
-			Armour:     ItemArmour{Location: []ItemArmourLocation{}},
-			Grimoire:   ItemGrimoire{Spells: []string{}},
-		}
+		obj = &Item{}
 	case WhTypeTalent:
-		return &Talent{Group: []string{}, Source: map[Source]string{}}
+		obj = &Talent{}
 	case WhTypeSkill:
-		return &Skill{Group: []string{}, Source: map[Source]string{}}
+		obj = &Skill{}
 	case WhTypeCareer:
-		return &Career{
-			Species: []CareerSpecies{},
-			Source:  map[Source]string{},
-			Level1:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
-			Level2:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
-			Level3:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
-			Level4:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
-			Level5:  CareerLevel{Attributes: []Attribute{}, Skills: []string{}, Talents: []string{}},
-		}
+		obj = &Career{}
 	case WhTypeCharacter:
-		return &Character{
-			EquippedItems: []IdNumber{},
-			CarriedItems:  []IdNumber{},
-			StoredItems:   []IdNumber{},
-			Skills:        []IdNumber{},
-			Talents:       []IdNumber{},
-			CareerPath:    []IdNumber{},
-			Spells:        []string{},
-			Prayers:       []string{},
-			Traits:        []string{},
-			Mutations:     []string{},
-		}
+		obj = &Character{}
 	case WhTypeItemFull:
-		return &ItemFull{
-			Properties: []*Wh{},
-			Runes:      []WhNumber{},
-			Source:     map[Source]string{},
-			Armour:     ItemArmour{Location: []ItemArmourLocation{}},
-			Grimoire:   ItemGrimoireFull{Spells: []*Wh{}},
-		}
+		obj = &ItemFull{}
 	case WhTypeCharacterFull:
-		return &CharacterFull{
-			EquippedItems: []WhNumber{},
-			CarriedItems:  []WhNumber{},
-			StoredItems:   []WhNumber{},
-			Skills:        []WhNumber{},
-			Talents:       []WhNumber{},
-			CareerPath:    []WhNumber{},
-			Spells:        []*Wh{},
-			Prayers:       []*Wh{},
-			Traits:        []*Wh{},
-			Mutations:     []*Wh{},
-		}
+		obj = &CharacterFull{}
 	case WhTypeTrait:
-		return &Trait{Source: map[Source]string{}}
+		obj = &Trait{}
 	case WhTypeRune:
-		return &Rune{Labels: []RuneLabel{}, ApplicableTo: []ItemType{}, Source: map[Source]string{}}
+		obj = &Rune{}
+	default:
+		return nil
 	}
-
-	return &Character{}
+	obj.Init()
+	return obj
 }
