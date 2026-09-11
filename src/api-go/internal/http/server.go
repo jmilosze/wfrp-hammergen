@@ -32,16 +32,17 @@ func (s *Server) Start() {
 	go func() {
 		log.Printf("server starting on %s", s.Server.Addr)
 		if err := s.Server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatal(err)
+			log.Printf("server error: %v", err)
 		}
 	}()
 }
 
-func (s *Server) Stop() {
+func (s *Server) Stop() error {
 	ctx, cancel := context.WithTimeout(context.Background(), s.ShutdownTimeout)
 	defer cancel()
 
 	if err := s.Server.Shutdown(ctx); err != nil {
-		panic(err)
+		return fmt.Errorf("server shutdown failed: %w", err)
 	}
+	return nil
 }

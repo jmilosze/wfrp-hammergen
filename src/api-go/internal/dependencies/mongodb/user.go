@@ -29,14 +29,16 @@ type userDocWrite struct {
 	LastAuthOn       time.Time       `bson:"lastAuthOn"`
 }
 
-func NewUserDbService(db *DbService, createIndex bool) *UserDbService {
+func NewUserDbService(db *DbService, createIndex bool) (*UserDbService, error) {
 	coll := db.Client.Database(db.DbName).Collection(userCollectionName)
 
 	if createIndex {
-		createIndexOnField("username", coll)
+		if err := createIndexOnField("username", coll); err != nil {
+			return nil, err
+		}
 	}
 
-	return &UserDbService{Db: db, Collection: coll}
+	return &UserDbService{Db: db, Collection: coll}, nil
 }
 
 func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldValue string) (*user.User, error) {

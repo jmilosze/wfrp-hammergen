@@ -685,7 +685,8 @@ func (s *userTestStage) new_user_reset_password_token_is_generated() {
 
 func (s *userTestStage) generateResetToken(id string, duration time.Duration) {
 	claims := auth.Claims{Id: id, Admin: false, SharedAccounts: []string{}, ResetPassword: true}
-	cfg := config.NewConfig()
+	cfg, err := config.NewConfig()
+	require.NoError(s.t, err)
 	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, time.Hour, duration)
 
 	resetToken, err := jwtService.GenerateResetPasswordToken(&claims)

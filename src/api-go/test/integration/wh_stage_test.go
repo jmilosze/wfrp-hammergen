@@ -616,7 +616,8 @@ func (s *whTestStage) user_authentication_token_is_expired() *whTestStage {
 
 func (s *whTestStage) generateAccessToken(id string, duration time.Duration) {
 	claims := auth.Claims{Id: id, Admin: false, SharedAccounts: []string{}, ResetPassword: false}
-	cfg := config.NewConfig()
+	cfg, err := config.NewConfig()
+	require.NoError(s.t, err)
 	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, duration, time.Hour)
 
 	token, err := jwtService.GenerateAccessToken(&claims)

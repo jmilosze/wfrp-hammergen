@@ -35,10 +35,16 @@ func main() {
 }
 
 func run() error {
-	cfg := config.NewConfig()
+	cfg, err := config.NewConfig()
+	if err != nil {
+		return err
+	}
 	internal.SetupLogger(cfg.Logging.GcpProjectId)
 
-	val := validator.NewValidator()
+	val, err := validator.NewValidator()
+	if err != nil {
+		return err
+	}
 	jwtService := golangjwt.NewHmacService(cfg.Jwt.HmacSecret, cfg.Jwt.AccessExpiry, cfg.Jwt.ResetExpiry)
 
 	var emailService domain.EmailService
@@ -63,11 +69,24 @@ func run() error {
 	var whDbService wh.WhDbService
 
 	if cfg.Services.Db == "mongodb" {
-		mongoDbService := mongodb.NewDbService(cfg.MongoDb.Uri, cfg.MongoDb.Name)
-		defer mongoDbService.Disconnect()
+		mongoDbService, err := mongodb.NewDbService(cfg.MongoDb.Uri, cfg.MongoDb.Name)
+		if err != nil {
+			return err
+		}
+		defer func() {
+			if err := mongoDbService.Disconnect(); err != nil {
+				log.Printf("error disconnecting mongodb: %v", err)
+			}
+		}()
 
-		userDbService = mongodb.NewUserDbService(mongoDbService, cfg.MongoDb.CreateUserIndexes)
-		whDbService = mongodb.NewWhDbService(mongoDbService, cfg.MongoDb.CreateWhIndexes)
+		userDbService, err = mongodb.NewUserDbService(mongoDbService, cfg.MongoDb.CreateUserIndexes)
+		if err != nil {
+			return err
+		}
+		whDbService, err = mongodb.NewWhDbService(mongoDbService, cfg.MongoDb.CreateWhIndexes)
+		if err != nil {
+			return err
+		}
 	} else {
 		return fmt.Errorf("unknown database service: %s", cfg.Services.Db)
 	}
@@ -115,7 +134,9 @@ func run() error {
 
 	server.Start()
 	<-done
-	server.Stop()
+	if err := server.Stop(); err != nil {
+		log.Printf("error stopping server: %v", err)
+	}
 
 	// Shutdown pprof server if it was started
 	if pprofServer != nil {

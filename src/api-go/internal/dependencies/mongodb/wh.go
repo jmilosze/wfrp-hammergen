@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	d "github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
@@ -32,7 +31,7 @@ type whDocRead struct {
 	Object     bson.Raw             `bson:"object"`
 }
 
-func NewWhDbService(db *DbService, createIndex bool) *WhDbService {
+func NewWhDbService(db *DbService, createIndex bool) (*WhDbService, error) {
 	collections := map[warhammer.WhType]*mongo.Collection{}
 
 	for _, whCoreType := range warhammer.WhCoreTypes {
@@ -40,21 +39,24 @@ func NewWhDbService(db *DbService, createIndex bool) *WhDbService {
 	}
 	collections[warhammer.WhTypeOther] = db.Client.Database(db.DbName).Collection(warhammer.WhTypeOther)
 	if createIndex {
-		createIndexOnField("name", collections[warhammer.WhTypeOther])
+		if err := createIndexOnField("name", collections[warhammer.WhTypeOther]); err != nil {
+			return nil, err
+		}
 	}
 
-	return &WhDbService{Db: db, Collections: collections}
+	return &WhDbService{Db: db, Collections: collections}, nil
 }
 
-func createIndexOnField(fieldName string, collection *mongo.Collection) {
+func createIndexOnField(fieldName string, collection *mongo.Collection) error {
 	mod := mongo.IndexModel{
 		Keys:    bson.D{{Key: fieldName, Value: 1}},
 		Options: options.Index().SetUnique(true),
 	}
 	_, err := collection.Indexes().CreateOne(context.TODO(), mod)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to create index on field %s: %w", fieldName, err)
 	}
+	return nil
 }
 
 func newWhDocWrite(w *warhammer.Wh) (*whDocWrite, error) {

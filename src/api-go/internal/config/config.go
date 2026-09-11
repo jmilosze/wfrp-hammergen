@@ -82,12 +82,12 @@ type Logging struct {
 	GcpProjectId string `default:"some-project" split_words:"true"`
 }
 
-func NewConfig() Config {
+func NewConfig() (Config, error) {
 	var result Config
 
 	if err := envconfig.Process(strings.ToUpper(appName), &result); err != nil {
-		panic(fmt.Errorf("settings: cannot initalize app: %w", err))
+		return Config{}, fmt.Errorf("settings: cannot initialize app: %w", err)
 	}
 
-	return result
+	return result, nil
 }
