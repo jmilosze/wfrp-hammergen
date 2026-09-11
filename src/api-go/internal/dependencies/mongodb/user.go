@@ -20,14 +20,13 @@ type UserDbService struct {
 }
 
 type userDocWrite struct {
-	Id                 bson.ObjectID   `bson:"_id"`
-	Username           string          `bson:"username"`
-	PasswordHash       []byte          `bson:"passwordHash"`
-	Admin              bool            `bson:"admin"`
-	SharedAccountIds   []bson.ObjectID `bson:"sharedAccountIds"`
-	SharedAccountNames []string        `bson:"sharedAccountNames,omitempty"`
-	CreatedOn          time.Time       `bson:"createdOn"`
-	LastAuthOn         time.Time       `bson:"lastAuthOn"`
+	Id               bson.ObjectID   `bson:"_id"`
+	Username         string          `bson:"username"`
+	PasswordHash     []byte          `bson:"passwordHash"`
+	Admin            bool            `bson:"admin"`
+	SharedAccountIds []bson.ObjectID `bson:"sharedAccountIds"`
+	CreatedOn        time.Time       `bson:"createdOn"`
+	LastAuthOn       time.Time       `bson:"lastAuthOn"`
 }
 
 func NewUserDbService(db *DbService, createIndex bool) *UserDbService {
@@ -45,92 +44,60 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		return nil, fmt.Errorf("invalid field name %s", fieldName)
 	}
 
-	var matchStage bson.D
+	var query bson.D
 	if fieldName == "id" {
 		id, err := bson.ObjectIDFromHex(fieldValue)
 		if err != nil {
 			return nil, fmt.Errorf("failed to calculate object id of %s: %w", fieldValue, err)
 		}
-		matchStage = bson.D{{"$match", bson.D{{"_id", id}}}}
+		query = bson.D{{"_id", id}}
 	} else {
-		matchStage = bson.D{{"$match", bson.D{{"username", fieldValue}}}}
-	}
-	unwindStage := bson.D{{"$unwind", bson.D{
-		{"path", "$sharedAccountIds"},
-		{"preserveNullAndEmptyArrays", true},
-	}}}
-	lookupStage := bson.D{{"$lookup", bson.D{
-		{"from", s.Collection.Name()},
-		{"localField", "sharedAccountIds"},
-		{"foreignField", "_id"},
-		{"as", "sharedAcc"},
-	}}}
-	groupStage := bson.D{{"$group", bson.D{
-		{"_id", "$_id"},
-		{"sharedAccountIds", bson.D{{"$push", bson.D{{"$arrayElemAt", bson.A{"$sharedAcc._id", 0}}}}}},
-		{"sharedAccountNames", bson.D{{"$push", bson.D{{"$arrayElemAt", bson.A{"$sharedAcc.username", 0}}}}}},
-		{"username", bson.D{{"$first", "$username"}}},
-		{"passwordHash", bson.D{{"$first", "$passwordHash"}}},
-		{"admin", bson.D{{"$first", "$admin"}}},
-		{"createdOn", bson.D{{"$first", "$createdOn"}}},
-		{"lastAuthOn", bson.D{{"$first", "$lastAuthOn"}}},
-	}}}
-
-	cur, err := s.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindStage, lookupStage, groupStage})
-	defer cur.Close(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to query aggregate: %w", err)
+		query = bson.D{{"username", fieldValue}}
 	}
 
 	var userMongo userDocWrite
-	ok := cur.Next(ctx)
-	if !ok {
-		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user not found db")}
-	}
-	err = cur.Decode(&userMongo)
+	err := s.Collection.FindOne(ctx, query).Decode(&userMongo)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal user: %w", err)
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user not found db")}
+		}
+		return nil, fmt.Errorf("failed to find user: %w", err)
 	}
 
-	newUser := newUserFromMongo(&userMongo, nil)
+	linkedUsers, err := getLinkedUsersByIds(ctx, s.Collection, userMongo.SharedAccountIds)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get linked-users from db: %w", err)
+	}
 
-	return newUser, nil
+	return newUserFromMongo(&userMongo, linkedUsers), nil
 }
 
-func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fieldValues []string) ([]*userDocWrite, error) {
-	getAll := false
-	if fieldValues == nil {
-		getAll = true
-	} else {
-		if len(fieldValues) == 0 {
-			return []*userDocWrite{}, nil
-		}
+func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, error) {
+	mongoUsers, err := findUsers(ctx, s.Collection, bson.D{{}})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get users from db: %w", err)
 	}
 
-	var query bson.D
-	if !getAll {
-		var queryValueList []bson.D
-		for _, fieldValue := range fieldValues {
-			if fieldName == "username" {
-				queryValueList = append(queryValueList, bson.D{{"username", fieldValue}})
-			} else {
-				id, err := bson.ObjectIDFromHex(fieldValue)
-				if err != nil {
-					return nil, fmt.Errorf("failed to calculate object id of %s: %w", fieldValue, err)
-				}
-				queryValueList = append(queryValueList, bson.D{{"_id", id}})
-			}
-		}
-		query = bson.D{{"$or", queryValueList}}
-	} else {
-		query = bson.D{{}}
+	users := make([]*user.User, len(mongoUsers))
+	for i, u := range mongoUsers {
+		users[i] = newUserFromMongo(u, mongoUsers)
 	}
 
+	return users, nil
+}
+
+func getLinkedUsersByIds(ctx context.Context, col *mongo.Collection, ids []bson.ObjectID) ([]*userDocWrite, error) {
+	if len(ids) == 0 {
+		return []*userDocWrite{}, nil
+	}
+	return findUsers(ctx, col, bson.D{{"_id", bson.D{{"$in", ids}}}})
+}
+
+func findUsers(ctx context.Context, coll *mongo.Collection, query bson.D) ([]*userDocWrite, error) {
 	cur, err := coll.Find(ctx, query)
 	if cur != nil {
 		defer cur.Close(ctx)
 	}
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute find query: %w", err)
 	}
@@ -142,20 +109,6 @@ func getMany(ctx context.Context, coll *mongo.Collection, fieldName string, fiel
 			return nil, fmt.Errorf("failed to unmarshal users: %w", err)
 		}
 		users = append(users, &u)
-	}
-
-	return users, nil
-}
-
-func (s *UserDbService) RetrieveAll(ctx context.Context) ([]*user.User, error) {
-	mongoUsers, err := getMany(ctx, s.Collection, "username", nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get users from db: %w", err)
-	}
-
-	users := make([]*user.User, len(mongoUsers))
-	for i, u := range mongoUsers {
-		users[i] = newUserFromMongo(u, mongoUsers)
 	}
 
 	return users, nil
@@ -186,15 +139,10 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, e
 }
 
 func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts []string) ([]*userDocWrite, error) {
-	linkedUsers := make([]*userDocWrite, 0)
-	if sharedAccounts != nil {
-		var err error
-		linkedUsers, err = getMany(ctx, col, "username", sharedAccounts)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get linked-users from db: %w", err)
-		}
+	if len(sharedAccounts) == 0 {
+		return []*userDocWrite{}, nil
 	}
-	return linkedUsers, nil
+	return findUsers(ctx, col, bson.D{{"username", bson.D{{"$in", sharedAccounts}}}})
 }
 
 func newMongoFromUser(u *user.User, linkedUsers []*userDocWrite) (*userDocWrite, error) {
@@ -232,14 +180,9 @@ func usernamesToIds(usernames []string, us []*userDocWrite) []bson.ObjectID {
 }
 
 func newUserFromMongo(u *userDocWrite, linkedUsers []*userDocWrite) *user.User {
-	var sharedAccountIds []string
-	if u.SharedAccountIds != nil {
-		sharedAccountIds = make([]string, len(u.SharedAccountIds))
-		for i, sa := range u.SharedAccountIds {
-			sharedAccountIds[i] = sa.Hex()
-		}
-	} else {
-		sharedAccountIds = nil
+	sharedAccountIds := make([]string, len(u.SharedAccountIds))
+	for i, sa := range u.SharedAccountIds {
+		sharedAccountIds[i] = sa.Hex()
 	}
 
 	user := user.New()
@@ -247,11 +190,7 @@ func newUserFromMongo(u *userDocWrite, linkedUsers []*userDocWrite) *user.User {
 	user.Username = u.Username
 	user.Admin = u.Admin
 	user.SharedAccountIds = sharedAccountIds
-	if linkedUsers != nil {
-		user.SharedAccountNames = idsToUsernames(u.SharedAccountIds, linkedUsers)
-	} else {
-		user.SharedAccountNames = u.SharedAccountNames
-	}
+	user.SharedAccountNames = idsToUsernames(u.SharedAccountIds, linkedUsers)
 	if u.PasswordHash != nil {
 		user.PasswordHash = u.PasswordHash
 	}
