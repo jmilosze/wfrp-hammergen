@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -16,37 +15,13 @@ type Skill struct {
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (skill *Skill) Copy() WhObject {
-	if skill == nil {
-		return nil
-	}
-
-	return &Skill{
-		Name:        skill.Name,
-		Description: skill.Description,
-		Attribute:   skill.Attribute,
-		Type:        skill.Type,
-		IsGroup:     skill.IsGroup,
-		DisplayZero: skill.DisplayZero,
-		Group:       copyArray(skill.Group),
-		Source:      copySourceMap(skill.Source),
-	}
-}
-
-func (skill *Skill) InitNilPointers() error {
-	if skill == nil {
-		return errors.New("skill pointer is nil")
-	}
-
+func (skill *Skill) Init() {
 	if skill.Group == nil {
 		skill.Group = []string{}
 	}
-
 	if skill.Source == nil {
 		skill.Source = map[Source]string{}
 	}
-
-	return nil
 }
 
 type SkillType int

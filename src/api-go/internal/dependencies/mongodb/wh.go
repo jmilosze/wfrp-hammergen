@@ -145,7 +145,7 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 		return nil, fmt.Errorf("failed to execute find db: %w", err)
 	}
 
-	var whList []*warhammer.Wh
+	whList := make([]*warhammer.Wh, 0)
 
 	for cur.Next(context.Background()) {
 		var doc whDocRead
@@ -170,9 +170,12 @@ func idsQuery(whIds []string) (bson.M, error) {
 	for _, v := range whIds {
 		id, err := bson.ObjectIDFromHex(v)
 		if err != nil {
-			return nil, fmt.Errorf("failed to calculate object id of %s: %w", v, err)
+			continue
 		}
 		ids = append(ids, bson.M{"_id": id})
+	}
+	if len(ids) == 0 {
+		return bson.M{"_id": bson.M{"$in": bson.A{}}}, nil
 	}
 	return bson.M{"$or": ids}, nil
 }

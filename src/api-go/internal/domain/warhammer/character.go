@@ -10,16 +10,16 @@ type Character struct {
 	Name              string           `json:"name" validate:"name_valid"`
 	Description       string           `json:"description" validate:"desc_valid"`
 	Notes             string           `json:"notes" validate:"desc_valid"`
-	EquippedItems     []*IdNumber      `json:"equippedItems" validate:"dive"`
-	CarriedItems      []*IdNumber      `json:"carriedItems" validate:"dive"`
-	StoredItems       []*IdNumber      `json:"storedItems" validate:"dive"`
-	Skills            []*IdNumber      `json:"skills" validate:"dive"`
-	Talents           []*IdNumber      `json:"talents" validate:"dive"`
+	EquippedItems     []IdNumber       `json:"equippedItems" validate:"dive"`
+	CarriedItems      []IdNumber       `json:"carriedItems" validate:"dive"`
+	StoredItems       []IdNumber       `json:"storedItems" validate:"dive"`
+	Skills            []IdNumber       `json:"skills" validate:"dive"`
+	Talents           []IdNumber       `json:"talents" validate:"dive"`
 	Species           CharacterSpecies `json:"species" validate:"character_species_valid"`
-	BaseAttributes    *Attributes      `json:"baseAttributes"`
-	AttributeAdvances *Attributes      `json:"attributeAdvances"`
-	CareerPath        []*IdNumber      `json:"careerPath" validate:"dive"`
-	Career            *IdNumber        `json:"career"`
+	BaseAttributes    Attributes       `json:"baseAttributes"`
+	AttributeAdvances Attributes       `json:"attributeAdvances"`
+	CareerPath        []IdNumber       `json:"careerPath" validate:"dive"`
+	Career            IdNumber         `json:"career"`
 	Fate              int              `json:"fate" validate:"gte=0,lte=1000"`
 	Fortune           int              `json:"fortune" validate:"gte=0,lte=1000"`
 	Resilience        int              `json:"resilience" validate:"gte=0,lte=1000"`
@@ -39,42 +39,36 @@ type Character struct {
 	Mutations         []string         `json:"mutations" validate:"dive,id_valid"`
 }
 
-func (character *Character) Copy() WhObject {
-	if character == nil {
-		return nil
+func (character *Character) Init() {
+	if character.EquippedItems == nil {
+		character.EquippedItems = []IdNumber{}
 	}
-
-	return &Character{
-		Name:              character.Name,
-		Description:       character.Description,
-		Notes:             character.Notes,
-		EquippedItems:     copyArrayIdNumber(character.EquippedItems),
-		CarriedItems:      copyArrayIdNumber(character.CarriedItems),
-		StoredItems:       copyArrayIdNumber(character.StoredItems),
-		Skills:            copyArrayIdNumber(character.Skills),
-		Talents:           copyArrayIdNumber(character.Talents),
-		Species:           character.Species,
-		BaseAttributes:    character.BaseAttributes.Copy(),
-		AttributeAdvances: character.AttributeAdvances.Copy(),
-		CareerPath:        copyArrayIdNumber(character.CareerPath),
-		Career:            character.Career.Copy(),
-		Fate:              character.Fate,
-		Fortune:           character.Fortune,
-		Resilience:        character.Resilience,
-		Resolve:           character.Resolve,
-		CurrentExp:        character.CurrentExp,
-		SpentExp:          character.SpentExp,
-		Status:            character.Status,
-		Standing:          character.Standing,
-		Brass:             character.Brass,
-		Silver:            character.Silver,
-		Gold:              character.Gold,
-		Spells:            copyArray(character.Spells),
-		Prayers:           copyArray(character.Prayers),
-		Traits:            copyArray(character.Traits),
-		Sin:               character.Sin,
-		Corruption:        character.Corruption,
-		Mutations:         copyArray(character.Mutations),
+	if character.CarriedItems == nil {
+		character.CarriedItems = []IdNumber{}
+	}
+	if character.StoredItems == nil {
+		character.StoredItems = []IdNumber{}
+	}
+	if character.Skills == nil {
+		character.Skills = []IdNumber{}
+	}
+	if character.Talents == nil {
+		character.Talents = []IdNumber{}
+	}
+	if character.CareerPath == nil {
+		character.CareerPath = []IdNumber{}
+	}
+	if character.Spells == nil {
+		character.Spells = []string{}
+	}
+	if character.Prayers == nil {
+		character.Prayers = []string{}
+	}
+	if character.Traits == nil {
+		character.Traits = []string{}
+	}
+	if character.Mutations == nil {
+		character.Mutations = []string{}
 	}
 }
 
@@ -126,20 +120,17 @@ func (character *Character) ToFull(
 	careerPath := idNumberListToWhNumberList(character.CareerPath, allCareerIdMap)
 	career, err := idNumberToWhNumber(character.Career, allCareerIdMap)
 	if err != nil {
-		if character.Career != nil {
+		if character.Career.Id != "" {
 			log.Printf("Error finding career %s, using empty career instead", character.Career.Id)
-			newCareer := &Career{}
-			err = newCareer.InitNilPointers()
-			if err != nil {
-				return nil, err
-			}
-			career = &WhNumber{Wh: &Wh{Id: "000000000000000000000000", Object: newCareer}, Number: 1}
+			careerWh := &Wh{Id: "000000000000000000000000", Object: &Career{}}
+			careerWh.Init()
+			career = WhNumber{Wh: careerWh, Number: 1}
 		} else {
 			return nil, err
 		}
 	}
 
-	return &CharacterFull{
+	fullChar := &CharacterFull{
 		Name:              character.Name,
 		Description:       character.Description,
 		Notes:             character.Notes,
@@ -149,8 +140,8 @@ func (character *Character) ToFull(
 		Skills:            skills,
 		Talents:           talents,
 		Species:           character.Species,
-		BaseAttributes:    character.BaseAttributes.Copy(),
-		AttributeAdvances: character.AttributeAdvances.Copy(),
+		BaseAttributes:    character.BaseAttributes,
+		AttributeAdvances: character.AttributeAdvances,
 		CareerPath:        careerPath,
 		Career:            career,
 		Fate:              character.Fate,
@@ -170,116 +161,33 @@ func (character *Character) ToFull(
 		Sin:               character.Sin,
 		Corruption:        character.Corruption,
 		Mutations:         mutations,
-	}, nil
+	}
+	fullChar.Init()
+	return fullChar, nil
 }
 
-func (character *Character) InitNilPointers() error {
-	if character == nil {
-		return errors.New("character pointer is nil")
+func idNumberListToWhNumberList(idNumberList []IdNumber, allIdWhMap map[string]*Wh) []WhNumber {
+	if len(idNumberList) == 0 {
+		return []WhNumber{}
 	}
 
-	if character.EquippedItems == nil {
-		character.EquippedItems = []*IdNumber{}
-	}
-	for _, v := range character.EquippedItems {
-		if v == nil {
-			return errors.New("equipped items idNumber pointer is nil")
-		}
-	}
-
-	if character.CarriedItems == nil {
-		character.CarriedItems = []*IdNumber{}
-	}
-	for _, v := range character.CarriedItems {
-		if v == nil {
-			return errors.New("carried items idNumber pointer is nil")
-		}
-	}
-
-	if character.StoredItems == nil {
-		character.StoredItems = []*IdNumber{}
-	}
-	for _, v := range character.StoredItems {
-		if v == nil {
-			return errors.New("stored items idNumber pointer is nil")
-		}
-	}
-
-	if character.Skills == nil {
-		character.Skills = []*IdNumber{}
-	}
-	for _, v := range character.Skills {
-		if v == nil {
-			return errors.New("skills idNumber pointer is nil")
-		}
-	}
-
-	if character.Talents == nil {
-		character.Talents = []*IdNumber{}
-	}
-	for _, v := range character.Talents {
-		if v == nil {
-			return errors.New("talents idNumber pointer is nil")
-		}
-	}
-
-	if character.BaseAttributes == nil {
-		character.BaseAttributes = &Attributes{}
-	}
-
-	if character.AttributeAdvances == nil {
-		character.AttributeAdvances = &Attributes{}
-	}
-
-	if character.Career == nil {
-		character.Career = &IdNumber{}
-	}
-
-	if character.CareerPath == nil {
-		character.CareerPath = []*IdNumber{}
-	}
-
-	if character.Spells == nil {
-		character.Spells = []string{}
-	}
-
-	if character.Prayers == nil {
-		character.Prayers = []string{}
-	}
-
-	if character.Traits == nil {
-		character.Traits = []string{}
-	}
-
-	if character.Mutations == nil {
-		character.Mutations = []string{}
-	}
-
-	return nil
-}
-
-func idNumberListToWhNumberList(idNumberList []*IdNumber, allIdWhMap map[string]*Wh) []*WhNumber {
-	if idNumberList == nil {
-		return nil
-	}
-
-	whNumberList := make([]*WhNumber, 0)
+	whNumberList := make([]WhNumber, 0, len(idNumberList))
 	for _, v := range idNumberList {
 		wh, ok := allIdWhMap[v.Id]
 		if ok {
-			whNumberList = append(whNumberList, &WhNumber{Wh: wh.Copy(), Number: v.Number})
+			whNumberList = append(whNumberList, WhNumber{Wh: wh, Number: v.Number})
 		}
 	}
 
 	return whNumberList
 }
 
-func skillIdNumberListToWhNumberList(skillIdNumberList []*IdNumber, allSkills []*Wh) ([]*WhNumber, error) {
-	if skillIdNumberList == nil {
-		return nil, nil
+func skillIdNumberListToWhNumberList(skillIdNumberList []IdNumber, allSkills []*Wh) ([]WhNumber, error) {
+	if len(skillIdNumberList) == 0 && len(allSkills) == 0 {
+		return []WhNumber{}, nil
 	}
 
-	whNumberList := make([]*WhNumber, 0)
+	whNumberList := make([]WhNumber, 0)
 
 	var skillMap = make(map[string]int, len(skillIdNumberList))
 	for _, v := range skillIdNumberList {
@@ -289,14 +197,14 @@ func skillIdNumberListToWhNumberList(skillIdNumberList []*IdNumber, allSkills []
 	for _, v := range allSkills {
 		skillNumber, ok := skillMap[v.Id]
 		if ok {
-			whNumberList = append(whNumberList, &WhNumber{Wh: v.Copy(), Number: skillNumber})
+			whNumberList = append(whNumberList, WhNumber{Wh: v, Number: skillNumber})
 		} else {
 			allSkill, ok := v.Object.(*Skill)
 			if !ok {
 				return nil, errors.New("error asserting skill")
 			}
 			if allSkill.Type == SkillTypeBasic && allSkill.DisplayZero && allSkill.Attribute != AttVarious {
-				whNumberList = append(whNumberList, &WhNumber{Wh: v.Copy(), Number: 0})
+				whNumberList = append(whNumberList, WhNumber{Wh: v, Number: 0})
 			}
 		}
 	}
@@ -304,56 +212,27 @@ func skillIdNumberListToWhNumberList(skillIdNumberList []*IdNumber, allSkills []
 	return whNumberList, nil
 }
 
-func idNumberToWhNumber(idNumer *IdNumber, allIdWhMap map[string]*Wh) (*WhNumber, error) {
+func idNumberToWhNumber(idNumber IdNumber, allIdWhMap map[string]*Wh) (WhNumber, error) {
 	if allIdWhMap == nil {
-		return nil, errors.New("allIdWhMap is nil")
+		return WhNumber{}, errors.New("allIdWhMap is nil")
 	}
 
-	if idNumer == nil {
-		return nil, errors.New("idNumer is nil")
-	}
-
-	wh, ok := allIdWhMap[idNumer.Id]
+	wh, ok := allIdWhMap[idNumber.Id]
 	if ok {
-		whNum := WhNumber{Wh: wh.Copy(), Number: idNumer.Number}
-		return &whNum, nil
+		return WhNumber{Wh: wh, Number: idNumber.Number}, nil
 	}
 	if len(allIdWhMap) > 0 {
 		for _, v := range allIdWhMap {
-			whNum := WhNumber{Wh: v.Copy(), Number: idNumer.Number}
-			return &whNum, nil
+			return WhNumber{Wh: v, Number: idNumber.Number}, nil
 		}
 	}
 
-	return nil, fmt.Errorf("could not find id %s in allIdWhMap", idNumer.Id)
+	return WhNumber{}, fmt.Errorf("could not find id %s in allIdWhMap", idNumber.Id)
 }
 
 type IdNumber struct {
 	Id     string `json:"id" validate:"id_valid"`
 	Number int    `json:"number" validate:"gte=1,lte=1000"`
-}
-
-func (idNumber *IdNumber) Copy() *IdNumber {
-	if idNumber == nil {
-		return nil
-	}
-
-	return &IdNumber{
-		Id:     idNumber.Id,
-		Number: idNumber.Number,
-	}
-}
-
-func copyArrayIdNumber(input []*IdNumber) []*IdNumber {
-	if input == nil {
-		return nil
-	}
-
-	output := make([]*IdNumber, len(input))
-	for i, v := range input {
-		output[i] = v.Copy()
-	}
-	return output
 }
 
 type CharacterSpecies string
@@ -496,16 +375,16 @@ type CharacterFull struct {
 	Name              string           `json:"name"`
 	Description       string           `json:"description"`
 	Notes             string           `json:"notes"`
-	EquippedItems     []*WhNumber      `json:"equippedItems"`
-	CarriedItems      []*WhNumber      `json:"carriedItems"`
-	StoredItems       []*WhNumber      `json:"storedItems"`
-	Skills            []*WhNumber      `json:"skills"`
-	Talents           []*WhNumber      `json:"talents"`
+	EquippedItems     []WhNumber       `json:"equippedItems"`
+	CarriedItems      []WhNumber       `json:"carriedItems"`
+	StoredItems       []WhNumber       `json:"storedItems"`
+	Skills            []WhNumber       `json:"skills"`
+	Talents           []WhNumber       `json:"talents"`
 	Species           CharacterSpecies `json:"species"`
-	BaseAttributes    *Attributes      `json:"baseAttributes"`
-	AttributeAdvances *Attributes      `json:"attributeAdvances"`
-	CareerPath        []*WhNumber      `json:"careerPath"`
-	Career            *WhNumber        `json:"career"`
+	BaseAttributes    Attributes       `json:"baseAttributes"`
+	AttributeAdvances Attributes       `json:"attributeAdvances"`
+	CareerPath        []WhNumber       `json:"careerPath"`
+	Career            WhNumber         `json:"career"`
 	Fate              int              `json:"fate"`
 	Fortune           int              `json:"fortune"`
 	Resilience        int              `json:"resilience"`
@@ -525,192 +404,40 @@ type CharacterFull struct {
 	Mutations         []*Wh            `json:"mutations"`
 }
 
-func (characterFull *CharacterFull) Copy() WhObject {
-	if characterFull == nil {
-		return nil
+func (c *CharacterFull) Init() {
+	if c.EquippedItems == nil {
+		c.EquippedItems = []WhNumber{}
 	}
-
-	return &CharacterFull{
-		Name:              characterFull.Name,
-		Description:       characterFull.Description,
-		Notes:             characterFull.Notes,
-		EquippedItems:     copyWhNumberArray(characterFull.EquippedItems),
-		CarriedItems:      copyWhNumberArray(characterFull.CarriedItems),
-		StoredItems:       copyWhNumberArray(characterFull.StoredItems),
-		Skills:            copyWhNumberArray(characterFull.Skills),
-		Talents:           copyWhNumberArray(characterFull.Talents),
-		Species:           characterFull.Species,
-		BaseAttributes:    characterFull.BaseAttributes.Copy(),
-		AttributeAdvances: characterFull.AttributeAdvances.Copy(),
-		CareerPath:        copyWhNumberArray(characterFull.CareerPath),
-		Career:            characterFull.Career.Copy(),
-		Fate:              characterFull.Fate,
-		Fortune:           characterFull.Fortune,
-		Resilience:        characterFull.Resilience,
-		Resolve:           characterFull.Resolve,
-		CurrentExp:        characterFull.CurrentExp,
-		SpentExp:          characterFull.SpentExp,
-		Status:            characterFull.Status,
-		Standing:          characterFull.Standing,
-		Brass:             characterFull.Brass,
-		Silver:            characterFull.Silver,
-		Gold:              characterFull.Gold,
-		Spells:            copyWhArray(characterFull.Spells),
-		Prayers:           copyWhArray(characterFull.Prayers),
-		Traits:            copyWhArray(characterFull.Traits),
-		Sin:               characterFull.Sin,
-		Corruption:        characterFull.Corruption,
-		Mutations:         copyWhArray(characterFull.Mutations),
+	if c.CarriedItems == nil {
+		c.CarriedItems = []WhNumber{}
 	}
-}
-
-func copyWhNumberArray(input []*WhNumber) []*WhNumber {
-	if input == nil {
-		return nil
+	if c.StoredItems == nil {
+		c.StoredItems = []WhNumber{}
 	}
-
-	output := make([]*WhNumber, len(input))
-	for i, v := range input {
-		output[i] = v.Copy()
+	if c.Skills == nil {
+		c.Skills = []WhNumber{}
 	}
-	return output
-}
-
-func (characterFull *CharacterFull) InitNilPointers() error {
-	if characterFull == nil {
-		return errors.New("characterFull pointer is nil")
+	if c.Talents == nil {
+		c.Talents = []WhNumber{}
 	}
-
-	if characterFull.EquippedItems == nil {
-		characterFull.EquippedItems = []*WhNumber{}
+	if c.CareerPath == nil {
+		c.CareerPath = []WhNumber{}
 	}
-	err := initNilPointersInWhNumberList(characterFull.EquippedItems, WhTypeItem)
-	if err != nil {
-		return err
+	if c.Spells == nil {
+		c.Spells = []*Wh{}
 	}
-
-	if characterFull.CarriedItems == nil {
-		characterFull.CarriedItems = []*WhNumber{}
+	if c.Prayers == nil {
+		c.Prayers = []*Wh{}
 	}
-	err = initNilPointersInWhNumberList(characterFull.CarriedItems, WhTypeItem)
-	if err != nil {
-		return err
+	if c.Traits == nil {
+		c.Traits = []*Wh{}
 	}
-
-	if characterFull.StoredItems == nil {
-		characterFull.StoredItems = []*WhNumber{}
+	if c.Mutations == nil {
+		c.Mutations = []*Wh{}
 	}
-	err = initNilPointersInWhNumberList(characterFull.StoredItems, WhTypeItem)
-	if err != nil {
-		return err
-	}
-
-	if characterFull.Skills == nil {
-		characterFull.Skills = []*WhNumber{}
-	}
-	err = initNilPointersInWhNumberList(characterFull.Skills, WhTypeSkill)
-	if err != nil {
-		return err
-	}
-
-	if characterFull.Talents == nil {
-		characterFull.Talents = []*WhNumber{}
-	}
-	err = initNilPointersInWhNumberList(characterFull.Talents, WhTypeTalent)
-	if err != nil {
-		return err
-	}
-
-	if characterFull.BaseAttributes == nil {
-		characterFull.BaseAttributes = &Attributes{}
-	}
-
-	if characterFull.AttributeAdvances == nil {
-		characterFull.AttributeAdvances = &Attributes{}
-	}
-
-	if characterFull.CareerPath == nil {
-		characterFull.CareerPath = []*WhNumber{}
-	}
-	err = initNilPointersInWhNumberList(characterFull.CareerPath, WhTypeCareer)
-	if err != nil {
-		return err
-	}
-
-	if characterFull.Spells == nil {
-		characterFull.Spells = []*Wh{}
-	}
-	err = initNilPointersInWhList(characterFull.Spells)
-	if err != nil {
-		return err
-	}
-
-	if characterFull.Prayers == nil {
-		characterFull.Prayers = []*Wh{}
-	}
-	err = initNilPointersInWhList(characterFull.Prayers)
-	if err != nil {
-		return err
-	}
-
-	if characterFull.Traits == nil {
-		characterFull.Traits = []*Wh{}
-	}
-	err = initNilPointersInWhList(characterFull.Traits)
-	if err != nil {
-		return err
-	}
-
-	if characterFull.Mutations == nil {
-		characterFull.Mutations = []*Wh{}
-	}
-	err = initNilPointersInWhList(characterFull.Mutations)
-	if err != nil {
-		return err
-	}
-
-	if characterFull.Career == nil {
-		characterFull.Career = &WhNumber{}
-	}
-
-	return characterFull.Career.Wh.InitNilPointers()
-}
-
-func initNilPointersInWhNumberList(list []*WhNumber, t WhType) error {
-	for _, v := range list {
-		if v == nil {
-			return errors.New(fmt.Sprintf("%s idWh pointer is nil", t))
-		}
-		err := v.Wh.InitNilPointers()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func initNilPointersInWhList(list []*Wh) error {
-	for _, v := range list {
-		err := v.InitNilPointers()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 type WhNumber struct {
 	Wh     *Wh `json:"wh"`
 	Number int `json:"number"`
-}
-
-func (input *WhNumber) Copy() *WhNumber {
-	if input == nil {
-		return nil
-	}
-
-	return &WhNumber{
-		Wh:     input.Wh.Copy(),
-		Number: input.Number,
-	}
 }

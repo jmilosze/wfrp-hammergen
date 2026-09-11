@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"errors"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/exp/slices"
 )
@@ -116,66 +115,28 @@ type SpellClassification struct {
 	Labels []SpellLabel `json:"labels"`
 }
 
-func (classification *SpellClassification) Copy() *SpellClassification {
-	if classification == nil {
-		return nil
-	}
-
-	return &SpellClassification{
-		Type:   classification.Type,
-		Labels: copyArray(classification.Labels),
+func (sc *SpellClassification) Init() {
+	if sc.Labels == nil {
+		sc.Labels = []SpellLabel{}
 	}
 }
 
 type Spell struct {
-	Name           string               `json:"name" validate:"name_valid"`
-	Description    string               `json:"description" validate:"desc_valid"`
-	Cn             int                  `json:"cn" validate:"min=0,max=99"`
-	Range          string               `json:"range" validate:"medium_string_valid"`
-	Target         string               `json:"target" validate:"medium_string_valid"`
-	Duration       string               `json:"duration" validate:"medium_string_valid"`
-	Classification *SpellClassification `json:"classification" validate:"spell_classification_valid"`
-	Source         map[Source]string    `json:"source" validate:"source_valid"`
+	Name           string              `json:"name" validate:"name_valid"`
+	Description    string              `json:"description" validate:"desc_valid"`
+	Cn             int                 `json:"cn" validate:"min=0,max=99"`
+	Range          string              `json:"range" validate:"medium_string_valid"`
+	Target         string              `json:"target" validate:"medium_string_valid"`
+	Duration       string              `json:"duration" validate:"medium_string_valid"`
+	Classification SpellClassification `json:"classification" validate:"spell_classification_valid"`
+	Source         map[Source]string   `json:"source" validate:"source_valid"`
 }
 
-func (spell *Spell) Copy() WhObject {
-	if spell == nil {
-		return nil
-	}
-
-	return &Spell{
-		Name:           spell.Name,
-		Description:    spell.Description,
-		Cn:             spell.Cn,
-		Range:          spell.Range,
-		Target:         spell.Target,
-		Duration:       spell.Duration,
-		Classification: spell.Classification.Copy(),
-		Source:         copySourceMap(spell.Source),
-	}
-}
-
-func (spell *Spell) InitNilPointers() error {
-	if spell == nil {
-		return errors.New("spell pointer is nil")
-	}
-
+func (spell *Spell) Init() {
 	if spell.Source == nil {
 		spell.Source = map[Source]string{}
 	}
-
-	if spell.Classification == nil {
-		spell.Classification = &SpellClassification{
-			Type:   SpellTypeOther,
-			Labels: []SpellLabel{},
-		}
-	}
-
-	if spell.Classification.Labels == nil {
-		spell.Classification.Labels = []SpellLabel{}
-	}
-
-	return nil
+	spell.Classification.Init()
 }
 
 func SpellClassificationValidator(fl validator.FieldLevel) bool {

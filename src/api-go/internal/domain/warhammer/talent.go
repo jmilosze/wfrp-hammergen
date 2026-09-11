@@ -1,9 +1,5 @@
 package warhammer
 
-import (
-	"errors"
-)
-
 type Talent struct {
 	Name        string            `json:"name" validate:"name_valid"`
 	Description string            `json:"description" validate:"desc_valid"`
@@ -12,51 +8,17 @@ type Talent struct {
 	Attribute   Attribute         `json:"attribute" validate:"att_type_valid"`
 	Attribute2  Attribute         `json:"attribute2" validate:"att_type_valid"`
 	IsGroup     bool              `json:"isGroup" validate:"boolean"`
-	Modifiers   *Modifiers        `json:"modifiers"`
+	Modifiers   Modifiers         `json:"modifiers"`
 	Group       []string          `json:"group" validate:"dive,id_valid"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (talent *Talent) Copy() WhObject {
-	if talent == nil {
-		return nil
-	}
-
-	return &Talent{
-		Name:        talent.Name,
-		Description: talent.Description,
-		Tests:       talent.Tests,
-		MaxRank:     talent.MaxRank,
-		Attribute:   talent.Attribute,
-		Attribute2:  talent.Attribute2,
-		IsGroup:     talent.IsGroup,
-		Modifiers:   talent.Modifiers.Copy(),
-		Group:       copyArray(talent.Group),
-		Source:      copySourceMap(talent.Source),
-	}
-}
-
-func (talent *Talent) InitNilPointers() error {
-	if talent == nil {
-		return errors.New("talent pointer is nil")
-	}
-
-	if talent.Modifiers == nil {
-		talent.Modifiers = &Modifiers{}
-	}
-
-	err := talent.Modifiers.InitNilPointers()
-	if err != nil {
-		return err
-	}
-
+func (talent *Talent) Init() {
 	if talent.Group == nil {
 		talent.Group = []string{}
 	}
-
 	if talent.Source == nil {
 		talent.Source = map[Source]string{}
 	}
-
-	return nil
+	talent.Modifiers.Init()
 }

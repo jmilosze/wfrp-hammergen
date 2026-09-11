@@ -6,7 +6,7 @@ import (
 )
 
 var rune0 = wh.Wh{
-	Id:         "rune00000000000000000000",
+	Id:         "920000000000000000000000",
 	OwnerId:    user0.Id,
 	Visibility: wh.VisibilityPublic,
 	Object: &wh.Rune{
@@ -22,7 +22,7 @@ var rune0 = wh.Wh{
 }
 
 var rune1 = wh.Wh{
-	Id:         "rune00000000000000000001",
+	Id:         "920000000000000000000001",
 	OwnerId:    user1.Id,
 	Visibility: wh.VisibilityPrivate,
 	Object: &wh.Rune{

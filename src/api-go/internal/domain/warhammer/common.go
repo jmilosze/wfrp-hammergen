@@ -30,27 +30,8 @@ func formatStringValues[T ~string](list []T) string {
 	return strings.Join(values, " ")
 }
 
-func copyArray[T any](arr []T) []T {
-	if arr != nil && len(arr) == 0 {
-		return make([]T, 0)
-	}
-	return append([]T(nil), arr...)
-}
-
-func copyWhArray(input []*Wh) []*Wh {
-	if input == nil {
-		return nil
-	}
-
-	output := make([]*Wh, len(input))
-	for i, v := range input {
-		output[i] = v.Copy()
-	}
-	return output
-}
-
 func whListToIdWhMap(whList []*Wh) map[string]*Wh {
-	allWhMap := make(map[string]*Wh, 0)
+	allWhMap := make(map[string]*Wh, len(whList))
 	for _, v := range whList {
 		allWhMap[v.Id] = v
 	}
@@ -58,15 +39,14 @@ func whListToIdWhMap(whList []*Wh) map[string]*Wh {
 }
 
 func idListToWhList(idList []string, allIdWhMap map[string]*Wh) []*Wh {
-	if idList == nil {
-		return nil
+	if len(idList) == 0 {
+		return []*Wh{}
 	}
 
-	whList := make([]*Wh, 0)
+	whList := make([]*Wh, 0, len(idList))
 	for _, v := range idList {
-		wh, ok := allIdWhMap[v]
-		if ok {
-			whList = append(whList, wh.Copy())
+		if wh, ok := allIdWhMap[v]; ok {
+			whList = append(whList, wh)
 		}
 	}
 	return whList

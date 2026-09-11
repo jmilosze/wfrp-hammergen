@@ -1,7 +1,6 @@
 package warhammer
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -13,34 +12,13 @@ type Property struct {
 	Source       map[Source]string `json:"source" validate:"source_valid"`
 }
 
-func (property *Property) Copy() WhObject {
-	if property == nil {
-		return nil
-	}
-
-	return &Property{
-		Name:         property.Name,
-		Description:  property.Description,
-		Type:         property.Type,
-		ApplicableTo: copyArray(property.ApplicableTo),
-		Source:       copySourceMap(property.Source),
-	}
-}
-
-func (property *Property) InitNilPointers() error {
-	if property == nil {
-		return errors.New("property pointer is nil")
-	}
-
+func (property *Property) Init() {
 	if property.ApplicableTo == nil {
 		property.ApplicableTo = []ItemType{}
 	}
-
 	if property.Source == nil {
 		property.Source = map[Source]string{}
 	}
-
-	return nil
 }
 
 type PropertyType int

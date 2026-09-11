@@ -1,9 +1,7 @@
 package warhammer
 
 import (
-	"errors"
 	"fmt"
-	"strings"
 )
 
 type Visibility int
@@ -24,11 +22,21 @@ func GetWhValidationAliases() map[string]string {
 	}
 }
 
+type WhObject interface {
+	Init()
+}
+
 type Wh struct {
 	Id         string     `json:"id"`
 	OwnerId    string     `json:"ownerId"`
 	Visibility Visibility `json:"visibility" validate:"visibility_valid"`
 	Object     WhObject   `json:"object"`
+}
+
+func (w *Wh) Init() {
+	if w != nil && w.Object != nil {
+		w.Object.Init()
+	}
 }
 
 const (
@@ -64,82 +72,50 @@ var WhCoreTypes = []WhType{
 	WhTypeRune,
 }
 
-func (w *Wh) Copy() *Wh {
-	if w == nil {
-		return nil
-	}
-
-	wh := Wh{
-		Id:         strings.Clone(w.Id),
-		OwnerId:    strings.Clone(w.OwnerId),
-		Visibility: w.Visibility,
-	}
-
-	if w.Object != nil {
-		wh.Object = w.Object.Copy()
-	}
-
-	return &wh
-}
-
 func (w *Wh) CopyHeaders() *Wh {
 	if w == nil {
 		return nil
 	}
 
 	return &Wh{
-		Id:         strings.Clone(w.Id),
-		OwnerId:    strings.Clone(w.OwnerId),
+		Id:         w.Id,
+		OwnerId:    w.OwnerId,
 		Visibility: w.Visibility,
 	}
 }
 
 func NewWhObject(t WhType) WhObject {
+	var obj WhObject
 	switch t {
 	case WhTypeMutation:
-		return &Mutation{}
+		obj = &Mutation{}
 	case WhTypeSpell:
-		return &Spell{}
+		obj = &Spell{}
 	case WhTypePrayer:
-		return &Prayer{}
+		obj = &Prayer{}
 	case WhTypeProperty:
-		return &Property{}
+		obj = &Property{}
 	case WhTypeItem:
-		return &Item{}
+		obj = &Item{}
 	case WhTypeTalent:
-		return &Talent{}
+		obj = &Talent{}
 	case WhTypeSkill:
-		return &Skill{}
+		obj = &Skill{}
 	case WhTypeCareer:
-		return &Career{}
+		obj = &Career{}
 	case WhTypeCharacter:
-		return &Character{}
+		obj = &Character{}
 	case WhTypeItemFull:
-		return &ItemFull{}
+		obj = &ItemFull{}
 	case WhTypeCharacterFull:
-		return &CharacterFull{}
+		obj = &CharacterFull{}
 	case WhTypeTrait:
-		return &Trait{}
+		obj = &Trait{}
 	case WhTypeRune:
-		return &Rune{}
+		obj = &Rune{}
+	default:
+		return nil
 	}
-
-	return &Character{}
-}
-
-func (w *Wh) InitNilPointers() error {
-	if w == nil {
-		return errors.New("wh pointer is nil")
-	}
-
-	if w.Object == nil {
-		return errors.New("wh.object pointer is nil")
-	}
-
-	return w.Object.InitNilPointers()
-}
-
-type WhObject interface {
-	Copy() WhObject
-	InitNilPointers() error
+	obj.Init()
+	return obj
 }
