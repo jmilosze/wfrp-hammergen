@@ -11,7 +11,5 @@ func (trait *Trait) Init() {
 	if trait.Source == nil {
 		trait.Source = map[Source]string{}
 	}
-	if trait.Modifiers.Effects == nil {
-		trait.Modifiers.Effects = []EffectType{}
-	}
+	trait.Modifiers.Init()
 }

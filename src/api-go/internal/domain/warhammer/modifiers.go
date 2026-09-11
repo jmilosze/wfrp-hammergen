@@ -23,6 +23,12 @@ type Modifiers struct {
 	Effects    []EffectType `json:"effects" validate:"unique,dive,effect_valid"`
 }
 
+func (modifiers *Modifiers) Init() {
+	if modifiers.Effects == nil {
+		modifiers.Effects = []EffectType{}
+	}
+}
+
 func GetModifierValidationAliases() map[string]string {
 	return map[string]string{
 		"effect_valid": fmt.Sprintf("oneof=%s", effectTypeValues()),

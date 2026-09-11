@@ -20,7 +20,5 @@ func (talent *Talent) Init() {
 	if talent.Source == nil {
 		talent.Source = map[Source]string{}
 	}
-	if talent.Modifiers.Effects == nil {
-		talent.Modifiers.Effects = []EffectType{}
-	}
+	talent.Modifiers.Init()
 }

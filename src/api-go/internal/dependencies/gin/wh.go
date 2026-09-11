@@ -46,7 +46,6 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
-		whWrite.Init()
 
 		var reqTop struct {
 			Visibility *warhammer.Visibility `json:"visibility"`

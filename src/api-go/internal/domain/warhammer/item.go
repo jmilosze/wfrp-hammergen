@@ -35,12 +35,8 @@ func (item *Item) Init() {
 	if item.Source == nil {
 		item.Source = map[Source]string{}
 	}
-	if item.Armour.Location == nil {
-		item.Armour.Location = []ItemArmourLocation{}
-	}
-	if item.Grimoire.Spells == nil {
-		item.Grimoire.Spells = []string{}
-	}
+	item.Armour.Init()
+	item.Grimoire.Init()
 }
 
 func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh, allRunes []*Wh) (*ItemFull, error) {
@@ -114,6 +110,12 @@ type ItemArmour struct {
 	Group    ItemArmourGroup      `json:"group" validate:"item_armour_group_valid"`
 }
 
+func (armour *ItemArmour) Init() {
+	if armour.Location == nil {
+		armour.Location = []ItemArmourLocation{}
+	}
+}
+
 type ItemContainer struct {
 	Capacity  int           `json:"capacity" validate:"gte=0,lte=1000"`
 	CarryType ItemCarryType `json:"carryType" validate:"item_carry_type_valid"`
@@ -121,6 +123,12 @@ type ItemContainer struct {
 
 type ItemGrimoire struct {
 	Spells []string `json:"spells" validate:"dive,id_valid"`
+}
+
+func (ig *ItemGrimoire) Init() {
+	if ig.Spells == nil {
+		ig.Spells = []string{}
+	}
 }
 
 type ItemOther struct {
@@ -371,6 +379,12 @@ type ItemGrimoireFull struct {
 	Spells []*Wh `json:"spells"`
 }
 
+func (ig *ItemGrimoireFull) Init() {
+	if ig.Spells == nil {
+		ig.Spells = []*Wh{}
+	}
+}
+
 func (item *ItemFull) Init() {
 	if item.Properties == nil {
 		item.Properties = []*Wh{}
@@ -381,12 +395,8 @@ func (item *ItemFull) Init() {
 	if item.Source == nil {
 		item.Source = map[Source]string{}
 	}
-	if item.Armour.Location == nil {
-		item.Armour.Location = []ItemArmourLocation{}
-	}
-	if item.Grimoire.Spells == nil {
-		item.Grimoire.Spells = []*Wh{}
-	}
+	item.Armour.Init()
+	item.Grimoire.Init()
 }
 
 func GetItemValidationAliases() map[string]string {

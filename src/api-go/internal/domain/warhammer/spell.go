@@ -115,6 +115,12 @@ type SpellClassification struct {
 	Labels []SpellLabel `json:"labels"`
 }
 
+func (sc *SpellClassification) Init() {
+	if sc.Labels == nil {
+		sc.Labels = []SpellLabel{}
+	}
+}
+
 type Spell struct {
 	Name           string              `json:"name" validate:"name_valid"`
 	Description    string              `json:"description" validate:"desc_valid"`
@@ -127,12 +133,10 @@ type Spell struct {
 }
 
 func (spell *Spell) Init() {
-	if spell.Classification.Labels == nil {
-		spell.Classification.Labels = []SpellLabel{}
-	}
 	if spell.Source == nil {
 		spell.Source = map[Source]string{}
 	}
+	spell.Classification.Init()
 }
 
 func SpellClassificationValidator(fl validator.FieldLevel) bool {

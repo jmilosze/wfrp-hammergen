@@ -24,11 +24,11 @@ func (career *Career) Init() {
 	if career.Source == nil {
 		career.Source = map[Source]string{}
 	}
-	career.Level1.init()
-	career.Level2.init()
-	career.Level3.init()
-	career.Level4.init()
-	career.Level5.init()
+	career.Level1.Init()
+	career.Level2.Init()
+	career.Level3.Init()
+	career.Level4.Init()
+	career.Level5.Init()
 }
 
 type CareerLevel struct {
@@ -42,7 +42,7 @@ type CareerLevel struct {
 	Items      string      `json:"items" validate:"desc_valid"`
 }
 
-func (cl *CareerLevel) init() {
+func (cl *CareerLevel) Init() {
 	if cl.Attributes == nil {
 		cl.Attributes = []Attribute{}
 	}

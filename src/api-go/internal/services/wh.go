@@ -28,6 +28,8 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to create wh")}
 	}
 
+	w.Init()
+
 	if err := s.Validator.Struct(w); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
 	}
@@ -76,6 +78,8 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	if c.Id == "anonymous" {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to update wh %s", w.Id)}
 	}
+
+	w.Init()
 
 	if err := s.Validator.Struct(w); err != nil {
 		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
@@ -143,6 +147,10 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 	whs, err := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, whIds)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retreive wh: %w", err)
+	}
+
+	for _, v := range whs {
+		v.Init()
 	}
 
 	whsRet := whs

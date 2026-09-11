@@ -16,9 +16,7 @@ func (mutation *Mutation) Init() {
 	if mutation.Source == nil {
 		mutation.Source = map[Source]string{}
 	}
-	if mutation.Modifiers.Effects == nil {
-		mutation.Modifiers.Effects = []EffectType{}
-	}
+	mutation.Modifiers.Init()
 }
 
 type MutationType int
