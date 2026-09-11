@@ -61,7 +61,7 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 	err := s.Collection.FindOne(ctx, query).Decode(&userMongo)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: fmt.Errorf("user not found db")}
+			return nil, fmt.Errorf("user not found in db: %w", domain.ErrNotFound)
 		}
 		return nil, fmt.Errorf("failed to find user: %w", err)
 	}
@@ -129,12 +129,10 @@ func (s *UserDbService) Create(ctx context.Context, u *user.User) (*user.User, e
 
 	_, err = s.Collection.InsertOne(ctx, userMongoDb)
 	if err != nil {
-		wErr := fmt.Errorf("failed to insert mongo-user: %w", err)
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, &domain.DbError{Type: domain.ErrorDbConflict, Err: wErr}
-		} else {
-			return nil, wErr
+			return nil, fmt.Errorf("user already exists: %w", domain.ErrConflict)
 		}
+		return nil, fmt.Errorf("failed to insert mongo-user: %w", err)
 	}
 
 	return newUserFromMongo(userMongoDb, linkedUsers), nil
@@ -230,16 +228,14 @@ func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User
 
 	result, err := s.Collection.UpdateOne(ctx, bson.D{{"_id", userMongo.Id}}, bson.D{{"$set", userMongo}})
 	if err != nil {
-		wErr := fmt.Errorf("failed to insert mongo-user: %w", err)
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, &domain.DbError{Type: domain.ErrorDbConflict, Err: wErr}
-		} else {
-			return nil, wErr
+			return nil, fmt.Errorf("user already exists: %w", domain.ErrConflict)
 		}
+		return nil, fmt.Errorf("failed to update mongo-user: %w", err)
 	}
 
 	if result.MatchedCount == 0 {
-		return nil, &domain.DbError{Type: domain.ErrorDbNotFound, Err: errors.New("user not found in db")}
+		return nil, fmt.Errorf("user not found in db: %w", domain.ErrNotFound)
 	}
 
 	return newUserFromMongo(userMongo, linkedUsers), nil

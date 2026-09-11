@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"sync"
 
@@ -25,21 +24,21 @@ func NewWhService(v *validator.Validate, db wh.WhDbService) *WhService {
 
 func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, error) {
 	if c.Id == "anonymous" {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to create wh")}
+		return nil, fmt.Errorf("unauthorized to create wh: %w", domain.ErrUnauthorized)
 	}
 
 	w.Init()
 
 	if err := s.Validator.Struct(w); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
+		return nil, fmt.Errorf("%w: %s", domain.ErrInvalidArguments, err)
 	}
 
 	if err := extraCharacterValidation(t, w, s.Validator); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
+		return nil, fmt.Errorf("%w: %s", domain.ErrInvalidArguments, err)
 	}
 
 	if !c.Admin && w.Visibility == wh.VisibilityPublic {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("non-admin cannot create public items")}
+		return nil, fmt.Errorf("non-admin cannot create public items: %w", domain.ErrUnauthorized)
 	}
 
 	w.OwnerId = c.Id
@@ -76,43 +75,37 @@ func canModify(ownerId string, userId string) bool {
 
 func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.Claims) (*wh.Wh, error) {
 	if c.Id == "anonymous" {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("unauthorized to update wh %s", w.Id)}
+		return nil, fmt.Errorf("unauthorized to update wh %s: %w", w.Id, domain.ErrUnauthorized)
 	}
 
 	w.Init()
 
 	if err := s.Validator.Struct(w); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
+		return nil, fmt.Errorf("%w: %s", domain.ErrInvalidArguments, err)
 	}
 
 	if err := extraCharacterValidation(t, w, s.Validator); err != nil {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorInvalidArguments, Err: err}
+		return nil, fmt.Errorf("%w: %s", domain.ErrInvalidArguments, err)
 	}
 
 	if !c.Admin && w.Visibility == wh.VisibilityPublic {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorUnauthorized, Err: fmt.Errorf("non-admin cannot set visibility to public")}
+		return nil, fmt.Errorf("non-admin cannot set visibility to public: %w", domain.ErrUnauthorized)
 	}
 
 	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, []string{w.Id})
 	if err != nil || len(existingWhs) == 0 {
-		return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("wh %s not found", w.Id)}
+		return nil, fmt.Errorf("wh %s not found: %w", w.Id, domain.ErrNotFound)
 	}
 	existingWh := existingWhs[0]
 
 	if !canModify(existingWh.OwnerId, c.Id) {
-		return nil, &wh.WhError{WhType: t, ErrType: wh.ErrorNotFound, Err: fmt.Errorf("unauthorized to update wh %s", w.Id)}
+		return nil, fmt.Errorf("unauthorized to update wh %s: %w", w.Id, domain.ErrNotFound)
 	}
 
 	w.OwnerId = existingWh.OwnerId
 	updatedWh, err := s.WhDbService.Update(ctx, t, w, c.Id)
 	if err != nil {
-		var dbErr *domain.DbError
-		wErr := fmt.Errorf("failed to update wh: %w", err)
-		if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
-			return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: wErr}
-		} else {
-			return nil, wErr
-		}
+		return nil, fmt.Errorf("failed to update wh: %w", err)
 	}
 
 	return updatedWh, nil
@@ -120,12 +113,12 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 
 func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) error {
 	if c.Id == "anonymous" {
-		return &wh.WhError{ErrType: wh.ErrorUnauthorized, WhType: t, Err: fmt.Errorf("unauthorized to delete wh %s", whId)}
+		return fmt.Errorf("unauthorized to delete wh %s: %w", whId, domain.ErrUnauthorized)
 	}
 
 	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, []string{whId})
 	if err != nil || len(existingWhs) == 0 {
-		return &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("wh %s not found", whId)}
+		return fmt.Errorf("wh %s not found: %w", whId, domain.ErrNotFound)
 	}
 	existingWh := existingWhs[0]
 
@@ -168,7 +161,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 	}
 
 	if errIfNotFound && len(whIds) != 0 && len(whsRet) != len(whIds) {
-		return nil, &wh.WhError{ErrType: wh.ErrorNotFound, WhType: t, Err: fmt.Errorf("not all ids found")}
+		return nil, fmt.Errorf("not all ids found: %w", domain.ErrNotFound)
 	}
 
 	return whsRet, nil
@@ -371,13 +364,7 @@ func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []wh.IdNum
 func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, error) {
 	generationPropsMap, err := s.WhDbService.RetrieveGenerationProps(ctx)
 	if err != nil {
-		var dbErr *domain.DbError
-		wErr := fmt.Errorf("failed to get generationProps: %w", err)
-		if errors.As(err, &dbErr) && dbErr.Type == domain.ErrorDbNotFound {
-			return nil, &wh.WhError{ErrType: wh.ErrorNotFound, Err: wErr}
-		} else {
-			return nil, wErr
-		}
+		return nil, fmt.Errorf("failed to get generationProps: %w", err)
 	}
 
 	return generationPropsMap, nil

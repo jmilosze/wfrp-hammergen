@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"golang.org/x/exp/slices"
@@ -66,20 +67,17 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 
 		if err != nil {
 			log.Println("error handling create or update wh", err)
-			var whErr *warhammer.WhError
-			if errors.As(err, &whErr) {
-				if whErr.ErrType == warhammer.ErrorInvalidArguments {
-					c.JSON(BadRequestErrResp(whErr.Error()))
-					return
-				}
-				if whErr.ErrType == warhammer.ErrorUnauthorized {
-					c.JSON(UnauthorizedErrResp(""))
-					return
-				}
-				if whErr.ErrType == warhammer.ErrorNotFound {
-					c.JSON(NotFoundErrResp(""))
-					return
-				}
+			if errors.Is(err, domain.ErrInvalidArguments) {
+				c.JSON(BadRequestErrResp(err.Error()))
+				return
+			}
+			if errors.Is(err, domain.ErrUnauthorized) {
+				c.JSON(UnauthorizedErrResp(""))
+				return
+			}
+			if errors.Is(err, domain.ErrNotFound) {
+				c.JSON(NotFoundErrResp(""))
+				return
 			}
 			c.JSON(ServerErrResp(""))
 			return
@@ -111,8 +109,7 @@ func whGetHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) 
 
 		if err != nil {
 			log.Println("error handling get wh", err)
-			var whErr *warhammer.WhError
-			if errors.As(err, &whErr) && whErr.ErrType == warhammer.ErrorNotFound {
+			if errors.Is(err, domain.ErrNotFound) {
 				c.JSON(NotFoundErrResp(""))
 			} else {
 				c.JSON(ServerErrResp(""))
@@ -137,8 +134,7 @@ func whDeleteHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Contex
 
 		if err != nil {
 			log.Println("error handling delete wh", err)
-			var whErr *warhammer.WhError
-			if errors.As(err, &whErr) && whErr.ErrType == warhammer.ErrorUnauthorized {
+			if errors.Is(err, domain.ErrUnauthorized) {
 				c.JSON(UnauthorizedErrResp(""))
 			} else {
 				c.JSON(ServerErrResp(""))
@@ -168,8 +164,7 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 
 		if err != nil {
 			log.Println("error handling list wh", err)
-			var whErr *warhammer.WhError
-			if errors.As(err, &whErr) && whErr.ErrType == warhammer.ErrorNotFound {
+			if errors.Is(err, domain.ErrNotFound) {
 				c.JSON(NotFoundErrResp(""))
 			} else {
 				c.JSON(ServerErrResp(""))
@@ -187,8 +182,7 @@ func whGenerationPropsHandler(s warhammer.WhService) func(*gin.Context) {
 
 		if err != nil {
 			log.Println("error handling generation props", err)
-			var whErr *warhammer.WhError
-			if errors.As(err, &whErr) && whErr.ErrType == warhammer.ErrorNotFound {
+			if errors.Is(err, domain.ErrNotFound) {
 				c.JSON(NotFoundErrResp(""))
 			} else {
 				c.JSON(ServerErrResp(""))
