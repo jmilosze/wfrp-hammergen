@@ -3,10 +3,18 @@ package golangjwt
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
-	"time"
 )
+
+type CustomClaims struct {
+	Admin          bool     `json:"adm"`
+	SharedAccounts []string `json:"shrd_acc"`
+	ResetPassword  bool     `json:"pwd"`
+	jwt.RegisteredClaims
+}
 
 type HmacService struct {
 	HmacSecret            []byte
@@ -29,15 +37,18 @@ func (jwtService *HmacService) GenerateAccessToken(claims *auth.Claims) (string,
 func generateToken(claims *auth.Claims, expiryTime time.Duration, hmacSecret []byte) (string, error) {
 	currentTime := time.Now()
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":      claims.Id,
-		"exp":      currentTime.Add(expiryTime).Unix(),
-		"orig_iat": currentTime.Unix(),
-		"adm":      claims.Admin,
-		"shrd_acc": claims.SharedAccounts,
-		"pwd":      claims.ResetPassword,
-	})
+	customClaims := CustomClaims{
+		Admin:          claims.Admin,
+		SharedAccounts: claims.SharedAccounts,
+		ResetPassword:  claims.ResetPassword,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   claims.Id,
+			ExpiresAt: jwt.NewNumericDate(currentTime.Add(expiryTime)),
+			IssuedAt:  jwt.NewNumericDate(currentTime),
+		},
+	}
 
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
 	signedToken, err := token.SignedString(hmacSecret)
 	if err != nil {
 		return "", fmt.Errorf("could not sign token: %w", err)
@@ -51,7 +62,8 @@ func (jwtService *HmacService) GenerateResetPasswordToken(claims *auth.Claims) (
 }
 
 func (jwtService *HmacService) ParseToken(tokenString string) (*auth.Claims, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	var customClaims CustomClaims
+	token, err := jwt.ParseWithClaims(tokenString, &customClaims, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -61,26 +73,18 @@ func (jwtService *HmacService) ParseToken(tokenString string) (*auth.Claims, err
 	if err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) {
 			return nil, &auth.Error{Type: auth.ErrorExpiredToken, Err: fmt.Errorf("token is expired: %w", err)}
-		} else {
-			return nil, fmt.Errorf("could not parse token: %w", err)
 		}
+		return nil, fmt.Errorf("could not parse token: %w", err)
 	}
 
-	jwtClaims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, fmt.Errorf("could not extract claims: %w", err)
+	if !token.Valid {
+		return nil, errors.New("invalid token")
 	}
 
-	var claims auth.Claims
-	claims.Id, ok = jwtClaims["sub"].(string)
-	claims.Admin, _ = jwtClaims["adm"].(bool)
-	claims.ResetPassword, _ = jwtClaims["pwd"].(bool)
-
-	sharedAccounts, _ := jwtClaims["shrd_acc"].([]interface{})
-	claims.SharedAccounts = make([]string, len(sharedAccounts))
-	for i, acc := range sharedAccounts {
-		claims.SharedAccounts[i], _ = acc.(string)
-	}
-
-	return &claims, nil
+	return &auth.Claims{
+		Id:             customClaims.Subject,
+		Admin:          customClaims.Admin,
+		SharedAccounts: customClaims.SharedAccounts,
+		ResetPassword:  customClaims.ResetPassword,
+	}, nil
 }
