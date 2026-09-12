@@ -11,11 +11,6 @@ func RegisterOtherRoutes(router *gin.Engine, js auth.JwtService) {
 
 func keepwarmHandler() func(*gin.Context) {
 	return func(c *gin.Context) {
-		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 		c.JSON(OkResp(""))
 	}
 }

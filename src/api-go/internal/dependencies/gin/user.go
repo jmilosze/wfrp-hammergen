@@ -107,10 +107,6 @@ func newUsersResponse(users []*user.User) []UserResponse {
 func userGetHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 		userId := c.Param("userId")
 
 		if userId == "" {
@@ -137,18 +133,6 @@ func userGetHandler(us user.UserService) func(*gin.Context) {
 	}
 }
 
-func getUserClaims(c *gin.Context) *auth.Claims {
-	var claims auth.Claims
-
-	claims.Id = c.GetString("ClaimsId")
-	claims.Admin = c.GetBool("ClaimsAdmin")
-
-	sharedAccountsRaw, _ := c.Get("ClaimsSharedAccounts")
-	claims.SharedAccounts, _ = sharedAccountsRaw.([]string)
-
-	return &claims
-}
-
 func userGetExistsHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		userId := c.Param("userName")
@@ -165,10 +149,6 @@ func userGetExistsHandler(us user.UserService) func(*gin.Context) {
 func userListHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		allUsers, err := us.List(c.Request.Context(), claims)
 		if err != nil {
@@ -192,10 +172,6 @@ type UserUpdate struct {
 func userUpdateHandler(users user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		userId := c.Param("userId")
 		if userId == "" {
@@ -245,10 +221,6 @@ type UserCredentials struct {
 func userUpdateCredentialsHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		userId := c.Param("userId")
 
@@ -306,10 +278,6 @@ type UserClaims struct {
 func userUpdateClaimsHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		userId := c.Param("userId")
 
@@ -354,10 +322,6 @@ type UserDelete struct {
 func userDeleteHandler(us user.UserService) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		userId := c.Param("userId")
 		if userId == "" {

@@ -1,17 +1,18 @@
 package gin
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
-	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 	"log"
 	"log/slog"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jmilosze/wfrp-hammergen-go/internal"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
+	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/user"
 )
 
 func RegisterAuthRoutes(router *gin.Engine, us user.UserService, js auth.JwtService) {
@@ -52,48 +53,57 @@ func tokenHandler(us user.UserService, js auth.JwtService) func(*gin.Context) {
 
 func RequireJwt(js auth.JwtService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		traceHeader := c.Request.Header.Get("X-Cloud-Trace-Context")
+		ctx := internal.ContextWithTrace(c.Request.Context(), traceHeader)
+		c.Request = c.Request.WithContext(ctx)
+
 		authHeader := c.Request.Header.Get("Authorization")
-		ctx := context.WithValue(c.Request.Context(), "X-Cloud-Trace-Context", c.Request.Header.Get("X-Cloud-Trace-Context"))
+		if authHeader == "" {
+			setAnonymous(c)
+			slog.InfoContext(ctx, "user log", "user", "anonymous")
+			return
+		}
 
 		token, err := parseAuthHeader(authHeader)
 		if err != nil {
-			setAnonymous(c)
-			slog.InfoContext(ctx, "user log", "user", "anonymous")
+			c.AbortWithStatusJSON(UnauthorizedErrResp(""))
+			slog.InfoContext(ctx, "user log", "user", "invalid")
 			return
 		}
 
 		claims, authErr := js.ParseToken(token)
 		if authErr != nil {
 			log.Println("error handling parsing auth token", authErr)
-			setInvalid(c)
+			c.AbortWithStatusJSON(UnauthorizedErrResp(""))
 			slog.InfoContext(ctx, "user log", "user", "invalid")
 			return
 		}
 
 		if claims.ResetPassword {
-			setAnonymous(c)
-			slog.InfoContext(ctx, "user log", "user", "anonymous")
+			c.AbortWithStatusJSON(UnauthorizedErrResp(""))
+			slog.InfoContext(ctx, "user log", "user", "invalid")
 			return
 		}
 
-		c.Set("ClaimsId", claims.Id)
-		c.Set("ClaimsAdmin", claims.Admin)
-		c.Set("ClaimsSharedAccounts", claims.SharedAccounts)
-
+		c.Set("claims", claims)
 		slog.InfoContext(ctx, "user log", "user", claims.Id)
 	}
 }
 
 func setAnonymous(c *gin.Context) {
-	c.Set("ClaimsId", "anonymous")
-	c.Set("ClaimsAdmin", false)
-	c.Set("ClaimsSharedAccounts", []string{})
+	c.Set("claims", &auth.Claims{
+		Id:             "anonymous",
+		Admin:          false,
+		SharedAccounts: []string{},
+	})
 }
 
-func setInvalid(c *gin.Context) {
-	c.Set("ClaimsId", "invalid")
-	c.Set("ClaimsAdmin", false)
-	c.Set("ClaimsSharedAccounts", []string{})
+func getUserClaims(c *gin.Context) *auth.Claims {
+	val, ok := c.Get("claims")
+	if !ok {
+		return &auth.Claims{Id: "anonymous"}
+	}
+	return val.(*auth.Claims)
 }
 
 func parseAuthHeader(authHeader string) (string, error) {
@@ -102,7 +112,7 @@ func parseAuthHeader(authHeader string) (string, error) {
 	}
 
 	parts := strings.SplitN(authHeader, " ", 2)
-	if !(len(parts) == 2 && parts[0] == "Bearer") {
+	if !(len(parts) == 2 && parts[0] == "Bearer") || parts[1] == "" {
 		return "", fmt.Errorf("invalid 'Authorization' header")
 	}
 

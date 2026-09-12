@@ -28,10 +28,6 @@ func RegisterWhRoutes(router *gin.Engine, ws warhammer.WhService, js auth.JwtSer
 func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.WhType) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		reqData, err := c.GetRawData()
 		if err != nil {
@@ -87,18 +83,10 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 	}
 }
 
-func invalid(claims *auth.Claims) bool {
-	return claims.Id == "invalid"
-}
-
 func whGetHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) {
 	return func(c *gin.Context) {
 		whId := c.Param("whId")
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		var full bool
 		if slices.Contains([]string{"true", "yes"}, c.Query("full")) {
@@ -125,10 +113,6 @@ func whDeleteHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Contex
 	return func(c *gin.Context) {
 		whId := c.Param("whId")
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		err := s.Delete(c.Request.Context(), t, whId, claims)
 
@@ -150,10 +134,6 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 	return func(c *gin.Context) {
 		ids, _ := c.GetQueryArray("id")
 		claims := getUserClaims(c)
-		if invalid(claims) {
-			c.JSON(UnauthorizedErrResp(""))
-			return
-		}
 
 		var full bool
 		if slices.Contains([]string{"true", "yes"}, c.Query("full")) {
