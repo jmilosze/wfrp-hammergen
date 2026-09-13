@@ -1,8 +1,9 @@
 package warhammer
 
 import (
+	"slices"
+
 	"github.com/go-playground/validator/v10"
-	"golang.org/x/exp/slices"
 )
 
 type SpellType int

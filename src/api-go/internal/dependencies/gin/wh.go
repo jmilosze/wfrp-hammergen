@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"slices"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/auth"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
-	"golang.org/x/exp/slices"
 )
 
 func RegisterWhRoutes(router *gin.Engine, ws warhammer.WhService, js auth.JwtService) {

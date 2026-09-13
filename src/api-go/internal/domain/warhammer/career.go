@@ -103,7 +103,7 @@ const (
 	CareerClassPeasant   = 3
 	CareerClassRanger    = 4
 	CareerClassRiverfolk = 5
-	CareerClassRouge     = 6
+	CareerClassRogue     = 6
 	CareerClassWarrior   = 7
 	CareerClassSeafarer  = 8
 )
@@ -116,7 +116,7 @@ func classValues() string {
 		CareerClassPeasant,
 		CareerClassRanger,
 		CareerClassRiverfolk,
-		CareerClassRouge,
+		CareerClassRogue,
 		CareerClassWarrior,
 		CareerClassSeafarer,
 	})
@@ -141,7 +141,6 @@ func careerSpeciesValues() string {
 		CareerSpeciesDwarf,
 		CareerSpeciesHighElf,
 		CareerSpeciesWoodElf,
-		CareerClassRiverfolk,
 		CareerSpeciesGnome,
 		CareerSpeciesOgre,
 	})
