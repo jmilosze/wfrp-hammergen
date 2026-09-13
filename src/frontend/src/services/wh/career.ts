@@ -31,7 +31,7 @@ export const enum CareerClass {
   Peasant,
   Ranger,
   Riverfolk,
-  Rougue,
+  Rogue,
   Warrior,
   Seafarer,
 }
@@ -42,7 +42,8 @@ export const careerClassList = [
   CareerClass.Courtier,
   CareerClass.Peasant,
   CareerClass.Ranger,
-  CareerClass.Rougue,
+  CareerClass.Riverfolk,
+  CareerClass.Rogue,
   CareerClass.Warrior,
   CareerClass.Seafarer,
 ];
@@ -61,8 +62,8 @@ export function printClassName(careerClass: CareerClass) {
       return "Ranger";
     case CareerClass.Riverfolk:
       return "Riverfolk";
-    case CareerClass.Rougue:
-      return "Rougue";
+    case CareerClass.Rogue:
+      return "Rogue";
     case CareerClass.Warrior:
       return "Warrior";
     case CareerClass.Seafarer:
