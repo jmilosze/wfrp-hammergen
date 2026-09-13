@@ -3,7 +3,6 @@ package recaptcha
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -28,13 +27,20 @@ func NewCaptchaService(secret string, url string, minScore float64, timeout time
 	}
 }
 
+type captchaResponse struct {
+	Success    bool     `json:"success"`
+	Score      float64  `json:"score"`
+	Action     string   `json:"action"`
+	ErrorCodes []string `json:"error-codes"`
+}
+
 func (e *CaptchaService) Verify(ctx context.Context, captcha string, remoteAddr string) bool {
 	data := url.Values{}
 	data.Set("secret", e.Secret)
 	data.Set("response", captcha)
 	data.Set("remoteip", remoteAddr)
 
-	req, err := http.NewRequestWithContext(ctx, "POST", e.Url, strings.NewReader(data.Encode()))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, e.Url, strings.NewReader(data.Encode()))
 	if err != nil {
 		return true
 	}
@@ -47,41 +53,18 @@ func (e *CaptchaService) Verify(ctx context.Context, captcha string, remoteAddr 
 	}
 	defer resp.Body.Close()
 
-	// Read the response body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
+	if resp.StatusCode != http.StatusOK {
 		return true
 	}
 
-	var response map[string]any
-	err = json.Unmarshal(body, &response)
-	if err != nil {
+	var res captchaResponse
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return true
 	}
 
-	successStr, ok := response["success"]
-	if !ok {
-		return true
-	}
-
-	success, ok := successStr.(bool)
-	if !ok {
-		return true
-	}
-
-	if !success {
+	if !res.Success {
 		return false
 	}
 
-	scoreStr, ok := response["score"]
-	if !ok {
-		return true
-	}
-
-	score, ok := scoreStr.(float64)
-	if !ok {
-		return true
-	}
-
-	return score >= e.MinScore
+	return res.Score >= e.MinScore
 }

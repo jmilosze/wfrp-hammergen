@@ -176,9 +176,9 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 		if !ok {
 			return nil, fmt.Errorf("failed to cast object to item")
 		}
-		allPropertyIds = mergeStrAndRemoveDuplicates(allPropertyIds, item.Properties)
-		allRuneIds = mergeStrAndIdNumberAndRemoveDuplicates(allRuneIds, item.Runes)
-		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, item.Grimoire.Spells)
+		allPropertyIds = deduplicate(allPropertyIds, item.Properties)
+		allRuneIds = deduplicate(allRuneIds, idNumbersToIds(item.Runes))
+		allSpellIds = deduplicate(allSpellIds, item.Grimoire.Spells)
 	}
 
 	var wg sync.WaitGroup
@@ -237,22 +237,26 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	return fullItems, nil
 }
 
-func mergeStrAndRemoveDuplicates(slice1 []string, slice2 []string) []string {
-	merged := append(slice1, slice2...)
-
-	// Create a map to keep track of unique elements
-	uniqueMap := make(map[string]bool)
-	for _, num := range merged {
-		uniqueMap[num] = true
+func deduplicate[T comparable](slices ...[]T) []T {
+	seen := make(map[T]struct{})
+	var result []T
+	for _, s := range slices {
+		for _, v := range s {
+			if _, ok := seen[v]; !ok {
+				seen[v] = struct{}{}
+				result = append(result, v)
+			}
+		}
 	}
+	return result
+}
 
-	// Create a new slice to store the unique elements
-	mergedUnique := []string{}
-	for num := range uniqueMap {
-		mergedUnique = append(mergedUnique, num)
+func idNumbersToIds(items []wh.IdNumber) []string {
+	ids := make([]string, len(items))
+	for i, item := range items {
+		ids[i] = item.Id
 	}
-
-	return mergedUnique
+	return ids
 }
 
 func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, error) {
@@ -268,19 +272,14 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		if !ok {
 			return nil, fmt.Errorf("failed to cast object to character")
 		}
-		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.EquippedItems)
-		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.CarriedItems)
-		allItemIds = mergeStrAndIdNumberAndRemoveDuplicates(allItemIds, character.StoredItems)
+		allItemIds = deduplicate(allItemIds, idNumbersToIds(character.EquippedItems), idNumbersToIds(character.CarriedItems), idNumbersToIds(character.StoredItems))
+		allTalentIds = deduplicate(allTalentIds, idNumbersToIds(character.Talents))
+		allCareerIds = deduplicate(allCareerIds, idNumbersToIds(character.CareerPath), []string{character.Career.Id})
 
-		allTalentIds = mergeStrAndIdNumberAndRemoveDuplicates(allTalentIds, character.Talents)
-
-		allCareerIds = mergeStrAndIdNumberAndRemoveDuplicates(allCareerIds, character.CareerPath)
-		allCareerIds = mergeStrAndIdNumberAndRemoveDuplicates(allCareerIds, []wh.IdNumber{character.Career})
-
-		allMutationIds = mergeStrAndRemoveDuplicates(allMutationIds, character.Mutations)
-		allSpellIds = mergeStrAndRemoveDuplicates(allSpellIds, character.Spells)
-		allPrayerIds = mergeStrAndRemoveDuplicates(allPrayerIds, character.Prayers)
-		allTraitIds = mergeStrAndRemoveDuplicates(allTraitIds, character.Traits)
+		allMutationIds = deduplicate(allMutationIds, character.Mutations)
+		allSpellIds = deduplicate(allSpellIds, character.Spells)
+		allPrayerIds = deduplicate(allPrayerIds, character.Prayers)
+		allTraitIds = deduplicate(allTraitIds, character.Traits)
 	}
 
 	var wg sync.WaitGroup
@@ -336,29 +335,6 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 	}
 
 	return fullCharacters, nil
-}
-
-func mergeStrAndIdNumberAndRemoveDuplicates(strings []string, structs []wh.IdNumber) []string {
-	// Create a map to store unique strings
-	uniqueStrings := make(map[string]bool)
-
-	// Add all strings from the first argument to the map
-	for _, str := range strings {
-		uniqueStrings[str] = true
-	}
-
-	// Add all strings from the second argument to the map
-	for _, s := range structs {
-		uniqueStrings[s.Id] = true
-	}
-
-	// Create a new slice to store the unique strings
-	result := []string{}
-	for str := range uniqueStrings {
-		result = append(result, str)
-	}
-
-	return result
 }
 
 func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, error) {

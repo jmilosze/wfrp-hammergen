@@ -25,9 +25,13 @@ type Config struct {
 }
 
 type Server struct {
-	Port            int           `default:"8080" split_words:"true"`
-	ShutdownTimeout time.Duration `default:"10s" split_words:"true"`
-	RequestTimeout  time.Duration `default:"10s" split_words:"true"`
+	Port              int           `default:"8080" split_words:"true"`
+	ShutdownTimeout   time.Duration `default:"10s" split_words:"true"`
+	RequestTimeout    time.Duration `default:"10s" split_words:"true"`
+	ReadHeaderTimeout time.Duration `default:"5s" split_words:"true"`
+	ReadTimeout       time.Duration `default:"15s" split_words:"true"`
+	WriteTimeout      time.Duration `default:"15s" split_words:"true"`
+	IdleTimeout       time.Duration `default:"120s" split_words:"true"`
 }
 
 type PprofServer struct {

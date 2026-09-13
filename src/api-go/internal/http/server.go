@@ -19,8 +19,12 @@ type Server struct {
 func NewServer(cfg *config.Server, router http.Handler) *Server {
 	return &Server{
 		Server: &http.Server{
-			Addr:    fmt.Sprintf(":%d", cfg.Port),
-			Handler: router,
+			Addr:              fmt.Sprintf(":%d", cfg.Port),
+			Handler:           router,
+			ReadHeaderTimeout: cfg.ReadHeaderTimeout,
+			ReadTimeout:       cfg.ReadTimeout,
+			WriteTimeout:      cfg.WriteTimeout,
+			IdleTimeout:       cfg.IdleTimeout,
 		},
 		ShutdownTimeout: cfg.ShutdownTimeout,
 	}

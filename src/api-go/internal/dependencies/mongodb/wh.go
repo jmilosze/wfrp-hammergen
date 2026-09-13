@@ -174,12 +174,9 @@ func idsQuery(whIds []string) (bson.M, error) {
 		if err != nil {
 			continue
 		}
-		ids = append(ids, bson.M{"_id": id})
+		ids = append(ids, id)
 	}
-	if len(ids) == 0 {
-		return bson.M{"_id": bson.M{"$in": bson.A{}}}, nil
-	}
-	return bson.M{"$or": ids}, nil
+	return bson.M{"_id": bson.M{"$in": ids}}, nil
 }
 
 func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
@@ -187,18 +184,14 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 		bson.M{"visibility": int(warhammer.VisibilityPublic)},
 	}
 
-	for _, v := range userIds {
-		allowedConditions = append(allowedConditions, bson.M{"ownerid": v})
+	if len(userIds) > 0 {
+		allowedConditions = append(allowedConditions, bson.M{"ownerid": bson.M{"$in": userIds}})
 	}
 
 	if len(sharedUserIds) > 0 {
-		sharedOwners := bson.A{}
-		for _, v := range sharedUserIds {
-			sharedOwners = append(sharedOwners, bson.M{"ownerid": v})
-		}
 		sharedFilter := bson.M{
 			"$and": bson.A{
-				bson.M{"$or": sharedOwners},
+				bson.M{"ownerid": bson.M{"$in": sharedUserIds}},
 				bson.M{"visibility": int(warhammer.VisibilityShared)},
 			},
 		}
