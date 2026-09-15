@@ -26,8 +26,8 @@ const reRenderContent = computed(() => {
   return router.currentRoute.value.path + "_counter_" + reRenderContentCounter.value.toString();
 });
 
-watch(isEqualOrGreater, () => {
-  if (isEqualOrGreater) {
+watch(isEqualOrGreater, (isLg) => {
+  if (isLg) {
     showSideBar.value = false;
   }
 });

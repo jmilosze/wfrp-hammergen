@@ -2,3 +2,4 @@
 
 - Always re-read files before making modifications to ensure you have the most up-to-date content and avoid working from stale cache.
 - Always avoid using defensive fallbacks. We do not add code "just in case".
+- Avoid TypeScript type assertions (such as `as any`, `as Type`, or non-null assertion `!`) that are not absolutely needed. Prefer proper type definitions, narrowing, or adjusted function signatures.

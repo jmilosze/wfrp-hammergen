@@ -1,4 +1,4 @@
-import { ApiResponse, SHORT_DESC_REGEX, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
+import { ApiResponse, SHORT_DESC_LENGTH, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
 import { computed, Ref, ref } from "vue";
 import { source } from "../services/wh/source.ts";
 import { useAuth } from "./auth.ts";
@@ -38,7 +38,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
       const whCopy: T = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
       whCopy.name = whCopy.name + " - copy";
       if (!whCopy.validateName().valid) {
-        whCopy.name = whCopy.name.slice(-SHORT_DESC_REGEX);
+        whCopy.name = whCopy.name.slice(0, SHORT_DESC_LENGTH);
       }
 
       whCopy.ownerId = auth.getLoggedUserInfo().userId;

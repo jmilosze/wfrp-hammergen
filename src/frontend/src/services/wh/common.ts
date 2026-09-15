@@ -41,6 +41,7 @@ export interface ApiResponse<WhApiData> {
 }
 
 export const VERY_SHORT_DESC_REGEX: RegExp = /^[^<>]{0,25}$/;
+export const SHORT_DESC_LENGTH = 200;
 export const SHORT_DESC_REGEX: RegExp = /^[^<>]{0,200}$/;
 export const LONG_DESC_REGEX: RegExp = /^[^<>]{0,10000}$/;
 

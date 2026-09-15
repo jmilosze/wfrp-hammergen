@@ -31,7 +31,7 @@ function moveToLastPage(direction: -1 | 1): void {
   if (direction === -1) {
     startRow.value = 0;
   } else {
-    startRow.value = Math.floor(props.totalRows / props.rowsPerPage) * props.rowsPerPage;
+    startRow.value = Math.max(0, Math.ceil(props.totalRows / props.rowsPerPage) - 1) * props.rowsPerPage;
   }
 }
 </script>
