@@ -78,7 +78,6 @@ const { isEqualOrGreater } = useElSize(400, skillsTableRef);
               <MultipleCheckboxInput
                 v-model="attributes"
                 title="Attributes"
-                F
                 :options="attributeOpts"
                 :disabled="!canEdit"
               />

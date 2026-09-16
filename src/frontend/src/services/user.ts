@@ -50,7 +50,6 @@ export class User {
       this.email === otherUser.email &&
       this.currentPassword === otherUser.currentPassword &&
       this.newPassword === otherUser.newPassword &&
-      this.newPassword === otherUser.newPassword &&
       this.confirmNewPassword === otherUser.confirmNewPassword &&
       arraysAreEqualIgnoreOrder(this.sharedAccounts, otherUser.sharedAccounts)
     );

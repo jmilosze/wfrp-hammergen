@@ -19,12 +19,12 @@ const route = useRoute();
 
 const linkClass = computed(() => {
   if (props.variant == "top") {
-    if (route.name == props.routeName && route.name != "placeholder") {
+    if (route.name == props.routeName) {
       return TOP_VARIANT.static.concat(TOP_VARIANT.selected);
     }
     return TOP_VARIANT.static.concat(TOP_VARIANT.unselected);
   } else {
-    if (route.name == props.routeName && route.name != "placeholder") {
+    if (route.name == props.routeName) {
       return SIDE_VARIANT.static.concat(SIDE_VARIANT.selected);
     }
     return SIDE_VARIANT.static.concat(SIDE_VARIANT.unselected);

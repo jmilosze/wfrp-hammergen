@@ -48,7 +48,7 @@ export const LONG_DESC_REGEX: RegExp = /^[^<>]{0,10000}$/;
 export function validVeryShortDescFn(name: string): ValidationStatus {
   return setValidationStatus(
     VERY_SHORT_DESC_REGEX.test(name),
-    "This field has to be shorter than 15 characters and cannot use <> symbols.",
+    "This field has to be shorter than 25 characters and cannot use <> symbols.",
   );
 }
 

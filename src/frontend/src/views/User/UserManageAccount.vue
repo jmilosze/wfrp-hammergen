@@ -8,7 +8,7 @@ import HorizontalNavBar from "../../components/HorizontalNavBar.vue";
 import { useQueryParams } from "../../composables/useQueryParams.ts";
 
 const viewNames = [
-  { value: "manage", text: "Mange account" },
+  { value: "manage", text: "Manage account" },
   { value: "linked", text: "Linked users" },
 ];
 

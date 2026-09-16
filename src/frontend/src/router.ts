@@ -39,11 +39,6 @@ export default createRouter({
       component: HomePage,
     },
     {
-      path: "/",
-      name: "placeholder",
-      component: HomePage,
-    },
-    {
       path: "/about",
       name: "about",
       component: AboutHammergen,

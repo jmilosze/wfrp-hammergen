@@ -12,7 +12,7 @@ import ActionButton from "../../components/ActionButton.vue";
 
 const props = withDefaults(
   defineProps<{
-    token: string;
+    token?: string;
   }>(),
   {
     token: "",
