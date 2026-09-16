@@ -44,17 +44,9 @@ const itemsWithNumber: Ref<Record<string, ItemWithNumber>> = ref({});
 const itemsWithNumberList: Ref<ItemWithNumber[]> = ref([]);
 
 watch(
-  () => props.initItems,
-  (newVal) => {
-    updateItemsWithNumber(newVal, props.allItemList);
-  },
-  { immediate: true },
-);
-
-watch(
-  () => props.allItemList,
-  (newVal) => {
-    updateItemsWithNumber(props.initItems, newVal);
+  [() => props.initItems, () => props.allItemList],
+  ([selectedItems, allItemList]) => {
+    updateItemsWithNumber(selectedItems, allItemList);
   },
   { immediate: true },
 );
@@ -67,19 +59,17 @@ function updateItemsWithNumber(
   selectedItems: Record<string, number>,
   allItemList: { name: string; id: string; description: string }[],
 ) {
-  itemsWithNumber.value = {};
+  const newItemsWithNumber: Record<string, ItemWithNumber> = {};
   for (const item of allItemList) {
-    itemsWithNumber.value[item.id] = {
+    newItemsWithNumber[item.id] = {
       id: item.id,
       name: addSpaces(item.name),
       description: truncate(addSpaces(item.description), props.truncateModalDescription),
-      number: 0,
+      number: selectedItems && item.id in selectedItems ? selectedItems[item.id] : 0,
     };
-    if (selectedItems && item.id in selectedItems) {
-      itemsWithNumber.value[item.id].number = selectedItems[item.id];
-    }
   }
-  itemsWithNumberList.value = Object.values(itemsWithNumber.value).sort((a, b) => {
+  itemsWithNumber.value = newItemsWithNumber;
+  itemsWithNumberList.value = Object.values(newItemsWithNumber).sort((a, b) => {
     return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
   });
 }

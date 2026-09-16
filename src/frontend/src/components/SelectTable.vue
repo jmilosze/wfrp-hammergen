@@ -42,17 +42,9 @@ const itemsWithSelect: Ref<Record<string, ItemWithSelect>> = ref({});
 const itemsWithSelectList: Ref<ItemWithSelect[]> = ref([]);
 
 watch(
-  () => props.initSelectedItems,
-  (newVal) => {
-    updateItemsWithSelect(newVal, props.itemList);
-  },
-  { immediate: true },
-);
-
-watch(
-  () => props.itemList,
-  (newVal) => {
-    updateItemsWithSelect(props.initSelectedItems, newVal);
+  [() => props.initSelectedItems, () => props.itemList],
+  ([selectedItems, itemList]) => {
+    updateItemsWithSelect(selectedItems, itemList);
   },
   { immediate: true },
 );
@@ -61,19 +53,17 @@ function updateItemsWithSelect(
   selectedItems: Set<string>,
   itemList: { name: string; id: string; description: string }[],
 ) {
-  itemsWithSelect.value = {};
+  const newItemsWithSelect: Record<string, ItemWithSelect> = {};
   for (const item of itemList) {
-    itemsWithSelect.value[item.id] = {
+    newItemsWithSelect[item.id] = {
       id: item.id,
       name: addSpaces(item.name),
       description: truncate(addSpaces(item.description), props.truncateModalDescription),
-      selected: false,
+      selected: Boolean(selectedItems && selectedItems.has(item.id)),
     };
-    if (selectedItems && selectedItems.has(item.id)) {
-      itemsWithSelect.value[item.id].selected = true;
-    }
   }
-  itemsWithSelectList.value = Object.values(itemsWithSelect.value).sort((a, b) => {
+  itemsWithSelect.value = newItemsWithSelect;
+  itemsWithSelectList.value = Object.values(newItemsWithSelect).sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
   });
 }
