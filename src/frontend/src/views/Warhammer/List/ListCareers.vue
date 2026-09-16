@@ -18,25 +18,22 @@ import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 
 import DeleteModal from "../../../components/DeleteModal.vue";
-import { getListOfAllValues, getOptions } from "../../../utils/whList.ts";
+import { getOptions } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
-import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new CareerApi(authRequest));
 await whList.loadWhList();
 
-const allCareerClasses = getListOfAllValues(careerClassList);
-const allCareerSpecies = getListOfAllValues(speciesList);
-
-const searchTerm = useQueryParams("search");
-const sourceTerm = useQueryParams("source", whList.sourceValues);
-const classTerm = useQueryParams("class", allCareerClasses);
-const speciesTerm = useQueryParams("species", allCareerSpecies);
+const searchTerm = useRouteQuery("search", "");
+const sourceTerm = useRouteQuery("source", "");
+const classTerm = useRouteQuery("class", "");
+const speciesTerm = useRouteQuery("species", "");
 
 const auth = useAuth();
 

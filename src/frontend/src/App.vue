@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import NavLink from "./components/NavLink.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
@@ -7,7 +7,7 @@ import { authRequest } from "./services/auth.ts";
 import { useScreenSize } from "./composables/viewSize.ts";
 import { ViewSize } from "./utils/viewSize.ts";
 import { useModal } from "./composables/modal.ts";
-import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { usePrint } from "./composables/print.ts";
 import { useAuth } from "./composables/auth.ts";
 import { Icon } from "@iconify/vue";
@@ -18,13 +18,8 @@ const userApi = new UserApi(authRequest);
 const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
 const auth = useAuth();
 const modal = useModal();
-const router = useRouter();
+const route = useRoute();
 const { printing } = usePrint();
-
-const reRenderContentCounter = ref(0);
-const reRenderContent = computed(() => {
-  return router.currentRoute.value.path + "_counter_" + reRenderContentCounter.value.toString();
-});
 
 watch(isEqualOrGreater, (isLg) => {
   if (isLg) {
@@ -53,11 +48,6 @@ onMounted(async () => {
     await auth.callAndLogoutIfUnauthorized(userApi.get, false)();
   }
 });
-
-function onListWhClick() {
-  showSideBar.value = false;
-  reRenderContentCounter.value += 1;
-}
 </script>
 
 <template>
@@ -96,7 +86,7 @@ function onListWhClick() {
     ]"
   >
     <div class="pl-1 lg:p-0 mt-2 mb-8 flex items-center justify-between lg:justify-center lg:ml-0">
-      <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="onListWhClick()">
+      <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="showSideBar = false">
         <div class="flex items-center gap-2">
           <Icon icon="game-icons:warhammer" />
           <div>Hammergen</div>
@@ -116,7 +106,7 @@ function onListWhClick() {
           routeName="characters"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Characters
         </NavLink>
@@ -126,7 +116,7 @@ function onListWhClick() {
           routeName="careers"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Careers
         </NavLink>
@@ -134,7 +124,7 @@ function onListWhClick() {
           routeName="traits"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Creature traits
         </NavLink>
@@ -142,7 +132,7 @@ function onListWhClick() {
           routeName="mutations"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Mutations
         </NavLink>
@@ -150,7 +140,7 @@ function onListWhClick() {
           routeName="prayers"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Prayers
         </NavLink>
@@ -158,7 +148,7 @@ function onListWhClick() {
           routeName="properties"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Qualities and flaws
         </NavLink>
@@ -166,7 +156,7 @@ function onListWhClick() {
           routeName="runes"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Runes
         </NavLink>
@@ -174,7 +164,7 @@ function onListWhClick() {
           routeName="skills"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Skills
         </NavLink>
@@ -182,7 +172,7 @@ function onListWhClick() {
           routeName="spells"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Spells
         </NavLink>
@@ -190,7 +180,7 @@ function onListWhClick() {
           routeName="talents"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Talents
         </NavLink>
@@ -198,7 +188,7 @@ function onListWhClick() {
           routeName="items"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Trappings
         </NavLink>
@@ -239,7 +229,7 @@ function onListWhClick() {
           href="https://dice.hammergen.net/"
           variant="side"
           :class="isEqualOrGreater ? 'text-start' : 'text-end'"
-          @click="onListWhClick()"
+          @click="showSideBar = false"
         >
           Roll dice!
         </NavLink>
@@ -259,7 +249,7 @@ function onListWhClick() {
     <div class="h-full flex flex-col justify-between items-center">
       <!-- Content -->
       <div class="flex-auto p-8 max-w-7xl w-full">
-        <RouterView v-slot="{ Component }" :key="reRenderContent">
+        <RouterView v-slot="{ Component }" :key="route.path">
           <template v-if="Component">
             <Suspense>
               <!-- main content -->

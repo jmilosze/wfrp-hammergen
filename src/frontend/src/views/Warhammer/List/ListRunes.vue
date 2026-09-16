@@ -10,26 +10,23 @@ import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 import DeleteModal from "../../../components/DeleteModal.vue";
-import { getListOfAllValues, getOptions } from "../../../utils/whList.ts";
+import { getOptions } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
-import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new RuneApi(authRequest));
 await whList.loadWhList();
 
-const allItemTypes = getListOfAllValues(itemTypeList);
-const allRuneLabels = getListOfAllValues(runeLabelList);
-
-const searchTerm = useQueryParams("search");
-const sourceTerm = useQueryParams("source", whList.sourceValues);
-const applicableToTerm = useQueryParams("applicableTo", allItemTypes);
-const labelTerm = useQueryParams("label", allRuneLabels);
+const searchTerm = useRouteQuery("search", "");
+const sourceTerm = useRouteQuery("source", "");
+const applicableToTerm = useRouteQuery("applicableTo", "");
+const labelTerm = useRouteQuery("label", "");
 
 const auth = useAuth();
 

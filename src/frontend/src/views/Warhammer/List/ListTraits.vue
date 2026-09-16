@@ -14,15 +14,15 @@ import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
-import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new TraitApi(authRequest));
 await whList.loadWhList();
 
-const searchTerm = useQueryParams("search");
-const sourceTerm = useQueryParams("source", whList.sourceValues);
+const searchTerm = useRouteQuery("search", "");
+const sourceTerm = useRouteQuery("source", "");
 
 const auth = useAuth();
 

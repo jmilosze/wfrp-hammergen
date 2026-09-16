@@ -19,7 +19,3 @@ export function getOptions<T extends number>(
 
   return options;
 }
-
-export function getListOfAllValues<T extends number>(allValues: T[]) {
-  return ["", "no", ...allValues.map((x) => x.toString())];
-}

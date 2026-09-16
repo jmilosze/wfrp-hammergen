@@ -4,7 +4,7 @@ import TextLink from "../../components/TextLink.vue";
 import HowTo from "./HowTo.vue";
 import UpdateList from "./UpdateList.vue";
 import HorizontalNavBar from "../../components/HorizontalNavBar.vue";
-import { useQueryParams } from "../../composables/useQueryParams.ts";
+import { useRouteQuery } from "@vueuse/router";
 
 const viewNames = [
   { value: "about", text: "About" },
@@ -12,10 +12,7 @@ const viewNames = [
   { value: "updates", text: "Updates" },
 ];
 
-const currentView = useQueryParams(
-  "view",
-  viewNames.map((x) => x.value),
-);
+const currentView = useRouteQuery("view", viewNames[0].value);
 </script>
 
 <template>

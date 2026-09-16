@@ -11,23 +11,21 @@ import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 
 import DeleteModal from "../../../components/DeleteModal.vue";
-import { getListOfAllValues, getOptions } from "../../../utils/whList.ts";
+import { getOptions } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
-import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new MutationApi(authRequest));
 await whList.loadWhList();
 
-const allMutationTypes = getListOfAllValues(mutationTypeList);
-
-const searchTerm = useQueryParams("search");
-const sourceTerm = useQueryParams("source", whList.sourceValues);
-const typeTerm = useQueryParams("type", allMutationTypes);
+const searchTerm = useRouteQuery("search", "");
+const sourceTerm = useRouteQuery("source", "");
+const typeTerm = useRouteQuery("type", "");
 
 const auth = useAuth();
 

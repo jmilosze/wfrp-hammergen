@@ -13,7 +13,7 @@ import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import ActionButton from "../../../components/ActionButton.vue";
-import { useQueryParams } from "../../../composables/useQueryParams.ts";
+import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 import TextLink from "../../../components/TextLink.vue";
 import { Visibility } from "../../../services/wh/common.ts";
@@ -22,9 +22,8 @@ const whList = useWhList(new CharacterApi(authRequest));
 await whList.loadWhList();
 const auth = useAuth();
 
-const searchTerm = useQueryParams("search");
-const showSampleTerm = useQueryParams("sample");
-showSampleTerm.value = auth.loggedIn.value ? "" : "true";
+const searchTerm = useRouteQuery("search", "");
+const showSampleTerm = useRouteQuery("sample", auth.loggedIn.value ? "" : "true");
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
