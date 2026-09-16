@@ -91,11 +91,11 @@ export const testIsEqualCommonProperties = (name: string, whProperty: WhProperty
       { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
       { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
       { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
-    ])("when other mutation has $diff", (t) => {
+    ])(`when other ${name} has $diff`, (t) => {
       const whProperty1 = whProperty.copy();
       const whProperty2 = whProperty.copy();
       whProperty1.source = { 1: "page 2", 3: "page 5-10" };
-      whProperty1.source = t.source;
+      whProperty2.source = t.source;
       expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
     });
   });
