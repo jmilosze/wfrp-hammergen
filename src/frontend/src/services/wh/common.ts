@@ -27,7 +27,7 @@ export interface WhProperty {
 
 export interface WhApi<T, TApiData> {
   getElement: (id: string) => Promise<T>;
-  listElements: (id: string) => Promise<T[]>;
+  listElements: () => Promise<T[]>;
   createElement: (wh: T) => Promise<ApiResponse<TApiData>>;
   updateElement: (wh: T) => Promise<ApiResponse<TApiData>>;
   deleteElement: (id: string) => Promise<void>;

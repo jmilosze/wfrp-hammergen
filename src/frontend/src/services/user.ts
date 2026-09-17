@@ -1,6 +1,12 @@
 import { ValidationStatus, setValidationStatus } from "../utils/validation.ts";
-import { AxiosInstance } from "axios";
+import { AxiosInstance, AxiosRequestConfig } from "axios";
 import { arraysAreEqualIgnoreOrder } from "../utils/array.ts";
+
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    skipAuthRedirect?: boolean;
+  }
+}
 
 const EMAIL_REGEX =
   /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/;
@@ -104,7 +110,7 @@ export class UserApi {
   updatePassword: (user: User) => Promise<void>;
   updateSharedAccounts: (user: User) => Promise<void>;
   delete: (user: User) => Promise<void>;
-  get: () => Promise<User>;
+  get: (config?: AxiosRequestConfig) => Promise<User>;
   checkIfExists: (email: string) => Promise<boolean>;
 
   constructor(axios: AxiosInstance) {
@@ -158,8 +164,8 @@ export class UserApi {
       });
     };
 
-    this.get = async () => {
-      const resp = await axios.get("/api/user");
+    this.get = async (config?: AxiosRequestConfig) => {
+      const resp = await axios.get("/api/user", config);
       const user = new User();
 
       if ("data" in resp) {

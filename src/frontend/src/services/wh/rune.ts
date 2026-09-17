@@ -170,7 +170,7 @@ export function modelToApi(itemRune: Rune): RuneApiData {
 
 export class RuneApi implements WhApi<Rune, RuneApiData> {
   getElement: (id: string) => Promise<Rune>;
-  listElements: (id: string) => Promise<Rune[]>;
+  listElements: () => Promise<Rune[]>;
   createElement: (wh: Rune) => Promise<ApiResponse<RuneApiData>>;
   updateElement: (wh: Rune) => Promise<ApiResponse<RuneApiData>>;
   deleteElement: (id: string) => Promise<void>;

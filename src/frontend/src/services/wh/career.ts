@@ -490,7 +490,7 @@ function careerLevelToCareerLevelApiData(careerLevel: CareerLevel): CareerLevelA
 
 export class CareerApi implements WhApi<Career, CareerApiData> {
   getElement: (id: string) => Promise<Career>;
-  listElements: (id: string) => Promise<Career[]>;
+  listElements: () => Promise<Career[]>;
   createElement: (wh: Career) => Promise<ApiResponse<CareerApiData>>;
   updateElement: (wh: Career) => Promise<ApiResponse<CareerApiData>>;
   deleteElement: (id: string) => Promise<void>;

@@ -28,7 +28,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
 
     showApiError.value = true;
     try {
-      wh.value = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(id);
+      wh.value = await elementApi.getElement(id);
       whOriginal.value = wh.value.copy() as T;
       initSources.value = copySource(wh.value.source);
     } catch {
@@ -52,11 +52,11 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
 
     try {
       if (wh.value.id === "create") {
-        await auth.callAndLogoutIfUnauthorized(elementApi.createElement)(wh.value);
+        await elementApi.createElement(wh.value);
         submissionState.value.setSuccess(`${wh.value.name} created successfully.`);
         return true;
       } else {
-        await auth.callAndLogoutIfUnauthorized(elementApi.updateElement)(wh.value);
+        await elementApi.updateElement(wh.value);
         submissionState.value.setSuccess(`${wh.value.name} updated successfully.`);
         return true;
       }

@@ -14,7 +14,7 @@ const submissionState = ref(new SubmissionState());
 const showAfterSubmit = ref(false);
 const userApi = new UserApi(authRequest);
 
-const { getLoggedUserInfo, callAndLogoutIfUnauthorized } = useAuth();
+const { getLoggedUserInfo } = useAuth();
 
 const validPassword = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -52,7 +52,7 @@ async function submitForm() {
 
   try {
     user.value.email = getLoggedUserInfo().username.toLowerCase();
-    await callAndLogoutIfUnauthorized(userApi.updatePassword)(user.value);
+    await userApi.updatePassword(user.value);
 
     user.value.reset();
     submissionState.value.setSuccess("Password updated successfully.");

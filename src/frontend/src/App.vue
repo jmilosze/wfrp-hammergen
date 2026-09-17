@@ -45,7 +45,11 @@ watch(modal.show, (showModal) => {
 
 onMounted(async () => {
   if (auth.loggedIn.value) {
-    await auth.callAndLogoutIfUnauthorized(userApi.get, false)();
+    try {
+      await userApi.get({ skipAuthRedirect: true });
+    } catch {
+      // Ignored: interceptor resets auth state silently when skipAuthRedirect is true
+    }
   }
 });
 </script>

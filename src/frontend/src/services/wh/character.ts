@@ -845,7 +845,7 @@ export function modelToApi(character: Character): CharacterApiData {
 
 export class CharacterApi implements WhApi<Character, CharacterApiData> {
   getElement: (id: string) => Promise<Character>;
-  listElements: (id: string) => Promise<Character[]>;
+  listElements: () => Promise<Character[]>;
   createElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;
   updateElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;
   deleteElement: (id: string) => Promise<void>;

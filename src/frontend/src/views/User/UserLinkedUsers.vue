@@ -8,7 +8,7 @@ import ActionButton from "../../components/ActionButton.vue";
 import FormInput from "../../components/FormInput.vue";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
-import { UnauthorizedError, useAuth } from "../../composables/auth.ts";
+import { UnauthorizedError } from "../../composables/auth.ts";
 import AlertBlock from "../../components/AlertBlock.vue";
 
 const apiError = ref("");
@@ -22,8 +22,6 @@ const user = ref(new User());
 const originalUser = ref(new User());
 const userApi = new UserApi(authRequest);
 
-const { callAndLogoutIfUnauthorized } = useAuth();
-
 const validNewSharedAccount = computed(() => {
   if (addUserSubmissionState.value.notStartedOrSubmitted()) {
     return setValidationStatus(true);
@@ -33,7 +31,7 @@ const validNewSharedAccount = computed(() => {
 });
 
 try {
-  user.value = await callAndLogoutIfUnauthorized(userApi.get)();
+  user.value = await userApi.get();
   originalUser.value = user.value.copy();
 } catch {
   apiError.value = "Error. Could not pull data from server.";
@@ -54,7 +52,7 @@ async function addUsername() {
   showAddUserAfterSubmit.value = true;
 
   try {
-    const userExists = await callAndLogoutIfUnauthorized(userApi.checkIfExists)(newSharedAccount.value);
+    const userExists = await userApi.checkIfExists(newSharedAccount.value);
     if (userExists) {
       user.value.addSharedAccount(newSharedAccount.value);
       newSharedAccount.value = "";
@@ -76,13 +74,15 @@ async function submitForm() {
   applyChangesSubmissionState.value.setInProgress();
   showApplyChangesAfterSubmit.value = true;
   try {
-    await callAndLogoutIfUnauthorized(userApi.updateSharedAccounts)(user.value);
+    await userApi.updateSharedAccounts(user.value);
     originalUser.value = user.value.copy();
     applyChangesSubmissionState.value.setSuccess(
       "Linked user list updated successfully! In order to be able to see content shared by newly added users please log out and then log back in.",
     );
   } catch (error) {
-    applyChangesSubmissionState.value.setFailureFromError(error, []);
+    if (!(error instanceof UnauthorizedError)) {
+      applyChangesSubmissionState.value.setFailureFromError(error, []);
+    }
   }
 }
 </script>
