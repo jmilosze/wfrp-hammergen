@@ -884,7 +884,7 @@ export function modelToApi(item: Item): ItemApiData {
 
 export class ItemApi implements WhApi<Item, ItemApiData> {
   getElement: (id: string) => Promise<Item>;
-  listElements: (id: string) => Promise<Item[]>;
+  listElements: () => Promise<Item[]>;
   createElement: (wh: Item) => Promise<ApiResponse<ItemApiData>>;
   updateElement: (wh: Item) => Promise<ApiResponse<ItemApiData>>;
   deleteElement: (id: string) => Promise<void>;

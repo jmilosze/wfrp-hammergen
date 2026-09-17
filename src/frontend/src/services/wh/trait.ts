@@ -121,7 +121,7 @@ export function modelToApi(trait: Trait): TraitApiData {
 
 export class TraitApi implements WhApi<Trait, TraitApiData> {
   getElement: (id: string) => Promise<Trait>;
-  listElements: (id: string) => Promise<Trait[]>;
+  listElements: () => Promise<Trait[]>;
   createElement: (wh: Trait) => Promise<ApiResponse<TraitApiData>>;
   updateElement: (wh: Trait) => Promise<ApiResponse<TraitApiData>>;
   deleteElement: (id: string) => Promise<void>;

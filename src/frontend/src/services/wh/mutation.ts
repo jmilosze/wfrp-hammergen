@@ -149,7 +149,7 @@ export function modelToApi(mutation: Mutation): MutationApiData {
 
 export class MutationApi implements WhApi<Mutation, MutationApiData> {
   getElement: (id: string) => Promise<Mutation>;
-  listElements: (id: string) => Promise<Mutation[]>;
+  listElements: () => Promise<Mutation[]>;
   createElement: (wh: Mutation) => Promise<ApiResponse<MutationApiData>>;
   updateElement: (wh: Mutation) => Promise<ApiResponse<MutationApiData>>;
   deleteElement: (id: string) => Promise<void>;

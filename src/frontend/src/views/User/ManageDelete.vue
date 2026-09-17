@@ -14,7 +14,7 @@ const submissionState = ref(new SubmissionState());
 const showAfterSubmit = ref(false);
 const userApi = new UserApi(authRequest);
 
-const { callAndLogoutIfUnauthorized, logout } = useAuth();
+const { logout } = useAuth();
 
 const validCurrentPassword = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -35,7 +35,7 @@ async function submitForm() {
   showAfterSubmit.value = true;
 
   try {
-    await callAndLogoutIfUnauthorized(userApi.delete)(user.value);
+    await userApi.delete(user.value);
     user.value.reset();
     submissionState.value.setSuccess("Account deleted successfully deleted. Logging out...");
     setTimeout(() => {

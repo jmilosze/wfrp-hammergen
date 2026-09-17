@@ -227,7 +227,7 @@ export function modelToApi(talent: Talent): TalentApiData {
 
 export class TalentApi implements WhApi<Talent, TalentApiData> {
   getElement: (id: string) => Promise<Talent>;
-  listElements: (id: string) => Promise<Talent[]>;
+  listElements: () => Promise<Talent[]>;
   createElement: (wh: Talent) => Promise<ApiResponse<TalentApiData>>;
   updateElement: (wh: Talent) => Promise<ApiResponse<TalentApiData>>;
   deleteElement: (id: string) => Promise<void>;

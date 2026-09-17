@@ -152,7 +152,7 @@ export function modelToApi(prayer: Prayer): PrayerApiData {
 
 export class PrayerApi implements WhApi<Prayer, PrayerApiData> {
   getElement: (id: string) => Promise<Prayer>;
-  listElements: (id: string) => Promise<Prayer[]>;
+  listElements: () => Promise<Prayer[]>;
   createElement: (wh: Prayer) => Promise<ApiResponse<PrayerApiData>>;
   updateElement: (wh: Prayer) => Promise<ApiResponse<PrayerApiData>>;
   deleteElement: (id: string) => Promise<void>;

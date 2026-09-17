@@ -1,4 +1,4 @@
-import { ApiResponse, SHORT_DESC_LENGTH, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
+import { SHORT_DESC_LENGTH, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
 import { computed, Ref, ref } from "vue";
 import { source } from "../services/wh/source.ts";
 import { useAuth } from "./auth.ts";
@@ -25,7 +25,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
     loading.value = true;
     showApiError.value = true;
     try {
-      whList.value = await auth.callAndLogoutIfUnauthorized(elementApi.listElements)();
+      whList.value = await elementApi.listElements();
     } catch {
       apiError.value = "Error. Could not pull data from server.";
     }
@@ -35,7 +35,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
   async function copyWh(whId: string): Promise<void> {
     showApiError.value = true;
     try {
-      const whCopy: T = await auth.callAndLogoutIfUnauthorized(elementApi.getElement)(whId);
+      const whCopy: T = await elementApi.getElement(whId);
       whCopy.name = whCopy.name + " - copy";
       if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(0, SHORT_DESC_LENGTH);
@@ -47,7 +47,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
         whCopy.visibility = Visibility.Private;
       }
 
-      const res = (await auth.callAndLogoutIfUnauthorized(elementApi.createElement)(whCopy)) as ApiResponse<TApiData>;
+      const res = await elementApi.createElement(whCopy);
 
       whCopy.id = res.id;
       if (res.ownerId) {
@@ -65,7 +65,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
   async function deleteWh() {
     showApiError.value = true;
     try {
-      await auth.callAndLogoutIfUnauthorized(elementApi.deleteElement)(whToDelete.value.id);
+      await elementApi.deleteElement(whToDelete.value.id);
       for (let i = 0; i < whList.value.length; i++) {
         if (whList.value[i]["id"] === whToDelete.value.id) {
           whList.value.splice(i, 1);

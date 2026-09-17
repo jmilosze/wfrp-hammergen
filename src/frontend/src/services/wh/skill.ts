@@ -176,7 +176,7 @@ export function modelToApi(skill: Skill): SkillApiData {
 
 export class SkillApi implements WhApi<Skill, SkillApiData> {
   getElement: (id: string) => Promise<Skill>;
-  listElements: (id: string) => Promise<Skill[]>;
+  listElements: () => Promise<Skill[]>;
   createElement: (wh: Skill) => Promise<ApiResponse<SkillApiData>>;
   updateElement: (wh: Skill) => Promise<ApiResponse<SkillApiData>>;
   deleteElement: (id: string) => Promise<void>;

@@ -1,7 +1,7 @@
-import { getUserInfo, isUserAdmin, isUserLoggedIn, loginUser, logoutUser, setUserInfo } from "../services/auth.ts";
+import { authRequest, getUserInfo, isUserAdmin, isUserLoggedIn, loginUser, logoutUser, setUserInfo } from "../services/auth.ts";
 import { isAxiosError } from "axios";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { type Router, useRouter } from "vue-router";
 
 export class UnauthorizedError extends Error {
   constructor() {
@@ -13,39 +13,46 @@ export class UnauthorizedError extends Error {
 const loggedIn = ref(isUserLoggedIn());
 const isAdmin = ref(isUserAdmin());
 
+export function resetAuthState(): void {
+  logoutUser();
+  loggedIn.value = false;
+  isAdmin.value = false;
+}
+
+export function setupAuthInterceptor(router: Router): number {
+  let redirecting = false;
+
+  return authRequest.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      if (isAxiosError(error) && error.response?.status === 401) {
+        resetAuthState();
+
+        const skipRedirect = error.config?.skipAuthRedirect === true;
+        if (!skipRedirect && !redirecting && router.currentRoute.value.name !== "login") {
+          redirecting = true;
+          try {
+            await router.push({ name: "login" });
+          } finally {
+            redirecting = false;
+          }
+        }
+
+        return Promise.reject(new UnauthorizedError());
+      }
+      return Promise.reject(error);
+    },
+  );
+}
+
 export function useAuth() {
   loggedIn.value = isUserLoggedIn();
   isAdmin.value = isUserAdmin();
 
   const router = useRouter();
-  function callAndLogoutIfUnauthorized<T>(
-    apiCall: (...args: any[]) => Promise<T>,
-    redirectToLogin = true,
-  ): (...args: any[]) => Promise<T> {
-    return async (...args: any[]) => {
-      try {
-        return await apiCall(...args);
-      } catch (error: any) {
-        if (isAxiosError(error) && error.response && error.response?.status === 401) {
-          logoutUser();
-          loggedIn.value = false;
-          isAdmin.value = false;
-
-          if (redirectToLogin && router.currentRoute.value.name !== "login") {
-            await router.push({ name: "login" });
-          }
-          throw new UnauthorizedError();
-        } else {
-          throw error;
-        }
-      }
-    };
-  }
 
   async function logout(): Promise<void> {
-    logoutUser();
-    loggedIn.value = false;
-    isAdmin.value = false;
+    resetAuthState();
 
     if (router.currentRoute.value.name !== "home") {
       await router.push({ name: "home" });
@@ -70,7 +77,7 @@ export function useAuth() {
     return setUserInfo(username);
   }
 
-  return { loggedIn, isAdmin, login, logout, callAndLogoutIfUnauthorized, getLoggedUserInfo, setLoggedUserInfo, canEdit };
+  return { loggedIn, isAdmin, login, logout, getLoggedUserInfo, setLoggedUserInfo, canEdit };
 }
 
 export function canEdit(ownerId?: string): boolean {

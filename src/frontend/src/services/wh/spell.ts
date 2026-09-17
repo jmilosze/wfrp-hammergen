@@ -497,7 +497,7 @@ export function modelToApi(spell: Spell): SpellApiData {
 
 export class SpellApi implements WhApi<Spell, SpellApiData> {
   getElement: (id: string) => Promise<Spell>;
-  listElements: (id: string) => Promise<Spell[]>;
+  listElements: () => Promise<Spell[]>;
   createElement: (wh: Spell) => Promise<ApiResponse<SpellApiData>>;
   updateElement: (wh: Spell) => Promise<ApiResponse<SpellApiData>>;
   deleteElement: (id: string) => Promise<void>;
