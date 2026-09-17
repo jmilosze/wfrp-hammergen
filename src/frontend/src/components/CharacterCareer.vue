@@ -127,6 +127,9 @@ const modalColumns = [
 const resetPaginationCounter = ref(0);
 
 function onModifyClick() {
+  if (props.loading) {
+    return;
+  }
   resetPaginationCounter.value += 1;
   modal.showModal("modifyCareersModal");
   searchTerm.value = "";
@@ -181,7 +184,9 @@ function emitPastSelected(id: string) {
   <div>
     <div class="flex items-center mb-1">
       <div class="mr-1">Career</div>
-      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
+      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
+        Modify
+      </ActionButton>
     </div>
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />

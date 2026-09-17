@@ -140,6 +140,9 @@ const modalColumns = [
 const resetPaginationCounter = ref(0);
 
 function onModifyClick() {
+  if (props.loading) {
+    return;
+  }
   resetPaginationCounter.value += 1;
   modal.showModal("modifyItemsModal");
   searchTerm.value = "";
@@ -154,13 +157,23 @@ function onModifyClick() {
     <div class="flex items-center gap-2 mb-1 flex-wrap">
       <div>Trappings</div>
       <div class="flex gap-2 flex-wrap">
-        <ActionButton v-if="!disabled" class="flex-1 btn btn-sm" @click="onModifyClick">
+        <ActionButton v-if="!disabled" :disabled="props.loading" class="flex-1 btn btn-sm" @click="onModifyClick">
           <span class="flex-1">Modify</span>
         </ActionButton>
-        <ActionButton v-if="!disabled" class="whitespace-nowrap flex-1 btn btn-sm" @click="emit('addClassItems')">
+        <ActionButton
+          v-if="!disabled"
+          :disabled="props.loading"
+          class="whitespace-nowrap flex-1 btn btn-sm"
+          @click="emit('addClassItems')"
+        >
           <span class="flex-1">Add class items</span>
         </ActionButton>
-        <ActionButton v-if="!disabled" class="whitespace-nowrap flex-1 btn btn-danger btn-sm" @click="emit('clearAll')">
+        <ActionButton
+          v-if="!disabled"
+          :disabled="props.loading"
+          class="whitespace-nowrap flex-1 btn btn-danger btn-sm"
+          @click="emit('clearAll')"
+        >
           <span class="flex-1">Clear all</span>
         </ActionButton>
       </div>

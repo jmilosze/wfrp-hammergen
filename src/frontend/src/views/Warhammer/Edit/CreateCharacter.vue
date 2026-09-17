@@ -114,6 +114,19 @@ itemListUtils.loadWhList();
 const generationPropsUtils = useGenerationProps(authRequest);
 generationPropsUtils.loadGenerationProps();
 
+const referenceDataLoading = computed(
+  () =>
+    careerListUtils.loading.value ||
+    spellListUtils.loading.value ||
+    prayerListUtils.loading.value ||
+    traitListUtils.loading.value ||
+    mutationListUtils.loading.value ||
+    skillListUtils.loading.value ||
+    talentListUtils.loading.value ||
+    itemListUtils.loading.value ||
+    generationPropsUtils.loading.value,
+);
+
 await loadWh(props.id);
 
 const contentContainerRef = ref<HTMLDivElement | null>(null);
@@ -180,6 +193,9 @@ function formGenerateDescription() {
 }
 
 function formGenerateStatusStanding() {
+  if (careerListUtils.loading.value) {
+    return;
+  }
   let career = careerListUtils.whList.value.find((x) => x.id === wh.value.career.id);
   if (!career) {
     career = new Career();
@@ -284,7 +300,12 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
     .sort((a, b) => a.text.localeCompare(b.text));
 }
 
+const isGenerationDisabled = computed(() => referenceDataLoading.value || careerOpts.value.length === 0);
+
 function rollCharacter() {
+  if (isGenerationDisabled.value) {
+    return;
+  }
   const career = careerListUtils.whList.value.find((x) => x.id === selectedGenCareer.value);
   if (!career) {
     return;
@@ -437,7 +458,13 @@ const modifierAttributes = computed(() => {
         </p>
         <p class="my-1">Generating will override all current entries on the character sheet.</p>
       </HintModal>
-      <ActionButton class="btn btn-sm" @click="rollCharacter">Generate</ActionButton>
+      <ActionButton
+        class="btn btn-sm"
+        :disabled="isGenerationDisabled"
+        @click="rollCharacter"
+      >
+        Generate
+      </ActionButton>
     </div>
   </div>
   <div
@@ -513,7 +540,8 @@ const modifierAttributes = computed(() => {
         <div class="flex flex-wrap items-center gap-2 -mb-3">
           <p class="">Status and standing</p>
           <ActionButton
-            v-if="canEdit && !careerListUtils.loading.value"
+            v-if="canEdit"
+            :disabled="careerListUtils.loading.value"
             class="btn btn-sm"
             @click="formGenerateStatusStanding"
           >
@@ -567,13 +595,7 @@ const modifierAttributes = computed(() => {
         <p class="-mb-3">Sin and corruption</p>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
-            <FormInput
-              v-model="wh.sin"
-              type="number"
-              title="Sin"
-              :validationStatus="validSin"
-              :disabled="!canEdit"
-            />
+            <FormInput v-model="wh.sin" type="number" title="Sin" :validationStatus="validSin" :disabled="!canEdit" />
             <FormInput
               v-model="wh.corruption"
               type="number"
@@ -670,7 +692,7 @@ const modifierAttributes = computed(() => {
       :disabled="!canEdit"
       :initSkills="wh.skills"
       :skillList="skillListUtils.whList.value"
-      :loading="skillListUtils.loading.value"
+      :loading="skillListUtils.loading.value || generationPropsUtils.loading.value"
       :attributes="attributes"
       :validationStatus="validSkills"
       class="flex-1"
@@ -685,7 +707,7 @@ const modifierAttributes = computed(() => {
       :disabled="!canEdit"
       :initTalents="wh.talents"
       :talentList="talentListUtils.whList.value"
-      :loading="talentListUtils.loading.value"
+      :loading="talentListUtils.loading.value || generationPropsUtils.loading.value"
       :attributes="attributes"
       :validationStatus="validTalents"
       class="flex-1"
@@ -704,7 +726,7 @@ const modifierAttributes = computed(() => {
     :initCarried="wh.carriedItems"
     :initStored="wh.storedItems"
     :itemList="itemListUtils.whList.value"
-    :loading="itemListUtils.loading.value"
+    :loading="itemListUtils.loading.value || careerListUtils.loading.value || generationPropsUtils.loading.value"
     :equippedValidationStatus="validEquipped"
     :carriedValidationStatus="validCarried"
     :storedValidationStatus="validStored"

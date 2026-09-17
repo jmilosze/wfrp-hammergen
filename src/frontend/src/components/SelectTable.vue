@@ -83,6 +83,9 @@ const modalId = props.modalId ? props.modalId : "modifyItemsModal";
 const resetPaginationCounter = ref(0);
 
 function onModifyClick() {
+  if (props.loading) {
+    return;
+  }
   resetPaginationCounter.value += 1;
   modal.showModal(modalId);
   searchTerm.value = "";
@@ -96,8 +99,15 @@ function onModifyClick() {
   <div>
     <div class="flex items-center gap-2 mb-1">
       <div v-if="title">{{ title }}</div>
-      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
-      <ActionButton v-if="!disabled && clearAllBtn" class="btn btn-danger btn-sm" @click="emit('clearAll')">
+      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
+        Modify
+      </ActionButton>
+      <ActionButton
+        v-if="!disabled && clearAllBtn"
+        :disabled="props.loading"
+        class="btn btn-danger btn-sm"
+        @click="emit('clearAll')"
+      >
         Clear all
       </ActionButton>
     </div>

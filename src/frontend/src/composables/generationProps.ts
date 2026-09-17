@@ -13,13 +13,21 @@ export function useGenerationProps(axiosInstance: AxiosInstance) {
 
   const apiError = ref("");
   const showApiError = ref(true);
+  const loading = ref(false);
 
   async function loadGenerationProps(): Promise<void> {
+    if (loading.value) {
+      return;
+    }
+
+    loading.value = true;
     showApiError.value = true;
     try {
       generationProps.value = await getGenerationProps(axiosInstance);
     } catch {
       apiError.value = "Error. Could not pull data from server.";
+    } finally {
+      loading.value = false;
     }
   }
 
@@ -28,5 +36,6 @@ export function useGenerationProps(axiosInstance: AxiosInstance) {
     apiError,
     showApiError,
     loadGenerationProps,
+    loading,
   };
 }
