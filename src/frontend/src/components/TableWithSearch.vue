@@ -134,12 +134,7 @@ onUpdated(() => {
           <table v-if="isEqualOrGreater" class="w-full">
             <thead>
               <tr class="text-left">
-                <th
-                  v-for="field in fields"
-                  :key="field.name"
-                  class="border-b border-neutral-300 py-2 px-5"
-                  :class="[field.name === 'name' ? 'min-w-48 max-w-xs' : '']"
-                >
+                <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
                   {{ field.displayName }}
                 </th>
               </tr>
@@ -151,8 +146,8 @@ onUpdated(() => {
                   :key="field.name"
                   class="py-2 px-5 border-b border-neutral-300"
                   :class="[
-                    field.name === 'name' ? 'min-w-48 max-w-xs wrap-break-word' : '',
-                    field.name === 'description' ? 'wrap-break-word' : '',
+                    field.name === 'name' ? 'break-words' : '',
+                    field.name === 'description' ? '[overflow-wrap:anywhere]' : '',
                   ]"
                 >
                   <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
@@ -173,9 +168,12 @@ onUpdated(() => {
                     v-for="field in fields"
                     :key="field.name"
                     class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
-                    :class="[field.name === 'name' || field.name === 'description' ? 'wrap-break-word' : '']"
+                    :class="[
+                      field.name === 'name' ? 'break-words' : '',
+                      field.name === 'description' ? '[overflow-wrap:anywhere]' : '',
+                    ]"
                   >
-                    <div v-if="!field.skipStackedTitle" class="font-bold shrink-0">{{ field.displayName }}</div>
+                    <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
                     <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
                   </div>
                   <div class="border-b-4 border-neutral-400" />
