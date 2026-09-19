@@ -20,7 +20,7 @@ const canEdit = computed(() => auth.canEdit(props.ownerId));
 </script>
 
 <template>
-  <div class="flex gap-2 my-1">
+  <div class="flex gap-2 my-1 shrink-0">
     <LinkButton :routeName="routeName" :params="{ id: id }" class="btn btn-sm">
       {{ canEdit ? "View/Edit" : "View" }}
     </LinkButton>

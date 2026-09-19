@@ -12,7 +12,6 @@ import {
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed, watch } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -99,7 +98,7 @@ function formatSpellRow(spell: Spell) {
   simplifiedLabels.unshift(printSpellType(spell.classification.type));
 
   return {
-    name: addSpaces(spell.name),
+    name: spell.name,
     source: Object.keys(spell.source)
       .map((x) => source[x])
       .join(", "),

@@ -4,7 +4,6 @@ import { printRuneLabel, Rune, RuneApi, runeLabelList } from "../../../services/
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -62,7 +61,7 @@ function formatRuneRow(rune: Rune) {
   }
 
   return {
-    name: addSpaces(rune.name),
+    name: rune.name,
     applicableTo: applicableTo,
     source: Object.keys(rune.source)
       .map((x) => source[x])

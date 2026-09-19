@@ -6,7 +6,7 @@ import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { addSpaces, truncate } from "../utils/string.ts";
+import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import LinkButton from "./LinkButton.vue";
 import ReloadButton from "./ReloadButton.vue";
@@ -57,8 +57,8 @@ function updateItemsWithSelect(
   for (const item of itemList) {
     newItemsWithSelect[item.id] = {
       id: item.id,
-      name: addSpaces(item.name),
-      description: truncate(addSpaces(item.description), props.truncateModalDescription),
+      name: item.name,
+      description: truncate(item.description, props.truncateModalDescription),
       selected: Boolean(selectedItems && selectedItems.has(item.id)),
     };
   }
@@ -126,7 +126,7 @@ function onModifyClick() {
           <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-2 border-b border-neutral-300">
               <TextLink :routeName="routeName" :params="{ id: src.id }">
-                {{ addSpaces(src.name) }}
+                {{ src.name }}
               </TextLink>
             </td>
             <td v-if="!disableDescription" class="py-2 px-2 border-b border-neutral-300">{{ src.description }}</td>

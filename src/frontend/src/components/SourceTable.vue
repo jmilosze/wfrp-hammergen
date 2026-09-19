@@ -6,7 +6,6 @@ import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import TableWithSearch from "./TableWithSearch.vue";
-import { addSpaces } from "../utils/string.ts";
 
 const props = defineProps<{ initSources: Record<string, string>; disabled?: boolean }>();
 
@@ -82,7 +81,7 @@ function onModifyClick() {
         <tbody>
           <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ addSpaces(src.notes) }}</td>
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.notes }}</td>
           </tr>
         </tbody>
       </table>

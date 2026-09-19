@@ -12,7 +12,6 @@ import {
 import ActionButton from "../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";
-import { addSpaces } from "../../utils/string.ts";
 import { useElSize } from "../../composables/viewSize.ts";
 import { ViewSize } from "../../utils/viewSize.ts";
 import ViewCharacterTable from "../../components/ViewCharacterTable.vue";
@@ -223,8 +222,8 @@ const displayBasicSkills = ref({
   ],
   items: character.value.basicSkills.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
-    attributeName: addSpaces(x.attributeName),
+    name: x.name,
+    attributeName: x.attributeName,
     attributeValue: x.attributeValue,
     advances: x.advances,
     skill: x.skill,
@@ -241,8 +240,8 @@ const displayAdvancedSkills = ref({
   ],
   items: character.value.advancedSkills.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
-    attributeName: addSpaces(x.attributeName),
+    name: x.name,
+    attributeName: x.attributeName,
     attributeValue: x.attributeValue,
     advances: x.advances,
     skill: x.skill,
@@ -255,7 +254,7 @@ const displayTalents = ref({
     { name: "rank", displayName: "Times taken" },
   ],
   items: character.value.talents.map((x) => ({
-    name: addSpaces(x.name),
+    name: x.name,
     rank: x.rank,
     id: x.id,
   })),
@@ -271,8 +270,8 @@ const equippedArmourDisp = ref({
   ],
   items: character.value.equippedArmor.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
-    locations: x.locations ? x.locations.map((x) => addSpaces(x)).join(", ") : "",
+    name: x.name,
+    locations: x.locations ? x.locations.join(", ") : "",
     enc: x.enc,
     ap: x.ap ? x.ap : 0,
     qualities: x.qualitiesFlaws,
@@ -291,11 +290,11 @@ const equippedWeaponDisp = ref({
   ],
   items: character.value.equippedWeapon.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
-    group: addSpaces(x.group),
+    name: x.name,
+    group: x.group,
     enc: x.enc,
-    rng: addSpaces(x.rng),
-    dmg: addSpaces(x.dmg),
+    rng: x.rng,
+    dmg: x.dmg,
     qualities: x.qualitiesFlaws,
     runes: x.runes.map((x) => ({ id: x.id, name: x.name + `(x${x.number})` })),
   })),
@@ -309,9 +308,9 @@ const equippedOtherDisp = ref({
   ],
   items: character.value.equippedOther.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
+    name: x.name,
     enc: x.enc,
-    description: addSpaces(x.description),
+    description: x.description,
   })),
 });
 
@@ -323,9 +322,9 @@ const carriedDisp = ref({
   ],
   items: character.value.carried.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
+    name: x.name,
     enc: x.enc,
-    description: addSpaces(x.description),
+    description: x.description,
   })),
 });
 
@@ -333,7 +332,7 @@ const storedDisp = ref({
   fields: [{ name: "name", displayName: "Name", colspan: 0 }],
   items: character.value.stored.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
+    name: x.name,
   })),
 });
 
@@ -362,9 +361,9 @@ const mutationDisp = ref({
   ],
   items: character.value.mutations.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
+    name: x.name,
     type: x.type,
-    description: addSpaces(x.description),
+    description: x.description,
   })),
 });
 
@@ -375,8 +374,8 @@ const traitDisp = ref({
   ],
   items: character.value.traits.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
-    description: addSpaces(x.description),
+    name: x.name,
+    description: x.description,
   })),
 });
 
@@ -391,11 +390,11 @@ const spellFields = [
 function formatSpell(spell: CharacterFullSpell) {
   return {
     id: spell.id,
-    name: addSpaces(spell.name),
+    name: spell.name,
     cn: spell.cn,
-    range: addSpaces(spell.range),
-    target: addSpaces(spell.target),
-    duration: addSpaces(spell.duration),
+    range: spell.range,
+    target: spell.target,
+    duration: spell.duration,
   };
 }
 
@@ -413,10 +412,10 @@ const prayerDisp = ref({
   ],
   items: character.value.prayers.map((x) => ({
     id: x.id,
-    name: addSpaces(x.name),
-    range: addSpaces(x.range),
-    target: addSpaces(x.target),
-    duration: addSpaces(x.duration),
+    name: x.name,
+    range: x.range,
+    target: x.target,
+    duration: x.duration,
   })),
 });
 
@@ -441,7 +440,7 @@ const grimoiresDisp = ref(
   <AlertBlock v-if="apiError && showApiError" alertType="red" :centered="true" @close="showApiError = false">
     {{ apiError }}
   </AlertBlock>
-  <Header :title="addSpaces(character.name)" />
+  <Header :title="character.name" />
   <div v-if="!printing" ref="contentContainerRef" class="flex flex-wrap">
     <ActionButton class="m-1 btn btn-sm" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton class="m-1 btn btn-sm" @click="saveJson()">Download JSON</ActionButton>
@@ -465,13 +464,13 @@ const grimoiresDisp = ref(
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Name</span>
-                <span class="mr-3"> {{ addSpaces(character.name) }}</span>
+                <span class="mr-3"> {{ character.name }}</span>
               </div>
             </td>
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Species</span>
-                <span class="mr-3"> {{ addSpaces(character.species) }}</span>
+                <span class="mr-3"> {{ character.species }}</span>
               </div>
             </td>
           </tr>
@@ -479,7 +478,7 @@ const grimoiresDisp = ref(
             <td colspan="2" class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Description</span>
-                <span class="mr-3 whitespace-pre-wrap"> {{ addSpaces(character.description) }}</span>
+                <span class="mr-3 whitespace-pre-wrap"> {{ character.description }}</span>
               </div>
             </td>
           </tr>
@@ -495,20 +494,20 @@ const grimoiresDisp = ref(
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Current</span>
                 <TextLink routeName="career" :params="{ id: character.currentCareer.id }" class="mr-3">
-                  {{ addSpaces(character.currentCareer.name) }}
+                  {{ character.currentCareer.name }}
                 </TextLink>
               </div>
             </td>
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Class</span>
-                <span class="mr-3"> {{ addSpaces(character.currentCareer.className) }}</span>
+                <span class="mr-3"> {{ character.currentCareer.className }}</span>
               </div>
             </td>
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Status</span>
-                <span class="mr-3"> {{ addSpaces(character.status + " " + character.standing) }}</span>
+                <span class="mr-3"> {{ character.status + " " + character.standing }}</span>
               </div>
             </td>
           </tr>
@@ -523,7 +522,7 @@ const grimoiresDisp = ref(
                   :params="{ id: pastCareer.id }"
                   class="mr-3"
                 >
-                  {{ addSpaces(pastCareer.name) }}
+                  {{ pastCareer.name }}
                 </TextLink>
               </div>
             </td>
@@ -731,7 +730,7 @@ const grimoiresDisp = ref(
   <ViewCharacterTable
     v-for="book in grimoiresDisp"
     :key="book.name"
-    :title="'Spells in ' + addSpaces(book.name)"
+    :title="'Spells in ' + book.name"
     :stack="!isEqualOrGreater && !printing"
     :items="book.items"
     :fields="book.fields"
@@ -765,8 +764,8 @@ const grimoiresDisp = ref(
   </ViewCharacterTable>
   <div v-if="character.notes.length > 0" class="">
     <div class="mb-1">Notes</div>
-    <div class="p-2 border border-neutral-400 whitespace-pre-wrap">
-      {{ addSpaces(character.notes) }}
+    <div class="p-2 border border-neutral-400 whitespace-pre-wrap [overflow-wrap:anywhere]">
+      {{ character.notes }}
     </div>
   </div>
 </template>

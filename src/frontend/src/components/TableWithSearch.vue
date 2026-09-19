@@ -6,7 +6,6 @@ import { refDebounced } from "@vueuse/core";
 import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { addSpaces } from "../utils/string.ts";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -142,8 +141,13 @@ onUpdated(() => {
             </thead>
             <tbody>
               <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
-                <td v-for="field in fields" :key="field.name" class="py-2 px-5 border-b border-neutral-300">
-                  <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
+                <td
+                  v-for="field in fields"
+                  :key="field.name"
+                  class="py-2 px-5 border-b border-neutral-300"
+                  :class="[field.name === 'name' || field.name === 'description' ? '[overflow-wrap:anywhere]' : '']"
+                >
+                  <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
                 </td>
               </tr>
             </tbody>
@@ -160,10 +164,10 @@ onUpdated(() => {
                   <div
                     v-for="field in fields"
                     :key="field.name"
-                    class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
+                    class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2 [overflow-wrap:anywhere]"
                   >
                     <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
-                    <slot :name="field.name" v-bind="item">{{ addSpaces(String(item[field.name])) }}</slot>
+                    <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
                   </div>
                   <div class="border-b-4 border-neutral-400" />
                 </td>

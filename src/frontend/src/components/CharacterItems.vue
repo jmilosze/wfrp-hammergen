@@ -9,7 +9,7 @@ import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Item, printItemType } from "../services/wh/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
-import { addSpaces, truncate } from "../utils/string.ts";
+import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
@@ -66,8 +66,8 @@ function updateItemsWithNumber(
   for (const item of itemList) {
     itemsWithNumber.value[item.id] = {
       id: item.id,
-      name: addSpaces(item.name),
-      description: truncate(addSpaces(item.description), DESC_CHARS),
+      name: item.name,
+      description: truncate(item.description, DESC_CHARS),
       equipped: 0,
       carried: 0,
       stored: 0,
@@ -178,29 +178,29 @@ function onModifyClick() {
         </ActionButton>
       </div>
     </div>
-    <div class="border border-neutral-300 rounded p-2 min-w-fit">
+    <div class="border border-neutral-300 rounded p-2">
       <div v-if="props.loading" class="flex justify-center">
         <SpinnerAnimation class="w-14 m-2" />
       </div>
-      <div v-else class="flex gap-4 flex-wrap">
+      <div v-else class="flex flex-col md:flex-row gap-4">
         <div class="flex-1">
           <div class="mb-1">Equipped</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
             <table class="w-full">
               <thead>
                 <tr class="text-left">
                   <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-                  <th class="border-b border-neutral-300 py-2 px-2">Quantity</th>
+                  <th class="border-b border-neutral-300 py-2 px-2 w-px whitespace-nowrap">Quantity</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="src in selectedEquipped" :key="src.id" class="bg-white hover:bg-neutral-200">
                   <td class="py-2 px-2 border-b border-neutral-300">
                     <TextLink routeName="item" :params="{ id: src.id }">
-                      {{ addSpaces(src.name) }}
+                      {{ src.name }}
                     </TextLink>
                   </td>
-                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.equipped }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.equipped }}</td>
                 </tr>
               </tbody>
             </table>
@@ -209,22 +209,22 @@ function onModifyClick() {
         </div>
         <div class="flex-1">
           <div class="mb-1">Carried</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
             <table class="w-full">
               <thead>
                 <tr class="text-left">
                   <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-                  <th class="border-b border-neutral-300 py-2 px-2">Quantity</th>
+                  <th class="border-b border-neutral-300 py-2 px-2 w-px whitespace-nowrap">Quantity</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="src in selectedCarried" :key="src.id" class="bg-white hover:bg-neutral-200">
                   <td class="py-2 px-2 border-b border-neutral-300">
                     <TextLink routeName="item" :params="{ id: src.id }">
-                      {{ addSpaces(src.name) }}
+                      {{ src.name }}
                     </TextLink>
                   </td>
-                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.carried }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.carried }}</td>
                 </tr>
               </tbody>
             </table>
@@ -233,22 +233,22 @@ function onModifyClick() {
         </div>
         <div class="flex-1">
           <div class="mb-1">Stored</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
             <table class="w-full">
               <thead>
                 <tr class="text-left">
                   <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-                  <th class="border-b border-neutral-300 py-2 px-2">Quantity</th>
+                  <th class="border-b border-neutral-300 py-2 px-2 w-px whitespace-nowrap">Quantity</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="src in selectedStored" :key="src.id" class="bg-white hover:bg-neutral-200">
                   <td class="py-2 px-2 border-b border-neutral-300">
                     <TextLink routeName="item" :params="{ id: src.id }">
-                      {{ addSpaces(src.name) }}
+                      {{ src.name }}
                     </TextLink>
                   </td>
-                  <td class="py-2 px-2 border-b border-neutral-300">{{ src.stored }}</td>
+                  <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.stored }}</td>
                 </tr>
               </tbody>
             </table>
@@ -285,7 +285,7 @@ function onModifyClick() {
         <ReloadButton @click="emit('reload')" />
 
         <template #name="{ id }: { id: string }">
-          <TextLink routeName="item" :params="{ id: id }">{{ addSpaces(itemsWithNumber[id].name) }}</TextLink>
+          <TextLink routeName="item" :params="{ id: id }">{{ itemsWithNumber[id].name }}</TextLink>
         </template>
 
         <template #equipped="{ id }: { id: string }">

@@ -4,7 +4,6 @@ import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -43,7 +42,7 @@ const items = computed(() => {
 
 function formatPrayerRow(prayer: Prayer) {
   return {
-    name: addSpaces(prayer.name),
+    name: prayer.name,
     source: Object.keys(prayer.source)
       .map((x) => source[x])
       .join(", "),

@@ -4,7 +4,6 @@ import { Trait, TraitApi } from "../../../services/wh/trait.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -43,7 +42,7 @@ const items = computed(() => {
 
 function formatTraitRow(trait: Trait) {
   return {
-    name: addSpaces(trait.name),
+    name: trait.name,
     source: Object.keys(trait.source)
       .map((x) => source[x])
       .join(", "),

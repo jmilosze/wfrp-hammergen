@@ -4,7 +4,6 @@ import { Mutation, MutationApi, mutationTypeList, printMutationType } from "../.
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -48,7 +47,7 @@ const items = computed(() => {
 
 function formatMutationRow(mutation: Mutation) {
   return {
-    name: addSpaces(mutation.name),
+    name: mutation.name,
     type: printMutationType(mutation.type),
     source: Object.keys(mutation.source)
       .map((x) => source[x])

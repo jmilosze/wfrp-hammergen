@@ -4,7 +4,6 @@ import { Skill, SkillApi, skillTypeList, printSkillType } from "../../../service
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -52,7 +51,7 @@ const items = computed(() => {
 
 function formatSkillRow(skill: Skill) {
   return {
-    name: addSpaces(skill.name),
+    name: skill.name,
     type: printSkillType(skill.type),
     attribute: printAttributeName(skill.attribute),
     source: Object.keys(skill.source)

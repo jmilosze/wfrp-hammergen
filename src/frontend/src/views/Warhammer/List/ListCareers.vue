@@ -11,7 +11,6 @@ import {
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -64,7 +63,7 @@ function formatCareerRow(career: Career) {
   }
 
   return {
-    name: addSpaces(career.name),
+    name: career.name,
     class: printClassName(career.careerClass),
     species: species,
     source: Object.keys(career.source)

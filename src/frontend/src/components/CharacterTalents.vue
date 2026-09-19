@@ -10,7 +10,7 @@ import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { ValidationStatus } from "../utils/validation.ts";
-import { addSpaces, truncate } from "../utils/string.ts";
+import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
@@ -180,7 +180,7 @@ function onModifyClick() {
           <tr v-for="src in selectedTalents" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-2 border-b border-neutral-300">
               <TextLink routeName="talent" :params="{ id: src.id }">
-                {{ addSpaces(src.name) }}
+                {{ src.name }}
               </TextLink>
             </td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
@@ -210,7 +210,7 @@ function onModifyClick() {
         <ReloadButton @click="emit('reload')" />
 
         <template #name="{ id }: { id: string }">
-          <TextLink routeName="talent" :params="{ id: id }">{{ addSpaces(talentsWithNumber[id].name) }}</TextLink>
+          <TextLink routeName="talent" :params="{ id: id }">{{ talentsWithNumber[id].name }}</TextLink>
         </template>
 
         <template #number="{ id }: { id: string }">
@@ -224,7 +224,7 @@ function onModifyClick() {
 
         <template #description="{ id }: { id: string }">
           <div>
-            {{ truncate(addSpaces(talentsWithNumber[id].description), DESC_CHARS) }}
+            {{ truncate(talentsWithNumber[id].description, DESC_CHARS) }}
             <div class="mb-1">
               <span class="font-semibold mr-1">Max rank</span>
               {{ talentsWithNumber[id].maxRank }}

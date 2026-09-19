@@ -4,7 +4,6 @@ import { Talent, TalentApi } from "../../../services/wh/talent.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
@@ -44,7 +43,7 @@ const items = computed(() => {
 
 function formatTalentRow(talent: Talent) {
   return {
-    name: addSpaces(talent.name),
+    name: talent.name,
     maxRank: talent.getMaxRankDisplay(),
     source: Object.keys(talent.source)
       .map((x) => source[x])

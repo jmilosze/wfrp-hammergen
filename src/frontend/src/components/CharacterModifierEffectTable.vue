@@ -5,7 +5,6 @@ import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import TableWithSearch from "./TableWithSearch.vue";
-import { addSpaces } from "../utils/string.ts";
 import { modifierEffectList, printEffectDesc, printEffectName } from "../services/wh/characterModifiers.ts";
 
 const props = defineProps<{ initEffects: Set<number>; disabled?: boolean }>();
@@ -79,7 +78,7 @@ function onModifyClick() {
         <tbody>
           <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ addSpaces(src.desc) }}</td>
+            <td class="py-2 px-5 border-b border-neutral-300">{{ src.desc }}</td>
           </tr>
         </tbody>
       </table>

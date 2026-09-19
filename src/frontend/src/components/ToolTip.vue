@@ -2,7 +2,6 @@
 import { computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { Visibility } from "../services/wh/common";
-import { addSpaces } from "../utils/string";
 import { useAuth } from "../composables/auth";
 
 const props = defineProps<{
@@ -50,10 +49,10 @@ function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): { tile:
       </slot>
     </span>
     <div
-      class="absolute left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-white text-sm rounded px-2 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-opacity duration-200 min-w-[1px] max-w-[25vw] md:max-w-[10vw] w-max z-10"
+      class="absolute top-full left-0 md:left-1/2 md:-translate-x-1/2 mt-1 bg-gray-800 text-white text-sm rounded px-2 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-opacity duration-200 w-max max-w-[calc(100vw-3rem)] md:max-w-xs z-10 whitespace-normal [overflow-wrap:anywhere]"
     >
       <slot name="content">
-        {{ addSpaces(tileAndContent.content) }}
+        {{ tileAndContent.content }}
       </slot>
     </div>
   </div>

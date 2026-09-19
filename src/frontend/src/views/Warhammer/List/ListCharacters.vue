@@ -4,7 +4,6 @@ import { Character, CharacterApi } from "../../../services/wh/character.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { addSpaces } from "../../../utils/string.ts";
 import { computed } from "vue";
 import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsCharacter from "../../../components/ActionButtonsCharacter.vue";
@@ -41,7 +40,7 @@ const items = computed(() => {
 
 function formatCharacterRow(character: Character) {
   return {
-    name: addSpaces(character.name),
+    name: character.name,
     description: character.description,
     id: character.id,
     ownerId: character.ownerId,
