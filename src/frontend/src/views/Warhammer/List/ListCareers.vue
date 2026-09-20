@@ -13,7 +13,6 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 
 import DeleteModal from "../../../components/DeleteModal.vue";
@@ -104,7 +103,7 @@ const filteredSpeciesOptions = computed(() => {
     <SelectInput v-model="classTerm" :options="filteredClassOptions" class="grow mb-2 mx-1" />
     <SelectInput v-model="speciesTerm" :options="filteredSpeciesOptions" class="grow mb-2 mx-1" />
   </div>
-  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" :stackedViewSize="ViewSize.lg" class="mx-1">
+  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" stackBreakpoint="4xl" class="mx-1">
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="career" :params="{ id: 'create' }">
       Create new
     </LinkButton>

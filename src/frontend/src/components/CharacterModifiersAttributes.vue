@@ -4,7 +4,7 @@ const attributeNames = ["WS", "BS", "S", "T", "I", "Ag", "Dex", "Int", "WP", "Fe
 
 <template>
   <div class="@container">
-    <div class="grid grid-cols-2 @[640px]:grid-cols-5 @[1024px]:grid-cols-10 gap-2">
+    <div class="grid grid-cols-2 @2xl:grid-cols-5 @5xl:grid-cols-10 gap-2">
       <div
         v-for="attr in attributeNames"
         :key="attr"

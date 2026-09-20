@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
-import { ViewSize } from "../utils/viewSize.ts";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
@@ -119,7 +118,7 @@ function onModifyClick() {
         <thead>
           <tr class="text-left">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-            <th v-if="!disableDescription" class="hidden @[380px]:table-cell border-b border-neutral-300 py-2 px-2">Description</th>
+            <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">Description</th>
           </tr>
         </thead>
         <tbody>
@@ -129,7 +128,7 @@ function onModifyClick() {
                 {{ src.name }}
               </TextLink>
             </td>
-            <td v-if="!disableDescription" class="hidden @[380px]:table-cell py-2 px-2 border-b border-neutral-300">{{ src.description }}</td>
+            <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">{{ src.description }}</td>
           </tr>
         </tbody>
       </table>
@@ -141,7 +140,7 @@ function onModifyClick() {
         v-model="searchTerm"
         :fields="modalColumns"
         :items="itemsWithSelectList"
-        :stackedViewSize="ViewSize.xs"
+        stackBreakpoint="lg"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         elementId="modal"

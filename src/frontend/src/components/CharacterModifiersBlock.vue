@@ -160,7 +160,7 @@ const validAtts = computed(() => {
       </CharacterModifiersAttributes>
       <p class="text-sm text-red-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
 
-      <div class="flex flex-col @[1024px]:flex-row justify-between text-left gap-4 mt-4">
+      <div class="flex flex-col @5xl:flex-row justify-between text-left gap-4 mt-4">
         <CharacterModifierEffectTable
           :initEffects="modelValue.effects"
           :disabled="props.disabled ? props.disabled : false"

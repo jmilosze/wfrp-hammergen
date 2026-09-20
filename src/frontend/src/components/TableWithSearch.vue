@@ -3,8 +3,19 @@ import { TableField, TableRow } from "../utils/table.ts";
 import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
-import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
+
+export type StackBreakpoint =
+  | "none"
+  | "xs"
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "2xl"
+  | "3xl"
+  | "4xl"
+  | "5xl";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -13,7 +24,7 @@ const props = defineProps<{
   fields: TableField[];
   items: T[];
   perPage?: number;
-  stackedViewSize: ViewSize;
+  stackBreakpoint?: StackBreakpoint;
   modelValue: string;
   elementId?: string;
   loading?: boolean;
@@ -26,28 +37,38 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
+const desktopClasses: Record<StackBreakpoint, string> = {
+  none: "w-full table",
+  xs: "w-full hidden @xs:table",
+  sm: "w-full hidden @sm:table",
+  md: "w-full hidden @md:table",
+  lg: "w-full hidden @lg:table",
+  xl: "w-full hidden @xl:table",
+  "2xl": "w-full hidden @2xl:table",
+  "3xl": "w-full hidden @3xl:table",
+  "4xl": "w-full hidden @4xl:table",
+  "5xl": "w-full hidden @5xl:table",
+};
+
+const mobileClasses: Record<StackBreakpoint, string> = {
+  none: "hidden",
+  xs: "w-full @xs:hidden",
+  sm: "w-full @sm:hidden",
+  md: "w-full @md:hidden",
+  lg: "w-full @lg:hidden",
+  xl: "w-full @xl:hidden",
+  "2xl": "w-full @2xl:hidden",
+  "3xl": "w-full @3xl:hidden",
+  "4xl": "w-full @4xl:hidden",
+  "5xl": "w-full @5xl:hidden",
+};
+
 const desktopTableClass = computed(() => {
-  if (props.stackedViewSize === 0) {
-    return "w-full table";
-  } else if (props.stackedViewSize === ViewSize.xs) {
-    return "w-full hidden @[500px]:table";
-  } else if (props.stackedViewSize === ViewSize.sm) {
-    return "w-full hidden @[640px]:table";
-  } else {
-    return "w-full hidden @[1024px]:table";
-  }
+  return desktopClasses[props.stackBreakpoint ?? "none"];
 });
 
 const mobileTableClass = computed(() => {
-  if (props.stackedViewSize === 0) {
-    return "hidden";
-  } else if (props.stackedViewSize === ViewSize.xs) {
-    return "w-full @[500px]:hidden";
-  } else if (props.stackedViewSize === ViewSize.sm) {
-    return "w-full @[640px]:hidden";
-  } else {
-    return "w-full @[1024px]:hidden";
-  }
+  return mobileClasses[props.stackBreakpoint ?? "none"];
 });
 
 const searchTerm: Ref<string> = computed({

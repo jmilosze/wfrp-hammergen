@@ -3,7 +3,6 @@ import { printSkillType, Skill } from "../services/wh/skill.ts";
 import { computed, ref, Ref, watch } from "vue";
 import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/attributes.ts";
 import { useModal } from "../composables/modal.ts";
-import { ViewSize } from "../utils/viewSize.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ActionButton from "./ActionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
@@ -185,7 +184,7 @@ function onModifyClick() {
         v-model="searchTerm"
         :fields="modalColumns"
         :items="skillsWithNumberList"
-        :stackedViewSize="ViewSize.xs"
+        stackBreakpoint="lg"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         elementId="modal"

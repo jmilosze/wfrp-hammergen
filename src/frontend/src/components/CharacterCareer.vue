@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
-import { ViewSize } from "../utils/viewSize.ts";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
@@ -212,7 +211,7 @@ function emitPastSelected(id: string) {
         v-model="searchTerm"
         :fields="modalColumns"
         :items="careersWithSelectList"
-        :stackedViewSize="ViewSize.sm"
+        stackBreakpoint="2xl"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         elementId="modal"

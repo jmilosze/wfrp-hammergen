@@ -6,7 +6,6 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 import DeleteModal from "../../../components/DeleteModal.vue";
 import SelectInput from "../../../components/SelectInput.vue";
@@ -67,7 +66,7 @@ function formatTalentRow(talent: Talent) {
   </AlertBlock>
   <Header title="Talents" />
   <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
-  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" :stackedViewSize="ViewSize.lg" class="mx-1">
+  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" stackBreakpoint="4xl" class="mx-1">
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="talent" :params="{ id: 'create' }">
       Create new
     </LinkButton>

@@ -1,13 +1,9 @@
 <script setup lang="ts" generic="T = string | number">
-import { ViewSize } from "../utils/viewSize.ts";
-
 const props = defineProps<{
   modelValue: T[];
   title?: string;
   disabled?: boolean;
   options: { text: string; value: T }[];
-  viewBreakpoint?: { columns: number; view: ViewSize }[];
-  columns?: number;
 }>();
 
 const emit = defineEmits<{
@@ -42,7 +38,7 @@ function handleChange(event: Event) {
   <div>
     <p v-if="title" class="mb-1">{{ title }}</p>
     <div class="@container w-full border border-neutral-300 rounded px-2">
-      <ul class="columns-1 @[360px]:columns-2 @[500px]:columns-3 gap-4 list-none p-0 m-0">
+      <ul class="columns-1 @sm:columns-2 @lg:columns-3 gap-4 list-none p-0 m-0">
         <li v-for="option in options" :key="String(option.value)" class="break-inside-avoid py-2 flex">
           <input
             :id="String(option.value)"

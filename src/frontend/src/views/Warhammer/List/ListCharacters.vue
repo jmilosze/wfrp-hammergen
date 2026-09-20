@@ -5,7 +5,6 @@ import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { computed } from "vue";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import ActionButtonsCharacter from "../../../components/ActionButtonsCharacter.vue";
 import DeleteModal from "../../../components/DeleteModal.vue";
 import { useAuth } from "../../../composables/auth.ts";
@@ -74,7 +73,7 @@ function handleSampleCharacters() {
       </ActionButton>
     </template>
   </Header>
-  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" :stackedViewSize="ViewSize.lg" class="mx-1">
+  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" stackBreakpoint="4xl" class="mx-1">
     <LinkButton
       v-if="auth.loggedIn.value"
       class="mr-2 mb-2 shrink-0 btn"

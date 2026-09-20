@@ -109,7 +109,7 @@ function onModifyClick() {
     <div class="@container">
       <p class="mb-1">Classification</p>
       <div class="border p-2 rounded border-neutral-400">
-        <div class="flex flex-col @[640px]:flex-row gap-4">
+        <div class="flex flex-col @2xl:flex-row gap-4">
           <SelectInput
             :modelValue="props.modelValue.type"
             :options="typeOptions"
@@ -137,7 +137,7 @@ function onModifyClick() {
           v-model="searchTerm"
           :fields="modalColumns"
           :items="labelsWithSelectList"
-          :stackedViewSize="0"
+          stackBreakpoint="none"
         >
           <ActionButton class="mr-2 mb-2 shrink-0 btn" @click="selectAllLabels">Select all</ActionButton>
           <template #selected="{ id }: { id: SpellLabel }">
