@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T = string | number">
-import { computed } from "vue";
+import { computed, useId } from "vue";
 
 const props = defineProps<{
   modelValue: T;
@@ -11,6 +11,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "update:modelValue", modelValue: T): void;
 }>();
+
+const selectId = useId();
 
 const value = computed({
   get() {
@@ -24,8 +26,9 @@ const value = computed({
 
 <template>
   <div>
-    <div v-if="title" class="mb-1">{{ title }}</div>
+    <label v-if="title" :for="selectId" class="block mb-1">{{ title }}</label>
     <select
+      :id="selectId"
       v-model="value"
       class="border border-neutral-300 focus:border-neutral-700 focus:border-2 rounded outline-0 h-10 px-2 w-full bg-white disabled:bg-neutral-200"
       :disabled="disabled"

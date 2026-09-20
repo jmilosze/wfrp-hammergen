@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps<{
+import { computed, useId } from "vue";
+
+const props = defineProps<{
   title?: string;
   invertOrder?: boolean;
   trueText: string;
@@ -8,56 +10,43 @@ defineProps<{
 }>();
 
 const model = defineModel<boolean>();
+const radioGroupName = useId();
+
+const options = computed(() =>
+  props.invertOrder
+    ? [
+        { value: false, text: props.falseText },
+        { value: true, text: props.trueText },
+      ]
+    : [
+        { value: true, text: props.trueText },
+        { value: false, text: props.falseText },
+      ]
+);
 </script>
 
 <template>
-  <div>
-    <p v-if="title" class="mb-1">{{ title }}</p>
-    <div v-if="!invertOrder" class="flex flex-wrap">
-      <div class="flex items-center">
+  <fieldset>
+    <legend v-if="title" class="mb-1">{{ title }}</legend>
+    <div class="flex flex-wrap">
+      <label
+        v-for="(option, index) in options"
+        :key="String(option.value)"
+        class="inline-flex items-center cursor-pointer"
+        :class="{ 'mr-5': index === 0 }"
+      >
         <input
           v-model="model"
           type="radio"
-          :value="true"
+          :name="radioGroupName"
+          :value="option.value"
           :disabled="disabled"
           class="mr-2 w-5 h-5 accent-neutral-600"
-        >
-        <div class="mr-5">{{ trueText }}</div>
-      </div>
-      <div class="flex items-center">
-        <input
-          v-model="model"
-          type="radio"
-          :value="false"
-          :disabled="disabled"
-          class="mr-2 w-5 h-5 accent-neutral-600"
-        >
-        <div>{{ falseText }}</div>
-      </div>
+        />
+        <span>{{ option.text }}</span>
+      </label>
     </div>
-    <div v-else class="flex flex-wrap">
-      <div class="flex items-center">
-        <input
-          v-model="model"
-          type="radio"
-          :value="false"
-          :disabled="disabled"
-          class="mr-2 w-5 h-5 accent-neutral-600"
-        >
-        <div class="mr-5">{{ falseText }}</div>
-      </div>
-      <div class="flex items-center">
-        <input
-          v-model="model"
-          type="radio"
-          :value="true"
-          :disabled="disabled"
-          class="mr-2 w-5 h-5 accent-neutral-600"
-        >
-        <div>{{ trueText }}</div>
-      </div>
-    </div>
-  </div>
+  </fieldset>
 </template>
 
 <style scoped></style>

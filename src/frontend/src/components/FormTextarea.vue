@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ValidationStatus } from "../utils/validation.ts";
-import { computed } from "vue";
+import { computed, useId } from "vue";
 
 type BoxHeight = "sm" | "md";
 
@@ -21,6 +21,9 @@ const emit = defineEmits<{
   (e: "update:modelValue", modelValue: string): void;
 }>();
 
+const textareaId = useId();
+const errorId = useId();
+
 const value = computed({
   get() {
     return props.modelValue;
@@ -34,16 +37,24 @@ const value = computed({
 <template>
   <div class="w-full">
     <div class="flex items-center">
-      <p v-if="title" class="mb-1 mr-2">{{ title }}</p>
+      <label v-if="title" :for="textareaId" class="mb-1 mr-2">{{ title }}</label>
       <slot />
     </div>
     <textarea
+      :id="textareaId"
       v-model="value"
       class="border border-neutral-300 rounded w-full p-2 focus:outline-neutral-700 focus:border-transparent focus:outline-2 disabled:bg-neutral-200"
       :class="size ? heightClasses[size] : 'h-36'"
-      :disabled="disabled ? disabled : false"
+      :disabled="disabled"
+      :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
+      :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
     />
-    <p class="text-sm text-red-600" :class="[validationStatus.valid ? 'hidden' : '']">
+    <p
+      :id="errorId"
+      role="alert"
+      class="text-sm text-red-600"
+      :class="[validationStatus.valid ? 'hidden' : '']"
+    >
       {{ validationStatus.message }}
     </p>
   </div>
