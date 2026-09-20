@@ -81,7 +81,6 @@ watch(
   },
   { immediate: true },
 );
-
 </script>
 
 <template>
@@ -112,12 +111,7 @@ watch(
           falseText="Individual"
           :disabled="!canEdit"
         />
-        <FormTextarea
-          v-model="wh.description"
-          title="Description"
-          :validationStatus="validDesc"
-          :disabled="!canEdit"
-        />
+        <FormTextarea v-model="wh.description" title="Description" :validationStatus="validDesc" :disabled="!canEdit" />
       </div>
     </div>
     <div class="flex-1">
@@ -125,12 +119,7 @@ watch(
         <div>
           <p class="mb-1">Max rank</p>
           <div class="flex flex-wrap justify-left">
-            <SelectInput
-              v-model="wh.attribute"
-              :options="attOptions"
-              :disabled="!canEdit || wh.isGroup"
-              class="mb-2"
-            />
+            <SelectInput v-model="wh.attribute" :options="attOptions" :disabled="!canEdit || wh.isGroup" class="mb-2" />
             <div class="shrink-0 mx-2 pt-2 mb-2">Bonus +</div>
             <SelectInput
               v-model="wh.attribute2"
@@ -151,7 +140,7 @@ watch(
         <FormTextarea
           v-model="wh.tests"
           title="Tests"
-          :minH="24"
+          size="sm"
           :validationStatus="validTests"
           :disabled="!canEdit || wh.isGroup"
         />
