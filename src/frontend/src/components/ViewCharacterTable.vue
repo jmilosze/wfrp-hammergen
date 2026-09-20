@@ -8,9 +8,13 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="items.length" class="text-left">
+  <div v-if="items.length" class="@container text-left">
     <div class="mb-1">{{ title }}</div>
-    <table v-if="!stack" class="border-collapse w-full">
+    <table
+      v-if="!stack"
+      class="border-collapse w-full"
+      :class="[!stack ? '' : 'hidden @3xl:table print:table']"
+    >
       <tbody>
         <tr>
           <th
@@ -29,7 +33,11 @@ defineProps<{
         </tr>
       </tbody>
     </table>
-    <table v-else class="border-collapse w-full">
+    <table
+      v-if="stack"
+      class="border-collapse w-full"
+      :class="[stack ? '' : '@3xl:hidden print:hidden']"
+    >
       <tbody>
         <tr v-for="(item, i) in items" :key="i">
           <td class="border border-neutral-400 p-2">

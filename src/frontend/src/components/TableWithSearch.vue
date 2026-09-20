@@ -3,7 +3,6 @@ import { TableField, TableRow } from "../utils/table.ts";
 import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
-import { useElSize } from "../composables/viewSize.ts";
 import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 
@@ -27,8 +26,29 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(props.stackedViewSize, contentContainerRef);
+const desktopTableClass = computed(() => {
+  if (props.stackedViewSize === 0) {
+    return "w-full table";
+  } else if (props.stackedViewSize === ViewSize.xs) {
+    return "w-full hidden @[500px]:table";
+  } else if (props.stackedViewSize === ViewSize.sm) {
+    return "w-full hidden @[640px]:table";
+  } else {
+    return "w-full hidden @[1024px]:table";
+  }
+});
+
+const mobileTableClass = computed(() => {
+  if (props.stackedViewSize === 0) {
+    return "hidden";
+  } else if (props.stackedViewSize === ViewSize.xs) {
+    return "w-full @[500px]:hidden";
+  } else if (props.stackedViewSize === ViewSize.sm) {
+    return "w-full @[640px]:hidden";
+  } else {
+    return "w-full @[1024px]:hidden";
+  }
+});
 
 const searchTerm: Ref<string> = computed({
   get() {
@@ -106,7 +126,7 @@ onUpdated(() => {
 </script>
 
 <template>
-  <div ref="contentContainerRef">
+  <div class="@container">
     <div class="flex flex-wrap">
       <slot />
       <input
@@ -131,7 +151,7 @@ onUpdated(() => {
       />
       <div>
         <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-          <table v-if="isEqualOrGreater" class="w-full">
+          <table class="w-full" :class="desktopTableClass">
             <thead>
               <tr class="text-left">
                 <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
@@ -155,7 +175,7 @@ onUpdated(() => {
               </tr>
             </tbody>
           </table>
-          <table v-else class="w-full">
+          <table class="w-full" :class="mobileTableClass">
             <thead>
               <tr class="text-left">
                 <th class="border-b border-neutral-300 py-2 px-5" />
