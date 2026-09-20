@@ -18,7 +18,6 @@ import { rollDice } from "../utils/random.ts";
 
 const props = defineProps<{
   title: string;
-  cols: boolean;
   species: SpeciesWithRegion;
   otherAttributes: Attributes;
   rollsValidationStatus: ValidationStatus;

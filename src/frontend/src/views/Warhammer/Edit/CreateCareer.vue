@@ -15,9 +15,7 @@ import {
 import { Visibility } from "../../../services/wh/common.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { computed, ref, watch } from "vue";
-import { useElSize } from "../../../composables/viewSize.ts";
-import { ViewSize } from "../../../utils/viewSize.ts";
+import { computed, watch } from "vue";
 import FormInput from "../../../components/FormInput.vue";
 import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
@@ -63,9 +61,6 @@ const talentListUtils = useWhList(new TalentApi(authRequest));
 talentListUtils.loadWhList();
 
 await loadWh(props.id);
-
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -148,11 +143,7 @@ watch(
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create career' : canEdit ? 'Edit career' : wh.name" />
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -161,10 +152,6 @@ watch(
           title="Species"
           :options="speciesOpts"
           :disabled="!canEdit"
-          :viewBreakpoint="[
-            { columns: 3, view: ViewSize.xs },
-            { columns: 2, view: ViewSize.xxs },
-          ]"
         />
       </div>
     </div>
@@ -195,7 +182,6 @@ watch(
       v-model:items="wh.level1.items"
       v-model:exists="wh.level1.exists"
       level="1"
-      :singleColumn="!isEqualOrGreater"
       :canEdit="canEdit"
       :initialSkills="wh.level1.skills"
       :initialTalents="wh.level1.talents"
@@ -218,7 +204,6 @@ watch(
       v-model:items="wh.level2.items"
       v-model:exists="wh.level2.exists"
       level="2"
-      :singleColumn="!isEqualOrGreater"
       :canEdit="canEdit"
       :initialSkills="wh.level2.skills"
       :initialTalents="wh.level2.talents"
@@ -241,7 +226,6 @@ watch(
       v-model:items="wh.level3.items"
       v-model:exists="wh.level3.exists"
       level="3"
-      :singleColumn="!isEqualOrGreater"
       :canEdit="canEdit"
       :initialSkills="wh.level3.skills"
       :initialTalents="wh.level3.talents"
@@ -264,7 +248,6 @@ watch(
       v-model:items="wh.level4.items"
       v-model:exists="wh.level4.exists"
       level="4"
-      :singleColumn="!isEqualOrGreater"
       :canEdit="canEdit"
       :initialSkills="wh.level4.skills"
       :initialTalents="wh.level4.talents"
@@ -287,7 +270,6 @@ watch(
       v-model:items="wh.level5.items"
       v-model:exists="wh.level5.exists"
       level="5"
-      :singleColumn="!isEqualOrGreater"
       :canEdit="canEdit"
       :initialSkills="wh.level5.skills"
       :initialTalents="wh.level5.talents"
@@ -303,7 +285,7 @@ watch(
       @updateTalent="(e) => wh.updateLevelTalents(5, e.id, e.selected)"
     />
   </div>
-  <div class="flex justify-between text-left gap-4 my-4" :class="[isEqualOrGreater ? '' : 'flex-col']">
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="my-3 flex-1">
       <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>

@@ -3,9 +3,7 @@ import ActionButton from "./ActionButton.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import CharacterModifiersAttributes from "./CharacterModifiersAttributes.vue";
-import { computed, ref } from "vue";
-import { useElSize } from "../composables/viewSize.ts";
-import { ViewSize } from "../utils/viewSize.ts";
+import { computed } from "vue";
 import { AttributeName, setAttributeValue } from "../services/wh/attributes.ts";
 import SelectInput from "./SelectInput.vue";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
@@ -22,20 +20,6 @@ const emit = defineEmits<{
 }>();
 
 const modal = useModal();
-
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const sm = useElSize(ViewSize.sm, contentContainerRef);
-const lg = useElSize(ViewSize.lg, contentContainerRef);
-
-const rows = computed(() => {
-  if (lg.isEqualOrGreater.value) {
-    return 1;
-  } else if (sm.isEqualOrGreater.value) {
-    return 2;
-  } else {
-    return 5;
-  }
-});
 
 function updateAttributes(attribute: AttributeName, newValue: number) {
   const newModifiers = props.modelValue.copy();
@@ -86,13 +70,13 @@ const validAtts = computed(() => {
 </script>
 
 <template>
-  <div ref="contentContainerRef">
+  <div class="@container">
     <div class="flex items-center mb-2">
       <div class="mr-2">Character modifiers</div>
       <ActionButton class="btn btn-sm" @click="modal.showModal('modifiersHelpModal')">What are modifiers?</ActionButton>
     </div>
     <div class="border p-2 rounded border-neutral-400">
-      <CharacterModifiersAttributes :rows="rows">
+      <CharacterModifiersAttributes>
         <template #WS>
           <FormInput
             :modelValue="modelValue.attributes.WS"
@@ -176,7 +160,7 @@ const validAtts = computed(() => {
       </CharacterModifiersAttributes>
       <p class="text-sm text-red-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
 
-      <div class="justify-between text-left gap-4 mt-4" :class="[lg.isEqualOrGreater.value ? 'flex' : 'flex-col']">
+      <div class="flex flex-col @[1024px]:flex-row justify-between text-left gap-4 mt-4">
         <CharacterModifierEffectTable
           :initEffects="modelValue.effects"
           :disabled="props.disabled ? props.disabled : false"

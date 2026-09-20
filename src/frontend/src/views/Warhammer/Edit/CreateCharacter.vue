@@ -6,8 +6,6 @@ import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
 import { computed, ref, watch } from "vue";
-import { useElSize } from "../../../composables/viewSize.ts";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import EditControls from "../../../components/EditControls.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormInput from "../../../components/FormInput.vue";
@@ -128,12 +126,6 @@ const referenceDataLoading = computed(
 );
 
 await loadWh(props.id);
-
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
-
-const smSize = useElSize(ViewSize.sm, contentContainerRef);
-const lgSize = useElSize(ViewSize.lg, contentContainerRef);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -399,8 +391,8 @@ const modifierAttributes = computed(() => {
   <div v-if="canEdit" class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
     <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
-    <div class="flex gap-4" :class="lgSize.isEqualOrGreater.value ? [''] : ['flex-col']">
-      <div class="flex-auto flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+    <div class="flex flex-col @[1024px]:flex-row gap-4">
+      <div class="flex-auto flex flex-col @[640px]:flex-row gap-4">
         <SelectInput
           v-model="selectedGenSpecies"
           title="Species"
@@ -416,7 +408,7 @@ const modifierAttributes = computed(() => {
           class="min-w-24 flex-1"
         />
       </div>
-      <div class="flex-auto flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+      <div class="flex-auto flex flex-col @[640px]:flex-row gap-4">
         <SelectInput
           v-model="selectedGenLevel"
           title="Level"
@@ -467,11 +459,7 @@ const modifierAttributes = computed(() => {
       </ActionButton>
     </div>
   </div>
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit">
@@ -481,7 +469,7 @@ const modifierAttributes = computed(() => {
         </FormInput>
         <p class="-mb-3">Species</p>
         <div class="border border-neutral-300 rounded p-2">
-          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+          <div class="flex flex-col @[640px]:flex-row gap-4">
             <SelectInput
               v-model="species"
               title="Species"
@@ -503,7 +491,7 @@ const modifierAttributes = computed(() => {
           <ActionButton v-if="canEdit" class="btn btn-sm" @click="formGenerateFateResilience">Generate</ActionButton>
         </div>
         <div class="border border-neutral-300 rounded p-2">
-          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+          <div class="flex flex-col @[640px]:flex-row gap-4">
             <FormInput
               v-model="wh.fate"
               type="number"
@@ -520,7 +508,7 @@ const modifierAttributes = computed(() => {
             />
           </div>
 
-          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+          <div class="flex flex-col @[640px]:flex-row gap-4">
             <FormInput
               v-model="wh.resilience"
               type="number"
@@ -549,7 +537,7 @@ const modifierAttributes = computed(() => {
           </ActionButton>
         </div>
         <div class="border border-neutral-300 rounded p-2">
-          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+          <div class="flex flex-col @[640px]:flex-row gap-4">
             <SelectInput
               v-model="wh.status"
               title="Status"
@@ -568,7 +556,7 @@ const modifierAttributes = computed(() => {
         </div>
         <p class="-mb-3">Wealth</p>
         <div class="border border-neutral-300 rounded p-2">
-          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+          <div class="flex flex-col @[640px]:flex-row gap-4">
             <FormInput
               v-model="wh.brass"
               type="number"
@@ -594,7 +582,7 @@ const modifierAttributes = computed(() => {
         </div>
         <p class="-mb-3">Sin and corruption</p>
         <div class="border border-neutral-300 rounded p-2">
-          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+          <div class="flex flex-col @[640px]:flex-row gap-4">
             <FormInput v-model="wh.sin" type="number" title="Sin" :validationStatus="validSin" :disabled="!canEdit" />
             <FormInput
               v-model="wh.corruption"
@@ -607,7 +595,7 @@ const modifierAttributes = computed(() => {
         </div>
         <p class="-mb-3">Experience</p>
         <div class="border border-neutral-300 rounded p-2">
-          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+          <div class="flex flex-col @[640px]:flex-row gap-4">
             <FormInput
               v-model="wh.currentExp"
               type="number"
@@ -649,7 +637,7 @@ const modifierAttributes = computed(() => {
           title="Description"
           :validationStatus="validDesc"
           :disabled="!canEdit"
-          :class="[isEqualOrGreater ? '' : 'mt-2']"
+          class="mt-2 @3xl:mt-0"
         >
           <ActionButton v-if="canEdit" class="mb-1 btn btn-sm" @click="formGenerateDescription">
             Generate
@@ -658,7 +646,7 @@ const modifierAttributes = computed(() => {
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!canEdit" />
         <p class="-mb-3">Calculated</p>
         <div class="border border-neutral-300 rounded p-2">
-          <div class="flex gap-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+          <div class="flex flex-col @[640px]:flex-row gap-4">
             <div class="flex-1">
               <p class="mb-3">Movement</p>
               <div class="ml-1">{{ movement }}</div>
@@ -681,13 +669,12 @@ const modifierAttributes = computed(() => {
     v-model:attributeAdvances="wh.attributeAdvances"
     :otherAttributes="modifierAttributes"
     :species="wh.species"
-    :cols="isEqualOrGreater"
     title="Attributes"
     :rollsValidationStatus="validRolls"
     :advancesValidationStatus="validAdvances"
     :disabled="!canEdit"
   />
-  <div class="flex justify-between text-left gap-4 my-4" :class="smSize.isEqualOrGreater.value ? [''] : ['flex-col']">
+  <div class="flex flex-col @[640px]:flex-row justify-between text-left gap-4 my-4">
     <CharacterSkills
       :disabled="!canEdit"
       :initSkills="wh.skills"

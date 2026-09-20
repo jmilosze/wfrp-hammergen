@@ -16,8 +16,6 @@ import {
 import type { Skill } from "../services/wh/skill.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { ValidationStatus } from "../utils/validation.ts";
-import { ref } from "vue";
-import { useElSize } from "../composables/viewSize.ts";
 
 const name = defineModel<string>("name", { required: true });
 const attributes = defineModel<AttributeName[]>("attributes", { required: true });
@@ -28,7 +26,6 @@ const exists = defineModel<boolean>("exists", { required: true });
 
 defineProps<{
   level: string;
-  singleColumn: boolean;
   canEdit: boolean;
   initialSkills: Set<string>;
   initialTalents: Set<string>;
@@ -52,9 +49,6 @@ const attributeOpts = attributeNameList
   .map((x) => ({ text: printAttributeName(x), value: x }));
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
 const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
-
-const skillsTableRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(400, skillsTableRef);
 </script>
 <template>
   <div>
@@ -71,7 +65,7 @@ const { isEqualOrGreater } = useElSize(400, skillsTableRef);
       leaveToClass="opacity-0"
     >
       <div v-if="exists" class="border border-neutral-300 rounded p-2">
-        <div class="justify-between text-left gap-4 my-4" :class="[singleColumn ? 'flex-col' : 'flex']">
+        <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
           <div class="flex-1">
             <div class="flex flex-col gap-4">
               <FormInput v-model="name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -101,7 +95,7 @@ const { isEqualOrGreater } = useElSize(400, skillsTableRef);
               <FormTextarea v-model="items" title="Trappings" :validationStatus="validItems" :disabled="!canEdit" />
             </div>
           </div>
-          <div ref="skillsTableRef" class="flex-1" :class="[singleColumn ? 'mt-3' : '']">
+          <div class="flex-1">
             <div class="flex flex-col gap-4">
               <SelectTable
                 :modalId="`skill${level}`"
@@ -113,7 +107,6 @@ const { isEqualOrGreater } = useElSize(400, skillsTableRef);
                 :loading="whSkillListLoading"
                 routeName="skill"
                 :truncateModalDescription="100"
-                :disableDescription="!isEqualOrGreater"
                 @reload="emit('reloadWhSkillList')"
                 @selected="(e) => emit('updateSkill', { id: e.id, selected: e.selected })"
               />
@@ -127,7 +120,6 @@ const { isEqualOrGreater } = useElSize(400, skillsTableRef);
                 :loading="whTalentListLoading"
                 routeName="talent"
                 :truncateModalDescription="100"
-                :disableDescription="!isEqualOrGreater"
                 @reload="emit('reloadWhTalentList')"
                 @selected="(e) => emit('updateTalent', { id: e.id, selected: e.selected })"
               />

@@ -114,12 +114,12 @@ function onModifyClick() {
     <div v-if="props.loading" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
     </div>
-    <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+    <div v-else class="@container bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
       <table class="w-full">
         <thead>
           <tr class="text-left">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-            <th v-if="!disableDescription" class="border-b border-neutral-300 py-2 px-2">Description</th>
+            <th v-if="!disableDescription" class="hidden @[380px]:table-cell border-b border-neutral-300 py-2 px-2">Description</th>
           </tr>
         </thead>
         <tbody>
@@ -129,7 +129,7 @@ function onModifyClick() {
                 {{ src.name }}
               </TextLink>
             </td>
-            <td v-if="!disableDescription" class="py-2 px-2 border-b border-neutral-300">{{ src.description }}</td>
+            <td v-if="!disableDescription" class="hidden @[380px]:table-cell py-2 px-2 border-b border-neutral-300">{{ src.description }}</td>
           </tr>
         </tbody>
       </table>

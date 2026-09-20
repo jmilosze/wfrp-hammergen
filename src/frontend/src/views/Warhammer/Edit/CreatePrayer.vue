@@ -2,10 +2,8 @@
 import { Visibility } from "../../../services/wh/common.ts";
 import Header from "../../../components/PageHeader.vue";
 import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { authRequest } from "../../../services/auth.ts";
-import { useElSize } from "../../../composables/viewSize.ts";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
@@ -43,9 +41,6 @@ const {
 
 await loadWh(props.id);
 
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
-
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validRange = computed(() => wh.value.validateRange());
@@ -60,11 +55,7 @@ const validDuration = computed(() => wh.value.validateDuration());
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create prayer' : canEdit ? 'Edit prayer' : wh.name" />
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -85,11 +76,7 @@ const validDuration = computed(() => wh.value.validateDuration());
     </div>
   </div>
 
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
