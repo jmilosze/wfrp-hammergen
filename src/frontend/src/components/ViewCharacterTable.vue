@@ -3,7 +3,6 @@ defineProps<{
   title: string;
   fields: { name: string; displayName: string; colspan?: number }[];
   items: Record<string, any>[];
-  stack?: boolean;
   stackable?: boolean;
 }>();
 </script>
@@ -12,7 +11,6 @@ defineProps<{
   <div v-if="items.length" class="text-left">
     <div class="mb-1">{{ title }}</div>
     <table
-      v-if="!stack"
       class="border-collapse w-full"
       :class="[stackable ? 'hidden md:table print:table' : '']"
     >
@@ -35,9 +33,8 @@ defineProps<{
       </tbody>
     </table>
     <table
-      v-if="stack || stackable"
-      class="border-collapse w-full"
-      :class="[stackable && !stack ? 'md:hidden print:hidden' : '']"
+      v-if="stackable"
+      class="border-collapse w-full md:hidden print:hidden"
     >
       <tbody>
         <tr v-for="(item, i) in items" :key="i">
