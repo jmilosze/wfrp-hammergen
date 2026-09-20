@@ -5,17 +5,7 @@ import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 
-export type StackBreakpoint =
-  | "none"
-  | "xs"
-  | "sm"
-  | "md"
-  | "lg"
-  | "xl"
-  | "2xl"
-  | "3xl"
-  | "4xl"
-  | "5xl";
+export type StackBreakpoint = "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -63,13 +53,8 @@ const mobileClasses: Record<StackBreakpoint, string> = {
   "5xl": "w-full @5xl:hidden",
 };
 
-const desktopTableClass = computed(() => {
-  return desktopClasses[props.stackBreakpoint ?? "none"];
-});
-
-const mobileTableClass = computed(() => {
-  return mobileClasses[props.stackBreakpoint ?? "none"];
-});
+const desktopTableClass = desktopClasses[props.stackBreakpoint ?? "none"];
+const mobileTableClass = mobileClasses[props.stackBreakpoint ?? "none"];
 
 const searchTerm: Ref<string> = computed({
   get() {
@@ -187,8 +172,8 @@ onUpdated(() => {
                   :key="field.name"
                   class="py-2 px-5 border-b border-neutral-300"
                   :class="[
-                    field.name === 'name' ? 'break-words' : '',
-                    field.name === 'description' ? '[overflow-wrap:anywhere]' : '',
+                    field.name === 'name' ? 'wrap-break-word' : '',
+                    field.name === 'description' ? 'wrap-anywhere' : '',
                   ]"
                 >
                   <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
@@ -210,8 +195,8 @@ onUpdated(() => {
                     :key="field.name"
                     class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
                     :class="[
-                      field.name === 'name' ? 'break-words' : '',
-                      field.name === 'description' ? '[overflow-wrap:anywhere]' : '',
+                      field.name === 'name' ? 'wrap-break-word' : '',
+                      field.name === 'description' ? 'wrap-anywhere' : '',
                     ]"
                   >
                     <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
