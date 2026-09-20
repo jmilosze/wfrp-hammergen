@@ -7,14 +7,13 @@ import Header from "../../../components/PageHeader.vue";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
-import DeleteModal from "../../../components/DeleteModal.vue";
+
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
-import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new TalentApi(authRequest));
 await whList.loadWhList();
@@ -26,10 +25,10 @@ const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "tooltip", displayName: "", skipStackedTitle: true },
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "maxRank", displayName: "Max rank", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
+  { name: "tooltip", displayName: "Visibility", skipStackedTitle: false },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
@@ -66,22 +65,22 @@ function formatTalentRow(talent: Talent) {
   </AlertBlock>
   <Header title="Talents" />
   <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
-  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" stackBreakpoint="4xl" class="mx-1">
+  <TableWithSearch
+    v-model="searchTerm"
+    :fields="columns"
+    :items="items"
+    stackBreakpoint="4xl"
+    rowRouteName="talent"
+    class="mx-1"
+  >
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="talent" :params="{ id: 'create' }">
       Create new
     </LinkButton>
 
-    <template #name="{ name, id }: { name: string; id: string }">
-      <TextLink routeName="talent" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
-    </template>
-
-    <template #actions="{ name, id, ownerId }: { name: string; id: string; ownerId: string }">
+    <template #actions="{ id }: { id: string }">
       <ActionButtonsNonCharacter
         :id="id"
-        :ownerId="ownerId"
-        routeName="talent"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>
 
@@ -103,8 +102,6 @@ function formatTalentRow(talent: Talent) {
       <ToolTip :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>
-
-  <DeleteModal :elementToDelete="whList.whToDelete.value" @deleteConfirmed="whList.deleteWh()" />
 </template>
 
 <style scoped></style>

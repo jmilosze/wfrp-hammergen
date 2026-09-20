@@ -34,6 +34,7 @@ const {
   showApiError,
   loadWh,
   submitForm,
+  deleteItem,
   hasChanged,
   submissionState,
   resetForm,
@@ -75,23 +76,28 @@ const validDesc = computed(() => wh.value.validateDescription());
       <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!canEdit" />
     </div>
   </div>
-  <div class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
+  <div class="flex flex-col @3xl:flex-row justify-between gap-4 mt-4">
+    <div class="flex-1">
+      <AfterSubmit
+        :visible="showSubmissionStatus"
+        :submissionState="submissionState"
+        class="w-fit my-2"
+        @close="showSubmissionStatus = false"
+      />
 
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="traits"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
+      <EditControls
+        :saving="submissionState.status === 'inProgress'"
+        list="traits"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        :deleteItem="id !== 'create' ? deleteItem : undefined"
+        :name="wh.name"
+      />
+    </div>
+    <div class="flex-1 hidden @3xl:block" />
   </div>
 </template>
 

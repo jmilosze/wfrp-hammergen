@@ -6,14 +6,13 @@ import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
 import { computed } from "vue";
 import ActionButtonsCharacter from "../../../components/ActionButtonsCharacter.vue";
-import DeleteModal from "../../../components/DeleteModal.vue";
+
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import ActionButton from "../../../components/ActionButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
-import TextLink from "../../../components/TextLink.vue";
 import { Visibility } from "../../../services/wh/common.ts";
 
 const whList = useWhList(new CharacterApi(authRequest));
@@ -25,8 +24,8 @@ const showSampleTerm = useRouteQuery("sample", auth.loggedIn.value ? "" : "true"
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "tooltip", displayName: "", skipStackedTitle: true },
   { name: "description", displayName: "Description", skipStackedTitle: true },
+  { name: "tooltip", displayName: "Visibility", skipStackedTitle: false },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
@@ -73,7 +72,14 @@ function handleSampleCharacters() {
       </ActionButton>
     </template>
   </Header>
-  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" stackBreakpoint="4xl" class="mx-1">
+  <TableWithSearch
+    v-model="searchTerm"
+    :fields="columns"
+    :items="items"
+    stackBreakpoint="4xl"
+    rowRouteName="character"
+    class="mx-1"
+  >
     <LinkButton
       v-if="auth.loggedIn.value"
       class="mr-2 mb-2 shrink-0 btn"
@@ -83,16 +89,10 @@ function handleSampleCharacters() {
       Create new
     </LinkButton>
 
-    <template #name="{ name, id }: { name: string; id: string }">
-      <TextLink routeName="character" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
-    </template>
-
-    <template #actions="{ name, id, ownerId }: { name: string; id: string; ownerId: string }">
+    <template #actions="{ id }: { id: string }">
       <ActionButtonsCharacter
         :id="id"
-        :ownerId="ownerId"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>
 
@@ -108,8 +108,6 @@ function handleSampleCharacters() {
       <ToolTip :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>
-
-  <DeleteModal :elementToDelete="whList.whToDelete.value" @deleteConfirmed="whList.deleteWh()" />
 </template>
 
 <style scoped></style>

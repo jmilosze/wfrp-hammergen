@@ -2,8 +2,9 @@
 import router from "../router.ts";
 import ActionButton from "./ActionButton.vue";
 import { onBeforeRouteLeave } from "vue-router";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import DoubleRadioButton from "./DoubleRadioButton.vue";
+import DeleteModal from "./DeleteModal.vue";
 
 const props = defineProps<{
   readOnly: boolean;
@@ -13,12 +14,14 @@ const props = defineProps<{
   list: string;
   submitForm: () => Promise<boolean>;
   resetForm: () => void;
+  deleteItem?: () => Promise<boolean>;
+  name?: string;
 }>();
 
-const saveClicked = ref(false);
+const leaveWithoutConfirmation = ref(false);
 
 onBeforeRouteLeave((_, __, next) => {
-  if (props.readOnly || !props.confirmExit || saveClicked.value) {
+  if (props.readOnly || !props.confirmExit || leaveWithoutConfirmation.value) {
     next();
   } else {
     const answer = window.confirm("Changes that you made may not be saved.");
@@ -31,19 +34,49 @@ onBeforeRouteLeave((_, __, next) => {
 });
 
 const addAnother = ref(false);
+const deleting = ref(false);
+const elementToDelete = ref({ id: "", name: "" });
+
+function onDeleteClick() {
+  elementToDelete.value = { id: "", name: "" };
+  nextTick(() => {
+    elementToDelete.value = { id: "delete", name: props.name ?? "" };
+  });
+}
+
+async function navigateToList() {
+  leaveWithoutConfirmation.value = true;
+  const previousState = router.options.history.state.back;
+  const queryString = typeof previousState === "string" ? previousState.split("?")[1] : "";
+  const queryParams = new URLSearchParams(queryString || "");
+  const allParams = Object.fromEntries(queryParams.entries());
+  await router.push({ name: props.list, query: allParams });
+}
 
 async function onSave() {
+  if (props.saving || deleting.value) {
+    return;
+  }
   if (!(await props.submitForm())) {
     return;
   }
   if (addAnother.value) {
     props.resetForm();
   } else {
-    saveClicked.value = true;
-    const previousState = router.options.history.state.back as string;
-    const queryParams = new URLSearchParams(previousState?.split("?")[1] || "");
-    const allParams = Object.fromEntries(queryParams.entries());
-    await router.push({ name: props.list, query: allParams });
+    await navigateToList();
+  }
+}
+
+async function onConfirmDelete() {
+  if (!props.deleteItem || props.saving || deleting.value) {
+    return;
+  }
+  deleting.value = true;
+  const success = await props.deleteItem();
+  deleting.value = false;
+  elementToDelete.value = { id: "", name: "" };
+  if (success) {
+    await navigateToList();
   }
 }
 </script>
@@ -59,10 +92,26 @@ async function onSave() {
         class="my-3"
       />
     </div>
-    <div class="flex flex-wrap gap-4">
-      <ActionButton v-if="!readOnly" :spinner="saving" class="btn" @click="onSave">Save</ActionButton>
-      <ActionButton class="btn" @click="router.go(-1)">Back</ActionButton>
+    <div class="flex flex-wrap justify-between items-center gap-4">
+      <div class="flex flex-wrap gap-4">
+        <ActionButton v-if="!readOnly" :spinner="saving" class="btn" @click="onSave">Save</ActionButton>
+        <ActionButton class="btn" @click="router.go(-1)">Back</ActionButton>
+      </div>
+      <ActionButton
+        v-if="!readOnly && deleteItem !== undefined"
+        :spinner="deleting"
+        class="btn btn-danger ml-auto"
+        @click="onDeleteClick"
+      >
+        Delete
+      </ActionButton>
     </div>
+
+    <DeleteModal
+      v-if="!readOnly && deleteItem !== undefined"
+      :elementToDelete="elementToDelete"
+      @deleteConfirmed="onConfirmDelete"
+    />
   </div>
 </template>
 

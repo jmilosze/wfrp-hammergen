@@ -66,6 +66,22 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
     }
   }
 
+  async function deleteItem(): Promise<boolean> {
+    if (wh.value.id === "create") {
+      return false;
+    }
+
+    submissionState.value.setInProgress();
+    try {
+      await elementApi.deleteElement(wh.value.id);
+      return true;
+    } catch (error) {
+      submissionState.value.setFailureFromError(error);
+      showSubmissionStatus.value = true;
+      return false;
+    }
+  }
+
   function resetForm() {
     wh.value = whInstance.copy() as T;
     whOriginal.value = whInstance.copy() as T;
@@ -81,6 +97,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
     showApiError,
     loadWh,
     submitForm,
+    deleteItem,
     hasChanged,
     submissionState,
     resetForm,
