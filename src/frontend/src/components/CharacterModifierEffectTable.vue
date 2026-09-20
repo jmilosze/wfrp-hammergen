@@ -3,7 +3,6 @@ import ActionButton from "./ActionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
-import { ViewSize } from "../utils/viewSize.ts";
 import TableWithSearch from "./TableWithSearch.vue";
 import { modifierEffectList, printEffectDesc, printEffectName } from "../services/wh/characterModifiers.ts";
 
@@ -87,7 +86,7 @@ function onModifyClick() {
     <ModalWindow id="modifyEffectsModal">
       <template #header> Modify sources </template>
       <div class="">
-        <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="effectList" :stackedViewSize="ViewSize.sm">
+        <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="effectList" stackBreakpoint="2xl">
           <template #selected="{ id }: { id: number }">
             <div>
               <input

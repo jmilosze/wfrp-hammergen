@@ -4,7 +4,6 @@ import { computed, ref, Ref, watch } from "vue";
 import { source, validateSourceRecord } from "../services/wh/source.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
-import { ViewSize } from "../utils/viewSize.ts";
 import TableWithSearch from "./TableWithSearch.vue";
 
 const props = defineProps<{ initSources: Record<string, string>; disabled?: boolean }>();
@@ -97,7 +96,7 @@ function onModifyClick() {
           v-model="searchTerm"
           :fields="modalColumns"
           :items="sourcesList"
-          :stackedViewSize="ViewSize.xs"
+          stackBreakpoint="lg"
         >
           <template #selected="{ id }: { id: string }">
             <div>

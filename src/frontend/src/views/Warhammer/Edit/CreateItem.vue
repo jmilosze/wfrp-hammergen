@@ -30,9 +30,7 @@ import {
   rangedGroupList,
   weaponHandsList,
 } from "../../../services/wh/item.ts";
-import { computed, ref, watch } from "vue";
-import { useElSize } from "../../../composables/viewSize.ts";
-import { ViewSize } from "../../../utils/viewSize.ts";
+import { computed, watch } from "vue";
 import FormInput from "../../../components/FormInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
@@ -92,9 +90,6 @@ const runeList = computed(() => {
 
 await loadWh(props.id);
 
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
-
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validPrice = computed(() => wh.value.validatePrice());
@@ -131,8 +126,6 @@ watch(
   },
 );
 
-const propertiesTableRef = ref<HTMLDivElement | null>(null);
-const propertiesTable = useElSize(380, propertiesTableRef);
 </script>
 
 <template>
@@ -158,11 +151,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create trapping' : canEdit ? 'Edit trapping' : wh.name" />
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -196,7 +185,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         />
       </div>
     </div>
-    <div ref="propertiesTableRef" class="flex-1">
+    <div class="flex-1">
       <div v-if="wh.type === ItemType.Melee" class="flex flex-col gap-4">
         <div>
           <p class="mb-1">Weapon damage</p>
@@ -400,7 +389,6 @@ const propertiesTable = useElSize(380, propertiesTableRef);
           :loading="spellListUtils.loading.value"
           routeName="spell"
           :truncateModalDescription="100"
-          :disableDescription="!propertiesTable.isEqualOrGreater.value"
           class="mt-4"
           @reload="spellListUtils.loadWhList"
           @selected="(e) => wh.updateSpells(e.id, e.selected)"
@@ -415,7 +403,6 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         :loading="propertyListUtils.loading.value"
         routeName="property"
         :truncateModalDescription="100"
-        :disableDescription="!propertiesTable.isEqualOrGreater.value"
         class="mt-4"
         @reload="propertyListUtils.loadWhList"
         @selected="(e) => wh.updateProperties(e.id, e.selected)"
@@ -429,7 +416,6 @@ const propertiesTable = useElSize(380, propertiesTableRef);
         :loading="runeListUtils.loading.value"
         routeName="rune"
         :truncateModalDescription="100"
-        :disableDescription="!propertiesTable.isEqualOrGreater.value"
         :validationStatus="validRunes"
         class="mt-4"
         @reload="runeListUtils.loadWhList"
@@ -437,11 +423,7 @@ const propertiesTable = useElSize(380, propertiesTableRef);
       />
     </div>
   </div>
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="my-3 flex-1">
       <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>

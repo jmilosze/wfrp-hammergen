@@ -4,8 +4,6 @@ import Header from "../../../components/PageHeader.vue";
 import { printSpellLabel, printSpellType, Spell, SpellApi, SpellLabel } from "../../../services/wh/spell.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
-import { useElSize } from "../../../composables/viewSize.ts";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
@@ -45,9 +43,6 @@ const {
 
 await loadWh(props.id);
 
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
-
 const simplifiedLabels = ref(new Array<SpellLabel>());
 
 const validName = computed(() => wh.value.validateName());
@@ -67,11 +62,7 @@ const validCn = computed(() => wh.value.validateCn());
   <Header :title="id === 'create' ? 'Create spell' : canEdit ? 'Edit spell' : wh.name" />
   <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
   <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="mt-1" />
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -105,11 +96,7 @@ const validCn = computed(() => wh.value.validateCn());
     @update:simplifiedLabels="simplifiedLabels = $event"
   />
 
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>

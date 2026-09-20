@@ -11,8 +11,6 @@ import {
 } from "../services/wh/spell.ts";
 import SelectInput from "./SelectInput.vue";
 import { Ref, ref, watch } from "vue";
-import { useElSize } from "../composables/viewSize.ts";
-import { ViewSize } from "../utils/viewSize.ts";
 import ActionButton from "./ActionButton.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
@@ -24,9 +22,6 @@ const emit = defineEmits<{
   (e: "update:modelValue", value: SpellClassification): void;
   (e: "update:simplifiedLabels", value: SpellLabel[]): void;
 }>();
-
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const sm = useElSize(ViewSize.sm, contentContainerRef);
 
 const modal = useModal();
 const searchTerm = ref("");
@@ -111,10 +106,10 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div ref="contentContainerRef">
+    <div class="@container">
       <p class="mb-1">Classification</p>
       <div class="border p-2 rounded border-neutral-400">
-        <div class="flex gap-4" :class="[sm.isEqualOrGreater.value ? '' : 'flex-col']">
+        <div class="flex flex-col @2xl:flex-row gap-4">
           <SelectInput
             :modelValue="props.modelValue.type"
             :options="typeOptions"
@@ -142,7 +137,7 @@ function onModifyClick() {
           v-model="searchTerm"
           :fields="modalColumns"
           :items="labelsWithSelectList"
-          :stackedViewSize="ViewSize.zero"
+          stackBreakpoint="none"
         >
           <ActionButton class="mr-2 mb-2 shrink-0 btn" @click="selectAllLabels">Select all</ActionButton>
           <template #selected="{ id }: { id: SpellLabel }">

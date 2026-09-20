@@ -231,7 +231,7 @@ onMounted(async () => {
   <div class="lg:pl-64 pt-16 h-screen">
     <div class="h-full flex flex-col justify-between items-center">
       <!-- Content -->
-      <div class="flex-auto p-8 max-w-7xl w-full">
+      <div class="@container flex-auto p-8 max-w-7xl w-full">
         <RouterView v-slot="{ Component }" :key="route.path">
           <template v-if="Component">
             <Suspense>

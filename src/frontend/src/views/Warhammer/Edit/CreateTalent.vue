@@ -5,8 +5,6 @@ import { Talent, TalentApi } from "../../../services/wh/talent.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed, Ref, ref, watch } from "vue";
-import { useElSize } from "../../../composables/viewSize.ts";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import FormInput from "../../../components/FormInput.vue";
@@ -63,9 +61,6 @@ watch(
 
 await loadWh(props.id);
 
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
-
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validTests = computed(() => wh.value.validateTests());
@@ -87,8 +82,6 @@ watch(
   { immediate: true },
 );
 
-const talentTableRef = ref<HTMLDivElement | null>(null);
-const talentTable = useElSize(380, talentTableRef);
 </script>
 
 <template>
@@ -107,11 +100,7 @@ const talentTable = useElSize(380, talentTableRef);
   </div>
 
   <Header :title="id === 'create' ? 'Create talent' : canEdit ? 'Edit talent' : wh.name" />
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -131,7 +120,7 @@ const talentTable = useElSize(380, talentTableRef);
         />
       </div>
     </div>
-    <div ref="talentTableRef" class="flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <div>
           <p class="mb-1">Max rank</p>
@@ -175,7 +164,6 @@ const talentTable = useElSize(380, talentTableRef);
           :loading="talentListUtils.loading.value"
           routeName="talent"
           :truncateModalDescription="100"
-          :disableDescription="!talentTable.isEqualOrGreater.value"
           @reload="talentListUtils.loadWhList"
           @selected="(e) => wh.updateGroup(e.id, e.selected)"
         />
@@ -185,11 +173,7 @@ const talentTable = useElSize(380, talentTableRef);
   <div class="my-4">
     <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!canEdit || wh.isGroup" />
   </div>
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="my-3 flex-1">
       <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>

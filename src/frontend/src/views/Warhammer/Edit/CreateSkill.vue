@@ -15,8 +15,6 @@ import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import { computed, ref, Ref, watch } from "vue";
-import { useElSize } from "../../../composables/viewSize.ts";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import FormInput from "../../../components/FormInput.vue";
 import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import SelectInput from "../../../components/SelectInput.vue";
@@ -68,9 +66,6 @@ watch(
 
 await loadWh(props.id);
 
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
-
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 
@@ -99,8 +94,6 @@ watch(
   { immediate: true },
 );
 
-const skillsTableRef = ref<HTMLDivElement | null>(null);
-const skillTable = useElSize(380, skillsTableRef);
 </script>
 
 <template>
@@ -118,11 +111,7 @@ const skillTable = useElSize(380, skillsTableRef);
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create skill' : canEdit ? 'Edit skill' : wh.name" />
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -150,7 +139,7 @@ const skillTable = useElSize(380, skillsTableRef);
         />
       </div>
     </div>
-    <div ref="skillsTableRef" class="flex-1">
+    <div class="flex-1">
       <div class="flex flex-col gap-4">
         <DoubleRadioButton
           v-model="wh.displayZero"
@@ -168,18 +157,13 @@ const skillTable = useElSize(380, skillsTableRef);
           :loading="skillListUtils.loading.value"
           routeName="skill"
           :truncateModalDescription="100"
-          :disableDescription="!skillTable.isEqualOrGreater.value"
           @reload="skillListUtils.loadWhList"
           @selected="(e) => wh.modifyGroup(e.id, e.selected)"
         />
       </div>
     </div>
   </div>
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="my-3 flex-1">
       <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>

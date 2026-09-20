@@ -8,9 +8,7 @@ import {
 } from "../services/wh/attributes.ts";
 import { SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import FormInput from "./FormInput.vue";
-import { useElSize } from "../composables/viewSize.ts";
-import { ViewSize } from "../utils/viewSize.ts";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { ValidationStatus } from "../utils/validation.ts";
 import ActionButton from "./ActionButton.vue";
 import { generateRolls } from "../services/wh/characterGeneration/generateAttributes.ts";
@@ -18,7 +16,6 @@ import { rollDice } from "../utils/random.ts";
 
 const props = defineProps<{
   title: string;
-  cols: boolean;
   species: SpeciesWithRegion;
   otherAttributes: Attributes;
   rollsValidationStatus: ValidationStatus;
@@ -28,9 +25,6 @@ const props = defineProps<{
 
 const attributeRolls = defineModel<Attributes>("attributeRolls", { required: true });
 const attributeAdvances = defineModel<Attributes>("attributeAdvances", { required: true });
-
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const lgELSize = useElSize(ViewSize.lg, contentContainerRef);
 
 const racial = computed(() => {
   return getAttributes(props.species);
@@ -62,8 +56,8 @@ function newRolls() {
     <div class="mb-1">{{ title }}</div>
     <ActionButton v-if="!disabled" class="btn btn-sm" @click="newRolls">Generate rolls</ActionButton>
   </div>
-  <div ref="contentContainerRef" class="w-full">
-    <div v-if="!lgELSize.isEqualOrGreater.value" class="flex flex-col gap-4">
+  <div class="@container w-full">
+    <div class="flex flex-col gap-4 @5xl:hidden">
       <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
         <table class="w-full">
           <thead>
@@ -394,7 +388,7 @@ function newRolls() {
         <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
       </div>
     </div>
-    <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+    <div class="hidden @5xl:block bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
       <table class="w-full">
         <thead>
           <tr>

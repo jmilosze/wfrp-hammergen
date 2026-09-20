@@ -3,9 +3,19 @@ import { TableField, TableRow } from "../utils/table.ts";
 import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
-import { useElSize } from "../composables/viewSize.ts";
-import { ViewSize } from "../utils/viewSize.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
+
+export type StackBreakpoint =
+  | "none"
+  | "xs"
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "2xl"
+  | "3xl"
+  | "4xl"
+  | "5xl";
 
 const DEFAULT_PER_PAGE = 50;
 const SEARCH_DEBOUNCE_MS = 250;
@@ -14,7 +24,7 @@ const props = defineProps<{
   fields: TableField[];
   items: T[];
   perPage?: number;
-  stackedViewSize: ViewSize;
+  stackBreakpoint?: StackBreakpoint;
   modelValue: string;
   elementId?: string;
   loading?: boolean;
@@ -27,8 +37,39 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(props.stackedViewSize, contentContainerRef);
+const desktopClasses: Record<StackBreakpoint, string> = {
+  none: "w-full table",
+  xs: "w-full hidden @xs:table",
+  sm: "w-full hidden @sm:table",
+  md: "w-full hidden @md:table",
+  lg: "w-full hidden @lg:table",
+  xl: "w-full hidden @xl:table",
+  "2xl": "w-full hidden @2xl:table",
+  "3xl": "w-full hidden @3xl:table",
+  "4xl": "w-full hidden @4xl:table",
+  "5xl": "w-full hidden @5xl:table",
+};
+
+const mobileClasses: Record<StackBreakpoint, string> = {
+  none: "hidden",
+  xs: "w-full @xs:hidden",
+  sm: "w-full @sm:hidden",
+  md: "w-full @md:hidden",
+  lg: "w-full @lg:hidden",
+  xl: "w-full @xl:hidden",
+  "2xl": "w-full @2xl:hidden",
+  "3xl": "w-full @3xl:hidden",
+  "4xl": "w-full @4xl:hidden",
+  "5xl": "w-full @5xl:hidden",
+};
+
+const desktopTableClass = computed(() => {
+  return desktopClasses[props.stackBreakpoint ?? "none"];
+});
+
+const mobileTableClass = computed(() => {
+  return mobileClasses[props.stackBreakpoint ?? "none"];
+});
 
 const searchTerm: Ref<string> = computed({
   get() {
@@ -106,7 +147,7 @@ onUpdated(() => {
 </script>
 
 <template>
-  <div ref="contentContainerRef">
+  <div class="@container">
     <div class="flex flex-wrap">
       <slot />
       <input
@@ -131,7 +172,7 @@ onUpdated(() => {
       />
       <div>
         <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-          <table v-if="isEqualOrGreater" class="w-full">
+          <table class="w-full" :class="desktopTableClass">
             <thead>
               <tr class="text-left">
                 <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
@@ -155,7 +196,7 @@ onUpdated(() => {
               </tr>
             </tbody>
           </table>
-          <table v-else class="w-full">
+          <table class="w-full" :class="mobileTableClass">
             <thead>
               <tr class="text-left">
                 <th class="border-b border-neutral-300 py-2 px-5" />

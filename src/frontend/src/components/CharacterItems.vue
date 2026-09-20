@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, Ref, watch } from "vue";
 import { useModal } from "../composables/modal.ts";
-import { ViewSize } from "../utils/viewSize.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ActionButton from "./ActionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
@@ -272,7 +271,7 @@ function onModifyClick() {
         v-model="searchTerm"
         :fields="modalColumns"
         :items="itemsWithNumberList"
-        :stackedViewSize="ViewSize.md"
+        stackBreakpoint="3xl"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
         cellPadding="px-2"

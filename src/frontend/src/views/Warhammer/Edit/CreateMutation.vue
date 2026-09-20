@@ -5,8 +5,6 @@ import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Mutation, MutationApi, mutationTypeList, printMutationType } from "../../../services/wh/mutation.ts";
 import { computed, ref } from "vue";
-import { useElSize } from "../../../composables/viewSize.ts";
-import { ViewSize } from "../../../utils/viewSize.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import FormInput from "../../../components/FormInput.vue";
@@ -45,9 +43,6 @@ const {
 
 await loadWh(props.id);
 
-const contentContainerRef = ref<HTMLDivElement | null>(null);
-const { isEqualOrGreater } = useElSize(ViewSize.md, contentContainerRef);
-
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 
@@ -61,11 +56,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create mutation' : canEdit ? 'Edit mutation' : wh.name" />
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
         <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -86,11 +77,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
   <div class="my-4">
     <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!canEdit" />
   </div>
-  <div
-    ref="contentContainerRef"
-    class="flex justify-between text-left gap-4 my-4"
-    :class="[isEqualOrGreater ? '' : 'flex-col']"
-  >
+  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
     </div>
