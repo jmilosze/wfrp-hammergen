@@ -4,8 +4,7 @@ import NavLink from "./components/NavLink.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
-import { useScreenSize } from "./composables/viewSize.ts";
-import { ViewSize } from "./utils/viewSize.ts";
+import { useMediaQuery } from "@vueuse/core";
 import { useModal } from "./composables/modal.ts";
 import { useRoute } from "vue-router";
 import { usePrint } from "./composables/print.ts";
@@ -15,14 +14,14 @@ import { Icon } from "@iconify/vue";
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
 
-const { isEqualOrGreater } = useScreenSize(ViewSize.lg);
+const isLg = useMediaQuery("(min-width: 1024px)");
 const auth = useAuth();
 const modal = useModal();
 const route = useRoute();
 const { printing } = usePrint();
 
-watch(isEqualOrGreater, (isLg) => {
-  if (isLg) {
+watch(isLg, (isDesktop) => {
+  if (isDesktop) {
     showSideBar.value = false;
   }
 });
@@ -82,12 +81,8 @@ onMounted(async () => {
   <!-- SideBar -->
   <div
     v-if="!printing"
-    class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 transition-transform border-neutral-400 text-neutral-900"
-    :class="[
-      !isEqualOrGreater ? 'right-0 transform transition-transform duration-300' : 'left-0',
-      !isEqualOrGreater && !showSideBar ? 'translate-x-full' : '',
-      isEqualOrGreater ? 'border-r' : 'border-l',
-    ]"
+    class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 border-neutral-400 text-neutral-900 transition-transform duration-300 right-0 lg:right-auto lg:left-0 border-l lg:border-l-0 lg:border-r"
+    :class="[showSideBar ? 'translate-x-0' : 'translate-x-full lg:translate-x-0']"
   >
     <div class="pl-1 lg:p-0 mt-2 mb-8 flex items-center justify-between lg:justify-center lg:ml-0">
       <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="showSideBar = false">
@@ -97,19 +92,18 @@ onMounted(async () => {
         </div>
       </NavLink>
       <button
-        v-if="!isEqualOrGreater && showSideBar"
-        class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
+        v-if="showSideBar"
+        class="lg:hidden hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
         @click="showSideBar = false"
       >
         <Icon icon="lucide:x" class="size-6" />
       </button>
     </div>
-    <div class="pl-3 pr-3 divide-y divide-neutral-700">
+    <div class="pl-3 pr-3 divide-y divide-neutral-700 text-end lg:text-start">
       <div class="text-xl pb-2">
         <NavLink
           routeName="characters"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Characters
@@ -119,7 +113,6 @@ onMounted(async () => {
         <NavLink
           routeName="careers"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Careers
@@ -127,7 +120,6 @@ onMounted(async () => {
         <NavLink
           routeName="traits"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Creature traits
@@ -135,7 +127,6 @@ onMounted(async () => {
         <NavLink
           routeName="mutations"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Mutations
@@ -143,7 +134,6 @@ onMounted(async () => {
         <NavLink
           routeName="prayers"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Prayers
@@ -151,7 +141,6 @@ onMounted(async () => {
         <NavLink
           routeName="properties"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Qualities and flaws
@@ -159,7 +148,6 @@ onMounted(async () => {
         <NavLink
           routeName="runes"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Runes
@@ -167,7 +155,6 @@ onMounted(async () => {
         <NavLink
           routeName="skills"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Skills
@@ -175,7 +162,6 @@ onMounted(async () => {
         <NavLink
           routeName="spells"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Spells
@@ -183,7 +169,6 @@ onMounted(async () => {
         <NavLink
           routeName="talents"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Talents
@@ -191,7 +176,6 @@ onMounted(async () => {
         <NavLink
           routeName="items"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Trappings
@@ -201,12 +185,11 @@ onMounted(async () => {
         <NavLink
           routeName="manage"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Manage account
         </NavLink>
-        <NavLink variant="side" :class="isEqualOrGreater ? 'text-start' : 'text-end'" @click="auth.logout">
+        <NavLink variant="side" @click="auth.logout">
           Logout
         </NavLink>
       </div>
@@ -214,7 +197,6 @@ onMounted(async () => {
         <NavLink
           routeName="register"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Register
@@ -222,7 +204,6 @@ onMounted(async () => {
         <NavLink
           routeName="login"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Login
@@ -232,7 +213,6 @@ onMounted(async () => {
         <NavLink
           href="https://dice.hammergen.net/"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           Roll dice!
@@ -240,7 +220,6 @@ onMounted(async () => {
         <NavLink
           routeName="about"
           variant="side"
-          :class="isEqualOrGreater ? 'text-start' : 'text-end'"
           @click="showSideBar = false"
         >
           About
@@ -280,8 +259,8 @@ onMounted(async () => {
   <!-- Shade for side bar -->
   <Transition name="fade">
     <div
-      v-show="showSideBar && !isEqualOrGreater"
-      class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-70 duration-500"
+      v-show="showSideBar"
+      class="fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-70 duration-500 lg:hidden"
       @click="showSideBar = false"
     />
   </Transition>

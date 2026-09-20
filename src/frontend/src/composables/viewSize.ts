@@ -8,12 +8,6 @@ const scrollWidth = computed(() => {
   return screenSize.value - screenSizeWithoutScrollbar.value;
 });
 
-export function useScreenSize(size: ViewSize) {
-  const isEqualOrGreater = computed(() => {
-    return screenSize.value >= size;
-  });
-  return { isEqualOrGreater };
-}
 
 export function useElSize(size: ViewSize | number, el: Ref<HTMLDivElement | null>) {
   const { width } = useElementSize(el);

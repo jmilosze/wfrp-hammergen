@@ -3,7 +3,17 @@ import { useRoute } from "vue-router";
 import { computed } from "vue";
 
 const SIDE_VARIANT = {
-  static: ["block", "hover:bg-neutral-700", "hover:text-amber-300", "py-1", "px-2", "rounded", "select-none"],
+  static: [
+    "block",
+    "hover:bg-neutral-700",
+    "hover:text-amber-300",
+    "py-1",
+    "px-2",
+    "rounded",
+    "select-none",
+    "text-end",
+    "lg:text-start",
+  ],
   unselected: [],
   selected: ["font-bold"],
 };
