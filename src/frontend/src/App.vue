@@ -4,7 +4,7 @@ import NavLink from "./components/NavLink.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
-import { useMediaQuery } from "@vueuse/core";
+import { useMediaQuery, useScrollLock } from "@vueuse/core";
 import { useModal } from "./composables/modal.ts";
 import { useRoute } from "vue-router";
 import { usePrint } from "./composables/print.ts";
@@ -20,27 +20,20 @@ const modal = useModal();
 const route = useRoute();
 const { printing } = usePrint();
 
+const isScrollLocked = useScrollLock(document.body);
+
 watch(isLg, (isDesktop) => {
   if (isDesktop) {
     showSideBar.value = false;
   }
 });
 
-watch(showSideBar, (isOpen) => {
-  if (isOpen) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
+watch(
+  () => showSideBar.value || modal.show.value,
+  (shouldLock) => {
+    isScrollLocked.value = shouldLock;
   }
-});
-
-watch(modal.show, (showModal) => {
-  if (showModal) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-  }
-});
+);
 
 onMounted(async () => {
   if (auth.loggedIn.value) {
