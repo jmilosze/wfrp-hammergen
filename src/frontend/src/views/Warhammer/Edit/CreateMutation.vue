@@ -14,6 +14,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 
 const props = defineProps<{
@@ -102,8 +103,14 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
-      :deleteItem="id !== 'create' ? deleteItem : undefined"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Mutation"
       :name="wh.name"
+      list="mutations"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

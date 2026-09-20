@@ -13,6 +13,7 @@ import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import SelectInput from "../../../components/SelectInput.vue";
@@ -187,8 +188,14 @@ watch(
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
-      :deleteItem="id !== 'create' ? deleteItem : undefined"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Talent"
       :name="wh.name"
+      list="talents"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

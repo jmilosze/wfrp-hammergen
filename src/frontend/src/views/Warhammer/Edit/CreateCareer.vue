@@ -22,6 +22,7 @@ import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { useWhList } from "../../../composables/whList.ts";
@@ -310,8 +311,14 @@ watch(
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
-      :deleteItem="id !== 'create' ? deleteItem : undefined"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Career"
       :name="wh.name"
+      list="careers"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

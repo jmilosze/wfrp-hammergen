@@ -7,6 +7,7 @@ import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
@@ -121,8 +122,14 @@ const validCn = computed(() => wh.value.validateCn());
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
-      :deleteItem="id !== 'create' ? deleteItem : undefined"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Spell"
       :name="wh.name"
+      list="spells"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

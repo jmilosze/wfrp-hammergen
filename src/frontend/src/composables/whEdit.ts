@@ -74,6 +74,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
     submissionState.value.setInProgress();
     try {
       await elementApi.deleteElement(wh.value.id);
+      whOriginal.value = wh.value.copy() as T;
       return true;
     } catch (error) {
       submissionState.value.setFailureFromError(error);

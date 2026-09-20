@@ -7,6 +7,7 @@ import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormInput from "../../../components/FormInput.vue";
 import ActionButton from "../../../components/ActionButton.vue";
@@ -823,8 +824,14 @@ const modifierAttributes = computed(() => {
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
-      :deleteItem="id !== 'create' ? deleteItem : undefined"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Character"
       :name="wh.name"
+      list="characters"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

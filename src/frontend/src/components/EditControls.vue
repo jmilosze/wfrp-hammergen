@@ -2,9 +2,8 @@
 import router from "../router.ts";
 import ActionButton from "./ActionButton.vue";
 import { onBeforeRouteLeave } from "vue-router";
-import { nextTick, ref } from "vue";
+import { ref } from "vue";
 import DoubleRadioButton from "./DoubleRadioButton.vue";
-import DeleteModal from "./DeleteModal.vue";
 
 const props = defineProps<{
   readOnly: boolean;
@@ -14,8 +13,6 @@ const props = defineProps<{
   list: string;
   submitForm: () => Promise<boolean>;
   resetForm: () => void;
-  deleteItem?: () => Promise<boolean>;
-  name?: string;
 }>();
 
 const leaveWithoutConfirmation = ref(false);
@@ -34,15 +31,6 @@ onBeforeRouteLeave((_, __, next) => {
 });
 
 const addAnother = ref(false);
-const deleting = ref(false);
-const elementToDelete = ref({ id: "", name: "" });
-
-function onDeleteClick() {
-  elementToDelete.value = { id: "", name: "" };
-  nextTick(() => {
-    elementToDelete.value = { id: "delete", name: props.name ?? "" };
-  });
-}
 
 async function navigateToList() {
   leaveWithoutConfirmation.value = true;
@@ -54,7 +42,7 @@ async function navigateToList() {
 }
 
 async function onSave() {
-  if (props.saving || deleting.value) {
+  if (props.saving) {
     return;
   }
   if (!(await props.submitForm())) {
@@ -66,24 +54,11 @@ async function onSave() {
     await navigateToList();
   }
 }
-
-async function onConfirmDelete() {
-  if (!props.deleteItem || props.saving || deleting.value) {
-    return;
-  }
-  deleting.value = true;
-  const success = await props.deleteItem();
-  deleting.value = false;
-  elementToDelete.value = { id: "", name: "" };
-  if (success) {
-    await navigateToList();
-  }
-}
 </script>
 
 <template>
   <div>
-    <div v-if="allowAddAnother === true && !readOnly" class="my-2">
+    <div v-if="allowAddAnother && !readOnly" class="my-2">
       <DoubleRadioButton
         v-model="addAnother"
         title="Add another after saving?"
@@ -92,26 +67,10 @@ async function onConfirmDelete() {
         class="my-3"
       />
     </div>
-    <div class="flex flex-wrap items-center gap-8">
-      <div class="flex flex-wrap gap-4">
-        <ActionButton v-if="!readOnly" :spinner="saving" class="btn" @click="onSave">Save</ActionButton>
-        <ActionButton class="btn" @click="router.go(-1)">Back</ActionButton>
-      </div>
-      <ActionButton
-        v-if="!readOnly && deleteItem !== undefined"
-        :spinner="deleting"
-        class="btn btn-danger"
-        @click="onDeleteClick"
-      >
-        Delete
-      </ActionButton>
+    <div class="flex flex-wrap gap-4">
+      <ActionButton v-if="!readOnly" :spinner="saving" class="btn" @click="onSave">Save</ActionButton>
+      <ActionButton class="btn" @click="router.go(-1)">Back</ActionButton>
     </div>
-
-    <DeleteModal
-      v-if="!readOnly && deleteItem !== undefined"
-      :elementToDelete="elementToDelete"
-      @deleteConfirmed="onConfirmDelete"
-    />
   </div>
 </template>
 
