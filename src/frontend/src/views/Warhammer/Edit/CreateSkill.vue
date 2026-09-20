@@ -24,6 +24,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SelectTable from "../../../components/SelectTable.vue";
 
 const props = defineProps<{
@@ -45,6 +46,7 @@ const {
   showApiError,
   loadWh,
   submitForm,
+  deleteItem,
   hasChanged,
   submissionState,
   resetForm,
@@ -187,6 +189,14 @@ watch(
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Skill"
+      :name="wh.name"
+      list="skills"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

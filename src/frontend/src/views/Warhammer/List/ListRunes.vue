@@ -7,7 +7,7 @@ import Header from "../../../components/PageHeader.vue";
 import { source } from "../../../services/wh/source.ts";
 import { computed } from "vue";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
-import DeleteModal from "../../../components/DeleteModal.vue";
+
 import { getOptions } from "../../../utils/whList.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
@@ -16,7 +16,6 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
-import TextLink from "../../../components/TextLink.vue";
 
 const whList = useWhList(new RuneApi(authRequest));
 await whList.loadWhList();
@@ -30,10 +29,10 @@ const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "tooltip", displayName: "", skipStackedTitle: true },
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "applicableTo", displayName: "Applicable to", skipStackedTitle: false },
   { name: "source", displayName: "Source", skipStackedTitle: false },
+  { name: "tooltip", displayName: "Visibility", skipStackedTitle: false },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
@@ -107,22 +106,22 @@ const filteredLabelOptions = computed(() => {
     <SelectInput v-model="applicableToTerm" :options="filteredApplicableToOptions" class="grow mb-2 mx-1" />
     <SelectInput v-model="labelTerm" :options="filteredLabelOptions" class="grow mb-2 mx-1" />
   </div>
-  <TableWithSearch v-model="searchTerm" :fields="columns" :items="items" stackBreakpoint="4xl" class="mx-1">
+  <TableWithSearch
+    v-model="searchTerm"
+    :fields="columns"
+    :items="items"
+    stackBreakpoint="4xl"
+    rowRouteName="rune"
+    class="mx-1"
+  >
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="rune" :params="{ id: 'create' }">
       Create new
     </LinkButton>
 
-    <template #name="{ name, id }: { name: string; id: string }">
-      <TextLink routeName="rune" :params="{ id: id }" :sameWindow="true">{{ name }}</TextLink>
-    </template>
-
-    <template #actions="{ name, id, ownerId }: { name: string; id: string; ownerId: string }">
+    <template #actions="{ id }: { id: string }">
       <ActionButtonsNonCharacter
         :id="id"
-        :ownerId="ownerId"
-        routeName="rune"
         @copy="(copiedId) => whList.copyWh(copiedId)"
-        @delete="whList.whToDelete.value = { name: name, id: id }"
       />
     </template>
 
@@ -138,8 +137,6 @@ const filteredLabelOptions = computed(() => {
       <ToolTip :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>
-
-  <DeleteModal :elementToDelete="whList.whToDelete.value" @deleteConfirmed="whList.deleteWh()" />
 </template>
 
 <style scoped></style>

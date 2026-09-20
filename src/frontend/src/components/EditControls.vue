@@ -15,10 +15,10 @@ const props = defineProps<{
   resetForm: () => void;
 }>();
 
-const saveClicked = ref(false);
+const leaveWithoutConfirmation = ref(false);
 
 onBeforeRouteLeave((_, __, next) => {
-  if (props.readOnly || !props.confirmExit || saveClicked.value) {
+  if (props.readOnly || !props.confirmExit || leaveWithoutConfirmation.value) {
     next();
   } else {
     const answer = window.confirm("Changes that you made may not be saved.");
@@ -32,25 +32,33 @@ onBeforeRouteLeave((_, __, next) => {
 
 const addAnother = ref(false);
 
+async function navigateToList() {
+  leaveWithoutConfirmation.value = true;
+  const previousState = router.options.history.state.back;
+  const queryString = typeof previousState === "string" ? previousState.split("?")[1] : "";
+  const queryParams = new URLSearchParams(queryString || "");
+  const allParams = Object.fromEntries(queryParams.entries());
+  await router.push({ name: props.list, query: allParams });
+}
+
 async function onSave() {
+  if (props.saving) {
+    return;
+  }
   if (!(await props.submitForm())) {
     return;
   }
   if (addAnother.value) {
     props.resetForm();
   } else {
-    saveClicked.value = true;
-    const previousState = router.options.history.state.back as string;
-    const queryParams = new URLSearchParams(previousState?.split("?")[1] || "");
-    const allParams = Object.fromEntries(queryParams.entries());
-    await router.push({ name: props.list, query: allParams });
+    await navigateToList();
   }
 }
 </script>
 
 <template>
   <div>
-    <div v-if="allowAddAnother === true && !readOnly" class="my-2">
+    <div v-if="allowAddAnother && !readOnly" class="my-2">
       <DoubleRadioButton
         v-model="addAnother"
         title="Add another after saving?"

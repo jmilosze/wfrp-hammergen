@@ -1,31 +1,37 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import ActionButton from "./ActionButton.vue";
-import { useAuth } from "../composables/auth.ts";
 import LinkButton from "./LinkButton.vue";
+import { useAuth } from "../composables/auth.ts";
+import { Icon } from "@iconify/vue";
 
-const props = defineProps<{
+defineProps<{
   id: string;
-  ownerId?: string;
 }>();
 
 const emit = defineEmits<{
   (e: "copy", id: string): void;
-  (e: "delete", id: string): void;
 }>();
 
 const auth = useAuth();
-const canEdit = computed(() => auth.canEdit(props.ownerId));
 </script>
 
 <template>
   <div class="flex gap-2 my-1 shrink-0">
-    <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm">View</LinkButton>
-    <LinkButton v-if="canEdit" routeName="character" :params="{ id: id }" class="btn btn-sm">Edit</LinkButton>
-    <ActionButton v-if="auth.loggedIn.value" class="btn btn-secondary btn-sm" @click="emit('copy', id)">
-      Copy
+    <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm">
+      View
+    </LinkButton>
+    <ActionButton
+      v-if="auth.loggedIn.value"
+      class="btn btn-secondary btn-sm"
+      title="Copy"
+      aria-label="Copy"
+      @click="emit('copy', id)"
+    >
+      <span class="flex items-center gap-1.5">
+        <Icon icon="lucide:copy" class="size-4" />
+        <span>Copy</span>
+      </span>
     </ActionButton>
-    <ActionButton v-if="canEdit" class="mx-1 btn btn-danger btn-sm" @click="emit('delete', id)">Delete</ActionButton>
   </div>
 </template>
 

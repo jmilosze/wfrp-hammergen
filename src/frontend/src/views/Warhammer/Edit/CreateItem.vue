@@ -35,6 +35,7 @@ import FormInput from "../../../components/FormInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
@@ -65,6 +66,7 @@ const {
   showApiError,
   loadWh,
   submitForm,
+  deleteItem,
   hasChanged,
   submissionState,
   resetForm,
@@ -447,6 +449,14 @@ watch(
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Trapping"
+      :name="wh.name"
+      list="items"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

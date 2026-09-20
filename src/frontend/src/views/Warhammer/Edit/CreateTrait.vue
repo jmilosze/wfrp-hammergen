@@ -12,6 +12,7 @@ import FormTextarea from "../../../components/FormTextarea.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 
@@ -34,6 +35,7 @@ const {
   showApiError,
   loadWh,
   submitForm,
+  deleteItem,
   hasChanged,
   submissionState,
   resetForm,
@@ -91,6 +93,14 @@ const validDesc = computed(() => wh.value.validateDescription());
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Creature trait"
+      :name="wh.name"
+      list="traits"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

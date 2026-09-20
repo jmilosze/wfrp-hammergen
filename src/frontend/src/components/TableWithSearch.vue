@@ -4,6 +4,7 @@ import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
+import { useRouter } from "vue-router";
 
 export type StackBreakpoint = "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 
@@ -19,12 +20,14 @@ const props = defineProps<{
   elementId?: string;
   loading?: boolean;
   resetPagination?: number;
+  rowRouteName?: string;
 }>();
 
 const emit = defineEmits<{
   (e: "update:modelValue", modelValue: string): void;
   (e: "createNew"): void;
   (e: "reload"): void;
+  (e: "rowClick", item: T): void;
 }>();
 
 const desktopClasses: Record<StackBreakpoint, string> = {
@@ -129,6 +132,35 @@ onUpdated(() => {
     return;
   }
 });
+
+const router = useRouter();
+
+function onRowClick(item: T, event: MouseEvent): void {
+  if (!props.rowRouteName || event.button !== 0) {
+    return;
+  }
+  if (event.target instanceof HTMLElement && event.target.closest("a, button")) {
+    return;
+  }
+  if (window.getSelection()?.toString()) {
+    return;
+  }
+
+  emit("rowClick", item);
+
+  if (event.ctrlKey || event.metaKey) {
+    const routeData = router.resolve({ name: props.rowRouteName, params: { id: item.id } });
+    window.open(routeData.href, "_blank");
+  } else {
+    router.push({ name: props.rowRouteName, params: { id: item.id } });
+  }
+}
+
+function onCellClick(field: TableField, event: MouseEvent): void {
+  if (field.name === "actions") {
+    event.stopPropagation();
+  }
+}
 </script>
 
 <template>
@@ -166,7 +198,13 @@ onUpdated(() => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
+              <tr
+                v-for="item in itemsOnPage"
+                :key="item.id"
+                class="bg-white hover:bg-neutral-200"
+                :class="[props.rowRouteName ? 'cursor-pointer' : '']"
+                @click="onRowClick(item, $event)"
+              >
                 <td
                   v-for="field in fields"
                   :key="field.name"
@@ -174,7 +212,9 @@ onUpdated(() => {
                   :class="[
                     field.name === 'name' ? 'wrap-break-word' : '',
                     field.name === 'description' ? 'wrap-anywhere' : '',
+                    field.name === 'actions' ? 'cursor-default' : '',
                   ]"
+                  @click="onCellClick(field, $event)"
                 >
                   <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
                 </td>
@@ -188,7 +228,13 @@ onUpdated(() => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in itemsOnPage" :key="item.id" class="bg-white hover:bg-neutral-200">
+              <tr
+                v-for="item in itemsOnPage"
+                :key="item.id"
+                class="bg-white hover:bg-neutral-200"
+                :class="[props.rowRouteName ? 'cursor-pointer' : '']"
+                @click="onRowClick(item, $event)"
+              >
                 <td class="text-sm">
                   <div
                     v-for="field in fields"
@@ -197,7 +243,9 @@ onUpdated(() => {
                     :class="[
                       field.name === 'name' ? 'wrap-break-word' : '',
                       field.name === 'description' ? 'wrap-anywhere' : '',
+                      field.name === 'actions' ? 'cursor-default' : '',
                     ]"
+                    @click="onCellClick(field, $event)"
                   >
                     <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
                     <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>

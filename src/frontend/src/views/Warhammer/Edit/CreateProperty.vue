@@ -12,6 +12,7 @@ import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
@@ -41,6 +42,7 @@ const {
   showApiError,
   loadWh,
   submitForm,
+  deleteItem,
   hasChanged,
   submissionState,
   resetForm,
@@ -112,6 +114,14 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Quality/flaw"
+      :name="wh.name"
+      list="properties"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>

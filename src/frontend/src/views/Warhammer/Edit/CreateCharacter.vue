@@ -7,9 +7,11 @@ import { authRequest } from "../../../services/auth.ts";
 import { Character, CharacterApi } from "../../../services/wh/character.ts";
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
+import DeleteBlock from "../../../components/DeleteBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormInput from "../../../components/FormInput.vue";
 import ActionButton from "../../../components/ActionButton.vue";
+import LinkButton from "../../../components/LinkButton.vue";
 import generateName from "../../../services/wh/characterGeneration/generateName.ts";
 import {
   DEFAULT_CAREER_ID,
@@ -87,6 +89,7 @@ const {
   showApiError,
   loadWh,
   submitForm,
+  deleteItem,
   hasChanged,
   submissionState,
   resetForm,
@@ -388,7 +391,14 @@ const modifierAttributes = computed(() => {
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
-  <div v-if="canEdit" class="border border-neutral-700 rounded p-2 my-4">
+  <div v-if="id !== 'create'" class="border border-neutral-700 rounded p-2 my-4">
+    <div class="text-xl">View character</div>
+    <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
+    <div class="flex">
+      <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View character</LinkButton>
+    </div>
+  </div>
+  <div v-if="canEdit && id === 'create'" class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">Generate character</div>
     <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
     <div class="flex flex-col @5xl:flex-row gap-4">
@@ -450,13 +460,7 @@ const modifierAttributes = computed(() => {
         </p>
         <p class="my-1">Generating will override all current entries on the character sheet.</p>
       </HintModal>
-      <ActionButton
-        class="btn btn-sm"
-        :disabled="isGenerationDisabled"
-        @click="rollCharacter"
-      >
-        Generate
-      </ActionButton>
+      <ActionButton class="btn btn-sm" :disabled="isGenerationDisabled" @click="rollCharacter"> Generate </ActionButton>
     </div>
   </div>
   <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
@@ -820,6 +824,14 @@ const modifierAttributes = computed(() => {
       :submitForm="submitForm"
       :resetForm="resetForm"
       :readOnly="!canEdit"
+    />
+
+    <DeleteBlock
+      v-if="id !== 'create' && canEdit"
+      propertyName="Character"
+      :name="wh.name"
+      list="characters"
+      :deleteItem="deleteItem"
     />
   </div>
 </template>
