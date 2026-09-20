@@ -17,34 +17,57 @@ const tileAndContent = computed(() => {
   return getSharedItemTooltip(canEdit.value, vis);
 });
 
-function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): { tile: string; content: string } {
-  let sharedTile;
-  let sharedTooltip;
+interface TooltipInfo {
+  tile: string;
+  label: string;
+  content: string;
+  badgeClass: string;
+}
 
+function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): TooltipInfo {
   if (visibility === Visibility.Public) {
-    sharedTile = "material-symbols:globe";
-    sharedTooltip = "This item is owned by Hammergen";
+    return {
+      tile: "material-symbols:globe",
+      label: "Public",
+      content: "This item is owned by Hammergen",
+      badgeClass: "bg-blue-100 text-blue-800 border border-blue-300",
+    };
   } else if (visibility === Visibility.Shared) {
     if (canEdit) {
-      sharedTile = "material-symbols:backup";
-      sharedTooltip = "This item is shared with linked accounts";
+      return {
+        tile: "material-symbols:backup",
+        label: "Shared",
+        content: "This item is shared with linked accounts",
+        badgeClass: "bg-green-100 text-green-800 border border-green-300",
+      };
     } else {
-      sharedTile = "material-symbols:cloud-download";
-      sharedTooltip = "This item is being shared from a linked account";
+      return {
+        tile: "material-symbols:cloud-download",
+        label: "Shared",
+        content: "This item is being shared from a linked account",
+        badgeClass: "bg-green-100 text-green-800 border border-green-300",
+      };
     }
   } else {
-    sharedTile = "material-symbols:lock";
-    sharedTooltip = "This item is not shared";
+    return {
+      tile: "material-symbols:lock",
+      label: "Private",
+      content: "This item is not shared",
+      badgeClass: "bg-neutral-100 text-neutral-700 border border-neutral-300",
+    };
   }
-
-  return { tile: sharedTile, content: sharedTooltip };
 }
 </script>
 
 <template>
-  <span :title="tileAndContent.content" class="cursor-pointer inline-block text-lg">
+  <span
+    :title="tileAndContent.content"
+    :class="tileAndContent.badgeClass"
+    class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap select-none cursor-default"
+  >
     <slot name="tile">
-      <Icon :icon="tileAndContent.tile" class="size-6" />
+      <Icon :icon="tileAndContent.tile" class="size-4" />
     </slot>
+    <span>{{ tileAndContent.label }}</span>
   </span>
 </template>
