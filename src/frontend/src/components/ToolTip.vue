@@ -45,7 +45,7 @@ function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): Tooltip
         tile: "material-symbols:cloud-download",
         label: "Shared",
         content: "This item is being shared from a linked account",
-        badgeClass: "bg-green-100 text-green-800 border border-green-300",
+        badgeClass: "bg-purple-100 text-purple-800 border border-purple-300",
       };
     }
   } else {
