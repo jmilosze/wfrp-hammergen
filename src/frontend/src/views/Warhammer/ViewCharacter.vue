@@ -450,7 +450,7 @@ const grimoiresDisp = ref(
     <ActionButton class="m-1 btn btn-sm" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
 
-  <div class="flex flex-wrap @3xl:flex-nowrap justify-between text-left gap-5 my-5">
+  <div class="flex flex-wrap md:flex-nowrap justify-between text-left gap-5 my-5">
     <div class="grow">
       <div class="mb-1">Basic</div>
       <table class="border-collapse w-full">
@@ -526,7 +526,7 @@ const grimoiresDisp = ref(
       </table>
     </div>
   </div>
-  <div class="flex flex-wrap @3xl:flex-nowrap justify-between text-left gap-5 my-5">
+  <div class="flex flex-wrap md:flex-nowrap justify-between text-left gap-5 my-5">
     <ViewCharacterTable title="Movement" :items="displayMovement.items" :fields="displayMovement.fields" class="grow" />
     <ViewCharacterTable title="Wealth" :items="displayWealth.items" :fields="displayWealth.fields" class="grow" />
     <ViewCharacterTable title="Fate" :items="displayFate.items" :fields="displayFate.fields" class="grow" />
@@ -537,7 +537,7 @@ const grimoiresDisp = ref(
       class="grow"
     />
   </div>
-  <div class="flex flex-wrap @3xl:flex-nowrap justify-between text-left gap-5 my-5">
+  <div class="flex flex-wrap md:flex-nowrap justify-between text-left gap-5 my-5">
     <ViewCharacterTable
       title="Experience"
       :items="displayExperience.items"
@@ -546,7 +546,7 @@ const grimoiresDisp = ref(
     />
     <ViewCharacterTable title="Other" :items="displayOther.items" :fields="displayOther.fields" class="grow" />
   </div>
-  <div class="flex flex-wrap @3xl:flex-nowrap justify-between text-left gap-5 my-5">
+  <div class="flex flex-wrap md:flex-nowrap justify-between text-left gap-5 my-5">
     <ViewCharacterTable
       title="Attributes 1"
       :items="displayAttributes1.items"
@@ -560,7 +560,7 @@ const grimoiresDisp = ref(
       class="grow"
     />
   </div>
-  <div class="flex flex-wrap @3xl:flex-nowrap justify-between text-left gap-5 my-5">
+  <div class="flex flex-wrap md:flex-nowrap justify-between text-left gap-5 my-5">
     <ViewCharacterTable
       title="Basic skills 1"
       :items="displayBasicSkills.items.slice(0, Math.floor(character.basicSkills.length / 2))"
@@ -582,7 +582,7 @@ const grimoiresDisp = ref(
       </template>
     </ViewCharacterTable>
   </div>
-  <div class="flex flex-wrap @3xl:flex-nowrap justify-between text-left gap-5 my-5">
+  <div class="flex flex-wrap md:flex-nowrap justify-between text-left gap-5 my-5">
     <ViewCharacterTable
       title="Advanced skills"
       :items="displayAdvancedSkills.items"
@@ -602,6 +602,7 @@ const grimoiresDisp = ref(
 
   <ViewCharacterTable
     title="Equipped armour"
+    stackable
     :items="equippedArmourDisp.items"
     :fields="equippedArmourDisp.fields"
     class="my-5"
@@ -629,6 +630,7 @@ const grimoiresDisp = ref(
 
   <ViewCharacterTable
     title="Equipped weapon"
+    stackable
     :items="equippedWeaponDisp.items"
     :fields="equippedWeaponDisp.fields"
     class="my-5"
@@ -656,6 +658,7 @@ const grimoiresDisp = ref(
 
   <ViewCharacterTable
     title="Other equipped trappings"
+    stackable
     :items="equippedOtherDisp.items"
     :fields="equippedOtherDisp.fields"
     class="my-5"
@@ -667,6 +670,7 @@ const grimoiresDisp = ref(
 
   <ViewCharacterTable
     title="Carried trappings"
+    stackable
     :items="carriedDisp.items"
     :fields="carriedDisp.fields"
     class="my-5"
@@ -676,7 +680,7 @@ const grimoiresDisp = ref(
     </template>
   </ViewCharacterTable>
 
-  <div class="flex flex-wrap @3xl:flex-nowrap justify-between text-left gap-5">
+  <div class="flex flex-wrap md:flex-nowrap justify-between text-left gap-5">
     <div class="text-left grow">
       <div class="mb-1">Owned and stored stuff</div>
 
@@ -698,6 +702,7 @@ const grimoiresDisp = ref(
   </div>
   <ViewCharacterTable
     title="Known spells"
+    stackable
     :items="spellsDisp.items"
     :fields="spellsDisp.fields"
     class="my-5"
@@ -708,6 +713,7 @@ const grimoiresDisp = ref(
   </ViewCharacterTable>
   <ViewCharacterTable
     title="Known prayers"
+    stackable
     :items="prayerDisp.items"
     :fields="prayerDisp.fields"
     class="my-5"
@@ -720,6 +726,7 @@ const grimoiresDisp = ref(
     v-for="book in grimoiresDisp"
     :key="book.name"
     :title="'Spells in ' + book.name"
+    stackable
     :items="book.items"
     :fields="book.fields"
     class="my-5"
@@ -730,6 +737,7 @@ const grimoiresDisp = ref(
   </ViewCharacterTable>
   <ViewCharacterTable
     title="Mutations"
+    stackable
     :items="mutationDisp.items"
     :fields="mutationDisp.fields"
     class="my-5"
@@ -740,6 +748,7 @@ const grimoiresDisp = ref(
   </ViewCharacterTable>
   <ViewCharacterTable
     title="Traits"
+    stackable
     :items="traitDisp.items"
     :fields="traitDisp.fields"
     class="my-5"
