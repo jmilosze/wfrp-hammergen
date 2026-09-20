@@ -92,7 +92,7 @@ async function onConfirmDelete() {
         class="my-3"
       />
     </div>
-    <div class="flex flex-wrap justify-between items-center gap-4">
+    <div class="flex flex-wrap items-center gap-8">
       <div class="flex flex-wrap gap-4">
         <ActionButton v-if="!readOnly" :spinner="saving" class="btn" @click="onSave">Save</ActionButton>
         <ActionButton class="btn" @click="router.go(-1)">Back</ActionButton>
@@ -100,7 +100,7 @@ async function onConfirmDelete() {
       <ActionButton
         v-if="!readOnly && deleteItem !== undefined"
         :spinner="deleting"
-        class="btn btn-danger ml-auto"
+        class="btn btn-danger"
         @click="onDeleteClick"
       >
         Delete

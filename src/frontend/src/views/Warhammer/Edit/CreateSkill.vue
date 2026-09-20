@@ -172,28 +172,25 @@ watch(
       <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
     </div>
   </div>
-  <div class="flex flex-col @3xl:flex-row justify-between gap-4 mt-4">
-    <div class="flex-1">
-      <AfterSubmit
-        :visible="showSubmissionStatus"
-        :submissionState="submissionState"
-        class="w-fit my-2"
-        @close="showSubmissionStatus = false"
-      />
+  <div class="mt-4">
+    <AfterSubmit
+      :visible="showSubmissionStatus"
+      :submissionState="submissionState"
+      class="w-fit my-2"
+      @close="showSubmissionStatus = false"
+    />
 
-      <EditControls
-        :saving="submissionState.status === 'inProgress'"
-        list="skills"
-        :allowAddAnother="id === 'create'"
-        :confirmExit="hasChanged"
-        :submitForm="submitForm"
-        :resetForm="resetForm"
-        :readOnly="!canEdit"
-        :deleteItem="id !== 'create' ? deleteItem : undefined"
-        :name="wh.name"
-      />
-    </div>
-    <div class="flex-1 hidden @3xl:block" />
+    <EditControls
+      :saving="submissionState.status === 'inProgress'"
+      list="skills"
+      :allowAddAnother="id === 'create'"
+      :confirmExit="hasChanged"
+      :submitForm="submitForm"
+      :resetForm="resetForm"
+      :readOnly="!canEdit"
+      :deleteItem="id !== 'create' ? deleteItem : undefined"
+      :name="wh.name"
+    />
   </div>
 </template>
 
