@@ -168,7 +168,7 @@ async function scrollToTop(): Promise<void> {
                   v-if="props.rowRouteName && field.name !== 'actions'"
                   :to="{ name: props.rowRouteName, params: { id: item.id } }"
                   :tabindex="fieldIndex === 0 ? undefined : -1"
-                  class="py-2 px-5 block w-full h-full text-inherit no-underline hover:text-inherit"
+                  class="py-2 px-5 flex items-center w-full h-full text-inherit no-underline hover:text-inherit"
                 >
                   <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
                 </RouterLink>
