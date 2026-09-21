@@ -4,7 +4,7 @@ import { computed, onUpdated, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { useRouter } from "vue-router";
+import { RouterLink } from "vue-router";
 
 export type StackBreakpoint = "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 
@@ -27,7 +27,6 @@ const emit = defineEmits<{
   (e: "update:modelValue", modelValue: string): void;
   (e: "createNew"): void;
   (e: "reload"): void;
-  (e: "rowClick", item: T): void;
 }>();
 
 const desktopClasses: Record<StackBreakpoint, string> = {
@@ -72,7 +71,8 @@ const searchedItems = computed(() => {
   if (!searchTerm.value) {
     return props.items;
   } else {
-    return props.items.filter((row) => searchInRow(row));
+    const query = searchTermDebounced.value.toLowerCase();
+    return props.items.filter((row) => searchInRow(row, query));
   }
 });
 
@@ -94,9 +94,9 @@ const itemsOnPage = computed(() => {
   return searchedItems.value.slice(startRow.value, startRow.value + rowsPerPage);
 });
 
-function searchInRow(row: TableRow): boolean {
+function searchInRow(row: TableRow, query: string): boolean {
   for (const column of props.fields) {
-    if (String(row[column.name]).toLowerCase().includes(searchTermDebounced.value.toLowerCase())) {
+    if (String(row[column.name]).toLowerCase().includes(query)) {
       return true;
     }
   }
@@ -133,34 +133,6 @@ onUpdated(() => {
   }
 });
 
-const router = useRouter();
-
-function onRowClick(item: T, event: MouseEvent): void {
-  if (!props.rowRouteName || event.button !== 0) {
-    return;
-  }
-  if (event.target instanceof HTMLElement && event.target.closest("a, button")) {
-    return;
-  }
-  if (window.getSelection()?.toString()) {
-    return;
-  }
-
-  emit("rowClick", item);
-
-  if (event.ctrlKey || event.metaKey) {
-    const routeData = router.resolve({ name: props.rowRouteName, params: { id: item.id } });
-    window.open(routeData.href, "_blank");
-  } else {
-    router.push({ name: props.rowRouteName, params: { id: item.id } });
-  }
-}
-
-function onCellClick(field: TableField, event: MouseEvent): void {
-  if (field.name === "actions") {
-    event.stopPropagation();
-  }
-}
 </script>
 
 <template>
@@ -187,76 +159,91 @@ function onCellClick(field: TableField, event: MouseEvent): void {
         class="mt-3"
         @update:modelValue="needToScroll = 'top'"
       />
-      <div>
-        <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-          <table class="w-full" :class="desktopTableClass">
-            <thead>
-              <tr class="text-left">
-                <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
-                  {{ field.displayName }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in itemsOnPage"
-                :key="item.id"
-                class="bg-white hover:bg-neutral-200"
-                :class="[props.rowRouteName ? 'cursor-pointer' : '']"
-                @click="onRowClick(item, $event)"
+      <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+        <table class="w-full" :class="desktopTableClass">
+          <thead>
+            <tr class="text-left">
+              <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
+                {{ field.displayName }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="item in itemsOnPage"
+              :key="item.id"
+              class="bg-white hover:bg-neutral-200"
+              :class="[props.rowRouteName ? 'cursor-pointer table-row-clickable' : '']"
+            >
+              <td
+                v-for="(field, fieldIndex) in fields"
+                :key="field.name"
+                class="border-b border-neutral-300"
+                :class="[
+                  field.name === 'name' ? 'wrap-break-word' : '',
+                  field.name === 'description' ? 'wrap-anywhere' : '',
+                  props.rowRouteName && field.name !== 'actions' ? 'table-cell-link-container' : 'py-2 px-5',
+                ]"
               >
-                <td
-                  v-for="field in fields"
-                  :key="field.name"
-                  class="py-2 px-5 border-b border-neutral-300"
-                  :class="[
-                    field.name === 'name' ? 'wrap-break-word' : '',
-                    field.name === 'description' ? 'wrap-anywhere' : '',
-                    field.name === 'actions' ? 'cursor-default' : '',
-                  ]"
-                  @click="onCellClick(field, $event)"
+                <RouterLink
+                  v-if="props.rowRouteName && field.name !== 'actions'"
+                  :to="{ name: props.rowRouteName, params: { id: item.id } }"
+                  :tabindex="fieldIndex === 0 ? undefined : -1"
+                  class="py-2 px-5 block w-full h-full text-inherit no-underline hover:text-inherit"
                 >
                   <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="w-full" :class="mobileTableClass">
-            <thead>
-              <tr class="text-left">
-                <th class="border-b border-neutral-300 py-2 px-5" />
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="item in itemsOnPage"
-                :key="item.id"
-                class="bg-white hover:bg-neutral-200"
-                :class="[props.rowRouteName ? 'cursor-pointer' : '']"
-                @click="onRowClick(item, $event)"
-              >
-                <td class="text-sm">
+                </RouterLink>
+                <slot v-else :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="w-full" :class="mobileTableClass">
+          <thead>
+            <tr class="text-left">
+              <th class="border-b border-neutral-300 py-2 px-5" />
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="item in itemsOnPage"
+              :key="item.id"
+              class="bg-white hover:bg-neutral-200"
+              :class="[props.rowRouteName ? 'cursor-pointer' : '']"
+            >
+              <td class="text-sm">
+                <template v-for="(field, fieldIndex) in fields" :key="field.name">
+                  <RouterLink
+                    v-if="props.rowRouteName && field.name !== 'actions'"
+                    :to="{ name: props.rowRouteName, params: { id: item.id } }"
+                    :tabindex="fieldIndex === 0 ? undefined : -1"
+                    class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2 text-inherit no-underline hover:text-inherit"
+                    :class="[
+                      field.name === 'name' ? 'wrap-break-word' : '',
+                      field.name === 'description' ? 'wrap-anywhere' : '',
+                    ]"
+                  >
+                    <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
+                    <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
+                  </RouterLink>
                   <div
-                    v-for="field in fields"
-                    :key="field.name"
+                    v-else
                     class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
                     :class="[
                       field.name === 'name' ? 'wrap-break-word' : '',
                       field.name === 'description' ? 'wrap-anywhere' : '',
-                      field.name === 'actions' ? 'cursor-default' : '',
                     ]"
-                    @click="onCellClick(field, $event)"
                   >
                     <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
                     <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
                   </div>
-                  <div class="border-b-4 border-neutral-400" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-        </div>
+                </template>
+                <div class="border-b-4 border-neutral-400" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
       </div>
       <TablePagination
         v-if="searchedItems.length > rowsPerPage"
@@ -271,4 +258,13 @@ function onCellClick(field: TableField, event: MouseEvent): void {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.table-cell-link-container {
+  padding: 0;
+  height: inherit;
+}
+
+.table-row-clickable {
+  height: 1px;
+}
+</style>
