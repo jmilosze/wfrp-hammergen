@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends TableRow">
 import { TableField, TableRow } from "../utils/table.ts";
-import { computed, onUpdated, ref, Ref, watch } from "vue";
+import { computed, nextTick, ref, Ref, watch } from "vue";
 import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
@@ -25,8 +25,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", modelValue: string): void;
-  (e: "createNew"): void;
-  (e: "reload"): void;
 }>();
 
 const desktopClasses: Record<StackBreakpoint, string> = {
@@ -89,7 +87,6 @@ watch(
 
 const rowsPerPage: number = props.perPage ? props.perPage : DEFAULT_PER_PAGE;
 const startRow: Ref<number> = ref(0);
-const needToScroll: Ref<"top" | "bottom" | "no"> = ref("no");
 const itemsOnPage = computed(() => {
   return searchedItems.value.slice(startRow.value, startRow.value + rowsPerPage);
 });
@@ -103,35 +100,17 @@ function searchInRow(row: TableRow, query: string): boolean {
   return false;
 }
 
-onUpdated(() => {
-  if (needToScroll.value === "top") {
-    needToScroll.value = "no";
-    if (props.elementId) {
-      const element = document.getElementById(props.elementId);
-      if (element) {
-        element.scroll(0, 0);
-      }
-    } else {
-      window.scroll(0, 0);
+async function scrollToTop(): Promise<void> {
+  await nextTick();
+  if (props.elementId) {
+    const element = document.getElementById(props.elementId);
+    if (element) {
+      element.scroll(0, 0);
     }
-
-    return;
+  } else {
+    window.scroll(0, 0);
   }
-
-  if (needToScroll.value === "bottom") {
-    needToScroll.value = "no";
-    if (props.elementId) {
-      const element = document.getElementById(props.elementId);
-      if (element) {
-        element.scroll(0, element.scrollHeight);
-      }
-    } else {
-      window.scroll(0, document.body.scrollHeight);
-    }
-
-    return;
-  }
-});
+}
 
 </script>
 
@@ -157,7 +136,7 @@ onUpdated(() => {
         :totalRows="searchedItems.length"
         :rowsPerPage="rowsPerPage"
         class="mt-3"
-        @update:modelValue="needToScroll = 'top'"
+        @update:modelValue="scrollToTop"
       />
       <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
         <table class="w-full" :class="desktopTableClass">
@@ -251,7 +230,7 @@ onUpdated(() => {
         :totalRows="searchedItems.length"
         :rowsPerPage="rowsPerPage"
         class="mt-3"
-        @update:modelValue="needToScroll = 'top'"
+        @update:modelValue="scrollToTop"
       />
     </div>
     <div v-else class="mt-2">No results found.</div>
