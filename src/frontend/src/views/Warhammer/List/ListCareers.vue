@@ -37,7 +37,7 @@ const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
   { name: "class", displayName: "Class", skipStackedTitle: false },
   { name: "species", displayName: "Species", skipStackedTitle: false },
-  { name: "tooltip", displayName: "Visibility", skipStackedTitle: false },
+  { name: "tooltip", displayName: "Visibility", skipStackedTitle: true },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 

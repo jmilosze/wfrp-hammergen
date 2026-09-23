@@ -26,7 +26,7 @@ const auth = useAuth();
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
   { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "tooltip", displayName: "Visibility", skipStackedTitle: false },
+  { name: "tooltip", displayName: "Visibility", skipStackedTitle: true },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
@@ -76,10 +76,7 @@ function formatTalentRow(talent: Talent) {
     </LinkButton>
 
     <template #actions="{ id }: { id: string }">
-      <ActionButtonsNonCharacter
-        :id="id"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
-      />
+      <ActionButtonsNonCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
     </template>
 
     <template #maxRank="{ maxRank }">
@@ -88,15 +85,7 @@ function formatTalentRow(talent: Talent) {
       </div>
     </template>
 
-    <template
-      #tooltip="{
-        ownerId,
-        visibility,
-      }: {
-        ownerId: string;
-        visibility?: number;
-      }"
-    >
+    <template #tooltip="{ ownerId, visibility }: { ownerId: string; visibility?: number }">
       <ToolTip :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>

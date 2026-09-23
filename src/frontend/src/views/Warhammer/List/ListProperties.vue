@@ -35,7 +35,7 @@ const auth = useAuth();
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
   { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "tooltip", displayName: "Visibility", skipStackedTitle: false },
+  { name: "tooltip", displayName: "Visibility", skipStackedTitle: true },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
 ];
 
