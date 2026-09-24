@@ -1,4 +1,18 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {
+  createMemoryHistory,
+  createRouter,
+  createWebHistory,
+  type RouterHistory,
+  type RouteLocationNormalized,
+} from "vue-router";
+import { isUserLoggedIn } from "./services/auth.ts";
+
+declare module "vue-router" {
+  interface RouteMeta {
+    requiresAuth?: boolean;
+    requiresGuest?: boolean;
+  }
+}
 import AboutHammergen from "./views/About/AboutHammergen.vue";
 import HomePage from "./views/HomePage.vue";
 import UserForgotPassword from "./views/User/UserForgotPassword.vue";
@@ -30,9 +44,11 @@ import CreateTrait from "./views/Warhammer/Edit/CreateTrait.vue";
 import ListRunes from "./views/Warhammer/List/ListRunes.vue";
 import CreateRune from "./views/Warhammer/Edit/CreateRune.vue";
 
-export default createRouter({
-  history: createWebHistory(),
-  routes: [
+export function isCreationRoute(to: RouteLocationNormalized): boolean {
+  return to.params.id === "create";
+}
+
+const routes = [
     {
       path: "/",
       name: "home",
@@ -47,16 +63,19 @@ export default createRouter({
       path: "/register",
       name: "register",
       component: UserRegister,
+      meta: { requiresGuest: true },
     },
     {
       path: "/login",
       name: "login",
       component: UserLogin,
+      meta: { requiresGuest: true },
     },
     {
       path: "/forgotpassword",
       name: "forgotpassword",
       component: UserForgotPassword,
+      meta: { requiresGuest: true },
     },
     {
       path: "/resetpassword/:token",
@@ -68,6 +87,7 @@ export default createRouter({
       path: "/manage",
       name: "manage",
       component: UserManageAccount,
+      meta: { requiresAuth: true },
     },
     {
       path: "/prayers",
@@ -196,5 +216,32 @@ export default createRouter({
       component: CreateTrait,
       props: true,
     },
-  ],
-});
+];
+
+export function createHammergenRouter(
+  history: RouterHistory = typeof window !== "undefined" ? createWebHistory() : createMemoryHistory(),
+) {
+  const router = createRouter({
+    history,
+    routes,
+  });
+
+  router.beforeEach((to) => {
+    const loggedIn = isUserLoggedIn();
+
+    if ((to.meta.requiresAuth || isCreationRoute(to)) && !loggedIn) {
+      return {
+        name: "login",
+        query: { redirect: to.fullPath },
+      };
+    }
+
+    if (to.meta.requiresGuest && loggedIn) {
+      return { name: "home" };
+    }
+  });
+
+  return router;
+}
+
+export default createHammergenRouter();

@@ -9,12 +9,14 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
 import ActionButton from "../../components/ActionButton.vue";
 import { useAuth } from "../../composables/auth.ts";
+import { useRoute } from "vue-router";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 const showAfterSubmit = ref(false);
 
 const auth = useAuth();
+const route = useRoute();
 
 const validEmail = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -82,7 +84,13 @@ async function submitForm() {
       <TextLink routeName="forgotpassword" :sameWindow="true">Forgot your password?</TextLink>
     </div>
     <div class="mt-3">
-      <TextLink routeName="register" :sameWindow="true">Register as a new user.</TextLink>
+      <TextLink
+        routeName="register"
+        :query="route.query.redirect ? { redirect: route.query.redirect } : undefined"
+        :sameWindow="true"
+      >
+        Register as a new user.
+      </TextLink>
     </div>
   </div>
 </template>

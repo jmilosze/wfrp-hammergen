@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import Header from "../../components/PageHeader.vue";
 import FormInput from "../../components/FormInput.vue";
 import { anonRequest } from "../../services/auth";
@@ -17,6 +17,7 @@ const showAfterSubmit = ref(false);
 const userApi = new UserApi(anonRequest);
 
 const router = useRouter();
+const route = useRoute();
 const recaptcha = useReCaptcha() as IReCaptchaComposition;
 
 const validEmail = computed(() => {
@@ -76,7 +77,10 @@ async function submitForm() {
     submissionState.value.setSuccess("Registration successful, redirecting to login...");
 
     setTimeout(() => {
-      router.push({ name: "login" });
+      router.push({
+        name: "login",
+        query: route.query.redirect ? { redirect: route.query.redirect } : undefined,
+      });
     }, 1500);
   } catch (error) {
     submissionState.value.setFailureFromError(error, [

@@ -100,6 +100,7 @@ describe("Auth interceptor and state reset", () => {
     expect(auth.loggedIn.value).toBe(false);
     expect(localStorage.getItem("accessToken")).toBeNull();
     expect(router.currentRoute.value.name).toBe("login");
+    expect(router.currentRoute.value.query.redirect).toBe("/characters");
   });
 
   test("401 response with skipAuthRedirect does not redirect to login", async () => {

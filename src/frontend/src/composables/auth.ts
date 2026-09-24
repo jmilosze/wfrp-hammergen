@@ -19,6 +19,18 @@ export function resetAuthState(): void {
   isAdmin.value = false;
 }
 
+export function getSafeRedirectTarget(redirect: unknown): string | null {
+  if (
+    typeof redirect === "string" &&
+    redirect.startsWith("/") &&
+    !redirect.startsWith("//") &&
+    !redirect.startsWith("/\\")
+  ) {
+    return redirect;
+  }
+  return null;
+}
+
 export function setupAuthInterceptor(router: Router): number {
   let redirecting = false;
 
@@ -32,7 +44,10 @@ export function setupAuthInterceptor(router: Router): number {
         if (!skipRedirect && !redirecting && router.currentRoute.value.name !== "login") {
           redirecting = true;
           try {
-            await router.push({ name: "login" });
+            await router.push({
+              name: "login",
+              query: { redirect: router.currentRoute.value.fullPath },
+            });
           } finally {
             redirecting = false;
           }
@@ -64,7 +79,12 @@ export function useAuth() {
     loggedIn.value = true;
     isAdmin.value = isUserAdmin();
 
-    if (router.currentRoute.value.name !== "home") {
+    const redirect = router.currentRoute.value.query.redirect;
+    const safeTarget = getSafeRedirectTarget(redirect);
+
+    if (safeTarget !== null) {
+      await router.push(safeTarget);
+    } else if (router.currentRoute.value.name !== "home") {
       await router.push({ name: "home" });
     }
   }
