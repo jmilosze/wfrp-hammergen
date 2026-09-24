@@ -13,209 +13,180 @@ declare module "vue-router" {
     requiresGuest?: boolean;
   }
 }
-import AboutHammergen from "./views/About/AboutHammergen.vue";
 import HomePage from "./views/HomePage.vue";
-import UserForgotPassword from "./views/User/UserForgotPassword.vue";
-import UserLogin from "./views/User/UserLogin.vue";
-import UserManageAccount from "./views/User/UserManageAccount.vue";
-import UserRegister from "./views/User/UserRegister.vue";
-import UserResetPassword from "./views/User/UserResetPassword.vue";
-import ListPrayers from "./views/Warhammer/List/ListPrayers.vue";
-import CreatePrayer from "./views/Warhammer/Edit/CreatePrayer.vue";
-import ListSpells from "./views/Warhammer/List/ListSpells.vue";
-import CreateSpell from "./views/Warhammer/Edit/CreateSpell.vue";
-import CreateTalent from "./views/Warhammer/Edit/CreateTalent.vue";
-import ListTalents from "./views/Warhammer/List/ListTalents.vue";
-import CreateMutation from "./views/Warhammer/Edit/CreateMutation.vue";
-import ListMutations from "./views/Warhammer/List/ListMutations.vue";
-import CreateProperty from "./views/Warhammer/Edit/CreateProperty.vue";
-import ListProperties from "./views/Warhammer/List/ListProperties.vue";
-import CreateSkill from "./views/Warhammer/Edit/CreateSkill.vue";
-import ListSkills from "./views/Warhammer/List/ListSkills.vue";
-import ListCareers from "./views/Warhammer/List/ListCareers.vue";
-import CreateCareer from "./views/Warhammer/Edit/CreateCareer.vue";
-import CreateItem from "./views/Warhammer/Edit/CreateItem.vue";
-import ListItems from "./views/Warhammer/List/ListItems.vue";
-import ListCharacters from "./views/Warhammer/List/ListCharacters.vue";
-import CreateCharacter from "./views/Warhammer/Edit/CreateCharacter.vue";
-import ViewCharacter from "./views/Warhammer/ViewCharacter.vue";
-import ListTraits from "./views/Warhammer/List/ListTraits.vue";
-import CreateTrait from "./views/Warhammer/Edit/CreateTrait.vue";
-import ListRunes from "./views/Warhammer/List/ListRunes.vue";
-import CreateRune from "./views/Warhammer/Edit/CreateRune.vue";
 
 export function isCreationRoute(to: RouteLocationNormalized): boolean {
   return to.params.id === "create";
 }
 
 const routes = [
-    {
-      path: "/",
-      name: "home",
-      component: HomePage,
-    },
-    {
-      path: "/about",
-      name: "about",
-      component: AboutHammergen,
-    },
-    {
-      path: "/register",
-      name: "register",
-      component: UserRegister,
-      meta: { requiresGuest: true },
-    },
-    {
-      path: "/login",
-      name: "login",
-      component: UserLogin,
-      meta: { requiresGuest: true },
-    },
-    {
-      path: "/forgotpassword",
-      name: "forgotpassword",
-      component: UserForgotPassword,
-      meta: { requiresGuest: true },
-    },
-    {
-      path: "/resetpassword/:token",
-      name: "resetpassword",
-      component: UserResetPassword,
-      props: true,
-    },
-    {
-      path: "/manage",
-      name: "manage",
-      component: UserManageAccount,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/prayers",
-      name: "prayers",
-      component: ListPrayers,
-    },
-    {
-      path: "/prayer/:id",
-      name: "prayer",
-      component: CreatePrayer,
-      props: true,
-    },
-    {
-      path: "/spells",
-      name: "spells",
-      component: ListSpells,
-    },
-    {
-      path: "/spell/:id",
-      name: "spell",
-      component: CreateSpell,
-      props: true,
-    },
-    {
-      path: "/talents",
-      name: "talents",
-      component: ListTalents,
-    },
-    {
-      path: "/talent/:id",
-      name: "talent",
-      component: CreateTalent,
-      props: true,
-    },
-    {
-      path: "/mutations",
-      name: "mutations",
-      component: ListMutations,
-    },
-    {
-      path: "/mutation/:id",
-      name: "mutation",
-      component: CreateMutation,
-      props: true,
-    },
-    {
-      path: "/properties",
-      name: "properties",
-      component: ListProperties,
-    },
-    {
-      path: "/property/:id",
-      name: "property",
-      component: CreateProperty,
-      props: true,
-    },
-    {
-      path: "/runes",
-      name: "runes",
-      component: ListRunes,
-    },
-    {
-      path: "/rune/:id",
-      name: "rune",
-      component: CreateRune,
-      props: true,
-    },
-    {
-      path: "/skills",
-      name: "skills",
-      component: ListSkills,
-    },
-    {
-      path: "/skill/:id",
-      name: "skill",
-      component: CreateSkill,
-      props: true,
-    },
-    {
-      path: "/careers",
-      name: "careers",
-      component: ListCareers,
-    },
-    {
-      path: "/career/:id",
-      name: "career",
-      component: CreateCareer,
-      props: true,
-    },
-    {
-      path: "/items",
-      name: "items",
-      component: ListItems,
-    },
-    {
-      path: "/item/:id",
-      name: "item",
-      component: CreateItem,
-      props: true,
-    },
-    {
-      path: "/characters",
-      name: "characters",
-      component: ListCharacters,
-    },
-    {
-      path: "/character/:id",
-      name: "character",
-      component: CreateCharacter,
-      props: true,
-    },
-    {
-      path: "/view/character/:id",
-      name: "viewCharacter",
-      component: ViewCharacter,
-      props: true,
-    },
-    {
-      path: "/traits",
-      name: "traits",
-      component: ListTraits,
-    },
-    {
-      path: "/trait/:id",
-      name: "trait",
-      component: CreateTrait,
-      props: true,
-    },
+  {
+    path: "/",
+    name: "home",
+    component: HomePage,
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: () => import("./views/About/AboutHammergen.vue"),
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: () => import("./views/User/UserRegister.vue"),
+    meta: { requiresGuest: true },
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("./views/User/UserLogin.vue"),
+    meta: { requiresGuest: true },
+  },
+  {
+    path: "/forgotpassword",
+    name: "forgotpassword",
+    component: () => import("./views/User/UserForgotPassword.vue"),
+    meta: { requiresGuest: true },
+  },
+  {
+    path: "/resetpassword/:token",
+    name: "resetpassword",
+    component: () => import("./views/User/UserResetPassword.vue"),
+    props: true,
+  },
+  {
+    path: "/manage",
+    name: "manage",
+    component: () => import("./views/User/UserManageAccount.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/prayers",
+    name: "prayers",
+    component: () => import("./views/Warhammer/List/ListPrayers.vue"),
+  },
+  {
+    path: "/prayer/:id",
+    name: "prayer",
+    component: () => import("./views/Warhammer/Edit/CreatePrayer.vue"),
+    props: true,
+  },
+  {
+    path: "/spells",
+    name: "spells",
+    component: () => import("./views/Warhammer/List/ListSpells.vue"),
+  },
+  {
+    path: "/spell/:id",
+    name: "spell",
+    component: () => import("./views/Warhammer/Edit/CreateSpell.vue"),
+    props: true,
+  },
+  {
+    path: "/talents",
+    name: "talents",
+    component: () => import("./views/Warhammer/List/ListTalents.vue"),
+  },
+  {
+    path: "/talent/:id",
+    name: "talent",
+    component: () => import("./views/Warhammer/Edit/CreateTalent.vue"),
+    props: true,
+  },
+  {
+    path: "/mutations",
+    name: "mutations",
+    component: () => import("./views/Warhammer/List/ListMutations.vue"),
+  },
+  {
+    path: "/mutation/:id",
+    name: "mutation",
+    component: () => import("./views/Warhammer/Edit/CreateMutation.vue"),
+    props: true,
+  },
+  {
+    path: "/properties",
+    name: "properties",
+    component: () => import("./views/Warhammer/List/ListProperties.vue"),
+  },
+  {
+    path: "/property/:id",
+    name: "property",
+    component: () => import("./views/Warhammer/Edit/CreateProperty.vue"),
+    props: true,
+  },
+  {
+    path: "/runes",
+    name: "runes",
+    component: () => import("./views/Warhammer/List/ListRunes.vue"),
+  },
+  {
+    path: "/rune/:id",
+    name: "rune",
+    component: () => import("./views/Warhammer/Edit/CreateRune.vue"),
+    props: true,
+  },
+  {
+    path: "/skills",
+    name: "skills",
+    component: () => import("./views/Warhammer/List/ListSkills.vue"),
+  },
+  {
+    path: "/skill/:id",
+    name: "skill",
+    component: () => import("./views/Warhammer/Edit/CreateSkill.vue"),
+    props: true,
+  },
+  {
+    path: "/careers",
+    name: "careers",
+    component: () => import("./views/Warhammer/List/ListCareers.vue"),
+  },
+  {
+    path: "/career/:id",
+    name: "career",
+    component: () => import("./views/Warhammer/Edit/CreateCareer.vue"),
+    props: true,
+  },
+  {
+    path: "/items",
+    name: "items",
+    component: () => import("./views/Warhammer/List/ListItems.vue"),
+  },
+  {
+    path: "/item/:id",
+    name: "item",
+    component: () => import("./views/Warhammer/Edit/CreateItem.vue"),
+    props: true,
+  },
+  {
+    path: "/characters",
+    name: "characters",
+    component: () => import("./views/Warhammer/List/ListCharacters.vue"),
+  },
+  {
+    path: "/character/:id",
+    name: "character",
+    component: () => import("./views/Warhammer/Edit/CreateCharacter.vue"),
+    props: true,
+  },
+  {
+    path: "/view/character/:id",
+    name: "viewCharacter",
+    component: () => import("./views/Warhammer/ViewCharacter.vue"),
+    props: true,
+  },
+  {
+    path: "/traits",
+    name: "traits",
+    component: () => import("./views/Warhammer/List/ListTraits.vue"),
+  },
+  {
+    path: "/trait/:id",
+    name: "trait",
+    component: () => import("./views/Warhammer/Edit/CreateTrait.vue"),
+    props: true,
+  },
 ];
 
 export function createHammergenRouter(

@@ -3,6 +3,9 @@ import { VueReCaptcha } from "vue-recaptcha-v3";
 import { createApp } from "vue";
 import router from "./router";
 import { setupAuthInterceptor } from "./composables/auth.ts";
+window.addEventListener("vite:preloadError", () => {
+  window.location.reload();
+});
 
 const app = createApp(App);
 
