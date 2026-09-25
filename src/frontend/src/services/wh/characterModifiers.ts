@@ -1,7 +1,8 @@
-import { Attributes, attributesAreEqual, copyAttributes, getAttributes, validAttributesFn } from "./attributes.ts";
+import { Attributes, copyAttributes, getAttributes, validAttributesFn } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { validIntegerFn } from "./common.ts";
-import { setsAreEqual } from "../../utils/set.ts";
+import { cloneEntity } from "../../utils/clone.ts";
+import { isEqualEntity } from "../../utils/equal.ts";
 
 export const enum ModifierEffect {
   Hardy = 0,
@@ -60,25 +61,12 @@ export class CharacterModifiers {
     return false;
   }
 
-  isEqualTo(otherCharacterModifiers: CharacterModifiers) {
-    if (this.size !== otherCharacterModifiers.size || this.movement !== otherCharacterModifiers.movement) {
-      return false;
-    }
-
-    if (!setsAreEqual(this.effects, otherCharacterModifiers.effects)) {
-      return false;
-    }
-
-    return attributesAreEqual(this.attributes, otherCharacterModifiers.attributes);
+  isEqualTo(otherCharacterModifiers: unknown): boolean {
+    return isEqualEntity(this, otherCharacterModifiers);
   }
 
   copy(): CharacterModifiers {
-    return new CharacterModifiers({
-      size: this.size,
-      movement: this.movement,
-      attributes: copyAttributes(this.attributes),
-      effects: [...this.effects],
-    });
+    return cloneEntity(this);
   }
 
   validateAttributes(): ValidationStatus {

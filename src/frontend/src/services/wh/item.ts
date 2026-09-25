@@ -1,7 +1,5 @@
-import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
+import { copySource, Source, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
 import {
   ApiResponse,
   validateIdNumber,
@@ -10,11 +8,12 @@ import {
   validLongDescFn,
   validShortDescFn,
   Visibility,
-  WhProperty,
+  WhEntity,
 } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual, updateSet } from "../../utils/set.ts";
+import { updateSet } from "../../utils/set.ts";
 import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
+import { isEqualEntity } from "../../utils/equal.ts";
 
 export const enum ItemType {
   Melee = 0,
@@ -447,12 +446,19 @@ export interface ItemApiData {
   source: Source;
 }
 
-export class Item implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+const ITEM_SUBTYPE_KEYS: Record<ItemType, string> = {
+  [ItemType.Melee]: "melee",
+  [ItemType.Ranged]: "ranged",
+  [ItemType.Ammunition]: "ammunition",
+  [ItemType.Armour]: "armour",
+  [ItemType.Grimoire]: "grimoire",
+  [ItemType.Container]: "container",
+  [ItemType.Other]: "other",
+};
+
+const ALL_SUBTYPE_KEYS = ["melee", "ranged", "ammunition", "armour", "grimoire", "container", "other"];
+
+export class Item extends WhEntity {
   price: number;
   enc: number;
   availability: Availability;
@@ -466,7 +472,6 @@ export class Item implements WhProperty {
   grimoire: { spells: Set<string> };
   container: ContainerType;
   other: OtherType;
-  source: Source;
 
   constructor({
     id = "",
@@ -502,10 +507,7 @@ export class Item implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.price = price;
     this.enc = enc;
     this.availability = availability;
@@ -519,54 +521,6 @@ export class Item implements WhProperty {
     this.grimoire = grimoire;
     this.container = container;
     this.other = other;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Item {
-    return new Item({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      price: this.price,
-      enc: this.enc,
-      availability: this.availability,
-      properties: new Set(this.properties),
-      runes: { ...this.runes },
-      type: this.type,
-      melee: {
-        hands: this.melee.hands,
-        dmg: this.melee.dmg,
-        dmgSbMult: this.melee.dmgSbMult,
-        reach: this.melee.reach,
-        group: this.melee.group,
-      },
-      ranged: {
-        hands: this.ranged.hands,
-        dmg: this.ranged.dmg,
-        dmgSbMult: this.ranged.dmgSbMult,
-        rng: this.ranged.rng,
-        rngSbMult: this.ranged.rngSbMult,
-        group: this.ranged.group,
-      },
-      ammunition: {
-        dmg: this.ammunition.dmg,
-        rng: this.ammunition.rng,
-        rngMult: this.ammunition.rngMult,
-        group: this.ammunition.group,
-      },
-      armour: {
-        points: this.armour.points,
-        location: [...this.armour.location],
-        group: this.armour.group,
-      },
-      grimoire: { spells: new Set(this.grimoire.spells) },
-      container: { capacity: this.container.capacity, carryType: this.container.carryType },
-      other: { carryType: this.other.carryType },
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -655,58 +609,13 @@ export class Item implements WhProperty {
     );
   }
 
-  isEqualTo(otherItem: WhProperty): boolean {
-    if (!(otherItem instanceof Item)) {
+  override isEqualTo(otherItem: unknown): boolean {
+    if (!(otherItem instanceof Item) || this.type !== otherItem.type) {
       return false;
     }
-
-    if (
-      this.id !== otherItem.id ||
-      this.visibility !== otherItem.visibility ||
-      this.name !== otherItem.name ||
-      this.description !== otherItem.description ||
-      this.price !== otherItem.price ||
-      this.enc !== otherItem.enc ||
-      this.availability !== otherItem.availability ||
-      this.type !== otherItem.type ||
-      !setsAreEqual(this.properties, otherItem.properties) ||
-      !objectsAreEqual(this.source, otherItem.source) ||
-      !objectsAreEqual(this.runes, otherItem.runes)
-    ) {
-      return false;
-    }
-
-    if (this.type === ItemType.Melee) {
-      return objectsAreEqual(this.melee, otherItem.melee);
-    }
-    if (this.type === ItemType.Ranged) {
-      return objectsAreEqual(this.ranged, otherItem.ranged);
-    }
-    if (this.type === ItemType.Ammunition) {
-      return objectsAreEqual(this.ammunition, otherItem.ammunition);
-    }
-    if (this.type === ItemType.Armour) {
-      return (
-        this.armour.group === otherItem.armour.group &&
-        this.armour.points === otherItem.armour.points &&
-        arraysAreEqualIgnoreOrder(this.armour.location, otherItem.armour.location)
-      );
-    }
-    if (this.type === ItemType.Container) {
-      return objectsAreEqual(this.container, otherItem.container);
-    }
-    if (this.type === ItemType.Other) {
-      return objectsAreEqual(this.other, otherItem.other);
-    }
-    if (this.type === ItemType.Grimoire) {
-      return setsAreEqual(this.grimoire.spells, otherItem.grimoire.spells);
-    }
-
-    return true;
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
+    const activeKey = ITEM_SUBTYPE_KEYS[this.type];
+    const ignoredKeys = new Set(ALL_SUBTYPE_KEYS.filter((k) => k !== activeKey));
+    return isEqualEntity(this, otherItem, { ignoredKeys });
   }
 
   resetDetails() {
@@ -827,7 +736,7 @@ export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
     source: itemApi.object.source,
   });
 
-  return newItem.copy();
+  return newItem;
 }
 
 export function modelToApi(item: Item): ItemApiData {

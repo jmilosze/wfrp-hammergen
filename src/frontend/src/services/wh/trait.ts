@@ -1,8 +1,7 @@
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
-import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
+import { Source, copySource, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/trait";
@@ -15,14 +14,8 @@ export interface TraitApiData {
   source: Source;
 }
 
-export class Trait implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class Trait extends WhEntity {
   modifiers: CharacterModifiers;
-  source: Source;
 
   constructor({
     id = "",
@@ -33,25 +26,8 @@ export class Trait implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.modifiers = modifiers;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Trait {
-    return new Trait({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      modifiers: this.modifiers.copy(),
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -65,31 +41,10 @@ export class Trait implements WhProperty {
   isValid(): boolean {
     return this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source);
   }
-
-  isEqualTo(otherTrait: WhProperty): boolean {
-    if (!(otherTrait instanceof Trait)) {
-      return false;
-    }
-    if (
-      this.id !== otherTrait.id ||
-      this.visibility !== otherTrait.visibility ||
-      this.name !== otherTrait.name ||
-      this.description !== otherTrait.description ||
-      !objectsAreEqual(this.source, otherTrait.source)
-    ) {
-      return false;
-    }
-
-    return this.modifiers.isEqualTo(otherTrait.modifiers);
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
 }
 
 export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>): Trait {
-  const newTrait = new Trait({
+  return new Trait({
     id: traitApi.id,
     ownerId: traitApi.ownerId,
     visibility: traitApi.visibility,
@@ -98,8 +53,6 @@ export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>): Trait {
     modifiers: new CharacterModifiers(traitApi.object.modifiers),
     source: traitApi.object.source,
   });
-
-  return newTrait.copy();
 }
 
 export function modelToApi(trait: Trait): TraitApiData {

@@ -1,11 +1,10 @@
 import { AttributeName } from "./attributes.ts";
-import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
+import { copySource, Source, sourceIsValid } from "./source.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { defineWhApi } from "./crudGenerator.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual, updateSet } from "../../utils/set.ts";
+import { updateSet } from "../../utils/set.ts";
+import { cloneEntity } from "../../utils/clone.ts";
 import {
   DWARF_LIST,
   GNOME_LIST,
@@ -205,29 +204,11 @@ export const zeroCareerLevel: CareerLevel = {
   items: "",
 };
 
-const careerLevelEqual = (careerLevel: CareerLevel, OtherCareerLevel: CareerLevel): boolean => {
-  return (
-    careerLevel.exists === OtherCareerLevel.exists &&
-    careerLevel.name === OtherCareerLevel.name &&
-    careerLevel.status === OtherCareerLevel.status &&
-    careerLevel.standing === OtherCareerLevel.standing &&
-    arraysAreEqualIgnoreOrder(careerLevel.attributes, OtherCareerLevel.attributes) &&
-    setsAreEqual(careerLevel.skills, OtherCareerLevel.skills) &&
-    setsAreEqual(careerLevel.talents, OtherCareerLevel.talents) &&
-    careerLevel.items === OtherCareerLevel.items
-  );
-};
-
 export function isLevel(x: number): x is 1 | 2 | 3 | 4 | 5 {
   return x === 1 || x === 2 || x === 3 || x === 4 || x === 5;
 }
 
-export class Career implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class Career extends WhEntity {
   species: Species[];
   careerClass: CareerClass;
   level1: CareerLevel;
@@ -235,7 +216,6 @@ export class Career implements WhProperty {
   level3: CareerLevel;
   level4: CareerLevel;
   level5: CareerLevel;
-  source: Source;
 
   constructor({
     id = "",
@@ -252,10 +232,7 @@ export class Career implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.species = species;
     this.careerClass = careerClass;
     this.level1 = level1;
@@ -263,26 +240,6 @@ export class Career implements WhProperty {
     this.level3 = level3;
     this.level4 = level4;
     this.level5 = level5;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Career {
-    return new Career({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      species: [...this.species],
-      careerClass: this.careerClass,
-      level1: copyCareerLevel(this.level1),
-      level2: copyCareerLevel(this.level2),
-      level3: copyCareerLevel(this.level3),
-      level4: copyCareerLevel(this.level4),
-      level5: copyCareerLevel(this.level5),
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -351,29 +308,6 @@ export class Career implements WhProperty {
     );
   }
 
-  isEqualTo(otherCareer: WhProperty): boolean {
-    if (!(otherCareer instanceof Career)) {
-      return false;
-    }
-    return (
-      this.id === otherCareer.id &&
-      this.visibility === otherCareer.visibility &&
-      this.name === otherCareer.name &&
-      this.description === otherCareer.description &&
-      arraysAreEqualIgnoreOrder(this.species, otherCareer.species) &&
-      this.careerClass === otherCareer.careerClass &&
-      careerLevelEqual(this.level1, otherCareer.level1) &&
-      careerLevelEqual(this.level2, otherCareer.level2) &&
-      careerLevelEqual(this.level3, otherCareer.level3) &&
-      careerLevelEqual(this.level4, otherCareer.level4) &&
-      careerLevelEqual(this.level5, otherCareer.level5) &&
-      objectsAreEqual(this.source, otherCareer.source)
-    );
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
 
   getLevel(level: 1 | 2 | 3 | 4 | 5): CareerLevel {
     switch (level) {
@@ -409,16 +343,7 @@ export class Career implements WhProperty {
 }
 
 export function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
-  return {
-    exists: careerLevel.exists,
-    name: careerLevel.name,
-    status: careerLevel.status,
-    standing: careerLevel.standing,
-    attributes: [...careerLevel.attributes],
-    skills: new Set(careerLevel.skills),
-    talents: new Set(careerLevel.talents),
-    items: careerLevel.items,
-  };
+  return cloneEntity(careerLevel);
 }
 
 export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Career {

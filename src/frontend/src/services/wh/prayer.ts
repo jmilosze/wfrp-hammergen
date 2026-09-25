@@ -1,7 +1,6 @@
 import { defineWhApi } from "./crudGenerator.ts";
-import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
+import { Source, copySource, sourceIsValid } from "./source.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
@@ -16,16 +15,10 @@ export interface PrayerApiData {
   source: Source;
 }
 
-export class Prayer implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class Prayer extends WhEntity {
   range: string;
   duration: string;
   target: string;
-  source: Source;
 
   constructor({
     id = "",
@@ -38,29 +31,10 @@ export class Prayer implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
+    super({ id, ownerId, visibility, name, description, source });
     this.range = range;
     this.target = target;
     this.duration = duration;
-    this.description = description;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Prayer {
-    return new Prayer({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      range: this.range,
-      target: this.target,
-      duration: this.duration,
-      description: this.description,
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -93,30 +67,10 @@ export class Prayer implements WhProperty {
       sourceIsValid(this.source)
     );
   }
-
-  isEqualTo(otherPrayer: WhProperty): boolean {
-    if (!(otherPrayer instanceof Prayer)) {
-      return false;
-    }
-    return (
-      this.id === otherPrayer.id &&
-      this.visibility === otherPrayer.visibility &&
-      this.name === otherPrayer.name &&
-      this.range === otherPrayer.range &&
-      this.target === otherPrayer.target &&
-      this.duration === otherPrayer.duration &&
-      this.description === otherPrayer.description &&
-      objectsAreEqual(this.source, otherPrayer.source)
-    );
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
 }
 
 export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Prayer {
-  const newPrayer = new Prayer({
+  return new Prayer({
     id: prayerApi.id,
     ownerId: prayerApi.ownerId,
     visibility: prayerApi.visibility,
@@ -127,8 +81,6 @@ export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Praye
     description: prayerApi.object.description,
     source: prayerApi.object.source,
   });
-
-  return newPrayer.copy();
 }
 
 export function modelToApi(prayer: Prayer): PrayerApiData {

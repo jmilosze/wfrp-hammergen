@@ -8,7 +8,6 @@ import {
 import { Career, StatusStanding, StatusTier } from "./career.ts";
 import {
   Attributes,
-  attributesAreEqual,
   copyAttributes,
   getAttributes,
   multiplyAttributes,
@@ -23,25 +22,24 @@ import {
   validShortDescFn,
   Visibility,
   WhApi,
-  WhProperty,
+  WhEntity,
 } from "./common.ts";
-import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
+import { sourceIsValid } from "./source.ts";
 import { CharacterModifiers, ModifierEffect } from "./characterModifiers.ts";
-import { clearObject, objectsAreEqual } from "../../utils/object.ts";
+import { clearObject } from "../../utils/object.ts";
 import { AxiosInstance } from "axios";
 import { createWhApi, ServerEnvelope } from "./crudGenerator.ts";
 import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual, updateSet } from "../../utils/set.ts";
+import { updateSet } from "../../utils/set.ts";
 import {
-  compareIdNumber,
   copyIdNumberArray,
   fillUpIdNumberRecord,
   IdNumber,
   idNumberArrayToRecord,
   updateIdNumberRecord,
 } from "../../utils/idNumber.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
+import { isEqualEntity } from "../../utils/equal.ts";
 import { Skill } from "./skill.ts";
 import { GenerationProps } from "./generationProps.ts";
 import { generateSpeciesSkills, resolveSkillGroups } from "./characterGeneration/generateSkills.ts";
@@ -88,12 +86,9 @@ export interface CharacterApiData {
   visibility?: Visibility;
 }
 
-export class Character implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+const CHARACTER_IGNORED_KEYS: ReadonlySet<string> = new Set(["modifiers"]);
+
+export class Character extends WhEntity {
   notes: string;
   species: SpeciesWithRegion;
   fate: number;
@@ -122,7 +117,6 @@ export class Character implements WhProperty {
   prayers: Set<string>;
   traits: Set<string>;
   mutations: Set<string>;
-  source: Source;
   modifiers: {
     talents: Record<string, { number: number; value: CharacterModifiers }>;
     mutations: Record<string, { value: CharacterModifiers }>;
@@ -170,11 +164,7 @@ export class Character implements WhProperty {
       traits: {} as Record<string, { value: CharacterModifiers }>,
     },
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.visibility = visibility;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.notes = notes;
     this.species = species;
     this.fate = fate;
@@ -203,92 +193,14 @@ export class Character implements WhProperty {
     this.prayers = prayers;
     this.traits = traits;
     this.mutations = mutations;
-    this.source = source;
     this.modifiers = modifiers;
   }
 
-  isEqualTo(otherCharacter: WhProperty): boolean {
+  override isEqualTo(otherCharacter: unknown): boolean {
     if (!(otherCharacter instanceof Character)) {
       return false;
     }
-    return (
-      this.id === otherCharacter.id &&
-      this.visibility === otherCharacter.visibility &&
-      this.name === otherCharacter.name &&
-      this.description === otherCharacter.description &&
-      this.notes === otherCharacter.notes &&
-      this.species === otherCharacter.species &&
-      this.fate === otherCharacter.fate &&
-      this.fortune === otherCharacter.fortune &&
-      this.resilience === otherCharacter.resilience &&
-      this.resolve === otherCharacter.resolve &&
-      this.brass === otherCharacter.brass &&
-      this.silver === otherCharacter.silver &&
-      this.gold === otherCharacter.gold &&
-      this.spentExp === otherCharacter.spentExp &&
-      this.currentExp === otherCharacter.currentExp &&
-      this.sin === otherCharacter.sin &&
-      this.corruption === otherCharacter.corruption &&
-      this.status === otherCharacter.status &&
-      this.standing === otherCharacter.standing &&
-      compareIdNumber(this.career, otherCharacter.career) === 0 &&
-      attributesAreEqual(this.attributeRolls, otherCharacter.attributeRolls) &&
-      attributesAreEqual(this.attributeAdvances, otherCharacter.attributeAdvances) &&
-      objectsAreEqual(this.skills, otherCharacter.skills) &&
-      objectsAreEqual(this.talents, otherCharacter.talents) &&
-      objectsAreEqual(this.equippedItems, otherCharacter.equippedItems) &&
-      objectsAreEqual(this.carriedItems, otherCharacter.carriedItems) &&
-      objectsAreEqual(this.storedItems, otherCharacter.storedItems) &&
-      arraysAreEqualIgnoreOrder(this.careerPath, otherCharacter.careerPath, compareIdNumber) &&
-      setsAreEqual(this.spells, otherCharacter.spells) &&
-      setsAreEqual(this.prayers, otherCharacter.prayers) &&
-      setsAreEqual(this.traits, otherCharacter.traits) &&
-      setsAreEqual(this.mutations, otherCharacter.mutations) &&
-      objectsAreEqual(this.source, otherCharacter.source)
-    );
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
-
-  copy(): Character {
-    return new Character({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      notes: this.notes,
-      species: this.species,
-      fate: this.fate,
-      fortune: this.fortune,
-      resilience: this.resilience,
-      resolve: this.resolve,
-      brass: this.brass,
-      silver: this.silver,
-      gold: this.gold,
-      spentExp: this.spentExp,
-      currentExp: this.currentExp,
-      sin: this.sin,
-      corruption: this.corruption,
-      status: this.status,
-      standing: this.standing,
-      career: { id: this.career.id, number: this.career.number },
-      attributeRolls: copyAttributes(this.attributeRolls),
-      attributeAdvances: copyAttributes(this.attributeAdvances),
-      skills: { ...this.skills },
-      talents: { ...this.talents },
-      equippedItems: { ...this.equippedItems },
-      carriedItems: { ...this.carriedItems },
-      storedItems: { ...this.storedItems },
-      careerPath: copyIdNumberArray(this.careerPath),
-      spells: new Set(this.spells),
-      prayers: new Set(this.prayers),
-      traits: new Set(this.traits),
-      mutations: new Set(this.mutations),
-      source: copySource(this.source),
-    });
+    return isEqualEntity(this, otherCharacter, { ignoredKeys: CHARACTER_IGNORED_KEYS });
   }
 
   validateName(): ValidationStatus {
@@ -798,7 +710,7 @@ export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>):
     mutations: new Set(characterApi.object.mutations),
   });
 
-  return newCharacter.copy();
+  return newCharacter;
 }
 
 export function modelToApi(character: Character): CharacterApiData {

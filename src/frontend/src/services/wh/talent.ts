@@ -1,13 +1,22 @@
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
-import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
+import { Source, copySource, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
+import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { AttributeName, Attributes, getAttributeValue, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual, updateSet } from "../../utils/set.ts";
+import { updateSet } from "../../utils/set.ts";
+import { isEqualEntity } from "../../utils/equal.ts";
 
 const API_BASE_PATH = "/api/wh/talent";
+
+const TALENT_GROUP_IGNORED_KEYS: ReadonlySet<string> = new Set([
+  "tests",
+  "maxRank",
+  "attribute",
+  "attribute2",
+  "group",
+  "modifiers",
+]);
 
 export interface TalentApiData {
   name: string;
@@ -23,12 +32,7 @@ export interface TalentApiData {
   source: Source;
 }
 
-export class Talent implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class Talent extends WhEntity {
   tests: string;
   maxRank: number;
   attribute: AttributeName;
@@ -36,7 +40,6 @@ export class Talent implements WhProperty {
   isGroup: boolean;
   group: Set<string>;
   modifiers: CharacterModifiers;
-  source: Source;
 
   constructor({
     id = "",
@@ -53,10 +56,7 @@ export class Talent implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.tests = tests;
     this.maxRank = maxRank;
     this.attribute = attribute;
@@ -64,26 +64,6 @@ export class Talent implements WhProperty {
     this.isGroup = isGroup;
     this.group = group;
     this.modifiers = modifiers;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Talent {
-    return new Talent({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      tests: this.tests,
-      maxRank: this.maxRank,
-      attribute: this.attribute,
-      attribute2: this.attribute2,
-      isGroup: this.isGroup,
-      group: new Set(this.group),
-      modifiers: this.modifiers.copy(),
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -112,43 +92,14 @@ export class Talent implements WhProperty {
     );
   }
 
-  isEqualTo(otherTalent: WhProperty): boolean {
-    if (!(otherTalent instanceof Talent)) {
+  override isEqualTo(otherTalent: unknown): boolean {
+    if (!(otherTalent instanceof Talent) || this.isGroup !== otherTalent.isGroup) {
       return false;
     }
-    if (
-      this.id !== otherTalent.id ||
-      this.visibility !== otherTalent.visibility ||
-      this.name !== otherTalent.name ||
-      this.description !== otherTalent.description ||
-      this.isGroup !== otherTalent.isGroup ||
-      !objectsAreEqual(this.source, otherTalent.source)
-    ) {
-      return false;
-    }
-
     if (this.isGroup) {
-      return true;
+      return isEqualEntity(this, otherTalent, { ignoredKeys: TALENT_GROUP_IGNORED_KEYS });
     }
-
-    if (
-      this.tests !== otherTalent.tests ||
-      this.maxRank !== otherTalent.maxRank ||
-      this.attribute !== otherTalent.attribute ||
-      this.attribute2 !== otherTalent.attribute2
-    ) {
-      return false;
-    }
-
-    if (!setsAreEqual(this.group, otherTalent.group)) {
-      return false;
-    }
-
-    return this.modifiers.isEqualTo(otherTalent.modifiers);
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
+    return isEqualEntity(this, otherTalent);
   }
 
   getMaxRank(attributes: Attributes): number {
@@ -183,7 +134,7 @@ export class Talent implements WhProperty {
 }
 
 export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talent {
-  const newTalent = new Talent({
+  return new Talent({
     id: talentApi.id,
     ownerId: talentApi.ownerId,
     visibility: talentApi.visibility,
@@ -198,8 +149,6 @@ export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talen
     modifiers: new CharacterModifiers(talentApi.object.modifiers),
     source: talentApi.object.source,
   });
-
-  return newTalent.copy();
 }
 
 export function modelToApi(talent: Talent): TalentApiData {
