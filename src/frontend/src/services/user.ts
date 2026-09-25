@@ -1,6 +1,7 @@
 import { ValidationStatus, setValidationStatus } from "../utils/validation.ts";
 import { AxiosInstance, AxiosRequestConfig } from "axios";
-import { arraysAreEqualIgnoreOrder } from "../utils/array.ts";
+import { cloneEntity } from "../utils/clone.ts";
+import { isEqualEntity } from "../utils/equal.ts";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
@@ -42,23 +43,11 @@ export class User {
   }
 
   copy(): User {
-    return new User({
-      email: this.email,
-      currentPassword: this.currentPassword,
-      newPassword: this.newPassword,
-      confirmNewPassword: this.confirmNewPassword,
-      sharedAccounts: JSON.parse(JSON.stringify(this.sharedAccounts)),
-    });
+    return cloneEntity(this);
   }
 
-  isEqualTo(otherUser: User): boolean {
-    return (
-      this.email === otherUser.email &&
-      this.currentPassword === otherUser.currentPassword &&
-      this.newPassword === otherUser.newPassword &&
-      this.confirmNewPassword === otherUser.confirmNewPassword &&
-      arraysAreEqualIgnoreOrder(this.sharedAccounts, otherUser.sharedAccounts)
-    );
+  isEqualTo(otherUser: unknown): boolean {
+    return isEqualEntity(this, otherUser);
   }
 
   addSharedAccount(newSharedAccount: string) {

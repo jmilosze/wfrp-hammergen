@@ -1,10 +1,9 @@
-import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
+import { copySource, Source, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { AttributeName, attributeNameList } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual, updateSet } from "../../utils/set.ts";
+import { updateSet } from "../../utils/set.ts";
 
 export const enum SkillType {
   Basic = 0,
@@ -41,18 +40,12 @@ export interface SkillApiData {
   source: Source;
 }
 
-export class Skill implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class Skill extends WhEntity {
   attribute: AttributeName;
   type: number;
   displayZero: boolean;
   isGroup: boolean;
   group: Set<string>;
-  source: Source;
 
   constructor({
     id = "",
@@ -67,33 +60,12 @@ export class Skill implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.attribute = attribute;
     this.type = type;
     this.displayZero = displayZero;
     this.isGroup = isGroup;
     this.group = group;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Skill {
-    return new Skill({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      attribute: this.attribute,
-      type: this.type,
-      displayZero: this.displayZero,
-      isGroup: this.isGroup,
-      group: new Set(this.group),
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -108,35 +80,13 @@ export class Skill implements WhProperty {
     return this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source);
   }
 
-  isEqualTo(otherSkill: WhProperty): boolean {
-    if (!(otherSkill instanceof Skill)) {
-      return false;
-    }
-    return (
-      this.id === otherSkill.id &&
-      this.visibility === otherSkill.visibility &&
-      this.name === otherSkill.name &&
-      this.description === otherSkill.description &&
-      this.attribute === otherSkill.attribute &&
-      this.type === otherSkill.type &&
-      this.displayZero === otherSkill.displayZero &&
-      this.isGroup === otherSkill.isGroup &&
-      objectsAreEqual(this.source, otherSkill.source) &&
-      setsAreEqual(this.group, otherSkill.group)
-    );
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
-
   modifyGroup(id: string, selected: boolean): void {
     updateSet(this.group, id, selected);
   }
 }
 
 export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>): Skill {
-  const newSkill = new Skill({
+  return new Skill({
     id: skillApi.id,
     ownerId: skillApi.ownerId,
     visibility: skillApi.visibility,
@@ -149,8 +99,6 @@ export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>): Skill {
     group: new Set(skillApi.object.group),
     source: skillApi.object.source,
   });
-
-  return newSkill.copy();
 }
 
 export function modelToApi(skill: Skill): SkillApiData {
