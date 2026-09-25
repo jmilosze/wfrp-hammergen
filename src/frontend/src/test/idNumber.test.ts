@@ -1,28 +1,10 @@
 import { describe, expect, test } from "vitest";
 import {
-  compareIdNumber,
   copyIdNumberArray,
   fillUpIdNumberRecord,
   idNumberArrayToRecord,
   updateIdNumberRecord,
 } from "../utils/idNumber.ts";
-
-describe("compareIdNumber", () => {
-  test("returns 0 for equal id and number", () => {
-    expect(compareIdNumber({ id: "talent1", number: 2 }, { id: "talent1", number: 2 })).toBe(0);
-  });
-
-  test("sorts by id first", () => {
-    expect(compareIdNumber({ id: "a", number: 5 }, { id: "b", number: 1 })).toBe(-1);
-    expect(compareIdNumber({ id: "b", number: 1 }, { id: "a", number: 5 })).toBe(1);
-  });
-
-  test("sorts numbers numerically rather than lexicographically", () => {
-    // In lexicographical sort "talent_2" > "talent_10", but numerically 2 < 10
-    expect(compareIdNumber({ id: "talent", number: 2 }, { id: "talent", number: 10 })).toBe(-1);
-    expect(compareIdNumber({ id: "talent", number: 10 }, { id: "talent", number: 2 })).toBe(1);
-  });
-});
 
 describe("idNumberArrayToRecord", () => {
   test("converts array of IdNumber into a record", () => {

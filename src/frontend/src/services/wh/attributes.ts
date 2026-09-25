@@ -192,17 +192,6 @@ export function multiplyAttributes(multiplier: number, attributes: Attributes): 
   return returnAtts;
 }
 
-export function attributesAreEqual(att1: Attributes, att2: Attributes): boolean {
-  for (const key of Object.keys(att1)) {
-    if (isKey(att1, key) && isKey(att1, key)) {
-      if (att1[key] !== att2[key]) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 export function copyAttributes(attributes: Attributes): Attributes {
   const copy: Attributes = { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 };
 

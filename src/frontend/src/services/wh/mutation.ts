@@ -1,8 +1,7 @@
-import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
+import { Source, copySource, sourceIsValid } from "./source.ts";
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
@@ -34,15 +33,9 @@ export interface MutationApiData {
   source: Source;
 }
 
-export class Mutation implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class Mutation extends WhEntity {
   type: MutationType;
   modifiers: CharacterModifiers;
-  source: Source;
 
   constructor({
     id = "",
@@ -54,27 +47,9 @@ export class Mutation implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.type = type;
     this.modifiers = modifiers;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Mutation {
-    return new Mutation({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      type: this.type,
-      modifiers: this.modifiers.copy(),
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -93,29 +68,10 @@ export class Mutation implements WhProperty {
       sourceIsValid(this.source)
     );
   }
-
-  isEqualTo(otherMutation: WhProperty): boolean {
-    if (!(otherMutation instanceof Mutation)) {
-      return false;
-    }
-    return (
-      this.id === otherMutation.id &&
-      this.visibility === otherMutation.visibility &&
-      this.name === otherMutation.name &&
-      this.description === otherMutation.description &&
-      this.type === otherMutation.type &&
-      this.modifiers.isEqualTo(otherMutation.modifiers) &&
-      objectsAreEqual(this.source, otherMutation.source)
-    );
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
 }
 
 export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): Mutation {
-  const newMutation = new Mutation({
+  return new Mutation({
     id: mutationApi.id,
     ownerId: mutationApi.ownerId,
     visibility: mutationApi.visibility,
@@ -125,8 +81,6 @@ export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): M
     modifiers: new CharacterModifiers(mutationApi.object.modifiers),
     source: mutationApi.object.source,
   });
-
-  return newMutation.copy();
 }
 
 export function modelToApi(mutation: Mutation): MutationApiData {

@@ -1,7 +1,9 @@
-import { Source } from "./source.ts";
+import { Source, updateSource } from "./source.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 import { Attributes } from "./attributes.ts";
 import { isKey } from "../../utils/object.ts";
+import { cloneEntity } from "../../utils/clone.ts";
+import { isEqualEntity } from "../../utils/equal.ts";
 
 export enum Visibility {
   Private = 0,
@@ -17,12 +19,60 @@ export interface WhProperty {
   description: string;
   source: Source;
 
-  copy: () => WhProperty;
+  copy: <T extends WhProperty>(this: T) => T;
   isValid: () => boolean;
   validateName: () => ValidationStatus;
   validateDescription: () => ValidationStatus;
-  isEqualTo: (other: WhProperty) => boolean;
+  isEqualTo: (other: unknown) => boolean;
   updateSource: (update: { id: string; notes: string; selected: boolean }) => void;
+}
+
+export abstract class WhEntity implements WhProperty {
+  id: string;
+  ownerId: string;
+  visibility: Visibility;
+  name: string;
+  description: string;
+  source: Source;
+
+  constructor({
+    id = "",
+    ownerId = "",
+    visibility = Visibility.Private,
+    name = "",
+    description = "",
+    source = {},
+  }: {
+    id?: string;
+    ownerId?: string;
+    visibility?: Visibility;
+    name?: string;
+    description?: string;
+    source?: Source;
+  } = {}) {
+    this.id = id;
+    this.ownerId = ownerId;
+    this.visibility = visibility;
+    this.name = name;
+    this.description = description;
+    this.source = source;
+  }
+
+  copy<T extends WhEntity>(this: T): T {
+    return cloneEntity(this);
+  }
+
+  isEqualTo(other: unknown): boolean {
+    return isEqualEntity(this, other);
+  }
+
+  updateSource(update: { id: string; notes: string; selected: boolean }): void {
+    updateSource(this.source, update);
+  }
+
+  abstract isValid(): boolean;
+  abstract validateName(): ValidationStatus;
+  abstract validateDescription(): ValidationStatus;
 }
 
 export interface WhApi<T, TApiData> {

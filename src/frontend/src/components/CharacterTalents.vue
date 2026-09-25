@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Talent } from "../services/wh/talent.ts";
 import { computed, ref, Ref, watch } from "vue";
-import { Attributes, attributesAreEqual, printAttributeName } from "../services/wh/attributes.ts";
+import { Attributes, printAttributeName } from "../services/wh/attributes.ts";
+import { isEqualEntity } from "../utils/equal.ts";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ActionButton from "./ActionButton.vue";
@@ -106,7 +107,7 @@ watch(
 watch(
   () => props.attributes,
   (newVal, oldVal) => {
-    if (oldVal === undefined || !attributesAreEqual(newVal, oldVal)) {
+    if (oldVal === undefined || !isEqualEntity(newVal, oldVal)) {
       updateAttributes(newVal);
     }
   },

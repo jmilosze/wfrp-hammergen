@@ -1,4 +1,4 @@
-import { computed, Ref, ref } from "vue";
+import { computed, ref } from "vue";
 import { useAuth } from "./auth.ts";
 import { Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
 import { SubmissionState } from "../utils/submission.ts";
@@ -11,8 +11,8 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
     whInstance.visibility = Visibility.Public;
   }
 
-  const wh = ref(whInstance.copy()) as Ref<T>;
-  const whOriginal = ref(whInstance.copy()) as Ref<T>;
+  const wh = ref(whInstance.copy());
+  const whOriginal = ref(whInstance.copy());
   const initSources = ref(copySource(wh.value.source));
 
   const apiError = ref("");
@@ -29,7 +29,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
     showApiError.value = true;
     try {
       wh.value = await elementApi.getElement(id);
-      whOriginal.value = wh.value.copy() as T;
+      whOriginal.value = wh.value.copy();
       initSources.value = copySource(wh.value.source);
     } catch {
       apiError.value = "Error. Could not pull data from server.";

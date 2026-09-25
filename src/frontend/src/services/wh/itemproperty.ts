@@ -1,7 +1,5 @@
-import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
+import { copySource, Source, sourceIsValid } from "./source.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { defineWhApi } from "./crudGenerator.ts";
 import { ItemType } from "./item.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
@@ -34,15 +32,9 @@ export interface ItemPropertyApiData {
   source: Source;
 }
 
-export class ItemProperty implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class ItemProperty extends WhEntity {
   type: ItemPropertyType;
   applicableTo: ItemType[];
-  source: Source;
 
   constructor({
     id = "",
@@ -54,27 +46,9 @@ export class ItemProperty implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.type = type;
     this.applicableTo = applicableTo;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): ItemProperty {
-    return new ItemProperty({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      type: this.type,
-      applicableTo: [...this.applicableTo],
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -90,29 +64,10 @@ export class ItemProperty implements WhProperty {
   isValid(): boolean {
     return this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source);
   }
-
-  isEqualTo(otherItemProperty: WhProperty): boolean {
-    if (!(otherItemProperty instanceof ItemProperty)) {
-      return false;
-    }
-    return (
-      this.id === otherItemProperty.id &&
-      this.visibility === otherItemProperty.visibility &&
-      this.name === otherItemProperty.name &&
-      this.description === otherItemProperty.description &&
-      this.type === otherItemProperty.type &&
-      arraysAreEqualIgnoreOrder(this.applicableTo, otherItemProperty.applicableTo) &&
-      objectsAreEqual(this.source, otherItemProperty.source)
-    );
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
 }
 
 export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiData>): ItemProperty {
-  const newProperty = new ItemProperty({
+  return new ItemProperty({
     id: itemPropertyApi.id,
     ownerId: itemPropertyApi.ownerId,
     visibility: itemPropertyApi.visibility,
@@ -122,8 +77,6 @@ export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiD
     applicableTo: itemPropertyApi.object.applicableTo,
     source: itemPropertyApi.object.source,
   });
-
-  return newProperty.copy();
 }
 
 export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
