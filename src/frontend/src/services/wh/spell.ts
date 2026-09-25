@@ -1,14 +1,7 @@
-import {
-  createElementFunc,
-  deleteElementFunc,
-  getElementFunc,
-  listElementsFunc,
-  updateElementFunc,
-} from "./crudGenerator.ts";
-import { AxiosInstance } from "axios";
+import { defineWhApi } from "./crudGenerator.ts";
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual } from "../../utils/set.ts";
 
@@ -495,18 +488,5 @@ export function modelToApi(spell: Spell): SpellApiData {
   };
 }
 
-export class SpellApi implements WhApi<Spell, SpellApiData> {
-  getElement: (id: string) => Promise<Spell>;
-  listElements: () => Promise<Spell[]>;
-  createElement: (wh: Spell) => Promise<ApiResponse<SpellApiData>>;
-  updateElement: (wh: Spell) => Promise<ApiResponse<SpellApiData>>;
-  deleteElement: (id: string) => Promise<void>;
+export const spellApi = defineWhApi<Spell, SpellApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
 
-  constructor(axiosInstance: AxiosInstance) {
-    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
-  }
-}

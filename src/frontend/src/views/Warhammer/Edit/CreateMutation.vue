@@ -3,7 +3,7 @@ import { Visibility } from "../../../services/wh/common.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { Mutation, MutationApi, mutationTypeList, printMutationType } from "../../../services/wh/mutation.ts";
+import { Mutation, mutationApi, mutationTypeList, printMutationType } from "../../../services/wh/mutation.ts";
 import { computed, ref } from "vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -41,7 +41,7 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newMutation, new MutationApi(authRequest));
+} = useWhEdit(newMutation, mutationApi(authRequest));
 
 await loadWh(props.id);
 

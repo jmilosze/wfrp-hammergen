@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
-import { Skill, SkillApi, skillTypeList, printSkillType } from "../../../services/wh/skill.ts";
+import { Skill, skillApi, skillTypeList, printSkillType } from "../../../services/wh/skill.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -17,7 +17,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(new SkillApi(authRequest));
+const whList = useWhList(skillApi(authRequest));
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

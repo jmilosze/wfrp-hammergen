@@ -1,14 +1,7 @@
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import {
-  createElementFunc,
-  deleteElementFunc,
-  getElementFunc,
-  listElementsFunc,
-  updateElementFunc,
-} from "./crudGenerator.ts";
-import { AxiosInstance } from "axios";
+import { defineWhApi } from "./crudGenerator.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
 import { AttributeName, attributeNameList } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
@@ -174,21 +167,8 @@ export function modelToApi(skill: Skill): SkillApiData {
   };
 }
 
-export class SkillApi implements WhApi<Skill, SkillApiData> {
-  getElement: (id: string) => Promise<Skill>;
-  listElements: () => Promise<Skill[]>;
-  createElement: (wh: Skill) => Promise<ApiResponse<SkillApiData>>;
-  updateElement: (wh: Skill) => Promise<ApiResponse<SkillApiData>>;
-  deleteElement: (id: string) => Promise<void>;
+export const skillApi = defineWhApi<Skill, SkillApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
 
-  constructor(axiosInstance: AxiosInstance) {
-    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
-  }
-}
 
 export function getSkillAttributeNameList(isGroup: boolean): AttributeName[] {
   if (isGroup) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
-import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
+import { Prayer, prayerApi } from "../../../services/wh/prayer.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -15,7 +15,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(new PrayerApi(authRequest));
+const whList = useWhList(prayerApi(authRequest));
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

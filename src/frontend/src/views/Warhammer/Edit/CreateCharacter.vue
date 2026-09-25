@@ -4,7 +4,7 @@ import Header from "../../../components/PageHeader.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { Character, CharacterApi } from "../../../services/wh/character.ts";
+import { Character, characterApi } from "../../../services/wh/character.ts";
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
@@ -32,7 +32,7 @@ import { rollDice } from "../../../utils/random.ts";
 import generateDescription from "../../../services/wh/characterGeneration/generateDescription.ts";
 import {
   Career,
-  CareerApi,
+  careerApi,
   isLevel,
   printSpeciesName,
   printStatusStanding,
@@ -47,19 +47,19 @@ import { useWhList } from "../../../composables/whList.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
 import SelectTable from "../../../components/SelectTable.vue";
-import { SpellApi } from "../../../services/wh/spell.ts";
-import { MutationApi } from "../../../services/wh/mutation.ts";
-import { PrayerApi } from "../../../services/wh/prayer.ts";
+import { spellApi } from "../../../services/wh/spell.ts";
+import { mutationApi } from "../../../services/wh/mutation.ts";
+import { prayerApi } from "../../../services/wh/prayer.ts";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import HintModal from "../../../components/HintModal.vue";
-import { SkillApi } from "../../../services/wh/skill.ts";
-import { TalentApi } from "../../../services/wh/talent.ts";
+import { skillApi } from "../../../services/wh/skill.ts";
+import { talentApi } from "../../../services/wh/talent.ts";
 import { useGenerationProps } from "../../../composables/generationProps.ts";
 import CharacterSkills from "../../../components/CharacterSkills.vue";
 import CharacterTalents from "../../../components/CharacterTalents.vue";
-import { ItemApi } from "../../../services/wh/item.ts";
+import { itemApi } from "../../../services/wh/item.ts";
 import CharacterItems from "../../../components/CharacterItems.vue";
-import { TraitApi } from "../../../services/wh/trait.ts";
+import { traitApi } from "../../../services/wh/trait.ts";
 
 const props = defineProps<{
   id: string;
@@ -94,23 +94,23 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newCharacter, new CharacterApi(authRequest));
+} = useWhEdit(newCharacter, characterApi(authRequest));
 
-const careerListUtils = useWhList(new CareerApi(authRequest));
+const careerListUtils = useWhList(careerApi(authRequest));
 careerListUtils.loadWhList();
-const spellListUtils = useWhList(new SpellApi(authRequest));
+const spellListUtils = useWhList(spellApi(authRequest));
 spellListUtils.loadWhList();
-const prayerListUtils = useWhList(new PrayerApi(authRequest));
+const prayerListUtils = useWhList(prayerApi(authRequest));
 prayerListUtils.loadWhList();
-const traitListUtils = useWhList(new TraitApi(authRequest));
+const traitListUtils = useWhList(traitApi(authRequest));
 traitListUtils.loadWhList();
-const mutationListUtils = useWhList(new MutationApi(authRequest));
+const mutationListUtils = useWhList(mutationApi(authRequest));
 mutationListUtils.loadWhList();
-const skillListUtils = useWhList(new SkillApi(authRequest));
+const skillListUtils = useWhList(skillApi(authRequest));
 skillListUtils.loadWhList();
-const talentListUtils = useWhList(new TalentApi(authRequest));
+const talentListUtils = useWhList(talentApi(authRequest));
 talentListUtils.loadWhList();
-const itemListUtils = useWhList(new ItemApi(authRequest));
+const itemListUtils = useWhList(itemApi(authRequest));
 itemListUtils.loadWhList();
 const generationPropsUtils = useGenerationProps(authRequest);
 generationPropsUtils.loadGenerationProps();

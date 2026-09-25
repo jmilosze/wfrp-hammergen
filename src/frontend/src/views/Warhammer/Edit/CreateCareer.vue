@@ -4,7 +4,7 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
 import {
   Career,
-  CareerApi,
+  careerApi,
   careerClassList,
   copyCareerLevel,
   printClassName,
@@ -26,8 +26,8 @@ import DeleteBlock from "../../../components/DeleteBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { useWhList } from "../../../composables/whList.ts";
-import { SkillApi } from "../../../services/wh/skill.ts";
-import { TalentApi } from "../../../services/wh/talent.ts";
+import { skillApi } from "../../../services/wh/skill.ts";
+import { talentApi } from "../../../services/wh/talent.ts";
 import CareerLevel from "../../../components/CareerLevel.vue";
 
 const props = defineProps<{
@@ -54,12 +54,12 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newCareer, new CareerApi(authRequest));
+} = useWhEdit(newCareer, careerApi(authRequest));
 
-const skillListUtils = useWhList(new SkillApi(authRequest));
+const skillListUtils = useWhList(skillApi(authRequest));
 skillListUtils.loadWhList();
 
-const talentListUtils = useWhList(new TalentApi(authRequest));
+const talentListUtils = useWhList(talentApi(authRequest));
 talentListUtils.loadWhList();
 
 await loadWh(props.id);

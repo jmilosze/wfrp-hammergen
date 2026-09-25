@@ -6,7 +6,7 @@ import {
   printSpellLabel,
   printSpellType,
   Spell,
-  SpellApi,
+  spellApi,
   spellTypeList,
 } from "../../../services/wh/spell.ts";
 import { authRequest } from "../../../services/auth.ts";
@@ -24,7 +24,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(new SpellApi(authRequest));
+const whList = useWhList(spellApi(authRequest));
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

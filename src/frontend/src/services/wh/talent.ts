@@ -1,15 +1,8 @@
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
-import {
-  createElementFunc,
-  deleteElementFunc,
-  getElementFunc,
-  listElementsFunc,
-  updateElementFunc,
-} from "./crudGenerator.ts";
-import { AxiosInstance } from "axios";
+import { defineWhApi } from "./crudGenerator.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
 import { AttributeName, Attributes, getAttributeValue, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
@@ -225,18 +218,5 @@ export function modelToApi(talent: Talent): TalentApiData {
   };
 }
 
-export class TalentApi implements WhApi<Talent, TalentApiData> {
-  getElement: (id: string) => Promise<Talent>;
-  listElements: () => Promise<Talent[]>;
-  createElement: (wh: Talent) => Promise<ApiResponse<TalentApiData>>;
-  updateElement: (wh: Talent) => Promise<ApiResponse<TalentApiData>>;
-  deleteElement: (id: string) => Promise<void>;
+export const talentApi = defineWhApi<Talent, TalentApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
 
-  constructor(axiosInstance: AxiosInstance) {
-    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
-  }
-}

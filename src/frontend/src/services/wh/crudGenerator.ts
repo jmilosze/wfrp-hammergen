@@ -1,54 +1,43 @@
-import { AxiosInstance, AxiosResponse } from "axios";
-import { ApiResponse } from "./common.ts";
+import { AxiosInstance } from "axios";
+import { ApiResponse, WhApi } from "./common.ts";
 
-export function getElementFunc<WhApiData, WhModel>(
-  apiBasePath: string,
-  axiosInstance: AxiosInstance,
-  apiResponseToModel: (whApiResp: ApiResponse<WhApiData>) => WhModel,
-  apiSuffix: string = "",
-) {
-  return async (id: string) => {
-    const serverResp = await axiosInstance.get(`${apiBasePath}/${id}${apiSuffix}`);
-    return apiResponseToModel((serverResp as AxiosResponse<{ data: ApiResponse<WhApiData> }, any>).data.data);
+export interface ServerEnvelope<T> {
+  data: T;
+}
+
+export function createWhApi<TModel extends { id: string }, TApiData>(
+  basePath: string,
+  axios: AxiosInstance,
+  toModel: (api: ApiResponse<TApiData>) => TModel,
+  toApi: (model: TModel) => TApiData,
+): WhApi<TModel, TApiData> {
+  return {
+    getElement: async (id: string): Promise<TModel> => {
+      const { data } = await axios.get<ServerEnvelope<ApiResponse<TApiData>>>(`${basePath}/${id}`);
+      return toModel(data.data);
+    },
+    listElements: async (): Promise<TModel[]> => {
+      const { data } = await axios.get<ServerEnvelope<ApiResponse<TApiData>[]>>(basePath);
+      return data.data.map(toModel);
+    },
+    createElement: async (wh: TModel): Promise<ApiResponse<TApiData>> => {
+      const { data } = await axios.post<ServerEnvelope<ApiResponse<TApiData>>>(basePath, toApi(wh));
+      return data.data;
+    },
+    updateElement: async (wh: TModel): Promise<ApiResponse<TApiData>> => {
+      const { data } = await axios.put<ServerEnvelope<ApiResponse<TApiData>>>(`${basePath}/${wh.id}`, toApi(wh));
+      return data.data;
+    },
+    deleteElement: async (id: string): Promise<void> => {
+      await axios.delete(`${basePath}/${id}`);
+    },
   };
 }
 
-export function listElementsFunc<WhApiData, WhModel>(
-  apiBasePath: string,
-  axiosInstance: AxiosInstance,
-  apiResponseToModel: (whApiResp: ApiResponse<WhApiData>) => WhModel,
+export function defineWhApi<TModel extends { id: string }, TApiData>(
+  basePath: string,
+  toModel: (api: ApiResponse<TApiData>) => TModel,
+  toApi: (model: TModel) => TApiData,
 ) {
-  return async () => {
-    const serverResp = await axiosInstance.get(`${apiBasePath}`);
-
-    return (serverResp as AxiosResponse<{ data: ApiResponse<WhApiData>[] }, any>).data.data.map(apiResponseToModel);
-  };
-}
-
-export function createElementFunc<WhApiData, WhModel>(
-  apiBasePath: string,
-  axiosInstance: AxiosInstance,
-  convertModelToApiData: (wh: WhModel) => WhApiData,
-) {
-  return async (wh: WhModel) => {
-    const serverResp = await axiosInstance.post(`${apiBasePath}`, convertModelToApiData(wh));
-    return (serverResp as AxiosResponse<{ data: ApiResponse<WhApiData> }, any>).data.data;
-  };
-}
-
-export function updateElementFunc<WhApiData, WhModel extends { id: string }>(
-  apiBasePath: string,
-  axiosInstance: AxiosInstance,
-  convertModelToApiData: (wh: WhModel) => WhApiData,
-) {
-  return async (wh: WhModel) => {
-    const serverResp = await axiosInstance.put(`${apiBasePath}/${wh.id}`, convertModelToApiData(wh));
-    return (serverResp as AxiosResponse<{ data: ApiResponse<WhApiData> }, any>).data.data;
-  };
-}
-
-export function deleteElementFunc(apiBasePath: string, axiosInstance: AxiosInstance) {
-  return async (id: string) => {
-    await axiosInstance.delete(`${apiBasePath}/${id}`);
-  };
+  return (axios: AxiosInstance): WhApi<TModel, TApiData> => createWhApi(basePath, axios, toModel, toApi);
 }

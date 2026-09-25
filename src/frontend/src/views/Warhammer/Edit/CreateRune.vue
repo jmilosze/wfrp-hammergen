@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/common.ts";
 import Header from "../../../components/PageHeader.vue";
-import { printRuneLabel, Rune, RuneApi, runeLabelList } from "../../../services/wh/rune.ts";
+import { printRuneLabel, Rune, runeApi, runeLabelList } from "../../../services/wh/rune.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
@@ -42,7 +42,7 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newRune, new RuneApi(authRequest));
+} = useWhEdit(newRune, runeApi(authRequest));
 
 await loadWh(props.id);
 

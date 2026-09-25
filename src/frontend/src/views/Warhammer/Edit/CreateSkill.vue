@@ -7,7 +7,7 @@ import {
   getSkillTypeList,
   printSkillType,
   Skill,
-  SkillApi,
+  skillApi,
   SkillType,
 } from "../../../services/wh/skill.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
@@ -51,9 +51,9 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newSkill, new SkillApi(authRequest));
+} = useWhEdit(newSkill, skillApi(authRequest));
 
-const skillListUtils = useWhList(new SkillApi(authRequest));
+const skillListUtils = useWhList(skillApi(authRequest));
 const groupSkills: Ref<Skill[]> = ref([]);
 
 skillListUtils.loadWhList();

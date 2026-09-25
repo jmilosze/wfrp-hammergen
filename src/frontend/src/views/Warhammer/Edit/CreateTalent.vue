@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/common.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
-import { Talent, TalentApi } from "../../../services/wh/talent.ts";
+import { Talent, talentApi } from "../../../services/wh/talent.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed, Ref, ref, watch } from "vue";
@@ -46,9 +46,9 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newTalent, new TalentApi(authRequest));
+} = useWhEdit(newTalent, talentApi(authRequest));
 
-const talentListUtils = useWhList(new TalentApi(authRequest));
+const talentListUtils = useWhList(talentApi(authRequest));
 const groupTalents: Ref<Talent[]> = ref([]);
 
 talentListUtils.loadWhList();

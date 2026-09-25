@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/common.ts";
 import Header from "../../../components/PageHeader.vue";
-import { printSpellLabel, printSpellType, Spell, SpellApi, SpellLabel } from "../../../services/wh/spell.ts";
+import { printSpellLabel, printSpellType, Spell, spellApi, SpellLabel } from "../../../services/wh/spell.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
@@ -41,7 +41,7 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newSpell, new SpellApi(authRequest));
+} = useWhEdit(newSpell, spellApi(authRequest));
 
 await loadWh(props.id);
 

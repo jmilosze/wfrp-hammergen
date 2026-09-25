@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
-import { printRuneLabel, Rune, RuneApi, runeLabelList } from "../../../services/wh/rune.ts";
+import { printRuneLabel, Rune, runeApi, runeLabelList } from "../../../services/wh/rune.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -17,7 +17,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(new RuneApi(authRequest));
+const whList = useWhList(runeApi(authRequest));
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

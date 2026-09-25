@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
 import { computed, ref } from "vue";
-import { CharacterApi } from "../../services/wh/character.ts";
+import { characterApi } from "../../services/wh/character.ts";
 import { authRequest } from "../../services/auth.ts";
 import {
   CharacterFullItem,
@@ -29,7 +29,7 @@ const router = useRouter();
 const auth = useAuth();
 const { print, printing } = usePrint();
 
-const characterApi = new CharacterApi(authRequest);
+const api = characterApi(authRequest);
 
 const character = ref(newCharacterFull());
 const canEdit = computed(() => auth.canEdit(character.value.ownerId));
@@ -37,7 +37,7 @@ await loadCharacter();
 
 async function loadCharacter() {
   try {
-    character.value = await characterApi.getElementForDisplay(props.id);
+    character.value = await api.getElementForDisplay(props.id);
   } catch {
     apiError.value = "Error. Could not pull data from server.";
   }

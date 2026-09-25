@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/common.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
-import { Trait, TraitApi } from "../../../services/wh/trait.ts";
+import { Trait, traitApi } from "../../../services/wh/trait.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed } from "vue";
@@ -40,7 +40,7 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newTrait, new TraitApi(authRequest));
+} = useWhEdit(newTrait, traitApi(authRequest));
 
 await loadWh(props.id);
 

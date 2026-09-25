@@ -2,7 +2,7 @@
 import { useWhList } from "../../../composables/whList.ts";
 import {
   ItemProperty,
-  ItemPropertyApi,
+  itemPropertyApi,
   itemPropertyTypeList,
   printItemPropertyType,
 } from "../../../services/wh/itemproperty.ts";
@@ -22,7 +22,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(new ItemPropertyApi(authRequest));
+const whList = useWhList(itemPropertyApi(authRequest));
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

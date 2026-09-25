@@ -3,7 +3,7 @@ import { Visibility } from "../../../services/wh/common.ts";
 import Header from "../../../components/PageHeader.vue";
 import {
   ItemProperty,
-  ItemPropertyApi,
+  itemPropertyApi,
   itemPropertyTypeList,
   printItemPropertyType,
 } from "../../../services/wh/itemproperty.ts";
@@ -47,7 +47,7 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newItemProperty, new ItemPropertyApi(authRequest));
+} = useWhEdit(newItemProperty, itemPropertyApi(authRequest));
 
 await loadWh(props.id);
 

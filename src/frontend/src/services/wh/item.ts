@@ -1,14 +1,7 @@
 import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import {
-  createElementFunc,
-  deleteElementFunc,
-  getElementFunc,
-  listElementsFunc,
-  updateElementFunc,
-} from "./crudGenerator.ts";
+import { defineWhApi } from "./crudGenerator.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
 import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
-import { AxiosInstance } from "axios";
 import {
   ApiResponse,
   validateIdNumber,
@@ -17,7 +10,6 @@ import {
   validLongDescFn,
   validShortDescFn,
   Visibility,
-  WhApi,
   WhProperty,
 } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
@@ -882,18 +874,5 @@ export function modelToApi(item: Item): ItemApiData {
   };
 }
 
-export class ItemApi implements WhApi<Item, ItemApiData> {
-  getElement: (id: string) => Promise<Item>;
-  listElements: () => Promise<Item[]>;
-  createElement: (wh: Item) => Promise<ApiResponse<ItemApiData>>;
-  updateElement: (wh: Item) => Promise<ApiResponse<ItemApiData>>;
-  deleteElement: (id: string) => Promise<void>;
+export const itemApi = defineWhApi<Item, ItemApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
 
-  constructor(axiosInstance: AxiosInstance) {
-    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
-  }
-}

@@ -1,15 +1,8 @@
 import { Source, copySource, updateSource, sourceIsValid } from "./source.ts";
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
-import {
-  createElementFunc,
-  deleteElementFunc,
-  getElementFunc,
-  listElementsFunc,
-  updateElementFunc,
-} from "./crudGenerator.ts";
-import { AxiosInstance } from "axios";
+import { defineWhApi } from "./crudGenerator.ts";
 import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhApi, WhProperty } from "./common.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
@@ -147,18 +140,5 @@ export function modelToApi(mutation: Mutation): MutationApiData {
   };
 }
 
-export class MutationApi implements WhApi<Mutation, MutationApiData> {
-  getElement: (id: string) => Promise<Mutation>;
-  listElements: () => Promise<Mutation[]>;
-  createElement: (wh: Mutation) => Promise<ApiResponse<MutationApiData>>;
-  updateElement: (wh: Mutation) => Promise<ApiResponse<MutationApiData>>;
-  deleteElement: (id: string) => Promise<void>;
+export const mutationApi = defineWhApi<Mutation, MutationApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
 
-  constructor(axiosInstance: AxiosInstance) {
-    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
-  }
-}

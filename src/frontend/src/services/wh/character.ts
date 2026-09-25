@@ -29,14 +29,8 @@ import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
 import { CharacterModifiers, ModifierEffect } from "./characterModifiers.ts";
 import { clearObject, objectsAreEqual } from "../../utils/object.ts";
 import { AxiosInstance } from "axios";
-import {
-  createElementFunc,
-  deleteElementFunc,
-  getElementFunc,
-  listElementsFunc,
-  updateElementFunc,
-} from "./crudGenerator.ts";
-import { apiResponseToCharacterFull, CharacterFull } from "./characterFull.ts";
+import { createWhApi, ServerEnvelope } from "./crudGenerator.ts";
+import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { setsAreEqual, updateSet } from "../../utils/set.ts";
 import {
@@ -843,20 +837,20 @@ export function modelToApi(character: Character): CharacterApiData {
   };
 }
 
-export class CharacterApi implements WhApi<Character, CharacterApiData> {
-  getElement: (id: string) => Promise<Character>;
-  listElements: () => Promise<Character[]>;
-  createElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;
-  updateElement: (wh: Character) => Promise<ApiResponse<CharacterApiData>>;
-  deleteElement: (id: string) => Promise<void>;
+export interface CharacterApi extends WhApi<Character, CharacterApiData> {
   getElementForDisplay: (id: string) => Promise<CharacterFull>;
-
-  constructor(axiosInstance: AxiosInstance) {
-    this.getElement = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.listElements = listElementsFunc(API_BASE_PATH, axiosInstance, apiResponseToModel);
-    this.createElement = createElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.updateElement = updateElementFunc(API_BASE_PATH, axiosInstance, modelToApi);
-    this.deleteElement = deleteElementFunc(API_BASE_PATH, axiosInstance);
-    this.getElementForDisplay = getElementFunc(API_BASE_PATH, axiosInstance, apiResponseToCharacterFull, "?full=true");
-  }
 }
+
+export function characterApi(axios: AxiosInstance): CharacterApi {
+  const baseApi = createWhApi(API_BASE_PATH, axios, apiResponseToModel, modelToApi);
+  return {
+    ...baseApi,
+    getElementForDisplay: async (id: string): Promise<CharacterFull> => {
+      const { data } = await axios.get<ServerEnvelope<ApiResponse<CharacterFullApiData>>>(
+        `${API_BASE_PATH}/${id}?full=true`,
+      );
+      return apiResponseToCharacterFull(data.data);
+    },
+  };
+}
+

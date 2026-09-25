@@ -12,7 +12,7 @@ import {
   availabilityList,
   carryTypeList,
   Item,
-  ItemApi,
+  itemApi,
   ItemType,
   itemTypeList,
   meleeGroupList,
@@ -40,11 +40,11 @@ import SourceTable from "../../../components/SourceTable.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import { useWhList } from "../../../composables/whList.ts";
-import { ItemPropertyApi } from "../../../services/wh/itemproperty.ts";
+import { itemPropertyApi } from "../../../services/wh/itemproperty.ts";
 import SelectTable from "../../../components/SelectTable.vue";
 import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
-import { SpellApi } from "../../../services/wh/spell.ts";
-import { RuneApi } from "../../../services/wh/rune.ts";
+import { spellApi } from "../../../services/wh/spell.ts";
+import { runeApi } from "../../../services/wh/rune.ts";
 import SelectIdNumberTable from "../../../components/SelectIdNumberTable.vue";
 
 const props = defineProps<{
@@ -71,15 +71,15 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newItem, new ItemApi(authRequest));
+} = useWhEdit(newItem, itemApi(authRequest));
 
-const propertyListUtils = useWhList(new ItemPropertyApi(authRequest));
+const propertyListUtils = useWhList(itemPropertyApi(authRequest));
 propertyListUtils.loadWhList();
 
-const spellListUtils = useWhList(new SpellApi(authRequest));
+const spellListUtils = useWhList(spellApi(authRequest));
 spellListUtils.loadWhList();
 
-const runeListUtils = useWhList(new RuneApi(authRequest));
+const runeListUtils = useWhList(runeApi(authRequest));
 runeListUtils.loadWhList();
 
 const propertyList = computed(() => {

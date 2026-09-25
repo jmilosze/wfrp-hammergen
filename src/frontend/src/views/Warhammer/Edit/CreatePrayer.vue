@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/common.ts";
 import Header from "../../../components/PageHeader.vue";
-import { Prayer, PrayerApi } from "../../../services/wh/prayer.ts";
+import { Prayer, prayerApi } from "../../../services/wh/prayer.ts";
 import { computed } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
@@ -39,7 +39,7 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newPrayer, new PrayerApi(authRequest));
+} = useWhEdit(newPrayer, prayerApi(authRequest));
 
 await loadWh(props.id);
 

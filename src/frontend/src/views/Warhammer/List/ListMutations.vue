@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
-import { Mutation, MutationApi, mutationTypeList, printMutationType } from "../../../services/wh/mutation.ts";
+import { Mutation, mutationApi, mutationTypeList, printMutationType } from "../../../services/wh/mutation.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -16,7 +16,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(new MutationApi(authRequest));
+const whList = useWhList(mutationApi(authRequest));
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

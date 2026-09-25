@@ -2,7 +2,7 @@
 import { useWhList } from "../../../composables/whList.ts";
 import {
   Career,
-  CareerApi,
+  careerApi,
   careerClassList,
   printClassName,
   printSpeciesName,
@@ -23,7 +23,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(new CareerApi(authRequest));
+const whList = useWhList(careerApi(authRequest));
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

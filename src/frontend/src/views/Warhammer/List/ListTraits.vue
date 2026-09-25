@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
-import { Trait, TraitApi } from "../../../services/wh/trait.ts";
+import { Trait, traitApi } from "../../../services/wh/trait.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -15,7 +15,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(new TraitApi(authRequest));
+const whList = useWhList(traitApi(authRequest));
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");
