@@ -409,16 +409,11 @@ function careerLevelToCareerLevelApiData(careerLevel: CareerLevel): CareerLevelA
 
 export const careerApi = defineWhApi<Career, CareerApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
 
-export interface CareerLevelMatch {
-  levelNumber: number;
-  levelName: string;
-}
-
 export interface CareerMatch {
   id: string;
   name: string;
   careerClass: CareerClass;
-  levels: CareerLevelMatch[];
+  levels: number[];
 }
 
 export function findCareerMatches(
@@ -426,7 +421,7 @@ export function findCareerMatches(
   searchIds: Set<string>,
   type: "skill" | "talent",
 ): CareerMatch | null {
-  const levels: CareerLevelMatch[] = [];
+  const levels: number[] = [];
 
   const checkLevel = (level: CareerLevel, levelNumber: number) => {
     if (!level.exists) {
@@ -435,7 +430,7 @@ export function findCareerMatches(
     const targetSet = type === "skill" ? level.skills : level.talents;
     for (const id of searchIds) {
       if (targetSet.has(id)) {
-        levels.push({ levelNumber, levelName: level.name });
+        levels.push(levelNumber);
         break;
       }
     }

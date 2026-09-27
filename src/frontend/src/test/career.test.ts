@@ -358,7 +358,7 @@ describe("isEqualTo returns false", () => {
         id: "career-1",
         name: "Test Career",
         careerClass: CareerClass.Warrior,
-        levels: [{ levelNumber: 1, levelName: "Level 1 Name" }],
+        levels: [1],
       });
     });
 
@@ -368,7 +368,7 @@ describe("isEqualTo returns false", () => {
         id: "career-1",
         name: "Test Career",
         careerClass: CareerClass.Warrior,
-        levels: [{ levelNumber: 1, levelName: "Level 1 Name" }],
+        levels: [1],
       });
     });
 
@@ -378,10 +378,7 @@ describe("isEqualTo returns false", () => {
         id: "career-1",
         name: "Test Career",
         careerClass: CareerClass.Warrior,
-        levels: [
-          { levelNumber: 1, levelName: "Level 1 Name" },
-          { levelNumber: 3, levelName: "Level 3 Name" },
-        ],
+        levels: [1, 3],
       });
     });
 
@@ -396,7 +393,7 @@ describe("isEqualTo returns false", () => {
         id: "career-1",
         name: "Test Career",
         careerClass: CareerClass.Warrior,
-        levels: [{ levelNumber: 3, levelName: "Level 3 Name" }],
+        levels: [3],
       });
     });
 

@@ -63,12 +63,6 @@ watch(
   },
   { immediate: true, deep: true },
 );
-
-function formatLevels(levels: CareerMatch["levels"]): string {
-  return levels
-    .map((l) => (l.levelName ? `Level ${l.levelNumber}: ${l.levelName}` : `Level ${l.levelNumber}`))
-    .join(", ");
-}
 </script>
 
 <template>
@@ -111,7 +105,7 @@ function formatLevels(levels: CareerMatch["levels"]): string {
               {{ printClassName(match.careerClass) }}
             </td>
             <td class="py-2 px-5 text-neutral-800">
-              {{ formatLevels(match.levels) }}
+              {{ match.levels.join(", ") }}
             </td>
           </tr>
         </tbody>
