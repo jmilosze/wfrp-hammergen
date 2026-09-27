@@ -92,7 +92,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, fmt.Errorf("non-admin cannot set visibility to public: %w", domain.ErrUnauthorized)
 	}
 
-	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, []string{w.Id})
+	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, wh.WhFilter{WhIds: []string{w.Id}})
 	if err != nil || len(existingWhs) == 0 {
 		return nil, fmt.Errorf("wh %s not found: %w", w.Id, domain.ErrNotFound)
 	}
@@ -116,7 +116,7 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 		return fmt.Errorf("unauthorized to delete wh %s: %w", whId, domain.ErrUnauthorized)
 	}
 
-	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, []string{whId})
+	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, wh.WhFilter{WhIds: []string{whId}})
 	if err != nil || len(existingWhs) == 0 {
 		return fmt.Errorf("wh %s not found: %w", whId, domain.ErrNotFound)
 	}
@@ -134,10 +134,10 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 	return nil
 }
 
-func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, whIds []string) ([]*wh.Wh, error) {
+func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, filter wh.WhFilter) ([]*wh.Wh, error) {
 	users := []string{c.Id}
 
-	whs, err := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, whIds)
+	whs, err := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, filter)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retreive wh: %w", err)
 	}
@@ -160,7 +160,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		}
 	}
 
-	if errIfNotFound && len(whIds) != 0 && len(whsRet) != len(whIds) {
+	if errIfNotFound && len(filter.WhIds) != 0 && len(whsRet) != len(filter.WhIds) {
 		return nil, fmt.Errorf("not all ids found: %w", domain.ErrNotFound)
 	}
 
@@ -188,21 +188,21 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	var propertyWhErr error
 	go func() {
 		defer wg.Done()
-		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, false, allPropertyIds)
+		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, false, wh.WhFilter{WhIds: allPropertyIds})
 	}()
 
 	var allSpells []*wh.Wh
 	var spellWhErr error
 	go func() {
 		defer wg.Done()
-		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, false, allSpellIds)
+		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, false, wh.WhFilter{WhIds: allSpellIds})
 	}()
 
 	var allRunes []*wh.Wh
 	var runesWhErr error
 	go func() {
 		defer wg.Done()
-		allRunes, runesWhErr = whService.Get(ctx, wh.WhTypeRune, claims, false, false, allRuneIds)
+		allRunes, runesWhErr = whService.Get(ctx, wh.WhTypeRune, claims, false, false, wh.WhFilter{WhIds: allRuneIds})
 	}()
 
 	wg.Wait()
@@ -306,7 +306,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		v := components[k]
 		go func() {
 			defer wg.Done()
-			v.wh, v.err = whService.Get(ctx, k, claims, v.full, false, v.ids)
+			v.wh, v.err = whService.Get(ctx, k, claims, v.full, false, wh.WhFilter{WhIds: v.ids})
 		}()
 	}
 

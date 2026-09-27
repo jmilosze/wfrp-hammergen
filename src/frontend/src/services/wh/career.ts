@@ -1,7 +1,8 @@
 import { AttributeName } from "./attributes.ts";
 import { copySource, Source, sourceIsValid } from "./source.ts";
 import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
-import { defineWhApi } from "./crudGenerator.ts";
+import { defineWhApi, ServerEnvelope } from "./crudGenerator.ts";
+import { AxiosInstance } from "axios";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
 import { cloneEntity } from "../../utils/clone.ts";
@@ -407,4 +408,74 @@ function careerLevelToCareerLevelApiData(careerLevel: CareerLevel): CareerLevelA
 }
 
 export const careerApi = defineWhApi<Career, CareerApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
+
+export interface CareerLevelMatch {
+  levelNumber: number;
+  levelName: string;
+}
+
+export interface CareerMatch {
+  id: string;
+  name: string;
+  careerClass: CareerClass;
+  levels: CareerLevelMatch[];
+}
+
+export function findCareerMatches(
+  career: Career,
+  searchIds: Set<string>,
+  type: "skill" | "talent",
+): CareerMatch | null {
+  const levels: CareerLevelMatch[] = [];
+
+  const checkLevel = (level: CareerLevel, levelNumber: number) => {
+    if (!level.exists) {
+      return;
+    }
+    const targetSet = type === "skill" ? level.skills : level.talents;
+    for (const id of searchIds) {
+      if (targetSet.has(id)) {
+        levels.push({ levelNumber, levelName: level.name });
+        break;
+      }
+    }
+  };
+
+  checkLevel(career.level1, 1);
+  checkLevel(career.level2, 2);
+  checkLevel(career.level3, 3);
+  checkLevel(career.level4, 4);
+  checkLevel(career.level5, 5);
+
+  if (levels.length === 0) {
+    return null;
+  }
+
+  return {
+    id: career.id,
+    name: career.name,
+    careerClass: career.careerClass,
+    levels,
+  };
+}
+
+export async function getCareersForSkill(
+  axios: Pick<AxiosInstance, "get">,
+  skillIds: string[],
+): Promise<Career[]> {
+  const { data } = await axios.get<ServerEnvelope<ApiResponse<CareerApiData>[]>>(API_BASE_PATH, {
+    params: { skillId: skillIds },
+  });
+  return data.data.map(apiResponseToModel);
+}
+
+export async function getCareersForTalent(
+  axios: Pick<AxiosInstance, "get">,
+  talentIds: string[],
+): Promise<Career[]> {
+  const { data } = await axios.get<ServerEnvelope<ApiResponse<CareerApiData>[]>>(API_BASE_PATH, {
+    params: { talentId: talentIds },
+  });
+  return data.data.map(apiResponseToModel);
+}
 

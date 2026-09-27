@@ -4,7 +4,7 @@ import AlertBlock from "../components/AlertBlock.vue";
 import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 
-const showAlert = ref(true);
+const showAlert = ref(false);
 </script>
 
 <template>

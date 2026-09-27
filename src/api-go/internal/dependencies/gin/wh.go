@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"slices"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
@@ -93,7 +94,7 @@ func whGetHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) 
 			full = true
 		}
 
-		wh, err := s.Get(c.Request.Context(), t, claims, full, true, []string{whId})
+		wh, err := s.Get(c.Request.Context(), t, claims, full, true, warhammer.WhFilter{WhIds: []string{whId}})
 
 		if err != nil {
 			log.Println("error handling get wh", err)
@@ -130,9 +131,25 @@ func whDeleteHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Contex
 	}
 }
 
+func parseQueryList(c *gin.Context, key string) []string {
+	values, _ := c.GetQueryArray(key)
+	valuesBracket, _ := c.GetQueryArray(key + "[]")
+	all := append(values, valuesBracket...)
+	var result []string
+	for _, v := range all {
+		for _, part := range strings.Split(v, ",") {
+			trimmed := strings.TrimSpace(part)
+			if trimmed != "" {
+				result = append(result, trimmed)
+			}
+		}
+	}
+	return result
+}
+
 func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) {
 	return func(c *gin.Context) {
-		ids, _ := c.GetQueryArray("id")
+		ids := parseQueryList(c, "id")
 		claims := getUserClaims(c)
 
 		var full bool
@@ -140,7 +157,13 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 			full = true
 		}
 
-		whs, err := s.Get(c.Request.Context(), t, claims, full, true, ids)
+		filter := warhammer.WhFilter{WhIds: ids}
+		if t == warhammer.WhTypeCareer {
+			filter.SkillIds = parseQueryList(c, "skillId")
+			filter.TalentIds = parseQueryList(c, "talentId")
+		}
+
+		whs, err := s.Get(c.Request.Context(), t, claims, full, true, filter)
 
 		if err != nil {
 			log.Println("error handling list wh", err)

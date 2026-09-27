@@ -124,20 +124,34 @@ func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId strin
 	return nil
 }
 
-func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds []string, sharedUserIds []string, whIds []string) ([]*warhammer.Wh, error) {
-	var filter bson.M
+func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds []string, sharedUserIds []string, filter warhammer.WhFilter) ([]*warhammer.Wh, error) {
+	andConditions := bson.A{allAllowedOwnersQuery(userIds, sharedUserIds)}
 
-	if len(whIds) != 0 {
-		ids, err := idsQuery(whIds)
+	if len(filter.WhIds) != 0 {
+		ids, err := idsQuery(filter.WhIds)
 		if err != nil {
 			return nil, err
 		}
-		filter = bson.M{"$and": bson.A{ids, allAllowedOwnersQuery(userIds, sharedUserIds)}}
-	} else {
-		filter = allAllowedOwnersQuery(userIds, sharedUserIds)
+		andConditions = append(andConditions, ids)
 	}
 
-	cur, err := s.Collections[t].Find(ctx, filter)
+	if t == warhammer.WhTypeCareer {
+		if len(filter.SkillIds) > 0 {
+			andConditions = append(andConditions, careerLevelContainsQuery("skills", filter.SkillIds))
+		}
+		if len(filter.TalentIds) > 0 {
+			andConditions = append(andConditions, careerLevelContainsQuery("talents", filter.TalentIds))
+		}
+	}
+
+	var mongoFilter bson.M
+	if len(andConditions) == 1 {
+		mongoFilter = andConditions[0].(bson.M)
+	} else {
+		mongoFilter = bson.M{"$and": andConditions}
+	}
+
+	cur, err := s.Collections[t].Find(ctx, mongoFilter)
 
 	if cur != nil {
 		defer cur.Close(ctx)
@@ -199,6 +213,17 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 	}
 
 	return bson.M{"$or": allowedConditions}
+}
+
+func careerLevelContainsQuery(field string, ids []string) bson.M {
+	orConditions := bson.A{}
+	for i := 1; i <= 5; i++ {
+		orConditions = append(orConditions, bson.M{
+			fmt.Sprintf("object.level%d.exists", i):    true,
+			fmt.Sprintf("object.level%d.%s", i, field): bson.M{"$in": ids},
+		})
+	}
+	return bson.M{"$or": orConditions}
 }
 
 func whDocToWh(doc *whDocRead, t warhammer.WhType) (*warhammer.Wh, error) {

@@ -26,6 +26,7 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SelectTable from "../../../components/SelectTable.vue";
+import CareerReferencesTable from "../../../components/CareerReferencesTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -165,6 +166,7 @@ watch(
       </div>
     </div>
   </div>
+  <CareerReferencesTable v-if="id !== 'create'" :entityId="wh.id" :parentGroupIds="wh.group" type="skill" />
   <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="my-3 flex-1">
       <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />

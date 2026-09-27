@@ -93,3 +93,20 @@ func TestAllAllowedOwnersQuery(t *testing.T) {
 		}
 	})
 }
+
+func TestCareerLevelContainsQuery(t *testing.T) {
+	ids := []string{"id1", "id2"}
+	got := careerLevelContainsQuery("skills", ids)
+	expected := bson.M{
+		"$or": bson.A{
+			bson.M{"object.level1.exists": true, "object.level1.skills": bson.M{"$in": ids}},
+			bson.M{"object.level2.exists": true, "object.level2.skills": bson.M{"$in": ids}},
+			bson.M{"object.level3.exists": true, "object.level3.skills": bson.M{"$in": ids}},
+			bson.M{"object.level4.exists": true, "object.level4.skills": bson.M{"$in": ids}},
+			bson.M{"object.level5.exists": true, "object.level5.skills": bson.M{"$in": ids}},
+		},
+	}
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("got %v, want %v", got, expected)
+	}
+}

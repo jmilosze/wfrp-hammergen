@@ -5,13 +5,16 @@ import {
   CareerClass,
   CareerLevel,
   CareerLevelApiData,
+  findCareerMatches,
+  getCareersForSkill,
+  getCareersForTalent,
   modelToApi,
   Species,
   StatusTier,
 } from "../services/wh/career.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
 import { ApiResponse, Visibility } from "../services/wh/common.ts";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 
 const careerApiData: CareerApiData = {
@@ -282,6 +285,169 @@ describe("isEqualTo returns false", () => {
       t.level.talents.add("someOtherTalent");
       expect(career.isEqualTo(otherCareer)).toBe(false);
       t.level.talents = currentValue;
+    });
+  });
+
+  describe("findCareerMatches", () => {
+    const testCareer = apiResponseToModel({
+      id: "career-1",
+      ownerId: "owner-1",
+      visibility: Visibility.Public,
+      object: {
+        name: "Test Career",
+        description: "description",
+        species: [Species.Human],
+        class: CareerClass.Warrior,
+        source: {},
+        level1: {
+          exists: true,
+          name: "Level 1 Name",
+          status: StatusTier.Brass,
+          standing: 1,
+          attributes: [],
+          skills: ["skill-a", "group-1"],
+          talents: ["talent-a"],
+          items: "",
+        },
+        level2: {
+          exists: false,
+          name: "Level 2 Inactive",
+          status: StatusTier.Brass,
+          standing: 1,
+          attributes: [],
+          skills: ["skill-a"],
+          talents: ["talent-a"],
+          items: "",
+        },
+        level3: {
+          exists: true,
+          name: "Level 3 Name",
+          status: StatusTier.Silver,
+          standing: 2,
+          attributes: [],
+          skills: ["skill-b"],
+          talents: ["talent-b", "talent-group-1"],
+          items: "",
+        },
+        level4: {
+          exists: false,
+          name: "",
+          status: StatusTier.Brass,
+          standing: 0,
+          attributes: [],
+          skills: [],
+          talents: [],
+          items: "",
+        },
+        level5: {
+          exists: false,
+          name: "",
+          status: StatusTier.Brass,
+          standing: 0,
+          attributes: [],
+          skills: [],
+          talents: [],
+          items: "",
+        },
+      },
+    });
+
+    test("matches skill on active levels and ignores inactive levels", () => {
+      const match = findCareerMatches(testCareer, new Set(["skill-a"]), "skill");
+      expect(match).toEqual({
+        id: "career-1",
+        name: "Test Career",
+        careerClass: CareerClass.Warrior,
+        levels: [{ levelNumber: 1, levelName: "Level 1 Name" }],
+      });
+    });
+
+    test("matches parent group ID when passed in searchIds", () => {
+      const match = findCareerMatches(testCareer, new Set(["skill-child", "group-1"]), "skill");
+      expect(match).toEqual({
+        id: "career-1",
+        name: "Test Career",
+        careerClass: CareerClass.Warrior,
+        levels: [{ levelNumber: 1, levelName: "Level 1 Name" }],
+      });
+    });
+
+    test("matches multiple active levels", () => {
+      const match = findCareerMatches(testCareer, new Set(["skill-a", "skill-b"]), "skill");
+      expect(match).toEqual({
+        id: "career-1",
+        name: "Test Career",
+        careerClass: CareerClass.Warrior,
+        levels: [
+          { levelNumber: 1, levelName: "Level 1 Name" },
+          { levelNumber: 3, levelName: "Level 3 Name" },
+        ],
+      });
+    });
+
+    test("returns null if no skills match", () => {
+      const match = findCareerMatches(testCareer, new Set(["skill-unknown"]), "skill");
+      expect(match).toBeNull();
+    });
+
+    test("matches talents on active levels including parent group", () => {
+      const match = findCareerMatches(testCareer, new Set(["talent-child", "talent-group-1"]), "talent");
+      expect(match).toEqual({
+        id: "career-1",
+        name: "Test Career",
+        careerClass: CareerClass.Warrior,
+        levels: [{ levelNumber: 3, levelName: "Level 3 Name" }],
+      });
+    });
+
+    test("returns null if no talents match", () => {
+      const match = findCareerMatches(testCareer, new Set(["talent-unknown"]), "talent");
+      expect(match).toBeNull();
+    });
+  });
+
+  describe("career API lookups", () => {
+    test("getCareersForSkill calls endpoint with skillId params and maps response", async () => {
+      const mockCareerApi: ApiResponse<CareerApiData> = {
+        id: "c-1",
+        ownerId: "u-1",
+        visibility: Visibility.Public,
+        object: careerApiData,
+      };
+
+      const mockAxios = {
+        get: vi.fn().mockResolvedValue({ data: { data: [mockCareerApi] } }),
+      };
+
+      const result = await getCareersForSkill(mockAxios, ["skill-1", "group-1"]);
+
+      expect(mockAxios.get).toHaveBeenCalledWith("/api/wh/career", {
+        params: { skillId: ["skill-1", "group-1"] },
+      });
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe("c-1");
+      expect(result[0].name).toBe("career");
+    });
+
+    test("getCareersForTalent calls endpoint with talentId params and maps response", async () => {
+      const mockCareerApi: ApiResponse<CareerApiData> = {
+        id: "c-2",
+        ownerId: "u-1",
+        visibility: Visibility.Public,
+        object: careerApiData,
+      };
+
+      const mockAxios = {
+        get: vi.fn().mockResolvedValue({ data: { data: [mockCareerApi] } }),
+      };
+
+      const result = await getCareersForTalent(mockAxios, ["talent-1"]);
+
+      expect(mockAxios.get).toHaveBeenCalledWith("/api/wh/career", {
+        params: { talentId: ["talent-1"] },
+      });
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe("c-2");
     });
   });
 });

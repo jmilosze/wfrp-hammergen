@@ -6,6 +6,13 @@ import TextLink from "../../components/TextLink.vue";
 <template>
   <Header title="Updates" />
   <div>
+    <div class="text-xl mt-2 mb-1">27 Sep 2026</div>
+    <p class="mb-1">
+      When viewing details of a skill or talent, you can now see all careers (and specific levels) that have access to that skill or talent, including through parent groups.
+    </p>
+  </div>
+
+  <div>
     <div class="text-xl mt-2 mb-1">8 Sep 2026</div>
     <p class="mb-1">
       Added contents of
