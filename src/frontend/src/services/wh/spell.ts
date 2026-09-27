@@ -1,9 +1,7 @@
 import { defineWhApi } from "./crudGenerator.ts";
-import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
+import { copySource, Source, sourceIsValid } from "./source.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
-import { setsAreEqual } from "../../utils/set.ts";
 
 const CASTING_NUMBER_RE = /^([1-9][0-9]|[0-9])$/;
 const API_BASE_PATH = "/api/wh/spell";
@@ -335,18 +333,12 @@ export type SpellClassification = {
   labels: Set<SpellLabel>;
 };
 
-export class Spell implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class Spell extends WhEntity {
   cn: number;
   range: string;
   duration: string;
   target: string;
   classification: SpellClassification;
-  source: Source;
 
   constructor({
     id = "",
@@ -361,33 +353,12 @@ export class Spell implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
+    super({ id, ownerId, visibility, name, description, source });
     this.cn = cn;
     this.range = range;
     this.target = target;
     this.duration = duration;
-    this.description = description;
     this.classification = classification;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Spell {
-    return new Spell({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      cn: this.cn,
-      range: this.range,
-      target: this.target,
-      duration: this.duration,
-      description: this.description,
-      classification: { type: this.classification.type, labels: new Set(this.classification.labels) },
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -428,33 +399,10 @@ export class Spell implements WhProperty {
       sourceIsValid(this.source)
     );
   }
-
-  isEqualTo(otherSpell: WhProperty): boolean {
-    if (!(otherSpell instanceof Spell)) {
-      return false;
-    }
-    return (
-      this.id === otherSpell.id &&
-      this.visibility === otherSpell.visibility &&
-      this.name === otherSpell.name &&
-      this.cn === otherSpell.cn &&
-      this.range === otherSpell.range &&
-      this.target === otherSpell.target &&
-      this.duration === otherSpell.duration &&
-      this.description === otherSpell.description &&
-      this.classification.type === otherSpell.classification.type &&
-      setsAreEqual(this.classification.labels, otherSpell.classification.labels) &&
-      objectsAreEqual(this.source, otherSpell.source)
-    );
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
 }
 
 export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
-  const newSpell = new Spell({
+  return new Spell({
     id: spellApi.id,
     ownerId: spellApi.ownerId,
     visibility: spellApi.visibility,
@@ -470,8 +418,6 @@ export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
     },
     source: spellApi.object.source,
   });
-
-  return newSpell.copy();
 }
 
 export function modelToApi(spell: Spell): SpellApiData {

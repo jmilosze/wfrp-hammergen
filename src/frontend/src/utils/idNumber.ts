@@ -3,16 +3,6 @@ export interface IdNumber {
   number: number;
 }
 
-export function compareIdNumber(x: IdNumber, y: IdNumber): -1 | 0 | 1 {
-  if (x.id !== y.id) {
-    return x.id < y.id ? -1 : 1;
-  }
-  if (x.number === y.number) {
-    return 0;
-  }
-  return x.number < y.number ? -1 : 1;
-}
-
 export function idNumberArrayToRecord(arr: IdNumber[]): Record<string, number> {
   return arr.reduce(
     (acc, current) => {

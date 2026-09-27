@@ -1,7 +1,5 @@
-import { copySource, Source, sourceIsValid, updateSource } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhProperty } from "./common.ts";
-import { objectsAreEqual } from "../../utils/object.ts";
-import { arraysAreEqualIgnoreOrder } from "../../utils/array.ts";
+import { copySource, Source, sourceIsValid } from "./source.ts";
+import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
 import { defineWhApi } from "./crudGenerator.ts";
 import { ItemType } from "./item.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
@@ -58,15 +56,9 @@ export interface RuneApiData {
   source: Source;
 }
 
-export class Rune implements WhProperty {
-  id: string;
-  ownerId: string;
-  visibility: Visibility;
-  name: string;
-  description: string;
+export class Rune extends WhEntity {
   labels: RuneLabel[];
   applicableTo: ItemType[];
-  source: Source;
 
   constructor({
     id = "",
@@ -78,27 +70,9 @@ export class Rune implements WhProperty {
     visibility = Visibility.Private,
     source = {},
   } = {}) {
-    this.id = id;
-    this.ownerId = ownerId;
-    this.name = name;
-    this.description = description;
+    super({ id, ownerId, visibility, name, description, source });
     this.labels = labels;
     this.applicableTo = applicableTo;
-    this.visibility = visibility;
-    this.source = source;
-  }
-
-  copy(): Rune {
-    return new Rune({
-      id: this.id,
-      ownerId: this.ownerId,
-      visibility: this.visibility,
-      name: this.name,
-      description: this.description,
-      labels: [...this.labels],
-      applicableTo: [...this.applicableTo],
-      source: copySource(this.source),
-    });
   }
 
   validateName(): ValidationStatus {
@@ -114,29 +88,10 @@ export class Rune implements WhProperty {
   isValid(): boolean {
     return this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source);
   }
-
-  isEqualTo(otherRune: WhProperty): boolean {
-    if (!(otherRune instanceof Rune)) {
-      return false;
-    }
-    return (
-      this.id === otherRune.id &&
-      this.visibility === otherRune.visibility &&
-      this.name === otherRune.name &&
-      this.description === otherRune.description &&
-      arraysAreEqualIgnoreOrder(this.applicableTo, otherRune.applicableTo) &&
-      arraysAreEqualIgnoreOrder(this.labels, otherRune.labels) &&
-      objectsAreEqual(this.source, otherRune.source)
-    );
-  }
-
-  updateSource(update: { id: string; notes: string; selected: boolean }): void {
-    updateSource(this.source, update);
-  }
 }
 
 export function apiResponseToModel(itemRuneApi: ApiResponse<RuneApiData>): Rune {
-  const newRune = new Rune({
+  return new Rune({
     id: itemRuneApi.id,
     ownerId: itemRuneApi.ownerId,
     visibility: itemRuneApi.visibility,
@@ -146,8 +101,6 @@ export function apiResponseToModel(itemRuneApi: ApiResponse<RuneApiData>): Rune 
     applicableTo: itemRuneApi.object.applicableTo,
     source: itemRuneApi.object.source,
   });
-
-  return newRune.copy();
 }
 
 export function modelToApi(itemRune: Rune): RuneApiData {
