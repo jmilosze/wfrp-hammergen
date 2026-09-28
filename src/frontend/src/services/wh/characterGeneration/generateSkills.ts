@@ -1,5 +1,6 @@
 import { Skill } from "../skill.ts";
-import { SelectRandomFn } from "../../../utils/random.ts";
+import { Career, getCareerSkillsByLevel } from "../career.ts";
+import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { skillCost } from "./calculateExperience.ts";
 
 const SKILL_ADV = [40, 30, 20, 10];
@@ -7,21 +8,26 @@ const LEVEL_1_MAX_ADV_PER_SKILL = 10;
 const SKILL_FILL_UP_SKILLS = 8;
 const SKILL_FILL_UP_PER_LVL = 5;
 
+export interface SkillsGenerationContext {
+  speciesSkills: string[];
+  career: Career;
+  skills: Skill[];
+  level: number;
+}
+
 export function generateSkills(
-  speciesSkills: string[],
-  careerSkills: [string[], string[], string[], string[]],
-  listOfWhSkills: Skill[],
-  level: number,
-  selectRandomFn: SelectRandomFn,
+  context: SkillsGenerationContext,
+  selectRandomFn: SelectRandomFn = selectRandom,
 ): [Record<string, number>, number] {
-  const resolvedSkillGroups = resolveSkillGroups(listOfWhSkills);
-  let skills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandomFn);
+  const careerSkills = getCareerSkillsByLevel(context.career);
+  const resolvedSkillGroups = resolveSkillGroups(context.skills);
+  let skills = generateSpeciesSkills(context.speciesSkills, resolvedSkillGroups, selectRandomFn);
   const availSkills = genAvailSkills(resolvedSkillGroups, careerSkills, selectRandomFn);
   skills = genLvlSkill(skills, availSkills[0], SKILL_ADV[0], LEVEL_1_MAX_ADV_PER_SKILL, 0, selectRandomFn)[0];
 
   let expSpent = 0;
   let allAvailSkills = availSkills[0];
-  for (let tmpLvl = 2; tmpLvl <= level; ++tmpLvl) {
+  for (let tmpLvl = 2; tmpLvl <= context.level; ++tmpLvl) {
     const fillUpTo = (tmpLvl - 1) * SKILL_FILL_UP_PER_LVL;
     [skills, expSpent] = fillUpLvlSkill(
       skills,

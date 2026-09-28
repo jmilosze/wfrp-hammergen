@@ -1,13 +1,13 @@
 import { Talent } from "../talent.ts";
+import { Career, getCareerAttributesByLevel, getCareerTalentsByLevel } from "../career.ts";
 import {
-  AttributeName,
   Attributes,
   copyAttributes,
   getAttributes,
   multiplyAttributes,
   sumAttributes,
 } from "../attributes.ts";
-import { RollInTableFn, SelectRandomFn } from "../../../utils/random.ts";
+import { rollInTable, RollInTableFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { generateSpeciesTalents, RandomTalents, SpeciesTalents } from "./generateSpeciesTalents.ts";
 import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
 import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
@@ -17,33 +17,52 @@ const LEVEL_N_TALENTS = 2;
 const LEVEL_1_ATTS = 5;
 const LEVEL_N_ATTS = 5;
 
+export interface TalentsAndAdvancesContext {
+  speciesTalents: SpeciesTalents;
+  randomTalents: RandomTalents;
+  career: Career;
+  baseAtts: Attributes;
+  talents: Talent[];
+  level: 1 | 2 | 3 | 4;
+}
+
+export interface TalentsAndAdvancesRandomFns {
+  selectRandomFn?: SelectRandomFn;
+  rollInTableFn?: RollInTableFn;
+}
+
 export function genTalentsAndAdvances(
-  speciesTalents: SpeciesTalents,
-  randomTalents: RandomTalents,
-  careerTalents: [string[], string[], string[], string[]],
-  baseAtts: Attributes,
-  listOfWhTalents: Talent[],
-  careerAtts: [AttributeName[], AttributeName[], AttributeName[], AttributeName[]],
-  level: 1 | 2 | 3 | 4,
-  selectRandomFn: SelectRandomFn,
-  rollInTableFn: RollInTableFn,
+  context: TalentsAndAdvancesContext,
+  randomFns: TalentsAndAdvancesRandomFns = {},
 ): [Record<string, number>, Attributes, number] {
-  const talentGroups = getTalentGroups(listOfWhTalents);
+  const selectRandomFn = randomFns.selectRandomFn ?? selectRandom;
+  const rollInTableFn = randomFns.rollInTableFn ?? rollInTable;
+
+  const careerTalents = getCareerTalentsByLevel(context.career);
+  const careerAtts = getCareerAttributesByLevel(context.career);
+
+  const talentGroups = getTalentGroups(context.talents);
 
   let advances = getAttributes();
   if (careerAtts[0].length > 0) {
     advances = generateAdv(careerAtts[0], LEVEL_1_ATTS, advances, 0, selectRandomFn)[0];
   }
 
-  let talents = generateSpeciesTalents(speciesTalents, talentGroups, randomTalents, selectRandomFn, rollInTableFn);
-  let talentsRank = getAllTalentsMaxRank(talents, listOfWhTalents, baseAtts, advances);
+  let talents = generateSpeciesTalents(
+    context.speciesTalents,
+    talentGroups,
+    context.randomTalents,
+    selectRandomFn,
+    rollInTableFn,
+  );
+  let talentsRank = getAllTalentsMaxRank(talents, context.talents, context.baseAtts, advances);
   let availTalents = generateAvailableTalents(careerTalents[0], talentGroups, selectRandomFn);
   talents = generateLevelTalent(talents, availTalents, talentsRank, LEVEL_1_TALENTS, 0, selectRandomFn)[0];
 
   let expSpent = 0;
 
-  if (level > 1) {
-    talentsRank = getAllTalentsMaxRank(talents, listOfWhTalents, baseAtts, advances);
+  if (context.level > 1) {
+    talentsRank = getAllTalentsMaxRank(talents, context.talents, context.baseAtts, advances);
     availTalents = generateAvailableTalents(careerTalents[0], talentGroups, selectRandomFn);
     [talents, expSpent] = generateLevelTalent(
       talents,
@@ -56,7 +75,7 @@ export function genTalentsAndAdvances(
   }
 
   let allCareerAtts = careerAtts[0];
-  for (let tmpLvl = 2; tmpLvl <= level; ++tmpLvl) {
+  for (let tmpLvl = 2; tmpLvl <= context.level; ++tmpLvl) {
     const fillUpAtt = 5 * (tmpLvl - 1);
     [advances, expSpent] = fillUpAdv(allCareerAtts, fillUpAtt, advances, expSpent);
 
@@ -65,7 +84,7 @@ export function genTalentsAndAdvances(
       [advances, expSpent] = generateAdv(allCareerAtts, LEVEL_N_ATTS, advances, expSpent, selectRandomFn);
     }
 
-    talentsRank = getAllTalentsMaxRank(talents, listOfWhTalents, baseAtts, advances);
+    talentsRank = getAllTalentsMaxRank(talents, context.talents, context.baseAtts, advances);
     const availTalents = generateAvailableTalents(careerTalents[tmpLvl - 1], talentGroups, selectRandomFn);
     [talents, expSpent] = generateLevelTalent(
       talents,

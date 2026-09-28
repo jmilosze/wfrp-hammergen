@@ -987,3 +987,81 @@ describe("getTotalAttributes returns correct value", () => {
     expect(char.getTotalAttributes()).toEqual(t.expected);
   });
 });
+
+describe("Character currency validation", () => {
+  test("validateBrass returns valid for valid integers between 0 and 1,000,000", () => {
+    const char = character.copy();
+    char.brass = 0;
+    expect(char.validateBrass().valid).toBe(true);
+
+    char.brass = 500;
+    expect(char.validateBrass().valid).toBe(true);
+
+    char.brass = 1000000;
+    expect(char.validateBrass().valid).toBe(true);
+  });
+
+  test("validateBrass returns invalid for numbers outside range or non-integers", () => {
+    const char = character.copy();
+    char.brass = -1;
+    expect(char.validateBrass().valid).toBe(false);
+
+    char.brass = 1000001;
+    expect(char.validateBrass().valid).toBe(false);
+
+    char.brass = 5.5;
+    expect(char.validateBrass().valid).toBe(false);
+  });
+
+  test("validateSilver returns valid for valid integers between 0 and 1,000,000", () => {
+    const char = character.copy();
+    char.silver = 0;
+    expect(char.validateSilver().valid).toBe(true);
+
+    char.silver = 1000000;
+    expect(char.validateSilver().valid).toBe(true);
+  });
+
+  test("validateSilver returns invalid for numbers outside range or non-integers", () => {
+    const char = character.copy();
+    char.silver = -1;
+    expect(char.validateSilver().valid).toBe(false);
+
+    char.silver = 1000001;
+    expect(char.validateSilver().valid).toBe(false);
+  });
+
+  test("validateGold returns valid for valid integers between 0 and 1,000,000", () => {
+    const char = character.copy();
+    char.gold = 0;
+    expect(char.validateGold().valid).toBe(true);
+
+    char.gold = 1000000;
+    expect(char.validateGold().valid).toBe(true);
+  });
+
+  test("validateGold returns invalid for numbers outside range or non-integers", () => {
+    const char = character.copy();
+    char.gold = -1;
+    expect(char.validateGold().valid).toBe(false);
+
+    char.gold = 1000001;
+    expect(char.validateGold().valid).toBe(false);
+  });
+
+  test("isValid enforces brass, silver, and gold validity", () => {
+    const char = character.copy();
+    expect(char.isValid()).toBe(true);
+
+    char.brass = -1;
+    expect(char.isValid()).toBe(false);
+
+    char.brass = 12;
+    char.silver = -5;
+    expect(char.isValid()).toBe(false);
+
+    char.silver = 5;
+    char.gold = -1;
+    expect(char.isValid()).toBe(false);
+  });
+});
