@@ -17,7 +17,6 @@ const props = defineProps<{
   perPage?: number;
   stackBreakpoint?: StackBreakpoint;
   modelValue: string;
-  elementId?: string;
   loading?: boolean;
   resetPagination?: number;
   rowRouteName?: string;
@@ -100,14 +99,23 @@ function searchInRow(row: TableRow, query: string): boolean {
   return false;
 }
 
+const tableRoot = ref<HTMLDivElement | null>(null);
+
 async function scrollToTop(): Promise<void> {
   await nextTick();
-  if (props.elementId) {
-    const element = document.getElementById(props.elementId);
-    if (element) {
-      element.scroll(0, 0);
+  let parent = tableRoot.value?.parentElement ?? null;
+  let hasScrolledParent = false;
+
+  while (parent && parent !== document.body) {
+    const { overflowY } = window.getComputedStyle(parent);
+    if (overflowY === "auto" || overflowY === "scroll") {
+      parent.scroll(0, 0);
+      hasScrolledParent = true;
     }
-  } else {
+    parent = parent.parentElement;
+  }
+
+  if (!hasScrolledParent) {
     window.scroll(0, 0);
   }
 }
@@ -115,7 +123,7 @@ async function scrollToTop(): Promise<void> {
 </script>
 
 <template>
-  <div class="@container">
+  <div ref="tableRoot" class="@container">
     <div class="flex flex-wrap">
       <slot />
       <input

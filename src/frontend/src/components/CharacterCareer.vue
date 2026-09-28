@@ -214,7 +214,6 @@ function emitPastSelected(id: string) {
         stackBreakpoint="2xl"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
-        elementId="modal"
       >
         <LinkButton class="mr-2 mb-2 shrink-0 btn" routeName="career" :params="{ id: 'create' }" :newWindow="true">
           Create new

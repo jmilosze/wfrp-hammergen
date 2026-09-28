@@ -143,7 +143,6 @@ function onModifyClick() {
         stackBreakpoint="lg"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
-        elementId="modal"
       >
         <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
           Create new
