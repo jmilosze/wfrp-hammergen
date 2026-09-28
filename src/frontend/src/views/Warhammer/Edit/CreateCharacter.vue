@@ -12,7 +12,6 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormInput from "../../../components/FormInput.vue";
 import ActionButton from "../../../components/ActionButton.vue";
 import LinkButton from "../../../components/LinkButton.vue";
-import generateName from "../../../services/wh/characterGeneration/generateName.ts";
 import {
   DEFAULT_CAREER_ID,
   getDefaultSpeciesWithRegion,
@@ -25,22 +24,24 @@ import {
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import {
+  applyClassItems,
+  applyDescription,
+  applyFateAndResilience,
+  applyName,
+  applySpeciesSkills,
+  applySpeciesTalents,
+  applyStatusAndStanding,
   generateCharacter,
-  generateFateAndResilience,
-} from "../../../services/wh/characterGeneration/generateCharacter.ts";
-import { rollDice } from "../../../utils/random.ts";
-import generateDescription from "../../../services/wh/characterGeneration/generateDescription.ts";
+} from "../../../services/wh/characterGeneration/characterGenerator.ts";
 import {
   Career,
   careerApi,
-  isLevel,
   printSpeciesName,
   printStatusStanding,
   printStatusTier,
   speciesList,
   speciesWithRegionToSpecies,
   statusStandingList,
-  StatusTier,
   statusTierList,
 } from "../../../services/wh/career.ts";
 import { useWhList } from "../../../composables/whList.ts";
@@ -174,36 +175,22 @@ const wounds = computed(() => wh.value.getWounds());
 const size = computed(() => printSize(wh.value.getSize()));
 
 function formGenerateName() {
-  wh.value.name = generateName(wh.value.species);
+  applyName(wh.value);
 }
 
 function formGenerateFateResilience() {
-  [wh.value.fate, wh.value.resilience] = generateFateAndResilience(wh.value.species, rollDice);
-  wh.value.fortune = wh.value.fate;
-  wh.value.resolve = wh.value.resilience;
+  applyFateAndResilience(wh.value);
 }
 
 function formGenerateDescription() {
-  wh.value.description = generateDescription(wh.value.species);
+  applyDescription(wh.value);
 }
 
 function formGenerateStatusStanding() {
   if (careerListUtils.loading.value) {
     return;
   }
-  let career = careerListUtils.whList.value.find((x) => x.id === wh.value.career.id);
-  if (!career) {
-    career = new Career();
-  }
-
-  if (isLevel(wh.value.career.number)) {
-    const careerWithLevel = career.getLevel(wh.value.career.number);
-    wh.value.status = careerWithLevel.status;
-    wh.value.standing = careerWithLevel.standing;
-  } else {
-    wh.value.status = StatusTier.Brass;
-    wh.value.standing = 0;
-  }
+  applyStatusAndStanding(wh.value, careerListUtils.whList.value);
 }
 
 watch(
@@ -314,9 +301,11 @@ function rollCharacter() {
     selectedGenLevel.value as 1 | 2 | 3 | 4,
   );
 
-  wh.value.hydrateTalentModifiers(talentListUtils.whList.value);
-  wh.value.hydrateMutationModifiers(mutationListUtils.whList.value);
-  wh.value.hydrateTraitModifiers(traitListUtils.whList.value);
+  wh.value.hydrateAllModifiers({
+    talents: talentListUtils.whList.value,
+    mutations: mutationListUtils.whList.value,
+    traits: traitListUtils.whList.value,
+  });
 }
 
 const attributes = computed(() => {
@@ -691,7 +680,7 @@ const modifierAttributes = computed(() => {
       @clearAll="wh.clearSkills(true)"
       @updated="(event) => wh.updateSkills(event.id, event.number)"
       @addSpeciesSkills="
-        wh.addSpeciesSkills(skillListUtils.whList.value, generationPropsUtils.generationProps.value, true)
+        applySpeciesSkills(wh, skillListUtils.whList.value, generationPropsUtils.generationProps.value)
       "
     />
     <CharacterTalents
@@ -706,7 +695,7 @@ const modifierAttributes = computed(() => {
       @clearAll="wh.clearTalents(true)"
       @updated="(event) => wh.updateTalents(event.id, event.number, talentListUtils.whList.value)"
       @addSpeciesTalents="
-        wh.addSpeciesTalents(talentListUtils.whList.value, generationPropsUtils.generationProps.value, true)
+        applySpeciesTalents(wh, talentListUtils.whList.value, generationPropsUtils.generationProps.value)
       "
     />
   </div>
@@ -727,7 +716,7 @@ const modifierAttributes = computed(() => {
     @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
     @carriedUpdated="(event) => wh.updateItems(event.id, event.number, 'carried')"
     @storedUpdated="(event) => wh.updateItems(event.id, event.number, 'stored')"
-    @addClassItems="wh.addClassItems(careerListUtils.whList.value, generationPropsUtils.generationProps.value, true)"
+    @addClassItems="applyClassItems(wh, careerListUtils.whList.value, generationPropsUtils.generationProps.value)"
   />
 
   <div class="flex justify-between text-left gap-4 my-4 flex-wrap">

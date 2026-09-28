@@ -5,7 +5,7 @@ import {
   SpeciesWithRegion,
   getSizeFormula,
 } from "./characterUtils.ts";
-import { Career, StatusStanding, StatusTier } from "./career.ts";
+import { StatusStanding, StatusTier } from "./career.ts";
 import {
   Attributes,
   copyAttributes,
@@ -34,20 +34,12 @@ import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
 import {
   copyIdNumberArray,
-  fillUpIdNumberRecord,
   IdNumber,
   idNumberArrayToRecord,
   updateIdNumberRecord,
 } from "../../utils/idNumber.ts";
 import { isEqualEntity } from "../../utils/equal.ts";
-import { Skill } from "./skill.ts";
-import { GenerationProps } from "./generationProps.ts";
-import { generateSpeciesSkills, resolveSkillGroups } from "./characterGeneration/generateSkills.ts";
-import { rollDice, rollInTable, selectRandom } from "../../utils/random.ts";
 import { Talent } from "./talent.ts";
-import { getTalentGroups } from "./characterGeneration/generateTalents.ts";
-import { generateSpeciesTalents } from "./characterGeneration/generateSpeciesTalents.ts";
-import { generateClassItems } from "./characterGeneration/generateCharacter.ts";
 import { Mutation } from "./mutation.ts";
 import { Trait } from "./trait.ts";
 const API_BASE_PATH = "/api/wh/character";
@@ -547,98 +539,6 @@ export class Character extends WhEntity {
     }
   }
 
-  addSpeciesSkills(listOfSkills: Skill[], generationProps: GenerationProps, replace: boolean): void {
-    if (!(this.species in generationProps.speciesSkills) || listOfSkills.length === 0) {
-      return;
-    }
-
-    if (!(this.species in generationProps.speciesSkills)) {
-      return;
-    }
-
-    const speciesSkills = generationProps.speciesSkills[this.species];
-    const resolvedSkillGroups = resolveSkillGroups(listOfSkills);
-    const generatedSkills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandom);
-
-    let newSkills: Record<string, number>;
-    if (replace) {
-      newSkills = { ...this.skills };
-    } else {
-      newSkills = this.skills;
-    }
-
-    fillUpIdNumberRecord(newSkills, generatedSkills);
-
-    if (replace) {
-      this.skills = newSkills;
-    }
-  }
-
-  addSpeciesTalents(listOfTalents: Talent[], generationProps: GenerationProps, replace: boolean): void {
-    if (!(this.species in generationProps.speciesTalents) || listOfTalents.length === 0) {
-      return;
-    }
-    if (!(this.species in generationProps.speciesTalents)) {
-      return;
-    }
-
-    const speciesTalents = generationProps.speciesTalents[this.species];
-    const resolvedTalentGroups = getTalentGroups(listOfTalents);
-    const generatedTalents = generateSpeciesTalents(
-      speciesTalents,
-      resolvedTalentGroups,
-      generationProps.randomTalents,
-      selectRandom,
-      rollInTable,
-    );
-
-    let newTalents: Record<string, number>;
-    if (replace) {
-      newTalents = { ...this.talents };
-    } else {
-      newTalents = this.talents;
-    }
-
-    fillUpIdNumberRecord(newTalents, idNumberArrayToRecord(generatedTalents));
-
-    if (replace) {
-      this.talents = newTalents;
-    }
-  }
-
-  addClassItems(careerList: Career[], generationProps: GenerationProps, replace: boolean): void {
-    if (generationProps.classItems.length === 0) {
-      return;
-    }
-
-    const selectedCarrer = careerList.find((x) => x.id === this.career.id);
-
-    if (!selectedCarrer) {
-      return;
-    }
-
-    const classItems = generationProps.classItems[selectedCarrer.careerClass];
-    const generatedItems = generateClassItems(classItems, rollDice, selectRandom);
-
-    let newEquipped: Record<string, number>;
-    let newCarried: Record<string, number>;
-    if (replace) {
-      newEquipped = { ...this.equippedItems };
-      newCarried = { ...this.carriedItems };
-    } else {
-      newEquipped = this.equippedItems;
-      newCarried = this.carriedItems;
-    }
-
-    fillUpIdNumberRecord(newEquipped, idNumberArrayToRecord(generatedItems.equipped));
-    fillUpIdNumberRecord(newCarried, idNumberArrayToRecord(generatedItems.carried));
-
-    if (replace) {
-      this.equippedItems = newEquipped;
-      this.carriedItems = newCarried;
-    }
-  }
-
   hydrateTalentModifiers(talents: Talent[]): void {
     this.modifiers.talents = {};
     for (const talent of talents) {
@@ -663,6 +563,18 @@ export class Character extends WhEntity {
       if (this.traits.has(trait.id)) {
         this.modifiers.traits[trait.id] = { value: trait.modifiers.copy() };
       }
+    }
+  }
+
+  hydrateAllModifiers(referenceData: { talents?: Talent[]; mutations?: Mutation[]; traits?: Trait[] }): void {
+    if (referenceData.talents) {
+      this.hydrateTalentModifiers(referenceData.talents);
+    }
+    if (referenceData.mutations) {
+      this.hydrateMutationModifiers(referenceData.mutations);
+    }
+    if (referenceData.traits) {
+      this.hydrateTraitModifiers(referenceData.traits);
     }
   }
 }
