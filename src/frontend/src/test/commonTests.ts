@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Source } from "../services/wh/source.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { Visibility } from "../services/wh/common.ts";
+import { RollInTableFn, SelectRandomFn } from "../utils/random.ts";
 
 export interface WhPropertyExtended {
   id: string;
@@ -13,10 +14,16 @@ export interface WhPropertyExtended {
   copy(): WhPropertyExtended;
 }
 
-export function getRollInTableTest(...rolls: number[]): <T>(_: number, __: number, table: [T, number, number][]) => T {
-  let expectedRolls = [] as number[];
+/**
+ * Creates a deterministic mock for `rollInTable` that simulates table rolls using a predetermined sequence of numbers.
+ *
+ * Each time the returned mock is called:
+ * 1. It takes the next roll value from `rolls` (or repeats the last roll if `rolls` is exhausted).
+ * 2. It finds the entry in `table` where `roll >= min && roll < max` and returns its value (`element[0]`).
+ */
+export function getRollInTableTest(...rolls: number[]): RollInTableFn {
+  const expectedRolls = [...rolls];
   let currentRoll = 0;
-  expectedRolls = JSON.parse(JSON.stringify(rolls));
 
   return function <T>(_: number, __: number, table: [T, number, number][]) {
     const roll =
@@ -31,14 +38,23 @@ export function getRollInTableTest(...rolls: number[]): <T>(_: number, __: numbe
   };
 }
 
-export function getSelectRandomTest(...selections: number[]): <T>(array: T[]) => T {
-  let expectedSel = [] as number[];
-  let currentSel = 0;
-  expectedSel = JSON.parse(JSON.stringify(selections));
+/**
+ * Creates a deterministic mock for `selectRandom` that selects array elements by index using a predetermined sequence.
+ *
+ * Each time the returned mock is called:
+ * 1. It takes the next index from `selections` (or repeats the last index if `selections` is exhausted).
+ * 2. It returns the element at that index from the passed array (`array[selection]`).
+ */
+export function getSelectRandomTest(...selections: number[]): SelectRandomFn {
+  const expectedSelections = [...selections];
+  let currentSelection = 0;
 
   return function <T>(array: T[]) {
-    const selection = currentSel < expectedSel.length ? expectedSel[currentSel] : expectedSel[expectedSel.length - 1];
-    currentSel += 1;
+    const selection =
+      currentSelection < expectedSelections.length
+        ? expectedSelections[currentSelection]
+        : expectedSelections[expectedSelections.length - 1];
+    currentSelection += 1;
     return array[selection];
   };
 }

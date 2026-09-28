@@ -8,9 +8,11 @@ import generateName from "./generateName.ts";
 import { Character } from "../character.ts";
 import generateDescription from "./generateDescription.ts";
 import { generateRolls } from "./generateAttributes.ts";
-import { generateSkills } from "./generateSkills.ts";
+import { generateCareerSkills, resolveSkillGroups } from "./generateCareerSkills.ts";
+import { generateSpeciesSkills } from "./generateSpeciesSkills.ts";
 import { getAttributes, sumAttributes } from "../attributes.ts";
-import { genTalentsAndAdvances } from "./generateTalents.ts";
+import { generateCareerTalents, getTalentGroups } from "./generateCareerTalents.ts";
+import { generateSpeciesTalents } from "./generateSpeciesTalents.ts";
 import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
 import { GenerationProps } from "../generationProps.ts";
 import { defaultSource } from "../source.ts";
@@ -142,38 +144,53 @@ export function generateCharacter(
   character.equippedItems = idNumberArrayToRecord(classItems.equipped);
   character.carriedItems = idNumberArrayToRecord(classItems.carried);
 
-  let skillExpSpent = 0;
+  const skillGroupMap = resolveSkillGroups(context.skills);
+
+  let speciesSkills: Record<string, number> = {};
   if (context.species in context.generationProps.speciesSkills) {
-    [character.skills, skillExpSpent] = generateSkills(
-      {
-        speciesSkills: context.generationProps.speciesSkills[context.species],
-        career: context.career,
-        skills: context.skills,
-        level: context.level,
-      },
+    speciesSkills = generateSpeciesSkills(
+      context.generationProps.speciesSkills[context.species],
+      skillGroupMap,
       selectRandomFn,
     );
   }
 
+  let skillExpSpent = 0;
+  [character.skills, skillExpSpent] = generateCareerSkills(
+    {
+      startingSkills: speciesSkills,
+      career: context.career,
+      skillGroupMap,
+      level: context.level,
+    },
+    selectRandomFn,
+  );
+
   const baseAttributes = sumAttributes(getAttributes(context.species), character.attributeRolls);
 
-  let talentAndAttExpSpent = 0;
+  let speciesTalents: IdNumber[] = [];
   if (context.species in context.generationProps.speciesTalents) {
-    [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
-      {
-        speciesTalents: context.generationProps.speciesTalents[context.species],
-        randomTalents: context.generationProps.randomTalents,
-        career: context.career,
-        baseAtts: baseAttributes,
-        talents: context.talents,
-        level: context.level,
-      },
-      {
-        selectRandomFn,
-        rollInTableFn,
-      },
+    const talentGroups = getTalentGroups(context.talents);
+    speciesTalents = generateSpeciesTalents(
+      context.generationProps.speciesTalents[context.species],
+      talentGroups,
+      context.generationProps.randomTalents,
+      selectRandomFn,
+      rollInTableFn,
     );
   }
+
+  let talentAndAttExpSpent = 0;
+  [character.talents, character.attributeAdvances, talentAndAttExpSpent] = generateCareerTalents(
+    {
+      startingTalents: speciesTalents,
+      career: context.career,
+      baseAtts: baseAttributes,
+      talents: context.talents,
+      level: context.level,
+    },
+    selectRandomFn,
+  );
 
   const totalExSpent = skillExpSpent + talentAndAttExpSpent + 100 * (context.level - 1);
   character.currentExp = exp - totalExSpent > 0 ? exp - totalExSpent : 0;

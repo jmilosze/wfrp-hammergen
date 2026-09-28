@@ -1,17 +1,16 @@
 import { describe, expect, test } from "vitest";
 import {
   generateAvailableTalents,
+  generateCareerTalents,
   generateLevelTalent,
-  genTalentsAndAdvances,
   getAllTalentsMaxRank,
   getTalentGroups,
-} from "../services/wh/characterGeneration/generateTalents.ts";
+} from "../services/wh/characterGeneration/generateCareerTalents.ts";
 import { Talent } from "../services/wh/talent.ts";
 import { Career, copyCareerLevel, zeroCareerLevel } from "../services/wh/career.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
-import { getRollInTableTest, getSelectRandomTest } from "./commonTests.ts";
-import { RandomTalents, SpeciesTalents } from "../services/wh/characterGeneration/generateSpeciesTalents.ts";
+import { getSelectRandomTest } from "./commonTests.ts";
 
 const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 15, Dex: 0, Int: 0, WP: 0, Fel: 0 };
 const advances = { WS: 10, BS: 10, S: 10, T: 10, I: 10, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
@@ -285,8 +284,8 @@ describe("generateLevelTalent generates expected talents", () => {
   });
 });
 
-describe("genTalentsAndAdvances generates expected talents and advances", () => {
-  test("for level 1 character", () => {
+describe("generateCareerTalents generates expected talents and advances", () => {
+  test("for level 1 character with starting talents", () => {
     const group0 = new Talent({ id: "g0", isGroup: true });
     const group1 = new Talent({ id: "g1", isGroup: true });
     const group2 = new Talent({ id: "g1", isGroup: true });
@@ -357,12 +356,11 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
       random1,
     ];
 
-    const speciesTalents = ["i0", "i1,i2", "random"] as SpeciesTalents;
-
-    const randomTalents = [
-      { id: "r0", minRoll: 1, maxRoll: 51 },
-      { id: "r1", minRoll: 51, maxRoll: 101 },
-    ] as RandomTalents;
+    const startingTalents = [
+      { id: "i0", number: 1 },
+      { id: "i1", number: 1 },
+      { id: "r1", number: 1 },
+    ];
 
     const career = new Career({
       level1: {
@@ -389,19 +387,15 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
 
     const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
 
-    const [talents, advances, cost] = genTalentsAndAdvances(
+    const [talents, advances, cost] = generateCareerTalents(
       {
-        speciesTalents,
-        randomTalents,
+        startingTalents,
         career,
         baseAtts,
         talents: listOfWhTalents,
         level: 1,
       },
-      {
-        selectRandomFn: getSelectRandomTest(0),
-        rollInTableFn: getRollInTableTest(75),
-      },
+      getSelectRandomTest(0),
     );
 
     expect(talents).toEqual({
@@ -425,5 +419,38 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
     });
 
     expect(cost).toEqual(0);
+  });
+
+  test("for level 1 character without starting talents", () => {
+    const individual = new Talent({
+      id: "i1",
+      modifiers: new CharacterModifiers({}),
+      maxRank: 1,
+      attribute: AttributeName.WS,
+    });
+
+    const career = new Career({
+      level1: {
+        ...copyCareerLevel(zeroCareerLevel),
+        talents: new Set(["i1"]),
+        attributes: [AttributeName.WS],
+      },
+    });
+
+    const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
+
+    const [talents, advances, cost] = generateCareerTalents(
+      {
+        career,
+        baseAtts,
+        talents: [individual],
+        level: 1,
+      },
+      getSelectRandomTest(0),
+    );
+
+    expect(talents).toEqual({ i1: 1 });
+    expect(cost).toEqual(0);
+    expect(advances.WS).toEqual(5);
   });
 });

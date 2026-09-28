@@ -7,8 +7,7 @@ import {
   multiplyAttributes,
   sumAttributes,
 } from "../attributes.ts";
-import { rollInTable, RollInTableFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
-import { generateSpeciesTalents, RandomTalents, SpeciesTalents } from "./generateSpeciesTalents.ts";
+import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
 import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
 
@@ -17,27 +16,18 @@ const LEVEL_N_TALENTS = 2;
 const LEVEL_1_ATTS = 5;
 const LEVEL_N_ATTS = 5;
 
-export interface TalentsAndAdvancesContext {
-  speciesTalents: SpeciesTalents;
-  randomTalents: RandomTalents;
+export interface CareerTalentsContext {
   career: Career;
   baseAtts: Attributes;
   talents: Talent[];
   level: 1 | 2 | 3 | 4;
+  startingTalents?: IdNumber[];
 }
 
-export interface TalentsAndAdvancesRandomFns {
-  selectRandomFn?: SelectRandomFn;
-  rollInTableFn?: RollInTableFn;
-}
-
-export function genTalentsAndAdvances(
-  context: TalentsAndAdvancesContext,
-  randomFns: TalentsAndAdvancesRandomFns = {},
+export function generateCareerTalents(
+  context: CareerTalentsContext,
+  selectRandomFn: SelectRandomFn = selectRandom,
 ): [Record<string, number>, Attributes, number] {
-  const selectRandomFn = randomFns.selectRandomFn ?? selectRandom;
-  const rollInTableFn = randomFns.rollInTableFn ?? rollInTable;
-
   const careerTalents = getCareerTalentsByLevel(context.career);
   const careerAtts = getCareerAttributesByLevel(context.career);
 
@@ -48,13 +38,7 @@ export function genTalentsAndAdvances(
     advances = generateAdv(careerAtts[0], LEVEL_1_ATTS, advances, 0, selectRandomFn)[0];
   }
 
-  let talents = generateSpeciesTalents(
-    context.speciesTalents,
-    talentGroups,
-    context.randomTalents,
-    selectRandomFn,
-    rollInTableFn,
-  );
+  let talents = context.startingTalents ? [...context.startingTalents] : [];
   let talentsRank = getAllTalentsMaxRank(talents, context.talents, context.baseAtts, advances);
   let availTalents = generateAvailableTalents(careerTalents[0], talentGroups, selectRandomFn);
   talents = generateLevelTalent(talents, availTalents, talentsRank, LEVEL_1_TALENTS, 0, selectRandomFn)[0];

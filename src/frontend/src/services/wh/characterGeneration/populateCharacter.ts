@@ -6,9 +6,10 @@ import { GenerationProps } from "../generationProps.ts";
 import { Sex } from "../characterUtils.ts";
 import { rollDice, RollDiceFn, rollInTable, RollInTableFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { fillUpIdNumberRecord, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
-import { generateSpeciesSkills, resolveSkillGroups } from "./generateSkills.ts";
+import { resolveSkillGroups } from "./generateCareerSkills.ts";
+import { generateSpeciesSkills } from "./generateSpeciesSkills.ts";
 import { generateSpeciesTalents } from "./generateSpeciesTalents.ts";
-import { getTalentGroups } from "./generateTalents.ts";
+import { getTalentGroups } from "./generateCareerTalents.ts";
 import {
   generateClassItems,
   generateFateAndResilience,
@@ -27,8 +28,8 @@ export function populateSpeciesSkills(
     return;
   }
   const speciesSkills = generationProps.speciesSkills[character.species];
-  const resolvedSkillGroups = resolveSkillGroups(listOfSkills);
-  const generatedSkills = generateSpeciesSkills(speciesSkills, resolvedSkillGroups, selectRandomFn);
+  const skillGroupMap = resolveSkillGroups(listOfSkills);
+  const generatedSkills = generateSpeciesSkills(speciesSkills, skillGroupMap, selectRandomFn);
   const newSkills = { ...character.skills };
   fillUpIdNumberRecord(newSkills, generatedSkills);
   character.skills = newSkills;

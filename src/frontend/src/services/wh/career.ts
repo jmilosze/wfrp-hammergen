@@ -342,7 +342,7 @@ export class Career extends WhEntity {
     return this.species.includes(species);
   }
 
-  getSkillsByLevel(): [string[], string[], string[], string[]] {
+  getSkillsByLevel(): Record<number, string[]> {
     return getCareerSkillsByLevel(this);
   }
 
@@ -355,13 +355,13 @@ export class Career extends WhEntity {
   }
 }
 
-export function getCareerSkillsByLevel(career: Career): [string[], string[], string[], string[]] {
-  return [
-    [...career.level1.skills],
-    [...career.level2.skills],
-    [...career.level3.skills],
-    [...career.level4.skills],
-  ];
+export function getCareerSkillsByLevel(career: Career): Record<number, string[]> {
+  return {
+    1: [...career.level1.skills],
+    2: [...career.level2.skills],
+    3: [...career.level3.skills],
+    4: [...career.level4.skills],
+  };
 }
 
 export function getCareerTalentsByLevel(career: Career): [string[], string[], string[], string[]] {
