@@ -23,16 +23,16 @@ import {
 } from "../../../services/wh/characterUtils.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
+import { generateCharacter } from "../../../services/wh/characterGeneration/characterGenerator.ts";
 import {
-  applyClassItems,
-  applyDescription,
-  applyFateAndResilience,
-  applyName,
-  applySpeciesSkills,
-  applySpeciesTalents,
-  applyStatusAndStanding,
-  generateCharacter,
-} from "../../../services/wh/characterGeneration/characterGenerator.ts";
+  populateClassItems,
+  populateDescription,
+  populateFateAndResilience,
+  populateName,
+  populateSpeciesSkills,
+  populateSpeciesTalents,
+  populateStatusAndStanding,
+} from "../../../services/wh/characterGeneration/populateCharacter.ts";
 import {
   Career,
   careerApi,
@@ -80,7 +80,7 @@ const selectedGenSpeciesWithRegionOpts = computed(() =>
   getSpeciesWithRegionList(selectedGenSpecies.value).map((x) => ({ text: printSpeciesRegion(x), value: x })),
 );
 
-const selectedGenLevel = ref(1);
+const selectedGenLevel = ref<1 | 2 | 3 | 4>(1);
 const selectedGenCareer = ref(DEFAULT_CAREER_ID);
 
 const {
@@ -175,22 +175,22 @@ const wounds = computed(() => wh.value.getWounds());
 const size = computed(() => printSize(wh.value.getSize()));
 
 function formGenerateName() {
-  applyName(wh.value);
+  populateName(wh.value);
 }
 
 function formGenerateFateResilience() {
-  applyFateAndResilience(wh.value);
+  populateFateAndResilience(wh.value);
 }
 
 function formGenerateDescription() {
-  applyDescription(wh.value);
+  populateDescription(wh.value);
 }
 
 function formGenerateStatusStanding() {
   if (careerListUtils.loading.value) {
     return;
   }
-  applyStatusAndStanding(wh.value, careerListUtils.whList.value);
+  populateStatusAndStanding(wh.value, careerListUtils.whList.value);
 }
 
 watch(
@@ -292,14 +292,14 @@ function rollCharacter() {
   if (!career) {
     return;
   }
-  wh.value = generateCharacter(
-    selectedGenSpeciesWithRegion.value,
+  wh.value = generateCharacter({
+    species: selectedGenSpeciesWithRegion.value,
     career,
-    skillListUtils.whList.value,
-    talentListUtils.whList.value,
-    generationPropsUtils.generationProps.value,
-    selectedGenLevel.value as 1 | 2 | 3 | 4,
-  );
+    skills: skillListUtils.whList.value,
+    talents: talentListUtils.whList.value,
+    generationProps: generationPropsUtils.generationProps.value,
+    level: selectedGenLevel.value,
+  });
 
   wh.value.hydrateAllModifiers({
     talents: talentListUtils.whList.value,
@@ -680,7 +680,7 @@ const modifierAttributes = computed(() => {
       @clearAll="wh.clearSkills(true)"
       @updated="(event) => wh.updateSkills(event.id, event.number)"
       @addSpeciesSkills="
-        applySpeciesSkills(wh, skillListUtils.whList.value, generationPropsUtils.generationProps.value)
+        populateSpeciesSkills(wh, skillListUtils.whList.value, generationPropsUtils.generationProps.value)
       "
     />
     <CharacterTalents
@@ -695,7 +695,7 @@ const modifierAttributes = computed(() => {
       @clearAll="wh.clearTalents(true)"
       @updated="(event) => wh.updateTalents(event.id, event.number, talentListUtils.whList.value)"
       @addSpeciesTalents="
-        applySpeciesTalents(wh, talentListUtils.whList.value, generationPropsUtils.generationProps.value)
+        populateSpeciesTalents(wh, talentListUtils.whList.value, generationPropsUtils.generationProps.value)
       "
     />
   </div>
@@ -716,7 +716,7 @@ const modifierAttributes = computed(() => {
     @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
     @carriedUpdated="(event) => wh.updateItems(event.id, event.number, 'carried')"
     @storedUpdated="(event) => wh.updateItems(event.id, event.number, 'stored')"
-    @addClassItems="applyClassItems(wh, careerListUtils.whList.value, generationPropsUtils.generationProps.value)"
+    @addClassItems="populateClassItems(wh, careerListUtils.whList.value, generationPropsUtils.generationProps.value)"
   />
 
   <div class="flex justify-between text-left gap-4 my-4 flex-wrap">

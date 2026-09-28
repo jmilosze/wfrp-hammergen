@@ -286,6 +286,9 @@ export class Character extends WhEntity {
       this.validateFortune().valid &&
       this.validateResilience().valid &&
       this.validateResolve().valid &&
+      this.validateBrass().valid &&
+      this.validateSilver().valid &&
+      this.validateGold().valid &&
       this.validateSin().valid &&
       this.validateCorruption().valid &&
       this.validateCurrentExp().valid &&

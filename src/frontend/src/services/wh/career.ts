@@ -341,6 +341,47 @@ export class Career extends WhEntity {
     const species = speciesWithRegionToSpecies(speciesWithRegion);
     return this.species.includes(species);
   }
+
+  getSkillsByLevel(): [string[], string[], string[], string[]] {
+    return getCareerSkillsByLevel(this);
+  }
+
+  getTalentsByLevel(): [string[], string[], string[], string[]] {
+    return getCareerTalentsByLevel(this);
+  }
+
+  getAttributesByLevel(): [AttributeName[], AttributeName[], AttributeName[], AttributeName[]] {
+    return getCareerAttributesByLevel(this);
+  }
+}
+
+export function getCareerSkillsByLevel(career: Career): [string[], string[], string[], string[]] {
+  return [
+    [...career.level1.skills],
+    [...career.level2.skills],
+    [...career.level3.skills],
+    [...career.level4.skills],
+  ];
+}
+
+export function getCareerTalentsByLevel(career: Career): [string[], string[], string[], string[]] {
+  return [
+    [...career.level1.talents],
+    [...career.level2.talents],
+    [...career.level3.talents],
+    [...career.level4.talents],
+  ];
+}
+
+export function getCareerAttributesByLevel(
+  career: Career,
+): [AttributeName[], AttributeName[], AttributeName[], AttributeName[]] {
+  return [
+    career.level1.attributes,
+    career.level2.attributes,
+    career.level3.attributes,
+    career.level4.attributes,
+  ];
 }
 
 export function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {

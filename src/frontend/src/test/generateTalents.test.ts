@@ -7,6 +7,7 @@ import {
   getTalentGroups,
 } from "../services/wh/characterGeneration/generateTalents.ts";
 import { Talent } from "../services/wh/talent.ts";
+import { Career, copyCareerLevel, zeroCareerLevel } from "../services/wh/career.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { AttributeName } from "../services/wh/attributes.ts";
 import { getRollInTableTest, getSelectRandomTest } from "./commonTests.ts";
@@ -363,32 +364,44 @@ describe("genTalentsAndAdvances generates expected talents and advances", () => 
       { id: "r1", minRoll: 51, maxRoll: 101 },
     ] as RandomTalents;
 
-    const careerTalents: [string[], string[], string[], string[]] = [
-      ["g0", "i3"],
-      ["g0m1", "g0m2"],
-      ["g1", "g1m1"],
-      ["g2", "g2m1"],
-    ];
+    const career = new Career({
+      level1: {
+        ...copyCareerLevel(zeroCareerLevel),
+        talents: new Set(["g0", "i3"]),
+        attributes: [AttributeName.S, AttributeName.WS, AttributeName.Dex],
+      },
+      level2: {
+        ...copyCareerLevel(zeroCareerLevel),
+        talents: new Set(["g0m1", "g0m2"]),
+        attributes: [AttributeName.I],
+      },
+      level3: {
+        ...copyCareerLevel(zeroCareerLevel),
+        talents: new Set(["g1", "g1m1"]),
+        attributes: [AttributeName.Int],
+      },
+      level4: {
+        ...copyCareerLevel(zeroCareerLevel),
+        talents: new Set(["g2", "g2m1"]),
+        attributes: [AttributeName.WP],
+      },
+    });
 
     const baseAtts = { WS: 10, BS: 10, S: 10, T: 10, I: 0, Ag: 10, Dex: 10, Int: 10, WP: 10, Fel: 10 };
 
-    const careerAtts: [AttributeName[], AttributeName[], AttributeName[], AttributeName[]] = [
-      [AttributeName.S, AttributeName.WS, AttributeName.Dex],
-      [AttributeName.I],
-      [AttributeName.Int],
-      [AttributeName.WP],
-    ];
-
     const [talents, advances, cost] = genTalentsAndAdvances(
-      speciesTalents,
-      randomTalents,
-      careerTalents,
-      baseAtts,
-      listOfWhTalents,
-      careerAtts,
-      1,
-      getSelectRandomTest(0),
-      getRollInTableTest(75),
+      {
+        speciesTalents,
+        randomTalents,
+        career,
+        baseAtts,
+        talents: listOfWhTalents,
+        level: 1,
+      },
+      {
+        selectRandomFn: getSelectRandomTest(0),
+        rollInTableFn: getRollInTableTest(75),
+      },
     );
 
     expect(talents).toEqual({
