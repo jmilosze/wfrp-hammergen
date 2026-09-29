@@ -1,6 +1,6 @@
 import { SpeciesWithRegion } from "../characterUtils.ts";
-import { Career, isLevel, StatusStanding, StatusTier } from "../career.ts";
-import { rollDice, RollDiceFn, rollInTable, RollInTableFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
+import { Career, GenerationLevel, isLevel, StatusStanding, StatusTier } from "../career.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { getSpeciesFateResilience, SpeciesFateResilience } from "./data/species.ts";
 import { Talent } from "../talent.ts";
 import { Skill } from "../skill.ts";
@@ -8,9 +8,12 @@ import generateName from "./generateName.ts";
 import { Character } from "../character.ts";
 import generateDescription from "./generateDescription.ts";
 import { generateRolls } from "./generateAttributes.ts";
-import { generateSkills } from "./generateSkills.ts";
+import { generateCareerSkills } from "./generateCareerSkills.ts";
+import { generateSpeciesSkills } from "./generateSpeciesSkills.ts";
 import { getAttributes, sumAttributes } from "../attributes.ts";
-import { genTalentsAndAdvances } from "./generateTalents.ts";
+import { generateCareerTalents } from "./generateCareerTalents.ts";
+import { generateSpeciesTalents } from "./generateSpeciesTalents.ts";
+import { resolveEntityGroups } from "./resolveEntityGroups.ts";
 import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
 import { GenerationProps } from "../generationProps.ts";
 import { defaultSource } from "../source.ts";
@@ -22,7 +25,7 @@ export type { SpeciesFateResilience };
 export interface CharacterGenerationContext {
   species: SpeciesWithRegion;
   career: Career;
-  level: 1 | 2 | 3 | 4;
+  level: GenerationLevel;
   skills: Skill[];
   talents: Talent[];
   generationProps: GenerationProps;
@@ -31,7 +34,6 @@ export interface CharacterGenerationContext {
 export interface CharacterGenerationRandomFns {
   rollDiceFn?: RollDiceFn;
   selectRandomFn?: SelectRandomFn;
-  rollInTableFn?: RollInTableFn;
 }
 
 export function generateStatusAndStanding(
@@ -105,7 +107,6 @@ export function generateCharacter(
 ): Character {
   const rollDiceFn = randomFns.rollDiceFn ?? rollDice;
   const selectRandomFn = randomFns.selectRandomFn ?? selectRandom;
-  const rollInTableFn = randomFns.rollInTableFn ?? rollInTable;
 
   const character = new Character({
     id: "create",
@@ -142,38 +143,50 @@ export function generateCharacter(
   character.equippedItems = idNumberArrayToRecord(classItems.equipped);
   character.carriedItems = idNumberArrayToRecord(classItems.carried);
 
-  let skillExpSpent = 0;
-  if (context.species in context.generationProps.speciesSkills) {
-    [character.skills, skillExpSpent] = generateSkills(
-      {
-        speciesSkills: context.generationProps.speciesSkills[context.species],
-        career: context.career,
-        skills: context.skills,
-        level: context.level,
-      },
-      selectRandomFn,
-    );
-  }
+  const skillGroupMap = resolveEntityGroups(context.skills);
+
+  const speciesSkills = generateSpeciesSkills(
+    context.generationProps.speciesSkills[context.species],
+    skillGroupMap,
+    selectRandomFn,
+  );
+
+  const [skills, skillExpSpent] = generateCareerSkills(
+    {
+      startingSkills: speciesSkills,
+      career: context.career,
+      skillGroupMap,
+      level: context.level,
+    },
+    selectRandomFn,
+  );
+  character.skills = skills;
 
   const baseAttributes = sumAttributes(getAttributes(context.species), character.attributeRolls);
 
-  let talentAndAttExpSpent = 0;
-  if (context.species in context.generationProps.speciesTalents) {
-    [character.talents, character.attributeAdvances, talentAndAttExpSpent] = genTalentsAndAdvances(
-      {
-        speciesTalents: context.generationProps.speciesTalents[context.species],
-        randomTalents: context.generationProps.randomTalents,
-        career: context.career,
-        baseAtts: baseAttributes,
-        talents: context.talents,
-        level: context.level,
-      },
-      {
-        selectRandomFn,
-        rollInTableFn,
-      },
-    );
-  }
+  const talentGroupMap = resolveEntityGroups(context.talents);
+
+  const speciesTalents = generateSpeciesTalents(
+    context.generationProps.speciesTalents[context.species],
+    talentGroupMap,
+    context.generationProps.randomTalents,
+    selectRandomFn,
+    rollDiceFn,
+  );
+
+  const [talents, attributeAdvances, talentAndAttExpSpent] = generateCareerTalents(
+    {
+      startingTalents: speciesTalents,
+      career: context.career,
+      baseAtts: baseAttributes,
+      talents: context.talents,
+      talentGroupMap,
+      level: context.level,
+    },
+    selectRandomFn,
+  );
+  character.talents = talents;
+  character.attributeAdvances = attributeAdvances;
 
   const totalExSpent = skillExpSpent + talentAndAttExpSpent + 100 * (context.level - 1);
   character.currentExp = exp - totalExSpent > 0 ? exp - totalExSpent : 0;

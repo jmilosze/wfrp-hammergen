@@ -4,8 +4,9 @@ import { AxiosInstance, AxiosResponse } from "axios";
 export interface GenerationProps {
   classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];
   randomTalents: RandomTalents;
-  speciesTalents: Record<string, string[]>;
-  speciesSkills: Record<string, string[]>;
+  // Not every species has generation data, so lookups may return undefined.
+  speciesTalents: Partial<Record<string, string[]>>;
+  speciesSkills: Partial<Record<string, string[]>>;
 }
 
 export async function getGenerationProps(axiosInstance: AxiosInstance): Promise<GenerationProps> {

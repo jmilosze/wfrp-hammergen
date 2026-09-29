@@ -309,7 +309,6 @@ export class Career extends WhEntity {
     );
   }
 
-
   getLevel(level: 1 | 2 | 3 | 4 | 5): CareerLevel {
     switch (level) {
       case 1:
@@ -342,29 +341,30 @@ export class Career extends WhEntity {
     return this.species.includes(species);
   }
 
-  getSkillsByLevel(): [string[], string[], string[], string[]] {
+  getSkillsByLevel(): PerGenerationLevel<string[]> {
     return getCareerSkillsByLevel(this);
   }
 
-  getTalentsByLevel(): [string[], string[], string[], string[]] {
+  getTalentsByLevel(): PerGenerationLevel<string[]> {
     return getCareerTalentsByLevel(this);
   }
 
-  getAttributesByLevel(): [AttributeName[], AttributeName[], AttributeName[], AttributeName[]] {
+  getAttributesByLevel(): PerGenerationLevel<AttributeName[]> {
     return getCareerAttributesByLevel(this);
   }
 }
 
-export function getCareerSkillsByLevel(career: Career): [string[], string[], string[], string[]] {
-  return [
-    [...career.level1.skills],
-    [...career.level2.skills],
-    [...career.level3.skills],
-    [...career.level4.skills],
-  ];
+// Career levels that character generation can produce (level 5 is never generated).
+export type GenerationLevel = 1 | 2 | 3 | 4;
+
+// One entry per generation level; index 0 holds level 1.
+export type PerGenerationLevel<T> = [T, T, T, T];
+
+export function getCareerSkillsByLevel(career: Career): PerGenerationLevel<string[]> {
+  return [[...career.level1.skills], [...career.level2.skills], [...career.level3.skills], [...career.level4.skills]];
 }
 
-export function getCareerTalentsByLevel(career: Career): [string[], string[], string[], string[]] {
+export function getCareerTalentsByLevel(career: Career): PerGenerationLevel<string[]> {
   return [
     [...career.level1.talents],
     [...career.level2.talents],
@@ -373,15 +373,8 @@ export function getCareerTalentsByLevel(career: Career): [string[], string[], st
   ];
 }
 
-export function getCareerAttributesByLevel(
-  career: Career,
-): [AttributeName[], AttributeName[], AttributeName[], AttributeName[]] {
-  return [
-    career.level1.attributes,
-    career.level2.attributes,
-    career.level3.attributes,
-    career.level4.attributes,
-  ];
+export function getCareerAttributesByLevel(career: Career): PerGenerationLevel<AttributeName[]> {
+  return [career.level1.attributes, career.level2.attributes, career.level3.attributes, career.level4.attributes];
 }
 
 export function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
@@ -495,23 +488,16 @@ export function findCareerMatches(
   };
 }
 
-export async function getCareersForSkill(
-  axios: Pick<AxiosInstance, "get">,
-  skillIds: string[],
-): Promise<Career[]> {
+export async function getCareersForSkill(axios: Pick<AxiosInstance, "get">, skillIds: string[]): Promise<Career[]> {
   const { data } = await axios.get<ServerEnvelope<ApiResponse<CareerApiData>[]>>(API_BASE_PATH, {
     params: { skillId: skillIds },
   });
   return data.data.map(apiResponseToModel);
 }
 
-export async function getCareersForTalent(
-  axios: Pick<AxiosInstance, "get">,
-  talentIds: string[],
-): Promise<Career[]> {
+export async function getCareersForTalent(axios: Pick<AxiosInstance, "get">, talentIds: string[]): Promise<Career[]> {
   const { data } = await axios.get<ServerEnvelope<ApiResponse<CareerApiData>[]>>(API_BASE_PATH, {
     params: { talentId: talentIds },
   });
   return data.data.map(apiResponseToModel);
 }
-

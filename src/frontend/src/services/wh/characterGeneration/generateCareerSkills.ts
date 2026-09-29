@@ -1,0 +1,214 @@
+import { Career, GenerationLevel, getCareerSkillsByLevel, PerGenerationLevel } from "../career.ts";
+import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
+import { skillCost } from "./calculateExperience.ts";
+import { EntityGroupMap, GroupPicker } from "./resolveEntityGroups.ts";
+
+const STARTING_CAREER_ADVANCES = 40;
+const STARTING_CAREER_MAX_ADVANCES_PER_SKILL = 10;
+const REQUIRED_PREREQUISITE_SKILLS = 8;
+const ADVANCES_PER_LEVEL = 5;
+
+const HIGHER_LEVELS = [2, 3, 4] as const;
+
+const LEVEL_ADVANCE_BUDGETS: Record<(typeof HIGHER_LEVELS)[number], number> = {
+  2: 30,
+  3: 20,
+  4: 10,
+};
+
+export interface CareerSkillsContext {
+  career: Career;
+  skillGroupMap: EntityGroupMap;
+  level: GenerationLevel;
+  startingSkills: Record<string, number>;
+}
+
+/**
+ * Purchases a single advance in a skill, incrementing its rank by 1
+ * and calculating the XP cost based on the pre-advance rank.
+ */
+export function purchaseSingleAdvance(skills: Record<string, number>, skillId: string): number {
+  const currentRank = skills[skillId] ?? 0;
+  const cost = skillCost(currentRank);
+  skills[skillId] = currentRank + 1;
+  return cost;
+}
+
+function chooseSkillsForLevel(careerSkills: string[], groupPicker: GroupPicker, allSelectedSkills: string[]): string[] {
+  const levelSkills = new Set<string>();
+  for (const skill of careerSkills) {
+    if (groupPicker.isGroup(skill)) {
+      const pickedSkill = groupPicker.pick(skill, allSelectedSkills);
+      if (pickedSkill !== null) {
+        levelSkills.add(pickedSkill);
+        allSelectedSkills.push(pickedSkill);
+      }
+    } else {
+      levelSkills.add(skill);
+      allSelectedSkills.push(skill);
+    }
+  }
+  return [...levelSkills];
+}
+
+/**
+ * Career skill lists often contain generic group placeholders like 'Melee (Any)' or 'Trade (Any)'.
+ * This function picks a concrete specialization (e.g. 'Melee (Basic)') for each placeholder,
+ * never choosing a skill that is already a career skill, whether it was listed explicitly or picked
+ * for an earlier placeholder, in the same or an earlier career level.
+ * Species skills are deliberately not excluded: they can't be advanced after character creation unless
+ * they are also career skills, so a placeholder may pick a skill the character only has from its species.
+ */
+export function chooseConcreteCareerSkills(
+  careerSkillsByLevel: PerGenerationLevel<string[]>,
+  skillGroupMap: EntityGroupMap,
+  selectRandomFn: SelectRandomFn,
+): PerGenerationLevel<string[]> {
+  const groupPicker = new GroupPicker(skillGroupMap, selectRandomFn);
+  const allSelectedSkills: string[] = [];
+
+  return [
+    chooseSkillsForLevel(careerSkillsByLevel[0], groupPicker, allSelectedSkills),
+    chooseSkillsForLevel(careerSkillsByLevel[1], groupPicker, allSelectedSkills),
+    chooseSkillsForLevel(careerSkillsByLevel[2], groupPicker, allSelectedSkills),
+    chooseSkillsForLevel(careerSkillsByLevel[3], groupPicker, allSelectedSkills),
+  ];
+}
+
+/**
+ * Distributes starting advances among Level 1 career skills (no more than 10 advances in any single skill).
+ * Initial creation advances cost 0 XP.
+ */
+export function allocateStartingCareerAdvances(
+  skills: Record<string, number>,
+  level1Skills: string[],
+  selectRandomFn: SelectRandomFn,
+): void {
+  let availableSkills = [...new Set(level1Skills)];
+  const advanceCounts: Record<string, number> = {};
+
+  for (let adv = 0; adv < STARTING_CAREER_ADVANCES; ++adv) {
+    if (availableSkills.length === 0) {
+      break;
+    }
+
+    const skill = selectRandomFn(availableSkills);
+    purchaseSingleAdvance(skills, skill);
+
+    const count = (advanceCounts[skill] ?? 0) + 1;
+    advanceCounts[skill] = count;
+
+    if (count === STARTING_CAREER_MAX_ADVANCES_PER_SKILL) {
+      availableSkills = availableSkills.filter((s) => s !== skill);
+    }
+  }
+}
+
+/**
+ * Ensures at least 8 career skills from previous levels have reached
+ * the prerequisite threshold of (level - 1) * 5 advances, spending XP for each advance.
+ *
+ * The 8 skills are chosen at random rather than cheapest-first. This is deliberate: the generator
+ * produces varied NPCs, so XP spent to reach a level differs between characters instead of always
+ * being the minimum.
+ */
+export function satisfyLevelPrerequisites(
+  skills: Record<string, number>,
+  eligibleCareerSkills: string[],
+  targetAdvanceThreshold: number,
+  selectRandomFn: SelectRandomFn,
+): number {
+  let availableSkills = [...new Set(eligibleCareerSkills)];
+  let xpSpent = 0;
+
+  for (let skillNo = 0; skillNo < REQUIRED_PREREQUISITE_SKILLS; ++skillNo) {
+    if (availableSkills.length === 0) {
+      break;
+    }
+
+    const skill = selectRandomFn(availableSkills);
+    availableSkills = availableSkills.filter((s) => s !== skill);
+
+    while ((skills[skill] ?? 0) < targetAdvanceThreshold) {
+      xpSpent += purchaseSingleAdvance(skills, skill);
+    }
+  }
+
+  return xpSpent;
+}
+
+/**
+ * Distributes the level advance budget randomly among the newly unlocked skills of that level, spending XP.
+ */
+export function allocateLevelAdvances(
+  skills: Record<string, number>,
+  levelSkills: string[],
+  advanceBudget: number,
+  selectRandomFn: SelectRandomFn,
+): number {
+  const availableSkills = [...new Set(levelSkills)];
+  let xpSpent = 0;
+
+  for (let adv = 0; adv < advanceBudget; ++adv) {
+    if (availableSkills.length === 0) {
+      break;
+    }
+
+    const skill = selectRandomFn(availableSkills);
+    xpSpent += purchaseSingleAdvance(skills, skill);
+  }
+
+  return xpSpent;
+}
+
+/**
+ * Generates career skills and advances across career levels (Levels 1 to 4).
+ * Builds on top of existing starting skills (e.g. species skills).
+ */
+export function generateCareerSkills(
+  context: CareerSkillsContext,
+  selectRandomFn: SelectRandomFn = selectRandom,
+): [Record<string, number>, number] {
+  const skills: Record<string, number> = { ...context.startingSkills };
+
+  // Career skill lists may contain group placeholders like 'Melee (Any)' or 'Trade (Any)'.
+  // Pick concrete specializations (e.g. 'Melee (Basic)') for each career level (1 to 4).
+  const careerSkillsByLevel = chooseConcreteCareerSkills(
+    getCareerSkillsByLevel(context.career),
+    context.skillGroupMap,
+    selectRandomFn,
+  );
+
+  // --- Step 1: Allocate Starting Career Advances (Creation / Level 1) ---
+  // In WFRP 4e, a starting character receives 40 advances to distribute among their
+  // Level 1 career skills. No single skill may receive more than 10 advances at creation.
+  // These initial advances cost 0 XP.
+  allocateStartingCareerAdvances(skills, careerSkillsByLevel[0], selectRandomFn);
+
+  let totalXpSpent = 0;
+  let accumulatedCareerSkills = [...careerSkillsByLevel[0]];
+
+  // --- Step 2: Progress Through Higher Career Levels (Levels 2 to 4) ---
+  // Characters created at or advanced to higher levels must satisfy level qualification
+  // prerequisites and spend XP to purchase advances in each level.
+  for (const level of HIGHER_LEVELS.filter((l) => l <= context.level)) {
+    // 2a. Satisfy Level Prerequisites:
+    // To qualify for an advanced career level, WFRP 4e requires having at least 8 career skills
+    // from previous levels with at least (level - 1) * 5 advances (e.g. 5 advances for Level 2,
+    // 10 for Level 3, 15 for Level 4). Any skills below this threshold are backfilled, spending XP.
+    const prerequisiteThreshold = (level - 1) * ADVANCES_PER_LEVEL;
+    totalXpSpent += satisfyLevelPrerequisites(skills, accumulatedCareerSkills, prerequisiteThreshold, selectRandomFn);
+
+    // 2b. Unlock New Level Skills:
+    // The skills of this new level are now unlocked and added to the pool of career skills.
+    const newLevelSkills = careerSkillsByLevel[level - 1];
+    accumulatedCareerSkills = accumulatedCareerSkills.concat(newLevelSkills);
+
+    // 2c. Allocate Level Advance Budget:
+    // Distribute advances from the level's budget (Level 2: 30, Level 3: 20, Level 4: 10)
+    // randomly among the newly unlocked skills of this level, spending XP.
+    totalXpSpent += allocateLevelAdvances(skills, newLevelSkills, LEVEL_ADVANCE_BUDGETS[level], selectRandomFn);
+  }
+
+  return [skills, totalXpSpent];
+}
