@@ -13,6 +13,10 @@ export function idNumberArrayToRecord(arr: IdNumber[]): Record<string, number> {
   );
 }
 
+export function recordToIdNumberArray(record: Record<string, number>): IdNumber[] {
+  return Object.entries(record).map(([id, number]) => ({ id, number }));
+}
+
 export function copyIdNumberArray(arr: IdNumber[]): IdNumber[] {
   if (arr) {
     const retArr = new Array<IdNumber>(arr.length);

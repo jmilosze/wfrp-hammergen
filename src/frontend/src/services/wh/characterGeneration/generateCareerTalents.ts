@@ -1,217 +1,259 @@
 import { Talent } from "../talent.ts";
 import { Career, getCareerAttributesByLevel, getCareerTalentsByLevel } from "../career.ts";
-import {
-  Attributes,
-  copyAttributes,
-  getAttributes,
-  multiplyAttributes,
-  sumAttributes,
-} from "../attributes.ts";
+import { Attributes, copyAttributes, getAttributes, multiplyAttributes, sumAttributes } from "../attributes.ts";
 import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
-import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
+import { EntityGroupMap } from "./resolveEntityGroups.ts";
 
-const LEVEL_1_TALENTS = 1;
-const LEVEL_N_TALENTS = 2;
-const LEVEL_1_ATTS = 5;
-const LEVEL_N_ATTS = 5;
+// Number of free attribute advances received at character creation (Level 1)
+const STARTING_ATTRIBUTE_ADVANCES = 5;
+
+// Required advance threshold per completed career tier: (level - 1) * 5
+// Level 2 requires 5 advances in prior attributes; Level 3 requires 10; Level 4 requires 15
+const ADVANCES_PER_LEVEL = 5;
+
+// Number of attribute advances distributed among accumulated career attributes at each higher level
+const LEVEL_ATTRIBUTE_ADVANCES = 5;
+
+// Number of free career talents chosen at character creation (Level 1)
+const STARTING_CAREER_TALENTS = 1;
+
+// Additional talent from Level 1 required to advance beyond Tier 1
+const ADVANCEMENT_PREREQUISITE_TALENTS = 1;
+
+// Number of career talents acquired at each higher career level (Levels 2 to 4)
+const HIGHER_LEVEL_CAREER_TALENTS = 2;
+
+// In WFRP 4e, talent advances cost 100 XP per new rank (rank 1 = 100, rank 2 = 200, etc.)
+const TALENT_XP_COST_PER_RANK = 100;
 
 export interface CareerTalentsContext {
   career: Career;
   baseAtts: Attributes;
   talents: Talent[];
+  talentGroupMap: EntityGroupMap;
   level: 1 | 2 | 3 | 4;
-  startingTalents?: IdNumber[];
+  startingTalents?: Record<string, number>;
 }
 
+/**
+ * Sums all attribute modifiers granted by the character's currently acquired talents.
+ * Certain talents (e.g. Savvy, Suave, Very Resilient) grant flat attribute bonuses.
+ */
+export function calculateTalentAttributeModifiers(
+  acquiredTalents: Record<string, number>,
+  allTalents: Talent[],
+): Attributes {
+  let totalModifiers = getAttributes();
+
+  for (const talent of allTalents) {
+    const rank = acquiredTalents[talent.id];
+    if (rank && rank > 0) {
+      totalModifiers = sumAttributes(
+        totalModifiers,
+        multiplyAttributes(rank, copyAttributes(talent.modifiers.attributes)),
+      );
+    }
+  }
+
+  return totalModifiers;
+}
+
+/**
+ * Calculates the maximum allowed rank for each talent based on effective attributes.
+ * Effective attributes = base attributes + attribute advances + talent attribute modifiers.
+ */
+export function calculateMaxTalentRanks(
+  acquiredTalents: Record<string, number>,
+  allTalents: Talent[],
+  baseAttributes: Attributes,
+  advances: Attributes,
+): Record<string, number> {
+  const talentModifiers = calculateTalentAttributeModifiers(acquiredTalents, allTalents);
+  const effectiveAttributes = sumAttributes(baseAttributes, advances, talentModifiers);
+
+  const maxRanks: Record<string, number> = {};
+  for (const talent of allTalents) {
+    maxRanks[talent.id] = talent.getMaxRank(effectiveAttributes);
+  }
+  return maxRanks;
+}
+
+/**
+ * Resolves group talent placeholders (e.g. 'Etiquette (Any)') in a career level's talent list
+ * to concrete specialization talents, ensuring no duplicate talents are selected.
+ */
+export function resolveAvailableTalents(
+  careerTalents: string[],
+  talentGroupMap: EntityGroupMap,
+  selectRandomFn: SelectRandomFn,
+): string[] {
+  const availableGroupMembers: EntityGroupMap = Object.fromEntries(
+    Object.entries(talentGroupMap).map(([group, members]) => [group, [...members]]),
+  );
+  const resolvedTalents: string[] = [];
+
+  for (const talent of careerTalents) {
+    if (talent in availableGroupMembers) {
+      const candidates = availableGroupMembers[talent];
+      if (candidates.length > 0) {
+        const chosenTalent = selectRandomFn(candidates);
+        availableGroupMembers[talent] = candidates.filter((id) => id !== chosenTalent);
+        resolvedTalents.push(chosenTalent);
+      }
+    } else {
+      resolvedTalents.push(talent);
+    }
+  }
+
+  return [...new Set(resolvedTalents)];
+}
+
+/**
+ * Advances a talent's rank by 1 and returns the XP cost.
+ * In WFRP 4e, talent advances cost 100 XP per new rank.
+ */
+export function purchaseSingleTalentAdvance(talents: Record<string, number>, talentId: string): number {
+  const nextRank = (talents[talentId] ?? 0) + 1;
+  talents[talentId] = nextRank;
+  return nextRank * TALENT_XP_COST_PER_RANK;
+}
+
+/**
+ * Randomly selects and advances talents from the available pool up to their maximum rank,
+ * accumulating and returning the total XP spent.
+ */
+export function allocateCareerTalents(
+  talents: Record<string, number>,
+  availableTalents: string[],
+  maxRanks: Record<string, number>,
+  advancesToAllocate: number,
+  selectRandomFn: SelectRandomFn,
+): number {
+  let eligibleTalents = availableTalents.filter((id) => {
+    if (!(id in maxRanks)) {
+      return false;
+    }
+    const currentRank = talents[id] ?? 0;
+    return currentRank < maxRanks[id];
+  });
+
+  let totalXpSpent = 0;
+
+  for (let i = 0; i < advancesToAllocate; ++i) {
+    if (eligibleTalents.length === 0) {
+      break;
+    }
+
+    const chosenTalent = selectRandomFn(eligibleTalents);
+    totalXpSpent += purchaseSingleTalentAdvance(talents, chosenTalent);
+
+    if ((talents[chosenTalent] ?? 0) >= maxRanks[chosenTalent]) {
+      eligibleTalents = eligibleTalents.filter((id) => id !== chosenTalent);
+    }
+  }
+
+  return totalXpSpent;
+}
+
+/**
+ * Generates career talents and attribute advances across career levels (Levels 1 to 4).
+ * Builds on top of pre-existing talents (e.g. species talents).
+ *
+ * In WFRP 4e, attributes and talents are mutually dependent:
+ * - Talents often scale their max rank with attribute bonuses.
+ * - Certain talents grant bonuses to attributes.
+ * - Career tier progression requires meeting attribute advance thresholds and acquiring tier talents.
+ */
 export function generateCareerTalents(
   context: CareerTalentsContext,
   selectRandomFn: SelectRandomFn = selectRandom,
 ): [Record<string, number>, Attributes, number] {
-  const careerTalents = getCareerTalentsByLevel(context.career);
-  const careerAtts = getCareerAttributesByLevel(context.career);
+  const careerTalentsByLevel = getCareerTalentsByLevel(context.career);
+  const careerAttributesByLevel = getCareerAttributesByLevel(context.career);
+  const { talentGroupMap } = context;
 
-  const talentGroups = getTalentGroups(context.talents);
+  const talents: Record<string, number> = context.startingTalents ? { ...context.startingTalents } : {};
+  let advances: Attributes = getAttributes();
+  let totalXpSpent = 0;
 
-  let advances = getAttributes();
-  if (careerAtts[0].length > 0) {
-    advances = generateAdv(careerAtts[0], LEVEL_1_ATTS, advances, 0, selectRandomFn)[0];
+  // --- Step 1: Character Creation (Level 1) ---
+  // In WFRP 4e, a starting character receives:
+  // 1a. 5 free advances distributed among Level 1 career attributes (0 XP).
+  const level1Attributes = careerAttributesByLevel[0];
+  if (level1Attributes.length > 0) {
+    advances = generateAdv(level1Attributes, STARTING_ATTRIBUTE_ADVANCES, advances, 0, selectRandomFn)[0];
   }
 
-  let talents = context.startingTalents ? [...context.startingTalents] : [];
-  let talentsRank = getAllTalentsMaxRank(talents, context.talents, context.baseAtts, advances);
-  let availTalents = generateAvailableTalents(careerTalents[0], talentGroups, selectRandomFn);
-  talents = generateLevelTalent(talents, availTalents, talentsRank, LEVEL_1_TALENTS, 0, selectRandomFn)[0];
+  // 1b. 1 free career talent selected from Level 1 career talents (0 XP).
+  let maxRanks = calculateMaxTalentRanks(talents, context.talents, context.baseAtts, advances);
+  const level1Talents = resolveAvailableTalents(careerTalentsByLevel[0], talentGroupMap, selectRandomFn);
+  allocateCareerTalents(talents, level1Talents, maxRanks, STARTING_CAREER_TALENTS, selectRandomFn);
 
-  let expSpent = 0;
+  // If character stays at Level 1, creation advances and talent cost 0 XP.
+  if (context.level === 1) {
+    return [talents, advances, 0];
+  }
 
-  if (context.level > 1) {
-    talentsRank = getAllTalentsMaxRank(talents, context.talents, context.baseAtts, advances);
-    availTalents = generateAvailableTalents(careerTalents[0], talentGroups, selectRandomFn);
-    [talents, expSpent] = generateLevelTalent(
+  // --- Step 2: Progress Through Higher Career Levels (Levels 2 to 4) ---
+  // 2a. Prerequisite Tier 1 Talent Investment:
+  // To qualify for advancement beyond Career Tier 1, the character must acquire an additional
+  // talent from Tier 1 (bringing Tier 1 talents to 2). This advance costs XP.
+  maxRanks = calculateMaxTalentRanks(talents, context.talents, context.baseAtts, advances);
+  const advancementTalents = resolveAvailableTalents(careerTalentsByLevel[0], talentGroupMap, selectRandomFn);
+  totalXpSpent += allocateCareerTalents(
+    talents,
+    advancementTalents,
+    maxRanks,
+    ADVANCEMENT_PREREQUISITE_TALENTS,
+    selectRandomFn,
+  );
+
+  let accumulatedCareerAttributes = [...level1Attributes];
+
+  // 2b. Advance through each subsequent career level:
+  for (let level = 2; level <= context.level; ++level) {
+    const levelIndex = level - 1;
+
+    // Prerequisite Attribute Threshold:
+    // To advance to Tier N, all career attributes from previous tiers must have reached at least
+    // (level - 1) * 5 advances (e.g. 5 for Level 2, 10 for Level 3, 15 for Level 4).
+    const prerequisiteThreshold = (level - 1) * ADVANCES_PER_LEVEL;
+    [advances, totalXpSpent] = fillUpAdv(accumulatedCareerAttributes, prerequisiteThreshold, advances, totalXpSpent);
+
+    // Unlock New Level Attributes:
+    const newLevelAttributes = careerAttributesByLevel[levelIndex];
+    accumulatedCareerAttributes = accumulatedCareerAttributes.concat(newLevelAttributes);
+
+    // Allocate Level Attribute Advances:
+    // Distribute 5 advances randomly across all unlocked career attributes, spending XP.
+    if (accumulatedCareerAttributes.length > 0) {
+      [advances, totalXpSpent] = generateAdv(
+        accumulatedCareerAttributes,
+        LEVEL_ATTRIBUTE_ADVANCES,
+        advances,
+        totalXpSpent,
+        selectRandomFn,
+      );
+    }
+
+    // Allocate Level Talents:
+    // Recalculate max ranks (attribute advances may have raised caps) and pick 2 talents
+    // from this level's career talents, spending XP.
+    maxRanks = calculateMaxTalentRanks(talents, context.talents, context.baseAtts, advances);
+    const currentLevelTalents = resolveAvailableTalents(
+      careerTalentsByLevel[levelIndex],
+      talentGroupMap,
+      selectRandomFn,
+    );
+    totalXpSpent += allocateCareerTalents(
       talents,
-      availTalents,
-      talentsRank,
-      LEVEL_1_TALENTS,
-      expSpent,
+      currentLevelTalents,
+      maxRanks,
+      HIGHER_LEVEL_CAREER_TALENTS,
       selectRandomFn,
     );
   }
 
-  let allCareerAtts = careerAtts[0];
-  for (let tmpLvl = 2; tmpLvl <= context.level; ++tmpLvl) {
-    const fillUpAtt = 5 * (tmpLvl - 1);
-    [advances, expSpent] = fillUpAdv(allCareerAtts, fillUpAtt, advances, expSpent);
-
-    allCareerAtts = allCareerAtts.concat(careerAtts[tmpLvl - 1]);
-    if (allCareerAtts.length > 0) {
-      [advances, expSpent] = generateAdv(allCareerAtts, LEVEL_N_ATTS, advances, expSpent, selectRandomFn);
-    }
-
-    talentsRank = getAllTalentsMaxRank(talents, context.talents, context.baseAtts, advances);
-    const availTalents = generateAvailableTalents(careerTalents[tmpLvl - 1], talentGroups, selectRandomFn);
-    [talents, expSpent] = generateLevelTalent(
-      talents,
-      availTalents,
-      talentsRank,
-      LEVEL_N_TALENTS,
-      expSpent,
-      selectRandomFn,
-    );
-  }
-
-  return [idNumberArrayToRecord(talents), advances, expSpent];
-}
-
-export function getTalentGroups(listOfWhTalents: Talent[]): Record<string, string[]> {
-  const resolvedGroups: Record<string, string[]> = {};
-
-  for (const talent of listOfWhTalents) {
-    if (talent.group) {
-      for (const group of talent.group) {
-        if (group in resolvedGroups) {
-          resolvedGroups[group].push(talent.id);
-        } else {
-          resolvedGroups[group] = [talent.id];
-        }
-      }
-    }
-  }
-  return resolvedGroups;
-}
-
-export function getAllTalentsMaxRank(
-  selectedTalents: IdNumber[],
-  listOfWhTalents: Talent[],
-  baseAtts: Attributes,
-  advances: Attributes,
-): Record<string, number> {
-  const attributes = sumAttributes(baseAtts, advances, getTalentAtts(selectedTalents, listOfWhTalents));
-
-  const talentsRank: Record<string, number> = {};
-  for (const talent of listOfWhTalents) {
-    talentsRank[talent.id] = talent.getMaxRank(attributes);
-  }
-  return talentsRank;
-}
-
-function getTalentAtts(selectedTalents: IdNumber[], listOfWhTalents: Talent[]): Attributes {
-  let attributes = getAttributes();
-
-  for (const talent of listOfWhTalents) {
-    for (const idNumber of selectedTalents) {
-      if (talent.id === idNumber.id) {
-        attributes = sumAttributes(
-          attributes,
-          multiplyAttributes(idNumber.number, copyAttributes(talent.modifiers.attributes)),
-        );
-      }
-    }
-  }
-  return attributes;
-}
-
-export function generateAvailableTalents(
-  talents: string[],
-  talentGroups: Record<string, string[]>,
-  selectRandomFn: SelectRandomFn,
-): string[] {
-  const talentGroupsCopy: Record<string, string[]> = JSON.parse(JSON.stringify(talentGroups));
-  const availTalents: string[] = [];
-
-  for (const talent of talents) {
-    if (talent in talentGroupsCopy) {
-      if (talentGroupsCopy[talent].length > 0) {
-        const newTalent = selectRandomFn(talentGroupsCopy[talent]);
-        const indexToRemove = talentGroupsCopy[talent].indexOf(newTalent);
-        talentGroupsCopy[talent].splice(indexToRemove, 1);
-        availTalents.push(newTalent);
-      }
-    } else {
-      availTalents.push(talent);
-    }
-  }
-
-  return [...new Set(availTalents)];
-}
-
-export function generateLevelTalent(
-  previousTalents: IdNumber[],
-  availTalents: string[],
-  talentsRank: Record<string, number>,
-  talentNumber: number,
-  currentCost: number,
-  selectRandomFn: SelectRandomFn,
-): [IdNumber[], number] {
-  const selectedTalents: Record<string, number> = {};
-
-  for (const talent of availTalents) {
-    if (!(talent in talentsRank)) {
-      availTalents.splice(availTalents.indexOf(talent), 1);
-    }
-  }
-
-  for (const talent of previousTalents) {
-    selectedTalents[talent.id] = talent.number;
-    if (availTalents.includes(talent.id) && talent.number >= talentsRank[talent.id]) {
-      availTalents.splice(availTalents.indexOf(talent.id), 1);
-    }
-  }
-
-  let cost = currentCost;
-  for (let adv = 0; adv < talentNumber; ++adv) {
-    let selectionSuccessful = false;
-    while (!selectionSuccessful) {
-      if (availTalents.length < 1) {
-        break;
-      }
-
-      const newSelected = selectRandomFn(availTalents);
-      let rank;
-      if (newSelected in selectedTalents) {
-        rank = selectedTalents[newSelected] + 1;
-      } else {
-        rank = 1;
-      }
-
-      if (rank >= talentsRank[newSelected]) {
-        availTalents.splice(availTalents.indexOf(newSelected), 1);
-      }
-
-      if (rank <= talentsRank[newSelected]) {
-        selectionSuccessful = true;
-        selectedTalents[newSelected] = rank;
-        cost += 100 * selectedTalents[newSelected];
-      }
-    }
-  }
-
-  const generatedTalents: IdNumber[] = [];
-  for (const [id, number] of Object.entries(selectedTalents)) {
-    if (number > 0) {
-      generatedTalents.push({ id: id, number: number });
-    }
-  }
-
-  return [generatedTalents, cost];
+  return [talents, advances, totalXpSpent];
 }

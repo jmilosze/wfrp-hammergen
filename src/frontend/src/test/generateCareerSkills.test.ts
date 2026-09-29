@@ -8,9 +8,9 @@ import {
   chooseConcreteCareerSkills,
   generateCareerSkills,
   purchaseSingleAdvance,
-  resolveSkillGroups,
   satisfyLevelPrerequisites,
 } from "../services/wh/characterGeneration/generateCareerSkills.ts";
+import { resolveEntityGroups } from "../services/wh/characterGeneration/resolveEntityGroups.ts";
 import { skillCost } from "../services/wh/characterGeneration/calculateExperience.ts";
 import { getSelectRandomTest } from "./commonTests.ts";
 
@@ -54,7 +54,7 @@ describe("generateCareerSkills", () => {
     },
   });
 
-  const dummySkillGroupMap = resolveSkillGroups(dummySkills);
+  const dummySkillGroupMap = resolveEntityGroups(dummySkills);
 
   describe("purchaseSingleAdvance", () => {
     test("increments unranked skill from 0 to 1 and returns XP cost", () => {
@@ -71,29 +71,6 @@ describe("generateCareerSkills", () => {
 
       expect(skills.s1).toBe(6);
       expect(cost).toBe(skillCost(5));
-    });
-  });
-
-  describe("resolveSkillGroups", () => {
-    test("indexes skills by group", () => {
-      const groups = resolveSkillGroups(dummySkills);
-      expect(groups).toHaveProperty("melee");
-      expect(groups.melee).toEqual(["melee_basic", "melee_brawling"]);
-    });
-
-    test("indexes skills that belong to multiple groups into each group", () => {
-      const groups = resolveSkillGroups(dummySkills);
-      expect(groups.combat).toEqual(["melee_basic"]);
-    });
-
-    test("ignores skills without groups", () => {
-      const groups = resolveSkillGroups([new Skill({ id: "nogroup", name: "No Group" })]);
-      expect(groups).toEqual({});
-    });
-
-    test("returns empty object when skill list is empty", () => {
-      const groups = resolveSkillGroups([]);
-      expect(groups).toEqual({});
     });
   });
 

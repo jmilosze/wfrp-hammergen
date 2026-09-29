@@ -1,5 +1,5 @@
 import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
-import { SkillGroupMap } from "./generateCareerSkills.ts";
+import { EntityGroupMap } from "./resolveEntityGroups.ts";
 
 const SPECIES_ADVANCE_PACKAGES = [
   { count: 3, advances: 3 },
@@ -8,7 +8,7 @@ const SPECIES_ADVANCE_PACKAGES = [
 
 function resolveConcreteSkill(
   skillId: string,
-  skillGroupMap: SkillGroupMap,
+  skillGroupMap: EntityGroupMap,
   selectRandomFn: SelectRandomFn,
 ): string {
   if (skillId in skillGroupMap) {
@@ -22,10 +22,14 @@ function resolveConcreteSkill(
  * Grouped skills (e.g. Language (Any)) are resolved to a concrete sub-skill.
  */
 export function generateSpeciesSkills(
-  speciesSkills: string[],
-  skillGroupMap: SkillGroupMap,
+  speciesSkills: string[] | undefined,
+  skillGroupMap: EntityGroupMap,
   selectRandomFn: SelectRandomFn = selectRandom,
 ): Record<string, number> {
+  if (speciesSkills === undefined) {
+    return {};
+  }
+
   const generatedSkills: Record<string, number> = {};
   let candidatePool = [...new Set(speciesSkills)];
 

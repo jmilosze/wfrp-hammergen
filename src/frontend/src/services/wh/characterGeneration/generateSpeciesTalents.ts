@@ -1,5 +1,5 @@
-import { RollInTableFn, SelectRandomFn } from "../../../utils/random.ts";
-import { IdNumber } from "../../../utils/idNumber.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn, selectWeighted } from "../../../utils/random.ts";
+import { EntityGroupMap } from "./resolveEntityGroups.ts";
 
 const RANDOM_TALENTS_ROLL = 100;
 
@@ -8,16 +8,19 @@ export type RandomTalents = Array<{
   minRoll: number;
   maxRoll: number;
 }>;
-export type GroupTalents = Record<string, string[]>;
 export type SpeciesTalents = string[];
 
 export function generateSpeciesTalents(
-  speciesTalents: SpeciesTalents,
-  groupTalents: GroupTalents,
+  speciesTalents: SpeciesTalents | undefined,
+  groupTalents: EntityGroupMap,
   randomTalents: RandomTalents,
-  selectRandomFn: SelectRandomFn,
-  rollInTableFn: RollInTableFn,
-): IdNumber[] {
+  selectRandomFn: SelectRandomFn = selectRandom,
+  rollDiceFn: RollDiceFn = rollDice,
+): Record<string, number> {
+  if (speciesTalents === undefined) {
+    return {};
+  }
+
   if (!randomTalentsValid(randomTalents)) {
     throw new Error("invalid random talents table");
   }
@@ -26,24 +29,44 @@ export function generateSpeciesTalents(
     throw new Error("invalid species talents object");
   }
 
-  const talents = [] as string[];
+  const talents: string[] = [];
   const groupTalentPicker = new GroupTalentPicker(groupTalents, selectRandomFn);
-  const randomTalentPicker = new RandomTalentPicker(RANDOM_TALENTS_ROLL, randomTalents, rollInTableFn);
+  const randomTalentPicker = new RandomTalentPicker(randomTalents, rollDiceFn, groupTalentPicker);
 
   for (const speciesTalent of speciesTalents) {
-    const newTalents = speciesTalent.split(",");
-    const newTalent = newTalents.length === 1 ? newTalents[0] : selectRandomFn(newTalents);
-    if (newTalent === "random") {
-      selectRandomTalent(randomTalentPicker, talents, groupTalentPicker);
+    const talent = chooseTalent(speciesTalent, selectRandomFn);
+    if (talent === "random") {
+      const pickedTalent = randomTalentPicker.pickFromRandom(talents);
+      if (pickedTalent !== null) {
+        talents.push(pickedTalent);
+      }
+    } else if (talent in groupTalents) {
+      const pickedTalent = groupTalentPicker.pickFromGroup(talent, talents);
+      if (pickedTalent !== null) {
+        talents.push(pickedTalent);
+      }
     } else {
-      selectTalent(newTalent, talents, groupTalentPicker);
+      talents.push(talent);
     }
   }
 
-  return convertToIdNumberArray(talents);
+  const generatedTalents: Record<string, number> = {};
+  for (const talent of talents) {
+    generatedTalents[talent] = 1;
+  }
+  return generatedTalents;
+}
+
+function chooseTalent(speciesTalent: string, selectRandomFn: SelectRandomFn): string {
+  const options = speciesTalent.split(",").map((s) => s.trim());
+  return options.length === 1 ? options[0] : selectRandomFn(options);
 }
 
 function randomTalentsValid(randomTalents: RandomTalents): boolean {
+  if (randomTalents.length === 0) {
+    return true;
+  }
+
   const uniqueTalents = new Set(randomTalents.map((x) => x.id));
   if (uniqueTalents.size !== randomTalents.length) {
     return false;
@@ -60,13 +83,13 @@ function randomTalentsValid(randomTalents: RandomTalents): boolean {
     }
     prevMax = end;
   }
-  return true;
+  return prevMax === RANDOM_TALENTS_ROLL + 1;
 }
 
-function speciesTalentsValid(speciesTalents: string[], talentGroups: Record<string, string[]>): boolean {
-  let allTalents = [] as string[];
+function speciesTalentsValid(speciesTalents: string[], talentGroups: EntityGroupMap): boolean {
+  let allTalents: string[] = [];
   for (const talents of speciesTalents) {
-    for (const talent of talents.split(",")) {
+    for (const talent of talents.split(",").map((s) => s.trim())) {
       allTalents.push(talent);
     }
   }
@@ -76,31 +99,23 @@ function speciesTalentsValid(speciesTalents: string[], talentGroups: Record<stri
   return new Set(allTalents).size === allTalents.length;
 }
 
-function convertToIdNumberArray(talents: string[]): IdNumber[] {
-  return talents.map((x) => ({ id: x, number: 1 }));
-}
-
 class GroupTalentPicker {
-  groupTalents: Record<string, string[]>;
+  groupTalents: EntityGroupMap;
   selectRandomFn: SelectRandomFn;
 
-  constructor(groupTalents: Record<string, string[]>, selectRandomFn: SelectRandomFn) {
+  constructor(groupTalents: EntityGroupMap, selectRandomFn: SelectRandomFn) {
     this.groupTalents = JSON.parse(JSON.stringify(groupTalents));
     this.selectRandomFn = selectRandomFn;
   }
 
-  isGroupTalent(talent: string): boolean {
-    return talent in this.groupTalents;
-  }
-
   pickFromGroup(group: string, selectedTalents: string[]): string | null {
-    if (!this.isGroupTalent(group)) {
+    if (!(group in this.groupTalents)) {
       return null;
     }
 
     while (this.groupTalents[group].length > 0) {
       const pickedTalent = this.selectRandomFn(this.groupTalents[group]);
-      removeFromTalentGroup(this.groupTalents[group], pickedTalent);
+      this.groupTalents[group] = this.groupTalents[group].filter((t) => t !== pickedTalent);
       if (!selectedTalents.includes(pickedTalent)) {
         return pickedTalent;
       }
@@ -109,91 +124,31 @@ class GroupTalentPicker {
   }
 }
 
-function removeFromTalentGroup(talentGroup: string[], talentToRemove: string): void {
-  const indexToRemove = talentGroup.indexOf(talentToRemove);
-  talentGroup.splice(indexToRemove, 1);
-}
-
 class RandomTalentPicker {
-  maxRandomRoll: number;
-  randomTalents: [string, number, number][];
-  rollInTableFn: RollInTableFn;
+  remainingTalents: Array<{ id: string; weight: number }>;
+  rollDiceFn: RollDiceFn;
+  groupTalentPicker: GroupTalentPicker;
 
-  constructor(initialMaxRandomRoll: number, randomTalents: RandomTalents, rollInTableFn: RollInTableFn) {
-    this.maxRandomRoll = initialMaxRandomRoll;
-    this.randomTalents = [];
-    for (const talent of randomTalents) {
-      this.randomTalents.push([talent.id, talent.minRoll, talent.maxRoll]);
-    }
-    this.rollInTableFn = rollInTableFn;
+  constructor(randomTalents: RandomTalents, rollDiceFn: RollDiceFn, groupTalentPicker: GroupTalentPicker) {
+    this.remainingTalents = randomTalents.map((t) => ({ id: t.id, weight: t.maxRoll - t.minRoll }));
+    this.rollDiceFn = rollDiceFn;
+    this.groupTalentPicker = groupTalentPicker;
   }
 
-  pickFromRandom(selectedTalents: string[], groupTalentPicker: GroupTalentPicker): string | null {
-    while (this.randomTalents.length > 0) {
-      const newRandom = this.rollInTableFn(this.maxRandomRoll, 1, this.randomTalents);
-      const shiftMaxRandomRoll = removeTalentFromRandomTalents(this.randomTalents, newRandom);
-      this.maxRandomRoll -= shiftMaxRandomRoll;
-      if (groupTalentPicker.isGroupTalent(newRandom)) {
-        const newSelectedTalent = groupTalentPicker.pickFromGroup(newRandom, selectedTalents);
-        if (newSelectedTalent !== null) {
-          return newSelectedTalent;
+  pickFromRandom(selectedTalents: string[]): string | null {
+    while (this.remainingTalents.length > 0) {
+      const rolled = selectWeighted(this.remainingTalents, (t) => t.weight, this.rollDiceFn);
+      this.remainingTalents = this.remainingTalents.filter((t) => t.id !== rolled.id);
+
+      if (rolled.id in this.groupTalentPicker.groupTalents) {
+        const pickedTalent = this.groupTalentPicker.pickFromGroup(rolled.id, selectedTalents);
+        if (pickedTalent !== null) {
+          return pickedTalent;
         }
-      } else {
-        if (!selectedTalents.includes(newRandom)) {
-          return newRandom;
-        }
+      } else if (!selectedTalents.includes(rolled.id)) {
+        return rolled.id;
       }
     }
     return null;
-  }
-}
-
-function removeTalentFromRandomTalents(randomTalents: [string, number, number][], talentToRemove: string): number {
-  let indexToRemove;
-  let shift;
-  for (const [i, element] of randomTalents.entries()) {
-    if (talentToRemove === element[0]) {
-      indexToRemove = i;
-      shift = element[2] - element[1];
-      break;
-    }
-  }
-
-  if (indexToRemove === undefined || shift === undefined) {
-    return 0;
-  }
-
-  randomTalents.splice(indexToRemove, 1);
-  if (randomTalents.length === 0) {
-    return shift;
-  }
-
-  for (let i = indexToRemove; i < randomTalents.length; i++) {
-    randomTalents[i][1] -= shift;
-    randomTalents[i][2] -= shift;
-  }
-
-  return shift;
-}
-
-function selectRandomTalent(
-  randomTalentPicker: RandomTalentPicker,
-  selectedTalents: string[],
-  groupTalentPicker: GroupTalentPicker,
-): void {
-  const newSelectedTalent = randomTalentPicker.pickFromRandom(selectedTalents, groupTalentPicker);
-  if (newSelectedTalent !== null) {
-    selectedTalents.push(newSelectedTalent);
-  }
-}
-
-function selectTalent(newTalent: string, selectedTalents: string[], groupTalentPicker: GroupTalentPicker): void {
-  if (groupTalentPicker.isGroupTalent(newTalent)) {
-    const newSelectedTalent = groupTalentPicker.pickFromGroup(newTalent, selectedTalents);
-    if (newSelectedTalent !== null) {
-      selectedTalents.push(newSelectedTalent);
-    }
-  } else {
-    selectedTalents.push(newTalent);
   }
 }

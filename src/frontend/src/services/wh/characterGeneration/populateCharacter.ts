@@ -4,12 +4,11 @@ import { Talent } from "../talent.ts";
 import { Career, StatusTier } from "../career.ts";
 import { GenerationProps } from "../generationProps.ts";
 import { Sex } from "../characterUtils.ts";
-import { rollDice, RollDiceFn, rollInTable, RollInTableFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { fillUpIdNumberRecord, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
-import { resolveSkillGroups } from "./generateCareerSkills.ts";
 import { generateSpeciesSkills } from "./generateSpeciesSkills.ts";
 import { generateSpeciesTalents } from "./generateSpeciesTalents.ts";
-import { getTalentGroups } from "./generateCareerTalents.ts";
+import { resolveEntityGroups } from "./resolveEntityGroups.ts";
 import {
   generateClassItems,
   generateFateAndResilience,
@@ -24,12 +23,15 @@ export function populateSpeciesSkills(
   generationProps: GenerationProps,
   selectRandomFn: SelectRandomFn = selectRandom,
 ): void {
-  if (!(character.species in generationProps.speciesSkills) || listOfSkills.length === 0) {
+  if (listOfSkills.length === 0) {
     return;
   }
-  const speciesSkills = generationProps.speciesSkills[character.species];
-  const skillGroupMap = resolveSkillGroups(listOfSkills);
-  const generatedSkills = generateSpeciesSkills(speciesSkills, skillGroupMap, selectRandomFn);
+  const skillGroupMap = resolveEntityGroups(listOfSkills);
+  const generatedSkills = generateSpeciesSkills(
+    generationProps.speciesSkills[character.species],
+    skillGroupMap,
+    selectRandomFn,
+  );
   const newSkills = { ...character.skills };
   fillUpIdNumberRecord(newSkills, generatedSkills);
   character.skills = newSkills;
@@ -40,22 +42,21 @@ export function populateSpeciesTalents(
   listOfTalents: Talent[],
   generationProps: GenerationProps,
   selectRandomFn: SelectRandomFn = selectRandom,
-  rollInTableFn: RollInTableFn = rollInTable,
+  rollDiceFn: RollDiceFn = rollDice,
 ): void {
-  if (!(character.species in generationProps.speciesTalents) || listOfTalents.length === 0) {
+  if (listOfTalents.length === 0) {
     return;
   }
-  const speciesTalents = generationProps.speciesTalents[character.species];
-  const resolvedTalentGroups = getTalentGroups(listOfTalents);
+  const talentGroupMap = resolveEntityGroups(listOfTalents);
   const generatedTalents = generateSpeciesTalents(
-    speciesTalents,
-    resolvedTalentGroups,
+    generationProps.speciesTalents[character.species],
+    talentGroupMap,
     generationProps.randomTalents,
     selectRandomFn,
-    rollInTableFn,
+    rollDiceFn,
   );
   const newTalents = { ...character.talents };
-  fillUpIdNumberRecord(newTalents, idNumberArrayToRecord(generatedTalents));
+  fillUpIdNumberRecord(newTalents, generatedTalents);
   character.talents = newTalents;
   character.hydrateTalentModifiers(listOfTalents);
 }

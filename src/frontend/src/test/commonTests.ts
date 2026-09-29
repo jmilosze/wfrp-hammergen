@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Source } from "../services/wh/source.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { Visibility } from "../services/wh/common.ts";
-import { RollInTableFn, SelectRandomFn } from "../utils/random.ts";
+import { RollDiceFn, RollInTableFn, SelectRandomFn } from "../utils/random.ts";
 
 export interface WhPropertyExtended {
   id: string;
@@ -12,6 +12,21 @@ export interface WhPropertyExtended {
   source: Source;
   isEqualTo(otherWhProperty: WhPropertyExtended): boolean;
   copy(): WhPropertyExtended;
+}
+
+/**
+ * Creates a deterministic mock for `rollDice` that returns roll values from a predetermined sequence.
+ */
+export function getRollDiceTest(...rolls: number[]): RollDiceFn {
+  const expectedRolls = [...rolls];
+  let currentRoll = 0;
+
+  return function () {
+    const roll =
+      currentRoll < expectedRolls.length ? expectedRolls[currentRoll] : expectedRolls[expectedRolls.length - 1];
+    currentRoll += 1;
+    return roll;
+  };
 }
 
 /**

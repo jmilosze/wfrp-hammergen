@@ -3,6 +3,7 @@ import {
   copyIdNumberArray,
   fillUpIdNumberRecord,
   idNumberArrayToRecord,
+  recordToIdNumberArray,
   updateIdNumberRecord,
 } from "../utils/idNumber.ts";
 
@@ -13,6 +14,16 @@ describe("idNumberArrayToRecord", () => {
       { id: "b", number: 2 },
     ]);
     expect(result).toEqual({ a: 1, b: 2 });
+  });
+});
+
+describe("recordToIdNumberArray", () => {
+  test("converts record into an array of IdNumber", () => {
+    const result = recordToIdNumberArray({ a: 1, b: 2 });
+    expect(result).toEqual([
+      { id: "a", number: 1 },
+      { id: "b", number: 2 },
+    ]);
   });
 });
 

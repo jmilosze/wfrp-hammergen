@@ -1,9 +1,7 @@
-import { Skill } from "../skill.ts";
 import { Career, getCareerSkillsByLevel } from "../career.ts";
 import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { skillCost } from "./calculateExperience.ts";
-
-export type SkillGroupMap = Record<string, string[]>;
+import { EntityGroupMap } from "./resolveEntityGroups.ts";
 
 const STARTING_CAREER_ADVANCES = 40;
 const STARTING_CAREER_MAX_ADVANCES_PER_SKILL = 10;
@@ -18,7 +16,7 @@ const LEVEL_ADVANCE_BUDGETS: Record<number, number> = {
 
 export interface CareerSkillsContext {
   career: Career;
-  skillGroupMap: SkillGroupMap;
+  skillGroupMap: EntityGroupMap;
   level: number;
   startingSkills?: Record<string, number>;
 }
@@ -34,72 +32,50 @@ export function purchaseSingleAdvance(skills: Record<string, number>, skillId: s
   return cost;
 }
 
-/**
- * Indexes skills by their group identifiers (e.g. 'melee' -> ['melee_basic', 'melee_brawling']).
- */
-export function resolveSkillGroups(listOfWhSkills: Skill[]): SkillGroupMap {
-  const resolvedGroups: SkillGroupMap = {};
+class GroupSkillPicker {
+  groupSkills: EntityGroupMap;
+  selectRandomFn: SelectRandomFn;
 
-  for (const skill of listOfWhSkills) {
-    if (skill.group) {
-      for (const group of skill.group) {
-        if (group in resolvedGroups) {
-          resolvedGroups[group].push(skill.id);
-        } else {
-          resolvedGroups[group] = [skill.id];
-        }
+  constructor(groupSkills: EntityGroupMap, selectRandomFn: SelectRandomFn) {
+    this.groupSkills = JSON.parse(JSON.stringify(groupSkills));
+    this.selectRandomFn = selectRandomFn;
+  }
+
+  pickFromGroup(group: string, selectedSkills: string[]): string | null {
+    if (!(group in this.groupSkills)) {
+      return null;
+    }
+
+    while (this.groupSkills[group].length > 0) {
+      const pickedSkill = this.selectRandomFn(this.groupSkills[group]);
+      this.groupSkills[group] = this.groupSkills[group].filter((s) => s !== pickedSkill);
+      if (!selectedSkills.includes(pickedSkill)) {
+        return pickedSkill;
       }
     }
-  }
-  return resolvedGroups;
-}
-
-function pickConcreteSubskill(
-  group: string,
-  skillGroupMap: SkillGroupMap,
-  chosenSpecializations: Set<string>,
-  selectRandomFn: SelectRandomFn,
-): string | null {
-  const allSubskills = skillGroupMap[group];
-  if (!allSubskills) {
     return null;
   }
-
-  const available = allSubskills.filter((skill) => !chosenSpecializations.has(skill));
-  if (available.length === 0) {
-    return null;
-  }
-
-  const picked = selectRandomFn(available);
-  chosenSpecializations.add(picked);
-  return picked;
 }
 
 function chooseSkillsForLevel(
   careerSkills: string[],
-  skillGroupMap: SkillGroupMap,
-  chosenSpecializations: Set<string>,
-  selectRandomFn: SelectRandomFn,
+  groupSkillPicker: GroupSkillPicker,
+  allSelectedSkills: string[],
 ): string[] {
-  const levelSkills = new Set<string>();
-
+  const levelSkills: string[] = [];
   for (const skill of careerSkills) {
-    if (skill in skillGroupMap) {
-      const concreteSubskill = pickConcreteSubskill(
-        skill,
-        skillGroupMap,
-        chosenSpecializations,
-        selectRandomFn,
-      );
-      if (concreteSubskill !== null) {
-        levelSkills.add(concreteSubskill);
+    if (skill in groupSkillPicker.groupSkills) {
+      const pickedSkill = groupSkillPicker.pickFromGroup(skill, allSelectedSkills);
+      if (pickedSkill !== null) {
+        levelSkills.push(pickedSkill);
+        allSelectedSkills.push(pickedSkill);
       }
-    } else {
-      levelSkills.add(skill);
+    } else if (!levelSkills.includes(skill)) {
+      levelSkills.push(skill);
+      allSelectedSkills.push(skill);
     }
   }
-
-  return Array.from(levelSkills);
+  return levelSkills;
 }
 
 /**
@@ -109,19 +85,17 @@ function chooseSkillsForLevel(
  */
 export function chooseConcreteCareerSkills(
   careerSkillsByLevel: Record<number, string[]>,
-  skillGroupMap: SkillGroupMap,
+  skillGroupMap: EntityGroupMap,
   selectRandomFn: SelectRandomFn,
 ): Record<number, string[]> {
-  // Tracks chosen specializations across levels so that picking e.g. "Melee (Basic)"
-  // at Level 1 prevents picking the same specialization again at higher levels,
-  // ensuring each "(Any)" placeholder unlocks a distinct new specialization.
-  const chosenSpecializations = new Set<string>();
+  const groupSkillPicker = new GroupSkillPicker(skillGroupMap, selectRandomFn);
+  const allSelectedSkills: string[] = [];
 
   return {
-    1: chooseSkillsForLevel(careerSkillsByLevel[1], skillGroupMap, chosenSpecializations, selectRandomFn),
-    2: chooseSkillsForLevel(careerSkillsByLevel[2], skillGroupMap, chosenSpecializations, selectRandomFn),
-    3: chooseSkillsForLevel(careerSkillsByLevel[3], skillGroupMap, chosenSpecializations, selectRandomFn),
-    4: chooseSkillsForLevel(careerSkillsByLevel[4], skillGroupMap, chosenSpecializations, selectRandomFn),
+    1: chooseSkillsForLevel(careerSkillsByLevel[1], groupSkillPicker, allSelectedSkills),
+    2: chooseSkillsForLevel(careerSkillsByLevel[2], groupSkillPicker, allSelectedSkills),
+    3: chooseSkillsForLevel(careerSkillsByLevel[3], groupSkillPicker, allSelectedSkills),
+    4: chooseSkillsForLevel(careerSkillsByLevel[4], groupSkillPicker, allSelectedSkills),
   };
 }
 

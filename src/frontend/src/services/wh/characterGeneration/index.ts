@@ -7,3 +7,4 @@ export * from "./generateSpeciesTalents.ts";
 export * from "./calculateExperience.ts";
 export * from "./generationUtils.ts";
 export * from "./populateCharacter.ts";
+export * from "./resolveEntityGroups.ts";

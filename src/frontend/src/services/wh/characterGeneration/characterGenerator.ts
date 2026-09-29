@@ -1,6 +1,6 @@
 import { SpeciesWithRegion } from "../characterUtils.ts";
 import { Career, isLevel, StatusStanding, StatusTier } from "../career.ts";
-import { rollDice, RollDiceFn, rollInTable, RollInTableFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { getSpeciesFateResilience, SpeciesFateResilience } from "./data/species.ts";
 import { Talent } from "../talent.ts";
 import { Skill } from "../skill.ts";
@@ -8,11 +8,12 @@ import generateName from "./generateName.ts";
 import { Character } from "../character.ts";
 import generateDescription from "./generateDescription.ts";
 import { generateRolls } from "./generateAttributes.ts";
-import { generateCareerSkills, resolveSkillGroups } from "./generateCareerSkills.ts";
+import { generateCareerSkills } from "./generateCareerSkills.ts";
 import { generateSpeciesSkills } from "./generateSpeciesSkills.ts";
 import { getAttributes, sumAttributes } from "../attributes.ts";
-import { generateCareerTalents, getTalentGroups } from "./generateCareerTalents.ts";
+import { generateCareerTalents } from "./generateCareerTalents.ts";
 import { generateSpeciesTalents } from "./generateSpeciesTalents.ts";
+import { resolveEntityGroups } from "./resolveEntityGroups.ts";
 import { IdNumber, idNumberArrayToRecord } from "../../../utils/idNumber.ts";
 import { GenerationProps } from "../generationProps.ts";
 import { defaultSource } from "../source.ts";
@@ -33,7 +34,6 @@ export interface CharacterGenerationContext {
 export interface CharacterGenerationRandomFns {
   rollDiceFn?: RollDiceFn;
   selectRandomFn?: SelectRandomFn;
-  rollInTableFn?: RollInTableFn;
 }
 
 export function generateStatusAndStanding(
@@ -107,7 +107,6 @@ export function generateCharacter(
 ): Character {
   const rollDiceFn = randomFns.rollDiceFn ?? rollDice;
   const selectRandomFn = randomFns.selectRandomFn ?? selectRandom;
-  const rollInTableFn = randomFns.rollInTableFn ?? rollInTable;
 
   const character = new Character({
     id: "create",
@@ -144,16 +143,13 @@ export function generateCharacter(
   character.equippedItems = idNumberArrayToRecord(classItems.equipped);
   character.carriedItems = idNumberArrayToRecord(classItems.carried);
 
-  const skillGroupMap = resolveSkillGroups(context.skills);
+  const skillGroupMap = resolveEntityGroups(context.skills);
 
-  let speciesSkills: Record<string, number> = {};
-  if (context.species in context.generationProps.speciesSkills) {
-    speciesSkills = generateSpeciesSkills(
-      context.generationProps.speciesSkills[context.species],
-      skillGroupMap,
-      selectRandomFn,
-    );
-  }
+  const speciesSkills = generateSpeciesSkills(
+    context.generationProps.speciesSkills[context.species],
+    skillGroupMap,
+    selectRandomFn,
+  );
 
   let skillExpSpent = 0;
   [character.skills, skillExpSpent] = generateCareerSkills(
@@ -168,25 +164,24 @@ export function generateCharacter(
 
   const baseAttributes = sumAttributes(getAttributes(context.species), character.attributeRolls);
 
-  let speciesTalents: IdNumber[] = [];
-  if (context.species in context.generationProps.speciesTalents) {
-    const talentGroups = getTalentGroups(context.talents);
-    speciesTalents = generateSpeciesTalents(
-      context.generationProps.speciesTalents[context.species],
-      talentGroups,
-      context.generationProps.randomTalents,
-      selectRandomFn,
-      rollInTableFn,
-    );
-  }
+  const talentGroupMap = resolveEntityGroups(context.talents);
 
-  let talentAndAttExpSpent = 0;
+  const speciesTalents = generateSpeciesTalents(
+    context.generationProps.speciesTalents[context.species],
+    talentGroupMap,
+    context.generationProps.randomTalents,
+    selectRandomFn,
+    rollDiceFn,
+  );
+
+  let talentAndAttExpSpent;
   [character.talents, character.attributeAdvances, talentAndAttExpSpent] = generateCareerTalents(
     {
       startingTalents: speciesTalents,
       career: context.career,
       baseAtts: baseAttributes,
       talents: context.talents,
+      talentGroupMap,
       level: context.level,
     },
     selectRandomFn,

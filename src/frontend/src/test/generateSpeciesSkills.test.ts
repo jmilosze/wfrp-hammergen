@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { Skill } from "../services/wh/skill.ts";
 import { generateSpeciesSkills } from "../services/wh/characterGeneration/generateSpeciesSkills.ts";
-import { resolveSkillGroups } from "../services/wh/characterGeneration/generateCareerSkills.ts";
+import { resolveEntityGroups } from "../services/wh/characterGeneration/resolveEntityGroups.ts";
 import { getSelectRandomTest } from "./commonTests.ts";
 
 describe("generateSpeciesSkills", () => {
@@ -20,7 +20,7 @@ describe("generateSpeciesSkills", () => {
     new Skill({ id: "art_sculpture", name: "Art (Sculpture)", group: new Set(["art"]) }),
   ];
 
-  const resolvedGroups = resolveSkillGroups(dummySkills);
+  const resolvedGroups = resolveEntityGroups(dummySkills);
 
   test("generates 3 skills at +3 and 3 skills at +5 advances", () => {
     const speciesCandidates = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8"];
@@ -66,5 +66,10 @@ describe("generateSpeciesSkills", () => {
     const hasArtSubskill = "art_painting" in result || "art_sculpture" in result;
     expect(hasMeleeSubskill).toBe(true);
     expect(hasArtSubskill).toBe(true);
+  });
+
+  test("returns empty record when speciesSkills is undefined", () => {
+    const result = generateSpeciesSkills(undefined, resolvedGroups, getSelectRandomTest(0));
+    expect(result).toEqual({});
   });
 });
