@@ -88,14 +88,7 @@ describe("calculateMaxTalentRanks", () => {
   });
 
   test("with 2 selected talents", () => {
-    expect(
-      calculateMaxTalentRanks(
-        { id1: 1, id2: 2 },
-        listOfWhTalents,
-        baseAtts,
-        advances,
-      ),
-    ).toEqual({
+    expect(calculateMaxTalentRanks({ id1: 1, id2: 2 }, listOfWhTalents, baseAtts, advances)).toEqual({
       id0: 2, // expected = 0 + WS(20)/10
       id1: 9, // expected = 1 + S(80)/10
       id2: 4, // expected = 2 + Ag(25)/10
@@ -165,13 +158,7 @@ describe("purchaseSingleTalentAdvance", () => {
 describe("allocateCareerTalents", () => {
   test("when availableTalents is empty, makes no changes and returns 0 XP", () => {
     const talents = { selected1: 1, selected2: 2 };
-    const xpSpent = allocateCareerTalents(
-      talents,
-      [],
-      { selected1: 4, selected2: 5 },
-      5,
-      getSelectRandomTest(0),
-    );
+    const xpSpent = allocateCareerTalents(talents, [], { selected1: 4, selected2: 5 }, 5, getSelectRandomTest(0));
     expect(talents).toEqual({ selected1: 1, selected2: 2 });
     expect(xpSpent).toBe(0);
   });
@@ -402,6 +389,7 @@ describe("generateCareerTalents generates expected talents and advances", () => 
 
     const [talents, advances, cost] = generateCareerTalents(
       {
+        startingTalents: {},
         career: singleTalentCareer,
         baseAtts,
         talents: [individual],
@@ -420,6 +408,7 @@ describe("generateCareerTalents generates expected talents and advances", () => 
     const talentGroupMap = resolveEntityGroups(listOfWhTalents);
 
     const contextLvl1: CareerTalentsContext = {
+      startingTalents: {},
       career,
       baseAtts,
       talents: listOfWhTalents,
@@ -431,6 +420,7 @@ describe("generateCareerTalents generates expected talents and advances", () => 
     expect(talents1.g0m0).toBe(1);
 
     const contextLvl2: CareerTalentsContext = {
+      startingTalents: {},
       career,
       baseAtts,
       talents: listOfWhTalents,
@@ -447,6 +437,7 @@ describe("generateCareerTalents generates expected talents and advances", () => 
     expect(talents2.g0m1).toBeDefined();
 
     const contextLvl3: CareerTalentsContext = {
+      startingTalents: {},
       career,
       baseAtts,
       talents: listOfWhTalents,
@@ -462,6 +453,7 @@ describe("generateCareerTalents generates expected talents and advances", () => 
     expect(advances3.I).toBeGreaterThanOrEqual(10);
 
     const contextLvl4: CareerTalentsContext = {
+      startingTalents: {},
       career,
       baseAtts,
       talents: listOfWhTalents,

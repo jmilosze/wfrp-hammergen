@@ -1,5 +1,5 @@
 import { rollDice, RollDiceFn, selectRandom, SelectRandomFn, selectWeighted } from "../../../utils/random.ts";
-import { EntityGroupMap } from "./resolveEntityGroups.ts";
+import { EntityGroupMap, GroupPicker } from "./resolveEntityGroups.ts";
 
 const RANDOM_TALENTS_ROLL = 100;
 
@@ -30,8 +30,8 @@ export function generateSpeciesTalents(
   }
 
   const talents: string[] = [];
-  const groupTalentPicker = new GroupTalentPicker(groupTalents, selectRandomFn);
-  const randomTalentPicker = new RandomTalentPicker(randomTalents, rollDiceFn, groupTalentPicker);
+  const groupPicker = new GroupPicker(groupTalents, selectRandomFn);
+  const randomTalentPicker = new RandomTalentPicker(randomTalents, rollDiceFn, groupPicker);
 
   for (const speciesTalent of speciesTalents) {
     const talent = chooseTalent(speciesTalent, selectRandomFn);
@@ -40,8 +40,8 @@ export function generateSpeciesTalents(
       if (pickedTalent !== null) {
         talents.push(pickedTalent);
       }
-    } else if (talent in groupTalents) {
-      const pickedTalent = groupTalentPicker.pickFromGroup(talent, talents);
+    } else if (groupPicker.isGroup(talent)) {
+      const pickedTalent = groupPicker.pick(talent, talents);
       if (pickedTalent !== null) {
         talents.push(pickedTalent);
       }
@@ -99,40 +99,15 @@ function speciesTalentsValid(speciesTalents: string[], talentGroups: EntityGroup
   return new Set(allTalents).size === allTalents.length;
 }
 
-class GroupTalentPicker {
-  groupTalents: EntityGroupMap;
-  selectRandomFn: SelectRandomFn;
-
-  constructor(groupTalents: EntityGroupMap, selectRandomFn: SelectRandomFn) {
-    this.groupTalents = JSON.parse(JSON.stringify(groupTalents));
-    this.selectRandomFn = selectRandomFn;
-  }
-
-  pickFromGroup(group: string, selectedTalents: string[]): string | null {
-    if (!(group in this.groupTalents)) {
-      return null;
-    }
-
-    while (this.groupTalents[group].length > 0) {
-      const pickedTalent = this.selectRandomFn(this.groupTalents[group]);
-      this.groupTalents[group] = this.groupTalents[group].filter((t) => t !== pickedTalent);
-      if (!selectedTalents.includes(pickedTalent)) {
-        return pickedTalent;
-      }
-    }
-    return null;
-  }
-}
-
 class RandomTalentPicker {
-  remainingTalents: Array<{ id: string; weight: number }>;
-  rollDiceFn: RollDiceFn;
-  groupTalentPicker: GroupTalentPicker;
+  private remainingTalents: Array<{ id: string; weight: number }>;
+  private readonly rollDiceFn: RollDiceFn;
+  private readonly groupPicker: GroupPicker;
 
-  constructor(randomTalents: RandomTalents, rollDiceFn: RollDiceFn, groupTalentPicker: GroupTalentPicker) {
+  constructor(randomTalents: RandomTalents, rollDiceFn: RollDiceFn, groupPicker: GroupPicker) {
     this.remainingTalents = randomTalents.map((t) => ({ id: t.id, weight: t.maxRoll - t.minRoll }));
     this.rollDiceFn = rollDiceFn;
-    this.groupTalentPicker = groupTalentPicker;
+    this.groupPicker = groupPicker;
   }
 
   pickFromRandom(selectedTalents: string[]): string | null {
@@ -140,8 +115,8 @@ class RandomTalentPicker {
       const rolled = selectWeighted(this.remainingTalents, (t) => t.weight, this.rollDiceFn);
       this.remainingTalents = this.remainingTalents.filter((t) => t.id !== rolled.id);
 
-      if (rolled.id in this.groupTalentPicker.groupTalents) {
-        const pickedTalent = this.groupTalentPicker.pickFromGroup(rolled.id, selectedTalents);
+      if (this.groupPicker.isGroup(rolled.id)) {
+        const pickedTalent = this.groupPicker.pick(rolled.id, selectedTalents);
         if (pickedTalent !== null) {
           return pickedTalent;
         }

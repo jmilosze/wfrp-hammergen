@@ -6,11 +6,7 @@ const SPECIES_ADVANCE_PACKAGES = [
   { count: 3, advances: 5 },
 ] as const;
 
-function resolveConcreteSkill(
-  skillId: string,
-  skillGroupMap: EntityGroupMap,
-  selectRandomFn: SelectRandomFn,
-): string {
+function resolveConcreteSkill(skillId: string, skillGroupMap: EntityGroupMap, selectRandomFn: SelectRandomFn): string {
   if (skillId in skillGroupMap) {
     return selectRandomFn(skillGroupMap[skillId]);
   }

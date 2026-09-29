@@ -146,10 +146,10 @@ describe("characterGenerator domain service", () => {
       level4: { ...copyCareerLevel(zeroCareerLevel), skills: new Set(["s4"]), talents: new Set(["t4"]), attributes: [AttributeName.T] },
     });
 
-    expect(getCareerSkillsByLevel(career)).toEqual({ 1: ["s1"], 2: ["s2"], 3: ["s3"], 4: ["s4"] });
+    expect(getCareerSkillsByLevel(career)).toEqual([["s1"], ["s2"], ["s3"], ["s4"]]);
     expect(getCareerTalentsByLevel(career)).toEqual([["t1"], ["t2"], ["t3"], ["t4"]]);
     expect(getCareerAttributesByLevel(career)).toEqual([[AttributeName.WS], [AttributeName.BS], [AttributeName.S], [AttributeName.T]]);
-    expect(career.getSkillsByLevel()).toEqual({ 1: ["s1"], 2: ["s2"], 3: ["s3"], 4: ["s4"] });
+    expect(career.getSkillsByLevel()).toEqual([["s1"], ["s2"], ["s3"], ["s4"]]);
     expect(career.getTalentsByLevel()).toEqual([["t1"], ["t2"], ["t3"], ["t4"]]);
     expect(career.getAttributesByLevel()).toEqual([[AttributeName.WS], [AttributeName.BS], [AttributeName.S], [AttributeName.T]]);
   });

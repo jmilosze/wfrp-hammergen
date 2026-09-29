@@ -191,13 +191,7 @@ describe("generateSpeciesTalents throws exception if not not enough talents to p
   });
 
   test("returns empty record when speciesTalents is undefined", () => {
-    const actual = generateSpeciesTalents(
-      undefined,
-      {},
-      [],
-      getSelectRandomTest(0),
-      getRollDiceTest(20),
-    );
+    const actual = generateSpeciesTalents(undefined, {}, [], getSelectRandomTest(0), getRollDiceTest(20));
     expect(actual).toEqual({});
   });
 });
@@ -211,13 +205,7 @@ describe("generateSpeciesTalents throws exception if randomTalents is invalid", 
       { id: "id2", minRoll: 2, maxRoll: 101 },
     ] as RandomTalents;
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid random talents table");
   });
 
@@ -230,13 +218,7 @@ describe("generateSpeciesTalents throws exception if randomTalents is invalid", 
     ] as RandomTalents;
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid random talents table");
   });
 
@@ -249,13 +231,7 @@ describe("generateSpeciesTalents throws exception if randomTalents is invalid", 
     ];
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid random talents table");
   });
 
@@ -269,13 +245,7 @@ describe("generateSpeciesTalents throws exception if randomTalents is invalid", 
     ] as RandomTalents;
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid random talents table");
   });
 
@@ -289,13 +259,7 @@ describe("generateSpeciesTalents throws exception if randomTalents is invalid", 
     ] as RandomTalents;
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid random talents table");
   });
 
@@ -309,13 +273,7 @@ describe("generateSpeciesTalents throws exception if randomTalents is invalid", 
     ] as RandomTalents;
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid random talents table");
   });
 });
@@ -327,13 +285,7 @@ describe("generateSpeciesTalents throws exception if speciesTalents is invalid",
     const randomTalents = [] as RandomTalents;
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid species talents object");
   });
 
@@ -343,13 +295,7 @@ describe("generateSpeciesTalents throws exception if speciesTalents is invalid",
     const randomTalents = [] as RandomTalents;
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid species talents object");
   });
 
@@ -359,13 +305,7 @@ describe("generateSpeciesTalents throws exception if speciesTalents is invalid",
     const randomTalents = [] as RandomTalents;
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid species talents object");
   });
 
@@ -375,13 +315,7 @@ describe("generateSpeciesTalents throws exception if speciesTalents is invalid",
     const randomTalents: RandomTalents = [];
 
     expect(() => {
-      generateSpeciesTalents(
-        speciesTalents,
-        groupTalents,
-        randomTalents,
-        getSelectRandomTest(0),
-        getRollDiceTest(20),
-      );
+      generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid species talents object");
   });
 });

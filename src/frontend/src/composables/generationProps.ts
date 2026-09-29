@@ -1,14 +1,13 @@
 import { ref } from "vue";
-import { RandomTalents } from "../services/wh/characterGeneration/generateSpeciesTalents.ts";
-import { getGenerationProps } from "../services/wh/generationProps.ts";
+import { GenerationProps, getGenerationProps } from "../services/wh/generationProps.ts";
 import { AxiosInstance } from "axios";
 
 export function useGenerationProps(axiosInstance: AxiosInstance) {
-  const generationProps = ref({
-    classItems: [] as { equipped: Record<string, string>; carried: Record<string, string> }[],
-    randomTalents: [] as RandomTalents,
-    speciesTalents: {} as Record<string, string[]>,
-    speciesSkills: {} as Record<string, string[]>,
+  const generationProps = ref<GenerationProps>({
+    classItems: [],
+    randomTalents: [],
+    speciesTalents: {},
+    speciesSkills: {},
   });
 
   const apiError = ref("");

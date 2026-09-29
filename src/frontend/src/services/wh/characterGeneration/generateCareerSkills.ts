@@ -1,14 +1,16 @@
-import { Career, getCareerSkillsByLevel } from "../career.ts";
+import { Career, GenerationLevel, getCareerSkillsByLevel, PerGenerationLevel } from "../career.ts";
 import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { skillCost } from "./calculateExperience.ts";
-import { EntityGroupMap } from "./resolveEntityGroups.ts";
+import { EntityGroupMap, GroupPicker } from "./resolveEntityGroups.ts";
 
 const STARTING_CAREER_ADVANCES = 40;
 const STARTING_CAREER_MAX_ADVANCES_PER_SKILL = 10;
 const REQUIRED_PREREQUISITE_SKILLS = 8;
 const ADVANCES_PER_LEVEL = 5;
 
-const LEVEL_ADVANCE_BUDGETS: Record<number, number> = {
+const HIGHER_LEVELS = [2, 3, 4] as const;
+
+const LEVEL_ADVANCE_BUDGETS: Record<(typeof HIGHER_LEVELS)[number], number> = {
   2: 30,
   3: 20,
   4: 10,
@@ -17,8 +19,8 @@ const LEVEL_ADVANCE_BUDGETS: Record<number, number> = {
 export interface CareerSkillsContext {
   career: Career;
   skillGroupMap: EntityGroupMap;
-  level: number;
-  startingSkills?: Record<string, number>;
+  level: GenerationLevel;
+  startingSkills: Record<string, number>;
 }
 
 /**
@@ -32,71 +34,45 @@ export function purchaseSingleAdvance(skills: Record<string, number>, skillId: s
   return cost;
 }
 
-class GroupSkillPicker {
-  groupSkills: EntityGroupMap;
-  selectRandomFn: SelectRandomFn;
-
-  constructor(groupSkills: EntityGroupMap, selectRandomFn: SelectRandomFn) {
-    this.groupSkills = JSON.parse(JSON.stringify(groupSkills));
-    this.selectRandomFn = selectRandomFn;
-  }
-
-  pickFromGroup(group: string, selectedSkills: string[]): string | null {
-    if (!(group in this.groupSkills)) {
-      return null;
-    }
-
-    while (this.groupSkills[group].length > 0) {
-      const pickedSkill = this.selectRandomFn(this.groupSkills[group]);
-      this.groupSkills[group] = this.groupSkills[group].filter((s) => s !== pickedSkill);
-      if (!selectedSkills.includes(pickedSkill)) {
-        return pickedSkill;
-      }
-    }
-    return null;
-  }
-}
-
-function chooseSkillsForLevel(
-  careerSkills: string[],
-  groupSkillPicker: GroupSkillPicker,
-  allSelectedSkills: string[],
-): string[] {
-  const levelSkills: string[] = [];
+function chooseSkillsForLevel(careerSkills: string[], groupPicker: GroupPicker, allSelectedSkills: string[]): string[] {
+  const levelSkills = new Set<string>();
   for (const skill of careerSkills) {
-    if (skill in groupSkillPicker.groupSkills) {
-      const pickedSkill = groupSkillPicker.pickFromGroup(skill, allSelectedSkills);
+    if (groupPicker.isGroup(skill)) {
+      const pickedSkill = groupPicker.pick(skill, allSelectedSkills);
       if (pickedSkill !== null) {
-        levelSkills.push(pickedSkill);
+        levelSkills.add(pickedSkill);
         allSelectedSkills.push(pickedSkill);
       }
-    } else if (!levelSkills.includes(skill)) {
-      levelSkills.push(skill);
+    } else {
+      levelSkills.add(skill);
       allSelectedSkills.push(skill);
     }
   }
-  return levelSkills;
+  return [...levelSkills];
 }
 
 /**
  * Career skill lists often contain generic group placeholders like 'Melee (Any)' or 'Trade (Any)'.
  * This function picks a concrete specialization (e.g. 'Melee (Basic)') for each placeholder,
- * ensuring no duplicate specializations are chosen within or across career levels.
+ * never choosing a skill that is already a career skill, whether it was listed explicitly or picked
+ * for an earlier placeholder, in the same or an earlier career level.
+ * Species skills are deliberately not excluded: they can't be advanced after character creation unless
+ * they are also career skills, so a placeholder may pick a skill the character only has from its species.
  */
 export function chooseConcreteCareerSkills(
-  careerSkillsByLevel: Record<number, string[]>,
+  careerSkillsByLevel: PerGenerationLevel<string[]>,
   skillGroupMap: EntityGroupMap,
   selectRandomFn: SelectRandomFn,
-): Record<number, string[]> {
-  const groupSkillPicker = new GroupSkillPicker(skillGroupMap, selectRandomFn);
+): PerGenerationLevel<string[]> {
+  const groupPicker = new GroupPicker(skillGroupMap, selectRandomFn);
   const allSelectedSkills: string[] = [];
 
-  return {
-    1: chooseSkillsForLevel(careerSkillsByLevel[1], groupSkillPicker, allSelectedSkills),
-    2: chooseSkillsForLevel(careerSkillsByLevel[2], groupSkillPicker, allSelectedSkills),
-    3: chooseSkillsForLevel(careerSkillsByLevel[3], groupSkillPicker, allSelectedSkills),
-    4: chooseSkillsForLevel(careerSkillsByLevel[4], groupSkillPicker, allSelectedSkills),
-  };
+  return [
+    chooseSkillsForLevel(careerSkillsByLevel[0], groupPicker, allSelectedSkills),
+    chooseSkillsForLevel(careerSkillsByLevel[1], groupPicker, allSelectedSkills),
+    chooseSkillsForLevel(careerSkillsByLevel[2], groupPicker, allSelectedSkills),
+    chooseSkillsForLevel(careerSkillsByLevel[3], groupPicker, allSelectedSkills),
+  ];
 }
 
 /**
@@ -189,7 +165,7 @@ export function generateCareerSkills(
   context: CareerSkillsContext,
   selectRandomFn: SelectRandomFn = selectRandom,
 ): [Record<string, number>, number] {
-  const skills: Record<string, number> = context.startingSkills ? { ...context.startingSkills } : {};
+  const skills: Record<string, number> = { ...context.startingSkills };
 
   // Career skill lists may contain group placeholders like 'Melee (Any)' or 'Trade (Any)'.
   // Pick concrete specializations (e.g. 'Melee (Basic)') for each career level (1 to 4).
@@ -203,43 +179,32 @@ export function generateCareerSkills(
   // In WFRP 4e, a starting character receives 40 advances to distribute among their
   // Level 1 career skills. No single skill may receive more than 10 advances at creation.
   // These initial advances cost 0 XP.
-  allocateStartingCareerAdvances(skills, careerSkillsByLevel[1], selectRandomFn);
+  allocateStartingCareerAdvances(skills, careerSkillsByLevel[0], selectRandomFn);
 
   let totalXpSpent = 0;
-  let accumulatedCareerSkills = [...careerSkillsByLevel[1]];
+  let accumulatedCareerSkills = [...careerSkillsByLevel[0]];
 
   // --- Step 2: Progress Through Higher Career Levels (Levels 2 to 4) ---
   // Characters created at or advanced to higher levels must satisfy level qualification
   // prerequisites and spend XP to purchase advances in each level.
-  for (let level = 2; level <= context.level; ++level) {
+  for (const level of HIGHER_LEVELS.filter((l) => l <= context.level)) {
     // 2a. Satisfy Level Prerequisites:
     // To qualify for an advanced career level, WFRP 4e requires having at least 8 career skills
     // from previous levels with at least (level - 1) * 5 advances (e.g. 5 advances for Level 2,
     // 10 for Level 3, 15 for Level 4). Any skills below this threshold are backfilled, spending XP.
     const prerequisiteThreshold = (level - 1) * ADVANCES_PER_LEVEL;
-    totalXpSpent += satisfyLevelPrerequisites(
-      skills,
-      accumulatedCareerSkills,
-      prerequisiteThreshold,
-      selectRandomFn,
-    );
+    totalXpSpent += satisfyLevelPrerequisites(skills, accumulatedCareerSkills, prerequisiteThreshold, selectRandomFn);
 
     // 2b. Unlock New Level Skills:
     // The skills of this new level are now unlocked and added to the pool of career skills.
-    const newLevelSkills = careerSkillsByLevel[level];
+    const newLevelSkills = careerSkillsByLevel[level - 1];
     accumulatedCareerSkills = accumulatedCareerSkills.concat(newLevelSkills);
 
     // 2c. Allocate Level Advance Budget:
     // Distribute advances from the level's budget (Level 2: 30, Level 3: 20, Level 4: 10)
     // randomly among the newly unlocked skills of this level, spending XP.
-    totalXpSpent += allocateLevelAdvances(
-      skills,
-      newLevelSkills,
-      LEVEL_ADVANCE_BUDGETS[level],
-      selectRandomFn,
-    );
+    totalXpSpent += allocateLevelAdvances(skills, newLevelSkills, LEVEL_ADVANCE_BUDGETS[level], selectRandomFn);
   }
 
   return [skills, totalXpSpent];
 }
-

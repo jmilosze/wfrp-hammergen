@@ -1,5 +1,4 @@
 export type SelectRandomFn = <T>(array: T[]) => T;
-export type RollInTableFn = <T>(sides: number, rolls: number, table: [T, number, number][]) => T;
 export type RollDiceFn = (sides: number, rolls: number) => number;
 
 export function selectRandom<T>(array: T[]): T {
@@ -24,15 +23,7 @@ export function rollDice(sides: number, rolls: number): number {
   return sumOfRolls;
 }
 
-export function selectWeighted<T>(
-  items: T[],
-  getWeight: (item: T) => number,
-  rollDiceFn: RollDiceFn = rollDice,
-): T {
-  if (items.length === 0) {
-    throw new Error("cannot select from empty array");
-  }
-
+export function selectWeighted<T>(items: T[], getWeight: (item: T) => number, rollDiceFn: RollDiceFn = rollDice): T {
   const totalWeight = items.reduce((sum, item) => sum + getWeight(item), 0);
   let roll = rollDiceFn(totalWeight, 1);
 
@@ -43,5 +34,5 @@ export function selectWeighted<T>(
     }
   }
 
-  return items[items.length - 1];
+  throw new Error("cannot select from items without positive weights");
 }

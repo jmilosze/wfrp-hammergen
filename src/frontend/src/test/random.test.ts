@@ -53,7 +53,11 @@ describe("random utilities", () => {
     });
 
     test("throws error when items array is empty", () => {
-      expect(() => selectWeighted([], () => 1)).toThrow("cannot select from empty array");
+      expect(() => selectWeighted([], () => 1)).toThrow("cannot select from items without positive weights");
+    });
+
+    test("throws error when all weights are zero", () => {
+      expect(() => selectWeighted([{ id: "A" }], () => 0)).toThrow("cannot select from items without positive weights");
     });
   });
 });

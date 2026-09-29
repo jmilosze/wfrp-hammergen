@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Source } from "../services/wh/source.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { Visibility } from "../services/wh/common.ts";
-import { RollDiceFn, RollInTableFn, SelectRandomFn } from "../utils/random.ts";
+import { RollDiceFn, SelectRandomFn } from "../utils/random.ts";
 
 export interface WhPropertyExtended {
   id: string;
@@ -26,30 +26,6 @@ export function getRollDiceTest(...rolls: number[]): RollDiceFn {
       currentRoll < expectedRolls.length ? expectedRolls[currentRoll] : expectedRolls[expectedRolls.length - 1];
     currentRoll += 1;
     return roll;
-  };
-}
-
-/**
- * Creates a deterministic mock for `rollInTable` that simulates table rolls using a predetermined sequence of numbers.
- *
- * Each time the returned mock is called:
- * 1. It takes the next roll value from `rolls` (or repeats the last roll if `rolls` is exhausted).
- * 2. It finds the entry in `table` where `roll >= min && roll < max` and returns its value (`element[0]`).
- */
-export function getRollInTableTest(...rolls: number[]): RollInTableFn {
-  const expectedRolls = [...rolls];
-  let currentRoll = 0;
-
-  return function <T>(_: number, __: number, table: [T, number, number][]) {
-    const roll =
-      currentRoll < expectedRolls.length ? expectedRolls[currentRoll] : expectedRolls[expectedRolls.length - 1];
-    for (const element of table) {
-      if (roll >= element[1] && roll < element[2]) {
-        currentRoll += 1;
-        return element[0];
-      }
-    }
-    throw new Error(`invalid table ${table}`);
   };
 }
 

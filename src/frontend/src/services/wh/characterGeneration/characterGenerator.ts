@@ -1,5 +1,5 @@
 import { SpeciesWithRegion } from "../characterUtils.ts";
-import { Career, isLevel, StatusStanding, StatusTier } from "../career.ts";
+import { Career, GenerationLevel, isLevel, StatusStanding, StatusTier } from "../career.ts";
 import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { getSpeciesFateResilience, SpeciesFateResilience } from "./data/species.ts";
 import { Talent } from "../talent.ts";
@@ -25,7 +25,7 @@ export type { SpeciesFateResilience };
 export interface CharacterGenerationContext {
   species: SpeciesWithRegion;
   career: Career;
-  level: 1 | 2 | 3 | 4;
+  level: GenerationLevel;
   skills: Skill[];
   talents: Talent[];
   generationProps: GenerationProps;
@@ -151,8 +151,7 @@ export function generateCharacter(
     selectRandomFn,
   );
 
-  let skillExpSpent = 0;
-  [character.skills, skillExpSpent] = generateCareerSkills(
+  const [skills, skillExpSpent] = generateCareerSkills(
     {
       startingSkills: speciesSkills,
       career: context.career,
@@ -161,6 +160,7 @@ export function generateCharacter(
     },
     selectRandomFn,
   );
+  character.skills = skills;
 
   const baseAttributes = sumAttributes(getAttributes(context.species), character.attributeRolls);
 
@@ -174,8 +174,7 @@ export function generateCharacter(
     rollDiceFn,
   );
 
-  let talentAndAttExpSpent;
-  [character.talents, character.attributeAdvances, talentAndAttExpSpent] = generateCareerTalents(
+  const [talents, attributeAdvances, talentAndAttExpSpent] = generateCareerTalents(
     {
       startingTalents: speciesTalents,
       career: context.career,
@@ -186,6 +185,8 @@ export function generateCharacter(
     },
     selectRandomFn,
   );
+  character.talents = talents;
+  character.attributeAdvances = attributeAdvances;
 
   const totalExSpent = skillExpSpent + talentAndAttExpSpent + 100 * (context.level - 1);
   character.currentExp = exp - totalExSpent > 0 ? exp - totalExSpent : 0;

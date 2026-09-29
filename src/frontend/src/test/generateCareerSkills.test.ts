@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { Career, copyCareerLevel, zeroCareerLevel } from "../services/wh/career.ts";
+import { Career, copyCareerLevel, PerGenerationLevel, zeroCareerLevel } from "../services/wh/career.ts";
 import { Skill } from "../services/wh/skill.ts";
 import {
   allocateLevelAdvances,
@@ -76,50 +76,80 @@ describe("generateCareerSkills", () => {
 
   describe("chooseConcreteCareerSkills", () => {
     test("replaces grouped skill placeholders with concrete choices without duplication across career levels", () => {
-      const careerSkills: Record<number, string[]> = {
-        1: ["s1", "melee"],
-        2: ["melee"],
-        3: [],
-        4: [],
-      };
+      const careerSkills: PerGenerationLevel<string[]> = [["s1", "melee"], ["melee"], [], []];
       const skillGroups = {
         melee: ["melee_basic", "melee_brawling"],
       };
 
       const concreteSkills = chooseConcreteCareerSkills(careerSkills, skillGroups, getSelectRandomTest(0));
 
-      expect(concreteSkills[1]).toEqual(["s1", "melee_basic"]);
-      expect(concreteSkills[2]).toEqual(["melee_brawling"]);
+      expect(concreteSkills[0]).toEqual(["s1", "melee_basic"]);
+      expect(concreteSkills[1]).toEqual(["melee_brawling"]);
     });
 
     test("leaves non-group skills unchanged", () => {
-      const careerSkills: Record<number, string[]> = {
-        1: ["s1", "s2"],
-        2: ["s3"],
-        3: [],
-        4: [],
-      };
+      const careerSkills: PerGenerationLevel<string[]> = [["s1", "s2"], ["s3"], [], []];
       const concreteSkills = chooseConcreteCareerSkills(careerSkills, {}, getSelectRandomTest(0));
 
-      expect(concreteSkills[1]).toEqual(["s1", "s2"]);
-      expect(concreteSkills[2]).toEqual(["s3"]);
+      expect(concreteSkills[0]).toEqual(["s1", "s2"]);
+      expect(concreteSkills[1]).toEqual(["s3"]);
     });
 
     test("handles exhausted group options gracefully when fewer subskills exist than requested", () => {
-      const careerSkills: Record<number, string[]> = {
-        1: ["melee"],
-        2: ["melee"],
-        3: [],
-        4: [],
-      };
+      const careerSkills: PerGenerationLevel<string[]> = [["melee"], ["melee"], [], []];
       const skillGroups = {
         melee: ["melee_basic"],
       };
 
       const concreteSkills = chooseConcreteCareerSkills(careerSkills, skillGroups, getSelectRandomTest(0));
 
-      expect(concreteSkills[1]).toEqual(["melee_basic"]);
-      expect(concreteSkills[2]).toEqual([]);
+      expect(concreteSkills[0]).toEqual(["melee_basic"]);
+      expect(concreteSkills[1]).toEqual([]);
+    });
+
+    test("never picks a skill listed explicitly in an earlier level", () => {
+      const careerSkills: PerGenerationLevel<string[]> = [["melee_basic"], ["melee"], [], []];
+      const skillGroups = {
+        melee: ["melee_basic", "melee_brawling"],
+      };
+
+      const concreteSkills = chooseConcreteCareerSkills(careerSkills, skillGroups, getSelectRandomTest(0));
+
+      expect(concreteSkills[0]).toEqual(["melee_basic"]);
+      expect(concreteSkills[1]).toEqual(["melee_brawling"]);
+    });
+
+    test("never picks a skill listed explicitly earlier in the same level", () => {
+      const careerSkills: PerGenerationLevel<string[]> = [["melee_basic", "melee"], [], [], []];
+      const skillGroups = {
+        melee: ["melee_basic", "melee_brawling"],
+      };
+
+      const concreteSkills = chooseConcreteCareerSkills(careerSkills, skillGroups, getSelectRandomTest(0));
+
+      expect(concreteSkills[0]).toEqual(["melee_basic", "melee_brawling"]);
+    });
+
+    test("drops a group placeholder when all its remaining members are already career skills", () => {
+      const careerSkills: PerGenerationLevel<string[]> = [["melee_basic", "melee_brawling"], ["melee"], [], []];
+      const skillGroups = {
+        melee: ["melee_basic", "melee_brawling"],
+      };
+
+      const concreteSkills = chooseConcreteCareerSkills(careerSkills, skillGroups, getSelectRandomTest(0));
+
+      expect(concreteSkills[1]).toEqual([]);
+    });
+
+    test("deduplicates skills within a single level", () => {
+      const careerSkills: PerGenerationLevel<string[]> = [["melee", "melee_basic"], [], [], []];
+      const skillGroups = {
+        melee: ["melee_basic", "melee_brawling"],
+      };
+
+      const concreteSkills = chooseConcreteCareerSkills(careerSkills, skillGroups, getSelectRandomTest(0));
+
+      expect(concreteSkills[0]).toEqual(["melee_basic"]);
     });
   });
 
@@ -258,6 +288,7 @@ describe("generateCareerSkills", () => {
 
     test("works without pre-existing skills at Level 1", () => {
       const context: CareerSkillsContext = {
+        startingSkills: {},
         career: dummyCareer,
         skillGroupMap: dummySkillGroupMap,
         level: 1,
@@ -273,6 +304,7 @@ describe("generateCareerSkills", () => {
 
     test("progresses through all 4 career tiers with cumulative XP and backfilled prerequisites", () => {
       const contextLvl1: CareerSkillsContext = {
+        startingSkills: {},
         career: dummyCareer,
         skillGroupMap: dummySkillGroupMap,
         level: 1,
@@ -282,6 +314,7 @@ describe("generateCareerSkills", () => {
       expect(Object.values(skills1).reduce((sum, v) => sum + v, 0)).toBe(40);
 
       const contextLvl2: CareerSkillsContext = {
+        startingSkills: {},
         career: dummyCareer,
         skillGroupMap: dummySkillGroupMap,
         level: 2,
@@ -292,6 +325,7 @@ describe("generateCareerSkills", () => {
       expect((skills2.s9 ?? 0) + (skills2.s10 ?? 0)).toBeGreaterThan(0);
 
       const contextLvl3: CareerSkillsContext = {
+        startingSkills: {},
         career: dummyCareer,
         skillGroupMap: dummySkillGroupMap,
         level: 3,
@@ -302,6 +336,7 @@ describe("generateCareerSkills", () => {
       expect((skills3.s11 ?? 0) + (skills3.s12 ?? 0)).toBeGreaterThan(0);
 
       const contextLvl4: CareerSkillsContext = {
+        startingSkills: {},
         career: dummyCareer,
         skillGroupMap: dummySkillGroupMap,
         level: 4,
@@ -315,6 +350,45 @@ describe("generateCareerSkills", () => {
       const careerSkillsAll = ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12"];
       const qualifiedSkills = careerSkillsAll.filter((id) => (skills4[id] ?? 0) >= 15);
       expect(qualifiedSkills.length).toBeGreaterThanOrEqual(8);
+    });
+
+    test("a group career skill may pick a skill the character already has only from species skills", () => {
+      const career = new Career({
+        id: "c_species",
+        level1: { ...copyCareerLevel(zeroCareerLevel), skills: new Set(["melee_brawling"]) },
+        level2: { ...copyCareerLevel(zeroCareerLevel), skills: new Set(["melee"]) },
+      });
+      const context: CareerSkillsContext = {
+        // Melee (Basic) comes from species skills only, so the Melee (Any) placeholder may still pick it.
+        startingSkills: { melee_basic: 5 },
+        career,
+        skillGroupMap: { melee: ["melee_basic", "melee_brawling"] },
+        level: 2,
+      };
+
+      const [skills] = generateCareerSkills(context, getSelectRandomTest(0));
+
+      // Level 2 budget of 30 advances goes to the group pick, Melee (Basic), on top of its 5 species advances.
+      expect(skills.melee_basic).toBe(5 + 30);
+    });
+
+    test("a group career skill never picks a skill the career already has, even if it is also a species skill", () => {
+      const career = new Career({
+        id: "c_species_career",
+        level1: { ...copyCareerLevel(zeroCareerLevel), skills: new Set(["melee_basic"]) },
+        level2: { ...copyCareerLevel(zeroCareerLevel), skills: new Set(["melee"]) },
+      });
+      const context: CareerSkillsContext = {
+        startingSkills: { melee_basic: 5 },
+        career,
+        skillGroupMap: { melee: ["melee_basic", "melee_brawling"] },
+        level: 2,
+      };
+
+      const [skills] = generateCareerSkills(context, getSelectRandomTest(0));
+
+      // Melee (Basic) is a level 1 career skill, so Melee (Any) at level 2 resolves to Melee (Brawling).
+      expect(skills.melee_brawling).toBe(30);
     });
 
     test("does not advance species skills unless they are in the career, even up to Level 4", () => {

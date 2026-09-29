@@ -1,9 +1,9 @@
 import { Talent } from "../talent.ts";
-import { Career, getCareerAttributesByLevel, getCareerTalentsByLevel } from "../career.ts";
+import { Career, GenerationLevel, getCareerAttributesByLevel, getCareerTalentsByLevel } from "../career.ts";
 import { Attributes, copyAttributes, getAttributes, multiplyAttributes, sumAttributes } from "../attributes.ts";
 import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
-import { EntityGroupMap } from "./resolveEntityGroups.ts";
+import { EntityGroupMap, GroupPicker } from "./resolveEntityGroups.ts";
 
 // Number of free attribute advances received at character creation (Level 1)
 const STARTING_ATTRIBUTE_ADVANCES = 5;
@@ -27,13 +27,15 @@ const HIGHER_LEVEL_CAREER_TALENTS = 2;
 // In WFRP 4e, talent advances cost 100 XP per new rank (rank 1 = 100, rank 2 = 200, etc.)
 const TALENT_XP_COST_PER_RANK = 100;
 
+const HIGHER_LEVELS = [2, 3, 4] as const;
+
 export interface CareerTalentsContext {
   career: Career;
   baseAtts: Attributes;
   talents: Talent[];
   talentGroupMap: EntityGroupMap;
-  level: 1 | 2 | 3 | 4;
-  startingTalents?: Record<string, number>;
+  level: GenerationLevel;
+  startingTalents: Record<string, number>;
 }
 
 /**
@@ -47,11 +49,10 @@ export function calculateTalentAttributeModifiers(
   let totalModifiers = getAttributes();
 
   for (const talent of allTalents) {
-    const rank = acquiredTalents[talent.id];
-    if (rank && rank > 0) {
+    if (talent.id in acquiredTalents) {
       totalModifiers = sumAttributes(
         totalModifiers,
-        multiplyAttributes(rank, copyAttributes(talent.modifiers.attributes)),
+        multiplyAttributes(acquiredTalents[talent.id], copyAttributes(talent.modifiers.attributes)),
       );
     }
   }
@@ -88,17 +89,13 @@ export function resolveAvailableTalents(
   talentGroupMap: EntityGroupMap,
   selectRandomFn: SelectRandomFn,
 ): string[] {
-  const availableGroupMembers: EntityGroupMap = Object.fromEntries(
-    Object.entries(talentGroupMap).map(([group, members]) => [group, [...members]]),
-  );
+  const groupPicker = new GroupPicker(talentGroupMap, selectRandomFn);
   const resolvedTalents: string[] = [];
 
   for (const talent of careerTalents) {
-    if (talent in availableGroupMembers) {
-      const candidates = availableGroupMembers[talent];
-      if (candidates.length > 0) {
-        const chosenTalent = selectRandomFn(candidates);
-        availableGroupMembers[talent] = candidates.filter((id) => id !== chosenTalent);
+    if (groupPicker.isGroup(talent)) {
+      const chosenTalent = groupPicker.pick(talent, []);
+      if (chosenTalent !== null) {
         resolvedTalents.push(chosenTalent);
       }
     } else {
@@ -148,7 +145,7 @@ export function allocateCareerTalents(
     const chosenTalent = selectRandomFn(eligibleTalents);
     totalXpSpent += purchaseSingleTalentAdvance(talents, chosenTalent);
 
-    if ((talents[chosenTalent] ?? 0) >= maxRanks[chosenTalent]) {
+    if (talents[chosenTalent] >= maxRanks[chosenTalent]) {
       eligibleTalents = eligibleTalents.filter((id) => id !== chosenTalent);
     }
   }
@@ -173,7 +170,7 @@ export function generateCareerTalents(
   const careerAttributesByLevel = getCareerAttributesByLevel(context.career);
   const { talentGroupMap } = context;
 
-  const talents: Record<string, number> = context.startingTalents ? { ...context.startingTalents } : {};
+  const talents: Record<string, number> = { ...context.startingTalents };
   let advances: Attributes = getAttributes();
   let totalXpSpent = 0;
 
@@ -212,7 +209,7 @@ export function generateCareerTalents(
   let accumulatedCareerAttributes = [...level1Attributes];
 
   // 2b. Advance through each subsequent career level:
-  for (let level = 2; level <= context.level; ++level) {
+  for (const level of HIGHER_LEVELS.filter((l) => l <= context.level)) {
     const levelIndex = level - 1;
 
     // Prerequisite Attribute Threshold:
