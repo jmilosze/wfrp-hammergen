@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Skill } from "../services/wh/skill.ts";
 import { generateSpeciesSkills } from "../services/wh/characterGeneration/generateSpeciesSkills.ts";
 import { resolveEntityGroups } from "../services/wh/characterGeneration/resolveEntityGroups.ts";
+import { selectRandom } from "../utils/random.ts";
 import { getSelectRandomTest } from "./commonTests.ts";
 
 describe("generateSpeciesSkills", () => {
@@ -66,6 +67,65 @@ describe("generateSpeciesSkills", () => {
     const hasArtSubskill = "art_painting" in result || "art_sculpture" in result;
     expect(hasMeleeSubskill).toBe(true);
     expect(hasArtSubskill).toBe(true);
+  });
+
+  test("throws when the species lists fewer than 6 different skills", () => {
+    expect(() => generateSpeciesSkills(["s1", "s2", "s3", "s4", "s5"], {}, getSelectRandomTest(0))).toThrow(
+      "species skills must provide 6 different skills",
+    );
+  });
+
+  test("throws when duplicates leave fewer than 6 different skills", () => {
+    expect(() => generateSpeciesSkills(["s1", "s2", "s3", "s4", "s5", "s1"], {}, getSelectRandomTest(0))).toThrow(
+      "species skills must provide 6 different skills",
+    );
+  });
+
+  test("a group never resolves to a skill the species lists by name", () => {
+    const groups = { language: ["lang_reikspiel", "lang_bretonnian"] };
+    const speciesCandidates = ["lang_reikspiel", "language", "s1", "s2", "s3", "s4"];
+
+    // Selecting index 0 makes the group draw Reikspiel first, which must be rejected.
+    const result = generateSpeciesSkills(speciesCandidates, groups, getSelectRandomTest(0));
+
+    expect(result).toEqual({ lang_reikspiel: 3, lang_bretonnian: 3, s1: 3, s2: 5, s3: 5, s4: 5 });
+  });
+
+  test("always generates 6 different skills when a named skill and a group overlap", () => {
+    const groups = { language: ["lang_reikspiel", "lang_bretonnian"] };
+    const speciesCandidates = ["lang_reikspiel", "language", "s1", "s2", "s3", "s4"];
+
+    for (let i = 0; i < 200; ++i) {
+      const result = generateSpeciesSkills(speciesCandidates, groups, selectRandom);
+      expect(Object.keys(result).sort()).toEqual(["lang_bretonnian", "lang_reikspiel", "s1", "s2", "s3", "s4"]);
+    }
+  });
+
+  test("two groups sharing a skill never both resolve to it", () => {
+    const groups = { melee: ["melee_basic"], combat: ["melee_basic", "melee_brawling"] };
+    const speciesCandidates = ["melee", "combat", "s1", "s2", "s3", "s4"];
+
+    const result = generateSpeciesSkills(speciesCandidates, groups, getSelectRandomTest(0));
+
+    expect(Object.keys(result).sort()).toEqual(["melee_basic", "melee_brawling", "s1", "s2", "s3", "s4"]);
+  });
+
+  test("skips a group with no new skill left and picks another species skill instead", () => {
+    const groups = { language: ["lang_reikspiel"] };
+    const speciesCandidates = ["lang_reikspiel", "language", "s1", "s2", "s3", "s4", "s5"];
+
+    const result = generateSpeciesSkills(speciesCandidates, groups, getSelectRandomTest(0));
+
+    expect(Object.keys(result).sort()).toEqual(["lang_reikspiel", "s1", "s2", "s3", "s4", "s5"]);
+  });
+
+  test("throws when groups can't provide enough different skills", () => {
+    const groups = { language: ["lang_reikspiel"] };
+    const speciesCandidates = ["lang_reikspiel", "language", "s1", "s2", "s3", "s4"];
+
+    expect(() => generateSpeciesSkills(speciesCandidates, groups, getSelectRandomTest(0))).toThrow(
+      "species skills must provide 6 different skills",
+    );
   });
 
   test("returns empty record when speciesSkills is undefined", () => {

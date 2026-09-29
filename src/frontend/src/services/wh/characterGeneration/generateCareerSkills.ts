@@ -107,6 +107,10 @@ export function allocateStartingCareerAdvances(
 /**
  * Ensures at least 8 career skills from previous levels have reached
  * the prerequisite threshold of (level - 1) * 5 advances, spending XP for each advance.
+ *
+ * The 8 skills are chosen at random rather than cheapest-first. This is deliberate: the generator
+ * produces varied NPCs, so XP spent to reach a level differs between characters instead of always
+ * being the minimum.
  */
 export function satisfyLevelPrerequisites(
   skills: Record<string, number>,

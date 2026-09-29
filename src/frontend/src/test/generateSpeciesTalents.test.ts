@@ -5,6 +5,7 @@ import {
   SpeciesTalents,
 } from "../services/wh/characterGeneration/generateSpeciesTalents.ts";
 import { EntityGroupMap } from "../services/wh/characterGeneration/resolveEntityGroups.ts";
+import { rollDice, selectRandom } from "../utils/random.ts";
 import { getRollDiceTest, getSelectRandomTest } from "./commonTests.ts";
 
 describe("generateSpeciesTalents returns expected talents", () => {
@@ -317,5 +318,76 @@ describe("generateSpeciesTalents throws exception if speciesTalents is invalid",
     expect(() => {
       generateSpeciesTalents(speciesTalents, groupTalents, randomTalents, getSelectRandomTest(0), getRollDiceTest(20));
     }).toThrow("invalid species talents object");
+  });
+});
+
+describe("generateSpeciesTalents never loses a talent the species gets by name", () => {
+  const randomTalents: RandomTalents = [
+    { id: "luck", minRoll: 1, maxRoll: 26 },
+    { id: "savvy", minRoll: 26, maxRoll: 51 },
+    { id: "acute_sense", minRoll: 51, maxRoll: 76 },
+    { id: "hardy", minRoll: 76, maxRoll: 101 },
+  ];
+  const groupTalents: EntityGroupMap = { acute_sense: ["acute_sight", "acute_taste"] };
+
+  test("a random pick skips a named talent listed after it", () => {
+    // Roll 10 lands on Luck, which the species gets by name, so the random pick rolls again and gets Savvy.
+    const result = generateSpeciesTalents(
+      ["random", "luck", "doomed"],
+      groupTalents,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollDiceTest(10),
+    );
+    expect(result).toEqual({ luck: 1, doomed: 1, savvy: 1 });
+  });
+
+  test("a group pick skips a named talent listed after it", () => {
+    const result = generateSpeciesTalents(
+      ["acute_sense", "acute_sight", "doomed"],
+      groupTalents,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollDiceTest(10),
+    );
+    expect(result).toEqual({ acute_sight: 1, doomed: 1, acute_taste: 1 });
+  });
+
+  test("a random pick that lands on a group skips a named talent listed after it", () => {
+    // Roll 60 lands on the Acute Sense group; Sight is named, so the group gives Taste.
+    const result = generateSpeciesTalents(
+      ["random", "acute_sight", "doomed"],
+      groupTalents,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollDiceTest(60),
+    );
+    expect(result).toEqual({ acute_sight: 1, doomed: 1, acute_taste: 1 });
+  });
+
+  test("a random pick skips a talent chosen from a later choice", () => {
+    // The "savvy,suave" choice picks Savvy, so the random roll that lands on Savvy rolls again.
+    const result = generateSpeciesTalents(
+      ["random", "savvy,suave"],
+      groupTalents,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollDiceTest(30),
+    );
+    expect(result).toEqual({ savvy: 1, acute_sight: 1 });
+  });
+
+  test("always gives one talent per species entry, whatever the order", () => {
+    for (let i = 0; i < 200; ++i) {
+      const result = generateSpeciesTalents(
+        ["random", "random", "luck", "doomed"],
+        groupTalents,
+        randomTalents,
+        selectRandom,
+        rollDice,
+      );
+      expect(Object.keys(result).length).toBe(4);
+      expect(result.luck).toBe(1);
+    }
   });
 });

@@ -29,24 +29,27 @@ export function generateSpeciesTalents(
     throw new Error("invalid species talents object");
   }
 
-  const talents: string[] = [];
   const groupPicker = new GroupPicker(groupTalents, selectRandomFn);
   const randomTalentPicker = new RandomTalentPicker(randomTalents, rollDiceFn, groupPicker);
 
-  for (const speciesTalent of speciesTalents) {
-    const talent = chooseTalent(speciesTalent, selectRandomFn);
-    if (talent === "random") {
-      const pickedTalent = randomTalentPicker.pickFromRandom(talents);
-      if (pickedTalent !== null) {
-        talents.push(pickedTalent);
-      }
-    } else if (groupPicker.isGroup(talent)) {
-      const pickedTalent = groupPicker.pick(talent, talents);
-      if (pickedTalent !== null) {
-        talents.push(pickedTalent);
-      }
-    } else {
-      talents.push(talent);
+  // Settle every "A,B" choice first, then add named talents before group and random picks.
+  // Group and random picks skip talents already taken, so they can never take a talent
+  // the species gets by name, whatever order the species talents are listed in.
+  const chosenTalents = speciesTalents.map((speciesTalent) => chooseTalent(speciesTalent, selectRandomFn));
+  const talents = chosenTalents.filter((talent) => talent !== "random" && !groupPicker.isGroup(talent));
+
+  for (const group of chosenTalents.filter((talent) => groupPicker.isGroup(talent))) {
+    const pickedTalent = groupPicker.pick(group, talents);
+    if (pickedTalent !== null) {
+      talents.push(pickedTalent);
+    }
+  }
+
+  const randomTalentCount = chosenTalents.filter((talent) => talent === "random").length;
+  for (let i = 0; i < randomTalentCount; ++i) {
+    const pickedTalent = randomTalentPicker.pickFromRandom(talents);
+    if (pickedTalent !== null) {
+      talents.push(pickedTalent);
     }
   }
 
