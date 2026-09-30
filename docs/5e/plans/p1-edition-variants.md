@@ -1,6 +1,6 @@
 # Plan P1 — Migrate content documents to the edition-variant format
 
-Status: **in progress** (2026-09-30) — maintenance mode deployed (step 5); migration and DB scripts written and tested on a copy of the 29-09-2026 dump (steps 2–3); MongoDB layer (step 1) next. Tracker item: C1a.
+Status: **in progress** (2026-09-30) — maintenance mode deployed (step 5); migration and DB scripts (steps 2–3), MongoDB layer and tests (steps 1, 4) done and tested; rollout (step 6) next: local → staging → production. Tracker item: C1a.
 
 ## Goal
 
@@ -57,7 +57,7 @@ Content collections (mutation, spell, prayer, property, item, talent, skill, car
 - Update `internal/dependencies/mongodb/wh_test.go` for the new document shape.
 - Mock data seeds go through the DB layer, so they need no changes.
 - `internal/services/wh_test.go`, integration tests (`test/integration/*`) and frontend tests should pass **unchanged** — that is the check that nothing user-visible changed.
-- Add a DB-layer test that `Update` keeps other keys under `editions` intact (simulate a `"5e"` key inserted directly).
+- Add DB-layer tests against a real MongoDB (`HAMMERGEN_TEST_MONGODB_URI`) for the new document shape on create/update/retrieve, including that `Update` keeps other keys under `editions` intact (simulate a `"5e"` key inserted directly).
 
 ### 5. Maintenance mode (separate PR, ships first)
 - Backend: env `HAMMERGEN_MAINTENANCE_ENABLED` (default `false`). When `true`, every route except `GET /api/status` returns 503 `{"message":"maintenance"}` (after CORS, so browsers can read it). `GET /api/status` returns `{"data":{"maintenance":bool}}`.
