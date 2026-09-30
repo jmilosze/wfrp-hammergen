@@ -108,16 +108,27 @@ func (f *fakeWhDb) Update(_ context.Context, _ wh.WhType, w *wh.Wh, _ string) (*
 	return w, nil
 }
 
-func TestUpdateCharacterEditionCannotChange(t *testing.T) {
-	db := &fakeWhDb{existing: &wh.Wh{Id: "id1", OwnerId: "user1", Edition: wh.Edition4e, Object: &wh.Character{}}}
+// newMockCharacter returns a copy of a valid mock character with the given edition.
+func newMockCharacter(e wh.Edition) *wh.Character {
+	character := *mock_data.NewMockCharacter()[0].Object.(*wh.Character)
+	character.Edition = e
+	return &character
+}
+
+func newTestWhService(t *testing.T, db wh.WhDbService) *WhService {
 	val, err := validator.NewValidator()
 	if err != nil {
 		t.Fatal(err)
 	}
-	s := NewWhService(val, db)
-	update := &wh.Wh{Id: "id1", Edition: wh.Edition5e, Object: mock_data.NewMockCharacter()[0].Object}
+	return NewWhService(val, db)
+}
 
-	_, err = s.Update(context.Background(), wh.WhTypeCharacter, update, &auth.Claims{Id: "user1"})
+func TestUpdateCharacterEditionCannotChange(t *testing.T) {
+	db := &fakeWhDb{existing: &wh.Wh{Id: "id1", OwnerId: "user1", Object: newMockCharacter(wh.Edition4e)}}
+	s := newTestWhService(t, db)
+
+	update := &wh.Wh{Id: "id1", Object: newMockCharacter(wh.Edition5e)}
+	_, err := s.Update(context.Background(), wh.WhTypeCharacter, update, &auth.Claims{Id: "user1"})
 	if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "cannot be changed") {
 		t.Errorf("expected edition change error, got %v", err)
 	}
@@ -125,11 +136,24 @@ func TestUpdateCharacterEditionCannotChange(t *testing.T) {
 		t.Error("expected character not to be updated")
 	}
 
-	update.Edition = wh.Edition4e
+	update = &wh.Wh{Id: "id1", Object: newMockCharacter(wh.Edition4e)}
 	if _, err = s.Update(context.Background(), wh.WhTypeCharacter, update, &auth.Claims{Id: "user1"}); err != nil {
 		t.Fatalf("expected update with the same edition to succeed, got %v", err)
 	}
 	if !db.updated {
 		t.Error("expected character to be updated")
+	}
+}
+
+func TestCreateCharacterRequiresValidEdition(t *testing.T) {
+	s := newTestWhService(t, nil)
+
+	for _, e := range []wh.Edition{"", "6e"} {
+		t.Run(string(e), func(t *testing.T) {
+			_, err := s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: newMockCharacter(e)}, &auth.Claims{Id: "user1"})
+			if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "Edition") {
+				t.Errorf("expected edition validation error, got %v", err)
+			}
+		})
 	}
 }

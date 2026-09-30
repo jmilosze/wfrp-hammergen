@@ -69,6 +69,7 @@ export interface WhNumber<WhApiData> {
 }
 
 export interface CharacterFullApiData {
+  edition: Edition;
   name: string;
   description: string;
   notes: string;
@@ -348,7 +349,7 @@ export function apiResponseToCharacterFull(
   fullCharacterApi: CharacterApiResponse<CharacterFullApiData>,
 ): CharacterFull {
   // Referenced content is resolved in the character's edition.
-  const e = fullCharacterApi.edition;
+  const e = fullCharacterApi.object.edition;
   const mutationAttributes: Attributes = fullCharacterApi.object.mutations.reduce(
     (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
     getAttributes(),

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Sets `edition: "4e"` on every character without an edition (plan P2, docs/5e/plans/p2-edition-api.md).
+Moves the character edition from the document into the character object (plan P2, docs/5e/plans/p2-edition-api.md).
 
-  before: { _id, ownerid, visibility, object: { ... } }
-  after:  { _id, ownerid, visibility, edition: "4e", object: { ... } }
+  before: { _id, ownerid, visibility, edition: "4e", object: { ... } }
+  after:  { _id, ownerid, visibility, object: { ..., edition: "4e" } }
 
-Idempotent: characters that already have an edition are not touched.
+Idempotent: characters without a top-level edition are not touched.
 """
 import argparse
 import os
@@ -18,37 +18,39 @@ DEFAULT_MONGO_URI = os.environ.get(
 DEFAULT_DB_NAME = os.environ.get("DB_NAME", "hammergenGo")
 
 COLLECTION = "character"
-EDITION = "4e"
+OLD_FIELD = "edition"
+NEW_FIELD = "object.edition"
+EDITIONS = ["4e", "5e"]
 
 
 def counts(db):
     coll = db[COLLECTION]
     return {
         "total": coll.count_documents({}),
-        "without": coll.count_documents({"edition": {"$exists": False}}),
-        "4e": coll.count_documents({"edition": EDITION}),
+        "old": coll.count_documents({OLD_FIELD: {"$exists": True}}),
+        "new": coll.count_documents({NEW_FIELD: {"$in": EDITIONS}}),
     }
 
 
 def print_counts(c):
-    print(f"{'collection':<12} {'total':>8} {'no edition':>12} {'edition 4e':>12}")
-    print(f"{COLLECTION:<12} {c['total']:>8} {c['without']:>12} {c['4e']:>12}")
+    print(f"{'collection':<12} {'total':>8} {OLD_FIELD:>10} {NEW_FIELD:>16}")
+    print(f"{COLLECTION:<12} {c['total']:>8} {c['old']:>10} {c['new']:>16}")
 
 
 def verify(before, after):
     errors = []
     if after["total"] != before["total"]:
         errors.append(f"total changed from {before['total']} to {after['total']}")
-    if after["without"] != 0:
-        errors.append(f"{after['without']} character(s) still have no edition")
-    if after["4e"] != after["total"]:
-        errors.append(f"{after['total'] - after['4e']} character(s) have an edition other than '{EDITION}'")
+    if after["old"] != 0:
+        errors.append(f"{after['old']} character(s) still have '{OLD_FIELD}'")
+    if after["new"] != after["total"]:
+        errors.append(f"{after['total'] - after['new']} character(s) have no valid '{NEW_FIELD}'")
     return errors
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description=f"Set edition '{EDITION}' on characters without an edition."
+        description=f"Move '{OLD_FIELD}' to '{NEW_FIELD}' on characters."
     )
     parser.add_argument(
         "--uri",
@@ -78,7 +80,7 @@ def main():
     before = counts(db)
     print_counts(before)
 
-    to_migrate = before["without"]
+    to_migrate = before["old"]
     print(f"\nCharacters to migrate: {to_migrate}")
 
     if args.dry_run:
@@ -89,7 +91,7 @@ def main():
     else:
         try:
             confirmation = (
-                input(f"Set edition '{EDITION}' on {to_migrate} character(s) in '{args.db}'? (type 'yes' to confirm): ")
+                input(f"Move '{OLD_FIELD}' to '{NEW_FIELD}' on {to_migrate} character(s) in '{args.db}'? (type 'yes' to confirm): ")
                 .strip()
                 .lower()
             )
@@ -103,8 +105,8 @@ def main():
 
         print("\nMigrating...")
         res = db[COLLECTION].update_many(
-            {"edition": {"$exists": False}},
-            {"$set": {"edition": EDITION}},
+            {OLD_FIELD: {"$exists": True}},
+            {"$rename": {OLD_FIELD: NEW_FIELD}},
         )
         print(f"  - {COLLECTION}: migrated {res.modified_count} character(s)")
 

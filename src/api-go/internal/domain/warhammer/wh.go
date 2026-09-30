@@ -2,6 +2,7 @@ package warhammer
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Visibility int
@@ -19,7 +20,16 @@ func getAllowedVisibilityValues() string {
 func GetWhValidationAliases() map[string]string {
 	return map[string]string{
 		"visibility_valid": fmt.Sprintf("oneof=%s", getAllowedVisibilityValues()),
+		"edition_valid":    fmt.Sprintf("oneof=%s", getAllowedEditionValues()),
 	}
+}
+
+func getAllowedEditionValues() string {
+	values := make([]string, len(Editions))
+	for i, e := range Editions {
+		values[i] = string(e)
+	}
+	return strings.Join(values, " ")
 }
 
 type Edition string
@@ -36,12 +46,11 @@ type WhObject interface {
 }
 
 // Wh is a content document or a character.
-// Content holds its edition variants in Editions. A character has one fixed Edition and its data in Object.
+// Content holds its edition variants in Editions. A character holds its data, including its fixed edition, in Object.
 type Wh struct {
 	Id         string               `json:"id"`
 	OwnerId    string               `json:"ownerId"`
 	Visibility Visibility           `json:"visibility" validate:"visibility_valid"`
-	Edition    Edition              `json:"edition,omitempty"`
 	Object     WhObject             `json:"object,omitempty"`
 	Editions   map[Edition]WhObject `json:"editions,omitempty" validate:"dive"`
 }
@@ -105,7 +114,6 @@ func (w *Wh) CopyHeaders() *Wh {
 		Id:         w.Id,
 		OwnerId:    w.OwnerId,
 		Visibility: w.Visibility,
-		Edition:    w.Edition,
 	}
 }
 

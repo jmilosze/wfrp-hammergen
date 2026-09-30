@@ -18,12 +18,11 @@ type WhDbService struct {
 }
 
 // Content documents store each edition variant under editions.<edition>.
-// Characters have a single fixed edition in edition and store their data under object.
+// Characters store their data, including their fixed edition, under object.
 type whDocWrite struct {
 	Id         bson.ObjectID                            `bson:"_id"`
 	OwnerId    string                                   `bson:"ownerid"`
 	Visibility warhammer.Visibility                     `bson:"visibility"`
-	Edition    warhammer.Edition                        `bson:"edition,omitempty"`
 	Object     warhammer.WhObject                       `bson:"object,omitempty"`
 	Editions   map[warhammer.Edition]warhammer.WhObject `bson:"editions,omitempty"`
 }
@@ -32,7 +31,6 @@ type whDocRead struct {
 	Id         bson.ObjectID                  `bson:"_id"`
 	OwnerId    string                         `bson:"ownerid"`
 	Visibility warhammer.Visibility           `bson:"visibility"`
-	Edition    warhammer.Edition              `bson:"edition"`
 	Object     bson.Raw                       `bson:"object"`
 	Editions   map[warhammer.Edition]bson.Raw `bson:"editions"`
 }
@@ -46,7 +44,7 @@ func editionQuery(t warhammer.WhType, e warhammer.Edition) bson.M {
 	if warhammer.HasEditions(t) {
 		return bson.M{variantPath(e): bson.M{"$exists": true}}
 	}
-	return bson.M{"edition": e}
+	return bson.M{"object.edition": e}
 }
 
 func NewWhDbService(db *DbService, createIndex bool) (*WhDbService, error) {
@@ -91,7 +89,6 @@ func newWhDocWrite(t warhammer.WhType, w *warhammer.Wh) (*whDocWrite, error) {
 	if warhammer.HasEditions(t) {
 		whDoc.Editions = w.Editions
 	} else {
-		whDoc.Edition = w.Edition
 		whDoc.Object = w.Object
 	}
 
@@ -285,7 +282,6 @@ func whDocToWh(doc *whDocRead, t warhammer.WhType, e warhammer.Edition) (*warham
 	}
 
 	if !warhammer.HasEditions(t) {
-		wh.Edition = doc.Edition
 		wh.Object = warhammer.NewWhObject(t)
 		if err := bson.Unmarshal(doc.Object, wh.Object); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal object: %w", err)

@@ -20,6 +20,7 @@ import { CharacterApiResponse, Visibility } from "../services/wh/common.ts";
 import { SpellLabel, SpellType } from "../services/wh/spell.ts";
 
 const characterFullApiData: CharacterFullApiData = {
+  edition: "4e",
   name: "charDisplay",
   species: SpeciesWithRegion.WoodElfDefault,
   fate: 1,
@@ -970,7 +971,6 @@ const characterFullApiData: CharacterFullApiData = {
 const characterFullApiResponse: CharacterApiResponse<CharacterFullApiData> = {
   id: "id",
   ownerId: "owner",
-  edition: "4e",
   visibility: Visibility.Shared,
   object: characterFullApiData,
 };

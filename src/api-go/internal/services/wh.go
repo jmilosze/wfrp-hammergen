@@ -102,8 +102,15 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, fmt.Errorf("unauthorized to update wh %s: %w", w.Id, domain.ErrNotFound)
 	}
 
-	if !wh.HasEditions(t) && existingWh.Edition != w.Edition {
-		return nil, fmt.Errorf("%w: edition of wh %s cannot be changed", domain.ErrInvalidArguments, w.Id)
+	if t == wh.WhTypeCharacter {
+		existingChar, okExisting := existingWh.Object.(*wh.Character)
+		updatedChar, okUpdated := w.Object.(*wh.Character)
+		if !okExisting || !okUpdated {
+			return nil, fmt.Errorf("failed to cast object to character")
+		}
+		if existingChar.Edition != updatedChar.Edition {
+			return nil, fmt.Errorf("%w: edition of wh %s cannot be changed", domain.ErrInvalidArguments, w.Id)
+		}
 	}
 
 	w.OwnerId = existingWh.OwnerId
@@ -334,7 +341,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edit
 		}
 		fullCharacter := v.CopyHeaders()
 		var err error
-		fullCharacter.Object, err = character.ToFull(e, components[wh.WhTypeItem].wh, components[wh.WhTypeSkill].wh, components[wh.WhTypeTalent].wh, components[wh.WhTypeMutation].wh, components[wh.WhTypeSpell].wh, components[wh.WhTypePrayer].wh, components[wh.WhTypeTrait].wh, components[wh.WhTypeCareer].wh)
+		fullCharacter.Object, err = character.ToFull(components[wh.WhTypeItem].wh, components[wh.WhTypeSkill].wh, components[wh.WhTypeTalent].wh, components[wh.WhTypeMutation].wh, components[wh.WhTypeSpell].wh, components[wh.WhTypePrayer].wh, components[wh.WhTypeTrait].wh, components[wh.WhTypeCareer].wh)
 		if err != nil {
 			return nil, fmt.Errorf("failed convert wh-character to full character: %w", err)
 		}

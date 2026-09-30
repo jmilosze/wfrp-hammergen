@@ -7,6 +7,7 @@ import (
 )
 
 type Character struct {
+	Edition           Edition          `json:"edition" validate:"edition_valid"`
 	Name              string           `json:"name" validate:"name_valid"`
 	Description       string           `json:"description" validate:"desc_valid"`
 	Notes             string           `json:"notes" validate:"desc_valid"`
@@ -72,11 +73,13 @@ func (character *Character) Init() {
 	}
 }
 
-// ToFull resolves the character's references; all content lists hold variants of edition e.
+// ToFull resolves the character's references; all content lists hold variants of the character's edition.
 func (character *Character) ToFull(
-	e Edition, allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh,
+	allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh,
 	allSpells []*Wh, allPrayers []*Wh, allTraits []*Wh, allCareers []*Wh,
 ) (*CharacterFull, error) {
+	e := character.Edition
+
 	if allItems == nil {
 		return nil, errors.New("allItems is nil")
 	}
@@ -132,6 +135,7 @@ func (character *Character) ToFull(
 	}
 
 	fullChar := &CharacterFull{
+		Edition:           character.Edition,
 		Name:              character.Name,
 		Description:       character.Description,
 		Notes:             character.Notes,
@@ -368,6 +372,7 @@ func GetCharacterValidationAliases() map[string]string {
 }
 
 type CharacterFull struct {
+	Edition           Edition          `json:"edition"`
 	Name              string           `json:"name"`
 	Description       string           `json:"description"`
 	Notes             string           `json:"notes"`

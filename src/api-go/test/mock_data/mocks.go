@@ -33,8 +33,6 @@ func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, w
 		if warhammer.HasEditions(t) {
 			newWh.Editions = map[warhammer.Edition]warhammer.WhObject{warhammer.Edition4e: wh.Object}
 			newWh.Object = nil
-		} else {
-			newWh.Edition = warhammer.Edition4e
 		}
 		if _, err := db.Create(ctx, t, &newWh); err != nil {
 			if errors.Is(err, domain.ErrConflict) {

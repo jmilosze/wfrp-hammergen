@@ -10,6 +10,7 @@ var character0 = wh.Wh{
 	Id:      "800000000000000000000000",
 	OwnerId: user1.Id,
 	Object: &wh.Character{
+		Edition:     wh.Edition4e,
 		Name:        "character 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Notes:       "some notes",
@@ -86,6 +87,7 @@ var character1 = wh.Wh{
 	OwnerId:    user0.Id,
 	Visibility: wh.VisibilityPublic,
 	Object: &wh.Character{
+		Edition:       wh.Edition4e,
 		Name:          "character 1",
 		Description:   fmt.Sprintf("owned by %s", user0.Username),
 		Species:       wh.CharacterSpeciesDwarfAltdorf,

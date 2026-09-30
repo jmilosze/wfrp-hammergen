@@ -47,13 +47,13 @@ func newTestCharacter(id string, name string, e warhammer.Edition) *warhammer.Wh
 		Id:         id,
 		OwnerId:    "owner1",
 		Visibility: warhammer.VisibilityPrivate,
-		Edition:    e,
-		Object:     &warhammer.Character{Name: name},
+		Object:     &warhammer.Character{Edition: e, Name: name},
 	}
 }
 
 type testRawObject struct {
-	Name string `bson:"name"`
+	Edition warhammer.Edition `bson:"edition"`
+	Name    string            `bson:"name"`
 }
 
 type testRawDoc struct {
@@ -156,8 +156,8 @@ func TestWhDbCharacterStoresEdition(t *testing.T) {
 
 	doc := rawDoc(t, s, warhammer.WhTypeCharacter, id4e)
 	require.Nil(t, doc.Editions)
-	require.Equal(t, warhammer.Edition4e, doc.Edition)
-	require.Equal(t, &testRawObject{Name: "c 4e"}, doc.Object)
+	require.Empty(t, doc.Edition)
+	require.Equal(t, &testRawObject{Edition: warhammer.Edition4e, Name: "c 4e"}, doc.Object)
 
 	byEdition := func(e warhammer.Edition) map[string]warhammer.Edition {
 		got, err := s.Retrieve(ctx, warhammer.WhTypeCharacter, []string{"owner1"}, nil, warhammer.WhFilter{Edition: e})
@@ -165,8 +165,9 @@ func TestWhDbCharacterStoresEdition(t *testing.T) {
 		res := map[string]warhammer.Edition{}
 		for _, w := range got {
 			require.Nil(t, w.Editions)
-			require.Equal(t, "c "+string(w.Edition), w.Object.(*warhammer.Character).Name)
-			res[w.Id] = w.Edition
+			character := w.Object.(*warhammer.Character)
+			require.Equal(t, "c "+string(character.Edition), character.Name)
+			res[w.Id] = character.Edition
 		}
 		return res
 	}
@@ -235,8 +236,8 @@ func TestWhDbUpdateCharacter(t *testing.T) {
 	require.NoError(t, err)
 
 	doc := rawDoc(t, s, warhammer.WhTypeCharacter, id)
-	require.Equal(t, warhammer.Edition4e, doc.Edition)
-	require.Equal(t, &testRawObject{Name: "c updated"}, doc.Object)
+	require.Empty(t, doc.Edition)
+	require.Equal(t, &testRawObject{Edition: warhammer.Edition4e, Name: "c updated"}, doc.Object)
 	require.Nil(t, doc.Editions)
 }
 

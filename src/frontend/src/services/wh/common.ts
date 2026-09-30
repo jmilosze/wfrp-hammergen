@@ -91,9 +91,8 @@ export interface ApiResponse<WhApiData> extends ApiHeaders {
   editions: Partial<Record<Edition, WhApiData>>;
 }
 
-// Character as returned by the API: a single, fixed edition.
+// Character as returned by the API; its fixed edition is part of the character data.
 export interface CharacterApiResponse<CharacterData> extends ApiHeaders {
-  edition: Edition;
   object: CharacterData;
 }
 

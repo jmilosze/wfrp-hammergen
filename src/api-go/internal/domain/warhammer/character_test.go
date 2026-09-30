@@ -33,12 +33,12 @@ func TestIdNumberToWhNumber(t *testing.T) {
 }
 
 func TestCharacterToFullMissingCareer(t *testing.T) {
-	character := &Character{Career: IdNumber{Id: missingId, Number: 2}}
+	character := &Character{Edition: Edition4e, Career: IdNumber{Id: missingId, Number: 2}}
 	character.Init()
 
 	// Repeat to make sure the result does not depend on map iteration order.
 	for range 20 {
-		full, err := character.ToFull(Edition4e, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, testCareers())
+		full, err := character.ToFull([]*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, testCareers())
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}

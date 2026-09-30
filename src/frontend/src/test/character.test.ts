@@ -9,6 +9,7 @@ import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { getAttributes } from "../services/wh/attributes.ts";
 
 const characterApiData: CharacterApiData = {
+  edition: "4e",
   name: "char name",
   description: "character 1",
   notes: "some notes",
@@ -64,7 +65,6 @@ const characterApiData: CharacterApiData = {
 const characterApiResponse: CharacterApiResponse<CharacterApiData> = {
   id: "id",
   ownerId: "owner",
-  edition: "4e",
   visibility: Visibility.Shared,
   object: characterApiData,
 };

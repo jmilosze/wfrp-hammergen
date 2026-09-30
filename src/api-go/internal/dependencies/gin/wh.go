@@ -39,11 +39,10 @@ func parseOptionalEdition(c *gin.Context) (warhammer.Edition, bool) {
 }
 
 // parseWhWrite decodes a create/update body: {visibility, editions: {<edition>: {...}}} for content,
-// {visibility, edition, ...character fields} for characters.
+// {visibility, ...character fields} for characters.
 func parseWhWrite(t warhammer.WhType, reqData []byte) (*warhammer.Wh, error) {
 	var reqTop struct {
 		Visibility *warhammer.Visibility                 `json:"visibility"`
-		Edition    *warhammer.Edition                    `json:"edition"`
 		Editions   map[warhammer.Edition]json.RawMessage `json:"editions"`
 	}
 	if err := json.Unmarshal(reqData, &reqTop); err != nil {
@@ -55,10 +54,6 @@ func parseWhWrite(t warhammer.WhType, reqData []byte) (*warhammer.Wh, error) {
 	whWrite := warhammer.Wh{Visibility: *reqTop.Visibility}
 
 	if !warhammer.HasEditions(t) {
-		if reqTop.Edition == nil || !slices.Contains(warhammer.Editions, *reqTop.Edition) {
-			return nil, errInvalidEdition
-		}
-		whWrite.Edition = *reqTop.Edition
 		whWrite.Object = warhammer.NewWhObject(t)
 		if err := json.Unmarshal(reqData, whWrite.Object); err != nil {
 			return nil, err

@@ -213,37 +213,19 @@ func TestWhContentWriteRejectsInvalidBody(t *testing.T) {
 	}
 }
 
-func TestWhCharacterWriteParsesEdition(t *testing.T) {
+func TestWhCharacterWriteParsesEditionInObject(t *testing.T) {
 	ws := &mockWhService{}
 	w := serveWh(newWhTestRouter(ws), "POST", "/api/wh/character", `{"visibility":0,"edition":"4e","name":"c"}`)
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected status 200, got %d: %s", w.Code, w.Body.String())
 	}
-	if ws.written.Edition != warhammer.Edition4e || ws.written.Editions != nil {
+	if ws.written.Editions != nil {
 		t.Fatalf("unexpected written wh %+v", ws.written)
 	}
-	if ws.written.Object.(*warhammer.Character).Name != "c" {
-		t.Fatalf("unexpected character %+v", ws.written.Object)
-	}
-}
-
-func TestWhCharacterWriteRequiresValidEdition(t *testing.T) {
-	for name, body := range map[string]string{
-		"no edition":      `{"visibility":0,"name":"c"}`,
-		"invalid edition": `{"visibility":0,"edition":"6e","name":"c"}`,
-	} {
-		t.Run(name, func(t *testing.T) {
-			ws := &mockWhService{}
-			w := serveWh(newWhTestRouter(ws), "POST", "/api/wh/character", body)
-
-			if w.Code != http.StatusBadRequest {
-				t.Fatalf("expected status 400, got %d", w.Code)
-			}
-			if ws.called {
-				t.Fatal("expected service not to be called")
-			}
-		})
+	character := ws.written.Object.(*warhammer.Character)
+	if character.Name != "c" || character.Edition != warhammer.Edition4e {
+		t.Fatalf("unexpected character %+v", character)
 	}
 }
 

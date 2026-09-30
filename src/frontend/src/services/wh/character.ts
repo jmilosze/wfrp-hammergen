@@ -47,6 +47,7 @@ import { Trait } from "./trait.ts";
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
+  edition: Edition;
   name: string;
   description: string;
   notes: string;
@@ -629,6 +630,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
 
 export function modelToApi(character: Character): CharacterApiData {
   return {
+    edition: UI_EDITION,
     name: character.name,
     description: character.description,
     notes: character.notes,
@@ -667,13 +669,8 @@ export interface CharacterApi extends WhApi<Character, CharacterApiResponse<Char
   getElementForDisplay: (id: string, edition: Edition) => Promise<CharacterFull>;
 }
 
-// Characters are sent flat, with their edition next to the character fields.
-function modelToRequest(character: Character): CharacterApiData & { edition: Edition } {
-  return { ...modelToApi(character), edition: UI_EDITION };
-}
-
 export function characterApi(axios: AxiosInstance): CharacterApi {
-  const baseApi = createWhApi(API_BASE_PATH, axios, apiResponseToModel, modelToRequest);
+  const baseApi = createWhApi(API_BASE_PATH, axios, apiResponseToModel, modelToApi);
   return {
     ...baseApi,
     getElementForDisplay: async (id: string, edition: Edition): Promise<CharacterFull> => {

@@ -83,7 +83,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | # | Item | Status | Notes |
 |---|---|---|---|
 | C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ✅ | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); migrated and deployed local → staging → production 2026-09-30; production backup `db/hammergen_30_09_2026_before_p1` |
-| C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | 🟡 | [plans/p2-edition-api.md](plans/p2-edition-api.md); revised design implemented and tested; rollout next |
+| C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | 🟡 | [plans/p2-edition-api.md](plans/p2-edition-api.md); deployed to production; follow-up (character edition in `object`) implemented and tested, rollout next |
 | C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill, prayer classification) | ⬜ | depends on Q-PRAYER, Q-SIZE |
 | C3 | 5e core source | ⬜ | |
 | C4 | Browse/search/filter content by edition in lists (R2) | ⬜ | |
@@ -168,3 +168,4 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-09-30 | P2 implemented: `?edition=` required on content/character routes, `edition` in responses, 5e writes rejected, `migrate_character_editions.py`, frontend passes `UI_EDITION` (`4e`); current vs new API on the production backup gave identical responses apart from `edition` (3,467 requests, 39 users). |
 | 2026-09-30 | P2 revised: content API uses the `editions` map (optional `?edition` filter on reads, editions in payload on writes, PUT merges variants); `full=true` and career search require `edition`; characters keep `{edition, object}`; no 5e write guard. Frontend and backend now ship together. |
 | 2026-09-30 | P2 revised design implemented: `editions` map in content API, `edition` on characters; current vs new API on the production backup identical after mapping `object` ↔ `editions["4e"]` (3,467 requests, 39 users); UI list/view/edit/copy/delete checked against the new API. |
+| 2026-09-30 | P2 deployed to production (top-level character `edition`). Follow-up: character edition moved into the character object (`object.edition`), `migrate_character_editions.py` now renames the field; current vs new API on the production backup identical apart from the edition's position (3,467 requests). |

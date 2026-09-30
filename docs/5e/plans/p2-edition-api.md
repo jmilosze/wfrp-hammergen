@@ -1,6 +1,6 @@
 # Plan P2 — Edition in the API
 
-Status: **in progress** (2026-09-30) — revised design implemented and tested (backend, frontend, tests, regression check on the production backup, UI check against the new API); rollout (step 8) next. Tracker item: C1b.
+Status: **in progress** (2026-09-30) — first version (top-level character `edition`) deployed to production; follow-up moving the character edition into the character object implemented and tested, rollout of the follow-up next. Tracker item: C1b.
 
 ## Goal
 
@@ -12,7 +12,7 @@ Make the API and the frontend's API layer edition-aware, so that 5e content and 
 - **PUT merges variants:** it writes the variants in the payload and leaves others untouched. (The frontend always sends every variant it has, so this is a safety net, not a feature.) Removing a variant is an explicit `DELETE ?edition=E`.
 - **`full=true` requires `edition`**, and references are resolved in that edition.
 - **Career search (`skillId`, `talentId`) requires `edition`**.
-- **Characters keep a single-variant shape** `{id, ownerId, visibility, edition, object}` (option b): a character has exactly one edition, fixed at creation.
+- **Characters keep a single-variant shape** `{id, ownerId, visibility, object}` (option b), with the edition as a field of the character object (`object.edition`, 2026-09-30 follow-up; first deployed as a top-level field): a character has exactly one edition, fixed at creation.
 - **No 5e write guard:** 5e variants can be written. We control the frontend and it will not write 5e until C2/H1; until then a 5e variant is validated with the same rules as 4e (the domain types are shared).
 - Replaces the earlier per-edition decision (option A, `?edition` required on every route and 5e writes rejected).
 
@@ -50,49 +50,50 @@ Response shape: `{id, ownerId, visibility, editions: {"4e": {...}, "5e": {...}}}
 
 ### Characters (`/api/wh/character`)
 
-Response shape: `{id, ownerId, visibility, edition, object}`.
+Response shape: `{id, ownerId, visibility, object: {edition, ...}}`.
 
 | Route | Behaviour |
 |---|---|
 | `GET /api/wh/character[?edition=E]` | All characters, or only characters of edition `E`. |
 | `GET /api/wh/character/:id[?edition=E]` | 404 if the character is not of edition `E`. |
 | `?full=true` | Requires `edition` (same rule as content); references resolved in `E`, which is the character's own edition. |
-| `POST /api/wh/character` | Body as today plus `edition` (required, `4e`/`5e`). |
-| `PUT /api/wh/character/:id` | Body as today plus `edition`; 400 if it differs from the stored edition (edition is immutable). |
+| `POST /api/wh/character` | Body as today (character fields plus `visibility`), with the `edition` character field (required, `4e`/`5e`). |
+| `PUT /api/wh/character/:id` | As POST; 400 if `edition` differs from the stored edition (edition is immutable). |
 | `DELETE /api/wh/character/:id` | Deletes the character. |
 
 ## Steps
 
 ### 1. Backend — domain
 - `Edition` type and values (`4e`, `5e`) — already in place.
-- `Wh` carries content variants as `Editions map[Edition]WhObject` and characters as `Edition` + `Object`; JSON uses `omitempty` so each type only returns its own fields.
+- `Wh` carries content variants as `Editions map[Edition]WhObject` and characters as `Object`; `Character` (and `CharacterFull`) has an `Edition` field validated as `edition_valid`. JSON uses `omitempty` so each type only returns its own fields.
 - Validation runs per variant for content, on `Object` for characters.
 
 ### 2. Backend — HTTP handlers (`internal/dependencies/gin/wh.go`)
 - Optional `edition` on GET/DELETE; required with `full=true` and career `skillId`/`talentId`.
 - Content POST/PUT: parse `{visibility, editions}`, decode each variant into the type's domain object; 400 on no variants or unknown edition key.
-- Character POST/PUT: parse `edition` from the body.
+- Character POST/PUT: the edition is a character field, validated with the rest of the character.
 
 ### 3. Backend — service (`internal/services/wh.go`)
 - `Get` with optional edition; `full=true` passes the edition to nested `Get` calls.
 - Character `Update`: 400 when the payload edition differs from the stored one.
 
 ### 4. Backend — MongoDB layer (`internal/dependencies/mongodb/wh.go`)
-- Retrieve with optional edition: filter `editions.E exists` (content) or `edition: E` (characters) only when given; decode all variants, or just `E`.
-- Create: insert the `editions` map (content) or `edition` + `object` (characters).
+- Retrieve with optional edition: filter `editions.E exists` (content) or `object.edition: E` (characters) only when given; decode all variants, or just `E`.
+- Create: insert the `editions` map (content) or `object` (characters).
 - Update: `$set` `visibility` and `editions.<E>` for each variant in the payload (content); `$set` `object` and `visibility` (characters).
 - Delete: with edition, `$unset` the variant then delete the document if `editions` is empty; without, delete the document.
 - Career skill/talent query on `editions.<E>.levelN.*`.
 
 ### 5. Character migration (`db/scripts/migrate_character_editions.py`)
-- Done: sets `edition: "4e"` on characters without an edition; idempotent, `--dry-run`, confirmation, verification.
+- First version (run on all environments): set a top-level `edition: "4e"` on characters.
+- Follow-up (replaces it): `$rename` `edition` → `object.edition`; idempotent, `--dry-run`, confirmation, verification (no top-level `edition`; every character has `object.edition` of `4e`/`5e`).
 
 ### 6. Frontend — API layer
-- Content `ApiResponse` becomes `{id, ownerId, visibility, editions: Partial<Record<Edition, T>>}`; characters get their own response type with `edition` and `object`.
+- Content `ApiResponse` becomes `{id, ownerId, visibility, editions: Partial<Record<Edition, T>>}`; characters get their own response type with `object`, and `edition` is a field of the character data.
 - Each entity's `apiResponseToModel` reads `editions[UI_EDITION]`; `modelToApi` builds `{visibility, editions: {[UI_EDITION]: …}}`.
 - `createWhApi`: `listElements` / `getElement` take an optional edition; `deleteElement` takes an optional edition; create/update send the payload as built.
 - The UI asks for `UI_EDITION` (`4e`) everywhere it reads content, so it only ever receives the 4e variant; `full=true` and career lookups pass it as required.
-- Character create/update send `edition: UI_EDITION`.
+- Character create/update send `edition: UI_EDITION` as a character field.
 - Deleting from the UI sends `?edition=4e`, so it removes only the 4e variant; a 5e variant (none exist yet) would stay.
 
 ### 7. Tests
@@ -114,11 +115,11 @@ Per environment (local → staging → production):
 
 Browser tabs still running the old frontend break until reloaded — check whether the maintenance page reloads the app when maintenance ends.
 
-Rollback: maintenance on, redeploy the previous backend and frontend (the `edition` field on characters is harmless to them), maintenance off. No restore needed.
+Rollback: maintenance on, redeploy the previous backend and frontend, maintenance off. For the follow-up, also move `object.edition` back to a top-level `edition` (or restore the backup).
 
 ## Done when
-- Content requests/responses use the `editions` map; characters carry `edition`.
-- Every character has `edition: "4e"`.
+- Content requests/responses use the `editions` map; characters carry `edition` in the character object.
+- Every character has `object.edition: "4e"`.
 - The UI works exactly as before, reading and writing `4e` only.
 - Users see no difference.
 
