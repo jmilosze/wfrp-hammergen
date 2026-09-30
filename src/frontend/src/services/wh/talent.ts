@@ -1,7 +1,7 @@
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import { Source, copySource, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, validIntegerFn, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, UI_EDITION, validIntegerFn, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { AttributeName, Attributes, getAttributeValue, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
@@ -28,7 +28,6 @@ export interface TalentApiData {
   isGroup: boolean;
   group: string[];
   modifiers: CharacterModifiersData;
-  visibility?: Visibility;
   source: Source;
 }
 
@@ -131,20 +130,21 @@ export class Talent extends WhEntity {
 }
 
 export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talent {
+  const data = variant(talentApi, UI_EDITION);
   return new Talent({
     id: talentApi.id,
     ownerId: talentApi.ownerId,
     visibility: talentApi.visibility,
-    name: talentApi.object.name,
-    description: talentApi.object.description,
-    tests: talentApi.object.tests,
-    maxRank: talentApi.object.maxRank,
-    attribute: talentApi.object.attribute,
-    attribute2: talentApi.object.attribute2,
-    isGroup: talentApi.object.isGroup,
-    group: new Set(talentApi.object.group),
-    modifiers: new CharacterModifiers(talentApi.object.modifiers),
-    source: talentApi.object.source,
+    name: data.name,
+    description: data.description,
+    tests: data.tests,
+    maxRank: data.maxRank,
+    attribute: data.attribute,
+    attribute2: data.attribute2,
+    isGroup: data.isGroup,
+    group: new Set(data.group),
+    modifiers: new CharacterModifiers(data.modifiers),
+    source: data.source,
   });
 }
 
@@ -159,7 +159,6 @@ export function modelToApi(talent: Talent): TalentApiData {
     isGroup: talent.isGroup,
     group: [...talent.group],
     modifiers: talent.modifiers.toData(),
-    visibility: talent.visibility,
     source: copySource(talent.source),
   };
 }

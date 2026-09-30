@@ -30,6 +30,12 @@ func InitUser(ctx context.Context, db user.UserDbService, bcryptCost int) {
 func seedWh(ctx context.Context, db warhammer.WhDbService, t warhammer.WhType, whs []*warhammer.Wh) {
 	for _, wh := range whs {
 		newWh := *wh
+		if warhammer.HasEditions(t) {
+			newWh.Editions = map[warhammer.Edition]warhammer.WhObject{warhammer.Edition4e: wh.Object}
+			newWh.Object = nil
+		} else {
+			newWh.Edition = warhammer.Edition4e
+		}
 		if _, err := db.Create(ctx, t, &newWh); err != nil {
 			if errors.Is(err, domain.ErrConflict) {
 				slog.Warn("seed wh already exists, skipping")

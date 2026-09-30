@@ -15,7 +15,7 @@ import {
   printAttributeName,
   sumAttributes,
 } from "./attributes.ts";
-import { ApiResponse, Visibility } from "./common.ts";
+import { ApiResponse, CharacterApiResponse, Edition, variant, Visibility } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
 import { TalentApiData } from "./talent.ts";
 import {
@@ -344,19 +344,23 @@ export function newCharacterFull({
   };
 }
 
-export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<CharacterFullApiData>): CharacterFull {
+export function apiResponseToCharacterFull(
+  fullCharacterApi: CharacterApiResponse<CharacterFullApiData>,
+): CharacterFull {
+  // Referenced content is resolved in the character's edition.
+  const e = fullCharacterApi.edition;
   const mutationAttributes: Attributes = fullCharacterApi.object.mutations.reduce(
-    (a, v) => sumAttributes(a, v.object.modifiers.attributes),
+    (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
     getAttributes(),
   );
 
   const traitAttributes: Attributes = fullCharacterApi.object.traits.reduce(
-    (a, v) => sumAttributes(a, v.object.modifiers.attributes),
+    (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
     getAttributes(),
   );
 
   const talentAttributes: Attributes = fullCharacterApi.object.talents.reduce(
-    (a, v) => sumAttributes(a, multiplyAttributes(v.number, v.wh.object.modifiers.attributes)),
+    (a, v) => sumAttributes(a, multiplyAttributes(v.number, variant(v.wh, e).modifiers.attributes)),
     getAttributes(),
   );
 
@@ -369,38 +373,38 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
   );
 
   const sizeModifier: number =
-    fullCharacterApi.object.mutations.reduce((a, v) => a + v.object.modifiers.size, 0) +
-    fullCharacterApi.object.traits.reduce((a, v) => a + v.object.modifiers.size, 0) +
-    fullCharacterApi.object.talents.reduce((a, v) => a + v.number * v.wh.object.modifiers.size, 0);
+    fullCharacterApi.object.mutations.reduce((a, v) => a + variant(v, e).modifiers.size, 0) +
+    fullCharacterApi.object.traits.reduce((a, v) => a + variant(v, e).modifiers.size, 0) +
+    fullCharacterApi.object.talents.reduce((a, v) => a + v.number * variant(v.wh, e).modifiers.size, 0);
   const movementModifier =
-    fullCharacterApi.object.mutations.reduce((a, v) => a + v.object.modifiers.movement, 0) +
-    fullCharacterApi.object.traits.reduce((a, v) => a + v.object.modifiers.movement, 0) +
-    fullCharacterApi.object.talents.reduce((a, v) => a + v.number * v.wh.object.modifiers.movement, 0);
+    fullCharacterApi.object.mutations.reduce((a, v) => a + variant(v, e).modifiers.movement, 0) +
+    fullCharacterApi.object.traits.reduce((a, v) => a + variant(v, e).modifiers.movement, 0) +
+    fullCharacterApi.object.talents.reduce((a, v) => a + v.number * variant(v.wh, e).modifiers.movement, 0);
 
   const size = getSizeFormula(sizeModifier);
 
   const hardyRanks =
     fullCharacterApi.object.mutations.reduce(
-      (a, v) => a + (v.object.modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
+      (a, v) => a + (variant(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
       0,
     ) +
     fullCharacterApi.object.traits.reduce(
-      (a, v) => a + (v.object.modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
+      (a, v) => a + (variant(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
       0,
     ) +
     fullCharacterApi.object.talents.reduce(
-      (a, v) => a + v.number * (v.wh.object.modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
+      (a, v) => a + v.number * (variant(v.wh, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
       0,
     );
 
-  const [basicSkills, advancedSkills] = getSkills(fullCharacterApi.object.skills, attributes);
+  const [basicSkills, advancedSkills] = getSkills(e, fullCharacterApi.object.skills, attributes);
 
-  const equippedArmor = fullCharacterApi.object.equippedItems.filter((x) => x.wh.object.type === ItemType.Armour);
+  const equippedArmor = fullCharacterApi.object.equippedItems.filter((x) => variant(x.wh, e).type === ItemType.Armour);
   const equippedWeapon = fullCharacterApi.object.equippedItems.filter((x) =>
-    [ItemType.Melee, ItemType.Ranged, ItemType.Ammunition].includes(x.wh.object.type),
+    [ItemType.Melee, ItemType.Ranged, ItemType.Ammunition].includes(variant(x.wh, e).type),
   );
   const equippedOther = fullCharacterApi.object.equippedItems.filter((x) =>
-    [ItemType.Container, ItemType.Other].includes(x.wh.object.type),
+    [ItemType.Container, ItemType.Other].includes(variant(x.wh, e).type),
   );
 
   return {
@@ -429,15 +433,15 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
 
     currentCareer: {
       id: fullCharacterApi.object.career.wh.id,
-      name: getCareerName(fullCharacterApi.object.career),
-      levelName: getCareerLevel(fullCharacterApi.object.career),
-      className: printClassName(fullCharacterApi.object.career.wh.object.class),
+      name: getCareerName(e, fullCharacterApi.object.career),
+      levelName: getCareerLevel(e, fullCharacterApi.object.career),
+      className: printClassName(variant(fullCharacterApi.object.career.wh, e).class),
     },
     pastCareers: fullCharacterApi.object.careerPath.map((x) => ({
       id: x.wh.id,
-      name: getCareerName(x),
-      levelName: getCareerLevel(x),
-      className: printClassName(x.wh.object.class),
+      name: getCareerName(e, x),
+      levelName: getCareerLevel(e, x),
+      className: printClassName(variant(x.wh, e).class),
     })),
 
     baseAttributes: fullCharacterApi.object.baseAttributes,
@@ -450,58 +454,58 @@ export function apiResponseToCharacterFull(fullCharacterApi: ApiResponse<Charact
     run: 4 * getMovementFormula(fullCharacterApi.object.species, movementModifier),
     wounds: getWoundsFormula(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
 
-    talents: fullCharacterApi.object.talents.map((x) => ({ id: x.wh.id, name: x.wh.object.name, rank: x.number })),
+    talents: fullCharacterApi.object.talents.map((x) => ({ id: x.wh.id, name: variant(x.wh, e).name, rank: x.number })),
     basicSkills: basicSkills,
     advancedSkills: advancedSkills,
 
-    equippedArmor: getItems(equippedArmor, attributes),
-    equippedWeapon: getItems(equippedWeapon, attributes),
-    equippedOther: getItems(equippedOther, attributes),
-    carried: getItems(fullCharacterApi.object.carriedItems, attributes),
-    stored: getItems(fullCharacterApi.object.storedItems, attributes),
+    equippedArmor: getItems(e, equippedArmor, attributes),
+    equippedWeapon: getItems(e, equippedWeapon, attributes),
+    equippedOther: getItems(e, equippedOther, attributes),
+    carried: getItems(e, fullCharacterApi.object.carriedItems, attributes),
+    stored: getItems(e, fullCharacterApi.object.storedItems, attributes),
 
-    spells: getSpells(fullCharacterApi.object.spells),
-    prayers: getPrayers(fullCharacterApi.object.prayers),
-    traits: getTraits(fullCharacterApi.object.traits),
-    mutations: getMutations(fullCharacterApi.object.mutations),
+    spells: getSpells(e, fullCharacterApi.object.spells),
+    prayers: getPrayers(e, fullCharacterApi.object.prayers),
+    traits: getTraits(e, fullCharacterApi.object.traits),
+    mutations: getMutations(e, fullCharacterApi.object.mutations),
 
-    encWeapon: equippedWeapon.map((x) => x.wh.object.enc * x.number).reduce((x, y) => x + y, 0),
+    encWeapon: equippedWeapon.map((x) => variant(x.wh, e).enc * x.number).reduce((x, y) => x + y, 0),
     encArmor: equippedArmor
-      .map((x) => (x.wh.object.enc > 0 ? x.wh.object.enc - 1 : 0) * x.number)
+      .map((x) => (variant(x.wh, e).enc > 0 ? variant(x.wh, e).enc - 1 : 0) * x.number)
       .reduce((x, y) => x + y, 0),
     encOther: equippedOther
-      .map((x) => (x.wh.object.enc > 0 ? x.wh.object.enc - 1 : 0) * x.number)
+      .map((x) => (variant(x.wh, e).enc > 0 ? variant(x.wh, e).enc - 1 : 0) * x.number)
       .reduce((x, y) => x + y, 0),
-    encCarried: fullCharacterApi.object.carriedItems.map((x) => x.wh.object.enc).reduce((x, y) => x + y, 0),
+    encCarried: fullCharacterApi.object.carriedItems.map((x) => variant(x.wh, e).enc).reduce((x, y) => x + y, 0),
   };
 }
 
-function getCareerName(career: WhNumber<CareerApiData>): string {
-  return `${career.wh.object.name} ${career.number}`;
+function getCareerName(e: Edition, career: WhNumber<CareerApiData>): string {
+  return `${variant(career.wh, e).name} ${career.number}`;
 }
 
-function getCareerLevel(career: WhNumber<CareerApiData>): string {
+function getCareerLevel(e: Edition, career: WhNumber<CareerApiData>): string {
   switch (career.number) {
     case 1:
-      return career.wh.object.level1.name;
+      return variant(career.wh, e).level1.name;
     case 2:
-      return career.wh.object.level2.name;
+      return variant(career.wh, e).level2.name;
     case 3:
-      return career.wh.object.level3.name;
+      return variant(career.wh, e).level3.name;
     case 4:
-      return career.wh.object.level4.name;
+      return variant(career.wh, e).level4.name;
     default:
       return "";
   }
 }
 
-function getSkills(characterSkills: WhNumber<SkillApiData>[], attributes: Attributes) {
+function getSkills(e: Edition, characterSkills: WhNumber<SkillApiData>[], attributes: Attributes) {
   const basicSkills = [] as CharacterFullSkill[];
   const advancedSkills = [] as CharacterFullSkill[];
 
   for (const skill of characterSkills) {
-    const formattedSkill = skillForDisplay(skill.wh, skill.number, attributes);
-    if (skill.wh.object.type === 0) {
+    const formattedSkill = skillForDisplay(e, skill.wh, skill.number, attributes);
+    if (variant(skill.wh, e).type === 0) {
       basicSkills.push(formattedSkill);
     } else {
       advancedSkills.push(formattedSkill);
@@ -512,17 +516,18 @@ function getSkills(characterSkills: WhNumber<SkillApiData>[], attributes: Attrib
 }
 
 function skillForDisplay(
+  e: Edition,
   rawSkill: ApiResponse<SkillApiData>,
   skillRank: number,
   attributes: Attributes,
 ): CharacterFullSkill {
   return {
     id: rawSkill.id,
-    name: rawSkill.object.isGroup ? `${rawSkill.object.name} (Any)` : rawSkill.object.name,
-    attributeName: printAttributeName(rawSkill.object.attribute),
-    attributeValue: getAttributeValue(rawSkill.object.attribute, attributes),
+    name: variant(rawSkill, e).isGroup ? `${variant(rawSkill, e).name} (Any)` : variant(rawSkill, e).name,
+    attributeName: printAttributeName(variant(rawSkill, e).attribute),
+    attributeValue: getAttributeValue(variant(rawSkill, e).attribute, attributes),
     advances: skillRank,
-    skill: getAttributeValue(rawSkill.object.attribute, attributes) + skillRank,
+    skill: getAttributeValue(variant(rawSkill, e).attribute, attributes) + skillRank,
   };
 }
 
@@ -530,59 +535,66 @@ function sortByName(x: { name: string }, y: { name: string }): -1 | 0 | 1 {
   return x.name === y.name ? 0 : x.name < y.name ? -1 : 1;
 }
 
-function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attributes): CharacterFullItem[] {
+function getItems(
+  e: Edition,
+  characterItems: WhNumber<ItemFullApiData>[],
+  attributes: Attributes,
+): CharacterFullItem[] {
   const SB = Math.floor(attributes.S / 10);
   const items = [] as CharacterFullItem[];
 
   for (const charItem of characterItems) {
     const item = {
       id: charItem.wh.id,
-      name: charItem.wh.object.name,
-      enc: charItem.wh.object.enc,
-      qualitiesFlaws: charItem.wh.object.properties.map((x) => ({ name: x.object.name, id: x.id })),
-      runes: charItem.wh.object.runes.map((x) => ({ name: x.wh.object.name, id: x.wh.id, number: x.number })),
+      name: variant(charItem.wh, e).name,
+      enc: variant(charItem.wh, e).enc,
+      qualitiesFlaws: variant(charItem.wh, e).properties.map((x) => ({ name: variant(x, e).name, id: x.id })),
+      runes: variant(charItem.wh, e).runes.map((x) => ({ name: variant(x.wh, e).name, id: x.wh.id, number: x.number })),
       number: charItem.number,
-      description: charItem.wh.object.description,
-      type: printItemType(charItem.wh.object.type),
+      description: variant(charItem.wh, e).description,
+      type: printItemType(variant(charItem.wh, e).type),
     } as CharacterFullItem;
 
-    if (charItem.wh.object.type === ItemType.Melee) {
-      item.group = printMeleeGroup(charItem.wh.object.melee.group);
-      item.rng = printMeleeReach(charItem.wh.object.melee.reach);
-      item.dmg = (charItem.wh.object.melee.dmg + charItem.wh.object.melee.dmgSbMult * SB).toString();
-    } else if (charItem.wh.object.type === ItemType.Ranged) {
-      item.group = printRangedGroup(charItem.wh.object.ranged.group);
-      item.rng = (charItem.wh.object.ranged.rng + charItem.wh.object.ranged.rngSbMult * SB).toString();
-      item.dmg = (charItem.wh.object.ranged.dmg + charItem.wh.object.ranged.dmgSbMult * SB).toString();
-    } else if (charItem.wh.object.type === ItemType.Ammunition) {
+    if (variant(charItem.wh, e).type === ItemType.Melee) {
+      item.group = printMeleeGroup(variant(charItem.wh, e).melee.group);
+      item.rng = printMeleeReach(variant(charItem.wh, e).melee.reach);
+      item.dmg = (variant(charItem.wh, e).melee.dmg + variant(charItem.wh, e).melee.dmgSbMult * SB).toString();
+    } else if (variant(charItem.wh, e).type === ItemType.Ranged) {
+      item.group = printRangedGroup(variant(charItem.wh, e).ranged.group);
+      item.rng = (variant(charItem.wh, e).ranged.rng + variant(charItem.wh, e).ranged.rngSbMult * SB).toString();
+      item.dmg = (variant(charItem.wh, e).ranged.dmg + variant(charItem.wh, e).ranged.dmgSbMult * SB).toString();
+    } else if (variant(charItem.wh, e).type === ItemType.Ammunition) {
       let range =
-        charItem.wh.object.ammunition.rngMult !== 1 ? `Weapon x${charItem.wh.object.ammunition.rngMult}` : "Weapon";
-      if (charItem.wh.object.ammunition.rng > 0) {
-        range += `+${charItem.wh.object.ammunition.rng.toString()}`;
-      } else if (charItem.wh.object.ammunition.rng < 0) {
-        range += `${charItem.wh.object.ammunition.rng.toString()}`;
+        variant(charItem.wh, e).ammunition.rngMult !== 1
+          ? `Weapon x${variant(charItem.wh, e).ammunition.rngMult}`
+          : "Weapon";
+      if (variant(charItem.wh, e).ammunition.rng > 0) {
+        range += `+${variant(charItem.wh, e).ammunition.rng.toString()}`;
+      } else if (variant(charItem.wh, e).ammunition.rng < 0) {
+        range += `${variant(charItem.wh, e).ammunition.rng.toString()}`;
       }
 
       let damage = "Weapon";
-      if (charItem.wh.object.ammunition.dmg > 0) {
-        damage += `+${charItem.wh.object.ammunition.dmg.toString()}`;
-      } else if (charItem.wh.object.ammunition.rng < 0) {
-        damage += `${charItem.wh.object.ammunition.dmg.toString()}`;
+      if (variant(charItem.wh, e).ammunition.dmg > 0) {
+        damage += `+${variant(charItem.wh, e).ammunition.dmg.toString()}`;
+      } else if (variant(charItem.wh, e).ammunition.rng < 0) {
+        damage += `${variant(charItem.wh, e).ammunition.dmg.toString()}`;
       }
 
-      item.group = printAmmoGroup(charItem.wh.object.ammunition.group);
+      item.group = printAmmoGroup(variant(charItem.wh, e).ammunition.group);
       item.rng = range;
       item.dmg = damage;
-    } else if (charItem.wh.object.type === ItemType.Armour) {
-      item.group = printArmourGroup(charItem.wh.object.armour.group);
-      item.locations = charItem.wh.object.armour.location.map((x) => printArmourLocation(x));
-      item.ap = charItem.wh.object.armour.points;
-    } else if (charItem.wh.object.type === ItemType.Grimoire) {
-      item.spells = getSpells(charItem.wh.object.grimoire.spells);
+    } else if (variant(charItem.wh, e).type === ItemType.Armour) {
+      item.group = printArmourGroup(variant(charItem.wh, e).armour.group);
+      item.locations = variant(charItem.wh, e).armour.location.map((x) => printArmourLocation(x));
+      item.ap = variant(charItem.wh, e).armour.points;
+    } else if (variant(charItem.wh, e).type === ItemType.Grimoire) {
+      item.spells = getSpells(e, variant(charItem.wh, e).grimoire.spells);
     } else {
       item.description =
-        (charItem.wh.object.type === ItemType.Container ? `(Capacity ${charItem.wh.object.container.capacity}) ` : "") +
-        charItem.wh.object.description;
+        (variant(charItem.wh, e).type === ItemType.Container
+          ? `(Capacity ${variant(charItem.wh, e).container.capacity}) `
+          : "") + variant(charItem.wh, e).description;
     }
     items.push(item);
   }
@@ -590,44 +602,44 @@ function getItems(characterItems: WhNumber<ItemFullApiData>[], attributes: Attri
   return items;
 }
 
-function getSpells(spells: ApiResponse<SpellApiData>[]): CharacterFullSpell[] {
+function getSpells(e: Edition, spells: ApiResponse<SpellApiData>[]): CharacterFullSpell[] {
   return spells.map((x) => ({
     id: x.id,
-    name: x.object.name,
-    range: x.object.range,
-    target: x.object.target,
-    duration: x.object.duration,
-    description: x.object.description,
-    cn: x.object.cn,
+    name: variant(x, e).name,
+    range: variant(x, e).range,
+    target: variant(x, e).target,
+    duration: variant(x, e).duration,
+    description: variant(x, e).description,
+    cn: variant(x, e).cn,
   }));
 }
 
-function getPrayers(prayers: ApiResponse<PrayerApiData>[]): CharacterFullPrayer[] {
+function getPrayers(e: Edition, prayers: ApiResponse<PrayerApiData>[]): CharacterFullPrayer[] {
   return prayers.map((x) => ({
     id: x.id,
-    name: x.object.name,
-    range: x.object.range,
-    target: x.object.target,
-    duration: x.object.duration,
-    description: x.object.description,
+    name: variant(x, e).name,
+    range: variant(x, e).range,
+    target: variant(x, e).target,
+    duration: variant(x, e).duration,
+    description: variant(x, e).description,
   }));
 }
 
-function getTraits(traits: ApiResponse<TraitApiData>[]): CharacterFullTrait[] {
+function getTraits(e: Edition, traits: ApiResponse<TraitApiData>[]): CharacterFullTrait[] {
   return traits.map((x) => ({
     id: x.id,
-    name: x.object.name,
-    description: x.object.description,
+    name: variant(x, e).name,
+    description: variant(x, e).description,
   }));
 }
 
-function getMutations(mutations: ApiResponse<MutationApiData>[]): CharacterFullMutation[] {
+function getMutations(e: Edition, mutations: ApiResponse<MutationApiData>[]): CharacterFullMutation[] {
   return mutations.map((x) => {
     return {
       id: x.id,
-      name: x.object.name,
-      type: printMutationType(x.object.type),
-      description: x.object.description,
+      name: variant(x, e).name,
+      type: printMutationType(variant(x, e).type),
+      description: variant(x, e).description,
     };
   });
 }

@@ -14,7 +14,9 @@ import {
   sumAttributes,
 } from "./attributes.ts";
 import {
-  ApiResponse,
+  CharacterApiResponse,
+  Edition,
+  UI_EDITION,
   validateIdNumber,
   validAttributesFn,
   validIntegerFn,
@@ -582,7 +584,7 @@ export class Character extends WhEntity {
   }
 }
 
-export function apiResponseToModel(characterApi: ApiResponse<CharacterApiData>): Character {
+export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterApiData>): Character {
   const newCharacter = new Character({
     id: characterApi.id,
     ownerId: characterApi.ownerId,
@@ -661,18 +663,23 @@ export function modelToApi(character: Character): CharacterApiData {
   };
 }
 
-export interface CharacterApi extends WhApi<Character, CharacterApiData> {
-  getElementForDisplay: (id: string) => Promise<CharacterFull>;
+export interface CharacterApi extends WhApi<Character, CharacterApiResponse<CharacterApiData>> {
+  getElementForDisplay: (id: string, edition: Edition) => Promise<CharacterFull>;
+}
+
+// Characters are sent flat, with their edition next to the character fields.
+function modelToRequest(character: Character): CharacterApiData & { edition: Edition } {
+  return { ...modelToApi(character), edition: UI_EDITION };
 }
 
 export function characterApi(axios: AxiosInstance): CharacterApi {
-  const baseApi = createWhApi(API_BASE_PATH, axios, apiResponseToModel, modelToApi);
+  const baseApi = createWhApi(API_BASE_PATH, axios, apiResponseToModel, modelToRequest);
   return {
     ...baseApi,
-    getElementForDisplay: async (id: string): Promise<CharacterFull> => {
-      const { data } = await axios.get<ServerEnvelope<ApiResponse<CharacterFullApiData>>>(
-        `${API_BASE_PATH}/${id}?full=true`,
-      );
+    getElementForDisplay: async (id: string, edition: Edition): Promise<CharacterFull> => {
+      const { data } = await axios.get<ServerEnvelope<CharacterApiResponse<CharacterFullApiData>>>(`${API_BASE_PATH}/${id}`, {
+        params: { full: true, edition },
+      });
       return apiResponseToCharacterFull(data.data);
     },
   };

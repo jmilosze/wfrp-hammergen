@@ -1,43 +1,49 @@
 import { AxiosInstance } from "axios";
-import { ApiResponse, WhApi } from "./common.ts";
+import { ApiHeaders, ApiResponse, ContentRequest, Edition, UI_EDITION, Visibility, WhApi } from "./common.ts";
 
 export interface ServerEnvelope<T> {
   data: T;
 }
 
-export function createWhApi<TModel extends { id: string }, TApiData>(
+export function createWhApi<TModel extends { id: string }, TResponse extends ApiHeaders, TRequest>(
   basePath: string,
   axios: AxiosInstance,
-  toModel: (api: ApiResponse<TApiData>) => TModel,
-  toApi: (model: TModel) => TApiData,
-): WhApi<TModel, TApiData> {
+  toModel: (api: TResponse) => TModel,
+  toRequest: (model: TModel) => TRequest,
+): WhApi<TModel, TResponse> {
   return {
-    getElement: async (id: string): Promise<TModel> => {
-      const { data } = await axios.get<ServerEnvelope<ApiResponse<TApiData>>>(`${basePath}/${id}`);
+    getElement: async (id: string, edition: Edition): Promise<TModel> => {
+      const { data } = await axios.get<ServerEnvelope<TResponse>>(`${basePath}/${id}`, { params: { edition } });
       return toModel(data.data);
     },
-    listElements: async (): Promise<TModel[]> => {
-      const { data } = await axios.get<ServerEnvelope<ApiResponse<TApiData>[]>>(basePath);
+    listElements: async (edition: Edition): Promise<TModel[]> => {
+      const { data } = await axios.get<ServerEnvelope<TResponse[]>>(basePath, { params: { edition } });
       return data.data.map(toModel);
     },
-    createElement: async (wh: TModel): Promise<ApiResponse<TApiData>> => {
-      const { data } = await axios.post<ServerEnvelope<ApiResponse<TApiData>>>(basePath, toApi(wh));
+    createElement: async (wh: TModel): Promise<TResponse> => {
+      const { data } = await axios.post<ServerEnvelope<TResponse>>(basePath, toRequest(wh));
       return data.data;
     },
-    updateElement: async (wh: TModel): Promise<ApiResponse<TApiData>> => {
-      const { data } = await axios.put<ServerEnvelope<ApiResponse<TApiData>>>(`${basePath}/${wh.id}`, toApi(wh));
+    updateElement: async (wh: TModel): Promise<TResponse> => {
+      const { data } = await axios.put<ServerEnvelope<TResponse>>(`${basePath}/${wh.id}`, toRequest(wh));
       return data.data;
     },
-    deleteElement: async (id: string): Promise<void> => {
-      await axios.delete(`${basePath}/${id}`);
+    deleteElement: async (id: string, edition: Edition): Promise<void> => {
+      await axios.delete(`${basePath}/${id}`, { params: { edition } });
     },
   };
 }
 
-export function defineWhApi<TModel extends { id: string }, TApiData>(
+// defineWhApi builds the API of a content type; the model is sent as the UI edition's variant.
+export function defineWhApi<TModel extends { id: string; visibility: Visibility }, TApiData>(
   basePath: string,
   toModel: (api: ApiResponse<TApiData>) => TModel,
   toApi: (model: TModel) => TApiData,
 ) {
-  return (axios: AxiosInstance): WhApi<TModel, TApiData> => createWhApi(basePath, axios, toModel, toApi);
+  const toRequest = (model: TModel): ContentRequest<TApiData> => ({
+    visibility: model.visibility,
+    editions: { [UI_EDITION]: toApi(model) },
+  });
+  return (axios: AxiosInstance): WhApi<TModel, ApiResponse<TApiData>> =>
+    createWhApi(basePath, axios, toModel, toRequest);
 }

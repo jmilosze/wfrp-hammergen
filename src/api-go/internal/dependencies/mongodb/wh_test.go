@@ -96,7 +96,7 @@ func TestAllAllowedOwnersQuery(t *testing.T) {
 
 func TestCareerLevelContainsQuery(t *testing.T) {
 	ids := []string{"id1", "id2"}
-	got := careerLevelContainsQuery("skills", ids)
+	got := careerLevelContainsQuery(warhammer.Edition4e, "skills", ids)
 	expected := bson.M{
 		"$or": bson.A{
 			bson.M{"editions.4e.level1.exists": true, "editions.4e.level1.skills": bson.M{"$in": ids}},

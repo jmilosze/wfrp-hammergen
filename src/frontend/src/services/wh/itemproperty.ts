@@ -1,5 +1,5 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { defineWhApi } from "./crudGenerator.ts";
 import { ItemType } from "./item.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
@@ -28,7 +28,6 @@ export interface ItemPropertyApiData {
   description: string;
   type: ItemPropertyType;
   applicableTo: ItemType[];
-  visibility?: Visibility;
   source: Source;
 }
 
@@ -67,15 +66,16 @@ export class ItemProperty extends WhEntity {
 }
 
 export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiData>): ItemProperty {
+  const data = variant(itemPropertyApi, UI_EDITION);
   return new ItemProperty({
     id: itemPropertyApi.id,
     ownerId: itemPropertyApi.ownerId,
     visibility: itemPropertyApi.visibility,
-    name: itemPropertyApi.object.name,
-    description: itemPropertyApi.object.description,
-    type: itemPropertyApi.object.type,
-    applicableTo: itemPropertyApi.object.applicableTo,
-    source: itemPropertyApi.object.source,
+    name: data.name,
+    description: data.description,
+    type: data.type,
+    applicableTo: data.applicableTo,
+    source: data.source,
   });
 }
 
@@ -85,7 +85,6 @@ export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
     description: itemProperty.description,
     type: itemProperty.type,
     applicableTo: [...itemProperty.applicableTo],
-    visibility: itemProperty.visibility,
     source: copySource(itemProperty.source),
   };
 }

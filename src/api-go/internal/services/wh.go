@@ -102,6 +102,10 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, fmt.Errorf("unauthorized to update wh %s: %w", w.Id, domain.ErrNotFound)
 	}
 
+	if !wh.HasEditions(t) && existingWh.Edition != w.Edition {
+		return nil, fmt.Errorf("%w: edition of wh %s cannot be changed", domain.ErrInvalidArguments, w.Id)
+	}
+
 	w.OwnerId = existingWh.OwnerId
 	updatedWh, err := s.WhDbService.Update(ctx, t, w, c.Id)
 	if err != nil {
@@ -111,12 +115,12 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	return updatedWh, nil
 }
 
-func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *auth.Claims) error {
+func (s *WhService) Delete(ctx context.Context, t wh.WhType, e wh.Edition, whId string, c *auth.Claims) error {
 	if c.Id == "anonymous" {
 		return fmt.Errorf("unauthorized to delete wh %s: %w", whId, domain.ErrUnauthorized)
 	}
 
-	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, wh.WhFilter{WhIds: []string{whId}})
+	existingWhs, err := s.WhDbService.Retrieve(ctx, t, []string{c.Id}, c.SharedAccounts, wh.WhFilter{Edition: e, WhIds: []string{whId}})
 	if err != nil || len(existingWhs) == 0 {
 		return fmt.Errorf("wh %s not found: %w", whId, domain.ErrNotFound)
 	}
@@ -126,7 +130,7 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 		return nil
 	}
 
-	err = s.WhDbService.Delete(ctx, t, whId, c.Id)
+	err = s.WhDbService.Delete(ctx, t, e, whId, c.Id)
 	if err != nil {
 		return fmt.Errorf("failed to delete wh: %w", err)
 	}
@@ -135,6 +139,10 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, whId string, c *aut
 }
 
 func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, filter wh.WhFilter) ([]*wh.Wh, error) {
+	if filter.Edition == "" && (full || len(filter.SkillIds) > 0 || len(filter.TalentIds) > 0) {
+		return nil, fmt.Errorf("%w: edition is required with full or career filters", domain.ErrInvalidArguments)
+	}
+
 	users := []string{c.Id}
 
 	whs, err := s.WhDbService.Retrieve(ctx, t, users, c.SharedAccounts, filter)
@@ -151,9 +159,9 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 	if full {
 		var whErr error
 		if t == wh.WhTypeItem {
-			whsRet, whErr = retrieveFullItems(ctx, s, c, whsRet)
+			whsRet, whErr = retrieveFullItems(ctx, s, filter.Edition, c, whsRet)
 		} else if t == wh.WhTypeCharacter {
-			whsRet, whErr = retrieveFullCharacters(ctx, s, c, whsRet)
+			whsRet, whErr = retrieveFullCharacters(ctx, s, filter.Edition, c, whsRet)
 		}
 		if whErr != nil {
 			return nil, whErr
@@ -167,12 +175,12 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 	return whsRet, nil
 }
 
-func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.Claims, items []*wh.Wh) ([]*wh.Wh, error) {
+func retrieveFullItems(ctx context.Context, whService *WhService, e wh.Edition, claims *auth.Claims, items []*wh.Wh) ([]*wh.Wh, error) {
 	allPropertyIds := make([]string, 0)
 	allRuneIds := make([]string, 0)
 	allSpellIds := make([]string, 0)
 	for _, v := range items {
-		item, ok := v.Object.(*wh.Item)
+		item, ok := v.Editions[e].(*wh.Item)
 		if !ok {
 			return nil, fmt.Errorf("failed to cast object to item")
 		}
@@ -188,21 +196,21 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 	var propertyWhErr error
 	go func() {
 		defer wg.Done()
-		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, false, wh.WhFilter{WhIds: allPropertyIds})
+		allProperties, propertyWhErr = whService.Get(ctx, wh.WhTypeProperty, claims, false, false, wh.WhFilter{Edition: e, WhIds: allPropertyIds})
 	}()
 
 	var allSpells []*wh.Wh
 	var spellWhErr error
 	go func() {
 		defer wg.Done()
-		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, false, wh.WhFilter{WhIds: allSpellIds})
+		allSpells, spellWhErr = whService.Get(ctx, wh.WhTypeSpell, claims, false, false, wh.WhFilter{Edition: e, WhIds: allSpellIds})
 	}()
 
 	var allRunes []*wh.Wh
 	var runesWhErr error
 	go func() {
 		defer wg.Done()
-		allRunes, runesWhErr = whService.Get(ctx, wh.WhTypeRune, claims, false, false, wh.WhFilter{WhIds: allRuneIds})
+		allRunes, runesWhErr = whService.Get(ctx, wh.WhTypeRune, claims, false, false, wh.WhFilter{Edition: e, WhIds: allRuneIds})
 	}()
 
 	wg.Wait()
@@ -221,16 +229,16 @@ func retrieveFullItems(ctx context.Context, whService *WhService, claims *auth.C
 
 	fullItems := make([]*wh.Wh, 0)
 	for _, v := range items {
-		item, ok := v.Object.(*wh.Item)
+		item, ok := v.Editions[e].(*wh.Item)
 		if !ok {
 			return nil, fmt.Errorf("failed to cast object to item")
 		}
-		var err error
-		fullItem := v.CopyHeaders()
-		fullItem.Object, err = item.ToFull(allProperties, allSpells, allRunes)
+		fullItemObject, err := item.ToFull(allProperties, allSpells, allRunes)
 		if err != nil {
 			return nil, fmt.Errorf("failed convert wh-item to full item")
 		}
+		fullItem := v.CopyHeaders()
+		fullItem.Editions = map[wh.Edition]wh.WhObject{e: fullItemObject}
 		fullItems = append(fullItems, fullItem)
 	}
 
@@ -259,7 +267,7 @@ func idNumbersToIds(items []wh.IdNumber) []string {
 	return ids
 }
 
-func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, error) {
+func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edition, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, error) {
 	allItemIds := make([]string, 0)
 	allTalentIds := make([]string, 0)
 	allCareerIds := make([]string, 0)
@@ -306,7 +314,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		v := components[k]
 		go func() {
 			defer wg.Done()
-			v.wh, v.err = whService.Get(ctx, k, claims, v.full, false, wh.WhFilter{WhIds: v.ids})
+			v.wh, v.err = whService.Get(ctx, k, claims, v.full, false, wh.WhFilter{Edition: e, WhIds: v.ids})
 		}()
 	}
 
@@ -326,7 +334,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *a
 		}
 		fullCharacter := v.CopyHeaders()
 		var err error
-		fullCharacter.Object, err = character.ToFull(components[wh.WhTypeItem].wh, components[wh.WhTypeSkill].wh, components[wh.WhTypeTalent].wh, components[wh.WhTypeMutation].wh, components[wh.WhTypeSpell].wh, components[wh.WhTypePrayer].wh, components[wh.WhTypeTrait].wh, components[wh.WhTypeCareer].wh)
+		fullCharacter.Object, err = character.ToFull(e, components[wh.WhTypeItem].wh, components[wh.WhTypeSkill].wh, components[wh.WhTypeTalent].wh, components[wh.WhTypeMutation].wh, components[wh.WhTypeSpell].wh, components[wh.WhTypePrayer].wh, components[wh.WhTypeTrait].wh, components[wh.WhTypeCareer].wh)
 		if err != nil {
 			return nil, fmt.Errorf("failed convert wh-character to full character: %w", err)
 		}

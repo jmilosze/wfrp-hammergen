@@ -1,6 +1,6 @@
 import { defineWhApi } from "./crudGenerator.ts";
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 
 const CASTING_NUMBER_RE = /^([1-9][0-9]|[0-9])$/;
@@ -322,7 +322,6 @@ export interface SpellApiData {
   cn: number;
   range: string;
   duration: string;
-  visibility?: Visibility;
   target: string;
   classification: SpellClassificationData;
   source: Source;
@@ -402,21 +401,22 @@ export class Spell extends WhEntity {
 }
 
 export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
+  const data = variant(spellApi, UI_EDITION);
   return new Spell({
     id: spellApi.id,
     ownerId: spellApi.ownerId,
     visibility: spellApi.visibility,
-    name: spellApi.object.name,
-    cn: spellApi.object.cn,
-    range: spellApi.object.range,
-    target: spellApi.object.target,
-    duration: spellApi.object.duration,
-    description: spellApi.object.description,
+    name: data.name,
+    cn: data.cn,
+    range: data.range,
+    target: data.target,
+    duration: data.duration,
+    description: data.description,
     classification: {
-      type: spellApi.object.classification.type,
-      labels: new Set(spellApi.object.classification.labels),
+      type: data.classification.type,
+      labels: new Set(data.classification.labels),
     },
-    source: spellApi.object.source,
+    source: data.source,
   });
 }
 
@@ -429,7 +429,6 @@ export function modelToApi(spell: Spell): SpellApiData {
     duration: spell.duration,
     description: spell.description,
     classification: { type: spell.classification.type, labels: [...spell.classification.labels] },
-    visibility: spell.visibility,
     source: copySource(spell.source),
   };
 }

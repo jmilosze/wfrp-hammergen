@@ -28,7 +28,6 @@ import { testIsEqualCommonProperties } from "./commonTests.ts";
 const itemApiData: ItemApiData = {
   name: "item",
   description: "desc",
-  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
   price: 12,
   enc: 2,
@@ -69,7 +68,7 @@ const itemApiResponse: ApiResponse<ItemApiData> = {
   id: "id",
   ownerId: "owner",
   visibility: Visibility.Shared,
-  object: itemApiData,
+  editions: { "4e": itemApiData },
 };
 
 const item = new Item({

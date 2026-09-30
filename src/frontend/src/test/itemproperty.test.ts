@@ -15,7 +15,6 @@ const itemPropertyApiData: ItemPropertyApiData = {
   description: "desc",
   type: ItemPropertyType.Quality,
   applicableTo: [ItemType.Melee, ItemType.Armour],
-  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -23,7 +22,7 @@ const itemPropertyApiDataResponse: ApiResponse<ItemPropertyApiData> = {
   id: "id",
   ownerId: "owner",
   visibility: Visibility.Shared,
-  object: itemPropertyApiData,
+  editions: { "4e": itemPropertyApiData },
 };
 
 const itemProperty = new ItemProperty({

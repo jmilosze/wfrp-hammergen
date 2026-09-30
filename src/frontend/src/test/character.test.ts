@@ -1,7 +1,7 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
 import { getWoundsFormula, printSpeciesWithRegion, Size, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 import { StatusTier } from "../services/wh/career.ts";
-import { ApiResponse, Visibility } from "../services/wh/common.ts";
+import { CharacterApiResponse, Visibility } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 import { IdNumber } from "../utils/idNumber.ts";
@@ -61,9 +61,10 @@ const characterApiData: CharacterApiData = {
   visibility: Visibility.Shared,
 };
 
-const characterApiResponse: ApiResponse<CharacterApiData> = {
+const characterApiResponse: CharacterApiResponse<CharacterApiData> = {
   id: "id",
   ownerId: "owner",
+  edition: "4e",
   visibility: Visibility.Shared,
   object: characterApiData,
 };

@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	d "github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -32,12 +33,22 @@ func newTestWhDbService(t *testing.T) *WhDbService {
 	return s
 }
 
-func newTestMutation(id string, name string, visibility warhammer.Visibility) *warhammer.Wh {
+// newTestMutation builds a mutation document with one variant per given edition, named "<name> <edition>".
+func newTestMutation(id string, name string, visibility warhammer.Visibility, editions ...warhammer.Edition) *warhammer.Wh {
+	variants := map[warhammer.Edition]warhammer.WhObject{}
+	for _, e := range editions {
+		variants[e] = &warhammer.Mutation{Name: name + " " + string(e), Source: map[warhammer.Source]string{}}
+	}
+	return &warhammer.Wh{Id: id, OwnerId: "owner1", Visibility: visibility, Editions: variants}
+}
+
+func newTestCharacter(id string, name string, e warhammer.Edition) *warhammer.Wh {
 	return &warhammer.Wh{
 		Id:         id,
 		OwnerId:    "owner1",
-		Visibility: visibility,
-		Object:     &warhammer.Mutation{Name: name, Source: map[warhammer.Source]string{}},
+		Visibility: warhammer.VisibilityPrivate,
+		Edition:    e,
+		Object:     &warhammer.Character{Name: name},
 	}
 }
 
@@ -46,156 +57,281 @@ type testRawObject struct {
 }
 
 type testRawDoc struct {
-	OwnerId    string                   `bson:"ownerid"`
-	Visibility warhammer.Visibility     `bson:"visibility"`
-	Object     *testRawObject           `bson:"object"`
-	Editions   map[string]testRawObject `bson:"editions"`
+	OwnerId    string                              `bson:"ownerid"`
+	Visibility warhammer.Visibility                `bson:"visibility"`
+	Edition    warhammer.Edition                   `bson:"edition"`
+	Object     *testRawObject                      `bson:"object"`
+	Editions   map[warhammer.Edition]testRawObject `bson:"editions"`
+}
+
+func objectId(t *testing.T, id string) bson.ObjectID {
+	oid, err := bson.ObjectIDFromHex(id)
+	require.NoError(t, err)
+	return oid
 }
 
 func rawDoc(t *testing.T, s *WhDbService, whType warhammer.WhType, id string) testRawDoc {
-	oid, err := bson.ObjectIDFromHex(id)
-	require.NoError(t, err)
 	var doc testRawDoc
-	require.NoError(t, s.Collections[whType].FindOne(context.Background(), bson.M{"_id": oid}).Decode(&doc))
+	require.NoError(t, s.Collections[whType].FindOne(context.Background(), bson.M{"_id": objectId(t, id)}).Decode(&doc))
 	return doc
 }
 
-func TestWhDbCreateStoresContentUnderEdition(t *testing.T) {
+func rawDocCount(t *testing.T, s *WhDbService, whType warhammer.WhType, id string) int64 {
+	n, err := s.Collections[whType].CountDocuments(context.Background(), bson.M{"_id": objectId(t, id)})
+	require.NoError(t, err)
+	return n
+}
+
+func mutationNames(t *testing.T, w *warhammer.Wh) map[warhammer.Edition]string {
+	require.Nil(t, w.Object)
+	names := map[warhammer.Edition]string{}
+	for e, obj := range w.Editions {
+		names[e] = obj.(*warhammer.Mutation).Name
+	}
+	return names
+}
+
+func TestWhDbCreateStoresContentEditions(t *testing.T) {
 	s := newTestWhDbService(t)
 	ctx := context.Background()
 	id := "700000000000000000000001"
 
-	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "mutation 1", warhammer.VisibilityPrivate))
+	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "m", warhammer.VisibilityPrivate, warhammer.Edition4e, warhammer.Edition5e))
 	require.NoError(t, err)
 
 	doc := rawDoc(t, s, warhammer.WhTypeMutation, id)
 	require.Nil(t, doc.Object)
+	require.Empty(t, doc.Edition)
 	require.Equal(t, "owner1", doc.OwnerId)
-	require.Equal(t, map[string]testRawObject{whEdition: {Name: "mutation 1"}}, doc.Editions)
-
-	got, err := s.Retrieve(ctx, warhammer.WhTypeMutation, []string{"owner1"}, nil, warhammer.WhFilter{WhIds: []string{id}})
-	require.NoError(t, err)
-	require.Len(t, got, 1)
-	require.Equal(t, "mutation 1", got[0].Object.(*warhammer.Mutation).Name)
-	require.Equal(t, "owner1", got[0].OwnerId)
+	require.Equal(t, map[warhammer.Edition]testRawObject{warhammer.Edition4e: {Name: "m 4e"}, warhammer.Edition5e: {Name: "m 5e"}}, doc.Editions)
 }
 
-func TestWhDbCreateStoresCharacterUnderObject(t *testing.T) {
+func TestWhDbRetrieveContentByEdition(t *testing.T) {
 	s := newTestWhDbService(t)
 	ctx := context.Background()
-	id := "700000000000000000000002"
+	idBoth := "700000000000000000000002"
+	id5eOnly := "700000000000000000000003"
 
-	character := &warhammer.Wh{
-		Id:         id,
-		OwnerId:    "owner1",
-		Visibility: warhammer.VisibilityPrivate,
-		Object:     &warhammer.Character{Name: "character 1"},
+	for _, w := range []*warhammer.Wh{
+		newTestMutation(idBoth, "both", warhammer.VisibilityPublic, warhammer.Edition4e, warhammer.Edition5e),
+		newTestMutation(id5eOnly, "only", warhammer.VisibilityPublic, warhammer.Edition5e),
+	} {
+		_, err := s.Create(ctx, warhammer.WhTypeMutation, w)
+		require.NoError(t, err)
 	}
-	_, err := s.Create(ctx, warhammer.WhTypeCharacter, character)
-	require.NoError(t, err)
 
-	doc := rawDoc(t, s, warhammer.WhTypeCharacter, id)
-	require.Nil(t, doc.Editions)
-	require.Equal(t, &testRawObject{Name: "character 1"}, doc.Object)
+	byEdition := func(e warhammer.Edition) map[string]map[warhammer.Edition]string {
+		got, err := s.Retrieve(ctx, warhammer.WhTypeMutation, nil, nil, warhammer.WhFilter{Edition: e})
+		require.NoError(t, err)
+		res := map[string]map[warhammer.Edition]string{}
+		for _, w := range got {
+			res[w.Id] = mutationNames(t, w)
+		}
+		return res
+	}
 
-	got, err := s.Retrieve(ctx, warhammer.WhTypeCharacter, []string{"owner1"}, nil, warhammer.WhFilter{WhIds: []string{id}})
-	require.NoError(t, err)
-	require.Len(t, got, 1)
-	require.Equal(t, "character 1", got[0].Object.(*warhammer.Character).Name)
+	require.Equal(t, map[string]map[warhammer.Edition]string{
+		idBoth:   {warhammer.Edition4e: "both 4e", warhammer.Edition5e: "both 5e"},
+		id5eOnly: {warhammer.Edition5e: "only 5e"},
+	}, byEdition(""))
+	require.Equal(t, map[string]map[warhammer.Edition]string{
+		idBoth: {warhammer.Edition4e: "both 4e"},
+	}, byEdition(warhammer.Edition4e))
+	require.Equal(t, map[string]map[warhammer.Edition]string{
+		idBoth:   {warhammer.Edition5e: "both 5e"},
+		id5eOnly: {warhammer.Edition5e: "only 5e"},
+	}, byEdition(warhammer.Edition5e))
 }
 
-func TestWhDbUpdateKeepsOtherEditions(t *testing.T) {
+func TestWhDbCharacterStoresEdition(t *testing.T) {
 	s := newTestWhDbService(t)
 	ctx := context.Background()
-	id := "700000000000000000000003"
+	id4e := "700000000000000000000004"
+	id5e := "700000000000000000000005"
 
-	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "mutation 4e", warhammer.VisibilityPrivate))
+	for _, w := range []*warhammer.Wh{newTestCharacter(id4e, "c 4e", warhammer.Edition4e), newTestCharacter(id5e, "c 5e", warhammer.Edition5e)} {
+		_, err := s.Create(ctx, warhammer.WhTypeCharacter, w)
+		require.NoError(t, err)
+	}
+
+	doc := rawDoc(t, s, warhammer.WhTypeCharacter, id4e)
+	require.Nil(t, doc.Editions)
+	require.Equal(t, warhammer.Edition4e, doc.Edition)
+	require.Equal(t, &testRawObject{Name: "c 4e"}, doc.Object)
+
+	byEdition := func(e warhammer.Edition) map[string]warhammer.Edition {
+		got, err := s.Retrieve(ctx, warhammer.WhTypeCharacter, []string{"owner1"}, nil, warhammer.WhFilter{Edition: e})
+		require.NoError(t, err)
+		res := map[string]warhammer.Edition{}
+		for _, w := range got {
+			require.Nil(t, w.Editions)
+			require.Equal(t, "c "+string(w.Edition), w.Object.(*warhammer.Character).Name)
+			res[w.Id] = w.Edition
+		}
+		return res
+	}
+
+	require.Equal(t, map[string]warhammer.Edition{id4e: warhammer.Edition4e, id5e: warhammer.Edition5e}, byEdition(""))
+	require.Equal(t, map[string]warhammer.Edition{id4e: warhammer.Edition4e}, byEdition(warhammer.Edition4e))
+	require.Equal(t, map[string]warhammer.Edition{id5e: warhammer.Edition5e}, byEdition(warhammer.Edition5e))
+}
+
+func TestWhDbUpdateMergesEditions(t *testing.T) {
+	s := newTestWhDbService(t)
+	ctx := context.Background()
+	id := "700000000000000000000006"
+
+	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "m", warhammer.VisibilityPrivate, warhammer.Edition4e, warhammer.Edition5e))
 	require.NoError(t, err)
 
-	oid, err := bson.ObjectIDFromHex(id)
-	require.NoError(t, err)
-	_, err = s.Collections[warhammer.WhTypeMutation].UpdateOne(ctx, bson.M{"_id": oid}, bson.M{"$set": bson.M{"editions.5e": bson.M{"name": "mutation 5e"}}})
-	require.NoError(t, err)
-
-	_, err = s.Update(ctx, warhammer.WhTypeMutation, newTestMutation(id, "mutation 4e updated", warhammer.VisibilityPublic), "owner1")
+	_, err = s.Update(ctx, warhammer.WhTypeMutation, newTestMutation(id, "updated", warhammer.VisibilityPublic, warhammer.Edition4e), "owner1")
 	require.NoError(t, err)
 
 	doc := rawDoc(t, s, warhammer.WhTypeMutation, id)
-	require.Equal(t, map[string]testRawObject{whEdition: {Name: "mutation 4e updated"}, "5e": {Name: "mutation 5e"}}, doc.Editions)
-	require.Nil(t, doc.Object)
+	require.Equal(t, map[warhammer.Edition]testRawObject{warhammer.Edition4e: {Name: "updated 4e"}, warhammer.Edition5e: {Name: "m 5e"}}, doc.Editions)
 	require.Equal(t, warhammer.VisibilityPublic, doc.Visibility)
 	require.Equal(t, "owner1", doc.OwnerId)
+}
+
+func TestWhDbUpdateAddsEdition(t *testing.T) {
+	s := newTestWhDbService(t)
+	ctx := context.Background()
+	id := "700000000000000000000007"
+
+	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "m", warhammer.VisibilityPrivate, warhammer.Edition4e))
+	require.NoError(t, err)
+
+	_, err = s.Update(ctx, warhammer.WhTypeMutation, newTestMutation(id, "new", warhammer.VisibilityPrivate, warhammer.Edition5e), "owner1")
+	require.NoError(t, err)
+
+	doc := rawDoc(t, s, warhammer.WhTypeMutation, id)
+	require.Equal(t, map[warhammer.Edition]testRawObject{warhammer.Edition4e: {Name: "m 4e"}, warhammer.Edition5e: {Name: "new 5e"}}, doc.Editions)
 }
 
 func TestWhDbUpdateRequiresOwner(t *testing.T) {
 	s := newTestWhDbService(t)
 	ctx := context.Background()
-	id := "700000000000000000000004"
+	id := "700000000000000000000008"
 
-	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "mutation 1", warhammer.VisibilityPrivate))
+	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "m", warhammer.VisibilityPrivate, warhammer.Edition4e))
 	require.NoError(t, err)
 
-	_, err = s.Update(ctx, warhammer.WhTypeMutation, newTestMutation(id, "mutation 1 updated", warhammer.VisibilityPrivate), "owner2")
-	require.Error(t, err)
+	_, err = s.Update(ctx, warhammer.WhTypeMutation, newTestMutation(id, "updated", warhammer.VisibilityPrivate, warhammer.Edition4e), "owner2")
+	require.ErrorIs(t, err, d.ErrNotFound)
 
 	doc := rawDoc(t, s, warhammer.WhTypeMutation, id)
-	require.Equal(t, "mutation 1", doc.Editions[whEdition].Name)
+	require.Equal(t, "m 4e", doc.Editions[warhammer.Edition4e].Name)
 }
 
-func TestWhDbRetrieveSkipsDocumentsWithoutEdition(t *testing.T) {
+func TestWhDbUpdateCharacter(t *testing.T) {
 	s := newTestWhDbService(t)
 	ctx := context.Background()
-	id4e := "700000000000000000000005"
-	id5eOnly := "700000000000000000000006"
+	id := "700000000000000000000009"
 
-	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id4e, "mutation 4e", warhammer.VisibilityPublic))
-	require.NoError(t, err)
-
-	oid5eOnly, err := bson.ObjectIDFromHex(id5eOnly)
-	require.NoError(t, err)
-	_, err = s.Collections[warhammer.WhTypeMutation].InsertOne(ctx, bson.M{
-		"_id":        oid5eOnly,
-		"ownerid":    "owner1",
-		"visibility": int(warhammer.VisibilityPublic),
-		"editions":   bson.M{"5e": bson.M{"name": "mutation 5e"}},
-	})
+	_, err := s.Create(ctx, warhammer.WhTypeCharacter, newTestCharacter(id, "c", warhammer.Edition4e))
 	require.NoError(t, err)
 
-	got, err := s.Retrieve(ctx, warhammer.WhTypeMutation, nil, nil, warhammer.WhFilter{})
+	_, err = s.Update(ctx, warhammer.WhTypeCharacter, newTestCharacter(id, "c updated", warhammer.Edition4e), "owner1")
 	require.NoError(t, err)
-	require.Len(t, got, 1)
-	require.Equal(t, id4e, got[0].Id)
+
+	doc := rawDoc(t, s, warhammer.WhTypeCharacter, id)
+	require.Equal(t, warhammer.Edition4e, doc.Edition)
+	require.Equal(t, &testRawObject{Name: "c updated"}, doc.Object)
+	require.Nil(t, doc.Editions)
+}
+
+func TestWhDbDeleteEdition(t *testing.T) {
+	s := newTestWhDbService(t)
+	ctx := context.Background()
+	id := "700000000000000000000010"
+
+	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "m", warhammer.VisibilityPrivate, warhammer.Edition4e, warhammer.Edition5e))
+	require.NoError(t, err)
+
+	require.NoError(t, s.Delete(ctx, warhammer.WhTypeMutation, warhammer.Edition5e, id, "owner1"))
+	doc := rawDoc(t, s, warhammer.WhTypeMutation, id)
+	require.Equal(t, map[warhammer.Edition]testRawObject{warhammer.Edition4e: {Name: "m 4e"}}, doc.Editions)
+
+	require.NoError(t, s.Delete(ctx, warhammer.WhTypeMutation, warhammer.Edition4e, id, "owner1"))
+	require.Zero(t, rawDocCount(t, s, warhammer.WhTypeMutation, id))
+}
+
+func TestWhDbDeleteWholeDocument(t *testing.T) {
+	s := newTestWhDbService(t)
+	ctx := context.Background()
+	id := "700000000000000000000011"
+
+	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "m", warhammer.VisibilityPrivate, warhammer.Edition4e, warhammer.Edition5e))
+	require.NoError(t, err)
+
+	require.NoError(t, s.Delete(ctx, warhammer.WhTypeMutation, "", id, "owner1"))
+	require.Zero(t, rawDocCount(t, s, warhammer.WhTypeMutation, id))
+}
+
+func TestWhDbDeleteRequiresOwner(t *testing.T) {
+	s := newTestWhDbService(t)
+	ctx := context.Background()
+	id := "700000000000000000000012"
+
+	_, err := s.Create(ctx, warhammer.WhTypeMutation, newTestMutation(id, "m", warhammer.VisibilityPrivate, warhammer.Edition4e))
+	require.NoError(t, err)
+
+	require.NoError(t, s.Delete(ctx, warhammer.WhTypeMutation, "", id, "owner2"))
+	require.NoError(t, s.Delete(ctx, warhammer.WhTypeMutation, warhammer.Edition4e, id, "owner2"))
+	require.Equal(t, int64(1), rawDocCount(t, s, warhammer.WhTypeMutation, id))
+}
+
+func TestWhDbDeleteCharacter(t *testing.T) {
+	s := newTestWhDbService(t)
+	ctx := context.Background()
+	id := "700000000000000000000013"
+
+	_, err := s.Create(ctx, warhammer.WhTypeCharacter, newTestCharacter(id, "c", warhammer.Edition4e))
+	require.NoError(t, err)
+
+	require.NoError(t, s.Delete(ctx, warhammer.WhTypeCharacter, "", id, "owner1"))
+	require.Zero(t, rawDocCount(t, s, warhammer.WhTypeCharacter, id))
 }
 
 func TestWhDbRetrieveCareersBySkillAndTalent(t *testing.T) {
 	s := newTestWhDbService(t)
 	ctx := context.Background()
 
-	newCareer := func(id string, level warhammer.CareerLevel) *warhammer.Wh {
-		career := &warhammer.Career{Name: "career " + id, Level2: level}
-		career.Init()
-		return &warhammer.Wh{Id: id, OwnerId: "owner1", Visibility: warhammer.VisibilityPrivate, Object: career}
+	newCareer := func(id string, level4e warhammer.CareerLevel, level5e *warhammer.CareerLevel) *warhammer.Wh {
+		variants := map[warhammer.Edition]warhammer.WhObject{warhammer.Edition4e: &warhammer.Career{Name: "career " + id, Level2: level4e}}
+		if level5e != nil {
+			variants[warhammer.Edition5e] = &warhammer.Career{Name: "career 5e " + id, Level1: *level5e}
+		}
+		w := &warhammer.Wh{Id: id, OwnerId: "owner1", Visibility: warhammer.VisibilityPrivate, Editions: variants}
+		w.Init()
+		return w
 	}
-	withSkill := "700000000000000000000007"
-	withTalent := "700000000000000000000008"
-	levelNotExisting := "700000000000000000000009"
+	withSkill := "700000000000000000000014"
+	withTalent := "700000000000000000000015"
+	levelNotExisting := "700000000000000000000016"
+	with5eSkill := "700000000000000000000017"
 
 	for _, career := range []*warhammer.Wh{
-		newCareer(withSkill, warhammer.CareerLevel{Exists: true, Skills: []string{"skill1"}}),
-		newCareer(withTalent, warhammer.CareerLevel{Exists: true, Talents: []string{"talent1"}}),
-		newCareer(levelNotExisting, warhammer.CareerLevel{Exists: false, Skills: []string{"skill1"}, Talents: []string{"talent1"}}),
+		newCareer(withSkill, warhammer.CareerLevel{Exists: true, Skills: []string{"skill1"}}, nil),
+		newCareer(withTalent, warhammer.CareerLevel{Exists: true, Talents: []string{"talent1"}}, nil),
+		newCareer(levelNotExisting, warhammer.CareerLevel{Exists: false, Skills: []string{"skill1"}, Talents: []string{"talent1"}}, nil),
+		newCareer(with5eSkill, warhammer.CareerLevel{Exists: true}, &warhammer.CareerLevel{Exists: true, Skills: []string{"skill1"}}),
 	} {
 		_, err := s.Create(ctx, warhammer.WhTypeCareer, career)
 		require.NoError(t, err)
 	}
 
-	got, err := s.Retrieve(ctx, warhammer.WhTypeCareer, []string{"owner1"}, nil, warhammer.WhFilter{SkillIds: []string{"skill1"}})
-	require.NoError(t, err)
-	require.Len(t, got, 1)
-	require.Equal(t, withSkill, got[0].Id)
+	ids := func(filter warhammer.WhFilter) []string {
+		got, err := s.Retrieve(ctx, warhammer.WhTypeCareer, []string{"owner1"}, nil, filter)
+		require.NoError(t, err)
+		res := []string{}
+		for _, w := range got {
+			res = append(res, w.Id)
+		}
+		return res
+	}
 
-	got, err = s.Retrieve(ctx, warhammer.WhTypeCareer, []string{"owner1"}, nil, warhammer.WhFilter{TalentIds: []string{"talent1"}})
-	require.NoError(t, err)
-	require.Len(t, got, 1)
-	require.Equal(t, withTalent, got[0].Id)
+	require.Equal(t, []string{withSkill}, ids(warhammer.WhFilter{Edition: warhammer.Edition4e, SkillIds: []string{"skill1"}}))
+	require.Equal(t, []string{withTalent}, ids(warhammer.WhFilter{Edition: warhammer.Edition4e, TalentIds: []string{"talent1"}}))
+	require.Equal(t, []string{with5eSkill}, ids(warhammer.WhFilter{Edition: warhammer.Edition5e, SkillIds: []string{"skill1"}}))
 }

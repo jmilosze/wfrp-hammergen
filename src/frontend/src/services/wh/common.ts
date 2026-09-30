@@ -75,19 +75,50 @@ export abstract class WhEntity implements WhProperty {
   abstract validateDescription(): ValidationStatus;
 }
 
-export interface WhApi<T, TApiData> {
-  getElement: (id: string) => Promise<T>;
-  listElements: () => Promise<T[]>;
-  createElement: (wh: T) => Promise<ApiResponse<TApiData>>;
-  updateElement: (wh: T) => Promise<ApiResponse<TApiData>>;
-  deleteElement: (id: string) => Promise<void>;
-}
+export type Edition = "4e" | "5e";
 
-export interface ApiResponse<WhApiData> {
+// Edition the UI works with until 5e support is added to the UI.
+export const UI_EDITION: Edition = "4e";
+
+export interface ApiHeaders {
   id: string;
   ownerId: string;
   visibility?: Visibility;
-  object: WhApiData;
+}
+
+// Content document as returned by the API: one variant per edition.
+export interface ApiResponse<WhApiData> extends ApiHeaders {
+  editions: Partial<Record<Edition, WhApiData>>;
+}
+
+// Character as returned by the API: a single, fixed edition.
+export interface CharacterApiResponse<CharacterData> extends ApiHeaders {
+  edition: Edition;
+  object: CharacterData;
+}
+
+// Content document as sent to the API; variants not included are left unchanged on update.
+export interface ContentRequest<WhApiData> {
+  visibility: Visibility;
+  editions: Partial<Record<Edition, WhApiData>>;
+}
+
+// variant returns the edition variant of a content document. Reads ask for an edition, so the API
+// only returns documents that have it.
+export function variant<WhApiData>(api: ApiResponse<WhApiData>, edition: Edition): WhApiData {
+  const data = api.editions[edition];
+  if (data === undefined) {
+    throw new Error(`${api.id} has no ${edition} variant`);
+  }
+  return data;
+}
+
+export interface WhApi<T, TResponse extends ApiHeaders> {
+  getElement: (id: string, edition: Edition) => Promise<T>;
+  listElements: (edition: Edition) => Promise<T[]>;
+  createElement: (wh: T) => Promise<TResponse>;
+  updateElement: (wh: T) => Promise<TResponse>;
+  deleteElement: (id: string, edition: Edition) => Promise<void>;
 }
 
 export const VERY_SHORT_DESC_REGEX: RegExp = /^[^<>]{0,25}$/;

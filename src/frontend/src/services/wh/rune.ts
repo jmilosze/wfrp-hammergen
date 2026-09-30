@@ -1,5 +1,5 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { defineWhApi } from "./crudGenerator.ts";
 import { ItemType } from "./item.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
@@ -52,7 +52,6 @@ export interface RuneApiData {
   description: string;
   labels: RuneLabel[];
   applicableTo: ItemType[];
-  visibility?: Visibility;
   source: Source;
 }
 
@@ -91,15 +90,16 @@ export class Rune extends WhEntity {
 }
 
 export function apiResponseToModel(itemRuneApi: ApiResponse<RuneApiData>): Rune {
+  const data = variant(itemRuneApi, UI_EDITION);
   return new Rune({
     id: itemRuneApi.id,
     ownerId: itemRuneApi.ownerId,
     visibility: itemRuneApi.visibility,
-    name: itemRuneApi.object.name,
-    description: itemRuneApi.object.description,
-    labels: itemRuneApi.object.labels,
-    applicableTo: itemRuneApi.object.applicableTo,
-    source: itemRuneApi.object.source,
+    name: data.name,
+    description: data.description,
+    labels: data.labels,
+    applicableTo: data.applicableTo,
+    source: data.source,
   });
 }
 
@@ -109,7 +109,6 @@ export function modelToApi(itemRune: Rune): RuneApiData {
     description: itemRune.description,
     labels: itemRune.labels,
     applicableTo: [...itemRune.applicableTo],
-    visibility: itemRune.visibility,
     source: copySource(itemRune.source),
   };
 }

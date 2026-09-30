@@ -1,6 +1,15 @@
 import { AttributeName } from "./attributes.ts";
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import {
+  ApiResponse,
+  Edition,
+  UI_EDITION,
+  validLongDescFn,
+  validShortDescFn,
+  variant,
+  Visibility,
+  WhEntity,
+} from "./common.ts";
 import { defineWhApi, ServerEnvelope } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { ValidationStatus } from "../../utils/validation.ts";
@@ -190,7 +199,6 @@ export interface CareerApiData {
   level3: CareerLevelApiData;
   level4: CareerLevelApiData;
   level5: CareerLevelApiData;
-  visibility?: Visibility;
   source: Source;
 }
 
@@ -382,20 +390,21 @@ export function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
 }
 
 export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Career {
+  const data = variant(careerApi, UI_EDITION);
   return new Career({
     id: careerApi.id,
     ownerId: careerApi.ownerId,
     visibility: careerApi.visibility,
-    name: careerApi.object.name,
-    description: careerApi.object.description,
-    careerClass: careerApi.object.class,
-    species: [...careerApi.object.species],
-    level1: careerLevelApiDataToCareerLevel(careerApi.object.level1),
-    level2: careerLevelApiDataToCareerLevel(careerApi.object.level2),
-    level3: careerLevelApiDataToCareerLevel(careerApi.object.level3),
-    level4: careerLevelApiDataToCareerLevel(careerApi.object.level4),
-    level5: careerLevelApiDataToCareerLevel(careerApi.object.level5),
-    source: copySource(careerApi.object.source),
+    name: data.name,
+    description: data.description,
+    careerClass: data.class,
+    species: [...data.species],
+    level1: careerLevelApiDataToCareerLevel(data.level1),
+    level2: careerLevelApiDataToCareerLevel(data.level2),
+    level3: careerLevelApiDataToCareerLevel(data.level3),
+    level4: careerLevelApiDataToCareerLevel(data.level4),
+    level5: careerLevelApiDataToCareerLevel(data.level5),
+    source: copySource(data.source),
   });
 }
 
@@ -423,7 +432,6 @@ export function modelToApi(career: Career): CareerApiData {
     level3: careerLevelToCareerLevelApiData(career.level3),
     level4: careerLevelToCareerLevelApiData(career.level4),
     level5: careerLevelToCareerLevelApiData(career.level5),
-    visibility: career.visibility,
     source: copySource(career.source),
   };
 }
@@ -488,16 +496,24 @@ export function findCareerMatches(
   };
 }
 
-export async function getCareersForSkill(axios: Pick<AxiosInstance, "get">, skillIds: string[]): Promise<Career[]> {
+export async function getCareersForSkill(
+  axios: Pick<AxiosInstance, "get">,
+  skillIds: string[],
+  edition: Edition,
+): Promise<Career[]> {
   const { data } = await axios.get<ServerEnvelope<ApiResponse<CareerApiData>[]>>(API_BASE_PATH, {
-    params: { skillId: skillIds },
+    params: { skillId: skillIds, edition },
   });
   return data.data.map(apiResponseToModel);
 }
 
-export async function getCareersForTalent(axios: Pick<AxiosInstance, "get">, talentIds: string[]): Promise<Career[]> {
+export async function getCareersForTalent(
+  axios: Pick<AxiosInstance, "get">,
+  talentIds: string[],
+  edition: Edition,
+): Promise<Career[]> {
   const { data } = await axios.get<ServerEnvelope<ApiResponse<CareerApiData>[]>>(API_BASE_PATH, {
-    params: { talentId: talentIds },
+    params: { talentId: talentIds, edition },
   });
   return data.data.map(apiResponseToModel);
 }

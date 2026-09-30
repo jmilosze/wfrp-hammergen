@@ -1,6 +1,6 @@
 import { defineWhApi } from "./crudGenerator.ts";
 import { Source, copySource, sourceIsValid } from "./source.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
@@ -10,7 +10,6 @@ export interface PrayerApiData {
   description: string;
   range: string;
   duration: string;
-  visibility?: Visibility;
   target: string;
   source: Source;
 }
@@ -70,16 +69,17 @@ export class Prayer extends WhEntity {
 }
 
 export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Prayer {
+  const data = variant(prayerApi, UI_EDITION);
   return new Prayer({
     id: prayerApi.id,
     ownerId: prayerApi.ownerId,
     visibility: prayerApi.visibility,
-    name: prayerApi.object.name,
-    range: prayerApi.object.range,
-    target: prayerApi.object.target,
-    duration: prayerApi.object.duration,
-    description: prayerApi.object.description,
-    source: prayerApi.object.source,
+    name: data.name,
+    range: data.range,
+    target: data.target,
+    duration: data.duration,
+    description: data.description,
+    source: data.source,
   });
 }
 
@@ -90,7 +90,6 @@ export function modelToApi(prayer: Prayer): PrayerApiData {
     target: prayer.target,
     duration: prayer.duration,
     description: prayer.description,
-    visibility: prayer.visibility,
     source: copySource(prayer.source),
   };
 }

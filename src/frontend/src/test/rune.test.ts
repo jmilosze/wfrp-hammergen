@@ -9,7 +9,6 @@ const runeApiData: RuneApiData = {
   description: "desc",
   labels: [RuneLabel.RuneLabelMaster, RuneLabel.RuneLabelProtection],
   applicableTo: [ItemType.Melee, ItemType.Armour],
-  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -17,7 +16,7 @@ const runeApiDataResponse: ApiResponse<RuneApiData> = {
   id: "id",
   ownerId: "owner",
   visibility: Visibility.Shared,
-  object: runeApiData,
+  editions: { "4e": runeApiData },
 };
 
 const rune = new Rune({

@@ -72,8 +72,9 @@ func (character *Character) Init() {
 	}
 }
 
+// ToFull resolves the character's references; all content lists hold variants of edition e.
 func (character *Character) ToFull(
-	allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh,
+	e Edition, allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh,
 	allSpells []*Wh, allPrayers []*Wh, allTraits []*Wh, allCareers []*Wh,
 ) (*CharacterFull, error) {
 	if allItems == nil {
@@ -106,7 +107,7 @@ func (character *Character) ToFull(
 	carriedItems := idNumberListToWhNumberList(character.CarriedItems, allItemIdMap)
 	storedItems := idNumberListToWhNumberList(character.StoredItems, allItemIdMap)
 
-	skills, err := skillIdNumberListToWhNumberList(character.Skills, allSkills)
+	skills, err := skillIdNumberListToWhNumberList(e, character.Skills, allSkills)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +123,7 @@ func (character *Character) ToFull(
 	if err != nil {
 		if character.Career.Id != "" {
 			log.Printf("Error finding career %s, using empty career instead", character.Career.Id)
-			careerWh := &Wh{Id: "000000000000000000000000", Object: &Career{}}
+			careerWh := &Wh{Id: "000000000000000000000000", Editions: map[Edition]WhObject{e: &Career{}}}
 			careerWh.Init()
 			career = WhNumber{Wh: careerWh, Number: 1}
 		} else {
@@ -182,7 +183,7 @@ func idNumberListToWhNumberList(idNumberList []IdNumber, allIdWhMap map[string]*
 	return whNumberList
 }
 
-func skillIdNumberListToWhNumberList(skillIdNumberList []IdNumber, allSkills []*Wh) ([]WhNumber, error) {
+func skillIdNumberListToWhNumberList(e Edition, skillIdNumberList []IdNumber, allSkills []*Wh) ([]WhNumber, error) {
 	if len(skillIdNumberList) == 0 && len(allSkills) == 0 {
 		return []WhNumber{}, nil
 	}
@@ -199,7 +200,7 @@ func skillIdNumberListToWhNumberList(skillIdNumberList []IdNumber, allSkills []*
 		if ok {
 			whNumberList = append(whNumberList, WhNumber{Wh: v, Number: skillNumber})
 		} else {
-			allSkill, ok := v.Object.(*Skill)
+			allSkill, ok := v.Editions[e].(*Skill)
 			if !ok {
 				return nil, errors.New("error asserting skill")
 			}

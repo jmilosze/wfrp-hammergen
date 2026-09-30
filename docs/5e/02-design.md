@@ -108,15 +108,15 @@ Preference: the content editor has a **4e/5e toggle**, and both edition variants
 ```
 { _id, ownerid, visibility,
   editions: {
-    "4": { name, description, source, ...all rule fields as today... },
-    "5": { name, description, source, ...5e rule fields... }
+    "4e": { name, description, source, ...all rule fields as today... },
+    "5e": { name, description, source, ...5e rule fields... }
   } }
 ```
 - ✔ The toggle maps directly onto the document.
-- ✔ R7/Q-VERSION is free: 4e content is offered to an opt-in 5e character only when `editions.5` is missing.
+- ✔ R7/Q-VERSION is free: 4e content is offered to an opt-in 5e character only when `editions.5e` is missing.
 - ✔ Characters and careers keep referencing one id; the character's edition picks the variant. A 5e career variant can list the same skill/talent ids as the 4e one.
 - ✔ Browse/search per edition = "variant exists" query.
-- ✘ Every content type changes shape (Go domain, Mongo mapping, API validation, TS types) and all existing content needs a one-off migration `object` → `editions.4`.
+- ✘ Every content type changes shape (Go domain, Mongo mapping, API validation, TS types) and all existing content needs a one-off migration `object` → `editions.4e`.
 - ✘ Owner and visibility are shared by both variants: only the owner (admin for public content) can add the 5e variant of an item. Users cannot attach their own 5e variant to a public 4e item — they create a separate 5e-only item instead.
 - ✘ Everything that differs must live inside the variant, including the item **type** (4e Shield is a melee weapon, 5e Shield is armour), `source` (page numbers differ) and group membership.
 - ✘ Adding a 5e variant later silently switches opt-in 5e characters that used the 4e variant to the 5e one (probably desirable — R7 — but their numbers change).
@@ -134,14 +134,14 @@ Because Cubicle 7 releases are often inconsistent (bugs, re-releases with differ
 - Items in one edition only (4e *Leather Breastplate*, 5e *Sword*) are documents with a single variant.
 - Renames (Diceman/Dicer, Strider/Striding Gait…) are simply different names in the two variants.
 - Parameterised qualities stay one entity per value, as today (Q-PROPS): *Blast 3*, *Reload 2*, and for 5e *Inflict (Entangled 50)*, *Inflict (Entangled 45)*, *Inflict (Entangled 35)*, *Inflict (Entangled your Strength)*, *Inflict (Prone)*, *Inflict (Deafened)*, *Inflict (Ablaze)*.
-- List endpoints return only the requested edition's variant; a Mongo aggregation `$project: { object: "$editions.5" }` keeps today's `{id, ownerId, visibility, object}` response shape.
+- List endpoints return only the requested edition's variant; a Mongo aggregation `$project: { object: "$editions.5e" }` keeps today's `{id, ownerId, visibility, object}` response shape.
 
 **Compatibility with future translations (Q-I18N)**
 Language should **not** be another variant axis next to edition: most fields are rules data (numbers, enums, ids) that must stay identical across languages, and duplicating them per language would let them drift. Instead, translations overlay only the **text** fields of a variant:
 
 ```
 editions: {
-  "5": { name, description, ...rules...,
+  "5e": { name, description, ...rules...,
          i18n: { "pl": { name, description }, "es": { name, description } } } }
 ```
 Missing translation → fall back to the default language. Text fields besides name/description need listing per type (spell/prayer range/target/duration, career level names and trappings, item descriptions, talent specialisation text). This works with both A and B; B keeps each item's editions and languages in one place.
@@ -159,7 +159,7 @@ _To do._ 5e sheet layout (see discovery §12), print, CSV.
 _To do._ 5e creation steps (discovery §3), higher-level generation with tracker/100 XP rules, 5e generation props (species skills/talents, random talents, class trappings, careers table).
 
 ### 4.6 Content
-Initial 5e public content comes from a **one-off import script** (Q-DATA): it matches 5e entries to existing public 4e documents (by name plus a rename table, e.g. Diceman → Dicer, Advisor → Adviser) and adds `editions.5` to them, and creates new documents for 5e-only entries. Input data is extracted from the 5e PDF (e.g. `data/careers-5e.json`) and must be verified against the book first. After the import, all content is maintained through the editor's 4e/5e toggle.
+Initial 5e public content comes from a **one-off import script** (Q-DATA): it matches 5e entries to existing public 4e documents (by name plus a rename table, e.g. Diceman → Dicer, Advisor → Adviser) and adds `editions.5e` to them, and creates new documents for 5e-only entries. Input data is extracted from the 5e PDF (e.g. `data/careers-5e.json`) and must be verified against the book first. After the import, all content is maintained through the editor's 4e/5e toggle.
 
 _To do:_ Source entry for 5e core; data entry/import plan; verification against the book.
 

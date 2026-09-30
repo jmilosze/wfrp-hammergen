@@ -1,7 +1,7 @@
 import { Source, copySource, sourceIsValid } from "./source.ts";
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
@@ -29,7 +29,6 @@ export interface MutationApiData {
   description: string;
   type: MutationType;
   modifiers: CharacterModifiersData;
-  visibility?: Visibility;
   source: Source;
 }
 
@@ -71,15 +70,16 @@ export class Mutation extends WhEntity {
 }
 
 export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): Mutation {
+  const data = variant(mutationApi, UI_EDITION);
   return new Mutation({
     id: mutationApi.id,
     ownerId: mutationApi.ownerId,
     visibility: mutationApi.visibility,
-    name: mutationApi.object.name,
-    description: mutationApi.object.description,
-    type: mutationApi.object.type,
-    modifiers: new CharacterModifiers(mutationApi.object.modifiers),
-    source: mutationApi.object.source,
+    name: data.name,
+    description: data.description,
+    type: data.type,
+    modifiers: new CharacterModifiers(data.modifiers),
+    source: data.source,
   });
 }
 
@@ -89,7 +89,6 @@ export function modelToApi(mutation: Mutation): MutationApiData {
     description: mutation.description,
     type: mutation.type,
     modifiers: mutation.modifiers.toData(),
-    visibility: mutation.visibility,
     source: copySource(mutation.source),
   };
 }

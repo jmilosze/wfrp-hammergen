@@ -26,6 +26,63 @@ func RegisterWhRoutes(router *gin.Engine, ws warhammer.WhService, js auth.JwtSer
 	router.GET("api/wh/generation", whGenerationPropsHandler(ws))
 }
 
+var errInvalidEdition = fmt.Errorf("edition must be one of %v", warhammer.Editions)
+
+// parseOptionalEdition returns the edition query parameter, or an empty edition when it is absent.
+func parseOptionalEdition(c *gin.Context) (warhammer.Edition, bool) {
+	e := warhammer.Edition(c.Query("edition"))
+	if e != "" && !slices.Contains(warhammer.Editions, e) {
+		c.JSON(BadRequestErrResp(errInvalidEdition.Error()))
+		return "", false
+	}
+	return e, true
+}
+
+// parseWhWrite decodes a create/update body: {visibility, editions: {<edition>: {...}}} for content,
+// {visibility, edition, ...character fields} for characters.
+func parseWhWrite(t warhammer.WhType, reqData []byte) (*warhammer.Wh, error) {
+	var reqTop struct {
+		Visibility *warhammer.Visibility                 `json:"visibility"`
+		Edition    *warhammer.Edition                    `json:"edition"`
+		Editions   map[warhammer.Edition]json.RawMessage `json:"editions"`
+	}
+	if err := json.Unmarshal(reqData, &reqTop); err != nil {
+		return nil, err
+	}
+	if reqTop.Visibility == nil {
+		return nil, errors.New("visibility is required")
+	}
+	whWrite := warhammer.Wh{Visibility: *reqTop.Visibility}
+
+	if !warhammer.HasEditions(t) {
+		if reqTop.Edition == nil || !slices.Contains(warhammer.Editions, *reqTop.Edition) {
+			return nil, errInvalidEdition
+		}
+		whWrite.Edition = *reqTop.Edition
+		whWrite.Object = warhammer.NewWhObject(t)
+		if err := json.Unmarshal(reqData, whWrite.Object); err != nil {
+			return nil, err
+		}
+		return &whWrite, nil
+	}
+
+	if len(reqTop.Editions) == 0 {
+		return nil, errors.New("at least one edition is required")
+	}
+	whWrite.Editions = make(map[warhammer.Edition]warhammer.WhObject, len(reqTop.Editions))
+	for e, raw := range reqTop.Editions {
+		if !slices.Contains(warhammer.Editions, e) {
+			return nil, errInvalidEdition
+		}
+		obj := warhammer.NewWhObject(t)
+		if err := json.Unmarshal(raw, obj); err != nil {
+			return nil, err
+		}
+		whWrite.Editions[e] = obj
+	}
+	return &whWrite, nil
+}
+
 func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.WhType) func(*gin.Context) {
 	return func(c *gin.Context) {
 		claims := getUserClaims(c)
@@ -37,29 +94,19 @@ func whCreateOrUpdateHandler(isCreate bool, s warhammer.WhService, t warhammer.W
 			return
 		}
 
-		whWrite := warhammer.Wh{}
-		whWrite.Object = warhammer.NewWhObject(t)
-		if err = json.Unmarshal(reqData, whWrite.Object); err != nil {
+		whWrite, err := parseWhWrite(t, reqData)
+		if err != nil {
 			log.Println("error handling create or update wh", err)
 			c.JSON(BadRequestErrResp(err.Error()))
 			return
 		}
 
-		var reqTop struct {
-			Visibility *warhammer.Visibility `json:"visibility"`
-		}
-		if err = json.Unmarshal(reqData, &reqTop); err != nil || reqTop.Visibility == nil {
-			c.JSON(BadRequestErrResp("visibility is required"))
-			return
-		}
-		whWrite.Visibility = *reqTop.Visibility
-
 		var whRead *warhammer.Wh
 		if isCreate {
-			whRead, err = s.Create(c.Request.Context(), t, &whWrite, claims)
+			whRead, err = s.Create(c.Request.Context(), t, whWrite, claims)
 		} else {
 			whWrite.Id = c.Param("whId")
-			whRead, err = s.Update(c.Request.Context(), t, &whWrite, claims)
+			whRead, err = s.Update(c.Request.Context(), t, whWrite, claims)
 		}
 
 		if err != nil {
@@ -88,17 +135,23 @@ func whGetHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context) 
 	return func(c *gin.Context) {
 		whId := c.Param("whId")
 		claims := getUserClaims(c)
+		edition, ok := parseOptionalEdition(c)
+		if !ok {
+			return
+		}
 
 		var full bool
 		if slices.Contains([]string{"true", "yes"}, c.Query("full")) {
 			full = true
 		}
 
-		wh, err := s.Get(c.Request.Context(), t, claims, full, true, warhammer.WhFilter{WhIds: []string{whId}})
+		wh, err := s.Get(c.Request.Context(), t, claims, full, true, warhammer.WhFilter{Edition: edition, WhIds: []string{whId}})
 
 		if err != nil {
 			log.Println("error handling get wh", err)
-			if errors.Is(err, domain.ErrNotFound) {
+			if errors.Is(err, domain.ErrInvalidArguments) {
+				c.JSON(BadRequestErrResp(err.Error()))
+			} else if errors.Is(err, domain.ErrNotFound) {
 				c.JSON(NotFoundErrResp(""))
 			} else {
 				c.JSON(ServerErrResp(""))
@@ -114,12 +167,18 @@ func whDeleteHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Contex
 	return func(c *gin.Context) {
 		whId := c.Param("whId")
 		claims := getUserClaims(c)
+		edition, ok := parseOptionalEdition(c)
+		if !ok {
+			return
+		}
 
-		err := s.Delete(c.Request.Context(), t, whId, claims)
+		err := s.Delete(c.Request.Context(), t, edition, whId, claims)
 
 		if err != nil {
 			log.Println("error handling delete wh", err)
-			if errors.Is(err, domain.ErrUnauthorized) {
+			if errors.Is(err, domain.ErrInvalidArguments) {
+				c.JSON(BadRequestErrResp(err.Error()))
+			} else if errors.Is(err, domain.ErrUnauthorized) {
 				c.JSON(UnauthorizedErrResp(""))
 			} else {
 				c.JSON(ServerErrResp(""))
@@ -151,13 +210,17 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 	return func(c *gin.Context) {
 		ids := parseQueryList(c, "id")
 		claims := getUserClaims(c)
+		edition, ok := parseOptionalEdition(c)
+		if !ok {
+			return
+		}
 
 		var full bool
 		if slices.Contains([]string{"true", "yes"}, c.Query("full")) {
 			full = true
 		}
 
-		filter := warhammer.WhFilter{WhIds: ids}
+		filter := warhammer.WhFilter{Edition: edition, WhIds: ids}
 		if t == warhammer.WhTypeCareer {
 			filter.SkillIds = parseQueryList(c, "skillId")
 			filter.TalentIds = parseQueryList(c, "talentId")
@@ -167,7 +230,9 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 
 		if err != nil {
 			log.Println("error handling list wh", err)
-			if errors.Is(err, domain.ErrNotFound) {
+			if errors.Is(err, domain.ErrInvalidArguments) {
+				c.JSON(BadRequestErrResp(err.Error()))
+			} else if errors.Is(err, domain.ErrNotFound) {
 				c.JSON(NotFoundErrResp(""))
 			} else {
 				c.JSON(ServerErrResp(""))

@@ -11,8 +11,8 @@ const (
 
 func testCareers() []*Wh {
 	return []*Wh{
-		{Id: careerAId, Object: &Career{Name: "A"}},
-		{Id: careerBId, Object: &Career{Name: "B"}},
+		{Id: careerAId, Editions: map[Edition]WhObject{Edition4e: &Career{Name: "A"}}},
+		{Id: careerBId, Editions: map[Edition]WhObject{Edition4e: &Career{Name: "B"}}},
 	}
 }
 
@@ -38,12 +38,15 @@ func TestCharacterToFullMissingCareer(t *testing.T) {
 
 	// Repeat to make sure the result does not depend on map iteration order.
 	for range 20 {
-		full, err := character.ToFull([]*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, testCareers())
+		full, err := character.ToFull(Edition4e, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, testCareers())
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		if full.Career.Wh.Id != emptyCareerId {
 			t.Fatalf("got career id %s, want %s", full.Career.Wh.Id, emptyCareerId)
+		}
+		if _, ok := full.Career.Wh.Editions[Edition4e].(*Career); !ok {
+			t.Fatalf("got career editions %v, want an empty 4e career", full.Career.Wh.Editions)
 		}
 		if full.Career.Number != 1 {
 			t.Fatalf("got career number %d, want 1", full.Career.Number)

@@ -1,15 +1,6 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import {
-  ApiResponse,
-  validateIdNumber,
-  validFloatFn,
-  validIntegerFn,
-  validLongDescFn,
-  validShortDescFn,
-  Visibility,
-  WhEntity,
-} from "./common.ts";
+import { ApiResponse, UI_EDITION, validateIdNumber, validFloatFn, validIntegerFn, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
 import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
@@ -451,7 +442,6 @@ export interface ItemApiData {
   grimoire: { spells: string[] };
   container: ContainerType;
   other: OtherType;
-  visibility?: Visibility;
   source: Source;
 }
 
@@ -720,26 +710,27 @@ export class Item extends WhEntity {
 }
 
 export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
+  const data = variant(itemApi, UI_EDITION);
   const newItem = new Item({
     id: itemApi.id,
     ownerId: itemApi.ownerId,
     visibility: itemApi.visibility,
-    name: itemApi.object.name,
-    description: itemApi.object.description,
-    price: itemApi.object.price,
-    enc: itemApi.object.enc,
-    availability: itemApi.object.availability,
-    properties: new Set(itemApi.object.properties),
-    runes: idNumberArrayToRecord(itemApi.object.runes),
-    type: itemApi.object.type,
-    melee: itemApi.object.melee,
-    ranged: itemApi.object.ranged,
-    ammunition: itemApi.object.ammunition,
-    armour: itemApi.object.armour,
-    grimoire: { spells: new Set(itemApi.object.grimoire.spells) },
-    container: itemApi.object.container,
-    other: itemApi.object.other,
-    source: itemApi.object.source,
+    name: data.name,
+    description: data.description,
+    price: data.price,
+    enc: data.enc,
+    availability: data.availability,
+    properties: new Set(data.properties),
+    runes: idNumberArrayToRecord(data.runes),
+    type: data.type,
+    melee: data.melee,
+    ranged: data.ranged,
+    ammunition: data.ammunition,
+    armour: data.armour,
+    grimoire: { spells: new Set(data.grimoire.spells) },
+    container: data.container,
+    other: data.other,
+    source: data.source,
   });
 
   return newItem;
@@ -784,7 +775,6 @@ export function modelToApi(item: Item): ItemApiData {
     grimoire: { spells: [...item.grimoire.spells] },
     container: { capacity: item.container.capacity, carryType: item.container.carryType },
     other: { carryType: item.other.carryType },
-    visibility: item.visibility,
     source: copySource(item.source),
   };
 }

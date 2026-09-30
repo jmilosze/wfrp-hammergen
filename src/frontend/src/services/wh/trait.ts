@@ -1,7 +1,7 @@
 import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
 import { Source, copySource, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/trait";
@@ -10,7 +10,6 @@ export interface TraitApiData {
   name: string;
   description: string;
   modifiers: CharacterModifiersData;
-  visibility?: Visibility;
   source: Source;
 }
 
@@ -44,14 +43,15 @@ export class Trait extends WhEntity {
 }
 
 export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>): Trait {
+  const data = variant(traitApi, UI_EDITION);
   return new Trait({
     id: traitApi.id,
     ownerId: traitApi.ownerId,
     visibility: traitApi.visibility,
-    name: traitApi.object.name,
-    description: traitApi.object.description,
-    modifiers: new CharacterModifiers(traitApi.object.modifiers),
-    source: traitApi.object.source,
+    name: data.name,
+    description: data.description,
+    modifiers: new CharacterModifiers(data.modifiers),
+    source: data.source,
   });
 }
 
@@ -60,7 +60,6 @@ export function modelToApi(trait: Trait): TraitApiData {
     name: trait.name,
     description: trait.description,
     modifiers: trait.modifiers.toData(),
-    visibility: trait.visibility,
     source: copySource(trait.source),
   };
 }

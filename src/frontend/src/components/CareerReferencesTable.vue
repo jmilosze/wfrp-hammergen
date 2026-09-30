@@ -8,6 +8,7 @@ import {
   getCareersForTalent,
   printClassName,
 } from "../services/wh/career.ts";
+import { UI_EDITION } from "../services/wh/common.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import AlertBlock from "./AlertBlock.vue";
 import TextLink from "./TextLink.vue";
@@ -37,8 +38,8 @@ async function loadCareers() {
   try {
     const careers =
       props.type === "skill"
-        ? await getCareersForSkill(authRequest, searchIdArray)
-        : await getCareersForTalent(authRequest, searchIdArray);
+        ? await getCareersForSkill(authRequest, searchIdArray, UI_EDITION)
+        : await getCareersForTalent(authRequest, searchIdArray, UI_EDITION);
 
     const matches: CareerMatch[] = [];
     for (const career of careers) {

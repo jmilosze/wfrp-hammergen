@@ -12,7 +12,6 @@ const skillApiData: SkillApiData = {
   displayZero: true,
   isGroup: true,
   group: ["a", "b"],
-  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 } as SkillApiData;
 
@@ -20,7 +19,7 @@ const skillApiResponse: ApiResponse<SkillApiData> = {
   id: "id",
   ownerId: "owner",
   visibility: Visibility.Shared,
-  object: skillApiData,
+  editions: { "4e": skillApiData },
 };
 
 const skill = new Skill({

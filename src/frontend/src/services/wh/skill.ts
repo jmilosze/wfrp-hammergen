@@ -1,6 +1,6 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, validLongDescFn, validShortDescFn, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { AttributeName, attributeNameList } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
@@ -36,7 +36,6 @@ export interface SkillApiData {
   displayZero: boolean;
   isGroup: boolean;
   group: string[];
-  visibility?: Visibility;
   source: Source;
 }
 
@@ -86,18 +85,19 @@ export class Skill extends WhEntity {
 }
 
 export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>): Skill {
+  const data = variant(skillApi, UI_EDITION);
   return new Skill({
     id: skillApi.id,
     ownerId: skillApi.ownerId,
     visibility: skillApi.visibility,
-    name: skillApi.object.name,
-    description: skillApi.object.description,
-    attribute: skillApi.object.attribute,
-    type: skillApi.object.type,
-    displayZero: skillApi.object.displayZero,
-    isGroup: skillApi.object.isGroup,
-    group: new Set(skillApi.object.group),
-    source: skillApi.object.source,
+    name: data.name,
+    description: data.description,
+    attribute: data.attribute,
+    type: data.type,
+    displayZero: data.displayZero,
+    isGroup: data.isGroup,
+    group: new Set(data.group),
+    source: data.source,
   });
 }
 
@@ -110,7 +110,6 @@ export function modelToApi(skill: Skill): SkillApiData {
     displayZero: skill.displayZero,
     isGroup: skill.isGroup,
     group: [...skill.group],
-    visibility: skill.visibility,
     source: copySource(skill.source),
   };
 }

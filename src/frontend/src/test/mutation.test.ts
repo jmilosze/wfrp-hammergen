@@ -14,7 +14,6 @@ const mutationApiData: MutationApiData = {
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
     effects: [],
   },
-  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -22,7 +21,7 @@ const mutationApiResponse: ApiResponse<MutationApiData> = {
   id: "id",
   ownerId: "owner",
   visibility: Visibility.Shared,
-  object: mutationApiData,
+  editions: { "4e": mutationApiData },
 };
 
 const mutation = new Mutation({

@@ -1,10 +1,13 @@
 import { computed, ref } from "vue";
 import { useAuth } from "./auth.ts";
-import { Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
+import { ApiHeaders, UI_EDITION, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
 import { SubmissionState } from "../utils/submission.ts";
 import { copySource } from "../services/wh/source.ts";
 
-export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, elementApi: WhApi<T, TApiData>) {
+export function useWhEdit<T extends WhProperty, TResponse extends ApiHeaders>(
+  whInstance: T,
+  elementApi: WhApi<T, TResponse>,
+) {
   const auth = useAuth();
 
   if (auth.isAdmin.value && whInstance.id === "create") {
@@ -28,7 +31,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
 
     showApiError.value = true;
     try {
-      wh.value = await elementApi.getElement(id);
+      wh.value = await elementApi.getElement(id, UI_EDITION);
       whOriginal.value = wh.value.copy();
       initSources.value = copySource(wh.value.source);
     } catch {
@@ -73,7 +76,7 @@ export function useWhEdit<T extends WhProperty, TApiData>(whInstance: T, element
 
     submissionState.value.setInProgress();
     try {
-      await elementApi.deleteElement(wh.value.id);
+      await elementApi.deleteElement(wh.value.id, UI_EDITION);
       whOriginal.value = wh.value.copy() as T;
       return true;
     } catch (error) {

@@ -22,21 +22,45 @@ func GetWhValidationAliases() map[string]string {
 	}
 }
 
+type Edition string
+
+const (
+	Edition4e Edition = "4e"
+	Edition5e Edition = "5e"
+)
+
+var Editions = []Edition{Edition4e, Edition5e}
+
 type WhObject interface {
 	Init()
 }
 
+// Wh is a content document or a character.
+// Content holds its edition variants in Editions. A character has one fixed Edition and its data in Object.
 type Wh struct {
-	Id         string     `json:"id"`
-	OwnerId    string     `json:"ownerId"`
-	Visibility Visibility `json:"visibility" validate:"visibility_valid"`
-	Object     WhObject   `json:"object"`
+	Id         string               `json:"id"`
+	OwnerId    string               `json:"ownerId"`
+	Visibility Visibility           `json:"visibility" validate:"visibility_valid"`
+	Edition    Edition              `json:"edition,omitempty"`
+	Object     WhObject             `json:"object,omitempty"`
+	Editions   map[Edition]WhObject `json:"editions,omitempty" validate:"dive"`
 }
 
 func (w *Wh) Init() {
-	if w != nil && w.Object != nil {
+	if w == nil {
+		return
+	}
+	if w.Object != nil {
 		w.Object.Init()
 	}
+	for _, v := range w.Editions {
+		v.Init()
+	}
+}
+
+// HasEditions tells whether documents of the type hold edition variants (content) or a single edition (characters).
+func HasEditions(t WhType) bool {
+	return t != WhTypeCharacter
 }
 
 const (
@@ -81,6 +105,7 @@ func (w *Wh) CopyHeaders() *Wh {
 		Id:         w.Id,
 		OwnerId:    w.OwnerId,
 		Visibility: w.Visibility,
+		Edition:    w.Edition,
 	}
 }
 

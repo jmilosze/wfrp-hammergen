@@ -1,4 +1,4 @@
-import { SHORT_DESC_LENGTH, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
+import { ApiHeaders, SHORT_DESC_LENGTH, UI_EDITION, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
 import { computed, Ref, ref } from "vue";
 import { source } from "../services/wh/source.ts";
 import { useAuth } from "./auth.ts";
@@ -8,7 +8,7 @@ for (const [key, value] of Object.entries(source)) {
   sourceOptions.push({ text: value, value: key });
 }
 
-export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, TApiData>) {
+export function useWhList<T extends WhProperty, TResponse extends ApiHeaders>(elementApi: WhApi<T, TResponse>) {
   const auth = useAuth();
 
   const whToDelete = ref({ id: "", name: "" });
@@ -25,7 +25,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
     loading.value = true;
     showApiError.value = true;
     try {
-      whList.value = await elementApi.listElements();
+      whList.value = await elementApi.listElements(UI_EDITION);
     } catch {
       apiError.value = "Error. Could not pull data from server.";
     }
@@ -35,7 +35,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
   async function copyWh(whId: string): Promise<void> {
     showApiError.value = true;
     try {
-      const whCopy: T = await elementApi.getElement(whId);
+      const whCopy: T = await elementApi.getElement(whId, UI_EDITION);
       whCopy.name = whCopy.name + " - copy";
       if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(0, SHORT_DESC_LENGTH);
@@ -65,7 +65,7 @@ export function useWhList<T extends WhProperty, TApiData>(elementApi: WhApi<T, T
   async function deleteWh() {
     showApiError.value = true;
     try {
-      await elementApi.deleteElement(whToDelete.value.id);
+      await elementApi.deleteElement(whToDelete.value.id, UI_EDITION);
       for (let i = 0; i < whList.value.length; i++) {
         if (whList.value[i]["id"] === whToDelete.value.id) {
           whList.value.splice(i, 1);

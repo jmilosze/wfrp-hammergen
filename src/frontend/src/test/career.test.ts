@@ -22,7 +22,6 @@ const careerApiData: CareerApiData = {
   description: "some desc",
   species: [Species.Dwarf, Species.Human],
   class: CareerClass.Academic,
-  visibility: Visibility.Private,
   source: { 1: "page 2", 3: "page 5-10" },
   level1: {
     exists: true,
@@ -80,7 +79,7 @@ const careerApiResponse: ApiResponse<CareerApiData> = {
   id: "id",
   ownerId: "owner",
   visibility: Visibility.Private,
-  object: careerApiData,
+  editions: { "4e": careerApiData },
 };
 
 const career = new Career({
@@ -293,61 +292,63 @@ describe("isEqualTo returns false", () => {
       id: "career-1",
       ownerId: "owner-1",
       visibility: Visibility.Public,
-      object: {
-        name: "Test Career",
-        description: "description",
-        species: [Species.Human],
-        class: CareerClass.Warrior,
-        source: {},
-        level1: {
-          exists: true,
-          name: "Level 1 Name",
-          status: StatusTier.Brass,
-          standing: 1,
-          attributes: [],
-          skills: ["skill-a", "group-1"],
-          talents: ["talent-a"],
-          items: "",
-        },
-        level2: {
-          exists: false,
-          name: "Level 2 Inactive",
-          status: StatusTier.Brass,
-          standing: 1,
-          attributes: [],
-          skills: ["skill-a"],
-          talents: ["talent-a"],
-          items: "",
-        },
-        level3: {
-          exists: true,
-          name: "Level 3 Name",
-          status: StatusTier.Silver,
-          standing: 2,
-          attributes: [],
-          skills: ["skill-b"],
-          talents: ["talent-b", "talent-group-1"],
-          items: "",
-        },
-        level4: {
-          exists: false,
-          name: "",
-          status: StatusTier.Brass,
-          standing: 0,
-          attributes: [],
-          skills: [],
-          talents: [],
-          items: "",
-        },
-        level5: {
-          exists: false,
-          name: "",
-          status: StatusTier.Brass,
-          standing: 0,
-          attributes: [],
-          skills: [],
-          talents: [],
-          items: "",
+      editions: {
+        "4e": {
+          name: "Test Career",
+          description: "description",
+          species: [Species.Human],
+          class: CareerClass.Warrior,
+          source: {},
+          level1: {
+            exists: true,
+            name: "Level 1 Name",
+            status: StatusTier.Brass,
+            standing: 1,
+            attributes: [],
+            skills: ["skill-a", "group-1"],
+            talents: ["talent-a"],
+            items: "",
+          },
+          level2: {
+            exists: false,
+            name: "Level 2 Inactive",
+            status: StatusTier.Brass,
+            standing: 1,
+            attributes: [],
+            skills: ["skill-a"],
+            talents: ["talent-a"],
+            items: "",
+          },
+          level3: {
+            exists: true,
+            name: "Level 3 Name",
+            status: StatusTier.Silver,
+            standing: 2,
+            attributes: [],
+            skills: ["skill-b"],
+            talents: ["talent-b", "talent-group-1"],
+            items: "",
+          },
+          level4: {
+            exists: false,
+            name: "",
+            status: StatusTier.Brass,
+            standing: 0,
+            attributes: [],
+            skills: [],
+            talents: [],
+            items: "",
+          },
+          level5: {
+            exists: false,
+            name: "",
+            status: StatusTier.Brass,
+            standing: 0,
+            attributes: [],
+            skills: [],
+            talents: [],
+            items: "",
+          },
         },
       },
     });
@@ -409,17 +410,17 @@ describe("isEqualTo returns false", () => {
         id: "c-1",
         ownerId: "u-1",
         visibility: Visibility.Public,
-        object: careerApiData,
+        editions: { "4e": careerApiData },
       };
 
       const mockAxios = {
         get: vi.fn().mockResolvedValue({ data: { data: [mockCareerApi] } }),
       };
 
-      const result = await getCareersForSkill(mockAxios, ["skill-1", "group-1"]);
+      const result = await getCareersForSkill(mockAxios, ["skill-1", "group-1"], "4e");
 
       expect(mockAxios.get).toHaveBeenCalledWith("/api/wh/career", {
-        params: { skillId: ["skill-1", "group-1"] },
+        params: { skillId: ["skill-1", "group-1"], edition: "4e" },
       });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe("c-1");
@@ -431,17 +432,17 @@ describe("isEqualTo returns false", () => {
         id: "c-2",
         ownerId: "u-1",
         visibility: Visibility.Public,
-        object: careerApiData,
+        editions: { "4e": careerApiData },
       };
 
       const mockAxios = {
         get: vi.fn().mockResolvedValue({ data: { data: [mockCareerApi] } }),
       };
 
-      const result = await getCareersForTalent(mockAxios, ["talent-1"]);
+      const result = await getCareersForTalent(mockAxios, ["talent-1"], "5e");
 
       expect(mockAxios.get).toHaveBeenCalledWith("/api/wh/career", {
-        params: { talentId: ["talent-1"] },
+        params: { talentId: ["talent-1"], edition: "5e" },
       });
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe("c-2");

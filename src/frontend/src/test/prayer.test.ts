@@ -9,7 +9,6 @@ const prayerApiData: PrayerApiData = {
   target: "target",
   duration: "duration",
   description: "desc",
-  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -17,7 +16,7 @@ const prayerApiResponse: ApiResponse<PrayerApiData> = {
   id: "id",
   ownerId: "owner",
   visibility: Visibility.Shared,
-  object: prayerApiData,
+  editions: { "4e": prayerApiData },
 };
 
 const prayer = new Prayer({

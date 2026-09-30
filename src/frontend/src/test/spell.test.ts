@@ -20,7 +20,6 @@ const spellApiData: SpellApiData = {
   duration: "duration",
   description: "desc",
   classification: { type: SpellType.SpellTypeLore, labels: [SpellLabel.SpellLabelRuin, SpellLabel.SpellLabelStealth] },
-  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -28,7 +27,7 @@ const spellApiResponse: ApiResponse<SpellApiData> = {
   id: "id",
   ownerId: "owner",
   visibility: Visibility.Shared,
-  object: spellApiData,
+  editions: { "4e": spellApiData },
 };
 
 const spell = new Spell({

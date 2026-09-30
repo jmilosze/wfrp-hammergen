@@ -83,13 +83,13 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | # | Item | Status | Notes |
 |---|---|---|---|
 | C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ✅ | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); migrated and deployed local → staging → production 2026-09-30; production backup `db/hammergen_30_09_2026_before_p1` |
-| C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ⬜ | see plan P1 "Later" |
+| C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | 🟡 | [plans/p2-edition-api.md](plans/p2-edition-api.md); revised design implemented and tested; rollout next |
 | C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill, prayer classification) | ⬜ | depends on Q-PRAYER, Q-SIZE |
 | C3 | 5e core source | ⬜ | |
 | C4 | Browse/search/filter content by edition in lists (R2) | ⬜ | |
 | C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | ⬜ | |
 | C6a | Extract and verify 5e core data (careers, skills, talents, items, qualities/flaws, spells, prayers, traits, mutations) | ⬜ | careers already extracted: `data/careers-5e.json`; see D16 |
-| C6b | One-off import script: add `editions.5` to matching public documents, create 5e-only public documents | ⬜ | Q-DATA; name matching + rename table; link only clear 1-to-1 matches |
+| C6b | One-off import script: add `editions.5e` to matching public documents, create 5e-only public documents | ⬜ | Q-DATA; name matching + rename table; link only clear 1-to-1 matches |
 | C7 | Tests | ⬜ | |
 
 ### Phase 3.2 — 5e characters (5e content only)
@@ -164,3 +164,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-09-30 | P1: maintenance mode deployed; migration script `migrate_editions.py` added, `find_duplicates.py`/`replace_duplicate.py` switched to `editions.4e`; tested on a restored prod dump. |
 | 2026-09-30 | P1: MongoDB layer reads/writes `editions.4e` (characters keep `object`); DB-layer tests against real Mongo added; integration tests pass; old API on original prod dump vs new API on migrated dump gave identical responses (3,467 requests, 39 users). |
 | 2026-09-30 | P1 done: migration run on local, staging (6,871 docs) and production (6,876 docs), new backend deployed, smoke tested. |
+| 2026-09-30 | Design §4.1a keys corrected to `"4e"`/`"5e"`. Plan P2 (C1b) drafted: `?edition=` query param, per-edition routes only (option A), 5e writes rejected until C2/H1. |
+| 2026-09-30 | P2 implemented: `?edition=` required on content/character routes, `edition` in responses, 5e writes rejected, `migrate_character_editions.py`, frontend passes `UI_EDITION` (`4e`); current vs new API on the production backup gave identical responses apart from `edition` (3,467 requests, 39 users). |
+| 2026-09-30 | P2 revised: content API uses the `editions` map (optional `?edition` filter on reads, editions in payload on writes, PUT merges variants); `full=true` and career search require `edition`; characters keep `{edition, object}`; no 5e write guard. Frontend and backend now ship together. |
+| 2026-09-30 | P2 revised design implemented: `editions` map in content API, `edition` on characters; current vs new API on the production backup identical after mapping `object` ↔ `editions["4e"]` (3,467 requests, 39 users); UI list/view/edit/copy/delete checked against the new API. |

@@ -2,6 +2,7 @@
 import Header from "../../components/PageHeader.vue";
 import { computed, ref } from "vue";
 import { characterApi } from "../../services/wh/character.ts";
+import { UI_EDITION } from "../../services/wh/common.ts";
 import { authRequest } from "../../services/auth.ts";
 import {
   CharacterFullItem,
@@ -37,7 +38,7 @@ await loadCharacter();
 
 async function loadCharacter() {
   try {
-    character.value = await api.getElementForDisplay(props.id);
+    character.value = await api.getElementForDisplay(props.id, UI_EDITION);
   } catch {
     apiError.value = "Error. Could not pull data from server.";
   }

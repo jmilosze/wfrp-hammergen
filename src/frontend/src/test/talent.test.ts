@@ -21,7 +21,6 @@ const talentGroupApiData: TalentApiData = {
   },
   isGroup: true,
   group: ["a", "b", "c"],
-  visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -29,7 +28,7 @@ const talentGroupApiResponse: ApiResponse<TalentApiData> = {
   id: "id1",
   ownerId: "owner",
   visibility: Visibility.Shared,
-  object: talentGroupApiData,
+  editions: { "4e": talentGroupApiData },
 };
 
 const talentGroup = new Talent({

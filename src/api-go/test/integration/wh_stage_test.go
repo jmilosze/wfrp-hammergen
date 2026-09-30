@@ -24,6 +24,8 @@ type whTestStage struct {
 	t                      *testing.T
 	client                 *http.Client
 	testUrl                string
+	edition                string
+	writeEditions          []string
 	genProps               *warhammer.GenProps
 	user                   *whUser
 	adminUser              *whUser
@@ -44,10 +46,15 @@ type whTestStage struct {
 }
 
 type whProperty struct {
-	Id         string              `json:"id"`
-	OwnerId    string              `json:"ownerId"`
-	Visibility int                 `json:"visibility"`
-	Object     *warhammer.Property `json:"object"`
+	Id         string                         `json:"id"`
+	OwnerId    string                         `json:"ownerId"`
+	Visibility int                            `json:"visibility"`
+	Editions   map[string]*warhammer.Property `json:"editions"`
+}
+
+// object returns the 4e variant, the one every test creates.
+func (w *whProperty) object() *warhammer.Property {
+	return w.Editions[string(warhammer.Edition4e)]
 }
 
 type whResponseFull struct {
@@ -72,10 +79,55 @@ func whTest(t *testing.T, testUrl string, parallel bool) (*whTestStage, *whTestS
 		t:             t,
 		client:        client,
 		testUrl:       testUrl,
+		writeEditions: []string{string(warhammer.Edition4e)},
 		responseWhMap: make(map[string]*whProperty),
 	}
 
 	return s, s, s
+}
+
+// whUrl builds a read/delete url with the stage's edition query parameter; an empty edition leaves it out.
+func (s *whTestStage) whUrl(path string) string {
+	if s.edition == "" {
+		return s.testUrl + path
+	}
+	return s.testUrl + path + "?edition=" + s.edition
+}
+
+// edition_is sets the edition query parameter of reads and deletes; "" leaves it out.
+func (s *whTestStage) edition_is(edition string) *whTestStage {
+	s.edition = edition
+	return s
+}
+
+// write_editions_are sets the editions a create/update payload carries the property under.
+func (s *whTestStage) write_editions_are(editions ...string) *whTestStage {
+	s.writeEditions = editions
+	return s
+}
+
+func (s *whTestStage) path_is_retrieved(path string) *whTestStage {
+	s.getWh(s.testUrl + path)
+	return s
+}
+
+func (s *whTestStage) response_wh_editions_are(editions ...string) *whTestStage {
+	got := []string{}
+	for e := range s.responseWh.Editions {
+		got = append(got, e)
+	}
+	require.ElementsMatch(s.t, editions, got)
+	return s
+}
+
+func (s *whTestStage) response_wh_edition_is_new_wh_property(edition string) *whTestStage {
+	s.compareWhProperty(s.newWhProperty, s.responseWh.Editions[edition])
+	return s
+}
+
+func (s *whTestStage) response_wh_edition_is_another_new_wh_property(edition string) *whTestStage {
+	s.compareWhProperty(s.anotherNewWhProperty, s.responseWh.Editions[edition])
+	return s
 }
 
 func (s *whTestStage) and() *whTestStage {
@@ -113,10 +165,10 @@ func (s *whTestStage) status_code_is_500() *whTestStage {
 
 func (s *whTestStage) wh_property_with_invalid_visibility_is_created() *whTestStage {
 	payload := map[string]any{
-		"name":        "invalid visibility property",
-		"description": "test",
-		"type":        0,
-		"visibility":  99,
+		"visibility": 99,
+		"editions": map[string]any{
+			"4e": map[string]any{"name": "invalid visibility property", "description": "test", "type": 0},
+		},
 	}
 	payloadBytes, err := json.Marshal(payload)
 	require.NoError(s.t, err)
@@ -136,9 +188,9 @@ func (s *whTestStage) wh_property_with_invalid_visibility_is_created() *whTestSt
 
 func (s *whTestStage) wh_property_without_visibility_is_created() *whTestStage {
 	payload := map[string]any{
-		"name":        "no visibility property",
-		"description": "test",
-		"type":        0,
+		"editions": map[string]any{
+			"4e": map[string]any{"name": "no visibility property", "description": "test", "type": 0},
+		},
 	}
 	payloadBytes, err := json.Marshal(payload)
 	require.NoError(s.t, err)
@@ -306,12 +358,11 @@ func (s *whTestStage) upsertWh(whProperty *warhammer.Property, url string, creat
 		method = "PUT"
 	}
 
-	payloadMap := make(map[string]any)
-	if whProperty != nil {
-		propBytes, err := json.Marshal(whProperty)
-		require.NoError(s.t, err)
-		require.NoError(s.t, json.Unmarshal(propBytes, &payloadMap))
+	editions := make(map[string]any)
+	for _, e := range s.writeEditions {
+		editions[e] = whProperty
 	}
+	payloadMap := map[string]any{"editions": editions}
 	if s.whVisibility != nil {
 		payloadMap["visibility"] = *s.whVisibility
 	}
@@ -345,7 +396,7 @@ func (s *whTestStage) response_body_contains_wh_property() *whTestStage {
 func (s *whTestStage) response_wh_object_is_new_wh_property() *whTestStage {
 	require.NotNil(s.t, s.newWhProperty)
 
-	s.compareWhProperty(s.newWhProperty, s.responseWh.Object)
+	s.compareWhProperty(s.newWhProperty, s.responseWh.object())
 	return s
 }
 
@@ -372,7 +423,7 @@ func (s *whTestStage) owner_is_admin_literal_and_can_edit() *whTestStage {
 }
 
 func (s *whTestStage) new_wh_property_is_retrieved() *whTestStage {
-	s.getWh(s.testUrl + "/api/wh/property/" + s.newWhPropertyId)
+	s.getWh(s.whUrl("/api/wh/property/" + s.newWhPropertyId))
 	return s
 }
 
@@ -456,7 +507,7 @@ func (s *whTestStage) response_body_contains_another_new_wh_id() *whTestStage {
 }
 
 func (s *whTestStage) wh_property_is_listed() *whTestStage {
-	s.getWh(s.testUrl + "/api/wh/property/")
+	s.getWh(s.whUrl("/api/wh/property/"))
 	return s
 }
 
@@ -465,7 +516,7 @@ func (s *whTestStage) response_body_contains_new_wh() *whTestStage {
 
 	wh, ok := s.responseWhMap[s.newWhPropertyId]
 	require.True(s.t, ok)
-	s.compareWhProperty(s.newWhProperty, wh.Object)
+	s.compareWhProperty(s.newWhProperty, wh.object())
 	return s
 }
 
@@ -474,7 +525,7 @@ func (s *whTestStage) response_body_contains_another_new_wh() *whTestStage {
 
 	wh, ok := s.responseWhMap[s.anotherNewWhPropertyId]
 	require.True(s.t, ok)
-	s.compareWhProperty(s.anotherNewWhProperty, wh.Object)
+	s.compareWhProperty(s.anotherNewWhProperty, wh.object())
 	return s
 }
 
@@ -536,12 +587,12 @@ func (s *whTestStage) user_is_not_authenticated() *whTestStage {
 func (s *whTestStage) response_wh_object_is_another_new_wh_property() *whTestStage {
 	require.NotNil(s.t, s.anotherNewWhProperty)
 
-	s.compareWhProperty(s.anotherNewWhProperty, s.responseWh.Object)
+	s.compareWhProperty(s.anotherNewWhProperty, s.responseWh.object())
 	return s
 }
 
 func (s *whTestStage) new_wh_property_is_deleted() *whTestStage {
-	s.deleteWh(s.testUrl + "/api/wh/property/" + s.newWhPropertyId)
+	s.deleteWh(s.whUrl("/api/wh/property/" + s.newWhPropertyId))
 	return s
 }
 

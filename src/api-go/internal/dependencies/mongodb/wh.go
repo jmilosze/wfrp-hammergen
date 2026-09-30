@@ -17,35 +17,36 @@ type WhDbService struct {
 	Collections map[warhammer.WhType]*mongo.Collection
 }
 
-// whEdition is the content edition variant read and written by the API.
-const whEdition = "4e"
-
-// Content documents store each edition variant under editions.<edition>; characters store it under object.
+// Content documents store each edition variant under editions.<edition>.
+// Characters have a single fixed edition in edition and store their data under object.
 type whDocWrite struct {
-	Id         bson.ObjectID                 `bson:"_id"`
-	OwnerId    string                        `bson:"ownerid"`
-	Visibility warhammer.Visibility          `bson:"visibility"`
-	Object     warhammer.WhObject            `bson:"object,omitempty"`
-	Editions   map[string]warhammer.WhObject `bson:"editions,omitempty"`
+	Id         bson.ObjectID                            `bson:"_id"`
+	OwnerId    string                                   `bson:"ownerid"`
+	Visibility warhammer.Visibility                     `bson:"visibility"`
+	Edition    warhammer.Edition                        `bson:"edition,omitempty"`
+	Object     warhammer.WhObject                       `bson:"object,omitempty"`
+	Editions   map[warhammer.Edition]warhammer.WhObject `bson:"editions,omitempty"`
 }
 
 type whDocRead struct {
-	Id         bson.ObjectID        `bson:"_id"`
-	OwnerId    string               `bson:"ownerid"`
-	Visibility warhammer.Visibility `bson:"visibility"`
-	Object     bson.Raw             `bson:"object"`
-	Editions   map[string]bson.Raw  `bson:"editions"`
+	Id         bson.ObjectID                  `bson:"_id"`
+	OwnerId    string                         `bson:"ownerid"`
+	Visibility warhammer.Visibility           `bson:"visibility"`
+	Edition    warhammer.Edition              `bson:"edition"`
+	Object     bson.Raw                       `bson:"object"`
+	Editions   map[warhammer.Edition]bson.Raw `bson:"editions"`
 }
 
-func hasEditions(t warhammer.WhType) bool {
-	return t != warhammer.WhTypeCharacter
+func variantPath(e warhammer.Edition) string {
+	return "editions." + string(e)
 }
 
-func objectPath(t warhammer.WhType) string {
-	if hasEditions(t) {
-		return "editions." + whEdition
+// editionQuery matches content documents that have the edition variant and characters of the edition.
+func editionQuery(t warhammer.WhType, e warhammer.Edition) bson.M {
+	if warhammer.HasEditions(t) {
+		return bson.M{variantPath(e): bson.M{"$exists": true}}
 	}
-	return "object"
+	return bson.M{"edition": e}
 }
 
 func NewWhDbService(db *DbService, createIndex bool) (*WhDbService, error) {
@@ -87,9 +88,10 @@ func newWhDocWrite(t warhammer.WhType, w *warhammer.Wh) (*whDocWrite, error) {
 		OwnerId:    w.OwnerId,
 		Visibility: w.Visibility,
 	}
-	if hasEditions(t) {
-		whDoc.Editions = map[string]warhammer.WhObject{whEdition: w.Object}
+	if warhammer.HasEditions(t) {
+		whDoc.Editions = w.Editions
 	} else {
+		whDoc.Edition = w.Edition
 		whDoc.Object = w.Object
 	}
 
@@ -120,10 +122,18 @@ func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhamm
 	}
 
 	findByIdQuery := bson.M{"$and": bson.A{bson.M{"_id": id}, bson.M{"ownerid": userId}}}
-	// $set only the variant being written so other edition variants of the document are kept.
-	update := bson.M{"$set": bson.M{objectPath(t): w.Object, "visibility": w.Visibility}}
 
-	result, err := s.Collections[t].UpdateOne(ctx, findByIdQuery, update)
+	// $set only the variants being written so other edition variants of the document are kept.
+	set := bson.M{"visibility": w.Visibility}
+	if warhammer.HasEditions(t) {
+		for e, obj := range w.Editions {
+			set[variantPath(e)] = obj
+		}
+	} else {
+		set["object"] = w.Object
+	}
+
+	result, err := s.Collections[t].UpdateOne(ctx, findByIdQuery, bson.M{"$set": set})
 	if err != nil {
 		return nil, fmt.Errorf("failed to update wh in db: %w", err)
 	}
@@ -135,14 +145,31 @@ func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhamm
 	return w, nil
 }
 
-func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId string, userId string) error {
+func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, e warhammer.Edition, whId string, userId string) error {
 	id, err := bson.ObjectIDFromHex(whId)
 	if err != nil {
 		return fmt.Errorf("failed to calculate object id of %s: %w", whId, err)
 	}
 
-	_, err = s.Collections[t].DeleteOne(ctx, bson.M{"$and": bson.A{bson.M{"_id": id}, bson.M{"ownerid": userId}}})
-	if err != nil {
+	findByIdQuery := bson.A{bson.M{"_id": id}, bson.M{"ownerid": userId}}
+	if e != "" {
+		findByIdQuery = append(findByIdQuery, editionQuery(t, e))
+	}
+
+	if e == "" || !warhammer.HasEditions(t) {
+		if _, err = s.Collections[t].DeleteOne(ctx, bson.M{"$and": findByIdQuery}); err != nil {
+			return fmt.Errorf("failed to delete wh from db: %w", err)
+		}
+		return nil
+	}
+
+	// Remove the edition variant, then the document if it was the last variant.
+	if _, err = s.Collections[t].UpdateOne(ctx, bson.M{"$and": findByIdQuery}, bson.M{"$unset": bson.M{variantPath(e): ""}}); err != nil {
+		return fmt.Errorf("failed to delete wh edition from db: %w", err)
+	}
+
+	emptyQuery := bson.M{"$and": bson.A{bson.M{"_id": id}, bson.M{"ownerid": userId}, bson.M{"editions": bson.M{}}}}
+	if _, err = s.Collections[t].DeleteOne(ctx, emptyQuery); err != nil {
 		return fmt.Errorf("failed to delete wh from db: %w", err)
 	}
 
@@ -152,8 +179,8 @@ func (s *WhDbService) Delete(ctx context.Context, t warhammer.WhType, whId strin
 func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds []string, sharedUserIds []string, filter warhammer.WhFilter) ([]*warhammer.Wh, error) {
 	andConditions := bson.A{allAllowedOwnersQuery(userIds, sharedUserIds)}
 
-	if hasEditions(t) {
-		andConditions = append(andConditions, bson.M{objectPath(t): bson.M{"$exists": true}})
+	if filter.Edition != "" {
+		andConditions = append(andConditions, editionQuery(t, filter.Edition))
 	}
 
 	if len(filter.WhIds) != 0 {
@@ -166,21 +193,14 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 
 	if t == warhammer.WhTypeCareer {
 		if len(filter.SkillIds) > 0 {
-			andConditions = append(andConditions, careerLevelContainsQuery("skills", filter.SkillIds))
+			andConditions = append(andConditions, careerLevelContainsQuery(filter.Edition, "skills", filter.SkillIds))
 		}
 		if len(filter.TalentIds) > 0 {
-			andConditions = append(andConditions, careerLevelContainsQuery("talents", filter.TalentIds))
+			andConditions = append(andConditions, careerLevelContainsQuery(filter.Edition, "talents", filter.TalentIds))
 		}
 	}
 
-	var mongoFilter bson.M
-	if len(andConditions) == 1 {
-		mongoFilter = andConditions[0].(bson.M)
-	} else {
-		mongoFilter = bson.M{"$and": andConditions}
-	}
-
-	cur, err := s.Collections[t].Find(ctx, mongoFilter)
+	cur, err := s.Collections[t].Find(ctx, bson.M{"$and": andConditions})
 
 	if cur != nil {
 		defer cur.Close(ctx)
@@ -199,7 +219,7 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 			return nil, fmt.Errorf("failed to decode wh: %w", err)
 		}
 
-		wh, err := whDocToWh(&doc, t)
+		wh, err := whDocToWh(&doc, t, filter.Edition)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert doc to wh: %w", err)
 		}
@@ -244,8 +264,8 @@ func allAllowedOwnersQuery(userIds []string, sharedUserIds []string) bson.M {
 	return bson.M{"$or": allowedConditions}
 }
 
-func careerLevelContainsQuery(field string, ids []string) bson.M {
-	path := objectPath(warhammer.WhTypeCareer)
+func careerLevelContainsQuery(e warhammer.Edition, field string, ids []string) bson.M {
+	path := variantPath(e)
 	orConditions := bson.A{}
 	for i := 1; i <= 5; i++ {
 		orConditions = append(orConditions, bson.M{
@@ -256,21 +276,33 @@ func careerLevelContainsQuery(field string, ids []string) bson.M {
 	return bson.M{"$or": orConditions}
 }
 
-func whDocToWh(doc *whDocRead, t warhammer.WhType) (*warhammer.Wh, error) {
+// whDocToWh decodes a document; for content only variant e is decoded, or all variants when e is empty.
+func whDocToWh(doc *whDocRead, t warhammer.WhType, e warhammer.Edition) (*warhammer.Wh, error) {
 	wh := warhammer.Wh{
 		Id:         doc.Id.Hex(),
 		OwnerId:    doc.OwnerId,
 		Visibility: doc.Visibility,
-		Object:     warhammer.NewWhObject(t),
 	}
 
-	raw := doc.Object
-	if hasEditions(t) {
-		raw = doc.Editions[whEdition]
+	if !warhammer.HasEditions(t) {
+		wh.Edition = doc.Edition
+		wh.Object = warhammer.NewWhObject(t)
+		if err := bson.Unmarshal(doc.Object, wh.Object); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal object: %w", err)
+		}
+		return &wh, nil
 	}
 
-	if err := bson.Unmarshal(raw, wh.Object); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal object: %w", err)
+	wh.Editions = make(map[warhammer.Edition]warhammer.WhObject, len(doc.Editions))
+	for docEdition, raw := range doc.Editions {
+		if e != "" && docEdition != e {
+			continue
+		}
+		obj := warhammer.NewWhObject(t)
+		if err := bson.Unmarshal(raw, obj); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal %s variant: %w", docEdition, err)
+		}
+		wh.Editions[docEdition] = obj
 	}
 
 	return &wh, nil
