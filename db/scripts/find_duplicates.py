@@ -117,6 +117,14 @@ SPELL_LABELS = {
 }
 
 
+def get_object(coll_name, doc):
+    # Content documents store the 4e variant under editions.4e; characters keep object.
+    if coll_name == "character":
+        return doc.get("object")
+    editions = doc.get("editions")
+    return editions.get("4e") if isinstance(editions, dict) else None
+
+
 def format_source(source_dict):
     if not source_dict or not isinstance(source_dict, dict):
         return "N/A"
@@ -177,7 +185,7 @@ def find_duplicates(db, collections_to_check, name_filter=None, exact_case=False
         # Group by name
         groups = defaultdict(list)
         for doc in public_docs:
-            obj = doc.get("object")
+            obj = get_object(coll_name, doc)
             if not isinstance(obj, dict):
                 continue
             name = obj.get("name")
@@ -208,13 +216,13 @@ def find_duplicates(db, collections_to_check, name_filter=None, exact_case=False
                     continue
 
             # Distinct original names in this group
-            original_names = list(dict.fromkeys(d["object"]["name"] for d in docs))
+            original_names = list(dict.fromkeys(get_object(coll_name, d)["name"] for d in docs))
 
             # Compare objects to see if content is identical or different
-            first_obj = docs[0].get("object", {})
+            first_obj = get_object(coll_name, docs[0])
             differing_fields = set()
             for other_doc in docs[1:]:
-                other_obj = other_doc.get("object", {})
+                other_obj = get_object(coll_name, other_doc)
                 all_keys = set(first_obj.keys()) | set(other_obj.keys())
                 for k in all_keys:
                     if first_obj.get(k) != other_obj.get(k):
@@ -292,7 +300,7 @@ def print_report(
                 doc_id = str(doc["_id"])
                 owner_id = str(doc.get("ownerid", "N/A"))
                 username = user_resolver(owner_id)
-                obj = doc.get("object", {})
+                obj = get_object(coll_name, doc)
                 source_str = format_source(obj.get("source"))
 
                 print(f"    ({j}) ID:       {doc_id}")

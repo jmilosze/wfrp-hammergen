@@ -82,7 +82,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ⬜ | plan agreed: [plans/p1-edition-variants.md](plans/p1-edition-variants.md) |
+| C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | 🟡 | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); maintenance mode deployed; `db/scripts/migrate_editions.py` done; MongoDB layer next |
 | C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ⬜ | see plan P1 "Later" |
 | C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill, prayer classification) | ⬜ | depends on Q-PRAYER, Q-SIZE |
 | C3 | 5e core source | ⬜ | |
@@ -161,3 +161,4 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-09-30 | Option B reconsidered against A-with-`replaces` and confirmed; non-1-to-1 cases become unlinked 5e-only items. |
 | 2026-09-30 | Plan P1 (edition-variant format migration, backend + frontend) drafted. |
 | 2026-09-30 | Plan P1 trimmed to DB format migration + MongoDB layer only (no API/UI/5e changes); agreed, not started. |
+| 2026-09-30 | P1: maintenance mode deployed; migration script `migrate_editions.py` added, `find_duplicates.py`/`replace_duplicate.py` switched to `editions.4e`; tested on a restored prod dump. |

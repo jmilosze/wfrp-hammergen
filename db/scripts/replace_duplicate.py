@@ -109,6 +109,20 @@ def get_user_resolver(user_collection):
     return resolve
 
 
+def object_path(coll_name):
+    # Content documents store the 4e variant under editions.4e; characters keep object.
+    return "object" if coll_name == "character" else "editions.4e"
+
+
+def get_object(coll_name, doc):
+    obj = doc
+    for key in object_path(coll_name).split("."):
+        if not isinstance(obj, dict):
+            return None
+        obj = obj.get(key)
+    return obj
+
+
 def find_entry_by_id(db, id_str):
     try:
         oid = ObjectId(id_str)
@@ -208,23 +222,24 @@ def scan_for_replacements(db, id1, id2):
             if changed:
                 # Determine which fields were modified
                 modified_fields = []
-                orig_obj = doc.get("object")
-                upd_obj = updated_doc.get("object")
+                path = object_path(coll_name)
+                orig_obj = get_object(coll_name, doc)
+                upd_obj = get_object(coll_name, updated_doc)
                 if isinstance(orig_obj, dict) and isinstance(upd_obj, dict):
                     for k in orig_obj:
                         if orig_obj[k] != upd_obj.get(k):
-                            modified_fields.append(f"object.{k}")
+                            modified_fields.append(f"{path}.{k}")
                     for k in upd_obj:
                         if k not in orig_obj:
-                            modified_fields.append(f"object.{k}")
+                            modified_fields.append(f"{path}.{k}")
                 else:
                     for k in doc:
                         if k != "_id" and doc[k] != updated_doc.get(k):
                             modified_fields.append(k)
 
                 doc_name = (
-                    doc.get("object", {}).get("name")
-                    if isinstance(doc.get("object"), dict)
+                    orig_obj.get("name")
+                    if isinstance(orig_obj, dict)
                     else doc.get("name", "N/A")
                 )
 
@@ -308,8 +323,10 @@ def main():
         sys.exit(1)
 
     # 4. Verify both entries have exactly the same name
-    name1 = doc1.get("object", {}).get("name") if isinstance(doc1.get("object"), dict) else None
-    name2 = doc2.get("object", {}).get("name") if isinstance(doc2.get("object"), dict) else None
+    obj1 = get_object(coll1, doc1)
+    obj2 = get_object(coll2, doc2)
+    name1 = obj1.get("name") if isinstance(obj1, dict) else None
+    name2 = obj2.get("name") if isinstance(obj2, dict) else None
 
     if not name1 or not name2 or name1 != name2:
         print(
@@ -322,8 +339,8 @@ def main():
     # 5. Display details of id1 and id2
     owner1_username = user_resolver(str(doc1.get("ownerid", "")))
     owner2_username = user_resolver(str(doc2.get("ownerid", "")))
-    source1_str = format_source(doc1.get("object", {}).get("source"))
-    source2_str = format_source(doc2.get("object", {}).get("source"))
+    source1_str = format_source(obj1.get("source"))
+    source2_str = format_source(obj2.get("source"))
 
     print("================================================================================")
     print(" DUPLICATE ENTRY REPLACEMENT PLAN")
