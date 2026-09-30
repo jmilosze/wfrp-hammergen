@@ -14,6 +14,7 @@ import {
   printAmmoGroup,
   armourGroupList,
   printArmourGroup,
+  printPrice,
 } from "../../../services/wh/item.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
@@ -42,6 +43,7 @@ const auth = useAuth();
 
 const columns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
+  { name: "price", displayName: "Price", skipStackedTitle: false },
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "tooltip", displayName: "Visibility", skipStackedTitle: true },
   { name: "actions", displayName: "Actions", skipStackedTitle: true },
@@ -73,6 +75,7 @@ function formatItemRow(item: Item) {
   return {
     name: item.name,
     type: printItemType(item.type),
+    price: printPrice(item.price),
     source: Object.keys(item.source)
       .map((x) => source[x])
       .join(", "),
@@ -158,6 +161,10 @@ watch(
     <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="item" :params="{ id: 'create' }">
       Create new
     </LinkButton>
+
+    <template #price="{ price }: { price: string }">
+      <span class="whitespace-nowrap">{{ price }}</span>
+    </template>
 
     <template #actions="{ id }: { id: string }">
       <ActionButtonsNonCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />

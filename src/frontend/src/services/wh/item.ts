@@ -14,6 +14,15 @@ import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
 import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
 import { isEqualEntity } from "../../utils/equal.ts";
+export {
+  BRASS_PER_GOLD,
+  BRASS_PER_SILVER,
+  SILVER_PER_GOLD,
+  brassToCoins,
+  coinsToBrass,
+  printPrice,
+  type Coins,
+} from "../../utils/currency.ts";
 
 export const enum ItemType {
   Melee = 0,
@@ -532,7 +541,7 @@ export class Item extends WhEntity {
   }
 
   validatePrice(): ValidationStatus {
-    return validFloatFn(this.price, 0, 1000000000);
+    return validFloatFn(this.price, 0, 24000000000);
   }
 
   validateEnc(): ValidationStatus {
