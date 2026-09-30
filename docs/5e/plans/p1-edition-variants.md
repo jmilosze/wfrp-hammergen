@@ -1,6 +1,6 @@
 # Plan P1 — Migrate content documents to the edition-variant format
 
-Status: **in progress** (2026-09-30) — maintenance mode deployed (step 5); migration and DB scripts (steps 2–3), MongoDB layer and tests (steps 1, 4) done and tested; rollout (step 6) next: local → staging → production. Tracker item: C1a.
+Status: **done** (2026-09-30) — migrated and deployed on local, staging and production; production backup taken before migrating: `db/hammergen_30_09_2026_before_p1`. Tracker item: C1a.
 
 ## Goal
 

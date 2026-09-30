@@ -82,7 +82,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | 🟡 | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); maintenance mode deployed; migration script and MongoDB layer done and tested; rollout next (local → staging → prod) |
+| C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ✅ | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); migrated and deployed local → staging → production 2026-09-30; production backup `db/hammergen_30_09_2026_before_p1` |
 | C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ⬜ | see plan P1 "Later" |
 | C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill, prayer classification) | ⬜ | depends on Q-PRAYER, Q-SIZE |
 | C3 | 5e core source | ⬜ | |
@@ -163,3 +163,4 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-09-30 | Plan P1 trimmed to DB format migration + MongoDB layer only (no API/UI/5e changes); agreed, not started. |
 | 2026-09-30 | P1: maintenance mode deployed; migration script `migrate_editions.py` added, `find_duplicates.py`/`replace_duplicate.py` switched to `editions.4e`; tested on a restored prod dump. |
 | 2026-09-30 | P1: MongoDB layer reads/writes `editions.4e` (characters keep `object`); DB-layer tests against real Mongo added; integration tests pass; old API on original prod dump vs new API on migrated dump gave identical responses (3,467 requests, 39 users). |
+| 2026-09-30 | P1 done: migration run on local, staging (6,871 docs) and production (6,876 docs), new backend deployed, smoke tested. |
