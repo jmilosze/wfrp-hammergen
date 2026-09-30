@@ -26,3 +26,29 @@ func TestCareerValidateEdition(t *testing.T) {
 		})
 	}
 }
+
+func TestCareerValidateEditionSpecies(t *testing.T) {
+	all := []CareerSpecies{
+		CareerSpeciesHuman, CareerSpeciesHalfling, CareerSpeciesDwarf, CareerSpeciesHighElf,
+		CareerSpeciesWoodElf, CareerSpeciesGnome, CareerSpeciesOgre,
+	}
+
+	for name, tc := range map[string]struct {
+		edition Edition
+		species []CareerSpecies
+		wantErr bool
+	}{
+		"4e with all species": {Edition4e, all, false},
+		"5e with 5e species":  {Edition5e, all[:5], false},
+		"5e with no species":  {Edition5e, []CareerSpecies{}, false},
+		"5e with gnome":       {Edition5e, []CareerSpecies{CareerSpeciesHuman, CareerSpeciesGnome}, true},
+		"5e with ogre":        {Edition5e, []CareerSpecies{CareerSpeciesOgre}, true},
+	} {
+		t.Run(name, func(t *testing.T) {
+			career := &Career{Species: tc.species}
+			if err := career.ValidateEdition(tc.edition); (err != nil) != tc.wantErr {
+				t.Errorf("got error %v, want error %v", err, tc.wantErr)
+			}
+		})
+	}
+}

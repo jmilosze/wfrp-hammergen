@@ -84,7 +84,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 |---|---|---|---|
 | C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ✅ | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); migrated and deployed local → staging → production 2026-09-30; production backup `db/hammergen_30_09_2026_before_p1` |
 | C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ✅ | [plans/p2-edition-api.md](plans/p2-edition-api.md); deployed to local, staging and production 2026-09-30 (character edition in `object.edition`); production backup `db/hammergen_30_09_2026_before_p2` |
-| C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill) | 🟡 | one model at a time (design §4.1); done: career income skill; prayers unchanged (Q-PRAYER); size scale unchanged (Q-SIZE) |
+| C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill) | 🟡 | one model at a time (design §4.1); done: career income skill, 5e career species; prayers unchanged (Q-PRAYER); size scale unchanged (Q-SIZE) |
 | C3 | 5e core source | ⬜ | |
 | C4 | Browse/search/filter content by edition in lists (R2) | ⬜ | |
 | C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | ⬜ | |
@@ -174,3 +174,4 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-09-30 | Q-SIZE decided: 5e uses the 4e 7-step size scale and wound formulas (book's "Small" read as "Tiny"); 5e Small talent not imported (no species, career or Random Talent grants it). |
 | 2026-09-30 | C2 started: edition-specific fields modelled as optional fields on the shared type plus `ValidateEdition` (design §4.1); career `incomeSkill` added. |
 | 2026-09-30 | Career `incomeSkill` is in both editions (4e has one too), optional; when set it must be a level 1 skill. No UI until after the 5e work. |
+| 2026-09-30 | C2: 5e careers restricted to the five 5e species (`Career.ValidateEdition`). |

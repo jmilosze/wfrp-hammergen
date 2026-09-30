@@ -95,6 +95,7 @@ Each decision gets an entry here once made (date, choice, reasoning). IDs match 
 
 Done so far:
 - **Career income skill:** `incomeSkill` (skill id) in both editions (4e has it too; it was missing from Hammergen). Optional in both for now — existing and user careers have none and must keep working; when set, it must be one of the career's level 1 skills. No UI yet: it will be added after the 5e work, when making it required for 5e can be reconsidered.
+- **Career species (5e):** a 5e career may only list Human, Halfling, Dwarf, High Elf and Wood Elf (R12); 4e keeps all seven. Enforced in `Career.ValidateEdition`. The editor's species options for 5e come with C5.
 
 _To do._ Edition marker(s); character fields (Resilience/Resolve, Ambitions, Appearance, tracker); talent max-rank semantics and new modifier types (Fortune, Encumbrance, Sturdy, Fear); property model; shields/armour groups/penalties; species enum; sources; career income skill; generation props per edition.
 

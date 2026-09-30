@@ -199,3 +199,19 @@ func TestCreateCareerValidatesIncomeSkill(t *testing.T) {
 		})
 	}
 }
+
+func TestCreateCareerValidatesSpeciesPerEdition(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+	withGnome := newMockCareer("")
+	withGnome.Species = []wh.CareerSpecies{wh.CareerSpeciesHuman, wh.CareerSpeciesGnome}
+
+	_, err := s.Create(context.Background(), wh.WhTypeCareer, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: withGnome}}, &auth.Claims{Id: "user1"})
+	if err != nil {
+		t.Errorf("4e: expected no error, got %v", err)
+	}
+
+	_, err = s.Create(context.Background(), wh.WhTypeCareer, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition5e: withGnome}}, &auth.Claims{Id: "user1"})
+	if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "not available in 5e") {
+		t.Errorf("5e: expected species error, got %v", err)
+	}
+}

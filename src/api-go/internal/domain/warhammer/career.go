@@ -21,10 +21,19 @@ type Career struct {
 	IncomeSkill string `json:"incomeSkill,omitempty" bson:"incomeskill,omitempty" validate:"omitempty,id_valid"`
 }
 
-// ValidateEdition checks the income skill, the same way in every edition: when set, it must be one of the level 1 skills.
-func (career *Career) ValidateEdition(_ Edition) error {
+// ValidateEdition checks rules that depend on the edition:
+//   - income skill (every edition): when set, it must be one of the level 1 skills;
+//   - species (5e): only the five 5e species (R12).
+func (career *Career) ValidateEdition(e Edition) error {
 	if career.IncomeSkill != "" && !slices.Contains(career.Level1.Skills, career.IncomeSkill) {
 		return errors.New("income skill must be one of the level 1 skills")
+	}
+	if e == Edition5e {
+		for _, s := range career.Species {
+			if !slices.Contains(careerSpecies5e, s) {
+				return fmt.Errorf("species %d is not available in 5e", s)
+			}
+		}
 	}
 	return nil
 }
@@ -145,6 +154,15 @@ const (
 	CareerSpeciesGnome    = 5
 	CareerSpeciesOgre     = 6
 )
+
+// careerSpecies5e are the species 5e careers can be open to.
+var careerSpecies5e = []CareerSpecies{
+	CareerSpeciesHuman,
+	CareerSpeciesHalfling,
+	CareerSpeciesDwarf,
+	CareerSpeciesHighElf,
+	CareerSpeciesWoodElf,
+}
 
 func careerSpeciesValues() string {
 	return formatIntegerValues([]CareerSpecies{
