@@ -260,7 +260,7 @@ watch(
   (newVal) => {
     careerOpts.value = setCareerOpts(selectedGenSpeciesWithRegion.value, newVal);
     if (!careerOpts.value.some((x) => x.value === selectedGenCareer.value)) {
-      if (newVal.length > 0) {
+      if (careerOpts.value.length > 0) {
         selectedGenCareer.value = careerOpts.value[0].value;
       } else {
         selectedGenCareer.value = DEFAULT_CAREER_ID;
