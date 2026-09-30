@@ -105,7 +105,8 @@ func run() error {
 		mock.InitWh(ctx, whDbService)
 	}
 
-	router := gin.NewRouter(cfg.Server.RequestTimeout)
+	router := gin.NewRouter(cfg.Server.RequestTimeout, cfg.Maintenance.Enabled)
+	gin.RegisterStatusRoutes(router, cfg.Maintenance.Enabled)
 	gin.RegisterUserRoutes(router, userService, jwtService, captchaService)
 	gin.RegisterAuthRoutes(router, userService, jwtService)
 	gin.RegisterWhRoutes(router, whService, jwtService)

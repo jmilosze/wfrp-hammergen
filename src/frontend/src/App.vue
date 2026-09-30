@@ -10,6 +10,8 @@ import { useRoute } from "vue-router";
 import { usePrint } from "./composables/print.ts";
 import { useAuth } from "./composables/auth.ts";
 import { Icon } from "@iconify/vue";
+import { useMaintenance } from "./composables/maintenance.ts";
+import MaintenancePage from "./views/MaintenancePage.vue";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
@@ -19,6 +21,7 @@ const auth = useAuth();
 const modal = useModal();
 const route = useRoute();
 const { printing } = usePrint();
+const { maintenance } = useMaintenance();
 
 const isScrollLocked = useScrollLock(document.body);
 
@@ -29,7 +32,7 @@ watch(isLg, (isDesktop) => {
 });
 
 watch(
-  () => showSideBar.value || modal.show.value,
+  () => showSideBar.value || modal.show.value || maintenance.value,
   (shouldLock) => {
     isScrollLocked.value = shouldLock;
   }
@@ -47,6 +50,8 @@ onMounted(async () => {
 </script>
 
 <template>
+  <!-- Maintenance screen covers the whole app -->
+  <MaintenancePage v-if="maintenance" />
   <!-- Top NavBar -->
   <div v-if="!printing" class="fixed lg:pl-64 h-16 w-full flex justify-center bg-neutral-700 z-10">
     <div class="flex-auto max-w-7xl px-4 flex items-center">

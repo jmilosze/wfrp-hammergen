@@ -22,6 +22,7 @@ type Config struct {
 	Captcha     Captcha
 	Services    Services
 	Logging     Logging
+	Maintenance Maintenance
 }
 
 type Server struct {
@@ -80,6 +81,10 @@ type Services struct {
 	Db      string `default:"mongodb" split_words:"true"`
 	Email   string `default:"mailjet" split_words:"true"`
 	Captcha string `default:"recaptcha" split_words:"true"`
+}
+
+type Maintenance struct {
+	Enabled bool `default:"false" split_words:"true"`
 }
 
 type Logging struct {

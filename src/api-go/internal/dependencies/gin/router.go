@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func NewRouter(requestTimeout time.Duration) *gin.Engine {
+func NewRouter(requestTimeout time.Duration, maintenance bool) *gin.Engine {
 	router := gin.New()
 
 	router.Use(gin.Recovery())
@@ -17,6 +17,8 @@ func NewRouter(requestTimeout time.Duration) *gin.Engine {
 	corsConfig.AllowAllOrigins = true
 	corsConfig.AllowHeaders = append(corsConfig.AllowHeaders, "Authorization")
 	router.Use(cors.New(corsConfig))
+
+	router.Use(MaintenanceMode(maintenance))
 
 	router.Use(timeout.Timeout(
 		timeout.WithTimeout(requestTimeout),
