@@ -200,6 +200,8 @@ export interface CareerApiData {
   level4: CareerLevelApiData;
   level5: CareerLevelApiData;
   source: Source;
+  // Skill used to earn income; optional, many careers have none.
+  incomeSkill?: string;
 }
 
 export const zeroCareerLevel: CareerLevel = {
@@ -225,6 +227,7 @@ export class Career extends WhEntity {
   level3: CareerLevel;
   level4: CareerLevel;
   level5: CareerLevel;
+  incomeSkill: string;
 
   constructor({
     id = "",
@@ -238,6 +241,7 @@ export class Career extends WhEntity {
     level3 = copyCareerLevel(zeroCareerLevel),
     level4 = copyCareerLevel(zeroCareerLevel),
     level5 = copyCareerLevel(zeroCareerLevel),
+    incomeSkill = "",
     visibility = Visibility.Private,
     source = {},
   } = {}) {
@@ -249,6 +253,7 @@ export class Career extends WhEntity {
     this.level3 = level3;
     this.level4 = level4;
     this.level5 = level5;
+    this.incomeSkill = incomeSkill;
   }
 
   validateName(): ValidationStatus {
@@ -404,6 +409,7 @@ export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Caree
     level3: careerLevelApiDataToCareerLevel(data.level3),
     level4: careerLevelApiDataToCareerLevel(data.level4),
     level5: careerLevelApiDataToCareerLevel(data.level5),
+    incomeSkill: data.incomeSkill ?? "",
     source: copySource(data.source),
   });
 }
@@ -432,6 +438,7 @@ export function modelToApi(career: Career): CareerApiData {
     level3: careerLevelToCareerLevelApiData(career.level3),
     level4: careerLevelToCareerLevelApiData(career.level4),
     level5: careerLevelToCareerLevelApiData(career.level5),
+    incomeSkill: career.incomeSkill,
     source: copySource(career.source),
   };
 }

@@ -1,7 +1,9 @@
 package warhammer
 
 import (
+	"errors"
 	"fmt"
+	"slices"
 )
 
 type Career struct {
@@ -15,6 +17,16 @@ type Career struct {
 	Level4      CareerLevel       `json:"level4"`
 	Level5      CareerLevel       `json:"level5"`
 	Source      map[Source]string `json:"source" validate:"source_valid"`
+	// IncomeSkill is the skill used to earn income. Optional: many existing careers have none.
+	IncomeSkill string `json:"incomeSkill,omitempty" bson:"incomeskill,omitempty" validate:"omitempty,id_valid"`
+}
+
+// ValidateEdition checks the income skill, the same way in every edition: when set, it must be one of the level 1 skills.
+func (career *Career) ValidateEdition(_ Edition) error {
+	if career.IncomeSkill != "" && !slices.Contains(career.Level1.Skills, career.IncomeSkill) {
+		return errors.New("income skill must be one of the level 1 skills")
+	}
+	return nil
 }
 
 func (career *Career) Init() {

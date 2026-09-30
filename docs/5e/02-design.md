@@ -73,10 +73,10 @@ Each decision gets an entry here once made (date, choice, reasoning). IDs match 
 | Q-TRACKER | Career Advancement Tracker | open | (a) store ticks; (b) compute from purchases; (c) ignore |
 | Q-AMBITION | Ambitions / Appearance fields | open | (a) add fields; (b) keep in description/notes |
 | Q-CONVERT | 4e → 5e conversion | **decided: no conversion; edition is fixed (R3)** | (a) none; (b) one-off "copy as 5e" helper; (c) full conversion |
-| Q-SIZE | 5e size scale | deferred (2026-09-30) — decide later | (a) reuse 7-step scale; (b) 5e scale (Tiny/Small/Average/Large/Enormous/Monstrous) |
+| Q-SIZE | 5e size scale | **decided 2026-09-30: (a) same 7 steps as 4e** (Tiny, Little, Small, Average, Large, Enormous, Monstrous). The 5e book's use of "Small" is treated as a mistake for "Tiny", so 5e keeps the 4e wound formulas for every size. The 5e Small talent is not imported: no species, career or Random Talent entry grants it, so it is treated as a leftover from 4e | (a) reuse 7-step scale; (b) 5e scale (Tiny/Small/Average/Large/Enormous/Monstrous) |
 | Q-PROPS | Parameterised qualities (Inflict X, Blast N…) | **decided 2026-09-30: one entity per value, as today (e.g. Inflict (Entangled 50))** | (a) one entity per value (today); (b) rating/parameter field |
 | Q-SHIELD | Shields | **decided 2026-09-30: armour for 5e, 4e unchanged (R11)** | (a) armour type for 5e only; (b) new model for both |
-| Q-PRAYER | Prayer classification | deferred (2026-09-30) — decide later | (a) add deity + blessing/miracle type; (b) keep as is |
+| Q-PRAYER | Prayer classification | **decided 2026-09-30: keep as is (b) in both editions** — no deity or blessing/miracle field; no current benefit. Revisit if Bless/Invoke rules are automated (Q-RULES) or for the 5e generator (phase 4) | (a) add deity + blessing/miracle type; (b) keep as is |
 | Q-RULES | Level of rules automation | open | (a) sheet values only; (b) + XP accounting; (c) + validation (career access, spell XP, exclusive talents) |
 | Q-DATA | 5e content entry | **decided 2026-09-30: initial one-off import script adds 5e variants to existing public documents and creates 5e-only public documents; afterwards all content (public by admins, custom by users) is created/edited in the editor with the 4e/5e toggle** | (a) manual via UI; (b) import script seeded from `data/careers-5e.json` etc. |
 | Q-VERSION | How do we know a 4e item "has a 5e version" (R7)? | **decided 2026-09-30: an item "has a 5e version" when its 5e variant exists (follows from option B)** | (a) explicit link from 5e entity to the 4e entity it replaces; (b) name match; (c) don't check — with the flag on, any 4e item is allowed |
@@ -90,6 +90,12 @@ Each decision gets an entry here once made (date, choice, reasoning). IDs match 
 ## 4. Design areas (to fill in after decisions)
 
 ### 4.1 Data model (Go domain + MongoDB)
+
+**Edition-specific fields (decided 2026-09-30).** Both variants of a content type share one Go/TS type. Fields that exist in only one edition are added to that shared type as optional fields (`omitempty`, so the other edition's documents and responses are unchanged), and per-edition rules live in `ValidateEdition(e)` (the `EditionValidator` interface), which the service applies to every variant after tag validation. Where a type's structure really diverges between editions (likely talents, possibly items), separate per-edition types are decided when that type is modelled.
+
+Done so far:
+- **Career income skill:** `incomeSkill` (skill id) in both editions (4e has it too; it was missing from Hammergen). Optional in both for now — existing and user careers have none and must keep working; when set, it must be one of the career's level 1 skills. No UI yet: it will be added after the 5e work, when making it required for 5e can be reconsidered.
+
 _To do._ Edition marker(s); character fields (Resilience/Resolve, Ambitions, Appearance, tracker); talent max-rank semantics and new modifier types (Fortune, Encumbrance, Sturdy, Fear); property model; shields/armour groups/penalties; species enum; sources; career income skill; generation props per edition.
 
 ### 4.1a Content model for two editions — brainstorm (2026-09-30)

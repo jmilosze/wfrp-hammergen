@@ -45,6 +45,11 @@ type WhObject interface {
 	Init()
 }
 
+// EditionValidator is implemented by content objects whose rules differ between editions.
+type EditionValidator interface {
+	ValidateEdition(e Edition) error
+}
+
 // Wh is a content document or a character.
 // Content holds its edition variants in Editions. A character holds its data, including its fixed edition, in Object.
 type Wh struct {

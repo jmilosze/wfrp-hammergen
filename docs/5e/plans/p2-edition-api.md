@@ -1,6 +1,6 @@
 # Plan P2 — Edition in the API
 
-Status: **in progress** (2026-09-30) — first version (top-level character `edition`) deployed to production; follow-up moving the character edition into the character object implemented and tested, rollout of the follow-up next. Tracker item: C1b.
+Status: **done** (2026-09-30) — deployed to local, staging and production, including the follow-up that moved the character edition into the character object. Tracker item: C1b.
 
 ## Goal
 

@@ -37,6 +37,10 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		return nil, fmt.Errorf("%w: %s", domain.ErrInvalidArguments, err)
 	}
 
+	if err := validateEditions(w); err != nil {
+		return nil, fmt.Errorf("%w: %s", domain.ErrInvalidArguments, err)
+	}
+
 	if !c.Admin && w.Visibility == wh.VisibilityPublic {
 		return nil, fmt.Errorf("non-admin cannot create public items: %w", domain.ErrUnauthorized)
 	}
@@ -69,6 +73,18 @@ func extraCharacterValidation(t wh.WhType, w *wh.Wh, validator *validator.Valida
 	return nil
 }
 
+// validateEditions applies edition-specific rules to each content variant.
+func validateEditions(w *wh.Wh) error {
+	for e, obj := range w.Editions {
+		if v, ok := obj.(wh.EditionValidator); ok {
+			if err := v.ValidateEdition(e); err != nil {
+				return fmt.Errorf("%s variant: %w", e, err)
+			}
+		}
+	}
+	return nil
+}
+
 func canModify(ownerId string, userId string) bool {
 	return ownerId == userId
 }
@@ -85,6 +101,10 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	if err := extraCharacterValidation(t, w, s.Validator); err != nil {
+		return nil, fmt.Errorf("%w: %s", domain.ErrInvalidArguments, err)
+	}
+
+	if err := validateEditions(w); err != nil {
 		return nil, fmt.Errorf("%w: %s", domain.ErrInvalidArguments, err)
 	}
 

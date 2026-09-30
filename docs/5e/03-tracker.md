@@ -50,10 +50,10 @@ All open; see [02-design.md §3](02-design.md#3-decisions).
 | Q-TRACKER | Career Advancement Tracker | ⬜ | | |
 | Q-AMBITION | Ambitions / Appearance | ⬜ | | |
 | Q-CONVERT | 4e → 5e conversion | ✅ | 2026-09-30 | None (edition is fixed) |
-| Q-SIZE | Size scale | ⏸ | | Deferred |
+| Q-SIZE | Size scale | ✅ | 2026-09-30 | Same 7 steps and wound formulas as 4e; 5e Small talent not imported |
 | Q-PROPS | Parameterised qualities | ✅ | 2026-09-30 | One entity per value, as today |
 | Q-SHIELD | Shields | ✅ | 2026-09-30 | Armour in 5e (5e rules only for 5e characters); 4e unchanged |
-| Q-PRAYER | Prayer classification | ⏸ | | Deferred |
+| Q-PRAYER | Prayer classification | ✅ | 2026-09-30 | Keep as is (no deity/type field), both editions |
 | Q-RULES | Rules automation level | ⬜ | | |
 | Q-DATA | Content entry approach | ✅ | 2026-09-30 | One-off import script for public 5e content; then editor with 4e/5e toggle |
 | Q-I18N | Future translations — keep model compatible | ⬜ | | Overlay of text fields per variant, not a variant axis |
@@ -83,8 +83,8 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | # | Item | Status | Notes |
 |---|---|---|---|
 | C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ✅ | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); migrated and deployed local → staging → production 2026-09-30; production backup `db/hammergen_30_09_2026_before_p1` |
-| C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | 🟡 | [plans/p2-edition-api.md](plans/p2-edition-api.md); deployed to production; follow-up (character edition in `object`) implemented and tested, rollout next |
-| C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill, prayer classification) | ⬜ | depends on Q-PRAYER, Q-SIZE |
+| C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ✅ | [plans/p2-edition-api.md](plans/p2-edition-api.md); deployed to local, staging and production 2026-09-30 (character edition in `object.edition`); production backup `db/hammergen_30_09_2026_before_p2` |
+| C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill) | 🟡 | one model at a time (design §4.1); done: career income skill; prayers unchanged (Q-PRAYER); size scale unchanged (Q-SIZE) |
 | C3 | 5e core source | ⬜ | |
 | C4 | Browse/search/filter content by edition in lists (R2) | ⬜ | |
 | C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | ⬜ | |
@@ -98,7 +98,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 |---|---|---|---|
 | H1 | Character edition, fixed at creation (R3); 4e characters unchanged (R4) | ⬜ | |
 | H2 | 5e character fields (no Resilience/Resolve; Ambitions/Appearance/tracker per decisions) | ⬜ | Q-AMBITION, Q-TRACKER |
-| H3 | 5e derived values (characteristics, skills, wounds, movement, size, encumbrance incl. max, fate/fortune) | ⬜ | Q-ADV, Q-SIZE |
+| H3 | 5e derived values (characteristics, skills, wounds, movement, size, encumbrance incl. max, fate/fortune) | ⬜ | Q-ADV; size and wounds as 4e (Q-SIZE) |
 | H4 | 5e character editor restricted to 5e content | ⬜ | |
 | H5 | 5e sheet, print, CSV | ⬜ | discovery §12 |
 | H6 | Tests (both editions) | ⬜ | |
@@ -169,3 +169,8 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-09-30 | P2 revised: content API uses the `editions` map (optional `?edition` filter on reads, editions in payload on writes, PUT merges variants); `full=true` and career search require `edition`; characters keep `{edition, object}`; no 5e write guard. Frontend and backend now ship together. |
 | 2026-09-30 | P2 revised design implemented: `editions` map in content API, `edition` on characters; current vs new API on the production backup identical after mapping `object` ↔ `editions["4e"]` (3,467 requests, 39 users); UI list/view/edit/copy/delete checked against the new API. |
 | 2026-09-30 | P2 deployed to production (top-level character `edition`). Follow-up: character edition moved into the character object (`object.edition`), `migrate_character_editions.py` now renames the field; current vs new API on the production backup identical apart from the edition's position (3,467 requests). |
+| 2026-09-30 | P2 done: character edition follow-up deployed; all characters have `object.edition` on local, staging and production. |
+| 2026-09-30 | Q-PRAYER decided: prayers keep their current shape in both editions; removed from C2. |
+| 2026-09-30 | Q-SIZE decided: 5e uses the 4e 7-step size scale and wound formulas (book's "Small" read as "Tiny"); 5e Small talent not imported (no species, career or Random Talent grants it). |
+| 2026-09-30 | C2 started: edition-specific fields modelled as optional fields on the shared type plus `ValidateEdition` (design §4.1); career `incomeSkill` added. |
+| 2026-09-30 | Career `incomeSkill` is in both editions (4e has one too), optional; when set it must be a level 1 skill. No UI until after the 5e work. |

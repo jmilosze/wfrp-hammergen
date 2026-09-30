@@ -150,6 +150,19 @@ test("modelToApi returns expected api career data", () => {
   expect(modelToApi(career)).toMatchObject(careerApiData);
 });
 
+test("apiResponseToModel sets an empty income skill when the variant has none", () => {
+  expect(apiResponseToModel(careerApiResponse).incomeSkill).toBe("");
+});
+
+test("income skill round-trips through the api data", () => {
+  const withIncome = apiResponseToModel({
+    ...careerApiResponse,
+    editions: { "4e": { ...careerApiData, incomeSkill: "skill11" } },
+  });
+  expect(withIncome.incomeSkill).toBe("skill11");
+  expect(modelToApi(withIncome).incomeSkill).toBe("skill11");
+});
+
 testIsEqualCommonProperties("career", career);
 
 describe("isEqualTo returns true", () => {

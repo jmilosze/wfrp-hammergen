@@ -103,6 +103,10 @@ func (f *fakeWhDb) Retrieve(_ context.Context, _ wh.WhType, _ []string, _ []stri
 	return []*wh.Wh{f.existing}, nil
 }
 
+func (f *fakeWhDb) Create(_ context.Context, _ wh.WhType, w *wh.Wh) (*wh.Wh, error) {
+	return w, nil
+}
+
 func (f *fakeWhDb) Update(_ context.Context, _ wh.WhType, w *wh.Wh, _ string) (*wh.Wh, error) {
 	f.updated = true
 	return w, nil
@@ -153,6 +157,44 @@ func TestCreateCharacterRequiresValidEdition(t *testing.T) {
 			_, err := s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: newMockCharacter(e)}, &auth.Claims{Id: "user1"})
 			if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "Edition") {
 				t.Errorf("expected edition validation error, got %v", err)
+			}
+		})
+	}
+}
+
+// newMockCareer returns a copy of a valid mock career with the given income skill.
+func newMockCareer(incomeSkill string) *wh.Career {
+	career := *mock_data.NewMockCareers()[0].Object.(*wh.Career)
+	career.IncomeSkill = incomeSkill
+	return &career
+}
+
+func TestCreateCareerValidatesIncomeSkill(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+	level1Skill := newMockCareer("").Level1.Skills[0]
+	notInLevel1 := "eeeeeeeeeeeeeeeeeeeeeeee"
+
+	for name, tc := range map[string]struct {
+		editions map[wh.Edition]wh.WhObject
+		wantErr  bool
+	}{
+		"4e without income skill":      {map[wh.Edition]wh.WhObject{wh.Edition4e: newMockCareer("")}, false},
+		"4e with level 1 income skill": {map[wh.Edition]wh.WhObject{wh.Edition4e: newMockCareer(level1Skill)}, false},
+		"4e income skill not in level": {map[wh.Edition]wh.WhObject{wh.Edition4e: newMockCareer(notInLevel1)}, true},
+		"5e without income skill":      {map[wh.Edition]wh.WhObject{wh.Edition5e: newMockCareer("")}, false},
+		"5e with level 1 income skill": {map[wh.Edition]wh.WhObject{wh.Edition5e: newMockCareer(level1Skill)}, false},
+		"5e income skill not in level": {map[wh.Edition]wh.WhObject{wh.Edition5e: newMockCareer(notInLevel1)}, true},
+		"invalid in one of two editions": {map[wh.Edition]wh.WhObject{
+			wh.Edition4e: newMockCareer(""), wh.Edition5e: newMockCareer(notInLevel1),
+		}, true},
+	} {
+		t.Run(name, func(t *testing.T) {
+			_, err := s.Create(context.Background(), wh.WhTypeCareer, &wh.Wh{Editions: tc.editions}, &auth.Claims{Id: "user1"})
+			if tc.wantErr && !errors.Is(err, domain.ErrInvalidArguments) {
+				t.Errorf("expected ErrInvalidArguments, got %v", err)
+			}
+			if !tc.wantErr && err != nil {
+				t.Errorf("expected no error, got %v", err)
 			}
 		})
 	}

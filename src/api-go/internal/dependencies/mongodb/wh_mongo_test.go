@@ -336,3 +336,30 @@ func TestWhDbRetrieveCareersBySkillAndTalent(t *testing.T) {
 	require.Equal(t, []string{withTalent}, ids(warhammer.WhFilter{Edition: warhammer.Edition4e, TalentIds: []string{"talent1"}}))
 	require.Equal(t, []string{with5eSkill}, ids(warhammer.WhFilter{Edition: warhammer.Edition5e, SkillIds: []string{"skill1"}}))
 }
+
+func TestWhDbCareerIncomeSkill(t *testing.T) {
+	s := newTestWhDbService(t)
+	ctx := context.Background()
+	id := "700000000000000000000018"
+	skillId := "600000000000000000000000"
+
+	career4e := &warhammer.Career{Name: "c 4e"}
+	career5e := &warhammer.Career{Name: "c 5e", Level1: warhammer.CareerLevel{Exists: true, Skills: []string{skillId}}, IncomeSkill: skillId}
+	w := &warhammer.Wh{Id: id, OwnerId: "owner1", Editions: map[warhammer.Edition]warhammer.WhObject{warhammer.Edition4e: career4e, warhammer.Edition5e: career5e}}
+	w.Init()
+	_, err := s.Create(ctx, warhammer.WhTypeCareer, w)
+	require.NoError(t, err)
+
+	var raw struct {
+		Editions map[warhammer.Edition]bson.M `bson:"editions"`
+	}
+	require.NoError(t, s.Collections[warhammer.WhTypeCareer].FindOne(ctx, bson.M{"_id": objectId(t, id)}).Decode(&raw))
+	require.NotContains(t, raw.Editions[warhammer.Edition4e], "incomeskill")
+	require.Equal(t, skillId, raw.Editions[warhammer.Edition5e]["incomeskill"])
+
+	got, err := s.Retrieve(ctx, warhammer.WhTypeCareer, []string{"owner1"}, nil, warhammer.WhFilter{WhIds: []string{id}})
+	require.NoError(t, err)
+	require.Len(t, got, 1)
+	require.Equal(t, "", got[0].Editions[warhammer.Edition4e].(*warhammer.Career).IncomeSkill)
+	require.Equal(t, skillId, got[0].Editions[warhammer.Edition5e].(*warhammer.Career).IncomeSkill)
+}
