@@ -221,11 +221,6 @@ func idNumberToWhNumber(idNumber IdNumber, allIdWhMap map[string]*Wh) (WhNumber,
 	if ok {
 		return WhNumber{Wh: wh, Number: idNumber.Number}, nil
 	}
-	if len(allIdWhMap) > 0 {
-		for _, v := range allIdWhMap {
-			return WhNumber{Wh: v, Number: idNumber.Number}, nil
-		}
-	}
 
 	return WhNumber{}, fmt.Errorf("could not find id %s in allIdWhMap", idNumber.Id)
 }
