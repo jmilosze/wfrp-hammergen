@@ -7,6 +7,7 @@ Working folder for adding Warhammer Fantasy Roleplay 5th edition to Hammergen. 5
 | [01-discovery.md](01-discovery.md) | What differs between 4e and 5e in the areas Hammergen covers, and what each difference means for Hammergen. Ends with open questions. | draft 1 |
 | [02-design.md](02-design.md) | Decisions and feature design. | not started |
 | [03-tracker.md](03-tracker.md) | Task list for discovery, decisions, design and implementation, plus a change log. | active |
+| [plans/p1-edition-variants.md](plans/p1-edition-variants.md) | Plan: migrate content documents to the per-edition variant format; MongoDB layer only, no user-visible change. | agreed |
 | [appendices/a-careers-diff.md](appendices/a-careers-diff.md) | Career-by-career 4e vs 5e comparison (generated). | draft |
 | [appendices/b-weapons-armour-diff.md](appendices/b-weapons-armour-diff.md) | Weapon and armour table comparison (generated). | draft |
 | [appendices/c-talents.md](appendices/c-talents.md) | 5e talents with 4e names, max ranks and modelled mechanics. | draft |

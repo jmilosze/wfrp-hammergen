@@ -44,19 +44,21 @@ All open; see [02-design.md §3](02-design.md#3-decisions).
 | Q-SCOPE | Keep 4e alongside 5e | ✅ | 2026-09-30 | Both, permanently |
 | Q-EDITION | Where edition lives | ✅ | 2026-09-30 | Every entity and character has an edition; character edition immutable |
 | Q-COMPAT | 4e supplement content in 5e | ✅ | 2026-09-30 | Opt-in, one-way per character; only where no 5e version; 4e talents/traits don't affect stats; not in generator |
-| Q-OVERLAP | Same-named content across editions | ✅ | 2026-09-30 | Separate entities per edition |
+| Q-OVERLAP | Same-named content across editions | ✅ | 2026-09-30 | One document per item with per-edition variants (option B, design §4.1a); users copy public items to add their own variants; lists return one variant |
 | Q-SPECIES | 5e species list | ✅ | 2026-09-30 | 5 core species only |
 | Q-ADV | Advance storage | ⬜ | | |
 | Q-TRACKER | Career Advancement Tracker | ⬜ | | |
 | Q-AMBITION | Ambitions / Appearance | ⬜ | | |
 | Q-CONVERT | 4e → 5e conversion | ✅ | 2026-09-30 | None (edition is fixed) |
-| Q-SIZE | Size scale | ⬜ | | |
-| Q-PROPS | Parameterised qualities | ⬜ | | |
+| Q-SIZE | Size scale | ⏸ | | Deferred |
+| Q-PROPS | Parameterised qualities | ✅ | 2026-09-30 | One entity per value, as today |
 | Q-SHIELD | Shields | ✅ | 2026-09-30 | Armour in 5e (5e rules only for 5e characters); 4e unchanged |
-| Q-PRAYER | Prayer classification | ⬜ | | |
+| Q-PRAYER | Prayer classification | ⏸ | | Deferred |
 | Q-RULES | Rules automation level | ⬜ | | |
-| Q-DATA | Content entry approach | ⬜ | | |
-| Q-VERSION | How to know a 4e item has a 5e version | ⬜ | | |
+| Q-DATA | Content entry approach | ✅ | 2026-09-30 | One-off import script for public 5e content; then editor with 4e/5e toggle |
+| Q-I18N | Future translations — keep model compatible | ⬜ | | Overlay of text fields per variant, not a variant axis |
+| Q-ANALYTICS | How to measure 4e vs 5e usage | ✅ | 2026-09-30 | API-side structured events; DB counts can complement |
+| Q-VERSION | How to know a 4e item has a 5e version | ✅ | 2026-09-30 | 5e variant exists on the item |
 | Q-4E-EFFECT | Which 4e content affects 5e stats | ✅ | 2026-09-30 | None initially — 4e content is shown but never affects 5e numbers |
 | Q-CUSTOM | Custom content per edition / copy to 5e | ✅ | 2026-09-30 | Custom content in either edition; no copy-from-4e helper for now |
 
@@ -80,12 +82,14 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| C1 | Edition on every content entity (model, DB, API validation) | ⬜ | Q-EDITION |
-| C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill, prayer classification) | ⬜ | depends on Q-PROPS, Q-PRAYER, Q-SIZE |
+| C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ⬜ | plan agreed: [plans/p1-edition-variants.md](plans/p1-edition-variants.md) |
+| C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ⬜ | see plan P1 "Later" |
+| C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill, prayer classification) | ⬜ | depends on Q-PRAYER, Q-SIZE |
 | C3 | 5e core source | ⬜ | |
 | C4 | Browse/search/filter content by edition in lists (R2) | ⬜ | |
-| C5 | Create/edit custom content with edition chosen on create (R13) | ⬜ | |
-| C6 | Enter/import 5e core content (careers, skills, talents, items, qualities/flaws, spells, prayers, traits, mutations) | ⬜ | Q-DATA; seed: `data/careers-5e.json` |
+| C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | ⬜ | |
+| C6a | Extract and verify 5e core data (careers, skills, talents, items, qualities/flaws, spells, prayers, traits, mutations) | ⬜ | careers already extracted: `data/careers-5e.json`; see D16 |
+| C6b | One-off import script: add `editions.5` to matching public documents, create 5e-only public documents | ⬜ | Q-DATA; name matching + rename table; link only clear 1-to-1 matches |
 | C7 | Tests | ⬜ | |
 
 ### Phase 3.2 — 5e characters (5e content only)
@@ -117,11 +121,23 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | G3 | Higher-level generation (tracker ticks, 100 XP per level, 5e XP costs) | ⬜ | |
 | G4 | Tests | ⬜ | |
 
+### Analytics (runs alongside the phases)
+
+| # | Item | Status | Notes |
+|---|---|---|---|
+| A1 | Decide approach and metric list | 🟡 | approach decided (API-side); metric list to do — design §4.6a |
+| A2 | Baseline 4e usage before 5e launches | ⬜ | so there is something to compare against |
+| A3 | Content browsing/search/custom-content metrics per edition | ⬜ | ship with phase 3.1 |
+| A4 | Character create/view/edit/print metrics per edition, "allow 4e content" switch | ⬜ | ship with phases 3.2–3.3 |
+| A5 | Generator runs per edition | ⬜ | ship with phase 3.4 |
+| A6 | Report/dashboard | ⬜ | |
+
 ### Release
 
 | # | Item | Status | Notes |
 |---|---|---|---|
 | X1 | Release plan per phase (flag, docs, announcement) | ⬜ | |
+| X2 | Update site texts that say "4th Edition" only (e.g. `<meta name="description">` in `index.html`, About page) | ⬜ | |
 
 ---
 
@@ -136,3 +152,12 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-09-30 | R8 widened: no 4e content affects a 5e character's numbers (initially); Q-4E-EFFECT decided. |
 | 2026-09-30 | R13 (custom content in either edition, no copy helper for now) agreed; Q-CUSTOM decided. |
 | 2026-09-30 | Delivery phases agreed: 5e content → 5e characters → opt-in 4e content → 5e generator; implementation section restructured. |
+| 2026-09-30 | R14 analytics (4e vs 5e usage) added; Q-ANALYTICS open; analytics workstream added. |
+| 2026-09-30 | Q-ANALYTICS decided: API-side events. |
+| 2026-09-30 | Content model brainstorm (design §4.1a): Q-OVERLAP reopened, leaning to per-edition variants in one document; Q-I18N added. |
+| 2026-09-30 | Option B chosen (Q-OVERLAP, Q-VERSION decided); public items admin-only, users copy to add variants; list endpoints return one variant. |
+| 2026-09-30 | Option B edge cases resolved; Q-PROPS decided (one entity per value). |
+| 2026-09-30 | Q-DATA decided (import script, then editor toggle); Q-PRAYER and Q-SIZE deferred. |
+| 2026-09-30 | Option B reconsidered against A-with-`replaces` and confirmed; non-1-to-1 cases become unlinked 5e-only items. |
+| 2026-09-30 | Plan P1 (edition-variant format migration, backend + frontend) drafted. |
+| 2026-09-30 | Plan P1 trimmed to DB format migration + MongoDB layer only (no API/UI/5e changes); agreed, not started. |
