@@ -8,7 +8,7 @@ import (
 type Item struct {
 	Name         string            `json:"name" validate:"name_valid"`
 	Description  string            `json:"description" validate:"desc_valid"`
-	Price        float64           `json:"price" validate:"gte=0,lte=1000000000"`
+	Price        float64           `json:"price" validate:"gte=0,lte=24000000000"`
 	Enc          float64           `json:"enc" validate:"gte=0,lte=1000"`
 	Availability ItemAvailability  `json:"availability" validate:"item_availability_valid"`
 	Properties   []string          `json:"properties" validate:"unique,dive,id_valid"`

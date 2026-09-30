@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import { Visibility } from "../../../services/wh/common.ts";
+import { validFloatFn, validIntegerFn, Visibility } from "../../../services/wh/common.ts";
 import { defaultSource } from "../../../services/wh/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
+import { ValidationStatus } from "../../../utils/validation.ts";
 import { authRequest } from "../../../services/auth.ts";
 import {
   ammoGroupList,
   armourGroupList,
   armourLocationList,
   availabilityList,
+  BRASS_PER_GOLD,
+  BRASS_PER_SILVER,
+  brassToCoins,
   carryTypeList,
+  type Coins,
+  coinsToBrass,
   Item,
   itemApi,
   ItemType,
@@ -25,12 +31,13 @@ import {
   printItemType,
   printMeleeGroup,
   printMeleeReach,
+  printPrice,
   printRangedGroup,
   printWeaponHands,
   rangedGroupList,
   weaponHandsList,
 } from "../../../services/wh/item.ts";
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import FormInput from "../../../components/FormInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
@@ -94,8 +101,76 @@ await loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
-const validPrice = computed(() => wh.value.validatePrice());
 const validEnc = computed(() => wh.value.validateEnc());
+
+const priceGold = ref(0);
+const priceSilver = ref(0);
+const priceBrass = ref(0);
+
+const MAX_PRICE_GOLD = 100000000;
+const MAX_PRICE_BRASS = MAX_PRICE_GOLD * BRASS_PER_GOLD;
+const MAX_PRICE_SILVER = Math.floor(MAX_PRICE_BRASS / BRASS_PER_SILVER);
+
+// An empty number input emits NaN; treat it as 0 coins.
+function coinValue(value: number): number {
+  return Number.isNaN(value) ? 0 : value;
+}
+
+function currentCoins(): Coins {
+  return {
+    gold: coinValue(priceGold.value),
+    silver: coinValue(priceSilver.value),
+    brass: coinValue(priceBrass.value),
+  };
+}
+
+function validCoin(value: number, max: number, integer: boolean): ValidationStatus {
+  if (Number.isNaN(value)) {
+    return { valid: true, message: "" };
+  }
+  return integer ? validIntegerFn(value, 0, max) : validFloatFn(value, 0, max);
+}
+
+const validPriceGold = computed(() => validCoin(priceGold.value, MAX_PRICE_GOLD, true));
+const validPriceSilver = computed(() => validCoin(priceSilver.value, MAX_PRICE_SILVER, true));
+const validPriceBrass = computed(() => validCoin(priceBrass.value, MAX_PRICE_BRASS, false));
+const validCoins = computed(
+  () => validPriceGold.value.valid && validPriceSilver.value.valid && validPriceBrass.value.valid,
+);
+
+const validPrice = computed<ValidationStatus>(() => {
+  if (wh.value.validatePrice().valid) {
+    return { valid: true, message: "" };
+  }
+  return {
+    valid: false,
+    message: `Total price must be at most ${MAX_PRICE_GOLD.toLocaleString("en-GB")} GC.`,
+  };
+});
+
+watch([priceGold, priceSilver, priceBrass], () => {
+  if (!validCoins.value) {
+    wh.value.price = Number.NaN;
+    return;
+  }
+  wh.value.price = coinsToBrass(currentCoins());
+});
+
+watch(
+  () => wh.value.price,
+  (newPrice) => {
+    if (Number.isNaN(newPrice) || newPrice === coinsToBrass(currentCoins())) {
+      return;
+    }
+    const coins = brassToCoins(newPrice);
+    priceGold.value = coins.gold;
+    priceSilver.value = coins.silver;
+    priceBrass.value = coins.brass;
+  },
+  { immediate: true },
+);
+
+const formattedPrice = computed(() => (Number.isNaN(wh.value.price) ? "—" : printPrice(wh.value.price)));
 
 const validMeleeSbDmgMult = computed(() => wh.value.validateMeleeDmgSbMult());
 const validMeleeDmg = computed(() => wh.value.validateMeleeDmg());
@@ -127,7 +202,6 @@ watch(
     wh.value.resetDetails();
   },
 );
-
 </script>
 
 <template>
@@ -165,13 +239,39 @@ watch(
           title="Availability"
           class="min-w-24"
         />
-        <FormInput
-          v-model="wh.price"
-          title="Price (in brass)"
-          :validationStatus="validPrice"
-          :disabled="!canEdit"
-          type="number"
-        />
+        <p class="-mb-3">Price</p>
+        <div class="border border-neutral-300 rounded p-2">
+          <div class="flex flex-col @2xl:flex-row gap-4">
+            <FormInput
+              v-model="priceGold"
+              type="number"
+              title="Gold (GC)"
+              :validationStatus="validPriceGold"
+              :disabled="!canEdit"
+              class="flex-1"
+            />
+            <FormInput
+              v-model="priceSilver"
+              type="number"
+              title="Silver (/-)"
+              :validationStatus="validPriceSilver"
+              :disabled="!canEdit"
+              class="flex-1"
+            />
+            <FormInput
+              v-model="priceBrass"
+              type="number"
+              title="Brass (d)"
+              :validationStatus="validPriceBrass"
+              :disabled="!canEdit"
+              class="flex-1"
+            />
+          </div>
+          <div class="text-xs text-neutral-500 mt-2">Total: {{ formattedPrice }}</div>
+          <div v-if="!validPrice.valid && validCoins" role="alert" class="text-sm text-red-600 mt-1">
+            {{ validPrice.message }}
+          </div>
+        </div>
         <FormInput
           v-model="wh.enc"
           title="Encumbrance"
@@ -179,12 +279,7 @@ watch(
           :disabled="!canEdit"
           type="number"
         />
-        <FormTextarea
-          v-model="wh.description"
-          title="Description"
-          :validationStatus="validDesc"
-          :disabled="!canEdit"
-        />
+        <FormTextarea v-model="wh.description" title="Description" :validationStatus="validDesc" :disabled="!canEdit" />
       </div>
     </div>
     <div class="flex-1">

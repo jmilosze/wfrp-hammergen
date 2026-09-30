@@ -405,3 +405,35 @@ describe("printArmourGroup", () => {
   });
 });
 
+describe("validatePrice", () => {
+  test("returns valid for numbers between 0 and 24,000,000,000 (matching backend gte=0,lte=24000000000)", () => {
+    const testItem = item.copy();
+    testItem.price = 0;
+    expect(testItem.validatePrice().valid).toBe(true);
+
+    testItem.price = 2.31;
+    expect(testItem.validatePrice().valid).toBe(true);
+
+    testItem.price = 240;
+    expect(testItem.validatePrice().valid).toBe(true);
+
+    testItem.price = 24000000000;
+    expect(testItem.validatePrice().valid).toBe(true);
+  });
+
+  test("returns invalid for negative numbers or numbers exceeding 24,000,000,000", () => {
+    const testItem = item.copy();
+    testItem.price = -0.01;
+    expect(testItem.validatePrice().valid).toBe(false);
+
+    testItem.price = -10;
+    expect(testItem.validatePrice().valid).toBe(false);
+
+    testItem.price = 24000000001;
+    expect(testItem.validatePrice().valid).toBe(false);
+
+    testItem.price = Number.NaN;
+    expect(testItem.validatePrice().valid).toBe(false);
+  });
+});
+
