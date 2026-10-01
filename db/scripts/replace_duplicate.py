@@ -71,6 +71,7 @@ SOURCES = {
     "41": "Lords of Stone and Steel",
     "42": "Temple of Spite",
     "43": "Sylvania The Cursed County",
+    "44": "WFRP 5e",
 }
 
 

@@ -51,6 +51,7 @@ const (
 	SourceLordsOfStoneAndSteel          = "41"
 	SourceTempleOfSpite                 = "42"
 	SourceSylvaniaTheCursedCounty       = "43"
+	SourceWFRP5e                        = "44"
 )
 
 func sourceValues() string {
@@ -99,6 +100,7 @@ func sourceValues() string {
 		SourceLordsOfStoneAndSteel,
 		SourceTempleOfSpite,
 		SourceSylvaniaTheCursedCounty,
+		SourceWFRP5e,
 	})
 }
 

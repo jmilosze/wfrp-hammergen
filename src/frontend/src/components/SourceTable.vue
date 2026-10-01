@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
-import { source, validateSourceRecord } from "../services/wh/source.ts";
+import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/source.ts";
+import { UI_EDITION } from "../services/wh/common.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import TableWithSearch from "./TableWithSearch.vue";
@@ -27,7 +28,8 @@ watch(
   () => props.initSources,
   (newVal) => {
     sources.value = {};
-    for (const [allSourceName, allSourceDispName] of Object.entries(source)) {
+    for (const allSourceName of sourcesByEdition[UI_EDITION]) {
+      const allSourceDispName = source[allSourceName];
       if (newVal && allSourceName in newVal) {
         sources.value[allSourceName] = {
           id: allSourceName,

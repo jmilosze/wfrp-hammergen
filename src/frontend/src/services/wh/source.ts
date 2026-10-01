@@ -1,5 +1,5 @@
 import { ValidationStatus } from "../../utils/validation.ts";
-import { validVeryShortDescFn } from "./common.ts";
+import { Edition, validVeryShortDescFn } from "./common.ts";
 
 export const source: Record<string, string> = {
   0: "Custom",
@@ -46,6 +46,13 @@ export const source: Record<string, string> = {
   41: "Lords of Stone and Steel",
   42: "Temple of Spite",
   43: "Sylvania The Cursed County",
+  44: "WFRP 5e",
+};
+
+// Sources offered when editing content of each edition; Custom is in both.
+export const sourcesByEdition: Record<Edition, string[]> = {
+  "4e": Object.keys(source).filter((id) => id !== "44"),
+  "5e": ["0", "44"],
 };
 
 export type Source = Record<string, string>;
