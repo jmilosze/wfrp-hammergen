@@ -86,8 +86,8 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ✅ | [plans/p2-edition-api.md](plans/p2-edition-api.md); deployed to local, staging and production 2026-09-30 (character edition in `object.edition`); production backup `db/hammergen_30_09_2026_before_p2` |
 | C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill) | ✅ | design §4.1; done: career income skill, 5e career species, talents (max rank, no tests, Strong Back/Sturdy effects), qualities and flaws (no model change), shields and armour/melee groups; prayers unchanged (Q-PRAYER); size scale unchanged (Q-SIZE) |
 | C3 | 5e core source | ✅ | source `44` "WFRP 5e"; the editor's source picker offers Custom + WFRP 5e for 5e, all 4e sources for 4e (no API check) |
-| C4 | Browse/search/filter content by edition in lists (R2) | ⬜ | |
-| C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | ⬜ | |
+| C4 | Browse/search/filter content by edition in lists (R2) | 🟡 | [plans/p3-edition-ui.md](plans/p3-edition-ui.md) |
+| C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | 🟡 | [plans/p3-edition-ui.md](plans/p3-edition-ui.md); missing variant pre-filled from the other one |
 | C6a | Extract and verify 5e core data (careers, skills, talents, items, qualities/flaws, spells, prayers, traits, mutations) | ⬜ | careers already extracted: `data/careers-5e.json`; see D16 |
 | C6b | One-off import script: add `editions.5e` to matching public documents, create 5e-only public documents | ⬜ | Q-DATA; name matching + rename table; link only clear 1-to-1 matches |
 | C7 | Tests | ⬜ | |
@@ -181,3 +181,4 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-10-01 | C2 armour: 5e shields are armour (new Shield group); armour groups per edition (5e adds Leather); 5e melee groups drop Parry and Engineering. Quick Armour not supported; penalties in descriptions. |
 | 2026-10-01 | C2 done (5e content model changes; details in design §4.1). |
 | 2026-10-01 | C3 done: 5e core rulebook added as source 44 ("WFRP 5e"); source picker is edition-dependent. |
+| 2026-10-01 | Plan P3 (C4/C5) agreed: global edition switch (default 4e), one-edition lists, editor 4e/5e toggle saving all variants, "Add version" pre-filled from the other variant, delete removes the selected variant, copy copies all variants; characters stay 4e. |

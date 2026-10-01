@@ -2,12 +2,12 @@
 import ActionButton from "./ActionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/source.ts";
-import { UI_EDITION } from "../services/wh/common.ts";
+import { Edition } from "../services/wh/common.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import TableWithSearch from "./TableWithSearch.vue";
 
-const props = defineProps<{ initSources: Record<string, string>; disabled?: boolean }>();
+const props = defineProps<{ initSources: Record<string, string>; edition: Edition; disabled?: boolean }>();
 
 const emit = defineEmits<{
   (e: "selected", value: { id: string; notes: string; selected: boolean }): void;
@@ -28,7 +28,7 @@ watch(
   () => props.initSources,
   (newVal) => {
     sources.value = {};
-    for (const allSourceName of sourcesByEdition[UI_EDITION]) {
+    for (const allSourceName of sourcesByEdition[props.edition]) {
       const allSourceDispName = source[allSourceName];
       if (newVal && allSourceName in newVal) {
         sources.value[allSourceName] = {
@@ -94,12 +94,7 @@ function onModifyClick() {
     <ModalWindow id="modifySourceModal">
       <template #header> Modify sources </template>
       <div>
-        <TableWithSearch
-          v-model="searchTerm"
-          :fields="modalColumns"
-          :items="sourcesList"
-          stackBreakpoint="lg"
-        >
+        <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="sourcesList" stackBreakpoint="lg">
           <template #selected="{ id }: { id: string }">
             <div>
               <input

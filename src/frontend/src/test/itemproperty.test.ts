@@ -37,7 +37,7 @@ const itemProperty = new ItemProperty({
 });
 
 test("apiResponseToModel returns expected mutation", () => {
-  expect(apiResponseToModel(itemPropertyApiDataResponse)).toMatchObject(itemProperty);
+  expect(apiResponseToModel(itemPropertyApiDataResponse, "4e")).toMatchObject(itemProperty);
 });
 
 test("modelToApi returns expected api mutation data", () => {

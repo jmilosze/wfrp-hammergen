@@ -6,17 +6,11 @@ import {
   getSizeFormula,
 } from "./characterUtils.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
-import {
-  Attributes,
-  copyAttributes,
-  getAttributes,
-  multiplyAttributes,
-  sumAttributes,
-} from "./attributes.ts";
+import { Attributes, copyAttributes, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
 import {
   CharacterApiResponse,
   Edition,
-  UI_EDITION,
+  CHARACTER_EDITION,
   validateIdNumber,
   validAttributesFn,
   validIntegerFn,
@@ -34,12 +28,7 @@ import { createWhApi, ServerEnvelope } from "./crudGenerator.ts";
 import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
-import {
-  copyIdNumberArray,
-  IdNumber,
-  idNumberArrayToRecord,
-  updateIdNumberRecord,
-} from "../../utils/idNumber.ts";
+import { copyIdNumberArray, IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
 import { isEqualEntity } from "../../utils/equal.ts";
 import { Talent } from "./talent.ts";
 import { Mutation } from "./mutation.ts";
@@ -630,7 +619,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
 
 export function modelToApi(character: Character): CharacterApiData {
   return {
-    edition: UI_EDITION,
+    edition: CHARACTER_EDITION,
     name: character.name,
     description: character.description,
     notes: character.notes,
@@ -674,11 +663,13 @@ export function characterApi(axios: AxiosInstance): CharacterApi {
   return {
     ...baseApi,
     getElementForDisplay: async (id: string, edition: Edition): Promise<CharacterFull> => {
-      const { data } = await axios.get<ServerEnvelope<CharacterApiResponse<CharacterFullApiData>>>(`${API_BASE_PATH}/${id}`, {
-        params: { full: true, edition },
-      });
+      const { data } = await axios.get<ServerEnvelope<CharacterApiResponse<CharacterFullApiData>>>(
+        `${API_BASE_PATH}/${id}`,
+        {
+          params: { full: true, edition },
+        },
+      );
       return apiResponseToCharacterFull(data.data);
     },
   };
 }
-

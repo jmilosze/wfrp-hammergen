@@ -1,4 +1,4 @@
-import { Source, updateSource } from "./source.ts";
+import { Source, sourceForEdition, updateSource } from "./source.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 import { Attributes } from "./attributes.ts";
 import { isKey } from "../../utils/object.ts";
@@ -20,7 +20,9 @@ export interface WhProperty {
   source: Source;
 
   copy: <T extends WhProperty>(this: T) => T;
-  isValid: () => boolean;
+  forEdition(edition: Edition): this;
+  // isValid checks the model as the variant of the given edition.
+  isValid: (edition: Edition) => boolean;
   validateName: () => ValidationStatus;
   validateDescription: () => ValidationStatus;
   isEqualTo: (other: unknown) => boolean;
@@ -62,6 +64,14 @@ export abstract class WhEntity implements WhProperty {
     return cloneEntity(this);
   }
 
+  // forEdition returns a copy to start the edition's variant from (pre-filled from this variant).
+  // Types with edition-specific rules adjust it further.
+  forEdition(edition: Edition): this {
+    const variant = this.copy();
+    variant.source = sourceForEdition(this.source, edition);
+    return variant;
+  }
+
   isEqualTo(other: unknown): boolean {
     return isEqualEntity(this, other);
   }
@@ -70,15 +80,24 @@ export abstract class WhEntity implements WhProperty {
     updateSource(this.source, update);
   }
 
-  abstract isValid(): boolean;
+  abstract isValid(edition: Edition): boolean;
   abstract validateName(): ValidationStatus;
   abstract validateDescription(): ValidationStatus;
 }
 
 export type Edition = "4e" | "5e";
 
-// Edition the UI works with until 5e support is added to the UI.
-export const UI_EDITION: Edition = "4e";
+export const EDITIONS: Edition[] = ["4e", "5e"];
+
+export function printEditionName(edition: Edition): string {
+  return edition === "4e" ? "4th Edition" : "5th Edition";
+}
+
+// Characters stay 4e until 5e characters are added (phase 3.2); character pages use 4e content.
+export const CHARACTER_EDITION: Edition = "4e";
+
+// One model per edition variant of a content document.
+export type Variants<T> = Partial<Record<Edition, T>>;
 
 export interface ApiHeaders {
   id: string;
@@ -112,6 +131,17 @@ export function variant<WhApiData>(api: ApiResponse<WhApiData>, edition: Edition
   return data;
 }
 
+// API of a content type: lists one edition, reads and writes whole documents (all variants).
+export interface ContentApi<T> {
+  listElements: (edition: Edition) => Promise<T[]>;
+  getDocument: (id: string) => Promise<Variants<T>>;
+  createDocument: (visibility: Visibility, variants: Variants<T>) => Promise<ApiHeaders>;
+  updateDocument: (id: string, visibility: Visibility, variants: Variants<T>) => Promise<ApiHeaders>;
+  // Deletes the whole document, all variants.
+  deleteElement: (id: string) => Promise<void>;
+}
+
+// API of characters: one character, one edition.
 export interface WhApi<T, TResponse extends ApiHeaders> {
   getElement: (id: string, edition: Edition) => Promise<T>;
   listElements: (edition: Edition) => Promise<T[]>;

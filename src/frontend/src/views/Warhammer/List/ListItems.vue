@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { UI_EDITION } from "../../../services/wh/common.ts";
 import { useWhList } from "../../../composables/whList.ts";
+import { useEdition } from "../../../composables/edition.ts";
 import {
   Item,
   itemApi,
@@ -32,7 +32,8 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(itemApi(authRequest));
+const { edition } = useEdition();
+const whList = useWhList(itemApi(authRequest), edition);
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");
@@ -110,7 +111,7 @@ const filteredGroupOptions = computed(() => {
       case ItemType.Melee.toString():
         return [
           anyGroup,
-          ...meleeGroupsByEdition[UI_EDITION].map((x) => ({ text: printMeleeGroup(x), value: x.toString() })),
+          ...meleeGroupsByEdition[edition.value].map((x) => ({ text: printMeleeGroup(x), value: x.toString() })),
         ];
       case ItemType.Ranged.toString():
         return [anyGroup, ...rangedGroupList.map((x) => ({ text: printRangedGroup(x), value: x.toString() }))];
@@ -119,7 +120,7 @@ const filteredGroupOptions = computed(() => {
       case ItemType.Armour.toString():
         return [
           anyGroup,
-          ...armourGroupsByEdition[UI_EDITION].map((x) => ({ text: printArmourGroup(x), value: x.toString() })),
+          ...armourGroupsByEdition[edition.value].map((x) => ({ text: printArmourGroup(x), value: x.toString() })),
         ];
       default:
         return [anyGroup];

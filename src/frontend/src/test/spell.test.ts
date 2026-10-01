@@ -48,7 +48,7 @@ const spell = new Spell({
 });
 
 test("apiResponseToModel returns expected spell", () => {
-  expect(apiResponseToModel(spellApiResponse)).toMatchObject(spell);
+  expect(apiResponseToModel(spellApiResponse, "4e")).toMatchObject(spell);
 });
 
 test("modelToApi returns expected api spell data", () => {
@@ -132,4 +132,3 @@ describe("Dark Magic lore", () => {
     expect(simplified).toEqual(new Set([SpellLabel.SpellLabelDarkMagic]));
   });
 });
-

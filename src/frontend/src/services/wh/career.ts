@@ -1,16 +1,7 @@
 import { AttributeName } from "./attributes.ts";
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import {
-  ApiResponse,
-  Edition,
-  UI_EDITION,
-  validLongDescFn,
-  validShortDescFn,
-  variant,
-  Visibility,
-  WhEntity,
-} from "./common.ts";
-import { defineWhApi, ServerEnvelope } from "./crudGenerator.ts";
+import { ApiResponse, Edition, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { defineContentApi, ServerEnvelope } from "./crudGenerator.ts";
 import { AxiosInstance } from "axios";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
@@ -123,6 +114,12 @@ export const speciesList = [
   Species.Gnome,
   Species.Ogre,
 ];
+
+// Species a career can be open to in each edition; 5e has five species.
+export const careerSpeciesByEdition: Record<Edition, Species[]> = {
+  "4e": speciesList,
+  "5e": [Species.Human, Species.Halfling, Species.Dwarf, Species.HighElf, Species.WoodElf],
+};
 
 export function printSpeciesName(species: Species) {
   switch (species) {
@@ -304,6 +301,12 @@ export class Career extends WhEntity {
     return validLongDescFn(this.level5.items);
   }
 
+  forEdition(edition: Edition): this {
+    const variant = super.forEdition(edition);
+    variant.species = variant.species.filter((s) => careerSpeciesByEdition[edition].includes(s));
+    return variant;
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -394,8 +397,8 @@ export function copyCareerLevel(careerLevel: CareerLevel): CareerLevel {
   return cloneEntity(careerLevel);
 }
 
-export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>): Career {
-  const data = variant(careerApi, UI_EDITION);
+export function apiResponseToModel(careerApi: ApiResponse<CareerApiData>, edition: Edition): Career {
+  const data = variant(careerApi, edition);
   return new Career({
     id: careerApi.id,
     ownerId: careerApi.ownerId,
@@ -456,7 +459,7 @@ function careerLevelToCareerLevelApiData(careerLevel: CareerLevel): CareerLevelA
   };
 }
 
-export const careerApi = defineWhApi<Career, CareerApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
+export const careerApi = defineContentApi<Career, CareerApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
 
 export interface CareerMatch {
   id: string;
@@ -511,7 +514,7 @@ export async function getCareersForSkill(
   const { data } = await axios.get<ServerEnvelope<ApiResponse<CareerApiData>[]>>(API_BASE_PATH, {
     params: { skillId: skillIds, edition },
   });
-  return data.data.map(apiResponseToModel);
+  return data.data.map((api) => apiResponseToModel(api, edition));
 }
 
 export async function getCareersForTalent(
@@ -522,5 +525,5 @@ export async function getCareersForTalent(
   const { data } = await axios.get<ServerEnvelope<ApiResponse<CareerApiData>[]>>(API_BASE_PATH, {
     params: { talentId: talentIds, edition },
   });
-  return data.data.map(apiResponseToModel);
+  return data.data.map((api) => apiResponseToModel(api, edition));
 }

@@ -1,6 +1,17 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, Edition, UI_EDITION, validateIdNumber, validFloatFn, validIntegerFn, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { defineContentApi } from "./crudGenerator.ts";
+import {
+  ApiResponse,
+  Edition,
+  validateIdNumber,
+  validFloatFn,
+  validIntegerFn,
+  validLongDescFn,
+  validShortDescFn,
+  variant,
+  Visibility,
+  WhEntity,
+} from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
 import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
@@ -604,6 +615,18 @@ export class Item extends WhEntity {
     return validateIdNumber("Rune number", this.runes, 1, 1000);
   }
 
+  // forEdition resets weapon and armour groups the edition doesn't have.
+  forEdition(edition: Edition): this {
+    const variant = super.forEdition(edition);
+    if (!meleeGroupsByEdition[edition].includes(variant.melee.group)) {
+      variant.melee.group = meleeGroupsByEdition[edition][0];
+    }
+    if (!armourGroupsByEdition[edition].includes(variant.armour.group)) {
+      variant.armour.group = armourGroupsByEdition[edition][0];
+    }
+    return variant;
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -727,8 +750,8 @@ export class Item extends WhEntity {
   }
 }
 
-export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>): Item {
-  const data = variant(itemApi, UI_EDITION);
+export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>, edition: Edition): Item {
+  const data = variant(itemApi, edition);
   const newItem = new Item({
     id: itemApi.id,
     ownerId: itemApi.ownerId,
@@ -797,5 +820,4 @@ export function modelToApi(item: Item): ItemApiData {
   };
 }
 
-export const itemApi = defineWhApi<Item, ItemApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const itemApi = defineContentApi<Item, ItemApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);

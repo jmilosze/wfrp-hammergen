@@ -1,7 +1,7 @@
 import { Source, copySource, sourceIsValid } from "./source.ts";
-import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
-import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { CharacterModifiers, CharacterModifiersData, effectsForEdition } from "./characterModifiers.ts";
+import { defineContentApi } from "./crudGenerator.ts";
+import { ApiResponse, Edition, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/mutation";
@@ -59,6 +59,12 @@ export class Mutation extends WhEntity {
     return validLongDescFn(this.description);
   }
 
+  forEdition(edition: Edition): this {
+    const variant = super.forEdition(edition);
+    variant.modifiers.effects = effectsForEdition(variant.modifiers.effects, edition);
+    return variant;
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -69,8 +75,8 @@ export class Mutation extends WhEntity {
   }
 }
 
-export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>): Mutation {
-  const data = variant(mutationApi, UI_EDITION);
+export function apiResponseToModel(mutationApi: ApiResponse<MutationApiData>, edition: Edition): Mutation {
+  const data = variant(mutationApi, edition);
   return new Mutation({
     id: mutationApi.id,
     ownerId: mutationApi.ownerId,
@@ -93,5 +99,4 @@ export function modelToApi(mutation: Mutation): MutationApiData {
   };
 }
 
-export const mutationApi = defineWhApi<Mutation, MutationApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const mutationApi = defineContentApi<Mutation, MutationApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);

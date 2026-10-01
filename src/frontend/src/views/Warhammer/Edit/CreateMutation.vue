@@ -14,6 +14,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import EditControls from "../../../components/EditControls.vue";
+import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 
@@ -30,6 +31,9 @@ const newMutation = new Mutation({
 
 const {
   wh,
+  edition,
+  hasVariant,
+  addVariant,
   canEdit,
   initSources,
   apiError,
@@ -58,36 +62,50 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create mutation' : canEdit ? 'Edit mutation' : wh.name" />
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
+  <EditorEditionSelector
+    v-model="edition"
+    :hasVariant="hasVariant"
+    :canEdit="canEdit"
+    propertyName="Mutation"
+    @add="addVariant"
+  />
+  <template v-if="hasVariant">
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormTextarea
+            v-model="wh.description"
+            title="Description"
+            :validationStatus="validDesc"
+            :disabled="!canEdit"
+          />
+        </div>
       </div>
     </div>
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormTextarea
-          v-model="wh.description"
-          title="Description"
-          :validationStatus="validDesc"
+    <div class="my-4">
+      <CharacterModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit" />
+    </div>
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <SourceTable
+          :edition="edition"
           :disabled="!canEdit"
+          :initSources="initSources"
+          @selected="(e) => wh.updateSource(e)"
         />
       </div>
+      <div class="flex-1">
+        <PublicPropertyBox v-model="wh.visibility" propertyName="Mutation" :disabled="!canEdit" />
+      </div>
     </div>
-  </div>
-  <div class="my-4">
-    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!canEdit" />
-  </div>
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
-    </div>
-    <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Mutation" :disabled="!canEdit" />
-    </div>
-  </div>
-  <div class="mt-4">
+  </template>
+  <div v-show="hasVariant" class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
       :submissionState="submissionState"

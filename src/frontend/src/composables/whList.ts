@@ -1,5 +1,5 @@
-import { ApiHeaders, SHORT_DESC_LENGTH, UI_EDITION, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
-import { computed, Ref, ref } from "vue";
+import { ContentApi, Edition, SHORT_DESC_LENGTH, Visibility, WhProperty } from "../services/wh/common.ts";
+import { computed, MaybeRefOrGetter, Ref, ref, toValue, watch } from "vue";
 import { source } from "../services/wh/source.ts";
 import { useAuth } from "./auth.ts";
 
@@ -8,7 +8,8 @@ for (const [key, value] of Object.entries(source)) {
   sourceOptions.push({ text: value, value: key });
 }
 
-export function useWhList<T extends WhProperty, TResponse extends ApiHeaders>(elementApi: WhApi<T, TResponse>) {
+// useWhList loads one edition of a content type and reloads when the edition changes.
+export function useWhList<T extends WhProperty>(elementApi: ContentApi<T>, edition: MaybeRefOrGetter<Edition>) {
   const auth = useAuth();
 
   const whToDelete = ref({ id: "", name: "" });
@@ -25,38 +26,44 @@ export function useWhList<T extends WhProperty, TResponse extends ApiHeaders>(el
     loading.value = true;
     showApiError.value = true;
     try {
-      whList.value = await elementApi.listElements(UI_EDITION);
+      whList.value = await elementApi.listElements(toValue(edition));
     } catch {
       apiError.value = "Error. Could not pull data from server.";
     }
     loading.value = false;
   }
 
+  // copyWh copies the whole document (all variants) and adds the listed edition's copy to the list.
   async function copyWh(whId: string): Promise<void> {
     showApiError.value = true;
     try {
-      const whCopy: T = await elementApi.getElement(whId, UI_EDITION);
-      whCopy.name = whCopy.name + " - copy";
-      if (!whCopy.validateName().valid) {
-        whCopy.name = whCopy.name.slice(0, SHORT_DESC_LENGTH);
+      const variants = await elementApi.getDocument(whId);
+      const copies = Object.values(variants);
+      for (const whCopy of copies) {
+        whCopy.name = whCopy.name + " - copy";
+        if (!whCopy.validateName().valid) {
+          whCopy.name = whCopy.name.slice(0, SHORT_DESC_LENGTH);
+        }
+        whCopy.ownerId = auth.getLoggedUserInfo().userId;
+        if (!auth.isAdmin.value && whCopy.visibility === Visibility.Public) {
+          whCopy.visibility = Visibility.Private;
+        }
       }
 
-      whCopy.ownerId = auth.getLoggedUserInfo().userId;
-
-      if (!auth.isAdmin.value && whCopy.visibility === Visibility.Public) {
-        whCopy.visibility = Visibility.Private;
+      const listed = variants[toValue(edition)];
+      if (listed === undefined) {
+        return;
       }
+      const res = await elementApi.createDocument(listed.visibility, variants);
 
-      const res = await elementApi.createElement(whCopy);
-
-      whCopy.id = res.id;
+      listed.id = res.id;
       if (res.ownerId) {
-        whCopy.ownerId = res.ownerId;
+        listed.ownerId = res.ownerId;
       }
       if (res.visibility !== undefined) {
-        whCopy.visibility = res.visibility;
+        listed.visibility = res.visibility;
       }
-      whList.value.push(whCopy);
+      whList.value.push(listed);
     } catch {
       apiError.value = "Error. Could not upload data to server.";
     }
@@ -65,7 +72,7 @@ export function useWhList<T extends WhProperty, TResponse extends ApiHeaders>(el
   async function deleteWh() {
     showApiError.value = true;
     try {
-      await elementApi.deleteElement(whToDelete.value.id, UI_EDITION);
+      await elementApi.deleteElement(whToDelete.value.id);
       for (let i = 0; i < whList.value.length; i++) {
         if (whList.value[i]["id"] === whToDelete.value.id) {
           whList.value.splice(i, 1);
@@ -96,6 +103,11 @@ export function useWhList<T extends WhProperty, TResponse extends ApiHeaders>(el
   });
 
   const sourceValues = sourceOptions.map((x) => x.value);
+
+  watch(
+    () => toValue(edition),
+    () => loadWhList(),
+  );
 
   return {
     whList,

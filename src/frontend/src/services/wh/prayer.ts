@@ -1,6 +1,6 @@
-import { defineWhApi } from "./crudGenerator.ts";
+import { defineContentApi } from "./crudGenerator.ts";
 import { Source, copySource, sourceIsValid } from "./source.ts";
-import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, Edition, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/prayer";
@@ -68,8 +68,8 @@ export class Prayer extends WhEntity {
   }
 }
 
-export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>): Prayer {
-  const data = variant(prayerApi, UI_EDITION);
+export function apiResponseToModel(prayerApi: ApiResponse<PrayerApiData>, edition: Edition): Prayer {
+  const data = variant(prayerApi, edition);
   return new Prayer({
     id: prayerApi.id,
     ownerId: prayerApi.ownerId,
@@ -94,5 +94,4 @@ export function modelToApi(prayer: Prayer): PrayerApiData {
   };
 }
 
-export const prayerApi = defineWhApi<Prayer, PrayerApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const prayerApi = defineContentApi<Prayer, PrayerApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);

@@ -12,6 +12,7 @@ import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
+import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
@@ -36,6 +37,9 @@ const newItemProperty = new ItemProperty({
 
 const {
   wh,
+  edition,
+  hasVariant,
+  addVariant,
   canEdit,
   initSources,
   apiError,
@@ -65,40 +69,54 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create quality/flaw' : canEdit ? 'Edit quality/flaw' : wh.name" />
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
-        <MultipleCheckboxColumnInput
-          v-model="wh.applicableTo"
-          :options="applicableToOptions"
-          :disabled="!canEdit"
-          title="Applicable to"
-        />
+  <EditorEditionSelector
+    v-model="edition"
+    :hasVariant="hasVariant"
+    :canEdit="canEdit"
+    propertyName="Quality/flaw"
+    @add="addVariant"
+  />
+  <template v-if="hasVariant">
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
+          <MultipleCheckboxColumnInput
+            v-model="wh.applicableTo"
+            :options="applicableToOptions"
+            :disabled="!canEdit"
+            title="Applicable to"
+          />
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormTextarea
+            v-model="wh.description"
+            title="Description"
+            :validationStatus="validDesc"
+            :disabled="!canEdit"
+          />
+        </div>
       </div>
     </div>
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormTextarea
-          v-model="wh.description"
-          title="Description"
-          :validationStatus="validDesc"
-          :disabled="!canEdit"
-        />
-      </div>
-    </div>
-  </div>
 
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <SourceTable
+          :edition="edition"
+          :disabled="!canEdit"
+          :initSources="initSources"
+          @selected="(e) => wh.updateSource(e)"
+        />
+      </div>
+      <div class="flex-1">
+        <PublicPropertyBox v-model="wh.visibility" propertyName="Quality/flaw" :disabled="!canEdit" />
+      </div>
     </div>
-    <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Quality/flaw" :disabled="!canEdit" />
-    </div>
-  </div>
-  <div class="mt-4">
+  </template>
+  <div v-show="hasVariant" class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
       :submissionState="submissionState"

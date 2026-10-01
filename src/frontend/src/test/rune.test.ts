@@ -31,7 +31,7 @@ const rune = new Rune({
 });
 
 test("apiResponseToModel returns expected mutation", () => {
-  expect(apiResponseToModel(runeApiDataResponse)).toMatchObject(rune);
+  expect(apiResponseToModel(runeApiDataResponse, "4e")).toMatchObject(rune);
 });
 
 test("modelToApi returns expected api mutation data", () => {

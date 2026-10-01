@@ -1,6 +1,6 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { defineContentApi } from "./crudGenerator.ts";
+import { ApiResponse, Edition, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { AttributeName, attributeNameList } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
@@ -84,8 +84,8 @@ export class Skill extends WhEntity {
   }
 }
 
-export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>): Skill {
-  const data = variant(skillApi, UI_EDITION);
+export function apiResponseToModel(skillApi: ApiResponse<SkillApiData>, edition: Edition): Skill {
+  const data = variant(skillApi, edition);
   return new Skill({
     id: skillApi.id,
     ownerId: skillApi.ownerId,
@@ -114,8 +114,7 @@ export function modelToApi(skill: Skill): SkillApiData {
   };
 }
 
-export const skillApi = defineWhApi<Skill, SkillApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const skillApi = defineContentApi<Skill, SkillApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
 
 export function getSkillAttributeNameList(isGroup: boolean): AttributeName[] {
   if (isGroup) {

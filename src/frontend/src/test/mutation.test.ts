@@ -40,7 +40,7 @@ const mutation = new Mutation({
 });
 
 test("apiResponseToModel returns expected mutation", () => {
-  expect(apiResponseToModel(mutationApiResponse)).toMatchObject(mutation);
+  expect(apiResponseToModel(mutationApiResponse, "4e")).toMatchObject(mutation);
 });
 
 test("modelToApi returns expected api mutation data", () => {

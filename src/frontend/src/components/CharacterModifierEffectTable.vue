@@ -5,9 +5,9 @@ import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import TableWithSearch from "./TableWithSearch.vue";
 import { modifierEffectsByEdition, printEffectDesc, printEffectName } from "../services/wh/characterModifiers.ts";
-import { UI_EDITION } from "../services/wh/common.ts";
+import { Edition } from "../services/wh/common.ts";
 
-const props = defineProps<{ initEffects: Set<number>; disabled?: boolean }>();
+const props = defineProps<{ initEffects: Set<number>; edition: Edition; disabled?: boolean }>();
 
 const emit = defineEmits<{
   (e: "selected", value: { id: number; selected: boolean }): void;
@@ -28,7 +28,7 @@ watch(
   () => props.initEffects,
   (newVal) => {
     effects.value = {};
-    for (const effectType of modifierEffectsByEdition[UI_EDITION]) {
+    for (const effectType of modifierEffectsByEdition[props.edition]) {
       if (newVal && newVal.has(effectType)) {
         effects.value[effectType] = {
           id: effectType,

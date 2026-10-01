@@ -1,6 +1,6 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
-import { defineWhApi } from "./crudGenerator.ts";
+import { ApiResponse, Edition, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { defineContentApi } from "./crudGenerator.ts";
 import { ItemType } from "./item.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
@@ -65,8 +65,8 @@ export class ItemProperty extends WhEntity {
   }
 }
 
-export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiData>): ItemProperty {
-  const data = variant(itemPropertyApi, UI_EDITION);
+export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiData>, edition: Edition): ItemProperty {
+  const data = variant(itemPropertyApi, edition);
   return new ItemProperty({
     id: itemPropertyApi.id,
     ownerId: itemPropertyApi.ownerId,
@@ -89,5 +89,8 @@ export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
   };
 }
 
-export const itemPropertyApi = defineWhApi<ItemProperty, ItemPropertyApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const itemPropertyApi = defineContentApi<ItemProperty, ItemPropertyApiData>(
+  API_BASE_PATH,
+  apiResponseToModel,
+  modelToApi,
+);

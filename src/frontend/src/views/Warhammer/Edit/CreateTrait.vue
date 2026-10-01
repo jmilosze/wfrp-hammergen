@@ -12,6 +12,7 @@ import FormTextarea from "../../../components/FormTextarea.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 import EditControls from "../../../components/EditControls.vue";
+import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
@@ -29,6 +30,9 @@ const newTrait = new Trait({
 
 const {
   wh,
+  edition,
+  hasVariant,
+  addVariant,
   canEdit,
   initSources,
   apiError,
@@ -56,28 +60,42 @@ const validDesc = computed(() => wh.value.validateDescription());
   </div>
 
   <Header :title="id === 'create' ? 'Create creature trait' : canEdit ? 'Edit creature trait' : wh.name" />
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" class="flex-1" />
-    <FormTextarea
-      v-model="wh.description"
-      title="Description"
-      :validationStatus="validDesc"
-      :disabled="!canEdit"
-      class="flex-1"
-    />
-  </div>
-  <div class="my-4">
-    <CharacterModifiersBlock v-model="wh.modifiers" :disabled="!canEdit" />
-  </div>
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="my-3 flex-1">
-      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+  <EditorEditionSelector
+    v-model="edition"
+    :hasVariant="hasVariant"
+    :canEdit="canEdit"
+    propertyName="Creature trait"
+    @add="addVariant"
+  />
+  <template v-if="hasVariant">
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" class="flex-1" />
+      <FormTextarea
+        v-model="wh.description"
+        title="Description"
+        :validationStatus="validDesc"
+        :disabled="!canEdit"
+        class="flex-1"
+      />
     </div>
-    <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!canEdit" />
+    <div class="my-4">
+      <CharacterModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit" />
     </div>
-  </div>
-  <div class="mt-4">
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="my-3 flex-1">
+        <SourceTable
+          :edition="edition"
+          :disabled="!canEdit"
+          :initSources="initSources"
+          @selected="(e) => wh.updateSource(e)"
+        />
+      </div>
+      <div class="my-3 flex-1">
+        <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!canEdit" />
+      </div>
+    </div>
+  </template>
+  <div v-show="hasVariant" class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
       :submissionState="submissionState"

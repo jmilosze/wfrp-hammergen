@@ -24,6 +24,7 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import EditControls from "../../../components/EditControls.vue";
+import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SelectTable from "../../../components/SelectTable.vue";
 import CareerReferencesTable from "../../../components/CareerReferencesTable.vue";
@@ -41,6 +42,10 @@ const newSkill = new Skill({
 
 const {
   wh,
+  edition,
+  hasVariant,
+  addVariant,
+  watchWh,
   canEdit,
   initSources,
   apiError,
@@ -54,7 +59,7 @@ const {
   showSubmissionStatus,
 } = useWhEdit(newSkill, skillApi(authRequest));
 
-const skillListUtils = useWhList(skillApi(authRequest));
+const skillListUtils = useWhList(skillApi(authRequest), edition);
 const groupSkills: Ref<Skill[]> = ref([]);
 
 skillListUtils.loadWhList();
@@ -80,8 +85,8 @@ const typeOpts = computed(() => {
   return getSkillTypeList(wh.value.isGroup).map((x) => ({ text: printSkillType(x), value: x }));
 });
 
-watch(
-  () => wh.value.isGroup,
+watchWh(
+  (w) => w.isGroup,
   (newVal) => {
     if (newVal) {
       wh.value.group = new Set<string>();
@@ -96,7 +101,6 @@ watch(
   },
   { immediate: true },
 );
-
 </script>
 
 <template>
@@ -114,68 +118,88 @@ watch(
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create skill' : canEdit ? 'Edit skill' : wh.name" />
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-        <DoubleRadioButton
-          v-model="wh.isGroup"
-          title="Individual skill/group of skills"
-          :invertOrder="true"
-          trueText="Group"
-          falseText="Individual"
-          :disabled="!canEdit"
-        />
-        <SelectInput
-          v-model="wh.attribute"
-          :options="attOptions"
-          :disabled="!canEdit"
-          title="Attribute"
-          class="min-w-24"
-        />
-        <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
-        <FormTextarea
-          v-model="wh.description"
-          title="Description"
-          :validationStatus="validDesc"
-          :disabled="!canEdit"
-        />
+  <EditorEditionSelector
+    v-model="edition"
+    :hasVariant="hasVariant"
+    :canEdit="canEdit"
+    propertyName="Skill"
+    @add="addVariant"
+  />
+  <template v-if="hasVariant">
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <DoubleRadioButton
+            v-model="wh.isGroup"
+            title="Individual skill/group of skills"
+            :invertOrder="true"
+            trueText="Group"
+            falseText="Individual"
+            :disabled="!canEdit"
+          />
+          <SelectInput
+            v-model="wh.attribute"
+            :options="attOptions"
+            :disabled="!canEdit"
+            title="Attribute"
+            class="min-w-24"
+          />
+          <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
+          <FormTextarea
+            v-model="wh.description"
+            title="Description"
+            :validationStatus="validDesc"
+            :disabled="!canEdit"
+          />
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <DoubleRadioButton
+            v-model="wh.displayZero"
+            title="Display if skill/group not taken?"
+            trueText="Yes"
+            falseText="No"
+            :disabled="!canEdit"
+          />
+          <SelectTable
+            :disabled="!canEdit || wh.isGroup"
+            :initSelectedItems="wh.group"
+            :itemList="groupSkills"
+            title="Belongs to group"
+            modalTitle="Modify groups"
+            :loading="skillListUtils.loading.value"
+            routeName="skill"
+            :truncateModalDescription="100"
+            @reload="skillListUtils.loadWhList"
+            @selected="(e) => wh.modifyGroup(e.id, e.selected)"
+          />
+        </div>
       </div>
     </div>
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <DoubleRadioButton
-          v-model="wh.displayZero"
-          title="Display if skill/group not taken?"
-          trueText="Yes"
-          falseText="No"
+    <CareerReferencesTable
+      v-if="id !== 'create'"
+      :edition="edition"
+      :entityId="wh.id"
+      :parentGroupIds="wh.group"
+      type="skill"
+    />
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="my-3 flex-1">
+        <SourceTable
+          :edition="edition"
           :disabled="!canEdit"
-        />
-        <SelectTable
-          :disabled="!canEdit || wh.isGroup"
-          :initSelectedItems="wh.group"
-          :itemList="groupSkills"
-          title="Belongs to group"
-          modalTitle="Modify groups"
-          :loading="skillListUtils.loading.value"
-          routeName="skill"
-          :truncateModalDescription="100"
-          @reload="skillListUtils.loadWhList"
-          @selected="(e) => wh.modifyGroup(e.id, e.selected)"
+          :initSources="initSources"
+          @selected="(e) => wh.updateSource(e)"
         />
       </div>
+      <div class="my-3 flex-1">
+        <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
+      </div>
     </div>
-  </div>
-  <CareerReferencesTable v-if="id !== 'create'" :entityId="wh.id" :parentGroupIds="wh.group" type="skill" />
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="my-3 flex-1">
-      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
-    </div>
-    <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
-    </div>
-  </div>
-  <div class="mt-4">
+  </template>
+  <div v-show="hasVariant" class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
       :submissionState="submissionState"

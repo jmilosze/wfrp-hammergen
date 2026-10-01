@@ -1,0 +1,111 @@
+import { computed, ref } from "vue";
+import { useAuth } from "./auth.ts";
+import { ApiHeaders, CHARACTER_EDITION, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
+import { SubmissionState } from "../utils/submission.ts";
+import { copySource } from "../services/wh/source.ts";
+
+// useCharacterEdit edits a single-edition entity (characters, CHARACTER_EDITION).
+export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHeaders>(
+  whInstance: T,
+  elementApi: WhApi<T, TResponse>,
+) {
+  const auth = useAuth();
+
+  if (auth.isAdmin.value && whInstance.id === "create") {
+    whInstance.visibility = Visibility.Public;
+  }
+
+  const wh = ref(whInstance.copy());
+  const whOriginal = ref(whInstance.copy());
+  const initSources = ref(copySource(wh.value.source));
+
+  const apiError = ref("");
+  const showApiError = ref(true);
+
+  const submissionState = ref(new SubmissionState());
+  const showSubmissionStatus = ref(false);
+
+  async function loadWh(id: string): Promise<void> {
+    if (id === "create") {
+      return;
+    }
+
+    showApiError.value = true;
+    try {
+      wh.value = await elementApi.getElement(id, CHARACTER_EDITION);
+      whOriginal.value = wh.value.copy();
+      initSources.value = copySource(wh.value.source);
+    } catch {
+      apiError.value = "Error. Could not pull data from server.";
+    }
+  }
+
+  const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
+
+  const canEdit = computed(() => wh.value.id === "create" || auth.canEdit(wh.value.ownerId));
+
+  async function submitForm(): Promise<boolean> {
+    submissionState.value.setInProgress();
+
+    if (!wh.value.isValid(CHARACTER_EDITION)) {
+      submissionState.value.setValidationError();
+      return false;
+    }
+
+    showSubmissionStatus.value = true;
+
+    try {
+      if (wh.value.id === "create") {
+        await elementApi.createElement(wh.value);
+        submissionState.value.setSuccess(`${wh.value.name} created successfully.`);
+        return true;
+      } else {
+        await elementApi.updateElement(wh.value);
+        submissionState.value.setSuccess(`${wh.value.name} updated successfully.`);
+        return true;
+      }
+    } catch (error) {
+      submissionState.value.setFailureFromError(error);
+      return false;
+    }
+  }
+
+  async function deleteItem(): Promise<boolean> {
+    if (wh.value.id === "create") {
+      return false;
+    }
+
+    submissionState.value.setInProgress();
+    try {
+      await elementApi.deleteElement(wh.value.id, CHARACTER_EDITION);
+      whOriginal.value = wh.value.copy() as T;
+      return true;
+    } catch (error) {
+      submissionState.value.setFailureFromError(error);
+      showSubmissionStatus.value = true;
+      return false;
+    }
+  }
+
+  function resetForm() {
+    wh.value = whInstance.copy() as T;
+    whOriginal.value = whInstance.copy() as T;
+    initSources.value = copySource(wh.value.source);
+  }
+
+  return {
+    wh,
+    canEdit,
+    whOriginal,
+    initSources,
+    apiError,
+    showApiError,
+    loadWh,
+    submitForm,
+    deleteItem,
+    hasChanged,
+    submissionState,
+    resetForm,
+    showSubmissionStatus,
+  };
+}

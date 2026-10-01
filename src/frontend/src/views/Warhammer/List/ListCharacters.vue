@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhList } from "../../../composables/whList.ts";
+import { useCharacterList } from "../../../composables/characterList.ts";
 import { Character, characterApi } from "../../../services/wh/character.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
@@ -15,7 +15,7 @@ import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 import { Visibility } from "../../../services/wh/common.ts";
 
-const whList = useWhList(characterApi(authRequest));
+const whList = useCharacterList(characterApi(authRequest));
 await whList.loadWhList();
 const auth = useAuth();
 

@@ -16,6 +16,11 @@ export const modifierEffectsByEdition: Record<Edition, ModifierEffect[]> = {
   "5e": [ModifierEffect.Hardy, ModifierEffect.StrongBack, ModifierEffect.Sturdy],
 };
 
+// effectsForEdition keeps only the effects used by the edition's rules.
+export function effectsForEdition(effects: Set<number>, edition: Edition): Set<number> {
+  return new Set([...effects].filter((e) => modifierEffectsByEdition[edition].includes(e)));
+}
+
 export function printEffectName(effect: ModifierEffect): string {
   switch (effect) {
     case ModifierEffect.Hardy:

@@ -1,7 +1,7 @@
-import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
+import { CharacterModifiers, CharacterModifiersData, effectsForEdition } from "./characterModifiers.ts";
 import { Source, copySource, sourceIsValid } from "./source.ts";
-import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { defineContentApi } from "./crudGenerator.ts";
+import { ApiResponse, Edition, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
 const API_BASE_PATH = "/api/wh/trait";
@@ -37,13 +37,19 @@ export class Trait extends WhEntity {
     return validLongDescFn(this.description);
   }
 
+  forEdition(edition: Edition): this {
+    const variant = super.forEdition(edition);
+    variant.modifiers.effects = effectsForEdition(variant.modifiers.effects, edition);
+    return variant;
+  }
+
   isValid(): boolean {
     return this.validateName().valid && this.validateDescription().valid && sourceIsValid(this.source);
   }
 }
 
-export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>): Trait {
-  const data = variant(traitApi, UI_EDITION);
+export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>, edition: Edition): Trait {
+  const data = variant(traitApi, edition);
   return new Trait({
     id: traitApi.id,
     ownerId: traitApi.ownerId,
@@ -64,5 +70,4 @@ export function modelToApi(trait: Trait): TraitApiData {
   };
 }
 
-export const traitApi = defineWhApi<Trait, TraitApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const traitApi = defineContentApi<Trait, TraitApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);

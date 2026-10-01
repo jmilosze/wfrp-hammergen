@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { UI_EDITION } from "../../../services/wh/common.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import { validFloatFn, validIntegerFn, Visibility } from "../../../services/wh/common.ts";
@@ -43,6 +42,7 @@ import FormInput from "../../../components/FormInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
+import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
@@ -68,6 +68,10 @@ const newItem = new Item({
 
 const {
   wh,
+  edition,
+  hasVariant,
+  addVariant,
+  watchWh,
   canEdit,
   initSources,
   apiError,
@@ -81,13 +85,13 @@ const {
   showSubmissionStatus,
 } = useWhEdit(newItem, itemApi(authRequest));
 
-const propertyListUtils = useWhList(itemPropertyApi(authRequest));
+const propertyListUtils = useWhList(itemPropertyApi(authRequest), edition);
 propertyListUtils.loadWhList();
 
-const spellListUtils = useWhList(spellApi(authRequest));
+const spellListUtils = useWhList(spellApi(authRequest), edition);
 spellListUtils.loadWhList();
 
-const runeListUtils = useWhList(runeApi(authRequest));
+const runeListUtils = useWhList(runeApi(authRequest), edition);
 runeListUtils.loadWhList();
 
 const propertyList = computed(() => {
@@ -189,16 +193,20 @@ const validRunes = computed(() => wh.value.validateRunes());
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
 const weaponHandsOpts = weaponHandsList.map((x) => ({ text: printWeaponHands(x), value: x }));
-const meleeGroupOpts = meleeGroupsByEdition[UI_EDITION].map((x) => ({ text: printMeleeGroup(x), value: x }));
+const meleeGroupOpts = computed(() =>
+  meleeGroupsByEdition[edition.value].map((x) => ({ text: printMeleeGroup(x), value: x })),
+);
 const meleeReachOpts = meleeReachList.map((x) => ({ text: printMeleeReach(x), value: x }));
 const rangedGroupOpts = rangedGroupList.map((x) => ({ text: printRangedGroup(x), value: x }));
 const ammunitionGroupOpts = ammoGroupList.map((x) => ({ text: printAmmoGroup(x), value: x }));
 const ArmourLocationOpts = armourLocationList.map((x) => ({ text: printArmourLocation(x), value: x }));
-const armourGroupOpts = armourGroupsByEdition[UI_EDITION].map((x) => ({ text: printArmourGroup(x), value: x }));
+const armourGroupOpts = computed(() =>
+  armourGroupsByEdition[edition.value].map((x) => ({ text: printArmourGroup(x), value: x })),
+);
 const carryTypeOpts = carryTypeList.map((x) => ({ text: printCarryType(x), value: x }));
 
-watch(
-  () => wh.value.type,
+watchWh(
+  (w) => w.type,
   () => {
     wh.value.resetDetails();
   },
@@ -228,308 +236,327 @@ watch(
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create trapping' : canEdit ? 'Edit trapping' : wh.name" />
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-        <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
-        <SelectInput
-          v-model="wh.availability"
-          :options="availOpts"
-          :disabled="!canEdit"
-          title="Availability"
-          class="min-w-24"
-        />
-        <p class="-mb-3">Price</p>
-        <div class="border border-neutral-300 rounded p-2">
-          <div class="flex flex-col @2xl:flex-row gap-4">
-            <FormInput
-              v-model="priceGold"
-              type="number"
-              title="Gold (GC)"
-              :validationStatus="validPriceGold"
-              :disabled="!canEdit"
-              class="flex-1"
-            />
-            <FormInput
-              v-model="priceSilver"
-              type="number"
-              title="Silver (/-)"
-              :validationStatus="validPriceSilver"
-              :disabled="!canEdit"
-              class="flex-1"
-            />
-            <FormInput
-              v-model="priceBrass"
-              type="number"
-              title="Brass (d)"
-              :validationStatus="validPriceBrass"
-              :disabled="!canEdit"
-              class="flex-1"
-            />
+  <EditorEditionSelector
+    v-model="edition"
+    :hasVariant="hasVariant"
+    :canEdit="canEdit"
+    propertyName="Trapping"
+    @add="addVariant"
+  />
+  <template v-if="hasVariant">
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
+          <SelectInput
+            v-model="wh.availability"
+            :options="availOpts"
+            :disabled="!canEdit"
+            title="Availability"
+            class="min-w-24"
+          />
+          <p class="-mb-3">Price</p>
+          <div class="border border-neutral-300 rounded p-2">
+            <div class="flex flex-col @2xl:flex-row gap-4">
+              <FormInput
+                v-model="priceGold"
+                type="number"
+                title="Gold (GC)"
+                :validationStatus="validPriceGold"
+                :disabled="!canEdit"
+                class="flex-1"
+              />
+              <FormInput
+                v-model="priceSilver"
+                type="number"
+                title="Silver (/-)"
+                :validationStatus="validPriceSilver"
+                :disabled="!canEdit"
+                class="flex-1"
+              />
+              <FormInput
+                v-model="priceBrass"
+                type="number"
+                title="Brass (d)"
+                :validationStatus="validPriceBrass"
+                :disabled="!canEdit"
+                class="flex-1"
+              />
+            </div>
+            <div class="text-xs text-neutral-500 mt-2">Total: {{ formattedPrice }}</div>
+            <div v-if="!validPrice.valid && validCoins" role="alert" class="text-sm text-red-600 mt-1">
+              {{ validPrice.message }}
+            </div>
           </div>
-          <div class="text-xs text-neutral-500 mt-2">Total: {{ formattedPrice }}</div>
-          <div v-if="!validPrice.valid && validCoins" role="alert" class="text-sm text-red-600 mt-1">
-            {{ validPrice.message }}
-          </div>
+          <FormInput
+            v-model="wh.enc"
+            title="Encumbrance"
+            :validationStatus="validEnc"
+            :disabled="!canEdit"
+            type="number"
+          />
+          <FormTextarea
+            v-model="wh.description"
+            title="Description"
+            :validationStatus="validDesc"
+            :disabled="!canEdit"
+          />
         </div>
-        <FormInput
-          v-model="wh.enc"
-          title="Encumbrance"
-          :validationStatus="validEnc"
-          :disabled="!canEdit"
-          type="number"
-        />
-        <FormTextarea v-model="wh.description" title="Description" :validationStatus="validDesc" :disabled="!canEdit" />
       </div>
-    </div>
-    <div class="flex-1">
-      <div v-if="wh.type === ItemType.Melee" class="flex flex-col gap-4">
-        <div>
-          <p class="mb-1">Weapon damage</p>
-          <div class="flex">
-            <div class="shrink-0 mr-4 pt-2">SB x</div>
-            <FormInput
-              v-model="wh.melee.dmgSbMult"
-              :validationStatus="validMeleeSbDmgMult"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
-            <div class="shrink-0 mx-4 pt-2">+</div>
-            <FormInput
-              v-model="wh.melee.dmg"
-              :validationStatus="validMeleeDmg"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
+      <div class="flex-1">
+        <div v-if="wh.type === ItemType.Melee" class="flex flex-col gap-4">
+          <div>
+            <p class="mb-1">Weapon damage</p>
+            <div class="flex">
+              <div class="shrink-0 mr-4 pt-2">SB x</div>
+              <FormInput
+                v-model="wh.melee.dmgSbMult"
+                :validationStatus="validMeleeSbDmgMult"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+              <div class="shrink-0 mx-4 pt-2">+</div>
+              <FormInput
+                v-model="wh.melee.dmg"
+                :validationStatus="validMeleeDmg"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+            </div>
           </div>
+          <SelectInput
+            v-model="wh.melee.group"
+            :options="meleeGroupOpts"
+            :disabled="!canEdit"
+            title="Weapon group"
+            class="min-w-24"
+          />
+          <SelectInput
+            v-model="wh.melee.hands"
+            :options="weaponHandsOpts"
+            :disabled="!canEdit"
+            title="One/Two handed"
+            class="min-w-24"
+          />
+          <SelectInput
+            v-model="wh.melee.reach"
+            :options="meleeReachOpts"
+            :disabled="!canEdit"
+            title="Weapon reach"
+            class="min-w-24"
+          />
         </div>
-        <SelectInput
-          v-model="wh.melee.group"
-          :options="meleeGroupOpts"
-          :disabled="!canEdit"
-          title="Weapon group"
-          class="min-w-24"
-        />
-        <SelectInput
-          v-model="wh.melee.hands"
-          :options="weaponHandsOpts"
-          :disabled="!canEdit"
-          title="One/Two handed"
-          class="min-w-24"
-        />
-        <SelectInput
-          v-model="wh.melee.reach"
-          :options="meleeReachOpts"
-          :disabled="!canEdit"
-          title="Weapon reach"
-          class="min-w-24"
-        />
-      </div>
-      <div v-else-if="wh.type === ItemType.Ranged" class="flex flex-col gap-4">
-        <div>
-          <p class="mb-1">Weapon damage</p>
-          <div class="flex">
-            <div class="shrink-0 mr-4 pt-2">SB x</div>
-            <FormInput
-              v-model="wh.ranged.dmgSbMult"
-              :validationStatus="validRangedSbDmgMult"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
-            <div class="shrink-0 mx-4 pt-2">+</div>
-            <FormInput
-              v-model="wh.ranged.dmg"
-              :validationStatus="validRangedDmg"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
+        <div v-else-if="wh.type === ItemType.Ranged" class="flex flex-col gap-4">
+          <div>
+            <p class="mb-1">Weapon damage</p>
+            <div class="flex">
+              <div class="shrink-0 mr-4 pt-2">SB x</div>
+              <FormInput
+                v-model="wh.ranged.dmgSbMult"
+                :validationStatus="validRangedSbDmgMult"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+              <div class="shrink-0 mx-4 pt-2">+</div>
+              <FormInput
+                v-model="wh.ranged.dmg"
+                :validationStatus="validRangedDmg"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+            </div>
           </div>
-        </div>
-        <div>
-          <p class="mb-1">Weapon range</p>
-          <div class="flex">
-            <div class="shrink-0 mr-4 pt-2">SB x</div>
-            <FormInput
-              v-model="wh.ranged.rngSbMult"
-              :validationStatus="validRangedSbRngMult"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
-            <div class="shrink-0 mx-4 pt-2">+</div>
-            <FormInput
-              v-model="wh.ranged.rng"
-              :validationStatus="validRangedRng"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
+          <div>
+            <p class="mb-1">Weapon range</p>
+            <div class="flex">
+              <div class="shrink-0 mr-4 pt-2">SB x</div>
+              <FormInput
+                v-model="wh.ranged.rngSbMult"
+                :validationStatus="validRangedSbRngMult"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+              <div class="shrink-0 mx-4 pt-2">+</div>
+              <FormInput
+                v-model="wh.ranged.rng"
+                :validationStatus="validRangedRng"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+            </div>
           </div>
+          <SelectInput
+            v-model="wh.ranged.group"
+            :options="rangedGroupOpts"
+            :disabled="!canEdit"
+            title="Weapon group"
+            class="min-w-24"
+          />
+          <SelectInput
+            v-model="wh.ranged.hands"
+            :options="weaponHandsOpts"
+            :disabled="!canEdit"
+            title="One/Two handed"
+            class="min-w-24"
+          />
         </div>
-        <SelectInput
-          v-model="wh.ranged.group"
-          :options="rangedGroupOpts"
-          :disabled="!canEdit"
-          title="Weapon group"
-          class="min-w-24"
-        />
-        <SelectInput
-          v-model="wh.ranged.hands"
-          :options="weaponHandsOpts"
-          :disabled="!canEdit"
-          title="One/Two handed"
-          class="min-w-24"
-        />
-      </div>
-      <div v-else-if="wh.type === ItemType.Ammunition" class="flex flex-col gap-4">
-        <div>
-          <p class="mb-1">Damage modification</p>
-          <div class="flex">
-            <div class="shrink-0 mr-4 pt-2">Weapon +</div>
-            <FormInput
-              v-model="wh.ammunition.dmg"
-              :validationStatus="validAmmunitionDmg"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
+        <div v-else-if="wh.type === ItemType.Ammunition" class="flex flex-col gap-4">
+          <div>
+            <p class="mb-1">Damage modification</p>
+            <div class="flex">
+              <div class="shrink-0 mr-4 pt-2">Weapon +</div>
+              <FormInput
+                v-model="wh.ammunition.dmg"
+                :validationStatus="validAmmunitionDmg"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+            </div>
           </div>
-        </div>
-        <div>
-          <p class="mb-1">Range modification</p>
-          <div class="flex">
-            <div class="shrink-0 mr-4 pt-2">Weapon x</div>
-            <FormInput
-              v-model="wh.ammunition.rngMult"
-              :validationStatus="validAmmunitionRngMult"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
-            <div class="shrink-0 mx-4 pt-2">+</div>
-            <FormInput
-              v-model="wh.ammunition.rng"
-              :validationStatus="validAmmunitionRng"
-              :disabled="!canEdit"
-              type="number"
-              class="min-w-14"
-            />
+          <div>
+            <p class="mb-1">Range modification</p>
+            <div class="flex">
+              <div class="shrink-0 mr-4 pt-2">Weapon x</div>
+              <FormInput
+                v-model="wh.ammunition.rngMult"
+                :validationStatus="validAmmunitionRngMult"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+              <div class="shrink-0 mx-4 pt-2">+</div>
+              <FormInput
+                v-model="wh.ammunition.rng"
+                :validationStatus="validAmmunitionRng"
+                :disabled="!canEdit"
+                type="number"
+                class="min-w-14"
+              />
+            </div>
           </div>
+          <SelectInput
+            v-model="wh.ammunition.group"
+            :options="ammunitionGroupOpts"
+            :disabled="!canEdit"
+            title="Ammunition group"
+            class="min-w-24"
+          />
         </div>
-        <SelectInput
-          v-model="wh.ammunition.group"
-          :options="ammunitionGroupOpts"
-          :disabled="!canEdit"
-          title="Ammunition group"
-          class="min-w-24"
-        />
-      </div>
-      <div v-else-if="wh.type === ItemType.Armour" class="flex flex-col gap-4">
-        <MultipleCheckboxInput
-          v-model="wh.armour.location"
-          title="Armour location"
-          :disabled="!canEdit"
-          :options="ArmourLocationOpts"
-        />
-        <FormInput
-          v-model="wh.armour.points"
-          title="Armour points"
-          :validationStatus="validArmourPoints"
-          type="number"
-          :disabled="!canEdit"
-        />
-        <SelectInput
-          v-model="wh.armour.group"
-          :options="armourGroupOpts"
-          :disabled="!canEdit"
-          title="Armour group"
-          class="min-w-24"
-        />
-      </div>
-      <div v-else-if="wh.type === ItemType.Container" class="flex flex-col gap-4">
-        <FormInput
-          v-model="wh.container.capacity"
-          title="Container capacity"
-          :validationStatus="validContainerCapacity"
-          type="number"
-          :disabled="!canEdit"
-        />
-        <SelectInput
-          v-model="wh.container.carryType"
-          :options="carryTypeOpts"
-          :disabled="!canEdit"
-          title="Can it be worn/carried?"
-          class="min-w-24"
-        />
-      </div>
-      <div v-else-if="wh.type === ItemType.Other" class="flex flex-col gap-4">
-        <SelectInput
-          v-model="wh.other.carryType"
-          :options="carryTypeOpts"
-          :disabled="!canEdit"
-          title="Can it be worn/carried?"
-          class="min-w-24"
-        />
-      </div>
-      <div v-else-if="wh.type === ItemType.Grimoire" class="flex flex-col gap-4">
+        <div v-else-if="wh.type === ItemType.Armour" class="flex flex-col gap-4">
+          <MultipleCheckboxInput
+            v-model="wh.armour.location"
+            title="Armour location"
+            :disabled="!canEdit"
+            :options="ArmourLocationOpts"
+          />
+          <FormInput
+            v-model="wh.armour.points"
+            title="Armour points"
+            :validationStatus="validArmourPoints"
+            type="number"
+            :disabled="!canEdit"
+          />
+          <SelectInput
+            v-model="wh.armour.group"
+            :options="armourGroupOpts"
+            :disabled="!canEdit"
+            title="Armour group"
+            class="min-w-24"
+          />
+        </div>
+        <div v-else-if="wh.type === ItemType.Container" class="flex flex-col gap-4">
+          <FormInput
+            v-model="wh.container.capacity"
+            title="Container capacity"
+            :validationStatus="validContainerCapacity"
+            type="number"
+            :disabled="!canEdit"
+          />
+          <SelectInput
+            v-model="wh.container.carryType"
+            :options="carryTypeOpts"
+            :disabled="!canEdit"
+            title="Can it be worn/carried?"
+            class="min-w-24"
+          />
+        </div>
+        <div v-else-if="wh.type === ItemType.Other" class="flex flex-col gap-4">
+          <SelectInput
+            v-model="wh.other.carryType"
+            :options="carryTypeOpts"
+            :disabled="!canEdit"
+            title="Can it be worn/carried?"
+            class="min-w-24"
+          />
+        </div>
+        <div v-else-if="wh.type === ItemType.Grimoire" class="flex flex-col gap-4">
+          <SelectTable
+            modalId="grimoire"
+            :disabled="!canEdit"
+            :initSelectedItems="wh.grimoire.spells"
+            :itemList="spellListUtils.whList.value"
+            title="Spells"
+            modalTitle="Add/remove spells"
+            :loading="spellListUtils.loading.value"
+            routeName="spell"
+            :truncateModalDescription="100"
+            class="mt-4"
+            @reload="spellListUtils.loadWhList"
+            @selected="(e) => wh.updateSpells(e.id, e.selected)"
+          />
+        </div>
         <SelectTable
-          modalId="grimoire"
           :disabled="!canEdit"
-          :initSelectedItems="wh.grimoire.spells"
-          :itemList="spellListUtils.whList.value"
-          title="Spells"
-          modalTitle="Add/remove spells"
-          :loading="spellListUtils.loading.value"
-          routeName="spell"
+          :initSelectedItems="wh.properties"
+          :itemList="propertyList"
+          title="Qualities and flaws"
+          modalTitle="Modify qualities and flaws"
+          :loading="propertyListUtils.loading.value"
+          routeName="property"
           :truncateModalDescription="100"
           class="mt-4"
-          @reload="spellListUtils.loadWhList"
-          @selected="(e) => wh.updateSpells(e.id, e.selected)"
+          @reload="propertyListUtils.loadWhList"
+          @selected="(e) => wh.updateProperties(e.id, e.selected)"
+        />
+        <SelectIdNumberTable
+          :disabled="!canEdit"
+          :initItems="wh.runes"
+          :allItemList="runeList"
+          title="Runes"
+          modalTitle="Modify runes"
+          :loading="runeListUtils.loading.value"
+          routeName="rune"
+          :truncateModalDescription="100"
+          :validationStatus="validRunes"
+          class="mt-4"
+          @reload="runeListUtils.loadWhList"
+          @updated="(e) => wh.updateRunes(e.id, e.number)"
         />
       </div>
-      <SelectTable
-        :disabled="!canEdit"
-        :initSelectedItems="wh.properties"
-        :itemList="propertyList"
-        title="Qualities and flaws"
-        modalTitle="Modify qualities and flaws"
-        :loading="propertyListUtils.loading.value"
-        routeName="property"
-        :truncateModalDescription="100"
-        class="mt-4"
-        @reload="propertyListUtils.loadWhList"
-        @selected="(e) => wh.updateProperties(e.id, e.selected)"
-      />
-      <SelectIdNumberTable
-        :disabled="!canEdit"
-        :initItems="wh.runes"
-        :allItemList="runeList"
-        title="Runes"
-        modalTitle="Modify runes"
-        :loading="runeListUtils.loading.value"
-        routeName="rune"
-        :truncateModalDescription="100"
-        :validationStatus="validRunes"
-        class="mt-4"
-        @reload="runeListUtils.loadWhList"
-        @updated="(e) => wh.updateRunes(e.id, e.number)"
-      />
     </div>
-  </div>
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="my-3 flex-1">
-      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="my-3 flex-1">
+        <SourceTable
+          :edition="edition"
+          :disabled="!canEdit"
+          :initSources="initSources"
+          @selected="(e) => wh.updateSource(e)"
+        />
+      </div>
+      <div class="my-3 flex-1">
+        <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!canEdit" />
+      </div>
     </div>
-    <div class="my-3 flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!canEdit" />
-    </div>
-  </div>
-  <div class="mt-4">
+  </template>
+  <div v-show="hasVariant" class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
       :submissionState="submissionState"

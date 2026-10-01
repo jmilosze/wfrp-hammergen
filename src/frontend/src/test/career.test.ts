@@ -143,7 +143,7 @@ const career = new Career({
 });
 
 test("apiResponseToModel returns expected career", () => {
-  expect(apiResponseToModel(careerApiResponse)).toMatchObject(career);
+  expect(apiResponseToModel(careerApiResponse, "4e")).toMatchObject(career);
 });
 
 test("modelToApi returns expected api career data", () => {
@@ -151,14 +151,17 @@ test("modelToApi returns expected api career data", () => {
 });
 
 test("apiResponseToModel sets an empty income skill when the variant has none", () => {
-  expect(apiResponseToModel(careerApiResponse).incomeSkill).toBe("");
+  expect(apiResponseToModel(careerApiResponse, "4e").incomeSkill).toBe("");
 });
 
 test("income skill round-trips through the api data", () => {
-  const withIncome = apiResponseToModel({
-    ...careerApiResponse,
-    editions: { "4e": { ...careerApiData, incomeSkill: "skill11" } },
-  });
+  const withIncome = apiResponseToModel(
+    {
+      ...careerApiResponse,
+      editions: { "4e": { ...careerApiData, incomeSkill: "skill11" } },
+    },
+    "4e",
+  );
   expect(withIncome.incomeSkill).toBe("skill11");
   expect(modelToApi(withIncome).incomeSkill).toBe("skill11");
 });
@@ -301,70 +304,73 @@ describe("isEqualTo returns false", () => {
   });
 
   describe("findCareerMatches", () => {
-    const testCareer = apiResponseToModel({
-      id: "career-1",
-      ownerId: "owner-1",
-      visibility: Visibility.Public,
-      editions: {
-        "4e": {
-          name: "Test Career",
-          description: "description",
-          species: [Species.Human],
-          class: CareerClass.Warrior,
-          source: {},
-          level1: {
-            exists: true,
-            name: "Level 1 Name",
-            status: StatusTier.Brass,
-            standing: 1,
-            attributes: [],
-            skills: ["skill-a", "group-1"],
-            talents: ["talent-a"],
-            items: "",
-          },
-          level2: {
-            exists: false,
-            name: "Level 2 Inactive",
-            status: StatusTier.Brass,
-            standing: 1,
-            attributes: [],
-            skills: ["skill-a"],
-            talents: ["talent-a"],
-            items: "",
-          },
-          level3: {
-            exists: true,
-            name: "Level 3 Name",
-            status: StatusTier.Silver,
-            standing: 2,
-            attributes: [],
-            skills: ["skill-b"],
-            talents: ["talent-b", "talent-group-1"],
-            items: "",
-          },
-          level4: {
-            exists: false,
-            name: "",
-            status: StatusTier.Brass,
-            standing: 0,
-            attributes: [],
-            skills: [],
-            talents: [],
-            items: "",
-          },
-          level5: {
-            exists: false,
-            name: "",
-            status: StatusTier.Brass,
-            standing: 0,
-            attributes: [],
-            skills: [],
-            talents: [],
-            items: "",
+    const testCareer = apiResponseToModel(
+      {
+        id: "career-1",
+        ownerId: "owner-1",
+        visibility: Visibility.Public,
+        editions: {
+          "4e": {
+            name: "Test Career",
+            description: "description",
+            species: [Species.Human],
+            class: CareerClass.Warrior,
+            source: {},
+            level1: {
+              exists: true,
+              name: "Level 1 Name",
+              status: StatusTier.Brass,
+              standing: 1,
+              attributes: [],
+              skills: ["skill-a", "group-1"],
+              talents: ["talent-a"],
+              items: "",
+            },
+            level2: {
+              exists: false,
+              name: "Level 2 Inactive",
+              status: StatusTier.Brass,
+              standing: 1,
+              attributes: [],
+              skills: ["skill-a"],
+              talents: ["talent-a"],
+              items: "",
+            },
+            level3: {
+              exists: true,
+              name: "Level 3 Name",
+              status: StatusTier.Silver,
+              standing: 2,
+              attributes: [],
+              skills: ["skill-b"],
+              talents: ["talent-b", "talent-group-1"],
+              items: "",
+            },
+            level4: {
+              exists: false,
+              name: "",
+              status: StatusTier.Brass,
+              standing: 0,
+              attributes: [],
+              skills: [],
+              talents: [],
+              items: "",
+            },
+            level5: {
+              exists: false,
+              name: "",
+              status: StatusTier.Brass,
+              standing: 0,
+              attributes: [],
+              skills: [],
+              talents: [],
+              items: "",
+            },
           },
         },
       },
-    });
+      "4e",
+    );
 
     test("matches skill on active levels and ignores inactive levels", () => {
       const match = findCareerMatches(testCareer, new Set(["skill-a"]), "skill");
@@ -445,7 +451,7 @@ describe("isEqualTo returns false", () => {
         id: "c-2",
         ownerId: "u-1",
         visibility: Visibility.Public,
-        editions: { "4e": careerApiData },
+        editions: { "5e": careerApiData },
       };
 
       const mockAxios = {

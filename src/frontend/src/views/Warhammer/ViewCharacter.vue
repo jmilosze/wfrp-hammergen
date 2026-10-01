@@ -2,7 +2,7 @@
 import Header from "../../components/PageHeader.vue";
 import { computed, ref } from "vue";
 import { characterApi } from "../../services/wh/character.ts";
-import { UI_EDITION } from "../../services/wh/common.ts";
+import { CHARACTER_EDITION } from "../../services/wh/common.ts";
 import { authRequest } from "../../services/auth.ts";
 import {
   CharacterFullItem,
@@ -38,7 +38,7 @@ await loadCharacter();
 
 async function loadCharacter() {
   try {
-    character.value = await api.getElementForDisplay(props.id, UI_EDITION);
+    character.value = await api.getElementForDisplay(props.id, CHARACTER_EDITION);
   } catch {
     apiError.value = "Error. Could not pull data from server.";
   }
@@ -441,11 +441,7 @@ const grimoiresDisp = ref(
     <ActionButton class="m-1 btn btn-sm" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton class="m-1 btn btn-sm" @click="saveJson()">Download JSON</ActionButton>
     <ActionButton class="m-1 btn btn-sm" @click="print()">Print</ActionButton>
-    <ActionButton
-      v-if="canEdit"
-      class="m-1 btn btn-sm"
-      @click="router.push({ name: 'character', params: { id: id } })"
-    >
+    <ActionButton v-if="canEdit" class="m-1 btn btn-sm" @click="router.push({ name: 'character', params: { id: id } })">
       Edit
     </ActionButton>
     <ActionButton class="m-1 btn btn-sm" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
@@ -701,13 +697,7 @@ const grimoiresDisp = ref(
       class="grow"
     />
   </div>
-  <ViewCharacterTable
-    title="Known spells"
-    stackable
-    :items="spellsDisp.items"
-    :fields="spellsDisp.fields"
-    class="my-5"
-  >
+  <ViewCharacterTable title="Known spells" stackable :items="spellsDisp.items" :fields="spellsDisp.fields" class="my-5">
     <template #name="item">
       <TextLink routeName="spell" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
@@ -747,13 +737,7 @@ const grimoiresDisp = ref(
       <TextLink routeName="mutation" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>
   </ViewCharacterTable>
-  <ViewCharacterTable
-    title="Traits"
-    stackable
-    :items="traitDisp.items"
-    :fields="traitDisp.fields"
-    class="my-5"
-  >
+  <ViewCharacterTable title="Traits" stackable :items="traitDisp.items" :fields="traitDisp.fields" class="my-5">
     <template #name="item">
       <TextLink routeName="trait" :params="{ id: item.id }">{{ item.name }}</TextLink>
     </template>

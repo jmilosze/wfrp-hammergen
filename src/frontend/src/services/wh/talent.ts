@@ -1,7 +1,16 @@
-import { CharacterModifiers, CharacterModifiersData } from "./characterModifiers.ts";
+import { CharacterModifiers, CharacterModifiersData, effectsForEdition } from "./characterModifiers.ts";
 import { Source, copySource, sourceIsValid } from "./source.ts";
-import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, UI_EDITION, validIntegerFn, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { defineContentApi } from "./crudGenerator.ts";
+import {
+  ApiResponse,
+  Edition,
+  validIntegerFn,
+  validLongDescFn,
+  validShortDescFn,
+  variant,
+  Visibility,
+  WhEntity,
+} from "./common.ts";
 import { AttributeName, Attributes, getAttributeValue, printAttributeName } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
@@ -77,16 +86,33 @@ export class Talent extends WhEntity {
     return validShortDescFn(this.tests);
   }
 
-  validateMaxRank(): ValidationStatus {
-    return validIntegerFn(this.maxRank, 0, 999);
+  // validateMaxRank: 999 means unlimited; a 5e talent (not a group) has a max rank of at least 1.
+  validateMaxRank(edition: Edition): ValidationStatus {
+    const min = edition === "5e" && !this.isGroup ? 1 : 0;
+    return validIntegerFn(this.maxRank, min, 999);
   }
 
-  isValid(): boolean {
+  // forEdition: a 5e talent has a fixed max rank only (no characteristic bonuses, at least 1) and no tests.
+  forEdition(edition: Edition): this {
+    const variant = super.forEdition(edition);
+    variant.modifiers.effects = effectsForEdition(variant.modifiers.effects, edition);
+    if (edition === "5e") {
+      variant.tests = "";
+      variant.attribute = AttributeName.None;
+      variant.attribute2 = AttributeName.None;
+      if (!variant.isGroup && variant.maxRank < 1) {
+        variant.maxRank = 1;
+      }
+    }
+    return variant;
+  }
+
+  isValid(edition: Edition): boolean {
     return (
       this.validateName().valid &&
       this.validateDescription().valid &&
       this.validateTests().valid &&
-      this.validateMaxRank().valid &&
+      this.validateMaxRank(edition).valid &&
       sourceIsValid(this.source)
     );
   }
@@ -129,8 +155,8 @@ export class Talent extends WhEntity {
   }
 }
 
-export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>): Talent {
-  const data = variant(talentApi, UI_EDITION);
+export function apiResponseToModel(talentApi: ApiResponse<TalentApiData>, edition: Edition): Talent {
+  const data = variant(talentApi, edition);
   return new Talent({
     id: talentApi.id,
     ownerId: talentApi.ownerId,
@@ -163,5 +189,4 @@ export function modelToApi(talent: Talent): TalentApiData {
   };
 }
 
-export const talentApi = defineWhApi<Talent, TalentApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const talentApi = defineContentApi<Talent, TalentApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);

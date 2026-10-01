@@ -12,6 +12,8 @@ import { useAuth } from "./composables/auth.ts";
 import { Icon } from "@iconify/vue";
 import { useMaintenance } from "./composables/maintenance.ts";
 import MaintenancePage from "./views/MaintenancePage.vue";
+import { useEdition } from "./composables/edition.ts";
+import EditionSwitch from "./components/EditionSwitch.vue";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
@@ -22,6 +24,7 @@ const modal = useModal();
 const route = useRoute();
 const { printing } = usePrint();
 const { maintenance } = useMaintenance();
+const { edition } = useEdition();
 
 const isScrollLocked = useScrollLock(document.body);
 
@@ -35,7 +38,7 @@ watch(
   () => showSideBar.value || modal.show.value || maintenance.value,
   (shouldLock) => {
     isScrollLocked.value = shouldLock;
-  }
+  },
 );
 
 onMounted(async () => {
@@ -82,12 +85,9 @@ onMounted(async () => {
     class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 border-neutral-400 text-neutral-900 transition-transform duration-300 right-0 lg:right-auto lg:left-0 border-l lg:border-l-0 lg:border-r"
     :class="[showSideBar ? 'translate-x-0' : 'translate-x-full lg:translate-x-0']"
   >
-    <div class="pl-1 lg:p-0 mt-2 mb-8 flex items-center justify-between lg:justify-center lg:ml-0">
+    <div class="pl-1 lg:p-0 mt-2 mb-2 flex items-center justify-between lg:justify-center lg:ml-0">
       <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="showSideBar = false">
-        <div class="flex items-center gap-2">
-          <Icon icon="game-icons:warhammer" />
-          <div>Hammergen</div>
-        </div>
+        <div>Hammergen</div>
       </NavLink>
       <button
         v-if="showSideBar"
@@ -97,131 +97,36 @@ onMounted(async () => {
         <Icon icon="lucide:x" class="size-6" />
       </button>
     </div>
+    <div class="px-3 mb-5 flex justify-center">
+      <EditionSwitch v-model="edition" />
+    </div>
     <div class="pl-3 pr-3 divide-y divide-neutral-700 text-end lg:text-start">
       <div class="text-xl pb-2">
-        <NavLink
-          routeName="characters"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Characters
-        </NavLink>
+        <NavLink routeName="characters" variant="side" @click="showSideBar = false"> Characters </NavLink>
       </div>
       <div class="py-2">
-        <NavLink
-          routeName="careers"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Careers
-        </NavLink>
-        <NavLink
-          routeName="traits"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Creature traits
-        </NavLink>
-        <NavLink
-          routeName="mutations"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Mutations
-        </NavLink>
-        <NavLink
-          routeName="prayers"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Prayers
-        </NavLink>
-        <NavLink
-          routeName="properties"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Qualities and flaws
-        </NavLink>
-        <NavLink
-          routeName="runes"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Runes
-        </NavLink>
-        <NavLink
-          routeName="skills"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Skills
-        </NavLink>
-        <NavLink
-          routeName="spells"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Spells
-        </NavLink>
-        <NavLink
-          routeName="talents"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Talents
-        </NavLink>
-        <NavLink
-          routeName="items"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Trappings
-        </NavLink>
+        <NavLink routeName="careers" variant="side" @click="showSideBar = false"> Careers </NavLink>
+        <NavLink routeName="traits" variant="side" @click="showSideBar = false"> Creature traits </NavLink>
+        <NavLink routeName="mutations" variant="side" @click="showSideBar = false"> Mutations </NavLink>
+        <NavLink routeName="prayers" variant="side" @click="showSideBar = false"> Prayers </NavLink>
+        <NavLink routeName="properties" variant="side" @click="showSideBar = false"> Qualities and flaws </NavLink>
+        <NavLink routeName="runes" variant="side" @click="showSideBar = false"> Runes </NavLink>
+        <NavLink routeName="skills" variant="side" @click="showSideBar = false"> Skills </NavLink>
+        <NavLink routeName="spells" variant="side" @click="showSideBar = false"> Spells </NavLink>
+        <NavLink routeName="talents" variant="side" @click="showSideBar = false"> Talents </NavLink>
+        <NavLink routeName="items" variant="side" @click="showSideBar = false"> Trappings </NavLink>
       </div>
       <div v-if="auth.loggedIn.value" class="py-2">
-        <NavLink
-          routeName="manage"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Manage account
-        </NavLink>
-        <NavLink variant="side" @click="auth.logout">
-          Logout
-        </NavLink>
+        <NavLink routeName="manage" variant="side" @click="showSideBar = false"> Manage account </NavLink>
+        <NavLink variant="side" @click="auth.logout"> Logout </NavLink>
       </div>
       <div v-else class="py-2">
-        <NavLink
-          routeName="register"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Register
-        </NavLink>
-        <NavLink
-          routeName="login"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Login
-        </NavLink>
+        <NavLink routeName="register" variant="side" @click="showSideBar = false"> Register </NavLink>
+        <NavLink routeName="login" variant="side" @click="showSideBar = false"> Login </NavLink>
       </div>
       <div class="pt-2">
-        <NavLink
-          href="https://dice.hammergen.net/"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          Roll dice!
-        </NavLink>
-        <NavLink
-          routeName="about"
-          variant="side"
-          @click="showSideBar = false"
-        >
-          About
-        </NavLink>
+        <NavLink href="https://dice.hammergen.net/" variant="side" @click="showSideBar = false"> Roll dice! </NavLink>
+        <NavLink routeName="about" variant="side" @click="showSideBar = false"> About </NavLink>
       </div>
     </div>
   </div>

@@ -7,6 +7,7 @@ import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
+import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
@@ -30,6 +31,9 @@ const newSpell = new Spell({
 
 const {
   wh,
+  edition,
+  hasVariant,
+  addVariant,
   canEdit,
   initSources,
   apiError,
@@ -62,51 +66,65 @@ const validCn = computed(() => wh.value.validateCn());
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create spell' : canEdit ? 'Edit spell' : wh.name" />
-  <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
-  <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="mt-1" />
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-        <FormTextarea
-          v-model="wh.description"
-          title="Description"
-          :validationStatus="validDesc"
-          :disabled="!canEdit"
-        />
-      </div>
-    </div>
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!canEdit" />
-        <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!canEdit" />
-        <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!canEdit" />
-        <FormInput
-          v-model="wh.cn"
-          title="Casting number"
-          type="number"
-          :validationStatus="validCn"
-          :disabled="!canEdit"
-        />
-      </div>
-    </div>
-  </div>
-
-  <SpellClassification
-    v-model="wh.classification"
-    :disabled="!canEdit"
-    @update:simplifiedLabels="simplifiedLabels = $event"
+  <EditorEditionSelector
+    v-model="edition"
+    :hasVariant="hasVariant"
+    :canEdit="canEdit"
+    propertyName="Spell"
+    @add="addVariant"
   />
+  <template v-if="hasVariant">
+    <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
+    <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="mt-1" />
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <FormTextarea
+            v-model="wh.description"
+            title="Description"
+            :validationStatus="validDesc"
+            :disabled="!canEdit"
+          />
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!canEdit" />
+          <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!canEdit" />
+          <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!canEdit" />
+          <FormInput
+            v-model="wh.cn"
+            title="Casting number"
+            type="number"
+            :validationStatus="validCn"
+            :disabled="!canEdit"
+          />
+        </div>
+      </div>
+    </div>
 
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+    <SpellClassification
+      v-model="wh.classification"
+      :disabled="!canEdit"
+      @update:simplifiedLabels="simplifiedLabels = $event"
+    />
+
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <SourceTable
+          :edition="edition"
+          :disabled="!canEdit"
+          :initSources="initSources"
+          @selected="(e) => wh.updateSource(e)"
+        />
+      </div>
+      <div class="flex-1">
+        <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!canEdit" />
+      </div>
     </div>
-    <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!canEdit" />
-    </div>
-  </div>
-  <div class="mt-4">
+  </template>
+  <div v-show="hasVariant" class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
       :submissionState="submissionState"

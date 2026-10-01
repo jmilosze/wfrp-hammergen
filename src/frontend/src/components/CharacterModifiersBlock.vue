@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Edition } from "../services/wh/common.ts";
 import ActionButton from "./ActionButton.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
@@ -13,6 +14,7 @@ import CharacterModifierEffectTable from "./CharacterModifierEffectTable.vue";
 const props = defineProps<{
   disabled?: boolean;
   modelValue: CharacterModifiers;
+  edition: Edition;
 }>();
 
 const emit = defineEmits<{
@@ -163,6 +165,7 @@ const validAtts = computed(() => {
       <div class="flex flex-col @5xl:flex-row justify-between text-left gap-4 mt-4">
         <CharacterModifierEffectTable
           :initEffects="modelValue.effects"
+          :edition="edition"
           :disabled="props.disabled ? props.disabled : false"
           class="mt-1 flex-1"
           @selected="(event) => updateEffects(event.id, event.selected)"

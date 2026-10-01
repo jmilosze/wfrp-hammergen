@@ -57,6 +57,17 @@ export const sourcesByEdition: Record<Edition, string[]> = {
 
 export type Source = Record<string, string>;
 
+// sourceForEdition keeps the sources offered for the edition, or Custom when none are left.
+export function sourceForEdition(source: Source, edition: Edition): Source {
+  const kept: Source = {};
+  for (const [id, notes] of Object.entries(source)) {
+    if (sourcesByEdition[edition].includes(id)) {
+      kept[id] = notes;
+    }
+  }
+  return Object.keys(kept).length > 0 ? kept : defaultSource();
+}
+
 export function copySource(source: Source): Source {
   return { ...source };
 }

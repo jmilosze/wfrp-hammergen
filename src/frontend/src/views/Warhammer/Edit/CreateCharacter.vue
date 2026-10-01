@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { CHARACTER_EDITION } from "../../../services/wh/common.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
-import { useWhEdit } from "../../../composables/whEdit.ts";
+import { useCharacterEdit } from "../../../composables/characterEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { Character, characterApi } from "../../../services/wh/character.ts";
 import { computed, ref, watch } from "vue";
@@ -95,23 +96,23 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useWhEdit(newCharacter, characterApi(authRequest));
+} = useCharacterEdit(newCharacter, characterApi(authRequest));
 
-const careerListUtils = useWhList(careerApi(authRequest));
+const careerListUtils = useWhList(careerApi(authRequest), CHARACTER_EDITION);
 careerListUtils.loadWhList();
-const spellListUtils = useWhList(spellApi(authRequest));
+const spellListUtils = useWhList(spellApi(authRequest), CHARACTER_EDITION);
 spellListUtils.loadWhList();
-const prayerListUtils = useWhList(prayerApi(authRequest));
+const prayerListUtils = useWhList(prayerApi(authRequest), CHARACTER_EDITION);
 prayerListUtils.loadWhList();
-const traitListUtils = useWhList(traitApi(authRequest));
+const traitListUtils = useWhList(traitApi(authRequest), CHARACTER_EDITION);
 traitListUtils.loadWhList();
-const mutationListUtils = useWhList(mutationApi(authRequest));
+const mutationListUtils = useWhList(mutationApi(authRequest), CHARACTER_EDITION);
 mutationListUtils.loadWhList();
-const skillListUtils = useWhList(skillApi(authRequest));
+const skillListUtils = useWhList(skillApi(authRequest), CHARACTER_EDITION);
 skillListUtils.loadWhList();
-const talentListUtils = useWhList(talentApi(authRequest));
+const talentListUtils = useWhList(talentApi(authRequest), CHARACTER_EDITION);
 talentListUtils.loadWhList();
-const itemListUtils = useWhList(itemApi(authRequest));
+const itemListUtils = useWhList(itemApi(authRequest), CHARACTER_EDITION);
 itemListUtils.loadWhList();
 const generationPropsUtils = useGenerationProps(authRequest);
 generationPropsUtils.loadGenerationProps();

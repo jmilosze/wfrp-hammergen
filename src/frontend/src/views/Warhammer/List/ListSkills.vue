@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
+import { useEdition } from "../../../composables/edition.ts";
 import { Skill, skillApi, skillTypeList, printSkillType } from "../../../services/wh/skill.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
@@ -17,7 +18,8 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(skillApi(authRequest));
+const { edition } = useEdition();
+const whList = useWhList(skillApi(authRequest), edition);
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

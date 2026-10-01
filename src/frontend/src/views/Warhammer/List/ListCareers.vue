@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
+import { useEdition } from "../../../composables/edition.ts";
 import {
   Career,
   careerApi,
   careerClassList,
   printClassName,
   printSpeciesName,
-  speciesList,
+  careerSpeciesByEdition,
 } from "../../../services/wh/career.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
@@ -23,7 +24,8 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(careerApi(authRequest));
+const { edition } = useEdition();
+const whList = useWhList(careerApi(authRequest), edition);
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");
@@ -52,7 +54,7 @@ const items = computed(() => {
 
 function formatCareerRow(career: Career) {
   let species: string;
-  if (career.species.length === speciesList.length) {
+  if (career.species.length === careerSpeciesByEdition[edition.value].length) {
     species = "All";
   } else {
     species = career.species.map((x) => printSpeciesName(x)).join(", ");
@@ -81,7 +83,12 @@ const filteredClassOptions = computed(() => {
 });
 
 const filteredSpeciesOptions = computed(() => {
-  return getOptions(speciesList, whList.whList.value.map((wh) => wh.species).flat(), printSpeciesName, "Any species");
+  return getOptions(
+    careerSpeciesByEdition[edition.value],
+    whList.whList.value.map((wh) => wh.species).flat(),
+    printSpeciesName,
+    "Any species",
+  );
 });
 </script>
 
@@ -113,21 +120,10 @@ const filteredSpeciesOptions = computed(() => {
     </LinkButton>
 
     <template #actions="{ id }: { id: string }">
-      <ActionButtonsNonCharacter
-        :id="id"
-        @copy="(copiedId) => whList.copyWh(copiedId)"
-      />
+      <ActionButtonsNonCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
     </template>
 
-    <template
-      #tooltip="{
-        ownerId,
-        visibility,
-      }: {
-        ownerId: string;
-        visibility?: number;
-      }"
-    >
+    <template #tooltip="{ ownerId, visibility }: { ownerId: string; visibility?: number }">
       <ToolTip :ownerId="ownerId" :visibility="visibility" />
     </template>
   </TableWithSearch>

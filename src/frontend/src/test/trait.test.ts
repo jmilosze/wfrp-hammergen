@@ -52,7 +52,7 @@ const traitIndividual = new Trait({
 });
 
 test("apiResponseToModel returns expected trait", () => {
-  expect(apiResponseToModel(traitGroupApiResponse)).toMatchObject(traitGroup);
+  expect(apiResponseToModel(traitGroupApiResponse, "4e")).toMatchObject(traitGroup);
 });
 
 test("modelToApi returns expected api trait data", () => {

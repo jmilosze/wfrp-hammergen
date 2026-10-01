@@ -7,6 +7,7 @@ import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
+import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
@@ -31,6 +32,9 @@ const newRune = new Rune({
 
 const {
   wh,
+  edition,
+  hasVariant,
+  addVariant,
   canEdit,
   initSources,
   apiError,
@@ -60,46 +64,60 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create rune' : canEdit ? 'Edit rune' : wh.name" />
-  <DisplayLabels :labelList="wh.labels.map((x) => printRuneLabel(x))" class="mt-1" />
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-        <MultipleCheckboxColumnInput
-          v-model="wh.applicableTo"
-          :options="applicableToOptions"
-          :disabled="!canEdit"
-          title="Applicable to"
-        />
-        <MultipleCheckboxColumnInput
-          v-model="wh.labels"
-          :options="labelOptions"
-          :disabled="!canEdit"
-          title="Labels"
-        />
+  <EditorEditionSelector
+    v-model="edition"
+    :hasVariant="hasVariant"
+    :canEdit="canEdit"
+    propertyName="Rune"
+    @add="addVariant"
+  />
+  <template v-if="hasVariant">
+    <DisplayLabels :labelList="wh.labels.map((x) => printRuneLabel(x))" class="mt-1" />
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <MultipleCheckboxColumnInput
+            v-model="wh.applicableTo"
+            :options="applicableToOptions"
+            :disabled="!canEdit"
+            title="Applicable to"
+          />
+          <MultipleCheckboxColumnInput
+            v-model="wh.labels"
+            :options="labelOptions"
+            :disabled="!canEdit"
+            title="Labels"
+          />
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormTextarea
+            v-model="wh.description"
+            title="Description"
+            :validationStatus="validDesc"
+            :disabled="!canEdit"
+          />
+        </div>
       </div>
     </div>
-    <div class="flex-1">
-      <div class="flex flex-col gap-4">
-        <FormTextarea
-          v-model="wh.description"
-          title="Description"
-          :validationStatus="validDesc"
-          :disabled="!canEdit"
-        />
-      </div>
-    </div>
-  </div>
 
-  <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-    <div class="flex-1">
-      <SourceTable :disabled="!canEdit" :initSources="initSources" @selected="(e) => wh.updateSource(e)" />
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1">
+        <SourceTable
+          :edition="edition"
+          :disabled="!canEdit"
+          :initSources="initSources"
+          @selected="(e) => wh.updateSource(e)"
+        />
+      </div>
+      <div class="flex-1">
+        <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
+      </div>
     </div>
-    <div class="flex-1">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
-    </div>
-  </div>
-  <div class="mt-4">
+  </template>
+  <div v-show="hasVariant" class="mt-4">
     <AfterSubmit
       :visible="showSubmissionStatus"
       :submissionState="submissionState"

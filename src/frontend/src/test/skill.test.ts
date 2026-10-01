@@ -37,7 +37,7 @@ const skill = new Skill({
 });
 
 test("apiResponseToModel returns expected skill", () => {
-  expect(apiResponseToModel(skillApiResponse)).toMatchObject(skill);
+  expect(apiResponseToModel(skillApiResponse, "4e")).toMatchObject(skill);
 });
 
 test("modelToApi returns expected api skill data", () => {

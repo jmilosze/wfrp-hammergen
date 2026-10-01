@@ -113,7 +113,7 @@ const item = new Item({
 });
 
 test("apiResponseToModel returns expected item", () => {
-  expect(apiResponseToModel(itemApiResponse)).toMatchObject(item);
+  expect(apiResponseToModel(itemApiResponse, "4e")).toMatchObject(item);
 });
 
 test("modelToApi returns expected api item data", () => {

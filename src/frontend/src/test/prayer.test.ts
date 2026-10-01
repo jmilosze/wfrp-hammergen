@@ -32,7 +32,7 @@ const prayer = new Prayer({
 });
 
 test("apiResponseToModel returns expected prayer", () => {
-  expect(apiResponseToModel(prayerApiResponse)).toMatchObject(prayer);
+  expect(apiResponseToModel(prayerApiResponse, "4e")).toMatchObject(prayer);
 });
 
 test("modelToApi returns expected api prayer data", () => {

@@ -72,7 +72,7 @@ const talentIndividual = new Talent({
 });
 
 test("apiResponseToModel returns expected talent", () => {
-  expect(apiResponseToModel(talentGroupApiResponse)).toMatchObject(talentGroup);
+  expect(apiResponseToModel(talentGroupApiResponse, "4e")).toMatchObject(talentGroup);
 });
 
 test("modelToApi returns expected api talent data", () => {
@@ -150,7 +150,20 @@ describe("validateMaxRank", () => {
     [1000, false],
     [-1, false],
     [1.5, false],
-  ])("max rank %d is valid: %s", (maxRank, valid) => {
-    expect(new Talent({ maxRank }).validateMaxRank().valid).toBe(valid);
+  ])("4e max rank %d is valid: %s", (maxRank, valid) => {
+    expect(new Talent({ maxRank }).validateMaxRank("4e").valid).toBe(valid);
+  });
+
+  test.each([
+    [0, false],
+    [1, true],
+    [999, true],
+    [1000, false],
+  ])("5e max rank %d is valid: %s", (maxRank, valid) => {
+    expect(new Talent({ maxRank }).validateMaxRank("5e").valid).toBe(valid);
+  });
+
+  test("5e group talent needs no max rank", () => {
+    expect(new Talent({ maxRank: 0, isGroup: true }).validateMaxRank("5e").valid).toBe(true);
   });
 });

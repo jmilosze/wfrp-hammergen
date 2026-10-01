@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useWhList } from "../../../composables/whList.ts";
+import { useEdition } from "../../../composables/edition.ts";
 import {
   ItemProperty,
   itemPropertyApi,
@@ -22,7 +23,8 @@ import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
-const whList = useWhList(itemPropertyApi(authRequest));
+const { edition } = useEdition();
+const whList = useWhList(itemPropertyApi(authRequest), edition);
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");

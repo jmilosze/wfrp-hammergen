@@ -1,6 +1,6 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
-import { defineWhApi } from "./crudGenerator.ts";
+import { ApiResponse, Edition, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { defineContentApi } from "./crudGenerator.ts";
 import { ItemType } from "./item.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 
@@ -89,8 +89,8 @@ export class Rune extends WhEntity {
   }
 }
 
-export function apiResponseToModel(itemRuneApi: ApiResponse<RuneApiData>): Rune {
-  const data = variant(itemRuneApi, UI_EDITION);
+export function apiResponseToModel(itemRuneApi: ApiResponse<RuneApiData>, edition: Edition): Rune {
+  const data = variant(itemRuneApi, edition);
   return new Rune({
     id: itemRuneApi.id,
     ownerId: itemRuneApi.ownerId,
@@ -113,5 +113,4 @@ export function modelToApi(itemRune: Rune): RuneApiData {
   };
 }
 
-export const runeApi = defineWhApi<Rune, RuneApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const runeApi = defineContentApi<Rune, RuneApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);

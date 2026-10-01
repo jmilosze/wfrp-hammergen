@@ -1,6 +1,6 @@
-import { defineWhApi } from "./crudGenerator.ts";
+import { defineContentApi } from "./crudGenerator.ts";
 import { copySource, Source, sourceIsValid } from "./source.ts";
-import { ApiResponse, UI_EDITION, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, Edition, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { setValidationStatus, ValidationStatus } from "../../utils/validation.ts";
 
 const CASTING_NUMBER_RE = /^([1-9][0-9]|[0-9])$/;
@@ -400,8 +400,8 @@ export class Spell extends WhEntity {
   }
 }
 
-export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>): Spell {
-  const data = variant(spellApi, UI_EDITION);
+export function apiResponseToModel(spellApi: ApiResponse<SpellApiData>, edition: Edition): Spell {
+  const data = variant(spellApi, edition);
   return new Spell({
     id: spellApi.id,
     ownerId: spellApi.ownerId,
@@ -433,5 +433,4 @@ export function modelToApi(spell: Spell): SpellApiData {
   };
 }
 
-export const spellApi = defineWhApi<Spell, SpellApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);
-
+export const spellApi = defineContentApi<Spell, SpellApiData>(API_BASE_PATH, apiResponseToModel, modelToApi);

@@ -4,7 +4,7 @@ import Username from "./ManageUsername.vue";
 import Password from "./ManagePassword.vue";
 import Delete from "./ManageDelete.vue";
 import UserLinkedUsers from "./UserLinkedUsers.vue";
-import HorizontalNavBar from "../../components/HorizontalNavBar.vue";
+import ToggleSwitch from "../../components/ToggleSwitch.vue";
 import { useRouteQuery } from "@vueuse/router";
 
 const viewNames = [
@@ -16,7 +16,9 @@ const currentView = useRouteQuery("view", viewNames[0].value);
 </script>
 
 <template>
-  <HorizontalNavBar v-model="currentView" :viewNames="viewNames" />
+  <div class="flex justify-center mb-4">
+    <ToggleSwitch v-model="currentView" :options="viewNames" label="Account view" />
+  </div>
   <div v-if="currentView === viewNames[0].value">
     <Header title="Manage your account">
       Change your email, password, or delete the account. To make any changes in this section, you will need to confirm
