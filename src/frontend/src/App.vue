@@ -85,19 +85,23 @@ onMounted(async () => {
     class="fixed overflow-auto h-full w-64 z-30 bg-amber-300 border-neutral-400 text-neutral-900 transition-transform duration-300 right-0 lg:right-auto lg:left-0 border-l lg:border-l-0 lg:border-r"
     :class="[showSideBar ? 'translate-x-0' : 'translate-x-full lg:translate-x-0']"
   >
-    <div class="pl-1 lg:p-0 mt-2 mb-2 flex items-center justify-between lg:justify-center lg:ml-0">
+    <!-- Equal flex-1 sides keep the title centred with or without the close button. -->
+    <div class="mt-2 mb-2 flex items-center">
+      <div class="flex-1" />
       <NavLink routeName="home" variant="side" class="text-3xl font-hammergen" @click="showSideBar = false">
         <div>Hammergen</div>
       </NavLink>
-      <button
-        v-if="showSideBar"
-        class="lg:hidden hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
-        @click="showSideBar = false"
-      >
-        <Icon icon="lucide:x" class="size-6" />
-      </button>
+      <div class="flex-1 flex justify-end">
+        <button
+          v-if="showSideBar"
+          class="lg:hidden hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2"
+          @click="showSideBar = false"
+        >
+          <Icon icon="lucide:x" class="size-6" />
+        </button>
+      </div>
     </div>
-    <div class="px-3 mb-5 flex justify-center">
+    <div class="px-3 mb-5 flex justify-center text-xs">
       <EditionSwitch v-model="edition" />
     </div>
     <div class="pl-3 pr-3 divide-y divide-neutral-700 text-end lg:text-start">
