@@ -1,19 +1,29 @@
 import { Attributes, copyAttributes, getAttributes, validAttributesFn } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
-import { validIntegerFn } from "./common.ts";
+import { Edition, validIntegerFn } from "./common.ts";
 import { cloneEntity } from "../../utils/clone.ts";
 import { isEqualEntity } from "../../utils/equal.ts";
 
 export const enum ModifierEffect {
   Hardy = 0,
+  StrongBack = 1,
+  Sturdy = 2,
 }
 
-export const modifierEffectList: ModifierEffect[] = [ModifierEffect.Hardy];
+// Effects used by each edition's rules.
+export const modifierEffectsByEdition: Record<Edition, ModifierEffect[]> = {
+  "4e": [ModifierEffect.Hardy],
+  "5e": [ModifierEffect.Hardy, ModifierEffect.StrongBack, ModifierEffect.Sturdy],
+};
 
 export function printEffectName(effect: ModifierEffect): string {
   switch (effect) {
     case ModifierEffect.Hardy:
       return "Hardy";
+    case ModifierEffect.StrongBack:
+      return "Strong Back";
+    case ModifierEffect.Sturdy:
+      return "Sturdy";
     default:
       return "";
   }
@@ -23,6 +33,10 @@ export function printEffectDesc(effect: ModifierEffect): string {
   switch (effect) {
     case ModifierEffect.Hardy:
       return "Increases Wounds by Toughness Bonus.";
+    case ModifierEffect.StrongBack:
+      return "Increases the Encumbrance limit by 1, or by 3 when taken twice.";
+    case ModifierEffect.Sturdy:
+      return "Counts Strength Bonus twice for the Encumbrance limit.";
     default:
       return "";
   }

@@ -3,6 +3,7 @@ package warhammer
 import (
 	"errors"
 	"fmt"
+	"slices"
 )
 
 type Item struct {
@@ -23,6 +24,21 @@ type Item struct {
 	Container  ItemContainer  `json:"container"`
 	Grimoire   ItemGrimoire   `json:"grimoire"`
 	Other      ItemOther      `json:"other"`
+}
+
+// ValidateEdition checks that the weapon or armour group of the item's type belongs to the edition.
+func (item *Item) ValidateEdition(e Edition) error {
+	switch item.Type {
+	case ItemTypeMelee:
+		if !slices.Contains(itemMeleeGroupsByEdition[e], item.Melee.Group) {
+			return fmt.Errorf("melee group %d is not available in %s", item.Melee.Group, e)
+		}
+	case ItemTypeArmour:
+		if !slices.Contains(itemArmourGroupsByEdition[e], item.Armour.Group) {
+			return fmt.Errorf("armour group %d is not available in %s", item.Armour.Group, e)
+		}
+	}
+	return nil
 }
 
 func (item *Item) Init() {
@@ -213,6 +229,18 @@ const (
 	ItemMeleeGroupEngineering = 8
 )
 
+// itemMeleeGroupsByEdition lists the melee groups of each edition; 5e has no Parry or Engineering group.
+var itemMeleeGroupsByEdition = map[Edition][]ItemMeleeGroup{
+	Edition4e: {
+		ItemMeleeGroupBasic, ItemMeleeGroupCavalry, ItemMeleeGroupFencing, ItemMeleeGroupBrawling, ItemMeleeGroupFlail,
+		ItemMeleeGroupParry, ItemMeleeGroupPolearm, ItemMeleeGroupTwoHanded, ItemMeleeGroupEngineering,
+	},
+	Edition5e: {
+		ItemMeleeGroupBasic, ItemMeleeGroupCavalry, ItemMeleeGroupFencing, ItemMeleeGroupBrawling, ItemMeleeGroupFlail,
+		ItemMeleeGroupPolearm, ItemMeleeGroupTwoHanded,
+	},
+}
+
 func itemMeleeGroupValues() string {
 	return formatIntegerValues([]ItemMeleeGroup{
 		ItemMeleeGroupBasic,
@@ -287,6 +315,8 @@ const (
 	ItemArmourGroupSoftKit       = 4
 	ItemArmourGroupBrigandine    = 5
 	ItemArmourGroupOther         = 6
+	ItemArmourGroupLeather       = 7
+	ItemArmourGroupShield        = 8
 )
 
 func itemArmourGroupValues() string {
@@ -298,7 +328,20 @@ func itemArmourGroupValues() string {
 		ItemArmourGroupSoftKit,
 		ItemArmourGroupBrigandine,
 		ItemArmourGroupOther,
+		ItemArmourGroupLeather,
+		ItemArmourGroupShield,
 	})
+}
+
+// itemArmourGroupsByEdition lists the armour groups of each edition; in 5e shields are armour.
+var itemArmourGroupsByEdition = map[Edition][]ItemArmourGroup{
+	Edition4e: {
+		ItemArmourGroupSoftLeather, ItemArmourGroupBoiledLeather, ItemArmourGroupMail, ItemArmourGroupPlate,
+		ItemArmourGroupSoftKit, ItemArmourGroupBrigandine, ItemArmourGroupOther,
+	},
+	Edition5e: {
+		ItemArmourGroupLeather, ItemArmourGroupMail, ItemArmourGroupPlate, ItemArmourGroupShield, ItemArmourGroupOther,
+	},
 }
 
 type ItemArmourLocation int

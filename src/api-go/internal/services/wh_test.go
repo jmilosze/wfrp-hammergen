@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -213,5 +214,65 @@ func TestCreateCareerValidatesSpeciesPerEdition(t *testing.T) {
 	_, err = s.Create(context.Background(), wh.WhTypeCareer, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition5e: withGnome}}, &auth.Claims{Id: "user1"})
 	if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "not available in 5e") {
 		t.Errorf("5e: expected species error, got %v", err)
+	}
+}
+
+func TestCreateTalentMaxRankLimit(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+	newTalent := func(maxRank int) *wh.Talent {
+		talent := *mock_data.NewMockTalents()[0].Object.(*wh.Talent)
+		talent.Attribute, talent.Attribute2, talent.MaxRank, talent.Tests = wh.AttNone, wh.AttNone, maxRank, ""
+		return &talent
+	}
+
+	for _, e := range wh.Editions {
+		for maxRank, wantErr := range map[int]bool{999: false, 1000: true} {
+			t.Run(fmt.Sprintf("%s %d", e, maxRank), func(t *testing.T) {
+				_, err := s.Create(context.Background(), wh.WhTypeTalent, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{e: newTalent(maxRank)}}, &auth.Claims{Id: "user1"})
+				if wantErr && !errors.Is(err, domain.ErrInvalidArguments) {
+					t.Errorf("expected ErrInvalidArguments, got %v", err)
+				}
+				if !wantErr && err != nil {
+					t.Errorf("expected no error, got %v", err)
+				}
+			})
+		}
+	}
+}
+
+func TestCreateTalentValidatesMaxRankPerEdition(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+	withBonus := *mock_data.NewMockTalents()[0].Object.(*wh.Talent)
+	withBonus.Tests = ""
+
+	_, err := s.Create(context.Background(), wh.WhTypeTalent, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: &withBonus}}, &auth.Claims{Id: "user1"})
+	if err != nil {
+		t.Errorf("4e: expected no error, got %v", err)
+	}
+
+	_, err = s.Create(context.Background(), wh.WhTypeTalent, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition5e: &withBonus}}, &auth.Claims{Id: "user1"})
+	if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "characteristic-based max rank") {
+		t.Errorf("5e: expected max rank error, got %v", err)
+	}
+}
+
+func TestCreateTraitAndMutationValidateEffectsPerEdition(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+	trait := *mock_data.NewMockTraits()[0].Object.(*wh.Trait)
+	trait.Modifiers.Effects = []wh.EffectType{wh.EffectTypeSturdy}
+	mutation := *mock_data.NewMockMutations()[0].Object.(*wh.Mutation)
+	mutation.Modifiers.Effects = []wh.EffectType{wh.EffectTypeStrongBack}
+
+	for typ, obj := range map[wh.WhType]wh.WhObject{wh.WhTypeTrait: &trait, wh.WhTypeMutation: &mutation} {
+		t.Run(string(typ), func(t *testing.T) {
+			_, err := s.Create(context.Background(), typ, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition5e: obj}}, &auth.Claims{Id: "user1"})
+			if err != nil {
+				t.Errorf("5e: expected no error, got %v", err)
+			}
+			_, err = s.Create(context.Background(), typ, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: obj}}, &auth.Claims{Id: "user1"})
+			if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "not available in 4e") {
+				t.Errorf("4e: expected effect error, got %v", err)
+			}
+		})
 	}
 }

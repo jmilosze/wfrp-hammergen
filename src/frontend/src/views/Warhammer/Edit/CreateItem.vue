@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UI_EDITION } from "../../../services/wh/common.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import { validFloatFn, validIntegerFn, Visibility } from "../../../services/wh/common.ts";
@@ -8,7 +9,7 @@ import { ValidationStatus } from "../../../utils/validation.ts";
 import { authRequest } from "../../../services/auth.ts";
 import {
   ammoGroupList,
-  armourGroupList,
+  armourGroupsByEdition,
   armourLocationList,
   availabilityList,
   BRASS_PER_GOLD,
@@ -21,7 +22,7 @@ import {
   itemApi,
   ItemType,
   itemTypeList,
-  meleeGroupList,
+  meleeGroupsByEdition,
   meleeReachList,
   printAmmoGroup,
   printArmourGroup,
@@ -188,12 +189,12 @@ const validRunes = computed(() => wh.value.validateRunes());
 const typeOpts = itemTypeList.map((x) => ({ text: printItemType(x), value: x }));
 const availOpts = availabilityList.map((x) => ({ text: printAvailability(x), value: x }));
 const weaponHandsOpts = weaponHandsList.map((x) => ({ text: printWeaponHands(x), value: x }));
-const meleeGroupOpts = meleeGroupList.map((x) => ({ text: printMeleeGroup(x), value: x }));
+const meleeGroupOpts = meleeGroupsByEdition[UI_EDITION].map((x) => ({ text: printMeleeGroup(x), value: x }));
 const meleeReachOpts = meleeReachList.map((x) => ({ text: printMeleeReach(x), value: x }));
 const rangedGroupOpts = rangedGroupList.map((x) => ({ text: printRangedGroup(x), value: x }));
 const ammunitionGroupOpts = ammoGroupList.map((x) => ({ text: printAmmoGroup(x), value: x }));
 const ArmourLocationOpts = armourLocationList.map((x) => ({ text: printArmourLocation(x), value: x }));
-const armourGroupOpts = armourGroupList.map((x) => ({ text: printArmourGroup(x), value: x }));
+const armourGroupOpts = armourGroupsByEdition[UI_EDITION].map((x) => ({ text: printArmourGroup(x), value: x }));
 const carryTypeOpts = carryTypeList.map((x) => ({ text: printCarryType(x), value: x }));
 
 watch(

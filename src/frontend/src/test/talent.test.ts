@@ -141,3 +141,16 @@ describe("isEqualTo returns false", () => {
     expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
   });
 });
+
+describe("validateMaxRank", () => {
+  test.each([
+    [0, true],
+    [3, true],
+    [999, true],
+    [1000, false],
+    [-1, false],
+    [1.5, false],
+  ])("max rank %d is valid: %s", (maxRank, valid) => {
+    expect(new Talent({ maxRank }).validateMaxRank().valid).toBe(valid);
+  });
+});

@@ -19,6 +19,11 @@ func (mutation *Mutation) Init() {
 	mutation.Modifiers.Init()
 }
 
+// ValidateEdition checks that the modifier effects are used by the edition.
+func (mutation *Mutation) ValidateEdition(e Edition) error {
+	return mutation.Modifiers.ValidateEdition(e)
+}
+
 type MutationType int
 
 const (

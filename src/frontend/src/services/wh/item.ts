@@ -1,6 +1,6 @@
 import { copySource, Source, sourceIsValid } from "./source.ts";
 import { defineWhApi } from "./crudGenerator.ts";
-import { ApiResponse, UI_EDITION, validateIdNumber, validFloatFn, validIntegerFn, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
+import { ApiResponse, Edition, UI_EDITION, validateIdNumber, validFloatFn, validIntegerFn, validLongDescFn, validShortDescFn, variant, Visibility, WhEntity } from "./common.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
 import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
@@ -68,17 +68,29 @@ export const enum MeleeGroup {
   Engineering,
 }
 
-export const meleeGroupList = [
-  MeleeGroup.Basic,
-  MeleeGroup.Cavalry,
-  MeleeGroup.Fencing,
-  MeleeGroup.Brawling,
-  MeleeGroup.Flail,
-  MeleeGroup.Parry,
-  MeleeGroup.Polearm,
-  MeleeGroup.TwoHanded,
-  MeleeGroup.Engineering,
-];
+// Melee groups of each edition; 5e has no Parry or Engineering group.
+export const meleeGroupsByEdition: Record<Edition, MeleeGroup[]> = {
+  "4e": [
+    MeleeGroup.Basic,
+    MeleeGroup.Cavalry,
+    MeleeGroup.Fencing,
+    MeleeGroup.Brawling,
+    MeleeGroup.Flail,
+    MeleeGroup.Parry,
+    MeleeGroup.Polearm,
+    MeleeGroup.TwoHanded,
+    MeleeGroup.Engineering,
+  ],
+  "5e": [
+    MeleeGroup.Basic,
+    MeleeGroup.Cavalry,
+    MeleeGroup.Fencing,
+    MeleeGroup.Brawling,
+    MeleeGroup.Flail,
+    MeleeGroup.Polearm,
+    MeleeGroup.TwoHanded,
+  ],
+};
 
 export function printMeleeGroup(meleeGroup: MeleeGroup) {
   switch (meleeGroup) {
@@ -199,17 +211,23 @@ export const enum ArmourGroup {
   SoftKit,
   Brigandine,
   Other,
+  Leather,
+  Shield,
 }
 
-export const armourGroupList = [
-  ArmourGroup.SoftLeather,
-  ArmourGroup.BoiledLeather,
-  ArmourGroup.Mail,
-  ArmourGroup.Plate,
-  ArmourGroup.SoftKit,
-  ArmourGroup.Brigandine,
-  ArmourGroup.Other,
-];
+// Armour groups of each edition; in 5e shields are armour.
+export const armourGroupsByEdition: Record<Edition, ArmourGroup[]> = {
+  "4e": [
+    ArmourGroup.SoftLeather,
+    ArmourGroup.BoiledLeather,
+    ArmourGroup.Mail,
+    ArmourGroup.Plate,
+    ArmourGroup.SoftKit,
+    ArmourGroup.Brigandine,
+    ArmourGroup.Other,
+  ],
+  "5e": [ArmourGroup.Leather, ArmourGroup.Mail, ArmourGroup.Plate, ArmourGroup.Shield, ArmourGroup.Other],
+};
 
 export function printArmourGroup(armourGroup: ArmourGroup) {
   switch (armourGroup) {
@@ -227,6 +245,10 @@ export function printArmourGroup(armourGroup: ArmourGroup) {
       return "Brigandine";
     case ArmourGroup.Other:
       return "Other";
+    case ArmourGroup.Leather:
+      return "Leather";
+    case ArmourGroup.Shield:
+      return "Shield";
     default:
       return "";
   }
@@ -380,10 +402,6 @@ export function printCarryType(carryType: CarryType): string {
       return "";
   }
 }
-
-export const itemGroupList = [
-  ...new Set([...meleeGroupList, ...rangedGroupList, ...ammoGroupList, ...armourGroupList]),
-];
 
 const API_BASE_PATH = "/api/wh/item";
 

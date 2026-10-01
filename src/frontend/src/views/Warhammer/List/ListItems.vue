@@ -1,18 +1,19 @@
 <script setup lang="ts">
+import { UI_EDITION } from "../../../services/wh/common.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import {
   Item,
   itemApi,
   ItemType,
   itemTypeList,
-  meleeGroupList,
+  meleeGroupsByEdition,
   printItemType,
   printMeleeGroup,
   printRangedGroup,
   rangedGroupList,
   ammoGroupList,
   printAmmoGroup,
-  armourGroupList,
+  armourGroupsByEdition,
   printArmourGroup,
   printPrice,
 } from "../../../services/wh/item.ts";
@@ -107,13 +108,19 @@ const filteredGroupOptions = computed(() => {
     const anyGroup = { text: "Any group", value: "" };
     switch (typeTerm.value) {
       case ItemType.Melee.toString():
-        return [anyGroup, ...meleeGroupList.map((x) => ({ text: printMeleeGroup(x), value: x.toString() }))];
+        return [
+          anyGroup,
+          ...meleeGroupsByEdition[UI_EDITION].map((x) => ({ text: printMeleeGroup(x), value: x.toString() })),
+        ];
       case ItemType.Ranged.toString():
         return [anyGroup, ...rangedGroupList.map((x) => ({ text: printRangedGroup(x), value: x.toString() }))];
       case ItemType.Ammunition.toString():
         return [anyGroup, ...ammoGroupList.map((x) => ({ text: printAmmoGroup(x), value: x.toString() }))];
       case ItemType.Armour.toString():
-        return [anyGroup, ...armourGroupList.map((x) => ({ text: printArmourGroup(x), value: x.toString() }))];
+        return [
+          anyGroup,
+          ...armourGroupsByEdition[UI_EDITION].map((x) => ({ text: printArmourGroup(x), value: x.toString() })),
+        ];
       default:
         return [anyGroup];
     }

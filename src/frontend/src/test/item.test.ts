@@ -20,6 +20,8 @@ import {
   RangedGroup,
   RangedType,
   WeaponHands,
+  meleeGroupsByEdition,
+  armourGroupsByEdition,
 } from "../services/wh/item.ts";
 import { ApiResponse, Visibility } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
@@ -436,3 +438,23 @@ describe("validatePrice", () => {
   });
 });
 
+describe("item groups by edition", () => {
+  test("5e melee groups have no Parry or Engineering", () => {
+    expect(meleeGroupsByEdition["4e"]).toContain(MeleeGroup.Parry);
+    expect(meleeGroupsByEdition["5e"]).not.toContain(MeleeGroup.Parry);
+    expect(meleeGroupsByEdition["5e"]).not.toContain(MeleeGroup.Engineering);
+  });
+
+  test("Leather and Shield armour groups are 5e only", () => {
+    expect(armourGroupsByEdition["5e"]).toEqual([
+      ArmourGroup.Leather,
+      ArmourGroup.Mail,
+      ArmourGroup.Plate,
+      ArmourGroup.Shield,
+      ArmourGroup.Other,
+    ]);
+    expect(armourGroupsByEdition["4e"]).not.toContain(ArmourGroup.Shield);
+    expect(printArmourGroup(ArmourGroup.Shield)).toBe("Shield");
+    expect(printArmourGroup(ArmourGroup.Leather)).toBe("Leather");
+  });
+});

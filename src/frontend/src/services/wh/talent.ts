@@ -78,7 +78,7 @@ export class Talent extends WhEntity {
   }
 
   validateMaxRank(): ValidationStatus {
-    return validIntegerFn(this.maxRank, 0, 99);
+    return validIntegerFn(this.maxRank, 0, 999);
   }
 
   isValid(): boolean {

@@ -4,7 +4,8 @@ import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import TableWithSearch from "./TableWithSearch.vue";
-import { modifierEffectList, printEffectDesc, printEffectName } from "../services/wh/characterModifiers.ts";
+import { modifierEffectsByEdition, printEffectDesc, printEffectName } from "../services/wh/characterModifiers.ts";
+import { UI_EDITION } from "../services/wh/common.ts";
 
 const props = defineProps<{ initEffects: Set<number>; disabled?: boolean }>();
 
@@ -27,7 +28,7 @@ watch(
   () => props.initEffects,
   (newVal) => {
     effects.value = {};
-    for (const effectType of modifierEffectList) {
+    for (const effectType of modifierEffectsByEdition[UI_EDITION]) {
       if (newVal && newVal.has(effectType)) {
         effects.value[effectType] = {
           id: effectType,

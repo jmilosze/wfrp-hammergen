@@ -84,7 +84,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 |---|---|---|---|
 | C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ✅ | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); migrated and deployed local → staging → production 2026-09-30; production backup `db/hammergen_30_09_2026_before_p1` |
 | C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ✅ | [plans/p2-edition-api.md](plans/p2-edition-api.md); deployed to local, staging and production 2026-09-30 (character edition in `object.edition`); production backup `db/hammergen_30_09_2026_before_p2` |
-| C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill) | 🟡 | one model at a time (design §4.1); done: career income skill, 5e career species; prayers unchanged (Q-PRAYER); size scale unchanged (Q-SIZE) |
+| C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill) | ✅ | design §4.1; done: career income skill, 5e career species, talents (max rank, no tests, Strong Back/Sturdy effects), qualities and flaws (no model change), shields and armour/melee groups; prayers unchanged (Q-PRAYER); size scale unchanged (Q-SIZE) |
 | C3 | 5e core source | ⬜ | |
 | C4 | Browse/search/filter content by edition in lists (R2) | ⬜ | |
 | C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | ⬜ | |
@@ -175,3 +175,8 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-09-30 | C2 started: edition-specific fields modelled as optional fields on the shared type plus `ValidateEdition` (design §4.1); career `incomeSkill` added. |
 | 2026-09-30 | Career `incomeSkill` is in both editions (4e has one too), optional; when set it must be a level 1 skill. No UI until after the 5e work. |
 | 2026-09-30 | C2: 5e careers restricted to the five 5e species (`Career.ValidateEdition`). |
+| 2026-10-01 | C2: talent max rank — 999 = unlimited in both editions (limit raised from 99, fixes saving 4e Magnum Opus/Wealthy); 5e uses `maxRank` only. Still open for talents: `tests` in 5e, new effect types. |
+| 2026-10-01 | C2 talents: 5e talents have no `tests`; modifier effects are edition-dependent (5e adds Strong Back and Sturdy; 4e Hardy only) for talents, traits and mutations; Luck/Fear not modelled. |
+| 2026-10-01 | C2 qualities and flaws: no model change; Inflict values as separate entries; 5e trappings offer only 5e qualities/flaws in the editor (no API check). |
+| 2026-10-01 | C2 armour: 5e shields are armour (new Shield group); armour groups per edition (5e adds Leather); 5e melee groups drop Parry and Engineering. Quick Armour not supported; penalties in descriptions. |
+| 2026-10-01 | C2 done (5e content model changes; details in design §4.1). |

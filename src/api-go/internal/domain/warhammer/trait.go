@@ -13,3 +13,8 @@ func (trait *Trait) Init() {
 	}
 	trait.Modifiers.Init()
 }
+
+// ValidateEdition checks that the modifier effects are used by the edition.
+func (trait *Trait) ValidateEdition(e Edition) error {
+	return trait.Modifiers.ValidateEdition(e)
+}
