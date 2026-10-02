@@ -24,7 +24,11 @@ export function validateValues(fieldName: string, values: Iterable<string>): Val
   );
 }
 
-// printWithValue shows the value in brackets after the name, e.g. "Ward (8)", for entities that take a value.
+// printWithValue shows the value of an entity that takes one in brackets after the name, replacing the bracketed
+// placeholder if the name has one: "Ward (Rating)" with value "8" shows as "Ward (8)".
 export function printWithValue(name: string, hasValue: boolean, value: string): string {
-  return hasValue && value !== "" ? `${name} (${value})` : name;
+  if (!hasValue || value === "") {
+    return name;
+  }
+  return `${name.replace(/\s*\([^()]*\)$/, "")} (${value})`;
 }

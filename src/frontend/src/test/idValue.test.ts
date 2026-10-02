@@ -3,9 +3,11 @@ import { MAX_VALUE_LENGTH, printWithValue, validateValues } from "../utils/idVal
 
 describe("printWithValue", () => {
   test.each([
+    { name: "Ward (Rating)", hasValue: true, value: "8", expected: "Ward (8)" },
+    { name: "Hatred (Target)", hasValue: true, value: "Elves", expected: "Hatred (Elves)" },
+    { name: "Tentacles (Number, Rating)", hasValue: true, value: "2, 1", expected: "Tentacles (2, 1)" },
     { name: "Ward", hasValue: true, value: "8", expected: "Ward (8)" },
-    { name: "Hatred", hasValue: true, value: "Elves", expected: "Hatred (Elves)" },
-    { name: "Ward", hasValue: true, value: "", expected: "Ward" },
+    { name: "Ward (Rating)", hasValue: true, value: "", expected: "Ward (Rating)" },
     { name: "Night Vision", hasValue: false, value: "8", expected: "Night Vision" },
   ])("$name with hasValue $hasValue and value '$value' prints '$expected'", (t) => {
     expect(printWithValue(t.name, t.hasValue, t.value)).toBe(t.expected);

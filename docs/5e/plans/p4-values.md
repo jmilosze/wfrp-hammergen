@@ -159,6 +159,11 @@ Immunity to Psychology is a separate trait and is not part of Immunity.
   - It merges 50 families and converts 248 characters and 918 items. A re-run changes nothing.
   - It aborts if a family document has a 5e variant (restore staging first).
   - Three private items listed several values of one family (e.g. "Blast 2, Blast 3, Blast 5"); each keeps its first value.
+- **Names with placeholders** (2026-10-03, `db/scripts/rename_value_families.py`):
+  - Merged entities are named as in the 4e rulebook, e.g. "Ward (Rating)", "Hatred (Target)", "Disease (Type)", "Venom (Difficulty)". "(Deity)" and "(Lore)" are used instead of the book's "(Various)".
+  - The UI replaces the bracketed placeholder with the value: "Ward (Rating)" with value 8 shows as "Ward (8)".
+  - Two-number values use a comma: Tentacles (Number, Rating) "2, 1", Tongue Attack (Rating, Range) "1, 5".
+  - Daemonic becomes "Daemonic (Target)" and takes a value.
 - **Still to do:**
   - Integration tests (`make test`) and an end-to-end check on migrated data.
   - Regenerate the 5e trait data and import (C6).
