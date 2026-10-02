@@ -1,6 +1,6 @@
 # Plan P3 — Edition in the UI (browse and edit content per edition)
 
-Status: **in progress** (2026-10-01). Tracker items: C4, C5.
+Status: **done** (2026-10-01) — implemented, unit-tested and checked in the browser against a local API. Tracker items: C4, C5.
 
 ## Goal
 

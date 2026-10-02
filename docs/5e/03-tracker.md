@@ -51,7 +51,7 @@ All open; see [02-design.md §3](02-design.md#3-decisions).
 | Q-AMBITION | Ambitions / Appearance | ⬜ | | |
 | Q-CONVERT | 4e → 5e conversion | ✅ | 2026-09-30 | None (edition is fixed) |
 | Q-SIZE | Size scale | ✅ | 2026-09-30 | Same 7 steps and wound formulas as 4e; 5e Small talent not imported |
-| Q-PROPS | Parameterised qualities | ✅ | 2026-09-30 | One entity per value, as today |
+| Q-PROPS | Parameterised qualities | ✅ | 2026-10-02 | Parameters that do not change the rules (ratings, targets) become a value on the reference (P4); parameters with their own rules or modifiers (Size, Trained, Mark of Chaos, Breath type) stay separate entities. Was (2026-09-30): one entity per value |
 | Q-SHIELD | Shields | ✅ | 2026-09-30 | Armour in 5e (5e rules only for 5e characters); 4e unchanged |
 | Q-PRAYER | Prayer classification | ✅ | 2026-09-30 | Keep as is (no deity/type field), both editions |
 | Q-RULES | Rules automation level | ⬜ | | |
@@ -84,19 +84,20 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 |---|---|---|---|
 | C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ✅ | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); migrated and deployed local → staging → production 2026-09-30; production backup `db/hammergen_30_09_2026_before_p1` |
 | C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ✅ | [plans/p2-edition-api.md](plans/p2-edition-api.md); deployed to local, staging and production 2026-09-30 (character edition in `object.edition`); production backup `db/hammergen_30_09_2026_before_p2` |
+| C1c | Values on references: one entity per trait/quality family whose parameter (rating or target) does not change its rules; the value is stored on the character/item reference | ⬜ | [plans/p4-values.md](plans/p4-ratings.md); blocks C6 |
 | C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill) | ✅ | design §4.1; done: career income skill, 5e career species, talents (max rank, no tests, Strong Back/Sturdy effects), qualities and flaws (no model change), shields and armour/melee groups; prayers unchanged (Q-PRAYER); size scale unchanged (Q-SIZE) |
 | C3 | 5e core source | ✅ | source `44` "WFRP 5e"; the editor's source picker offers Custom + WFRP 5e for 5e, all 4e sources for 4e (no API check) |
-| C4 | Browse/search/filter content by edition in lists (R2) | 🟡 | [plans/p3-edition-ui.md](plans/p3-edition-ui.md) |
-| C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | 🟡 | [plans/p3-edition-ui.md](plans/p3-edition-ui.md); missing variant pre-filled from the other one |
-| C6a | Extract and verify 5e core data (careers, skills, talents, items, qualities/flaws, spells, prayers, traits, mutations) | ⬜ | careers already extracted: `data/careers-5e.json`; see D16 |
-| C6b | One-off import script: add `editions.5e` to matching public documents, create 5e-only public documents | ⬜ | Q-DATA; name matching + rename table; link only clear 1-to-1 matches |
+| C4 | Browse/search/filter content by edition in lists (R2) | ✅ | [plans/p3-edition-ui.md](plans/p3-edition-ui.md); global 4e/5e switch |
+| C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | ✅ | [plans/p3-edition-ui.md](plans/p3-edition-ui.md); missing variant pre-filled from the other one; delete removes the whole document |
+| C6a | Extract and verify 5e core data (careers, skills, talents, items, qualities/flaws, spells, prayers, traits, mutations) | ⏸ | careers already extracted: `data/careers-5e.json`; see D16. Traits: `data/traits-5e.json` (to be regenerated after C1c); paused for C1c |
+| C6b | One-off import script: add `editions.5e` to matching public documents, create 5e-only public documents | ⏸ | Q-DATA; name matching + rename table; link only clear 1-to-1 matches. Traits: `db/scripts/import_5e_traits.py`, imported to staging 2026-10-02 (restore staging before C1c); paused for C1c |
 | C7 | Tests | ⬜ | |
 
 ### Phase 3.2 — 5e characters (5e content only)
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| H1 | Character edition, fixed at creation (R3); 4e characters unchanged (R4) | ⬜ | |
+| H1 | Character edition, fixed at creation (R3); 4e characters unchanged (R4) | ⬜ | character list to follow the global edition switch (today fixed to 4e via `CHARACTER_EDITION`); hide "create" for an edition without character support |
 | H2 | 5e character fields (no Resilience/Resolve; Ambitions/Appearance/tracker per decisions) | ⬜ | Q-AMBITION, Q-TRACKER |
 | H3 | 5e derived values (characteristics, skills, wounds, movement, size, encumbrance incl. max, fate/fortune) | ⬜ | Q-ADV; size and wounds as 4e (Q-SIZE) |
 | H4 | 5e character editor restricted to 5e content | ⬜ | |
@@ -182,3 +183,5 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-10-01 | C2 done (5e content model changes; details in design §4.1). |
 | 2026-10-01 | C3 done: 5e core rulebook added as source 44 ("WFRP 5e"); source picker is edition-dependent. |
 | 2026-10-01 | Plan P3 (C4/C5) agreed: global edition switch (default 4e), one-edition lists, editor 4e/5e toggle saving all variants, "Add version" pre-filled from the other variant, delete removes the selected variant, copy copies all variants; characters stay 4e. |
+| 2026-10-01 | C4/C5 done: browser walkthrough on a local test API passed (lists per edition, create, add pre-filled 5e version, save both in one PUT, copy all variants, delete whole document, 5e talent rules/validation, 5e item groups, characters stay 4e). |
+| 2026-10-02 | 5e trait import (C6a/C6b) paused after the first staging import. Decided to merge traits and qualities/flaws whose parameter does not change their rules (ratings like Ward 8, targets like Hatred - Elves) into one entity each, with the value on the reference: plan P4 (C1c). |
