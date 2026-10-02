@@ -16,6 +16,7 @@ import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
 import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
 import { isEqualEntity } from "../../utils/equal.ts";
+import { IdValue, validateValues } from "../../utils/idValue.ts";
 export {
   BRASS_PER_GOLD,
   BRASS_PER_SILVER,
@@ -461,7 +462,7 @@ export interface ItemApiData {
   price: number;
   enc: number;
   availability: Availability;
-  properties: string[];
+  properties: IdValue[];
   runes: IdNumber[];
   type: ItemType;
   melee: MeleeType;
@@ -490,7 +491,8 @@ export class Item extends WhEntity {
   price: number;
   enc: number;
   availability: Availability;
-  properties: Set<string>;
+  // Values of the item's qualities and flaws by id.
+  properties: Record<string, string>;
   runes: Record<string, number>;
   type: ItemType;
   melee: MeleeType;
@@ -509,7 +511,7 @@ export class Item extends WhEntity {
     price = 0,
     enc = 0,
     availability = Availability.Common,
-    properties = new Set<string>(),
+    properties = {} as Record<string, string>,
     runes = {} as Record<string, number>,
     type = ItemType.Melee,
     melee = {
@@ -627,6 +629,10 @@ export class Item extends WhEntity {
     return variant;
   }
 
+  validateProperties(): ValidationStatus {
+    return validateValues("Quality and flaw", Object.values(this.properties));
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -645,7 +651,8 @@ export class Item extends WhEntity {
       this.validateAmmunitionRng().valid &&
       this.validateArmourPoints().valid &&
       this.validateContainerCapacity().valid &&
-      this.validateRunes().valid
+      this.validateRunes().valid &&
+      this.validateProperties().valid
     );
   }
 
@@ -656,7 +663,7 @@ export class Item extends WhEntity {
   }
 
   resetDetails() {
-    this.properties = new Set<string>();
+    this.properties = {} as Record<string, string>;
     this.runes = {} as Record<string, number>;
 
     if (this.type !== ItemType.Melee) {
@@ -702,7 +709,17 @@ export class Item extends WhEntity {
   }
 
   updateProperties(id: string, selected: boolean): void {
-    updateSet(this.properties, id, selected);
+    if (selected) {
+      if (!(id in this.properties)) {
+        this.properties[id] = "";
+      }
+    } else {
+      delete this.properties[id];
+    }
+  }
+
+  updatePropertyValue(id: string, value: string): void {
+    this.properties[id] = value;
   }
 
   updateRunes(id: string, number: number): void {
@@ -761,7 +778,7 @@ export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>, edition: E
     price: data.price,
     enc: data.enc,
     availability: data.availability,
-    properties: new Set(data.properties),
+    properties: Object.fromEntries(data.properties.map((x) => [x.id, x.value])),
     runes: idNumberArrayToRecord(data.runes),
     type: data.type,
     melee: data.melee,
@@ -784,7 +801,7 @@ export function modelToApi(item: Item): ItemApiData {
     price: item.price,
     enc: item.enc,
     availability: item.availability,
-    properties: [...item.properties],
+    properties: Object.entries(item.properties).map(([id, value]) => ({ id: id, value: value })),
     runes: Object.entries(item.runes).map((x) => ({ id: x[0], number: x[1] })),
     type: item.type,
     melee: {

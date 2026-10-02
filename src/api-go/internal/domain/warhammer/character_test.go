@@ -53,3 +53,27 @@ func TestCharacterToFullMissingCareer(t *testing.T) {
 		}
 	}
 }
+
+func TestCharacterToFullKeepsTraitValues(t *testing.T) {
+	traitId := "dddddddddddddddddddddddd"
+	traits := []*Wh{{Id: traitId, Editions: map[Edition]WhObject{Edition4e: &Trait{Name: "Hatred", HasValue: true}}}}
+	character := &Character{
+		Edition: Edition4e,
+		Career:  IdNumber{Id: careerAId, Number: 1},
+		Traits:  []IdValue{{Id: traitId, Value: "Elves"}, {Id: missingId, Value: "8"}, {Id: traitId, Value: "Dwarfs"}},
+	}
+	character.Init()
+
+	full, err := character.ToFull([]*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, traits, testCareers())
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(full.Traits) != 2 {
+		t.Fatalf("got %d traits, want 2 (the missing trait is skipped)", len(full.Traits))
+	}
+	for i, want := range []string{"Elves", "Dwarfs"} {
+		if full.Traits[i].Wh.Id != traitId || full.Traits[i].Value != want {
+			t.Errorf("trait %d: got id %s value %q, want id %s value %q", i, full.Traits[i].Wh.Id, full.Traits[i].Value, traitId, want)
+		}
+	}
+}

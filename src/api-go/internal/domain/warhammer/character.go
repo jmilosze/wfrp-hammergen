@@ -34,7 +34,7 @@ type Character struct {
 	Gold              int              `json:"gold" validate:"gte=0,lte=1000000"`
 	Spells            []string         `json:"spells" validate:"dive,id_valid"`
 	Prayers           []string         `json:"prayers" validate:"dive,id_valid"`
-	Traits            []string         `json:"traits" validate:"dive,id_valid"`
+	Traits            []IdValue        `json:"traits" validate:"dive"`
 	Sin               int              `json:"sin" validate:"gte=0,lte=1000"`
 	Corruption        int              `json:"corruption" validate:"gte=0,lte=1000"`
 	Mutations         []string         `json:"mutations" validate:"dive,id_valid"`
@@ -66,7 +66,7 @@ func (character *Character) Init() {
 		character.Prayers = []string{}
 	}
 	if character.Traits == nil {
-		character.Traits = []string{}
+		character.Traits = []IdValue{}
 	}
 	if character.Mutations == nil {
 		character.Mutations = []string{}
@@ -117,7 +117,7 @@ func (character *Character) ToFull(
 	talents := idNumberListToWhNumberList(character.Talents, whListToIdWhMap(allTalents))
 	spells := idListToWhList(character.Spells, whListToIdWhMap(allSpells))
 	prayers := idListToWhList(character.Prayers, whListToIdWhMap(allPrayers))
-	traits := idListToWhList(character.Traits, whListToIdWhMap(allTraits))
+	traits := idValueListToWhValueList(character.Traits, whListToIdWhMap(allTraits))
 	mutations := idListToWhList(character.Mutations, whListToIdWhMap(allMutations))
 
 	allCareerIdMap := whListToIdWhMap(allCareers)
@@ -399,7 +399,7 @@ type CharacterFull struct {
 	Gold              int              `json:"gold"`
 	Spells            []*Wh            `json:"spells"`
 	Prayers           []*Wh            `json:"prayers"`
-	Traits            []*Wh            `json:"traits"`
+	Traits            []WhValue        `json:"traits"`
 	Sin               int              `json:"sin"`
 	Corruption        int              `json:"corruption"`
 	Mutations         []*Wh            `json:"mutations"`
@@ -431,7 +431,7 @@ func (c *CharacterFull) Init() {
 		c.Prayers = []*Wh{}
 	}
 	if c.Traits == nil {
-		c.Traits = []*Wh{}
+		c.Traits = []WhValue{}
 	}
 	if c.Mutations == nil {
 		c.Mutations = []*Wh{}

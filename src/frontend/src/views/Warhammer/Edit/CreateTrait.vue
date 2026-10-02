@@ -7,6 +7,7 @@ import { authRequest } from "../../../services/auth.ts";
 import { computed } from "vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
+import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
@@ -69,7 +70,18 @@ const validDesc = computed(() => wh.value.validateDescription());
   />
   <template v-if="hasVariant">
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" class="flex-1" />
+      <div class="flex-1">
+        <div class="flex flex-col gap-4">
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <DoubleRadioButton
+            v-model="wh.hasValue"
+            title="Takes a value? E.g. Ward (8) or Hatred (Elves)"
+            trueText="Yes"
+            falseText="No"
+            :disabled="!canEdit"
+          />
+        </div>
+      </div>
       <FormTextarea
         v-model="wh.description"
         title="Description"

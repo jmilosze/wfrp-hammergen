@@ -211,7 +211,7 @@ func retrieveFullItems(ctx context.Context, whService *WhService, e wh.Edition, 
 		if !ok {
 			return nil, fmt.Errorf("failed to cast object to item")
 		}
-		allPropertyIds = deduplicate(allPropertyIds, item.Properties)
+		allPropertyIds = deduplicate(allPropertyIds, idValuesToIds(item.Properties))
 		allRuneIds = deduplicate(allRuneIds, idNumbersToIds(item.Runes))
 		allSpellIds = deduplicate(allSpellIds, item.Grimoire.Spells)
 	}
@@ -294,6 +294,14 @@ func idNumbersToIds(items []wh.IdNumber) []string {
 	return ids
 }
 
+func idValuesToIds(items []wh.IdValue) []string {
+	ids := make([]string, len(items))
+	for i, item := range items {
+		ids[i] = item.Id
+	}
+	return ids
+}
+
 func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edition, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, error) {
 	allItemIds := make([]string, 0)
 	allTalentIds := make([]string, 0)
@@ -314,7 +322,7 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edit
 		allMutationIds = deduplicate(allMutationIds, character.Mutations)
 		allSpellIds = deduplicate(allSpellIds, character.Spells)
 		allPrayerIds = deduplicate(allPrayerIds, character.Prayers)
-		allTraitIds = deduplicate(allTraitIds, character.Traits)
+		allTraitIds = deduplicate(allTraitIds, idValuesToIds(character.Traits))
 	}
 
 	var wg sync.WaitGroup

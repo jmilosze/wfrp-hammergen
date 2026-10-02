@@ -216,6 +216,7 @@ func (s *whTestStage) new_wh_property() *whTestStage {
 		Description:  "new_wh_property description",
 		Type:         warhammer.PropertyTypeQuality,
 		ApplicableTo: []warhammer.ItemType{warhammer.ItemTypeMelee, warhammer.ItemTypeArmour},
+		HasValue:     true,
 		Source:       map[warhammer.Source]string{warhammer.SourceCustom: "", warhammer.SourceAltdorf: "123"},
 	}
 
@@ -245,6 +246,7 @@ func (s *whTestStage) new_wh_property_not_shared() *whTestStage {
 		Description:  "new_wh_property description",
 		Type:         warhammer.PropertyTypeQuality,
 		ApplicableTo: []warhammer.ItemType{warhammer.ItemTypeMelee, warhammer.ItemTypeArmour},
+		HasValue:     true,
 		Source:       map[warhammer.Source]string{warhammer.SourceCustom: "", warhammer.SourceAltdorf: "123"},
 	}
 
@@ -405,6 +407,7 @@ func (s *whTestStage) compareWhProperty(wh1 *warhammer.Property, wh2 *warhammer.
 	require.Equal(s.t, wh1.Description, wh2.Description)
 	require.Equal(s.t, wh1.Type, wh2.Type)
 	require.Equal(s.t, wh1.ApplicableTo, wh2.ApplicableTo)
+	require.Equal(s.t, wh1.HasValue, wh2.HasValue)
 	require.Equal(s.t, wh1.Source, wh2.Source)
 }
 

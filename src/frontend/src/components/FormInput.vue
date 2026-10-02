@@ -9,6 +9,7 @@ const props = defineProps<{
   disabled?: boolean;
   validationStatus?: ValidationStatus;
   centerText?: boolean;
+  maxlength?: number;
 }>();
 
 const emit = defineEmits<{
@@ -42,6 +43,7 @@ const value = computed({
           v-model="value"
           :type="type ?? 'text'"
           :disabled="disabled"
+          :maxlength="maxlength"
           :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
           :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
           class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline-2 disabled:bg-neutral-200"

@@ -28,12 +28,14 @@ export interface ItemPropertyApiData {
   description: string;
   type: ItemPropertyType;
   applicableTo: ItemType[];
+  hasValue: boolean;
   source: Source;
 }
 
 export class ItemProperty extends WhEntity {
   type: ItemPropertyType;
   applicableTo: ItemType[];
+  hasValue: boolean;
 
   constructor({
     id = "",
@@ -42,12 +44,14 @@ export class ItemProperty extends WhEntity {
     description = "",
     type = ItemPropertyType.Quality,
     applicableTo = [] as ItemType[],
+    hasValue = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
     super({ id, ownerId, visibility, name, description, source });
     this.type = type;
     this.applicableTo = applicableTo;
+    this.hasValue = hasValue;
   }
 
   validateName(): ValidationStatus {
@@ -75,6 +79,7 @@ export function apiResponseToModel(itemPropertyApi: ApiResponse<ItemPropertyApiD
     description: data.description,
     type: data.type,
     applicableTo: data.applicableTo,
+    hasValue: data.hasValue,
     source: data.source,
   });
 }
@@ -85,6 +90,7 @@ export function modelToApi(itemProperty: ItemProperty): ItemPropertyApiData {
     description: itemProperty.description,
     type: itemProperty.type,
     applicableTo: [...itemProperty.applicableTo],
+    hasValue: itemProperty.hasValue,
     source: copySource(itemProperty.source),
   };
 }

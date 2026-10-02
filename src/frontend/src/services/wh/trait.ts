@@ -10,11 +10,13 @@ export interface TraitApiData {
   name: string;
   description: string;
   modifiers: CharacterModifiersData;
+  hasValue: boolean;
   source: Source;
 }
 
 export class Trait extends WhEntity {
   modifiers: CharacterModifiers;
+  hasValue: boolean;
 
   constructor({
     id = "",
@@ -22,11 +24,13 @@ export class Trait extends WhEntity {
     name = "",
     description = "",
     modifiers = new CharacterModifiers(),
+    hasValue = false,
     visibility = Visibility.Private,
     source = {},
   } = {}) {
     super({ id, ownerId, visibility, name, description, source });
     this.modifiers = modifiers;
+    this.hasValue = hasValue;
   }
 
   validateName(): ValidationStatus {
@@ -57,6 +61,7 @@ export function apiResponseToModel(traitApi: ApiResponse<TraitApiData>, edition:
     name: data.name,
     description: data.description,
     modifiers: new CharacterModifiers(data.modifiers),
+    hasValue: data.hasValue,
     source: data.source,
   });
 }
@@ -66,6 +71,7 @@ export function modelToApi(trait: Trait): TraitApiData {
     name: trait.name,
     description: trait.description,
     modifiers: trait.modifiers.toData(),
+    hasValue: trait.hasValue,
     source: copySource(trait.source),
   };
 }

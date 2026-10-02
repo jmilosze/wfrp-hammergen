@@ -15,6 +15,7 @@ const itemPropertyApiData: ItemPropertyApiData = {
   description: "desc",
   type: ItemPropertyType.Quality,
   applicableTo: [ItemType.Melee, ItemType.Armour],
+  hasValue: true,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -32,6 +33,7 @@ const itemProperty = new ItemProperty({
   description: "desc",
   type: ItemPropertyType.Quality,
   applicableTo: [ItemType.Melee, ItemType.Armour],
+  hasValue: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
@@ -55,6 +57,12 @@ describe("isEqualTo returns true", () => {
 });
 
 describe("isEqualTo returns false", () => {
+  test("when other item property has different value of hasValue", () => {
+    const otherItemProperty = itemProperty.copy();
+    otherItemProperty.hasValue = false;
+    expect(itemProperty.isEqualTo(otherItemProperty)).toBe(false);
+  });
+
   test("when other item property has different value of type", () => {
     const otherItemProperty = itemProperty.copy();
     otherItemProperty.type = ItemPropertyType.Flaw;

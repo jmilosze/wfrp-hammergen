@@ -363,3 +363,32 @@ func TestWhDbCareerIncomeSkill(t *testing.T) {
 	require.Equal(t, "", got[0].Editions[warhammer.Edition4e].(*warhammer.Career).IncomeSkill)
 	require.Equal(t, skillId, got[0].Editions[warhammer.Edition5e].(*warhammer.Career).IncomeSkill)
 }
+
+func TestWhDbStoresValuesOnReferences(t *testing.T) {
+	s := newTestWhDbService(t)
+	ctx := context.Background()
+	characterId := "700000000000000000000010"
+	itemId := "700000000000000000000011"
+	traits := []warhammer.IdValue{{Id: "700000000000000000000020", Value: "Elves"}, {Id: "700000000000000000000020", Value: "Dwarfs"}}
+	properties := []warhammer.IdValue{{Id: "700000000000000000000021", Value: "3"}, {Id: "700000000000000000000022", Value: ""}}
+
+	character := newTestCharacter(characterId, "c", warhammer.Edition4e)
+	character.Object.(*warhammer.Character).Traits = traits
+	_, err := s.Create(ctx, warhammer.WhTypeCharacter, character)
+	require.NoError(t, err)
+
+	item := &warhammer.Wh{Id: itemId, OwnerId: "owner1", Visibility: warhammer.VisibilityPrivate,
+		Editions: map[warhammer.Edition]warhammer.WhObject{warhammer.Edition4e: &warhammer.Item{Name: "i", Properties: properties}}}
+	_, err = s.Create(ctx, warhammer.WhTypeItem, item)
+	require.NoError(t, err)
+
+	gotCharacters, err := s.Retrieve(ctx, warhammer.WhTypeCharacter, []string{"owner1"}, nil, warhammer.WhFilter{WhIds: []string{characterId}})
+	require.NoError(t, err)
+	require.Len(t, gotCharacters, 1)
+	require.Equal(t, traits, gotCharacters[0].Object.(*warhammer.Character).Traits)
+
+	gotItems, err := s.Retrieve(ctx, warhammer.WhTypeItem, []string{"owner1"}, nil, warhammer.WhFilter{WhIds: []string{itemId}})
+	require.NoError(t, err)
+	require.Len(t, gotItems, 1)
+	require.Equal(t, properties, gotItems[0].Editions[warhammer.Edition4e].(*warhammer.Item).Properties)
+}

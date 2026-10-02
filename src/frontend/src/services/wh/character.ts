@@ -28,6 +28,7 @@ import { createWhApi, ServerEnvelope } from "./crudGenerator.ts";
 import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { updateSet } from "../../utils/set.ts";
+import { IdValue, validateValues } from "../../utils/idValue.ts";
 import { copyIdNumberArray, IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../utils/idNumber.ts";
 import { isEqualEntity } from "../../utils/equal.ts";
 import { Talent } from "./talent.ts";
@@ -64,7 +65,7 @@ export interface CharacterApiData {
   storedItems: IdNumber[];
   spells: string[];
   prayers: string[];
-  traits: string[];
+  traits: IdValue[];
   mutations: string[];
   careerPath: IdNumber[];
   visibility?: Visibility;
@@ -99,7 +100,7 @@ export class Character extends WhEntity {
   careerPath: IdNumber[];
   spells: Set<string>;
   prayers: Set<string>;
-  traits: Set<string>;
+  traits: IdValue[];
   mutations: Set<string>;
   modifiers: {
     talents: Record<string, { number: number; value: CharacterModifiers }>;
@@ -138,7 +139,7 @@ export class Character extends WhEntity {
     careerPath = [] as IdNumber[],
     spells = new Set<string>(),
     prayers = new Set<string>(),
-    traits = new Set<string>(),
+    traits = [] as IdValue[],
     mutations = new Set<string>(),
     visibility = Visibility.Private,
     source = {},
@@ -268,6 +269,13 @@ export class Character extends WhEntity {
     return validateIdNumber("Stored trappings number", this.storedItems, 1, 1000);
   }
 
+  validateTraits(): ValidationStatus {
+    return validateValues(
+      "Trait",
+      this.traits.map((x) => x.value),
+    );
+  }
+
   isValid(): boolean {
     return (
       this.validateName().valid &&
@@ -291,7 +299,8 @@ export class Character extends WhEntity {
       this.validateTalents().valid &&
       this.validateEquippedItems().valid &&
       this.validateCarriedItems().valid &&
-      this.validateStoredItems().valid
+      this.validateStoredItems().valid &&
+      this.validateTraits().valid
     );
   }
 
@@ -425,12 +434,14 @@ export class Character extends WhEntity {
     }
   }
 
-  updateTraits(id: string, selected: boolean, traits: Trait[]): void {
-    updateSet(this.traits, id, selected);
-    if (!selected) {
-      delete this.modifiers.traits[id];
-      return;
-    }
+  hasTrait(id: string): boolean {
+    return this.traits.some((x) => x.id === id);
+  }
+
+  // addTrait adds the trait with an empty value. Traits that take a value can be added more than once
+  // (e.g. Hatred for Elves and for Dwarfs); their modifiers count once, as such traits have none.
+  addTrait(id: string, traits: Trait[]): void {
+    this.traits.push({ id: id, value: "" });
     for (const trait of traits) {
       if (trait.id === id) {
         this.modifiers.traits[id] = { value: trait.modifiers.copy() };
@@ -439,12 +450,31 @@ export class Character extends WhEntity {
     }
   }
 
-  clearTraits(replace = true): void {
-    if (replace) {
-      this.traits = new Set<string>();
-    } else {
-      this.traits.clear();
+  removeTrait(index: number): void {
+    const [removed] = this.traits.splice(index, 1);
+    if (!this.hasTrait(removed.id)) {
+      delete this.modifiers.traits[removed.id];
     }
+  }
+
+  // updateTraits adds or removes every occurrence of the trait.
+  updateTraits(id: string, selected: boolean, traits: Trait[]): void {
+    if (selected) {
+      if (!this.hasTrait(id)) {
+        this.addTrait(id, traits);
+      }
+      return;
+    }
+    this.traits = this.traits.filter((x) => x.id !== id);
+    delete this.modifiers.traits[id];
+  }
+
+  updateTraitValue(index: number, value: string): void {
+    this.traits[index].value = value;
+  }
+
+  clearTraits(): void {
+    this.traits = [];
     this.modifiers.traits = {};
   }
 
@@ -555,7 +585,7 @@ export class Character extends WhEntity {
   hydrateTraitModifiers(traits: Trait[]): void {
     this.modifiers.traits = {};
     for (const trait of traits) {
-      if (this.traits.has(trait.id)) {
+      if (this.hasTrait(trait.id)) {
         this.modifiers.traits[trait.id] = { value: trait.modifiers.copy() };
       }
     }
@@ -610,7 +640,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
     careerPath: copyIdNumberArray(characterApi.object.careerPath),
     spells: new Set(characterApi.object.spells),
     prayers: new Set(characterApi.object.prayers),
-    traits: new Set(characterApi.object.traits),
+    traits: characterApi.object.traits.map((x) => ({ id: x.id, value: x.value })),
     mutations: new Set(characterApi.object.mutations),
   });
 
@@ -648,7 +678,7 @@ export function modelToApi(character: Character): CharacterApiData {
     careerPath: copyIdNumberArray(character.careerPath),
     spells: [...character.spells],
     prayers: [...character.prayers],
-    traits: [...character.traits],
+    traits: character.traits.map((x) => ({ id: x.id, value: x.value })),
     mutations: [...character.mutations],
     visibility: character.visibility,
   };

@@ -49,6 +49,7 @@ import { useWhList } from "../../../composables/whList.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
 import SelectTable from "../../../components/SelectTable.vue";
+import SelectIdValueTable from "../../../components/SelectIdValueTable.vue";
 import { spellApi } from "../../../services/wh/spell.ts";
 import { mutationApi } from "../../../services/wh/mutation.ts";
 import { prayerApi } from "../../../services/wh/prayer.ts";
@@ -775,22 +776,26 @@ const modifierAttributes = computed(() => {
       @selected="(e) => wh.updateMutations(e.id, e.selected, mutationListUtils.whList.value)"
       @clearAll="wh.clearMutations(true)"
     />
-    <SelectTable
+    <SelectIdValueTable
       :disabled="!canEdit"
-      :initSelectedItems="wh.traits"
+      :selected="wh.traits"
       :itemList="traitListUtils.whList.value"
       title="Creature traits"
       modalTitle="Modify traits"
-      modalId="characterTraits"
       :loading="traitListUtils.loading.value"
       :clearAllBtn="true"
       :disableDescription="true"
+      :allowRepeat="true"
+      :validationStatus="wh.validateTraits()"
       routeName="trait"
       :truncateModalDescription="100"
       class="flex-1 min-w-56"
       @reload="traitListUtils.loadWhList"
+      @add="(id) => wh.addTrait(id, traitListUtils.whList.value)"
+      @remove="(e) => wh.removeTrait(e.index)"
       @selected="(e) => wh.updateTraits(e.id, e.selected, traitListUtils.whList.value)"
-      @clearAll="wh.clearTraits(true)"
+      @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
+      @clearAll="wh.clearTraits()"
     />
   </div>
 

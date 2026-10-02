@@ -9,6 +9,7 @@ import {
 } from "../../../services/wh/itemproperty.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
+import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
@@ -82,6 +83,13 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
         <div class="flex flex-col gap-4">
           <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
           <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
+          <DoubleRadioButton
+            v-model="wh.hasValue"
+            title="Takes a value? E.g. Blast (3)"
+            trueText="Yes"
+            falseText="No"
+            :disabled="!canEdit"
+          />
           <MultipleCheckboxColumnInput
             v-model="wh.applicableTo"
             :options="applicableToOptions"

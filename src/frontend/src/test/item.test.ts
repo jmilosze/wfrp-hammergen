@@ -34,7 +34,10 @@ const itemApiData: ItemApiData = {
   price: 12,
   enc: 2,
   availability: Availability.Exotic,
-  properties: ["prop1", "prop2"],
+  properties: [
+    { id: "prop1", value: "3" },
+    { id: "prop2", value: "" },
+  ],
   runes: [
     { id: "rune1", number: 1 },
     { id: "rune2", number: 2 },
@@ -83,7 +86,7 @@ const item = new Item({
   price: 12,
   enc: 2,
   availability: Availability.Exotic,
-  properties: new Set(["prop1", "prop2"]),
+  properties: { prop1: "3", prop2: "" },
   runes: { rune1: 1, rune2: 2 },
   type: ItemType.Ranged,
   melee: {
@@ -180,13 +183,19 @@ describe("isEqualTo returns false", () => {
 
   test("when other item has properties field that is a subset", () => {
     const otherItem = item.copy();
-    otherItem.properties = new Set(["prop1"]);
+    otherItem.properties = { prop1: "3" };
     expect(item.isEqualTo(otherItem)).toBe(false);
   });
 
   test("when other item has group properties of the same length but different values", () => {
     const otherItem = item.copy();
-    otherItem.properties = new Set(["prop3", "prop4"]);
+    otherItem.properties = { prop3: "3", prop4: "" };
+    expect(item.isEqualTo(otherItem)).toBe(false);
+  });
+
+  test("when other item has a different value of a property", () => {
+    const otherItem = item.copy();
+    otherItem.properties = { prop1: "4", prop2: "" };
     expect(item.isEqualTo(otherItem)).toBe(false);
   });
 
@@ -456,5 +465,25 @@ describe("item groups by edition", () => {
     expect(armourGroupsByEdition["4e"]).not.toContain(ArmourGroup.Shield);
     expect(printArmourGroup(ArmourGroup.Shield)).toBe("Shield");
     expect(printArmourGroup(ArmourGroup.Leather)).toBe("Leather");
+  });
+});
+
+describe("Item properties", () => {
+  test("updateProperties keeps the value of a property that is already selected", () => {
+    const otherItem = item.copy();
+    otherItem.updateProperties("prop1", true);
+    otherItem.updateProperties("prop3", true);
+    expect(otherItem.properties).toEqual({ prop1: "3", prop2: "", prop3: "" });
+    otherItem.updateProperties("prop1", false);
+    expect(otherItem.properties).toEqual({ prop2: "", prop3: "" });
+  });
+
+  test("validateProperties rejects a value that is too long", () => {
+    const otherItem = item.copy();
+    otherItem.updatePropertyValue("prop2", "1d10");
+    expect(otherItem.validateProperties().valid).toBe(true);
+    otherItem.updatePropertyValue("prop2", "a".repeat(21));
+    expect(otherItem.validateProperties().valid).toBe(false);
+    expect(otherItem.isValid()).toBe(false);
   });
 });

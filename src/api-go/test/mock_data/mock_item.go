@@ -15,7 +15,7 @@ var itemMelee = wh.Wh{
 		Price:        2.31,
 		Enc:          1.5,
 		Availability: wh.ItemAvailabilityCommon,
-		Properties:   []string{property0.Id, property1.Id},
+		Properties:   []wh.IdValue{{Id: property0.Id, Value: "2"}, {Id: property1.Id, Value: ""}},
 		Runes:        []wh.IdNumber{{Id: rune0.Id, Number: 1}, {Id: rune1.Id, Number: 2}},
 		Type:         wh.ItemTypeMelee,
 		Source: map[wh.Source]string{
@@ -42,7 +42,7 @@ var itemRanged = wh.Wh{
 		Price:        5,
 		Enc:          8,
 		Availability: wh.ItemAvailabilityScarce,
-		Properties:   []string{},
+		Properties:   []wh.IdValue{},
 		Type:         wh.ItemTypeRanged,
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",
@@ -68,7 +68,7 @@ var itemAmmunition = wh.Wh{
 		Price:        2.2,
 		Enc:          0.1,
 		Availability: wh.ItemAvailabilityRare,
-		Properties:   []string{property0.Id},
+		Properties:   []wh.IdValue{{Id: property0.Id, Value: ""}},
 		Type:         wh.ItemTypeAmmunition,
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
@@ -92,7 +92,7 @@ var itemArmour = wh.Wh{
 		Price:        2000,
 		Enc:          2,
 		Availability: wh.ItemAvailabilityExotic,
-		Properties:   []string{property0.Id},
+		Properties:   []wh.IdValue{{Id: property0.Id, Value: ""}},
 		Type:         wh.ItemTypeArmour,
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
@@ -115,7 +115,7 @@ var itemContainer = wh.Wh{
 		Price:        20,
 		Enc:          1,
 		Availability: wh.ItemAvailabilityCommon,
-		Properties:   []string{property0.Id},
+		Properties:   []wh.IdValue{{Id: property0.Id, Value: ""}},
 		Type:         wh.ItemTypeContainer,
 		Source: map[wh.Source]string{
 			wh.SourceWFRP: "g",
@@ -137,7 +137,7 @@ var itemGrimoire = wh.Wh{
 		Price:        20000,
 		Enc:          0,
 		Availability: wh.ItemAvailabilityCommon,
-		Properties:   []string{property0.Id},
+		Properties:   []wh.IdValue{{Id: property0.Id, Value: ""}},
 		Runes:        []wh.IdNumber{{Id: rune0.Id, Number: 1}},
 		Type:         wh.ItemTypeGrimoire,
 		Source: map[wh.Source]string{
@@ -159,7 +159,7 @@ var itemOther = wh.Wh{
 		Price:        2,
 		Enc:          1,
 		Availability: wh.ItemAvailabilityCommon,
-		Properties:   []string{property0.Id},
+		Properties:   []wh.IdValue{{Id: property0.Id, Value: ""}},
 		Type:         wh.ItemTypeOther,
 		Source: map[wh.Source]string{
 			wh.SourceCustom: "",

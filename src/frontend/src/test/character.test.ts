@@ -7,6 +7,7 @@ import { testIsEqualCommonProperties } from "./commonTests.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
 import { getAttributes } from "../services/wh/attributes.ts";
+import { Trait } from "../services/wh/trait.ts";
 
 const characterApiData: CharacterApiData = {
   edition: "4e",
@@ -53,7 +54,10 @@ const characterApiData: CharacterApiData = {
   ],
   spells: ["spellId1", "spellId2"],
   prayers: ["prayerId1", "prayerId2"],
-  traits: ["traitId1", "traitId2"],
+  traits: [
+    { id: "traitId1", value: "Elves" },
+    { id: "traitId2", value: "" },
+  ],
   mutations: ["mutationId1", "mutationId2"],
   careerPath: [
     { id: "careerId1", number: 1 },
@@ -115,7 +119,10 @@ const character = new Character({
   },
   spells: new Set(["spellId1", "spellId2"]),
   prayers: new Set(["prayerId1", "prayerId2"]),
-  traits: new Set(["traitId1", "traitId2"]),
+  traits: [
+    { id: "traitId1", value: "Elves" },
+    { id: "traitId2", value: "" },
+  ],
   mutations: new Set(["mutationId1", "mutationId2"]),
   careerPath: [
     { id: "careerId1", number: 1 },
@@ -445,8 +452,21 @@ describe("isEqualTo returns false", () => {
   });
 
   test.each([
-    { name: "different value", value: new Set(["traitId1", "otherId"]) },
-    { name: "different number of elements", value: new Set(["traitId1"]) },
+    {
+      name: "different trait",
+      value: [
+        { id: "traitId1", value: "Elves" },
+        { id: "otherId", value: "" },
+      ],
+    },
+    {
+      name: "different trait value",
+      value: [
+        { id: "traitId1", value: "Dwarfs" },
+        { id: "traitId2", value: "" },
+      ],
+    },
+    { name: "different number of elements", value: [{ id: "traitId1", value: "Elves" }] },
   ])("when other character has a different value of traits ($name)", (t) => {
     const otherCharacter = character.copy();
     otherCharacter.traits = t.value;
@@ -1064,5 +1084,58 @@ describe("Character currency validation", () => {
     char.silver = 5;
     char.gold = -1;
     expect(char.isValid()).toBe(false);
+  });
+});
+
+describe("Character traits", () => {
+  const traits = [
+    new Trait({ id: "hatred", hasValue: true }),
+    new Trait({ id: "large", modifiers: new CharacterModifiers({ size: 1 }) }),
+  ];
+
+  test("addTrait adds a trait that takes a value more than once and counts its modifiers once", () => {
+    const character = new Character();
+    character.addTrait("hatred", traits);
+    character.addTrait("hatred", traits);
+    character.updateTraitValue(0, "Elves");
+    character.updateTraitValue(1, "Dwarfs");
+    expect(character.traits).toEqual([
+      { id: "hatred", value: "Elves" },
+      { id: "hatred", value: "Dwarfs" },
+    ]);
+    expect(Object.keys(character.modifiers.traits)).toEqual(["hatred"]);
+  });
+
+  test("removeTrait keeps the modifiers while the trait is still on the character", () => {
+    const character = new Character();
+    character.addTrait("large", traits);
+    character.addTrait("large", traits);
+    character.removeTrait(0);
+    expect(character.getSize()).toBe(Size.Large);
+    character.removeTrait(0);
+    expect(character.traits).toEqual([]);
+    expect(character.getSize()).toBe(Size.Average);
+  });
+
+  test("updateTraits adds a trait once and removes every occurrence", () => {
+    const character = new Character();
+    character.updateTraits("large", true, traits);
+    character.updateTraits("large", true, traits);
+    expect(character.traits).toEqual([{ id: "large", value: "" }]);
+    expect(character.getSize()).toBe(Size.Large);
+
+    character.addTrait("hatred", traits);
+    character.addTrait("hatred", traits);
+    character.updateTraits("hatred", false, traits);
+    expect(character.traits).toEqual([{ id: "large", value: "" }]);
+  });
+
+  test("validateTraits rejects a value that is too long", () => {
+    const character = new Character();
+    character.addTrait("hatred", traits);
+    expect(character.validateTraits().valid).toBe(true);
+    character.updateTraitValue(0, "a".repeat(21));
+    expect(character.validateTraits().valid).toBe(false);
+    expect(character.isValid()).toBe(false);
   });
 });

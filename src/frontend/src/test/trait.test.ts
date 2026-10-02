@@ -13,6 +13,7 @@ const traitGroupApiData: TraitApiData = {
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
     effects: [],
   },
+  hasValue: true,
   source: { 1: "page 2", 3: "page 5-10" },
 };
 
@@ -33,6 +34,7 @@ const traitGroup = new Trait({
     movement: 1,
     attributes: { WS: 1, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 0 },
   }),
+  hasValue: true,
   visibility: Visibility.Shared,
   source: { 1: "page 2", 3: "page 5-10" },
 });
@@ -62,3 +64,9 @@ test("modelToApi returns expected api trait data", () => {
 testIsEqualCommonProperties("trait", traitIndividual);
 
 testIsEqualCharacterModifiers("trait", traitIndividual);
+
+test("isEqualTo returns false when other trait has different value of hasValue", () => {
+  const otherTrait = traitIndividual.copy();
+  otherTrait.hasValue = true;
+  expect(traitIndividual.isEqualTo(otherTrait)).toBe(false);
+});

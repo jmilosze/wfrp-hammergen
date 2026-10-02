@@ -43,6 +43,7 @@ import { ItemPropertyApiData } from "./itemproperty.ts";
 import { ModifierEffect } from "./characterModifiers.ts";
 import { TraitApiData } from "./trait.ts";
 import { RuneApiData } from "./rune.ts";
+import { printWithValue } from "../../utils/idValue.ts";
 
 export interface ItemFullApiData {
   name: string;
@@ -50,7 +51,7 @@ export interface ItemFullApiData {
   price: number;
   enc: number;
   availability: Availability;
-  properties: ApiResponse<ItemPropertyApiData>[];
+  properties: WhValue<ItemPropertyApiData>[];
   runes: WhNumber<RuneApiData>[];
   type: ItemType;
   melee: MeleeType;
@@ -66,6 +67,11 @@ export interface ItemFullApiData {
 export interface WhNumber<WhApiData> {
   wh: ApiResponse<WhApiData>;
   number: number;
+}
+
+export interface WhValue<WhApiData> {
+  wh: ApiResponse<WhApiData>;
+  value: string;
 }
 
 export interface CharacterFullApiData {
@@ -97,7 +103,7 @@ export interface CharacterFullApiData {
   storedItems: WhNumber<ItemFullApiData>[];
   spells: ApiResponse<SpellApiData>[];
   prayers: ApiResponse<PrayerApiData>[];
-  traits: ApiResponse<TraitApiData>[];
+  traits: WhValue<TraitApiData>[];
   mutations: ApiResponse<MutationApiData>[];
   careerPath: WhNumber<CareerApiData>[];
 }
@@ -350,12 +356,14 @@ export function apiResponseToCharacterFull(
 ): CharacterFull {
   // Referenced content is resolved in the character's edition.
   const e = fullCharacterApi.object.edition;
+  // A trait that takes a value can be on the character more than once; its modifiers count once.
+  const uniqueTraits = [...new Map(fullCharacterApi.object.traits.map((x) => [x.wh.id, x.wh])).values()];
   const mutationAttributes: Attributes = fullCharacterApi.object.mutations.reduce(
     (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
     getAttributes(),
   );
 
-  const traitAttributes: Attributes = fullCharacterApi.object.traits.reduce(
+  const traitAttributes: Attributes = uniqueTraits.reduce(
     (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
     getAttributes(),
   );
@@ -375,11 +383,11 @@ export function apiResponseToCharacterFull(
 
   const sizeModifier: number =
     fullCharacterApi.object.mutations.reduce((a, v) => a + variant(v, e).modifiers.size, 0) +
-    fullCharacterApi.object.traits.reduce((a, v) => a + variant(v, e).modifiers.size, 0) +
+    uniqueTraits.reduce((a, v) => a + variant(v, e).modifiers.size, 0) +
     fullCharacterApi.object.talents.reduce((a, v) => a + v.number * variant(v.wh, e).modifiers.size, 0);
   const movementModifier =
     fullCharacterApi.object.mutations.reduce((a, v) => a + variant(v, e).modifiers.movement, 0) +
-    fullCharacterApi.object.traits.reduce((a, v) => a + variant(v, e).modifiers.movement, 0) +
+    uniqueTraits.reduce((a, v) => a + variant(v, e).modifiers.movement, 0) +
     fullCharacterApi.object.talents.reduce((a, v) => a + v.number * variant(v.wh, e).modifiers.movement, 0);
 
   const size = getSizeFormula(sizeModifier);
@@ -389,10 +397,7 @@ export function apiResponseToCharacterFull(
       (a, v) => a + (variant(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
       0,
     ) +
-    fullCharacterApi.object.traits.reduce(
-      (a, v) => a + (variant(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
-      0,
-    ) +
+    uniqueTraits.reduce((a, v) => a + (variant(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0), 0) +
     fullCharacterApi.object.talents.reduce(
       (a, v) => a + v.number * (variant(v.wh, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
       0,
@@ -549,7 +554,10 @@ function getItems(
       id: charItem.wh.id,
       name: variant(charItem.wh, e).name,
       enc: variant(charItem.wh, e).enc,
-      qualitiesFlaws: variant(charItem.wh, e).properties.map((x) => ({ name: variant(x, e).name, id: x.id })),
+      qualitiesFlaws: variant(charItem.wh, e).properties.map((x) => ({
+        name: printWithValue(variant(x.wh, e).name, variant(x.wh, e).hasValue, x.value),
+        id: x.wh.id,
+      })),
       runes: variant(charItem.wh, e).runes.map((x) => ({ name: variant(x.wh, e).name, id: x.wh.id, number: x.number })),
       number: charItem.number,
       description: variant(charItem.wh, e).description,
@@ -626,11 +634,11 @@ function getPrayers(e: Edition, prayers: ApiResponse<PrayerApiData>[]): Characte
   }));
 }
 
-function getTraits(e: Edition, traits: ApiResponse<TraitApiData>[]): CharacterFullTrait[] {
+function getTraits(e: Edition, traits: WhValue<TraitApiData>[]): CharacterFullTrait[] {
   return traits.map((x) => ({
-    id: x.id,
-    name: variant(x, e).name,
-    description: variant(x, e).description,
+    id: x.wh.id,
+    name: printWithValue(variant(x.wh, e).name, variant(x.wh, e).hasValue, x.value),
+    description: variant(x.wh, e).description,
   }));
 }
 

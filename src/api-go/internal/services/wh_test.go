@@ -276,3 +276,54 @@ func TestCreateTraitAndMutationValidateEffectsPerEdition(t *testing.T) {
 		})
 	}
 }
+
+func TestIdValuesToIds(t *testing.T) {
+	items := []wh.IdValue{{Id: "trait-1", Value: "Elves"}, {Id: "trait-1", Value: "Dwarfs"}, {Id: "trait-2", Value: ""}}
+
+	want := []string{"trait-1", "trait-1", "trait-2"}
+	got := idValuesToIds(items)
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("idValuesToIds() = %v, want %v", got, want)
+	}
+}
+
+func TestCreateValidatesValues(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+	propertyId := mock_data.NewMockProperties()[0].Id
+	traitId := mock_data.NewMockTraits()[0].Id
+
+	newItem := func(properties []wh.IdValue) *wh.Wh {
+		item := *mock_data.NewMockItems()[0].Object.(*wh.Item)
+		item.Properties = properties
+		return &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: &item}}
+	}
+	newCharacter := func(traits []wh.IdValue) *wh.Wh {
+		character := newMockCharacter(wh.Edition4e)
+		character.Traits = traits
+		return &wh.Wh{Object: character}
+	}
+
+	for name, tc := range map[string]struct {
+		typ     wh.WhType
+		w       *wh.Wh
+		wantErr bool
+	}{
+		"item property with value":       {wh.WhTypeItem, newItem([]wh.IdValue{{Id: propertyId, Value: "1d10"}}), false},
+		"item property twice":            {wh.WhTypeItem, newItem([]wh.IdValue{{Id: propertyId, Value: "1"}, {Id: propertyId, Value: "2"}}), true},
+		"item property value too long":   {wh.WhTypeItem, newItem([]wh.IdValue{{Id: propertyId, Value: strings.Repeat("a", 21)}}), true},
+		"character trait twice":          {wh.WhTypeCharacter, newCharacter([]wh.IdValue{{Id: traitId, Value: "Elves"}, {Id: traitId, Value: "Dwarfs"}}), false},
+		"character trait value too long": {wh.WhTypeCharacter, newCharacter([]wh.IdValue{{Id: traitId, Value: strings.Repeat("a", 21)}}), true},
+		"character trait invalid id":     {wh.WhTypeCharacter, newCharacter([]wh.IdValue{{Id: "bad", Value: ""}}), true},
+	} {
+		t.Run(name, func(t *testing.T) {
+			_, err := s.Create(context.Background(), tc.typ, tc.w, &auth.Claims{Id: "user1"})
+			if tc.wantErr && !errors.Is(err, domain.ErrInvalidArguments) {
+				t.Errorf("expected validation error, got %v", err)
+			}
+			if !tc.wantErr && err != nil {
+				t.Errorf("expected no error, got %v", err)
+			}
+		})
+	}
+}

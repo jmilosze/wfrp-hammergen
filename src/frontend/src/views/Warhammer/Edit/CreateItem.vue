@@ -54,6 +54,7 @@ import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue
 import { spellApi } from "../../../services/wh/spell.ts";
 import { runeApi } from "../../../services/wh/rune.ts";
 import SelectIdNumberTable from "../../../components/SelectIdNumberTable.vue";
+import SelectIdValueTable from "../../../components/SelectIdValueTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -513,18 +514,21 @@ watchWh(
             @selected="(e) => wh.updateSpells(e.id, e.selected)"
           />
         </div>
-        <SelectTable
+        <SelectIdValueTable
           :disabled="!canEdit"
-          :initSelectedItems="wh.properties"
+          :selected="Object.entries(wh.properties).map(([id, value]) => ({ id: id, value: value }))"
           :itemList="propertyList"
           title="Qualities and flaws"
           modalTitle="Modify qualities and flaws"
           :loading="propertyListUtils.loading.value"
+          :validationStatus="wh.validateProperties()"
           routeName="property"
           :truncateModalDescription="100"
           class="mt-4"
           @reload="propertyListUtils.loadWhList"
+          @remove="(e) => wh.updateProperties(e.id, false)"
           @selected="(e) => wh.updateProperties(e.id, e.selected)"
+          @updateValue="(e) => wh.updatePropertyValue(e.id, e.value)"
         />
         <SelectIdNumberTable
           :disabled="!canEdit"

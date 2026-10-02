@@ -12,7 +12,7 @@ type Item struct {
 	Price        float64           `json:"price" validate:"gte=0,lte=24000000000"`
 	Enc          float64           `json:"enc" validate:"gte=0,lte=1000"`
 	Availability ItemAvailability  `json:"availability" validate:"item_availability_valid"`
-	Properties   []string          `json:"properties" validate:"unique,dive,id_valid"`
+	Properties   []IdValue         `json:"properties" validate:"unique=Id,dive"`
 	Runes        []IdNumber        `json:"runes" validate:"dive"`
 	Type         ItemType          `json:"type" validate:"item_type_valid"`
 	Source       map[Source]string `json:"source" validate:"source_valid"`
@@ -43,7 +43,7 @@ func (item *Item) ValidateEdition(e Edition) error {
 
 func (item *Item) Init() {
 	if item.Properties == nil {
-		item.Properties = []string{}
+		item.Properties = []IdValue{}
 	}
 	if item.Runes == nil {
 		item.Runes = []IdNumber{}
@@ -66,7 +66,7 @@ func (item *Item) ToFull(allProperties []*Wh, allSpells []*Wh, allRunes []*Wh) (
 		return nil, errors.New("allRunes is nil")
 	}
 
-	itemProperties := idListToWhList(item.Properties, whListToIdWhMap(allProperties))
+	itemProperties := idValueListToWhValueList(item.Properties, whListToIdWhMap(allProperties))
 	itemRunes := idNumberListToWhNumberList(item.Runes, whListToIdWhMap(allRunes))
 
 	grimoire := ItemGrimoireFull{
@@ -404,7 +404,7 @@ type ItemFull struct {
 	Price        float64           `json:"price"`
 	Enc          float64           `json:"enc"`
 	Availability ItemAvailability  `json:"availability"`
-	Properties   []*Wh             `json:"properties"`
+	Properties   []WhValue         `json:"properties"`
 	Runes        []WhNumber        `json:"runes"`
 	Type         ItemType          `json:"type"`
 	Source       map[Source]string `json:"source"`
@@ -430,7 +430,7 @@ func (ig *ItemGrimoireFull) Init() {
 
 func (item *ItemFull) Init() {
 	if item.Properties == nil {
-		item.Properties = []*Wh{}
+		item.Properties = []WhValue{}
 	}
 	if item.Runes == nil {
 		item.Runes = []WhNumber{}

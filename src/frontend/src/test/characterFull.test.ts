@@ -391,17 +391,21 @@ const characterFullApiData: CharacterFullApiData = {
             other: { carryType: CarryType.NotCarriableAndNotWearable },
             properties: [
               {
-                id: "pid1",
-                ownerId: "owner",
-                editions: {
-                  "4e": {
-                    name: "item_1_property_1",
-                    description: "",
-                    type: ItemPropertyType.Quality,
-                    applicableTo: [],
-                    source: {},
+                wh: {
+                  id: "pid1",
+                  ownerId: "owner",
+                  editions: {
+                    "4e": {
+                      name: "item_1_property_1",
+                      hasValue: true,
+                      description: "",
+                      type: ItemPropertyType.Quality,
+                      applicableTo: [],
+                      source: {},
+                    },
                   },
                 },
+                value: "3",
               },
             ],
             runes: [
@@ -454,30 +458,38 @@ const characterFullApiData: CharacterFullApiData = {
             other: { carryType: CarryType.NotCarriableAndNotWearable },
             properties: [
               {
-                id: "pid2",
-                ownerId: "owner",
-                editions: {
-                  "4e": {
-                    name: "item_2_property_1",
-                    description: "",
-                    type: ItemPropertyType.Quality,
-                    applicableTo: [],
-                    source: {},
+                wh: {
+                  id: "pid2",
+                  ownerId: "owner",
+                  editions: {
+                    "4e": {
+                      name: "item_2_property_1",
+                      hasValue: false,
+                      description: "",
+                      type: ItemPropertyType.Quality,
+                      applicableTo: [],
+                      source: {},
+                    },
                   },
                 },
+                value: "",
               },
               {
-                id: "pid3",
-                ownerId: "owner",
-                editions: {
-                  "4e": {
-                    name: "item_2_property_2",
-                    description: "",
-                    type: ItemPropertyType.Quality,
-                    applicableTo: [],
-                    source: {},
+                wh: {
+                  id: "pid3",
+                  ownerId: "owner",
+                  editions: {
+                    "4e": {
+                      name: "item_2_property_2",
+                      hasValue: false,
+                      description: "",
+                      type: ItemPropertyType.Quality,
+                      applicableTo: [],
+                      source: {},
+                    },
                   },
                 },
+                value: "",
               },
             ],
             runes: [],
@@ -565,17 +577,21 @@ const characterFullApiData: CharacterFullApiData = {
             other: { carryType: CarryType.NotCarriableAndNotWearable },
             properties: [
               {
-                id: "pid4",
-                ownerId: "owner",
-                editions: {
-                  "4e": {
-                    name: "item_4_property_1",
-                    description: "",
-                    type: ItemPropertyType.Quality,
-                    applicableTo: [],
-                    source: {},
+                wh: {
+                  id: "pid4",
+                  ownerId: "owner",
+                  editions: {
+                    "4e": {
+                      name: "item_4_property_1",
+                      hasValue: false,
+                      description: "",
+                      type: ItemPropertyType.Quality,
+                      applicableTo: [],
+                      source: {},
+                    },
                   },
                 },
+                value: "",
               },
             ],
             runes: [],
@@ -621,30 +637,38 @@ const characterFullApiData: CharacterFullApiData = {
             other: { carryType: CarryType.NotCarriableAndNotWearable },
             properties: [
               {
-                id: "pid5",
-                ownerId: "owner",
-                editions: {
-                  "4e": {
-                    name: "item_5_property_1",
-                    description: "",
-                    type: ItemPropertyType.Quality,
-                    applicableTo: [],
-                    source: {},
+                wh: {
+                  id: "pid5",
+                  ownerId: "owner",
+                  editions: {
+                    "4e": {
+                      name: "item_5_property_1",
+                      hasValue: false,
+                      description: "",
+                      type: ItemPropertyType.Quality,
+                      applicableTo: [],
+                      source: {},
+                    },
                   },
                 },
+                value: "",
               },
               {
-                id: "pid6",
-                ownerId: "owner",
-                editions: {
-                  "4e": {
-                    name: "item_5_property_2",
-                    description: "",
-                    type: ItemPropertyType.Quality,
-                    applicableTo: [],
-                    source: {},
+                wh: {
+                  id: "pid6",
+                  ownerId: "owner",
+                  editions: {
+                    "4e": {
+                      name: "item_5_property_2",
+                      hasValue: false,
+                      description: "",
+                      type: ItemPropertyType.Quality,
+                      applicableTo: [],
+                      source: {},
+                    },
                   },
                 },
+                value: "",
               },
             ],
             runes: [],
@@ -932,38 +956,67 @@ const characterFullApiData: CharacterFullApiData = {
   ],
   traits: [
     {
-      id: "idT18",
-      ownerId: "owner",
-      editions: {
-        "4e": {
-          name: "trait_1",
-          description: "trait_1_desc",
-          modifiers: {
-            size: -1,
-            attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 2 },
-            movement: 1,
-            effects: [],
+      wh: {
+        id: "idT18",
+        ownerId: "owner",
+        editions: {
+          "4e": {
+            name: "trait_1",
+            hasValue: true,
+            description: "trait_1_desc",
+            modifiers: {
+              size: -1,
+              attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 2 },
+              movement: 1,
+              effects: [],
+            },
+            source: {},
           },
-          source: {},
         },
       },
+      value: "8",
     },
     {
-      id: "idT19",
-      ownerId: "owner",
-      editions: {
-        "4e": {
-          name: "trait_2",
-          description: "trait_2_desc",
-          modifiers: {
-            size: 1,
-            attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
-            movement: 0,
-            effects: [],
+      wh: {
+        id: "idT18",
+        ownerId: "owner",
+        editions: {
+          "4e": {
+            name: "trait_1",
+            hasValue: true,
+            description: "trait_1_desc",
+            modifiers: {
+              size: -1,
+              attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 2, WP: 2, Fel: 2 },
+              movement: 1,
+              effects: [],
+            },
+            source: {},
           },
-          source: {},
         },
       },
+      value: "Elves",
+    },
+    {
+      wh: {
+        id: "idT19",
+        ownerId: "owner",
+        editions: {
+          "4e": {
+            name: "trait_2",
+            hasValue: false,
+            description: "trait_2_desc",
+            modifiers: {
+              size: 1,
+              attributes: { WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 },
+              movement: 0,
+              effects: [],
+            },
+            source: {},
+          },
+        },
+      },
+      value: "",
     },
   ],
 };
@@ -1071,7 +1124,7 @@ const characterFull = {
       id: "id9",
       name: "item_1",
       enc: 1.5,
-      qualitiesFlaws: [{ id: "pid1", name: "item_1_property_1" }],
+      qualitiesFlaws: [{ id: "pid1", name: "item_1_property_1 (3)" }],
       runes: [{ name: "Rune1", id: "rune1", number: 1 }],
       number: 1,
       description: "item_1_desc",
@@ -1223,7 +1276,8 @@ const characterFull = {
     },
   ],
   traits: [
-    { id: "idT18", name: "trait_1", description: "trait_1_desc" },
+    { id: "idT18", name: "trait_1 (8)", description: "trait_1_desc" },
+    { id: "idT18", name: "trait_1 (Elves)", description: "trait_1_desc" },
     { id: "idT19", name: "trait_2", description: "trait_2_desc" },
   ],
   mutations: [

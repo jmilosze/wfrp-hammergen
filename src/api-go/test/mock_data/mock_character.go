@@ -75,7 +75,7 @@ var character0 = wh.Wh{
 		Gold:       1,
 		Spells:     []string{spell0.Id, spell1.Id},
 		Prayers:    []string{prayer0.Id, prayer1.Id},
-		Traits:     []string{trait0.Id, trait1.Id},
+		Traits:     []wh.IdValue{{Id: trait0.Id, Value: "8"}, {Id: trait1.Id, Value: ""}},
 		Sin:        0,
 		Corruption: 0,
 		Mutations:  []string{mutation0.Id, mutation1.Id},
@@ -100,7 +100,7 @@ var character1 = wh.Wh{
 		CareerPath:    []wh.IdNumber{},
 		Spells:        []string{},
 		Prayers:       []string{},
-		Traits:        []string{},
+		Traits:        []wh.IdValue{},
 		Mutations:     []string{},
 	},
 }
