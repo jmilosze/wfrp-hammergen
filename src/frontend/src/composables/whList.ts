@@ -2,17 +2,30 @@ import { ContentApi, Edition, SHORT_DESC_LENGTH, Visibility, WhProperty } from "
 import { computed, MaybeRefOrGetter, Ref, ref, toValue, watch } from "vue";
 import { source } from "../services/wh/source.ts";
 import { useAuth } from "./auth.ts";
+import { useRouteQuery } from "@vueuse/router";
 
 const sourceOptions: { text: string; value: string }[] = [{ text: "Any source", value: "" }];
 for (const [key, value] of Object.entries(source)) {
   sourceOptions.push({ text: value, value: key });
 }
 
+// useSourceQuery is the list's source filter, kept in the "source" query string. It is cleared when the edition
+// changes, as the editions share no sources: a filter from the other edition would leave the list empty.
+export function useSourceQuery(edition: MaybeRefOrGetter<Edition>): Ref<string> {
+  const sourceTerm = useRouteQuery("source", "");
+  watch(
+    () => toValue(edition),
+    () => {
+      sourceTerm.value = "";
+    },
+  );
+  return sourceTerm;
+}
+
 // useWhList loads one edition of a content type and reloads when the edition changes.
 export function useWhList<T extends WhProperty>(elementApi: ContentApi<T>, edition: MaybeRefOrGetter<Edition>) {
   const auth = useAuth();
 
-  const whToDelete = ref({ id: "", name: "" });
   const whList: Ref<T[]> = ref([]);
   const apiError = ref("");
   const showApiError = ref(true);
@@ -69,21 +82,6 @@ export function useWhList<T extends WhProperty>(elementApi: ContentApi<T>, editi
     }
   }
 
-  async function deleteWh() {
-    showApiError.value = true;
-    try {
-      await elementApi.deleteElement(whToDelete.value.id);
-      for (let i = 0; i < whList.value.length; i++) {
-        if (whList.value[i]["id"] === whToDelete.value.id) {
-          whList.value.splice(i, 1);
-          break;
-        }
-      }
-    } catch {
-      apiError.value = "Error. Could not delete data from server.";
-    }
-  }
-
   const filteredSourceOptions = computed(() => {
     const sourcesInData: Set<string> = new Set();
     for (const wh of whList.value) {
@@ -116,9 +114,7 @@ export function useWhList<T extends WhProperty>(elementApi: ContentApi<T>, editi
     loadWhList,
     loading,
     copyWh,
-    deleteWh,
     filteredSourceOptions,
-    whToDelete,
     sourceValues,
   };
 }

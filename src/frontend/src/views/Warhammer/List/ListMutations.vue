@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhList } from "../../../composables/whList.ts";
+import { useSourceQuery, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
 import { Mutation, mutationApi, mutationTypeList, printMutationType } from "../../../services/wh/mutation.ts";
 import { authRequest } from "../../../services/auth.ts";
@@ -22,7 +22,7 @@ const whList = useWhList(mutationApi(authRequest), edition);
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");
-const sourceTerm = useRouteQuery("source", "");
+const sourceTerm = useSourceQuery(edition);
 const typeTerm = useRouteQuery("type", "");
 
 const auth = useAuth();

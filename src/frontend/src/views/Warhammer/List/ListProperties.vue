@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhList } from "../../../composables/whList.ts";
+import { useSourceQuery, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
 import {
   ItemProperty,
@@ -28,7 +28,7 @@ const whList = useWhList(itemPropertyApi(authRequest), edition);
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");
-const sourceTerm = useRouteQuery("source", "");
+const sourceTerm = useSourceQuery(edition);
 const applicableToTerm = useRouteQuery("applicableTo", "");
 const typeTerm = useRouteQuery("type", "");
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhList } from "../../../composables/whList.ts";
+import { useSourceQuery, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
 import { printRuneLabel, Rune, runeApi, runeLabelList } from "../../../services/wh/rune.ts";
 import { authRequest } from "../../../services/auth.ts";
@@ -23,7 +23,7 @@ const whList = useWhList(runeApi(authRequest), edition);
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");
-const sourceTerm = useRouteQuery("source", "");
+const sourceTerm = useSourceQuery(edition);
 const applicableToTerm = useRouteQuery("applicableTo", "");
 const labelTerm = useRouteQuery("label", "");
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useWhList } from "../../../composables/whList.ts";
+import { useSourceQuery, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
 import {
   getAllowedLabels,
@@ -30,7 +30,7 @@ const whList = useWhList(spellApi(authRequest), edition);
 await whList.loadWhList();
 
 const searchTerm = useRouteQuery("search", "");
-const sourceTerm = useRouteQuery("source", "");
+const sourceTerm = useSourceQuery(edition);
 const typeTerm = useRouteQuery("type", "");
 const labelTerm = useRouteQuery("group", "");
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Imports 5e content of one type from docs/5e/data/<type>s-5e.json (plan C6b, docs/5e/03-tracker.md),
+Imports 5e content of one type from its data file in docs/5e/data (plan C6b, docs/5e/03-tracker.md),
 e.g. --type trait reads traits-5e.json.
 
 Entries with `id4e` add `editions.5e` to that public 4e document.
@@ -63,8 +63,36 @@ def mutation_variant(entry):
     }
 
 
+def property_variant(entry):
+    return {
+        "name": entry["name"],
+        "description": entry["description"],
+        "type": entry["type"],
+        "applicableto": entry["applicableTo"],
+        "hasvalue": entry["hasValue"],
+        "source": entry["source"],
+    }
+
+
+def prayer_variant(entry):
+    return {
+        "name": entry["name"],
+        "description": entry["description"],
+        "range": entry["range"],
+        "target": entry["target"],
+        "duration": entry["duration"],
+        "source": entry["source"],
+    }
+
+
 # Builds the stored 5e variant from a data file entry, per collection.
-VARIANTS = {"trait": trait_variant, "mutation": mutation_variant}
+VARIANTS = {"trait": trait_variant, "mutation": mutation_variant, "property": property_variant, "prayer": prayer_variant}
+DATA_FILES = {
+    "trait": "traits-5e.json",
+    "mutation": "mutations-5e.json",
+    "property": "properties-5e.json",
+    "prayer": "prayers-5e.json",
+}
 
 
 def plan(coll, to_variant, entries):
@@ -139,7 +167,7 @@ def main():
         "--data",
         default=None,
         type=Path,
-        help=f"Data file (defaults to {DATA_DIR}/<type>s-5e.json)",
+        help=f"Data file (defaults to the type's file in {DATA_DIR})",
     )
     parser.add_argument(
         "--dry-run",
@@ -153,7 +181,7 @@ def main():
     )
     args = parser.parse_args()
 
-    data = args.data or DATA_DIR / f"{args.type}s-5e.json"
+    data = args.data or DATA_DIR / DATA_FILES[args.type]
     entries = json.loads(data.read_text())
     coll = MongoClient(args.uri)[args.db][args.type]
     to_variant = VARIANTS[args.type]
@@ -223,7 +251,7 @@ def main():
             print(f"  - {e}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Verification passed: all {len(entries)} {args.type}s are imported.")
+    print(f"Verification passed: all {len(entries)} entries are imported.")
 
 
 if __name__ == "__main__":
