@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Imports 5e creature traits from docs/5e/data/traits-5e.json (plan C6b, docs/5e/03-tracker.md).
+Imports 5e content of one type from docs/5e/data/<type>s-5e.json (plan C6b, docs/5e/03-tracker.md),
+e.g. --type trait reads traits-5e.json.
 
 Entries with `id4e` add `editions.5e` to that public 4e document.
-Entries without `id4e` create new public 5e-only documents, owned by the owner of the public 4e traits.
+Entries without `id4e` create new public 5e-only documents, owned by the owner of the public 4e documents.
 
 Idempotent: variants that are already imported unchanged are skipped.
 Already imported variants that differ from the data file are replaced only with --update.
@@ -22,33 +23,51 @@ DEFAULT_MONGO_URI = os.environ.get(
     "MONGO_URI", "mongodb://admin:admin@localhost:27017"
 )
 DEFAULT_DB_NAME = os.environ.get("DB_NAME", "hammergenGo")
-DEFAULT_DATA_FILE = Path(__file__).resolve().parents[2] / "docs/5e/data/traits-5e.json"
+DATA_DIR = Path(__file__).resolve().parents[2] / "docs/5e/data"
 
-COLLECTION = "trait"
 VISIBILITY_PUBLIC = 2
 ATTRIBUTES = ["ws", "bs", "s", "t", "i", "ag", "dex", "int", "wp", "fel"]
 
 
-def to_variant(entry):
+def modifiers_variant(entry):
     modifiers = entry.get("modifiers", {})
     attributes = modifiers.get("attributes", {})
     unknown = set(attributes) - set(ATTRIBUTES)
     if unknown:
         raise ValueError(f"{entry['name']}: unknown attributes {sorted(unknown)}")
     return {
+        "size": modifiers.get("size", 0),
+        "movement": modifiers.get("movement", 0),
+        "attributes": {a: attributes.get(a, 0) for a in ATTRIBUTES},
+        "effects": [],
+    }
+
+
+def trait_variant(entry):
+    return {
         "name": entry["name"],
         "description": entry["description"],
-        "modifiers": {
-            "size": modifiers.get("size", 0),
-            "movement": modifiers.get("movement", 0),
-            "attributes": {a: attributes.get(a, 0) for a in ATTRIBUTES},
-            "effects": [],
-        },
+        "modifiers": modifiers_variant(entry),
+        "hasvalue": entry["hasValue"],
         "source": entry["source"],
     }
 
 
-def plan(coll, entries):
+def mutation_variant(entry):
+    return {
+        "name": entry["name"],
+        "description": entry["description"],
+        "type": entry["type"],
+        "modifiers": modifiers_variant(entry),
+        "source": entry["source"],
+    }
+
+
+# Builds the stored 5e variant from a data file entry, per collection.
+VARIANTS = {"trait": trait_variant, "mutation": mutation_variant}
+
+
+def plan(coll, to_variant, entries):
     """Returns (attach, create, update, skipped, errors, owner) without writing anything.
 
     `update` lists already imported 5e variants that differ from the data file, as (document id, variant)."""
@@ -87,7 +106,7 @@ def plan(coll, entries):
                 attach.append((doc["_id"], doc["editions"]["4e"]["name"], variant))
 
     if len(owners) != 1:
-        errors.append(f"expected one owner of the public 4e traits, found {sorted(owners)}")
+        errors.append(f"expected one owner of the public 4e documents, found {sorted(owners)}")
 
     return attach, create, update, skipped, errors, owners.pop() if len(owners) == 1 else None
 
@@ -104,7 +123,8 @@ def apply(coll, attach, create, update, owner):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Import 5e creature traits.")
+    parser = argparse.ArgumentParser(description="Import 5e content of one type.")
+    parser.add_argument("--type", required=True, choices=sorted(VARIANTS), help="Content type to import")
     parser.add_argument(
         "--uri",
         default=DEFAULT_MONGO_URI,
@@ -117,9 +137,9 @@ def main():
     )
     parser.add_argument(
         "--data",
-        default=DEFAULT_DATA_FILE,
+        default=None,
         type=Path,
-        help=f"Traits data file (defaults to {DEFAULT_DATA_FILE})",
+        help=f"Data file (defaults to {DATA_DIR}/<type>s-5e.json)",
     )
     parser.add_argument(
         "--dry-run",
@@ -133,13 +153,15 @@ def main():
     )
     args = parser.parse_args()
 
-    entries = json.loads(args.data.read_text())
-    coll = MongoClient(args.uri)[args.db][COLLECTION]
+    data = args.data or DATA_DIR / f"{args.type}s-5e.json"
+    entries = json.loads(data.read_text())
+    coll = MongoClient(args.uri)[args.db][args.type]
+    to_variant = VARIANTS[args.type]
 
     print(f"Database: {args.db}")
-    print(f"Data:     {args.data} ({len(entries)} entries)")
+    print(f"Data:     {data} ({len(entries)} entries)")
 
-    attach, create, update, skipped, errors, owner = plan(coll, entries)
+    attach, create, update, skipped, errors, owner = plan(coll, to_variant, entries)
 
     print(f"\nAdd 5e variant to existing document: {len(attach)}")
     for doc_id, name4e, variant in attach:
@@ -191,17 +213,17 @@ def main():
         apply(coll, attach, create, update, owner)
 
     print("\nVerifying...")
-    attach, create, update, skipped, errors, _ = plan(coll, entries)
+    attach, create, update, skipped, errors, _ = plan(coll, to_variant, entries)
     if attach or create or update or errors or len(skipped) != len(entries):
         print(
-            f"Verification FAILED: {len(attach) + len(create)} trait(s) missing, {len(update)} different",
+            f"Verification FAILED: {len(attach) + len(create)} {args.type}(s) missing, {len(update)} different",
             file=sys.stderr,
         )
         for e in errors:
             print(f"  - {e}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Verification passed: all {len(entries)} traits are imported.")
+    print(f"Verification passed: all {len(entries)} {args.type}s are imported.")
 
 
 if __name__ == "__main__":

@@ -13,7 +13,8 @@ Backlog of known bugs and improvements that are not part of the current work. Ad
 ## Data
 
 - [x] **4e Fleet-footed talent has no +1 Movement modifier** in the public data. *(found in 5e discovery, appendix C)*
-- [ ] **4e Size traits have wrong size modifiers** in the public data: *Size - Tiny* is −2 (should be −3; −2 is Little) and *Size - Monstrous* is +2 (should be +3; +2 is Enormous). *(2026-10-02, found while preparing 5e traits)*
+- [x] **4e Size traits have wrong size modifiers** in the public data: *Size - Tiny* is −2 (should be −3; −2 is Little) and *Size - Monstrous* is +2 (should be +3; +2 is Enormous). *(2026-10-02, found while preparing 5e traits)*
+- [x] **4e mutations with wrong modifiers** in the public data (4e book p. 185): *Beast Within* has −5 I, should be −5 Int (its description already says Int); *Crawling Skin* has −5 Int, should be −5 I (description says Int too, also wrong). The 5e variants have the correct modifiers. *(2026-10-03, found while preparing 5e mutations)*
 
 ## Backend
 
@@ -31,6 +32,9 @@ Backlog of known bugs and improvements that are not part of the current work. Ad
   - Compendium opens automatically on any compendium page and remembers its open/closed state; same behaviour on mobile (slide-in sidebar).
   - Consider moving the 4e | 5e switch into the Compendium header while it only affects compendium content (characters stay 4e); move it back to the top when 5e characters arrive.
   - Name chosen over "Other" (confusing), "Library", "Game Content", "Reference", "Codex"/"Tome"; "Archives" ruled out (clashes with the *Archives of the Empire* sources).
+- [ ] **Rethink the pickers (select tables)** used to choose content, e.g. trappings, skills, talents, traits or qualities and flaws in the character and item editors. *(2026-10-03)*
+  - There are many different variants that don't look good together: `SelectTable` (checkbox), `SelectIdNumberTable` (number in the modal), `SelectIdValueTable` (value in the page table, "Add" for repeatable entries), plus the character editor's own pickers (`CharacterSkills`, `CharacterTalents`, `CharacterItems`, `CharacterCareer`).
+  - Goal: one standard, convenient and better-looking picker pattern. Purely UX, so do it alongside the sidebar rework above.
 - [ ] **Prettier:** about 40 files are not formatted (`npx prettier --check src`). *(2026-09-30)*
 - [ ] **Test fixtures cast with `as …ApiData`** (`skill.test.ts`, `career.test.ts`), which hides type errors — e.g. a stale `visibility` field went unnoticed. *(2026-09-30)*
 - [ ] **Open tabs after an API change:** check whether the maintenance page reloads the app when maintenance ends; tabs still running the old frontend break after a frontend/backend shape change. *(2026-09-30)*
