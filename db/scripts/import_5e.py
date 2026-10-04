@@ -5,6 +5,8 @@ e.g. --type trait reads traits-5e.json.
 
 Entries with `id4e` add `editions.5e` to that public 4e document.
 Entries without `id4e` create new public 5e-only documents, owned by the owner of the public 4e documents.
+Already imported 5e-only documents are found by their 5e name, so renaming such an entry in the data file
+after an import creates a new document (rename the existing one first).
 
 Idempotent: variants that are already imported unchanged are skipped.
 Already imported variants that differ from the data file are replaced only with --update.
@@ -39,7 +41,7 @@ def modifiers_variant(entry):
         "size": modifiers.get("size", 0),
         "movement": modifiers.get("movement", 0),
         "attributes": {a: attributes.get(a, 0) for a in ATTRIBUTES},
-        "effects": [],
+        "effects": modifiers.get("effects", []),
     }
 
 
@@ -85,13 +87,51 @@ def prayer_variant(entry):
     }
 
 
+def spell_variant(entry):
+    return {
+        "name": entry["name"],
+        "description": entry["description"],
+        "cn": entry["cn"],
+        "range": entry["range"],
+        "target": entry["target"],
+        "duration": entry["duration"],
+        "classification": {"type": entry["classification"]["type"], "labels": entry["classification"]["labels"]},
+        "source": entry["source"],
+    }
+
+
+def talent_variant(entry):
+    # 5e talents have a fixed max rank only (no characteristic-based rank) and no Tests line.
+    return {
+        "name": entry["name"],
+        "description": entry["description"],
+        "tests": "",
+        "maxrank": entry["maxRank"],
+        "attribute": 0,
+        "attribute2": 0,
+        "isgroup": entry["isGroup"],
+        "modifiers": modifiers_variant(entry),
+        "group": entry["group"],
+        "source": entry["source"],
+    }
+
+
 # Builds the stored 5e variant from a data file entry, per collection.
-VARIANTS = {"trait": trait_variant, "mutation": mutation_variant, "property": property_variant, "prayer": prayer_variant}
+VARIANTS = {
+    "trait": trait_variant,
+    "mutation": mutation_variant,
+    "property": property_variant,
+    "prayer": prayer_variant,
+    "spell": spell_variant,
+    "talent": talent_variant,
+}
 DATA_FILES = {
     "trait": "traits-5e.json",
     "mutation": "mutations-5e.json",
     "property": "properties-5e.json",
     "prayer": "prayers-5e.json",
+    "spell": "spells-5e.json",
+    "talent": "talents-5e.json",
 }
 
 

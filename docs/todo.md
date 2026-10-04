@@ -15,6 +15,7 @@ Backlog of known bugs and improvements that are not part of the current work. Ad
 - [x] **4e Fleet-footed talent has no +1 Movement modifier** in the public data. *(found in 5e discovery, appendix C)*
 - [x] **4e Size traits have wrong size modifiers** in the public data: *Size - Tiny* is −2 (should be −3; −2 is Little) and *Size - Monstrous* is +2 (should be +3; +2 is Enormous). *(2026-10-02, found while preparing 5e traits)*
 - [x] **4e mutations with wrong modifiers** in the public data (4e book p. 185): *Beast Within* has −5 I, should be −5 Int (its description already says Int); *Crawling Skin* has −5 Int, should be −5 I (description says Int too, also wrong). The 5e variants have the correct modifiers. *(2026-10-03, found while preparing 5e mutations)*
+- [ ] **4e Bless group contains Invoke talents** in the public data: *Invoke - Shallya*, *Invoke - Ranald*, *Invoke - The Night Prowler*, *Invoke - The Gamester*, *Invoke - The Deceiver* and *Invoke - The Protector* are in the Bless group instead of the Invoke group, so they are missing from Invoke. *(2026-10-04, found while preparing 5e talents)*
 
 ## Backend
 
