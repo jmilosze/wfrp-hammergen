@@ -16,6 +16,7 @@ Backlog of known bugs and improvements that are not part of the current work. Ad
 - [x] **4e Size traits have wrong size modifiers** in the public data: *Size - Tiny* is −2 (should be −3; −2 is Little) and *Size - Monstrous* is +2 (should be +3; +2 is Enormous). *(2026-10-02, found while preparing 5e traits)*
 - [x] **4e mutations with wrong modifiers** in the public data (4e book p. 185): *Beast Within* has −5 I, should be −5 Int (its description already says Int); *Crawling Skin* has −5 Int, should be −5 I (description says Int too, also wrong). The 5e variants have the correct modifiers. *(2026-10-03, found while preparing 5e mutations)*
 - [ ] **4e Bless group contains Invoke talents** in the public data: *Invoke - Shallya*, *Invoke - Ranald*, *Invoke - The Night Prowler*, *Invoke - The Gamester*, *Invoke - The Deceiver* and *Invoke - The Protector* are in the Bless group instead of the Invoke group, so they are missing from Invoke. *(2026-10-04, found while preparing 5e talents)*
+- [x] **4e Secret Signs - Knight group skill has a stale `group`** in the public data: it is stored as a member of *Secret Signs*, but group skills cannot belong to a group (the editor clears and hides it). Clear the field. *(2026-10-05, found while preparing 5e skills)*
 
 ## Backend
 
@@ -36,6 +37,7 @@ Backlog of known bugs and improvements that are not part of the current work. Ad
 - [ ] **Rethink the pickers (select tables)** used to choose content, e.g. trappings, skills, talents, traits or qualities and flaws in the character and item editors. *(2026-10-03)*
   - There are many different variants that don't look good together: `SelectTable` (checkbox), `SelectIdNumberTable` (number in the modal), `SelectIdValueTable` (value in the page table, "Add" for repeatable entries), plus the character editor's own pickers (`CharacterSkills`, `CharacterTalents`, `CharacterItems`, `CharacterCareer`).
   - Goal: one standard, convenient and better-looking picker pattern. Purely UX, so do it alongside the sidebar rework above.
+- [ ] **Allow group skills and talents to belong to other groups** (e.g. *Lore - Local* in *Lore*, *Secret Signs - Knight* in *Secret Signs*). The skill and talent editors currently clear and hide the group field for group entries. Character generation (career skills/talents given as a group, random picks, the character editor) must then handle nested groups, i.e. resolve a group to the members of its sub-groups too. *(2026-10-05)*
 - [ ] **Prettier:** about 40 files are not formatted (`npx prettier --check src`). *(2026-09-30)*
 - [ ] **Test fixtures cast with `as …ApiData`** (`skill.test.ts`, `career.test.ts`), which hides type errors — e.g. a stale `visibility` field went unnoticed. *(2026-09-30)*
 - [ ] **Open tabs after an API change:** check whether the maintenance page reloads the app when maintenance ends; tabs still running the old frontend break after a frontend/backend shape change. *(2026-09-30)*

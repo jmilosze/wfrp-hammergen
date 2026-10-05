@@ -116,6 +116,19 @@ def talent_variant(entry):
     }
 
 
+def skill_variant(entry):
+    return {
+        "name": entry["name"],
+        "description": entry["description"],
+        "type": entry["type"],
+        "displayzero": entry["displayZero"],
+        "group": entry["group"],
+        "attribute": entry["attribute"],
+        "isgroup": entry["isGroup"],
+        "source": entry["source"],
+    }
+
+
 # Builds the stored 5e variant from a data file entry, per collection.
 VARIANTS = {
     "trait": trait_variant,
@@ -124,6 +137,7 @@ VARIANTS = {
     "prayer": prayer_variant,
     "spell": spell_variant,
     "talent": talent_variant,
+    "skill": skill_variant,
 }
 DATA_FILES = {
     "trait": "traits-5e.json",
@@ -132,6 +146,7 @@ DATA_FILES = {
     "prayer": "prayers-5e.json",
     "spell": "spells-5e.json",
     "talent": "talents-5e.json",
+    "skill": "skills-5e.json",
 }
 
 
