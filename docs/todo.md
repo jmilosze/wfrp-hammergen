@@ -2,6 +2,10 @@
 
 Backlog of known bugs and improvements that are not part of the current work. Add the date and where it was found; move items out (or delete them) when done.
 
+## Features
+
+- [ ] **Read-only public links for your own characters and content** (characters, custom careers, items, etc.), so they can be shown to others, e.g. posted on Discord, without the viewer needing an account or edit rights. Today content is private, shared with linked users, or public (admin only). Needs a per-document "anyone with the link can view" option and a view page that works when logged out (a character also needs the content it references to be readable). *(2026-10-06)*
+
 ## Validation
 
 - [ ] **Move away from tag-based validation (`go-playground/validator`) to explicit per-type validation.** Struct tags only check single fields, so many invalid combinations get through. Example: a 4e talent can have `maxRank` 0 with both `attribute` and `attribute2` empty, i.e. a max rank of 0. Cross-field rules currently live in ad-hoc places (`extraCharacterValidation`, `ValidateEdition`). *(2026-10-01)*

@@ -6,7 +6,8 @@ e.g. --type trait reads traits-5e.json.
 Entries with `id4e` add `editions.5e` to that public 4e document.
 Entries without `id4e` create new public 5e-only documents, owned by the owner of the public 4e documents.
 Already imported 5e-only documents are found by their 5e name, so renaming such an entry in the data file
-after an import creates a new document (rename the existing one first).
+after an import creates a new document (rename the existing one first). A 5e-only entry with an `id` is created
+with that id and found by it instead (used when other entries reference it before it exists, e.g. new skill groups).
 
 Idempotent: variants that are already imported unchanged are skipped.
 Already imported variants that differ from the data file are replaced only with --update.
@@ -129,6 +130,60 @@ def skill_variant(entry):
     }
 
 
+def item_variant(entry):
+    # The data file holds the full item variant with camelCase keys (as in the API); stored keys are lowercase.
+    def lower_keys(value):
+        if isinstance(value, dict):
+            return {k.lower(): lower_keys(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [lower_keys(v) for v in value]
+        return value
+
+    return lower_keys({k: v for k, v in entry.items() if k not in ("id4e", "descriptionFrom")})
+
+
+def career_variant_builder(db):
+    """Career entries reference skills, talents and the income skill by 5e name: ids differ between databases for
+    5e-only documents, so they are looked up in the target database (each name must match one public 5e document)."""
+    ids = {}
+    for coll in ("skill", "talent"):
+        ids[coll] = {}
+        for doc in db[coll].find({"visibility": VISIBILITY_PUBLIC, "editions.5e": {"$exists": True}}, {"editions.5e.name": 1}):
+            ids[coll].setdefault(doc["editions"]["5e"]["name"], []).append(str(doc["_id"]))
+
+    def resolve(coll, name):
+        found = ids[coll].get(name, [])
+        if len(found) != 1:
+            raise SystemExit(f"Nothing was written: {len(found)} public 5e {coll}s are named '{name}'")
+        return found[0]
+
+    def career_variant(entry):
+        levels = {}
+        for n in range(1, 6):
+            level = entry[f"level{n}"]
+            levels[f"level{n}"] = {
+                "exists": level["exists"],
+                "name": level["name"],
+                "status": level["status"],
+                "standing": level["standing"],
+                "attributes": level["attributes"],
+                "skills": [resolve("skill", s) for s in level["skills"]],
+                "talents": [resolve("talent", t) for t in level["talents"]],
+                "items": level["items"],
+            }
+        return {
+            "name": entry["name"],
+            "description": entry["description"],
+            "class": entry["class"],
+            "species": entry["species"],
+            **levels,
+            "source": entry["source"],
+            "incomeskill": resolve("skill", entry["incomeSkill"]),
+        }
+
+    return career_variant
+
+
 # Builds the stored 5e variant from a data file entry, per collection.
 VARIANTS = {
     "trait": trait_variant,
@@ -138,6 +193,7 @@ VARIANTS = {
     "spell": spell_variant,
     "talent": talent_variant,
     "skill": skill_variant,
+    "item": item_variant,
 }
 DATA_FILES = {
     "trait": "traits-5e.json",
@@ -147,6 +203,8 @@ DATA_FILES = {
     "spell": "spells-5e.json",
     "talent": "talents-5e.json",
     "skill": "skills-5e.json",
+    "item": "items-5e.json",
+    "career": "careers-import-5e.json",
 }
 
 
@@ -159,6 +217,17 @@ def plan(coll, to_variant, entries):
 
     for entry in entries:
         variant = to_variant(entry)
+        if entry["id4e"] is None and entry.get("id"):
+            doc = coll.find_one({"_id": ObjectId(entry["id"])})
+            if doc is None:
+                create.append((ObjectId(entry["id"]), variant))
+            elif doc["visibility"] != VISIBILITY_PUBLIC or set(doc["editions"]) != {"5e"}:
+                errors.append(f"{variant['name']}: document {entry['id']} is not a public 5e-only document")
+            elif doc["editions"]["5e"] != variant:
+                update.append((doc["_id"], variant))
+            else:
+                skipped.append(variant["name"])
+            continue
         if entry["id4e"] is None:
             existing = list(coll.find({"visibility": VISIBILITY_PUBLIC, "editions.5e.name": variant["name"]}))
             if len(existing) > 1:
@@ -168,7 +237,7 @@ def plan(coll, to_variant, entries):
             elif existing:
                 skipped.append(variant["name"])
             else:
-                create.append(variant)
+                create.append((None, variant))
             continue
 
         doc = coll.find_one({"_id": ObjectId(entry["id4e"])})
@@ -200,14 +269,15 @@ def apply(coll, attach, create, update, owner):
     for doc_id, variant in update:
         coll.update_one({"_id": doc_id}, {"$set": {"editions.5e": variant}})
     if create:
-        coll.insert_many(
-            [{"ownerid": owner, "visibility": VISIBILITY_PUBLIC, "editions": {"5e": v}} for v in create]
-        )
+        coll.insert_many([
+            {**({"_id": doc_id} if doc_id else {}), "ownerid": owner, "visibility": VISIBILITY_PUBLIC, "editions": {"5e": v}}
+            for doc_id, v in create
+        ])
 
 
 def main():
     parser = argparse.ArgumentParser(description="Import 5e content of one type.")
-    parser.add_argument("--type", required=True, choices=sorted(VARIANTS), help="Content type to import")
+    parser.add_argument("--type", required=True, choices=sorted(DATA_FILES), help="Content type to import")
     parser.add_argument(
         "--uri",
         default=DEFAULT_MONGO_URI,
@@ -239,7 +309,7 @@ def main():
     data = args.data or DATA_DIR / DATA_FILES[args.type]
     entries = json.loads(data.read_text())
     coll = MongoClient(args.uri)[args.db][args.type]
-    to_variant = VARIANTS[args.type]
+    to_variant = career_variant_builder(coll.database) if args.type == "career" else VARIANTS[args.type]
 
     print(f"Database: {args.db}")
     print(f"Data:     {data} ({len(entries)} entries)")
@@ -251,7 +321,7 @@ def main():
         rename = "" if name4e == variant["name"] else f" (4e: {name4e})"
         print(f"  - {variant['name']}{rename} [{doc_id}]")
     print(f"\nCreate 5e-only document: {len(create)}")
-    for variant in create:
+    for _, variant in create:
         print(f"  - {variant['name']}")
     print(f"\nAlready imported but different, replace with --update: {len(update)}")
     for doc_id, variant in update:

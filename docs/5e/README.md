@@ -1,6 +1,6 @@
 # WFRP 5th edition support
 
-Working folder for adding Warhammer Fantasy Roleplay 5th edition to Hammergen. 5e is an evolution of 4e; the only 5e book so far is the core rulebook (`books/WFRP5_Core_Rulebook_01_09_26.pdf`).
+Working folder for adding Warhammer Fantasy Roleplay 5th edition to Hammergen. 5e is an evolution of 4e; the only 5e book so far is the core rulebook (`books/WFRP5_Core_Rulebook_06_10_26.pdf`, the 2026-10-01 update; data imported before 2026-10-06 was taken from the earlier `01_09_26` version and then updated).
 
 | Document | Purpose | Status |
 |---|---|---|
