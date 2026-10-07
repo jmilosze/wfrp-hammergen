@@ -1,27 +1,29 @@
 <script setup lang="ts">
-import Header from "../../components/PageHeader.vue";
+import Header from "../../../components/PageHeader.vue";
 import { computed, ref } from "vue";
-import { characterApi } from "../../services/wh/character.ts";
-import { CHARACTER_EDITION } from "../../services/wh/common.ts";
-import { authRequest } from "../../services/auth.ts";
+import { characterApi } from "../../../services/wh/character.ts";
+import { Edition } from "../../../services/wh/common.ts";
+import { authRequest } from "../../../services/auth.ts";
 import {
   CharacterFullItem,
   CharacterFullSpell,
-  CharacterFullToCsv,
+  characterFullToCsv4e,
   newCharacterFull,
-} from "../../services/wh/characterFull.ts";
-import ActionButton from "../../components/ActionButton.vue";
+} from "../../../services/wh/characterFull.ts";
+import ActionButton from "../../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";
-import ViewCharacterTable from "../../components/ViewCharacterTable.vue";
-import { usePrint } from "../../composables/print.ts";
-import { useAuth } from "../../composables/auth.ts";
-import AlertBlock from "../../components/AlertBlock.vue";
-import TextLink from "../../components/TextLink.vue";
+import ViewCharacterTable from "../../../components/ViewCharacterTable.vue";
+import { usePrint } from "../../../composables/print.ts";
+import { useAuth } from "../../../composables/auth.ts";
+import AlertBlock from "../../../components/AlertBlock.vue";
+import TextLink from "../../../components/TextLink.vue";
 
 const props = defineProps<{
   id: string;
 }>();
+
+const EDITION: Edition = "4e";
 
 const apiError = ref("");
 const showApiError = ref(true);
@@ -38,7 +40,7 @@ await loadCharacter();
 
 async function loadCharacter() {
   try {
-    character.value = await api.getElementForDisplay(props.id, CHARACTER_EDITION);
+    character.value = await api.getElementForDisplay(props.id, EDITION);
   } catch {
     apiError.value = "Error. Could not pull data from server.";
   }
@@ -52,7 +54,7 @@ function saveJson() {
 }
 
 function saveCsv() {
-  const blob = new Blob([CharacterFullToCsv(character.value)], {
+  const blob = new Blob([characterFullToCsv4e(character.value)], {
     type: "text/plain;charset=utf-8",
   });
   saveAs(blob, `${character.value.name}.csv`);
@@ -441,7 +443,11 @@ const grimoiresDisp = ref(
     <ActionButton class="m-1 btn btn-sm" @click="saveCsv()">Download CSV</ActionButton>
     <ActionButton class="m-1 btn btn-sm" @click="saveJson()">Download JSON</ActionButton>
     <ActionButton class="m-1 btn btn-sm" @click="print()">Print</ActionButton>
-    <ActionButton v-if="canEdit" class="m-1 btn btn-sm" @click="router.push({ name: 'character', params: { id: id } })">
+    <ActionButton
+      v-if="canEdit"
+      class="m-1 btn btn-sm"
+      @click="router.push({ name: 'character', params: { id: id }, query: { edition: EDITION } })"
+    >
       Edit
     </ActionButton>
     <ActionButton class="m-1 btn btn-sm" @click="router.push({ name: 'characters' })">Back to list</ActionButton>

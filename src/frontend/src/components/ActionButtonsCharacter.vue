@@ -3,9 +3,11 @@ import ActionButton from "./ActionButton.vue";
 import LinkButton from "./LinkButton.vue";
 import { useAuth } from "../composables/auth.ts";
 import { Icon } from "@iconify/vue";
+import { Edition } from "../services/wh/common.ts";
 
 defineProps<{
   id: string;
+  edition: Edition;
 }>();
 
 const emit = defineEmits<{
@@ -17,7 +19,7 @@ const auth = useAuth();
 
 <template>
   <div class="flex gap-2 my-1 shrink-0">
-    <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm">
+    <LinkButton routeName="viewCharacter" :params="{ id: id }" :query="{ edition: edition }" class="btn btn-sm">
       View
     </LinkButton>
     <ActionButton

@@ -1,19 +1,13 @@
-import {
-  getSizeFormula,
-  getMovementFormula,
-  getWoundsFormula,
-  printSize,
-  printSpeciesWithRegion,
-  SpeciesWithRegion,
-} from "./characterUtils.ts";
+import { printSize, printSpeciesWithRegion, SpeciesWithRegion } from "./characterUtils.ts";
+import { rulesFor } from "./rules/rules.ts";
 import { CareerApiData, printClassName, printStatusTier, StatusStanding, StatusTier } from "./career.ts";
 import {
   Attributes,
-  getAttributes,
   getAttributeValue,
   multiplyAttributes,
   printAttributeName,
   sumAttributes,
+  zeroAttributes,
 } from "./attributes.ts";
 import { ApiResponse, CharacterApiResponse, Edition, variant, Visibility } from "./common.ts";
 import { SkillApiData } from "./skill.ts";
@@ -27,6 +21,7 @@ import {
   MeleeType,
   OtherType,
   printAmmoGroup,
+  ArmourGroup,
   printArmourGroup,
   printArmourLocation,
   printItemType,
@@ -89,6 +84,7 @@ export interface CharacterFullApiData {
   gold: number;
   spentExp: number;
   currentExp: number;
+  careerTicks: number;
   sin: number;
   corruption: number;
   status: StatusTier;
@@ -194,6 +190,7 @@ export interface CharacterFullItem {
 export interface CharacterFull {
   id: string;
   ownerId: string;
+  edition: Edition;
   visibility: Visibility;
   name: string;
   description: string;
@@ -210,6 +207,7 @@ export interface CharacterFull {
   spentExp: number;
   currentExp: number;
   totalExp: number;
+  careerTicks: number;
   sin: number;
   corruption: number;
   status: string;
@@ -231,6 +229,8 @@ export interface CharacterFull {
   talents: CharacterFullTalent[];
   basicSkills: CharacterFullSkill[];
   advancedSkills: CharacterFullSkill[];
+  // Language skills (also in basic/advanced skills); the 5e sheet shows them as Known Languages.
+  languageSkills: CharacterFullSkill[];
 
   equippedArmor: CharacterFullItem[];
   equippedWeapon: CharacterFullItem[];
@@ -252,6 +252,7 @@ export interface CharacterFull {
 export function newCharacterFull({
   id = "",
   ownerId = "",
+  edition = "4e" as Edition,
   visibility = Visibility.Private,
   name = "",
   description = "",
@@ -268,16 +269,17 @@ export function newCharacterFull({
   spentExp = 0,
   currentExp = 0,
   totalExp = 0,
+  careerTicks = 0,
   sin = 0,
   corruption = 0,
   status = printStatusTier(StatusTier.Brass),
   standing = 0 as StatusStanding,
   currentCareer = {} as CharacterFullCareer,
   pastCareers = [] as CharacterFullCareer[],
-  baseAttributes = getAttributes(),
-  attributeAdvances = getAttributes(),
-  otherAttributes = getAttributes(),
-  attributes = getAttributes(),
+  baseAttributes = zeroAttributes(),
+  attributeAdvances = zeroAttributes(),
+  otherAttributes = zeroAttributes(),
+  attributes = zeroAttributes(),
   movement = 0,
   walk = 0,
   run = 0,
@@ -285,6 +287,7 @@ export function newCharacterFull({
   talents = [] as CharacterFullTalent[],
   basicSkills = [] as CharacterFullSkill[],
   advancedSkills = [] as CharacterFullSkill[],
+  languageSkills = [] as CharacterFullSkill[],
   equippedArmor = [] as CharacterFullItem[],
   equippedWeapon = [] as CharacterFullItem[],
   equippedOther = [] as CharacterFullItem[],
@@ -302,6 +305,7 @@ export function newCharacterFull({
   return {
     id: id,
     ownerId: ownerId,
+    edition: edition,
     visibility: visibility,
     name: name,
     description: description,
@@ -318,6 +322,7 @@ export function newCharacterFull({
     spentExp: spentExp,
     currentExp: currentExp,
     totalExp: totalExp,
+    careerTicks: careerTicks,
     sin: sin,
     corruption: corruption,
     status: status,
@@ -335,6 +340,7 @@ export function newCharacterFull({
     talents: talents,
     basicSkills: basicSkills,
     advancedSkills: advancedSkills,
+    languageSkills: languageSkills,
     equippedArmor: equippedArmor,
     equippedWeapon: equippedWeapon,
     equippedOther: equippedOther,
@@ -360,17 +366,17 @@ export function apiResponseToCharacterFull(
   const uniqueTraits = [...new Map(fullCharacterApi.object.traits.map((x) => [x.wh.id, x.wh])).values()];
   const mutationAttributes: Attributes = fullCharacterApi.object.mutations.reduce(
     (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
-    getAttributes(),
+    zeroAttributes(),
   );
 
   const traitAttributes: Attributes = uniqueTraits.reduce(
     (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
-    getAttributes(),
+    zeroAttributes(),
   );
 
   const talentAttributes: Attributes = fullCharacterApi.object.talents.reduce(
     (a, v) => sumAttributes(a, multiplyAttributes(v.number, variant(v.wh, e).modifiers.attributes)),
-    getAttributes(),
+    zeroAttributes(),
   );
 
   const otherAttributes = sumAttributes(mutationAttributes, traitAttributes, talentAttributes);
@@ -390,7 +396,8 @@ export function apiResponseToCharacterFull(
     uniqueTraits.reduce((a, v) => a + variant(v, e).modifiers.movement, 0) +
     fullCharacterApi.object.talents.reduce((a, v) => a + v.number * variant(v.wh, e).modifiers.movement, 0);
 
-  const size = getSizeFormula(sizeModifier);
+  const rules = rulesFor(e);
+  const size = rules.getSize(sizeModifier);
 
   const hardyRanks =
     fullCharacterApi.object.mutations.reduce(
@@ -404,6 +411,7 @@ export function apiResponseToCharacterFull(
     );
 
   const [basicSkills, advancedSkills] = getSkills(e, fullCharacterApi.object.skills, attributes);
+  const languageSkills = getLanguageSkills(e, fullCharacterApi.object.skills, attributes);
 
   const equippedArmor = fullCharacterApi.object.equippedItems.filter((x) => variant(x.wh, e).type === ItemType.Armour);
   const equippedWeapon = fullCharacterApi.object.equippedItems.filter((x) =>
@@ -416,6 +424,7 @@ export function apiResponseToCharacterFull(
   return {
     id: fullCharacterApi.id,
     ownerId: fullCharacterApi.ownerId,
+    edition: e,
     visibility: fullCharacterApi.visibility ?? Visibility.Private,
     name: fullCharacterApi.object.name,
     description: fullCharacterApi.object.description,
@@ -432,6 +441,7 @@ export function apiResponseToCharacterFull(
     spentExp: fullCharacterApi.object.spentExp,
     currentExp: fullCharacterApi.object.currentExp,
     totalExp: fullCharacterApi.object.spentExp + fullCharacterApi.object.currentExp,
+    careerTicks: fullCharacterApi.object.careerTicks,
     sin: fullCharacterApi.object.sin,
     corruption: fullCharacterApi.object.corruption,
     status: printStatusTier(fullCharacterApi.object.status),
@@ -455,14 +465,15 @@ export function apiResponseToCharacterFull(
     otherAttributes: otherAttributes,
     attributes: attributes,
 
-    movement: getMovementFormula(fullCharacterApi.object.species, movementModifier),
-    walk: 2 * getMovementFormula(fullCharacterApi.object.species, movementModifier),
-    run: 4 * getMovementFormula(fullCharacterApi.object.species, movementModifier),
-    wounds: getWoundsFormula(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
+    movement: rules.getMovement(fullCharacterApi.object.species, movementModifier),
+    walk: 2 * rules.getMovement(fullCharacterApi.object.species, movementModifier),
+    run: 4 * rules.getMovement(fullCharacterApi.object.species, movementModifier),
+    wounds: rules.getWounds(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
 
     talents: fullCharacterApi.object.talents.map((x) => ({ id: x.wh.id, name: variant(x.wh, e).name, rank: x.number })),
     basicSkills: basicSkills,
     advancedSkills: advancedSkills,
+    languageSkills: languageSkills,
 
     equippedArmor: getItems(e, equippedArmor, attributes),
     equippedWeapon: getItems(e, equippedWeapon, attributes),
@@ -519,6 +530,20 @@ function getSkills(e: Edition, characterSkills: WhNumber<SkillApiData>[], attrib
   }
 
   return [basicSkills.sort(sortByName), advancedSkills.sort(sortByName)];
+}
+
+// Public Language and Language - Guilder group skills: their members are languages.
+const LANGUAGE_GROUP_IDS = ["5cadc6a3828dc9389cc7b15a", "5d187bb123353e73dca2ec60"];
+
+function isLanguage(e: Edition, skill: ApiResponse<SkillApiData>): boolean {
+  return LANGUAGE_GROUP_IDS.includes(skill.id) || variant(skill, e).group.some((x) => LANGUAGE_GROUP_IDS.includes(x));
+}
+
+function getLanguageSkills(e: Edition, characterSkills: WhNumber<SkillApiData>[], attributes: Attributes) {
+  return characterSkills
+    .filter((x) => isLanguage(e, x.wh))
+    .map((x) => skillForDisplay(e, x.wh, x.number, attributes))
+    .sort(sortByName);
 }
 
 function skillForDisplay(
@@ -595,7 +620,11 @@ function getItems(
       item.dmg = damage;
     } else if (variant(charItem.wh, e).type === ItemType.Armour) {
       item.group = printArmourGroup(variant(charItem.wh, e).armour.group);
-      item.locations = variant(charItem.wh, e).armour.location.map((x) => printArmourLocation(x));
+      // 5e shields are armour in the Shield group, with no hit location.
+      item.locations =
+        variant(charItem.wh, e).armour.group === ArmourGroup.Shield
+          ? ["Shield"]
+          : variant(charItem.wh, e).armour.location.map((x) => printArmourLocation(x));
       item.ap = variant(charItem.wh, e).armour.points;
     } else if (variant(charItem.wh, e).type === ItemType.Grimoire) {
       item.spells = getSpells(e, variant(charItem.wh, e).grimoire.spells);
@@ -653,7 +682,7 @@ function getMutations(e: Edition, mutations: ApiResponse<MutationApiData>[]): Ch
   });
 }
 
-export function CharacterFullToCsv(characterFull: CharacterFull): string {
+export function characterFullToCsv4e(characterFull: CharacterFull): string {
   let csv = "Name,Species,Career,Class,Status,,,,,,\n";
   csv += csvStr(characterFull.name) + ",";
   csv += csvStr(characterFull.species) + ",";
@@ -886,7 +915,7 @@ export function CharacterFullToCsv(characterFull: CharacterFull): string {
   return csv;
 }
 
-function csvStr(stringValue: string | undefined): string {
+export function csvStr(stringValue: string | undefined): string {
   if (typeof stringValue === "undefined") {
     return "";
   } else {

@@ -1,11 +1,14 @@
-import { CHARACTER_EDITION, SHORT_DESC_LENGTH, Visibility, WhApi } from "../services/wh/common.ts";
+import { Edition, SHORT_DESC_LENGTH, Visibility, WhApi } from "../services/wh/common.ts";
 import { Ref, ref } from "vue";
 import { useAuth } from "./auth.ts";
 import { Character, CharacterApiData } from "../services/wh/character.ts";
 import { CharacterApiResponse } from "../services/wh/common.ts";
 
-// useCharacterList lists the user's characters; characters are single-edition (CHARACTER_EDITION).
-export function useCharacterList(characterApi: WhApi<Character, CharacterApiResponse<CharacterApiData>>) {
+// useCharacterList lists the user's characters of one edition (characters are single-edition).
+export function useCharacterList(
+  characterApi: WhApi<Character, CharacterApiResponse<CharacterApiData>>,
+  edition: Ref<Edition>,
+) {
   const auth = useAuth();
 
   const whList: Ref<Character[]> = ref([]);
@@ -21,7 +24,7 @@ export function useCharacterList(characterApi: WhApi<Character, CharacterApiResp
     loading.value = true;
     showApiError.value = true;
     try {
-      whList.value = await characterApi.listElements(CHARACTER_EDITION);
+      whList.value = await characterApi.listElements(edition.value);
     } catch {
       apiError.value = "Error. Could not pull data from server.";
     }
@@ -31,7 +34,7 @@ export function useCharacterList(characterApi: WhApi<Character, CharacterApiResp
   async function copyWh(whId: string): Promise<void> {
     showApiError.value = true;
     try {
-      const whCopy = await characterApi.getElement(whId, CHARACTER_EDITION);
+      const whCopy = await characterApi.getElement(whId, edition.value);
       whCopy.name = whCopy.name + " - copy";
       if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(0, SHORT_DESC_LENGTH);

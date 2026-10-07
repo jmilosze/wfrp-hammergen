@@ -1,4 +1,4 @@
-import { Attributes, copyAttributes, getAttributes, validAttributesFn } from "./attributes.ts";
+import { Attributes, copyAttributes, validAttributesFn, zeroAttributes } from "./attributes.ts";
 import { ValidationStatus } from "../../utils/validation.ts";
 import { Edition, validIntegerFn } from "./common.ts";
 import { cloneEntity } from "../../utils/clone.ts";
@@ -60,7 +60,7 @@ export class CharacterModifiers {
   attributes: Attributes;
   effects: Set<number>;
 
-  constructor({ size = 0, movement = 0, attributes = getAttributes(), effects = [] as number[] } = {}) {
+  constructor({ size = 0, movement = 0, attributes = zeroAttributes(), effects = [] as number[] } = {}) {
     this.size = size;
     this.movement = movement;
     this.attributes = attributes;

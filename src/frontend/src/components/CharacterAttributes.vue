@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  AttributeName,
-  Attributes,
-  getAttributes,
-  setAttributeValue,
-  sumAttributes,
-} from "../services/wh/attributes.ts";
-import { SpeciesWithRegion } from "../services/wh/characterUtils.ts";
+import { AttributeName, Attributes, setAttributeValue, sumAttributes } from "../services/wh/attributes.ts";
 import FormInput from "./FormInput.vue";
 import { computed } from "vue";
 import { ValidationStatus } from "../utils/validation.ts";
@@ -16,7 +9,10 @@ import { rollDice } from "../utils/random.ts";
 
 const props = defineProps<{
   title: string;
-  species: SpeciesWithRegion;
+  // Species characteristic modifiers (2d10 + modifier), from the character's edition rules.
+  speciesAttributes: Attributes;
+  // Step of the advance inputs (5 in 5e, where an Advance adds +5).
+  advanceStep?: number;
   otherAttributes: Attributes;
   rollsValidationStatus: ValidationStatus;
   advancesValidationStatus: ValidationStatus;
@@ -26,12 +22,8 @@ const props = defineProps<{
 const attributeRolls = defineModel<Attributes>("attributeRolls", { required: true });
 const attributeAdvances = defineModel<Attributes>("attributeAdvances", { required: true });
 
-const racial = computed(() => {
-  return getAttributes(props.species);
-});
-
 const total = computed(() => {
-  return sumAttributes(attributeRolls.value, attributeAdvances.value, props.otherAttributes, racial.value);
+  return sumAttributes(attributeRolls.value, attributeAdvances.value, props.otherAttributes, props.speciesAttributes);
 });
 
 const thClass = ["px-2", "py-2", "border-b", "border-neutral-300", "text-left"];
@@ -90,10 +82,10 @@ function newRolls() {
             <tr class="bg-white">
               <td :class="tdClass">Racial</td>
               <td :class="tdClassNoInput">
-                {{ racial.WS }}
+                {{ speciesAttributes.WS }}
               </td>
               <td :class="tdClassNoInput">
-                {{ racial.BS }}
+                {{ speciesAttributes.BS }}
               </td>
             </tr>
             <tr class="bg-white">
@@ -111,6 +103,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.WS"
                   @update:modelValue="updateAdvances(AttributeName.WS, $event)"
                 />
@@ -119,6 +112,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.BS"
                   @update:modelValue="updateAdvances(AttributeName.BS, $event)"
                 />
@@ -184,16 +178,16 @@ function newRolls() {
             </tr>
             <tr class="bg-white">
               <td :class="tdClassNoInput">
-                {{ racial.S }}
+                {{ speciesAttributes.S }}
               </td>
               <td :class="tdClassNoInput">
-                {{ racial.T }}
+                {{ speciesAttributes.T }}
               </td>
               <td :class="tdClassNoInput">
-                {{ racial.I }}
+                {{ speciesAttributes.I }}
               </td>
               <td :class="tdClassNoInput">
-                {{ racial.Ag }}
+                {{ speciesAttributes.Ag }}
               </td>
             </tr>
             <tr class="bg-white">
@@ -215,6 +209,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.S"
                   @update:modelValue="updateAdvances(AttributeName.S, $event)"
                 />
@@ -223,6 +218,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.T"
                   @update:modelValue="updateAdvances(AttributeName.T, $event)"
                 />
@@ -231,6 +227,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.I"
                   @update:modelValue="updateAdvances(AttributeName.I, $event)"
                 />
@@ -239,6 +236,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.Ag"
                   @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
                 />
@@ -309,16 +307,16 @@ function newRolls() {
             </tr>
             <tr class="bg-white">
               <td :class="tdClassNoInput">
-                {{ racial.Dex }}
+                {{ speciesAttributes.Dex }}
               </td>
               <td :class="tdClassNoInput">
-                {{ racial.Int }}
+                {{ speciesAttributes.Int }}
               </td>
               <td :class="tdClassNoInput">
-                {{ racial.WP }}
+                {{ speciesAttributes.WP }}
               </td>
               <td :class="tdClassNoInput">
-                {{ racial.Fel }}
+                {{ speciesAttributes.Fel }}
               </td>
             </tr>
             <tr class="bg-white">
@@ -340,6 +338,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.Dex"
                   @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
                 />
@@ -348,6 +347,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.Int"
                   @update:modelValue="updateAdvances(AttributeName.Int, $event)"
                 />
@@ -356,6 +356,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.WP"
                   @update:modelValue="updateAdvances(AttributeName.WP, $event)"
                 />
@@ -364,6 +365,7 @@ function newRolls() {
                 <FormInput
                   :disabled="props.disabled"
                   type="number"
+                  :step="advanceStep"
                   :modelValue="attributeAdvances.Fel"
                   @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
                 />
@@ -492,34 +494,34 @@ function newRolls() {
           <tr class="bg-white">
             <td :class="tdClass">Racial</td>
             <td :class="tdClassNoInput">
-              {{ racial.WS }}
+              {{ speciesAttributes.WS }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.BS }}
+              {{ speciesAttributes.BS }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.S }}
+              {{ speciesAttributes.S }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.T }}
+              {{ speciesAttributes.T }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.I }}
+              {{ speciesAttributes.I }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.Ag }}
+              {{ speciesAttributes.Ag }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.Dex }}
+              {{ speciesAttributes.Dex }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.Int }}
+              {{ speciesAttributes.Int }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.WP }}
+              {{ speciesAttributes.WP }}
             </td>
             <td :class="tdClassNoInput">
-              {{ racial.Fel }}
+              {{ speciesAttributes.Fel }}
             </td>
           </tr>
           <tr class="bg-white">
@@ -561,6 +563,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.WS"
                 @update:modelValue="updateAdvances(AttributeName.WS, $event)"
               />
@@ -569,6 +572,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.BS"
                 @update:modelValue="updateAdvances(AttributeName.BS, $event)"
               />
@@ -577,6 +581,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.S"
                 @update:modelValue="updateAdvances(AttributeName.S, $event)"
               />
@@ -585,6 +590,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.T"
                 @update:modelValue="updateAdvances(AttributeName.T, $event)"
               />
@@ -593,6 +599,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.I"
                 @update:modelValue="updateAdvances(AttributeName.I, $event)"
               />
@@ -601,6 +608,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.Ag"
                 @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
               />
@@ -609,6 +617,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.Dex"
                 @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
               />
@@ -617,6 +626,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.Int"
                 @update:modelValue="updateAdvances(AttributeName.Int, $event)"
               />
@@ -625,6 +635,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.WP"
                 @update:modelValue="updateAdvances(AttributeName.WP, $event)"
               />
@@ -633,6 +644,7 @@ function newRolls() {
               <FormInput
                 :disabled="props.disabled"
                 type="number"
+                :step="advanceStep"
                 :modelValue="attributeAdvances.Fel"
                 @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
               />

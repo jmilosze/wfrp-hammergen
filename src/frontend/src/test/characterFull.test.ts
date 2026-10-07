@@ -32,6 +32,7 @@ const characterFullApiData: CharacterFullApiData = {
   gold: 1,
   spentExp: 1000,
   currentExp: 230,
+  careerTicks: 0,
   status: 1,
   standing: 2,
   description: "character display",
@@ -1030,6 +1031,7 @@ const characterFullApiResponse: CharacterApiResponse<CharacterFullApiData> = {
 
 const characterFull = {
   id: "id",
+  edition: "4e",
   name: "charDisplay",
   species: "Wood Elf",
   size: "Small",
@@ -1043,6 +1045,7 @@ const characterFull = {
   spentExp: 1000,
   currentExp: 230,
   totalExp: 1230,
+  careerTicks: 0,
   status: "Silver",
   standing: 2,
   description: "character display",
@@ -1094,6 +1097,7 @@ const characterFull = {
       skill: 55,
     },
   ],
+  languageSkills: [],
   advancedSkills: [
     {
       id: "id5",

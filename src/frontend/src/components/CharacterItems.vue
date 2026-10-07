@@ -37,6 +37,7 @@ const props = defineProps<{
   storedValidationStatus: ValidationStatus;
   carriedValidationStatus: ValidationStatus;
   loading?: boolean;
+  hideGenerate?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -160,7 +161,7 @@ function onModifyClick() {
           <span class="flex-1">Modify</span>
         </ActionButton>
         <ActionButton
-          v-if="!disabled"
+          v-if="!disabled && !hideGenerate"
           :disabled="props.loading"
           class="whitespace-nowrap flex-1 btn btn-sm"
           @click="emit('addClassItems')"

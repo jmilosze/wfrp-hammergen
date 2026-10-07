@@ -33,6 +33,8 @@ const props = defineProps<{
   loading?: boolean;
   attributes: Attributes;
   validationStatus: ValidationStatus;
+  hideGenerate?: boolean;
+  step?: number;
 }>();
 
 const emit = defineEmits<{
@@ -130,7 +132,7 @@ function onModifyClick() {
           <span class="flex-1">Modify</span>
         </ActionButton>
         <ActionButton
-          v-if="!disabled"
+          v-if="!disabled && !hideGenerate"
           :disabled="props.loading"
           class="whitespace-nowrap flex-1 btn btn-sm"
           @click="emit('addSpeciesSkills')"
@@ -201,6 +203,7 @@ function onModifyClick() {
           <FormInput
             v-model="skillsWithNumber[id].number"
             type="number"
+            :step="step"
             class="min-w-16 w-full"
             @update:modelValue="emit('updated', { id: id, number: skillsWithNumber[id].number })"
           />

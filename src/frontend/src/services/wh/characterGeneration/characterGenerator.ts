@@ -10,7 +10,8 @@ import generateDescription from "./generateDescription.ts";
 import { generateRolls } from "./generateAttributes.ts";
 import { generateCareerSkills } from "./generateCareerSkills.ts";
 import { generateSpeciesSkills } from "./generateSpeciesSkills.ts";
-import { getAttributes, sumAttributes } from "../attributes.ts";
+import { sumAttributes } from "../attributes.ts";
+import { getSpeciesAttributes4e } from "../rules/rules4e.ts";
 import { generateCareerTalents } from "./generateCareerTalents.ts";
 import { generateSpeciesTalents } from "./generateSpeciesTalents.ts";
 import { resolveEntityGroups } from "./resolveEntityGroups.ts";
@@ -162,7 +163,7 @@ export function generateCharacter(
   );
   character.skills = skills;
 
-  const baseAttributes = sumAttributes(getAttributes(context.species), character.attributeRolls);
+  const baseAttributes = sumAttributes(getSpeciesAttributes4e(context.species), character.attributeRolls);
 
   const talentGroupMap = resolveEntityGroups(context.talents);
 

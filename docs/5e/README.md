@@ -10,6 +10,7 @@ Working folder for adding Warhammer Fantasy Roleplay 5th edition to Hammergen. 5
 | [plans/p1-edition-variants.md](plans/p1-edition-variants.md) | Plan: migrate content documents to the per-edition variant format; MongoDB layer only, no user-visible change. | done |
 | [plans/p2-edition-api.md](plans/p2-edition-api.md) | Plan: `editions` map in the content API (optional `?edition` filter), `edition` on characters; no user-visible change. | done |
 | [plans/p3-edition-ui.md](plans/p3-edition-ui.md) | Plan: global edition switch, lists per edition, editor 4e/5e toggle (C4, C5). | done |
+| [plans/p5-characters.md](plans/p5-characters.md) | Plan: 5e characters by hand — edition plumbing, model (tracker ticks), 5e calculated values, editor, sheet/print/CSV (H1–H5). | draft |
 | [appendices/a-careers-diff.md](appendices/a-careers-diff.md) | Career-by-career 4e vs 5e comparison (generated). | draft |
 | [appendices/b-weapons-armour-diff.md](appendices/b-weapons-armour-diff.md) | Weapon and armour table comparison (generated). | draft |
 | [appendices/c-talents.md](appendices/c-talents.md) | 5e talents with 4e names, max ranks and modelled mechanics. | draft |

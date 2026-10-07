@@ -1,6 +1,6 @@
 import { Talent } from "../talent.ts";
 import { Career, GenerationLevel, getCareerAttributesByLevel, getCareerTalentsByLevel } from "../career.ts";
-import { Attributes, copyAttributes, getAttributes, multiplyAttributes, sumAttributes } from "../attributes.ts";
+import { Attributes, copyAttributes, multiplyAttributes, sumAttributes, zeroAttributes } from "../attributes.ts";
 import { selectRandom, SelectRandomFn } from "../../../utils/random.ts";
 import { fillUpAdv, generateAdv } from "./generateAttributes.ts";
 import { EntityGroupMap, GroupPicker } from "./resolveEntityGroups.ts";
@@ -46,7 +46,7 @@ export function calculateTalentAttributeModifiers(
   acquiredTalents: Record<string, number>,
   allTalents: Talent[],
 ): Attributes {
-  let totalModifiers = getAttributes();
+  let totalModifiers = zeroAttributes();
 
   for (const talent of allTalents) {
     if (talent.id in acquiredTalents) {
@@ -171,7 +171,7 @@ export function generateCareerTalents(
   const { talentGroupMap } = context;
 
   const talents: Record<string, number> = { ...context.startingTalents };
-  let advances: Attributes = getAttributes();
+  let advances: Attributes = zeroAttributes();
   let totalXpSpent = 0;
 
   // --- Step 1: Character Creation (Level 1) ---

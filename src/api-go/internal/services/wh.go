@@ -69,6 +69,9 @@ func extraCharacterValidation(t wh.WhType, w *wh.Wh, validator *validator.Valida
 				return err
 			}
 		}
+		if err := char.ValidateEdition(char.Edition); err != nil {
+			return err
+		}
 	}
 	return nil
 }

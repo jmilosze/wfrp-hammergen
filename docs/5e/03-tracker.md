@@ -47,7 +47,7 @@ All open; see [02-design.md §3](02-design.md#3-decisions).
 | Q-OVERLAP | Same-named content across editions | ✅ | 2026-09-30 | One document per item with per-edition variants (option B, design §4.1a); users copy public items to add their own variants; lists return one variant |
 | Q-SPECIES | 5e species list | ✅ | 2026-09-30 | 5 core species only |
 | Q-ADV | Advance storage | ✅ | 2026-10-07 | Points, as today; only XP lookup, editor step and creation limits differ |
-| Q-TRACKER | Career Advancement Tracker | ✅ | 2026-10-07 | Store ticks (counter per career level) |
+| Q-TRACKER | Career Advancement Tracker | ✅ | 2026-10-07 | Store ticks: one running count (0–36) for the current career, manual like XP |
 | Q-AMBITION | Ambitions / Appearance | ✅ | 2026-10-07 | Not now: description and notes |
 | Q-CONVERT | 4e → 5e conversion | ✅ | 2026-09-30 | None (edition is fixed) |
 | Q-SIZE | Size scale | ✅ | 2026-10-06 | Revised after the 2026-10-01 book update: 5e has five steps (Small to Monstrous), no Tiny/Little; 5e Small talent not imported (removed from the book) |
@@ -97,12 +97,12 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| H1 | Character edition, fixed at creation (R3); 4e characters unchanged (R4) | ⬜ | character list to follow the global edition switch (today fixed to 4e via `CHARACTER_EDITION`); hide "create" for an edition without character support |
-| H2 | 5e character fields (no Resilience/Resolve; Ambitions/Appearance/tracker per decisions) | ⬜ | Q-AMBITION, Q-TRACKER |
-| H3 | 5e derived values (characteristics, skills, wounds, movement, size, encumbrance incl. max, fate/fortune) | ⬜ | Q-ADV; five size steps, no size-based wound formulas (Q-SIZE) |
-| H4 | 5e character editor restricted to 5e content | ⬜ | |
-| H5 | 5e sheet, print, CSV | ⬜ | discovery §12 |
-| H6 | Tests (both editions) | ⬜ | |
+| H1 | Character edition, fixed at creation (R3); 4e characters unchanged (R4) | ✅ | [plans/p5-characters.md](plans/p5-characters.md); character list to follow the global edition switch (today fixed to 4e via `CHARACTER_EDITION`); hide "create" for an edition without character support |
+| H2 | 5e character fields (no Resilience/Resolve; Ambitions/Appearance/tracker per decisions) | ✅ | [plans/p5-characters.md](plans/p5-characters.md); Q-AMBITION, Q-TRACKER |
+| H3 | 5e derived values (characteristics, skills, wounds, movement, size, encumbrance incl. max, fate/fortune) | ✅ | [plans/p5-characters.md](plans/p5-characters.md); Q-ADV; five size steps; wounds by size as p. 361 (Small 2 × TB) (Q-SIZE) |
+| H4 | 5e character editor restricted to 5e content | ✅ | [plans/p5-characters.md](plans/p5-characters.md) |
+| H5 | 5e sheet, print, CSV | ✅ | [plans/p5-characters.md](plans/p5-characters.md); discovery §12 |
+| H6 | Tests (both editions) | ✅ | [plans/p5-characters.md](plans/p5-characters.md) |
 
 ### Phase 3.3 — Opt-in 4e content for 5e characters
 
@@ -186,4 +186,5 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-10-01 | C4/C5 done: browser walkthrough on a local test API passed (lists per edition, create, add pre-filled 5e version, save both in one PUT, copy all variants, delete whole document, 5e talent rules/validation, 5e item groups, characters stay 4e). |
 | 2026-10-02 | 5e trait import (C6a/C6b) paused after the first staging import. Decided to merge traits and qualities/flaws whose parameter does not change their rules (ratings like Ward 8, targets like Hatred - Elves) into one entity each, with the value on the reference: plan P4 (C1c). |
 | 2026-10-06 | 5e core rulebook update (2026-10-01, `books/WFRP5_Core_Rulebook_06_10_26.pdf`) compared with the imported data; page numbers unchanged up to p. 365. Q-SIZE revised to five 5e steps. Changes applied via the data files and `db/scripts/update_5e_book_0610.py` (remove 5e Size - Tiny, Size - Little, Melee - Parry; rename Remedy - Wounded → Remedy - Infection). Run on staging and production 2026-10-06 (10 talents, 3 prayers, 13 spells, 5 qualities/flaws, 5 traits, 6 trappings re-imported with `--update`), production backup `db/hammergen_06_10_2026_before_5e_book_update`. Careers will be taken from the new PDF. |
-| 2026-10-07 | Character decisions: Q-ADV points (as today), Q-TRACKER store ticks per career level (10/12/14), Q-AMBITION not now (description/notes), Q-RULES sheet values only with XP typed in as in 4e. |
+| 2026-10-07 | Character decisions: Q-ADV points (as today), Q-TRACKER one running tick count for the current career (skulls at 10/22/36), Q-AMBITION not now (description/notes), Q-RULES sheet values only with XP typed in as in 4e. |
+| 2026-10-07 | Plan P5 implemented (H1–H6): separate 4e/5e character pages (`?edition=` in URLs), rules modules `rules4e.ts`/`rules5e.ts`, `careerTicks`, 5e species check, 5e editor and sheet (tracker, Known Languages, Shield row, 5e CSV). Walkthrough passed locally; not deployed. |
