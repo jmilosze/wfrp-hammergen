@@ -5,6 +5,7 @@ Backlog of known bugs and improvements that are not part of the current work. Ad
 ## Features
 
 - [ ] **Read-only public links for your own characters and content** (characters, custom careers, items, etc.), so they can be shown to others, e.g. posted on Discord, without the viewer needing an account or edit rights. Today content is private, shared with linked users, or public (admin only). Needs a per-document "anyone with the link can view" option and a view page that works when logged out (a character also needs the content it references to be readable). *(2026-10-06)*
+- [ ] **Content metrics per edition:** browsing, search and custom-content usage split by 4e/5e (API-side, see `docs/5e/02-design.md` §4.6a). Removed from the 5e scope (tracker A3). *(2026-10-07)*
 
 ## Validation
 

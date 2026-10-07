@@ -1,6 +1,6 @@
 # WFRP 5e — Tracker
 
-Status legend: ✅ done · 🟡 in progress · ⬜ not started · ⏸ blocked
+Status legend: ✅ done · 🟡 in progress · ⬜ not started · ⏸ blocked · ✘ dropped from scope
 
 Update this file as work progresses. Keep each item small enough to finish in one sitting; link PRs/commits in the Notes column.
 
@@ -26,12 +26,12 @@ Update this file as work progresses. Keep each item small enough to finish in on
 | D14 | Character sheet comparison | ✅ | discovery §12 |
 | D15 | Derived attributes (wounds, movement, size, encumbrance, fate/fortune) | ✅ | discovery §9 |
 | D16 | Verify `careers-5e.json` against the book (advance schemes, statuses, skills, talents, trappings, income skill) | ✅ | 2026-10-06, against the 2026-10-01 PDF: advance schemes read from the page icons for all 64 careers (all match); skills, talents, trappings, status, species, income skill and tagline re-extracted with fonts and compared with the first extraction (only the book's own updates and extraction noise differed); file rewritten from the new PDF |
-| D17 | Compare non-weapon trappings (containers, clothing, tools, food, animals/vehicles, poisons, herbs, prosthetics, magic items, hirelings) with DB | ⬜ | |
-| D18 | Compare spell texts/ranges/durations for same-named spells | ⬜ | only names and CN compared |
-| D19 | Compare prayer texts for same-named blessings/miracles | ⬜ | only names compared |
-| D20 | Compare skill descriptions | ⬜ | list/characteristics compared only |
-| D21 | Compare mutation effects with DB modifiers | ⬜ | |
-| D22 | Look for published 5e errata / FAQ; check discovery §15 items | ⬜ | |
+| D17 | Compare non-weapon trappings (containers, clothing, tools, food, animals/vehicles, poisons, herbs, prosthetics, magic items, hirelings) with DB | ✅ | 2026-10-06, done while preparing `data/items-5e.json` (C6a) |
+| D18 | Compare spell texts/ranges/durations for same-named spells | ✅ | 2026-10-03, done while preparing `data/spells-5e.json` (C6a) |
+| D19 | Compare prayer texts for same-named blessings/miracles | ✅ | 2026-10-03, done while preparing `data/prayers-5e.json` (C6a) |
+| D20 | Compare skill descriptions | ✅ | 2026-10-05, done while preparing `data/skills-5e.json` (C6a) |
+| D21 | Compare mutation effects with DB modifiers | ✅ | 2026-10-03, done while preparing `data/mutations-5e.json` (C6a); 4e modifier errors fixed (see `docs/todo.md`) |
+| D22 | Look for published 5e errata / FAQ; check discovery §15 items | ✅ | 2026-10-06: the 2026-10-01 book update (`books/WFRP5_Core_Rulebook_06_10_26.pdf`) compared with the imported data and applied (see log) |
 | D23 | Check how 4e supplement content maps to 5e (Appendix I compatibility) — e.g. supplement careers, species, qualities | ⬜ | input for Q-COMPAT |
 | D24 | Survey user data: how many characters use Gnome/Ogre/regional species, Resilience/Resolve, runes, supplement content | ⬜ | input for migration planning (Q-SCOPE, Q-SPECIES, Q-CONVERT now decided) |
 
@@ -46,15 +46,15 @@ All open; see [02-design.md §3](02-design.md#3-decisions).
 | Q-COMPAT | 4e supplement content in 5e | ✅ | 2026-09-30 | Opt-in, one-way per character; only where no 5e version; 4e talents/traits don't affect stats; not in generator |
 | Q-OVERLAP | Same-named content across editions | ✅ | 2026-09-30 | One document per item with per-edition variants (option B, design §4.1a); users copy public items to add their own variants; lists return one variant |
 | Q-SPECIES | 5e species list | ✅ | 2026-09-30 | 5 core species only |
-| Q-ADV | Advance storage | ⬜ | | |
-| Q-TRACKER | Career Advancement Tracker | ⬜ | | |
-| Q-AMBITION | Ambitions / Appearance | ⬜ | | |
+| Q-ADV | Advance storage | ✅ | 2026-10-07 | Points, as today; only XP lookup, editor step and creation limits differ |
+| Q-TRACKER | Career Advancement Tracker | ✅ | 2026-10-07 | Store ticks (counter per career level) |
+| Q-AMBITION | Ambitions / Appearance | ✅ | 2026-10-07 | Not now: description and notes |
 | Q-CONVERT | 4e → 5e conversion | ✅ | 2026-09-30 | None (edition is fixed) |
 | Q-SIZE | Size scale | ✅ | 2026-10-06 | Revised after the 2026-10-01 book update: 5e has five steps (Small to Monstrous), no Tiny/Little; 5e Small talent not imported (removed from the book) |
 | Q-PROPS | Parameterised qualities | ✅ | 2026-10-02 | Parameters that do not change the rules (ratings, targets) become a value on the reference (P4); parameters with their own rules or modifiers (Size, Trained, Mark of Chaos, Breath type) stay separate entities. Was (2026-09-30): one entity per value |
 | Q-SHIELD | Shields | ✅ | 2026-09-30 | Armour in 5e (5e rules only for 5e characters); 4e unchanged |
 | Q-PRAYER | Prayer classification | ✅ | 2026-09-30 | Keep as is (no deity/type field), both editions |
-| Q-RULES | Rules automation level | ⬜ | | |
+| Q-RULES | Rules automation level | ✅ | 2026-10-07 | Sheet values only for now; XP typed in as in 4e; no validation |
 | Q-DATA | Content entry approach | ✅ | 2026-09-30 | One-off import script for public 5e content; then editor with 4e/5e toggle |
 | Q-I18N | Future translations — keep model compatible | ⬜ | | Overlay of text fields per variant, not a variant axis |
 | Q-ANALYTICS | How to measure 4e vs 5e usage | ✅ | 2026-09-30 | API-side structured events; DB counts can complement |
@@ -84,14 +84,14 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 |---|---|---|---|
 | C1a | Migrate content documents to `editions.4e` + MongoDB layer reads/writes new format (no API/UI change) | ✅ | [plans/p1-edition-variants.md](plans/p1-edition-variants.md); migrated and deployed local → staging → production 2026-09-30; production backup `db/hammergen_30_09_2026_before_p1` |
 | C1b | `edition` in API (per-variant routes), `edition` on characters, frontend passes edition | ✅ | [plans/p2-edition-api.md](plans/p2-edition-api.md); deployed to local, staging and production 2026-09-30 (character edition in `object.edition`); production backup `db/hammergen_30_09_2026_before_p2` |
-| C1c | Values on references: one entity per trait/quality family whose parameter (rating or target) does not change its rules; the value is stored on the character/item reference | 🟡 | [plans/p4-values.md](plans/p4-values.md); blocks C6. Staging restored from `db/hammergen_01_10_2026` and migrated 2026-10-02; production migrated 2026-10-02, backup `db/hammergen_02_10_2026_before_p4`; names with placeholders (`rename_value_families.py`) on staging and production 2026-10-03, backup `db/hammergen_03_10_2026_before_rename`; new build not yet deployed |
+| C1c | Values on references: one entity per trait/quality family whose parameter (rating or target) does not change its rules; the value is stored on the character/item reference | ✅ | [plans/p4-values.md](plans/p4-values.md); blocks C6. Staging restored from `db/hammergen_01_10_2026` and migrated 2026-10-02; production migrated 2026-10-02, backup `db/hammergen_02_10_2026_before_p4`; names with placeholders (`rename_value_families.py`) on staging and production 2026-10-03, backup `db/hammergen_03_10_2026_before_rename`; new build deployed to production |
 | C2 | 5e-specific content model changes (talent max ranks/modifiers, qualities & flaws, shields as armour, armour groups/penalty, species, career income skill) | ✅ | design §4.1; done: career income skill, 5e career species, talents (max rank, no tests, Strong Back/Sturdy effects), qualities and flaws (no model change), shields and armour/melee groups; prayers unchanged (Q-PRAYER); size scale unchanged (Q-SIZE) |
 | C3 | 5e core source | ✅ | source `44` "WFRP 5e"; the editor's source picker offers Custom + WFRP 5e for 5e, all 4e sources for 4e (no API check) |
 | C4 | Browse/search/filter content by edition in lists (R2) | ✅ | [plans/p3-edition-ui.md](plans/p3-edition-ui.md); global 4e/5e switch |
 | C5 | Content editor with 4e/5e toggle (create/edit either or both variants; R13) | ✅ | [plans/p3-edition-ui.md](plans/p3-edition-ui.md); missing variant pre-filled from the other one; delete removes the whole document |
 | C6a | Extract and verify 5e core data (careers, skills, talents, items, qualities/flaws, spells, prayers, traits, mutations) | ✅ | All types imported to staging and production by 2026-10-06. Careers: `data/careers-5e.json` (verified, D16) → `data/careers-import-5e.json` (64 careers joined to the core 4e careers incl. 5 renames Advisor → Adviser, Bawd → Knave, Huffer → Pilot, Seaman → Sailor, Road Warden → Roadwarden; 4e descriptions kept, Ulthuan remarks dropped; skills/talents referenced by 5e name and resolved per database). Career choices ("A or B") are choice group skills/talents as in 4e: 29 (8 existing 4e groups given a 5e variant incl. Channelling - Wind of Magic and Arcane Magic - Wind of Magic, 21 new 5e-only with fixed ids), members get the group in their 5e group list; "(Any One)", "(All)", "(as Trade)" → the group. Skills, talents (with choice groups) and careers imported to staging and production 2026-10-06, production backup `db/hammergen_06_10_2026_before_5e_careers`. Traits: `data/traits-5e.json` regenerated 2026-10-03 for values (89 traits: 86 joined to 4e, 3 5e-only). Mutations: `data/mutations-5e.json` (55: 49 joined to 4e incl. the six Extra Mouth and six Patchy Feathers locations, 6 5e-only Spiny Protrusions locations); `db/scripts/fix_4e_mutations.py` (merge duplicate Panicked Urgency, rename to Profane Urgency / Thrill Hunter) run on staging and production 2026-10-03, production backup `db/hammergen_03_10_2026_before_mutation_fix`; its Patchy Feathers split (one mutation per hit location) run on staging and production 2026-10-03, production backup `db/hammergen_03_10_2026_before_patchy_feathers`; 5e mutations imported to staging and production 2026-10-03, production backup `db/hammergen_03_10_2026_before_5e_mutations`. Qualities and flaws: `data/properties-5e.json` (36: 34 joined to 4e incl. 4e Shield (Rating) → 5e Shield armour quality, 2 5e-only: Inflict (Condition), Parry); imported to staging and production 2026-10-03 (`import_5e.py --type property`), production backup `db/hammergen_03_10_2026_before_5e_properties`. Prayers: `data/prayers-5e.json` (79: all joined to 4e; renamed in 5e: Manann's Bounty → Manalt's Bounty, Stay Lucky → Cheat the Odds, Rich Man, Poor Man, Beggar Man, Thief → Trickster's Glamour, You Ain't Seen Me, Right? → You Saw Nothing); imported to staging and production 2026-10-03 (`import_5e.py --type prayer`), production backup `db/hammergen_03_10_2026_before_5e_prayers`. Spells: `db/scripts/fix_4e_spells.py` (merge duplicate Goodwill and Acquiescence) run on staging and production 2026-10-03, production backup `db/hammergen_03_10_2026_before_spell_merge`; `data/spells-5e.json` (146: 140 joined to 4e incl. 4 renames T'Essla's Arc → Coruscating Arc, Fat of the Land → Fare of the Land, Pha's Protection → Phâ's Protection, Curse of Ill-Fortune → Curse of Ill Fortune; 6 5e-only: Halétha's Joy, Shepherd's Eye, Glamour, Make Hale, Festering Inflammation, Miasma of Pestilence); imported to staging and production 2026-10-03, production backup `db/hammergen_03_10_2026_before_5e_spells`. Talents: `data/talents-5e.json` (354: 166 base talents, Small not imported per Q-SIZE, 15 groups incl. Impassioned Zeal plus Etiquette - Guilder, 174 members; 327 joined to 4e, 27 new 5e-only members); imported to staging and production 2026-10-04, production backup `db/hammergen_04_10_2026_before_5e_talents`. Skills: `data/skills-5e.json` (360: 45 base skills, Sail no longer a group so its ship members stay 4e-only; 18 groups incl. sub-groups Lore - Local, Secret Signs - Guilder, Secret Signs - Knight, Language - Guilder, which are not members of their parent group; 336 joined to 4e incl. 9 renames Art - Tatoo → Tattooing, Entertain - Fortune Telling → Fortunetelling, Language - Thief → Thieves Tongue, Lore - Empire → The Empire, Lore - Daemonology → Daemons, Melee - Two Handed → Two-handed, Secret Signs - Hedge Witch → Hedgefolk, Trade - Boatbuilding → Boatbuilder, Trade - Blacksmith → Smith; 24 new 5e-only members); imported to staging and production 2026-10-05 (`import_5e.py --type skill`), production backup `db/hammergen_05_10_2026_before_5e_skills`; `db/scripts/fix_4e_skills.py` (clear the stale 4e group of group skill Secret Signs - Knight) run on staging and production 2026-10-05, production backup `db/hammergen_05_10_2026_before_skill_fix`. Trappings: `db/scripts/fix_4e_items.py` (merge duplicate public Blanket and Match, keeping the copies used by generation props) run on staging and production 2026-10-06, production backup `db/hammergen_06_10_2026_before_item_merge`; `data/items-5e.json` generated (468: 234 joined to 4e, 52 5e-only, 182 copies of unmatched public 4e Other items; renames incl. Chainmail → Mail, Leather Skullcap → Leather Coif, Davrich Lamp → Feinkopf Lamp, Winds of Magic robes → Wizard's Robes; 4e shields → 5e Shield armour; 4e Black Lotus → Black Lotus (Sap)); imported to staging and production 2026-10-06 (`import_5e.py --type item`), production backup `db/hammergen_06_10_2026_before_5e_items` |
 | C6b | One-off import script: add `editions.5e` to matching public documents, create 5e-only public documents | ✅ | `db/scripts/import_5e.py --type trait|mutation|property|prayer|spell|talent|skill|item|career` (`--update` replaces changed variants; 5e-only entries may carry a fixed `id`; careers resolve skill/talent names in the target database). Q-DATA; name matching + rename table; link only clear 1-to-1 matches. Traits: `db/scripts/import_5e.py --type trait` (sets `hasValue` per variant); imported to staging and production 2026-10-03 (production backup `db/hammergen_03_10_2026_before_5e_traits`) |
-| C7 | Tests | ⬜ | |
+| C7 | Tests | ✘ | skipped 2026-10-07 |
 
 ### Phase 3.2 — 5e characters (5e content only)
 
@@ -128,7 +128,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 |---|---|---|---|
 | A1 | Decide approach and metric list | 🟡 | approach decided (API-side); metric list to do — design §4.6a |
 | A2 | Baseline 4e usage before 5e launches | ⬜ | so there is something to compare against |
-| A3 | Content browsing/search/custom-content metrics per edition | ⬜ | ship with phase 3.1 |
+| A3 | Content browsing/search/custom-content metrics per edition | ✘ | removed from the 5e scope 2026-10-07; moved to `docs/todo.md` |
 | A4 | Character create/view/edit/print metrics per edition, "allow 4e content" switch | ⬜ | ship with phases 3.2–3.3 |
 | A5 | Generator runs per edition | ⬜ | ship with phase 3.4 |
 | A6 | Report/dashboard | ⬜ | |
@@ -138,7 +138,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | # | Item | Status | Notes |
 |---|---|---|---|
 | X1 | Release plan per phase (flag, docs, announcement) | ⬜ | |
-| X2 | Update site texts that say "4th Edition" only (e.g. `<meta name="description">` in `index.html`, About page) | ⬜ | |
+| X2 | Update site texts that say "4th Edition" only (e.g. `<meta name="description">` in `index.html`, About page) | ⬜ | after 5e character creation is available (decided 2026-10-07) |
 
 ---
 
@@ -186,3 +186,4 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-10-01 | C4/C5 done: browser walkthrough on a local test API passed (lists per edition, create, add pre-filled 5e version, save both in one PUT, copy all variants, delete whole document, 5e talent rules/validation, 5e item groups, characters stay 4e). |
 | 2026-10-02 | 5e trait import (C6a/C6b) paused after the first staging import. Decided to merge traits and qualities/flaws whose parameter does not change their rules (ratings like Ward 8, targets like Hatred - Elves) into one entity each, with the value on the reference: plan P4 (C1c). |
 | 2026-10-06 | 5e core rulebook update (2026-10-01, `books/WFRP5_Core_Rulebook_06_10_26.pdf`) compared with the imported data; page numbers unchanged up to p. 365. Q-SIZE revised to five 5e steps. Changes applied via the data files and `db/scripts/update_5e_book_0610.py` (remove 5e Size - Tiny, Size - Little, Melee - Parry; rename Remedy - Wounded → Remedy - Infection). Run on staging and production 2026-10-06 (10 talents, 3 prayers, 13 spells, 5 qualities/flaws, 5 traits, 6 trappings re-imported with `--update`), production backup `db/hammergen_06_10_2026_before_5e_book_update`. Careers will be taken from the new PDF. |
+| 2026-10-07 | Character decisions: Q-ADV points (as today), Q-TRACKER store ticks per career level (10/12/14), Q-AMBITION not now (description/notes), Q-RULES sheet values only with XP typed in as in 4e. |

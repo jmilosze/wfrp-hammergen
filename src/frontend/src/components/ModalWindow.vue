@@ -27,7 +27,7 @@ if (props.size === "md") {
         @click.stop
       >
         <div class="p-3 flex justify-between">
-          <div class="text-xl font-semibold text-gray-900 dark:text-white"><slot name="header" /></div>
+          <div class="text-xl font-semibold text-gray-900"><slot name="header" /></div>
           <button
             class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded text-sm p-1"
             @click="modal.hideModal()"
