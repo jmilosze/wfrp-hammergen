@@ -800,7 +800,8 @@ export function characterFullToCsv4e(characterFull: CharacterFull): string {
   csv += "Name,Group,Locations,Enc,AP,Qualities,Runes,Number,,,\n";
 
   for (const armour of characterFull.equippedArmor) {
-    csv += csvStr(armour.name) + "," + csvStr(armour.locations?.join(", ")) + "," + armour.enc + ",";
+    csv += csvStr(armour.name) + "," + csvStr(armour.group) + ",";
+    csv += csvStr(armour.locations?.join(", ")) + "," + armour.enc + ",";
     csv +=
       armour.ap +
       "," +
@@ -809,7 +810,7 @@ export function characterFullToCsv4e(characterFull: CharacterFull): string {
       csvStr(armour.runes.map((x) => x.name + `(x${x.number})`).join(", ")) +
       "," +
       armour.number +
-      ",,,,\n";
+      ",,,\n";
   }
 
   csv += ",,,,,,,,,,\n";
@@ -904,7 +905,7 @@ export function characterFullToCsv4e(characterFull: CharacterFull): string {
   csv += "Spells in Grimoires,,,,,,,,,,\n";
   for (const item of [...characterFull.carried, ...characterFull.stored]) {
     if (item.spells) {
-      csv += item.name + ",,,,,,,,,\n";
+      csv += csvStr(item.name) + ",,,,,,,,,\n";
       csv += "Name,CN,Range,Target,Duration,,,,,,\n";
       for (const spell of item.spells) {
         csv += csvStr(spell.name) + "," + spell.cn + "," + csvStr(spell.range) + ",";
