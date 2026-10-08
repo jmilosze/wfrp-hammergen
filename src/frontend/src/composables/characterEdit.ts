@@ -1,13 +1,14 @@
 import { computed, ref } from "vue";
 import { useAuth } from "./auth.ts";
-import { ApiHeaders, CHARACTER_EDITION, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
+import { ApiHeaders, Edition, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
 import { SubmissionState } from "../utils/submission.ts";
 import { copySource } from "../services/wh/source.ts";
 
-// useCharacterEdit edits a single-edition entity (characters, CHARACTER_EDITION).
+// useCharacterEdit edits a single-edition entity (a character of the given edition).
 export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHeaders>(
   whInstance: T,
   elementApi: WhApi<T, TResponse>,
+  edition: Edition,
 ) {
   const auth = useAuth();
 
@@ -32,7 +33,7 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
 
     showApiError.value = true;
     try {
-      wh.value = await elementApi.getElement(id, CHARACTER_EDITION);
+      wh.value = await elementApi.getElement(id, edition);
       whOriginal.value = wh.value.copy();
       initSources.value = copySource(wh.value.source);
     } catch {
@@ -47,7 +48,7 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
   async function submitForm(): Promise<boolean> {
     submissionState.value.setInProgress();
 
-    if (!wh.value.isValid(CHARACTER_EDITION)) {
+    if (!wh.value.isValid(edition)) {
       submissionState.value.setValidationError();
       return false;
     }
@@ -77,7 +78,7 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
 
     submissionState.value.setInProgress();
     try {
-      await elementApi.deleteElement(wh.value.id, CHARACTER_EDITION);
+      await elementApi.deleteElement(wh.value.id, edition);
       whOriginal.value = wh.value.copy() as T;
       return true;
     } catch (error) {

@@ -132,7 +132,9 @@ func TestUpdateCharacterEditionCannotChange(t *testing.T) {
 	db := &fakeWhDb{existing: &wh.Wh{Id: "id1", OwnerId: "user1", Object: newMockCharacter(wh.Edition4e)}}
 	s := newTestWhService(t, db)
 
-	update := &wh.Wh{Id: "id1", Object: newMockCharacter(wh.Edition5e)}
+	character5e := newMockCharacter(wh.Edition5e)
+	character5e.Species = wh.CharacterSpeciesHumanReikland
+	update := &wh.Wh{Id: "id1", Object: character5e}
 	_, err := s.Update(context.Background(), wh.WhTypeCharacter, update, &auth.Claims{Id: "user1"})
 	if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "cannot be changed") {
 		t.Errorf("expected edition change error, got %v", err)
@@ -158,6 +160,54 @@ func TestCreateCharacterRequiresValidEdition(t *testing.T) {
 			_, err := s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: newMockCharacter(e)}, &auth.Claims{Id: "user1"})
 			if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "Edition") {
 				t.Errorf("expected edition validation error, got %v", err)
+			}
+		})
+	}
+}
+
+func TestCreateCharacterValidatesSpeciesPerEdition(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+
+	for name, tc := range map[string]struct {
+		edition wh.Edition
+		species wh.CharacterSpecies
+		wantErr bool
+	}{
+		"4e gnome":            {wh.Edition4e, wh.CharacterSpeciesGnomeDefault, false},
+		"4e human default":    {wh.Edition4e, wh.CharacterSpeciesHumanDefault, false},
+		"5e human (Reikland)": {wh.Edition5e, wh.CharacterSpeciesHumanReikland, false},
+		"5e wood elf":         {wh.Edition5e, wh.CharacterSpeciesWoodElfDefault, false},
+		"5e human default":    {wh.Edition5e, wh.CharacterSpeciesHumanDefault, true},
+		"5e gnome":            {wh.Edition5e, wh.CharacterSpeciesGnomeDefault, true},
+	} {
+		t.Run(name, func(t *testing.T) {
+			character := newMockCharacter(tc.edition)
+			character.Species = tc.species
+			_, err := s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: character}, &auth.Claims{Id: "user1"})
+			if tc.wantErr && (!errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "not available in 5e")) {
+				t.Errorf("expected species error, got %v", err)
+			}
+			if !tc.wantErr && err != nil {
+				t.Errorf("expected no error, got %v", err)
+			}
+		})
+	}
+}
+
+func TestCreateCharacterCareerTicksLimit(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+
+	for ticks, wantErr := range map[int]bool{0: false, 36: false, 37: true, -1: true} {
+		t.Run(fmt.Sprint(ticks), func(t *testing.T) {
+			character := newMockCharacter(wh.Edition5e)
+			character.Species = wh.CharacterSpeciesHumanReikland
+			character.CareerTicks = ticks
+			_, err := s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: character}, &auth.Claims{Id: "user1"})
+			if wantErr && !errors.Is(err, domain.ErrInvalidArguments) {
+				t.Errorf("expected ErrInvalidArguments, got %v", err)
+			}
+			if !wantErr && err != nil {
+				t.Errorf("expected no error, got %v", err)
 			}
 		})
 	}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CHARACTER_EDITION } from "../../../services/wh/common.ts";
+import { Edition } from "../../../services/wh/common.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import { defaultSource } from "../../../services/wh/source.ts";
@@ -68,7 +68,10 @@ const props = defineProps<{
   id: string;
 }>();
 
+const EDITION: Edition = "4e";
+
 const newCharacter = new Character({
+  edition: EDITION,
   name: "New character",
   species: SpeciesWithRegion.HumanReikland,
   id: "create",
@@ -97,23 +100,23 @@ const {
   submissionState,
   resetForm,
   showSubmissionStatus,
-} = useCharacterEdit(newCharacter, characterApi(authRequest));
+} = useCharacterEdit(newCharacter, characterApi(authRequest), EDITION);
 
-const careerListUtils = useWhList(careerApi(authRequest), CHARACTER_EDITION);
+const careerListUtils = useWhList(careerApi(authRequest), EDITION);
 careerListUtils.loadWhList();
-const spellListUtils = useWhList(spellApi(authRequest), CHARACTER_EDITION);
+const spellListUtils = useWhList(spellApi(authRequest), EDITION);
 spellListUtils.loadWhList();
-const prayerListUtils = useWhList(prayerApi(authRequest), CHARACTER_EDITION);
+const prayerListUtils = useWhList(prayerApi(authRequest), EDITION);
 prayerListUtils.loadWhList();
-const traitListUtils = useWhList(traitApi(authRequest), CHARACTER_EDITION);
+const traitListUtils = useWhList(traitApi(authRequest), EDITION);
 traitListUtils.loadWhList();
-const mutationListUtils = useWhList(mutationApi(authRequest), CHARACTER_EDITION);
+const mutationListUtils = useWhList(mutationApi(authRequest), EDITION);
 mutationListUtils.loadWhList();
-const skillListUtils = useWhList(skillApi(authRequest), CHARACTER_EDITION);
+const skillListUtils = useWhList(skillApi(authRequest), EDITION);
 skillListUtils.loadWhList();
-const talentListUtils = useWhList(talentApi(authRequest), CHARACTER_EDITION);
+const talentListUtils = useWhList(talentApi(authRequest), EDITION);
 talentListUtils.loadWhList();
-const itemListUtils = useWhList(itemApi(authRequest), CHARACTER_EDITION);
+const itemListUtils = useWhList(itemApi(authRequest), EDITION);
 itemListUtils.loadWhList();
 const generationPropsUtils = useGenerationProps(authRequest);
 generationPropsUtils.loadGenerationProps();
@@ -386,7 +389,9 @@ const modifierAttributes = computed(() => {
     <div class="text-xl">View character</div>
     <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
     <div class="flex">
-      <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View character</LinkButton>
+      <LinkButton routeName="viewCharacter" :params="{ id: id }" :query="{ edition: EDITION }" class="btn btn-sm">
+        View character
+      </LinkButton>
     </div>
   </div>
   <div v-if="canEdit && id === 'create'" class="border border-neutral-700 rounded p-2 my-4">
@@ -663,7 +668,7 @@ const modifierAttributes = computed(() => {
     v-model:attributeRolls="wh.attributeRolls"
     v-model:attributeAdvances="wh.attributeAdvances"
     :otherAttributes="modifierAttributes"
-    :species="wh.species"
+    :speciesAttributes="wh.getRacialAttributes()"
     title="Attributes"
     :rollsValidationStatus="validRolls"
     :advancesValidationStatus="validAdvances"

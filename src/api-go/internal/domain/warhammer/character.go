@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"slices"
 )
 
 type Character struct {
@@ -27,17 +28,35 @@ type Character struct {
 	Resolve           int              `json:"resolve" validate:"gte=0,lte=1000"`
 	CurrentExp        int              `json:"currentExp" validate:"gte=0,lte=10000000"`
 	SpentExp          int              `json:"spentExp" validate:"gte=0,lte=10000000"`
-	Status            Status           `json:"status" validate:"status_valid"`
-	Standing          Standing         `json:"standing" validate:"standing_valid"`
-	Brass             int              `json:"brass" validate:"gte=0,lte=1000000"`
-	Silver            int              `json:"silver" validate:"gte=0,lte=1000000"`
-	Gold              int              `json:"gold" validate:"gte=0,lte=1000000"`
-	Spells            []string         `json:"spells" validate:"dive,id_valid"`
-	Prayers           []string         `json:"prayers" validate:"dive,id_valid"`
-	Traits            []IdValue        `json:"traits" validate:"dive"`
-	Sin               int              `json:"sin" validate:"gte=0,lte=1000"`
-	Corruption        int              `json:"corruption" validate:"gte=0,lte=1000"`
-	Mutations         []string         `json:"mutations" validate:"dive,id_valid"`
+	// CareerTicks is the 5e Career Advancement Tracker: ticks in the current career (levels at 10/22/36).
+	CareerTicks int       `json:"careerTicks" bson:"careerticks,omitempty" validate:"gte=0,lte=36"`
+	Status      Status    `json:"status" validate:"status_valid"`
+	Standing    Standing  `json:"standing" validate:"standing_valid"`
+	Brass       int       `json:"brass" validate:"gte=0,lte=1000000"`
+	Silver      int       `json:"silver" validate:"gte=0,lte=1000000"`
+	Gold        int       `json:"gold" validate:"gte=0,lte=1000000"`
+	Spells      []string  `json:"spells" validate:"dive,id_valid"`
+	Prayers     []string  `json:"prayers" validate:"dive,id_valid"`
+	Traits      []IdValue `json:"traits" validate:"dive"`
+	Sin         int       `json:"sin" validate:"gte=0,lte=1000"`
+	Corruption  int       `json:"corruption" validate:"gte=0,lte=1000"`
+	Mutations   []string  `json:"mutations" validate:"dive,id_valid"`
+}
+
+// characterSpecies5e are the species 5e characters can be (Human uses the Reikland code).
+var characterSpecies5e = []CharacterSpecies{
+	CharacterSpeciesHumanReikland,
+	CharacterSpeciesHalflingDefault,
+	CharacterSpeciesDwarfDefault,
+	CharacterSpeciesHighElfDefault,
+	CharacterSpeciesWoodElfDefault,
+}
+
+func (character *Character) ValidateEdition(e Edition) error {
+	if e == Edition5e && !slices.Contains(characterSpecies5e, character.Species) {
+		return fmt.Errorf("species %s is not available in 5e", character.Species)
+	}
+	return nil
 }
 
 func (character *Character) Init() {
@@ -155,6 +174,7 @@ func (character *Character) ToFull(
 		Resolve:           character.Resolve,
 		CurrentExp:        character.CurrentExp,
 		SpentExp:          character.SpentExp,
+		CareerTicks:       character.CareerTicks,
 		Status:            character.Status,
 		Standing:          character.Standing,
 		Brass:             character.Brass,
@@ -392,6 +412,7 @@ type CharacterFull struct {
 	Resolve           int              `json:"resolve"`
 	CurrentExp        int              `json:"currentExp"`
 	SpentExp          int              `json:"spentExp"`
+	CareerTicks       int              `json:"careerTicks"`
 	Status            Status           `json:"status"`
 	Standing          Standing         `json:"standing"`
 	Brass             int              `json:"brass"`

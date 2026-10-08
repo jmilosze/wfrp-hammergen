@@ -93,9 +93,6 @@ export function printEditionName(edition: Edition): string {
   return edition === "4e" ? "4th Edition" : "5th Edition";
 }
 
-// Characters stay 4e until 5e characters are added (phase 3.2); character pages use 4e content.
-export const CHARACTER_EDITION: Edition = "4e";
-
 // One model per edition variant of a content document.
 export type Variants<T> = Partial<Record<Edition, T>>;
 

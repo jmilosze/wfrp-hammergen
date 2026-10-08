@@ -4,7 +4,7 @@ import { Character, characterApi } from "../../../services/wh/character.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import ActionButtonsCharacter from "../../../components/ActionButtonsCharacter.vue";
 
 import { useAuth } from "../../../composables/auth.ts";
@@ -14,9 +14,12 @@ import ActionButton from "../../../components/ActionButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 import { Visibility } from "../../../services/wh/common.ts";
+import { useEdition } from "../../../composables/edition.ts";
 
-const whList = useCharacterList(characterApi(authRequest));
+const { edition } = useEdition();
+const whList = useCharacterList(characterApi(authRequest), edition);
 await whList.loadWhList();
+watch(edition, () => whList.loadWhList());
 const auth = useAuth();
 
 const searchTerm = useRouteQuery("search", "");
@@ -78,6 +81,7 @@ function handleSampleCharacters() {
     :items="items"
     stackBreakpoint="4xl"
     rowRouteName="character"
+    :rowRouteQuery="{ edition: edition }"
     class="mx-1"
   >
     <LinkButton
@@ -85,12 +89,13 @@ function handleSampleCharacters() {
       class="mr-2 mb-2 shrink-0 btn"
       routeName="character"
       :params="{ id: 'create' }"
+      :query="{ edition: edition }"
     >
       Create new
     </LinkButton>
 
     <template #actions="{ id }: { id: string }">
-      <ActionButtonsCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
+      <ActionButtonsCharacter :id="id" :edition="edition" @copy="(copiedId) => whList.copyWh(copiedId)" />
     </template>
 
     <template #tooltip="{ ownerId, visibility }: { ownerId: string; visibility?: number }">

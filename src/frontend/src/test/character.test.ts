@@ -1,12 +1,12 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "../services/wh/character.ts";
-import { getWoundsFormula, printSpeciesWithRegion, Size, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
+import { printSpeciesWithRegion, Size, SpeciesWithRegion } from "../services/wh/characterUtils.ts";
+import { getSpeciesAttributes4e, getWounds4e } from "../services/wh/rules/rules4e.ts";
 import { StatusTier } from "../services/wh/career.ts";
 import { CharacterApiResponse, Visibility } from "../services/wh/common.ts";
 import { describe, expect, test } from "vitest";
 import { testIsEqualCommonProperties } from "./commonTests.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
-import { getAttributes } from "../services/wh/attributes.ts";
 import { Trait } from "../services/wh/trait.ts";
 
 const characterApiData: CharacterApiData = {
@@ -24,6 +24,7 @@ const characterApiData: CharacterApiData = {
   gold: 1,
   spentExp: 1000,
   currentExp: 230,
+  careerTicks: 0,
   sin: 1,
   corruption: 2,
   status: StatusTier.Brass,
@@ -89,6 +90,7 @@ const character = new Character({
   gold: 1,
   spentExp: 1000,
   currentExp: 230,
+  careerTicks: 0,
   sin: 1,
   corruption: 2,
   status: StatusTier.Brass,
@@ -148,7 +150,7 @@ test("isEqualTo returns true when characters have different modifiers", () => {
   otherCharacter.modifiers.talents = {
     talentId: {
       number: 2,
-      value: new CharacterModifiers({ attributes: getAttributes(SpeciesWithRegion.DwarfAtldorf) }),
+      value: new CharacterModifiers({ attributes: getSpeciesAttributes4e(SpeciesWithRegion.DwarfAtldorf) }),
     },
   };
   expect(character.isEqualTo(otherCharacter)).toBe(true);
@@ -483,7 +485,7 @@ describe("isEqualTo returns false", () => {
   });
 });
 
-describe("getWoundsFormula returns correct value", () => {
+describe("getWounds4e returns correct value", () => {
   test.each([
     { size: Size.Average, T: 10, WP: 10, S: 10, hardy: 1, expected: 5 }, // 1 + (2 * 1) + 1 + 1
     { size: Size.Average, T: 12, WP: 17, S: 20, hardy: 2, expected: 7 }, // 2 + (2 * 1) + 1 + 2
@@ -497,7 +499,7 @@ describe("getWoundsFormula returns correct value", () => {
     { size: Size.Monstrous, T: 20, WP: 10, S: 10, hardy: 0, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
     { size: 7, T: 20, WP: 10, S: 10, hardy: 0, expected: 48 }, // 8 * (1 + (2 * 2) + 1) },
   ])("when size = $size, T = $T, WP = $WP, S = $S", (t) => {
-    expect(getWoundsFormula(t.size, t.T, t.WP, t.S, t.hardy)).toEqual(t.expected);
+    expect(getWounds4e(t.size, t.T, t.WP, t.S, t.hardy)).toEqual(t.expected);
   });
 });
 

@@ -167,13 +167,13 @@ const routes = [
   {
     path: "/character/:id",
     name: "character",
-    component: () => import("./views/Warhammer/Edit/CreateCharacter.vue"),
+    component: () => import("./views/Warhammer/Character/EditCharacter.vue"),
     props: true,
   },
   {
     path: "/view/character/:id",
     name: "viewCharacter",
-    component: () => import("./views/Warhammer/ViewCharacter.vue"),
+    component: () => import("./views/Warhammer/Character/ViewCharacter.vue"),
     props: true,
   },
   {

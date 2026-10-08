@@ -1,16 +1,10 @@
-import {
-  DEFAULT_CAREER_ID,
-  getMovementFormula,
-  getWoundsFormula,
-  SpeciesWithRegion,
-  getSizeFormula,
-} from "./characterUtils.ts";
+import { DEFAULT_CAREER_ID, SpeciesWithRegion } from "./characterUtils.ts";
+import { rulesFor } from "./rules/rules.ts";
 import { StatusStanding, StatusTier } from "./career.ts";
-import { Attributes, copyAttributes, getAttributes, multiplyAttributes, sumAttributes } from "./attributes.ts";
+import { Attributes, copyAttributes, multiplyAttributes, sumAttributes, zeroAttributes } from "./attributes.ts";
 import {
   CharacterApiResponse,
   Edition,
-  CHARACTER_EDITION,
   validateIdNumber,
   validAttributesFn,
   validIntegerFn,
@@ -51,6 +45,7 @@ export interface CharacterApiData {
   gold: number;
   spentExp: number;
   currentExp: number;
+  careerTicks: number;
   sin: number;
   corruption: number;
   status: StatusTier;
@@ -74,6 +69,7 @@ export interface CharacterApiData {
 const CHARACTER_IGNORED_KEYS: ReadonlySet<string> = new Set(["modifiers"]);
 
 export class Character extends WhEntity {
+  edition: Edition;
   notes: string;
   species: SpeciesWithRegion;
   fate: number;
@@ -85,6 +81,7 @@ export class Character extends WhEntity {
   gold: number;
   spentExp: number;
   currentExp: number;
+  careerTicks: number;
   sin: number;
   corruption: number;
   status: StatusTier;
@@ -111,6 +108,7 @@ export class Character extends WhEntity {
   constructor({
     id = "",
     ownerId = "",
+    edition = "4e" as Edition,
     name = "",
     description = "",
     notes = "",
@@ -124,13 +122,14 @@ export class Character extends WhEntity {
     gold = 0,
     spentExp = 0,
     currentExp = 0,
+    careerTicks = 0,
     sin = 0,
     corruption = 0,
     status = StatusTier.Brass,
     standing = 0 as StatusStanding,
     career = { id: DEFAULT_CAREER_ID, number: 1 } as IdNumber,
-    attributeRolls = getAttributes(),
-    attributeAdvances = getAttributes(),
+    attributeRolls = zeroAttributes(),
+    attributeAdvances = zeroAttributes(),
     skills = {} as Record<string, number>,
     talents = {} as Record<string, number>,
     equippedItems = {} as Record<string, number>,
@@ -150,6 +149,7 @@ export class Character extends WhEntity {
     },
   } = {}) {
     super({ id, ownerId, visibility, name, description, source });
+    this.edition = edition;
     this.notes = notes;
     this.species = species;
     this.fate = fate;
@@ -161,6 +161,7 @@ export class Character extends WhEntity {
     this.gold = gold;
     this.spentExp = spentExp;
     this.currentExp = currentExp;
+    this.careerTicks = careerTicks;
     this.sin = sin;
     this.corruption = corruption;
     this.status = status;
@@ -241,6 +242,10 @@ export class Character extends WhEntity {
     return validIntegerFn(this.spentExp, 0, 10000000);
   }
 
+  validateCareerTicks(): ValidationStatus {
+    return validIntegerFn(this.careerTicks, 0, 36);
+  }
+
   validateRolls(): ValidationStatus {
     return validAttributesFn("Rolls", this.attributeRolls, -99, 99);
   }
@@ -293,6 +298,7 @@ export class Character extends WhEntity {
       this.validateCorruption().valid &&
       this.validateCurrentExp().valid &&
       this.validateSpentExp().valid &&
+      this.validateCareerTicks().valid &&
       this.validateRolls().valid &&
       this.validateAdvances().valid &&
       this.validateSkills().valid &&
@@ -316,11 +322,11 @@ export class Character extends WhEntity {
         .map((x) => x.value.movement)
         .reduce((a, b) => a + b, 0);
 
-    return getMovementFormula(this.species, mods);
+    return rulesFor(this.edition).getMovement(this.species, mods);
   }
 
   getRacialAttributes(): Attributes {
-    return getAttributes(this.species);
+    return rulesFor(this.edition).getSpeciesAttributes(this.species);
   }
 
   getBaseAttributes(): Attributes {
@@ -368,12 +374,12 @@ export class Character extends WhEntity {
         .map((x) => x.value.size)
         .reduce((a, b) => a + b, 0);
 
-    return getSizeFormula(mods);
+    return rulesFor(this.edition).getSize(mods);
   }
 
   getWounds(): number {
     const attributeTotal = this.getTotalAttributes();
-    return getWoundsFormula(
+    return rulesFor(this.edition).getWounds(
       this.getSize(),
       attributeTotal.T,
       attributeTotal.WP,
@@ -609,6 +615,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
     id: characterApi.id,
     ownerId: characterApi.ownerId,
     visibility: characterApi.visibility,
+    edition: characterApi.object.edition,
     name: characterApi.object.name,
     description: characterApi.object.description,
     notes: characterApi.object.notes,
@@ -622,6 +629,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
     gold: characterApi.object.gold,
     spentExp: characterApi.object.spentExp,
     currentExp: characterApi.object.currentExp,
+    careerTicks: characterApi.object.careerTicks,
     sin: characterApi.object.sin,
     corruption: characterApi.object.corruption,
     status: characterApi.object.status,
@@ -629,7 +637,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
     career: characterApi.object.career,
     attributeRolls: sumAttributes(
       characterApi.object.baseAttributes,
-      multiplyAttributes(-1, getAttributes(characterApi.object.species)),
+      multiplyAttributes(-1, rulesFor(characterApi.object.edition).getSpeciesAttributes(characterApi.object.species)),
     ),
     attributeAdvances: copyAttributes(characterApi.object.attributeAdvances),
     skills: idNumberArrayToRecord(characterApi.object.skills),
@@ -649,7 +657,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
 
 export function modelToApi(character: Character): CharacterApiData {
   return {
-    edition: CHARACTER_EDITION,
+    edition: character.edition,
     name: character.name,
     description: character.description,
     notes: character.notes,
@@ -663,6 +671,7 @@ export function modelToApi(character: Character): CharacterApiData {
     gold: character.gold,
     spentExp: character.spentExp,
     currentExp: character.currentExp,
+    careerTicks: character.careerTicks,
     sin: character.sin,
     corruption: character.corruption,
     status: character.status,

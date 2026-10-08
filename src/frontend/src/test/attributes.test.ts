@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { getAttributes, multiplyAttributes, sumAttributes } from "../services/wh/attributes.ts";
+import { multiplyAttributes, sumAttributes } from "../services/wh/attributes.ts";
+import { getSpeciesAttributes4e } from "../services/wh/rules/rules4e.ts";
 import { SpeciesWithRegion } from "../services/wh/characterUtils.ts";
 
 test("sumAttributes adds attributes correctly", () => {
@@ -56,6 +57,6 @@ describe("getRacialAttributes returns correct value", () => {
       expected: { WS: 20, BS: 10, S: 35, T: 35, I: 0, Ag: 15, Dex: 10, Int: 10, WP: 20, Fel: 10 },
     },
   ])("when species is $name", (t) => {
-    expect(getAttributes(t.species)).toEqual(t.expected);
+    expect(getSpeciesAttributes4e(t.species)).toEqual(t.expected);
   });
 });

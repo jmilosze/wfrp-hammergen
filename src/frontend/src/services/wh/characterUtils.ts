@@ -316,21 +316,6 @@ export const enum Sex {
   Female,
 }
 
-export function getMovementFormula(species: SpeciesWithRegion, mods: number): number {
-  let movement = 0;
-  if (HALFLING_LIST.includes(species) || DWARF_LIST.includes(species) || GNOME_LIST.includes(species)) {
-    movement = 3 + mods;
-  } else if (HUMAN_LIST.includes(species)) {
-    movement = 4 + mods;
-  } else if (OGRE_LIST.includes(species)) {
-    movement = 6 + mods;
-  } else if (HIGH_ELF_LIST.includes(species) || WOOD_ELF_LIST.includes(species)) {
-    movement = 5 + mods;
-  }
-
-  return movement <= 0 ? 0 : movement;
-}
-
 export const enum Size {
   Tiny = 0,
   Little,
@@ -360,36 +345,5 @@ export function printSize(size: number): string {
 }
 
 export const DEFAULT_SIZE = Size.Average;
-
-export function getWoundsFormula(size: number, T: number, WP: number, S: number, hardyRanks: number): number {
-  const TB = Math.floor(T / 10);
-  const WPB = Math.floor(WP / 10);
-  const SB = Math.floor(S / 10);
-
-  let base;
-
-  if (size <= Size.Tiny) {
-    base = 1;
-  } else if (size === Size.Little) {
-    base = TB;
-  } else if (size === Size.Small) {
-    base = 2 * TB + WPB;
-  } else if (size === Size.Average) {
-    base = SB + 2 * TB + WPB;
-  } else if (size === Size.Large) {
-    base = (SB + 2 * TB + WPB) * 2;
-  } else if (size === Size.Enormous) {
-    base = (SB + 2 * TB + WPB) * 4;
-  } else {
-    base = (SB + 2 * TB + WPB) * 8;
-  }
-
-  return base + TB * hardyRanks;
-}
-
-export function getSizeFormula(mods: number) {
-  const size = DEFAULT_SIZE + mods;
-  return size <= Size.Tiny ? Size.Tiny : size >= Size.Monstrous ? Size.Monstrous : size;
-}
 
 export const DEFAULT_CAREER_ID = "5d16a8ad9ae1c87a18017578";

@@ -1,11 +1,11 @@
 import { attCost } from "./calculateExperience.ts";
 import {
   Attributes,
-  getAttributes,
   AttributeName,
   copyAttributes,
   getAttributeValue,
   setAttributeValue,
+  zeroAttributes,
 } from "../attributes.ts";
 import { RollDiceFn, SelectRandomFn } from "../../../utils/random.ts";
 import { isKey } from "../../../utils/object.ts";
@@ -13,7 +13,7 @@ import { isKey } from "../../../utils/object.ts";
 const MAX_FILL_UP_TO = 1000;
 
 export function generateRolls(rollDiceFn: RollDiceFn): Attributes {
-  const rolls = getAttributes();
+  const rolls = zeroAttributes();
   for (const key of Object.keys(rolls)) {
     if (isKey(rolls, key)) {
       rolls[key] = rollDiceFn(10, 2);
