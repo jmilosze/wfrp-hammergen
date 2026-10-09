@@ -1,4 +1,12 @@
-import { authRequest, getUserInfo, isUserAdmin, isUserLoggedIn, loginUser, logoutUser, setUserInfo } from "../services/auth.ts";
+import {
+  authRequest,
+  getUserInfo,
+  isUserAdmin,
+  isUserLoggedIn,
+  loginUser,
+  logoutUser,
+  setUserInfo,
+} from "../services/auth.ts";
 import { isAxiosError } from "axios";
 import { ref } from "vue";
 import { type Router, useRouter } from "vue-router";

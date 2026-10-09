@@ -8,7 +8,7 @@ import {
   SpellLabel,
   SpellType,
   spellTypeList,
-} from "../services/wh/spell.ts";
+} from "../services/wh/content/spell.ts";
 import SelectInput from "./SelectInput.vue";
 import { Ref, ref, watch } from "vue";
 import ActionButton from "./ActionButton.vue";

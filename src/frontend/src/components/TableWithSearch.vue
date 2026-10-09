@@ -120,7 +120,6 @@ async function scrollToTop(): Promise<void> {
     window.scroll(0, 0);
   }
 }
-
 </script>
 
 <template>

@@ -1,5 +1,6 @@
 import { computed, MaybeRefOrGetter, toValue, watch } from "vue";
-import { ContentApi, WhProperty } from "../services/wh/common.ts";
+import { ContentApi } from "../services/wh/core/api.ts";
+import { WhProperty } from "../services/wh/core/entity.ts";
 import { useWhList } from "./whList.ts";
 
 // useWith4eContentList loads the 5e list of a content type and, while allow4e is on, also the 4e list. withAllowed

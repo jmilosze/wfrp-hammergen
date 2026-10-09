@@ -4,8 +4,8 @@ import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import TableWithSearch from "./TableWithSearch.vue";
-import { modifierEffectsByEdition, printEffectDesc, printEffectName } from "../services/wh/characterModifiers.ts";
-import { Edition } from "../services/wh/common.ts";
+import { modifierEffectsByEdition, printEffectDesc, printEffectName } from "../services/wh/core/characterModifiers.ts";
+import { Edition } from "../services/wh/core/edition.ts";
 
 const props = defineProps<{ initEffects: Set<number>; edition: Edition; disabled?: boolean }>();
 

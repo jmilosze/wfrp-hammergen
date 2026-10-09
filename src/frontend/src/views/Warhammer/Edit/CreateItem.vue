@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import { validFloatFn, validIntegerFn, Visibility } from "../../../services/wh/common.ts";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { validFloatFn, validIntegerFn } from "../../../services/wh/core/validators.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { ValidationStatus } from "../../../utils/validation.ts";
 import { authRequest } from "../../../services/auth.ts";
@@ -36,7 +37,7 @@ import {
   printWeaponHands,
   rangedGroupList,
   weaponHandsList,
-} from "../../../services/wh/item.ts";
+} from "../../../services/wh/content/item.ts";
 import { computed, ref, watch } from "vue";
 import FormInput from "../../../components/FormInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
@@ -48,11 +49,11 @@ import SourceTable from "../../../components/SourceTable.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import { useWhList } from "../../../composables/whList.ts";
-import { itemPropertyApi } from "../../../services/wh/itemproperty.ts";
+import { itemPropertyApi } from "../../../services/wh/content/itemproperty.ts";
 import SelectTable from "../../../components/SelectTable.vue";
 import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
-import { spellApi } from "../../../services/wh/spell.ts";
-import { runeApi } from "../../../services/wh/rune.ts";
+import { spellApi } from "../../../services/wh/content/spell.ts";
+import { runeApi } from "../../../services/wh/content/rune.ts";
 import SelectIdNumberTable from "../../../components/SelectIdNumberTable.vue";
 import SelectIdValueTable from "../../../components/SelectIdValueTable.vue";
 

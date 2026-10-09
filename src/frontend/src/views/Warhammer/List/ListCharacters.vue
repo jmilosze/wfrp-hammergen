@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCharacterList } from "../../../composables/characterList.ts";
-import { Character, characterApi } from "../../../services/wh/character.ts";
+import { Character, characterApi } from "../../../services/wh/character/character.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -13,7 +13,7 @@ import LinkButton from "../../../components/LinkButton.vue";
 import ActionButton from "../../../components/ActionButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
-import { Visibility } from "../../../services/wh/common.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
 import { useEdition } from "../../../composables/edition.ts";
 
 const { edition } = useEdition();

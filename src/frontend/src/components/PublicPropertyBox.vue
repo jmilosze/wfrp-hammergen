@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import HintModal from "./HintModal.vue";
 import TextLink from "./TextLink.vue";
-import { Visibility } from "../services/wh/common";
+import { Visibility } from "../services/wh/core/entity.ts";
 import { useAuth } from "../composables/auth";
 
 const visibility = defineModel<Visibility>({ default: Visibility.Private });

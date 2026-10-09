@@ -1,48 +1,60 @@
 <script setup lang="ts">
-import { Edition } from "../../../services/wh/common.ts";
+import { Edition } from "../../../services/wh/core/edition.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 import { useCharacterEdit } from "../../../composables/characterEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { Character, characterApi } from "../../../services/wh/character.ts";
-import { computed, watch } from "vue";
+import { Character, characterApi } from "../../../services/wh/character/character.ts";
+import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormInput from "../../../components/FormInput.vue";
 import LinkButton from "../../../components/LinkButton.vue";
-import { printSize, printSpeciesWithRegion, SpeciesWithRegion } from "../../../services/wh/characterUtils.ts";
-import { SPECIES_5E } from "../../../services/wh/rules/rules5e.ts";
+import { printSize } from "../../../services/wh/character/size.ts";
+import { printSpeciesWithRegion, SpeciesWithRegion } from "../../../services/wh/core/species.ts";
+import { SPECIES_5E } from "../../../services/wh/character/rules/rules5e.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import {
+  Career,
   careerApi,
   printStatusStanding,
   printStatusTier,
   statusStandingList,
   statusTierList,
-} from "../../../services/wh/career.ts";
+} from "../../../services/wh/content/career.ts";
 import { useWith4eContentList } from "../../../composables/with4eContent.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
 import SelectTable from "../../../components/SelectTable.vue";
 import SelectIdValueTable from "../../../components/SelectIdValueTable.vue";
-import { spellApi } from "../../../services/wh/spell.ts";
-import { mutationApi } from "../../../services/wh/mutation.ts";
-import { prayerApi } from "../../../services/wh/prayer.ts";
+import { spellApi } from "../../../services/wh/content/spell.ts";
+import { mutationApi } from "../../../services/wh/content/mutation.ts";
+import { prayerApi } from "../../../services/wh/content/prayer.ts";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
-import { skillApi } from "../../../services/wh/skill.ts";
-import { talentApi } from "../../../services/wh/talent.ts";
+import { skillApi } from "../../../services/wh/content/skill.ts";
+import { talentApi } from "../../../services/wh/content/talent.ts";
 import CharacterSkills from "../../../components/CharacterSkills.vue";
 import CharacterTalents from "../../../components/CharacterTalents.vue";
-import { itemApi } from "../../../services/wh/item.ts";
+import { itemApi } from "../../../services/wh/content/item.ts";
 import CharacterItems from "../../../components/CharacterItems.vue";
-import { traitApi } from "../../../services/wh/trait.ts";
+import { traitApi } from "../../../services/wh/content/trait.ts";
 import ModalWindow from "../../../components/ModalWindow.vue";
 import ActionButton from "../../../components/ActionButton.vue";
 import Ignored4eModifiersWarning from "../../../components/Ignored4eModifiersWarning.vue";
 import { useModal } from "../../../composables/modal.ts";
+import HintModal from "../../../components/HintModal.vue";
+import { useGenerationProps5e } from "../../../composables/generationProps.ts";
+import { generateCharacter5e } from "../../../services/wh/character/generation/5e/generator5e.ts";
+import { populateFateFortune5e } from "../../../services/wh/character/generation/5e/fate5e.ts";
+import { populateSpeciesSkills5e } from "../../../services/wh/character/generation/5e/skills5e.ts";
+import { populateClassItems } from "../../../services/wh/character/generation/shared/trappings.ts";
+import { populateDescription } from "../../../services/wh/character/generation/shared/description.ts";
+import { populateName } from "../../../services/wh/character/generation/shared/name.ts";
+import { populateSpeciesTalents } from "../../../services/wh/character/generation/shared/talents.ts";
+import { populateStatusAndStanding } from "../../../services/wh/character/generation/shared/status.ts";
 
 const props = defineProps<{
   id: string;
@@ -82,6 +94,18 @@ const mutationLists = useWith4eContentList(mutationApi(authRequest), () => wh.va
 const skillLists = useWith4eContentList(skillApi(authRequest), () => wh.value.allow4e);
 const talentLists = useWith4eContentList(talentApi(authRequest), () => wh.value.allow4e);
 const itemLists = useWith4eContentList(itemApi(authRequest), () => wh.value.allow4e);
+const generationPropsUtils = useGenerationProps5e(authRequest);
+generationPropsUtils.loadGenerationProps();
+
+// The generator uses 5e content only (R9), whether or not 4e content is allowed.
+const generationDataLoading = computed(
+  () =>
+    careerLists.list5e.loading.value ||
+    skillLists.list5e.loading.value ||
+    talentLists.list5e.loading.value ||
+    itemLists.list5e.loading.value ||
+    generationPropsUtils.loading.value,
+);
 
 await loadWh(props.id);
 
@@ -109,6 +133,70 @@ const validStored = computed(() => wh.value.validateStoredItems());
 const speciesOpts = SPECIES_5E.map((x) => ({ text: printSpeciesWithRegion(x), value: x }));
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
 const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
+
+const levelOpts = [
+  { text: "Level 1", value: 1 },
+  { text: "Level 2", value: 2 },
+  { text: "Level 3", value: 3 },
+  { text: "Level 4", value: 4 },
+];
+
+const selectedGenSpecies = ref(SpeciesWithRegion.HumanReikland);
+const selectedGenLevel = ref<1 | 2 | 3 | 4>(1);
+const selectedGenCareer = ref("");
+
+function genCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text: string; value: string }[] {
+  return careerList
+    .filter((x) => x.allowedForSpeciesWithRegion(species))
+    .filter((x) => x.level1.exists && x.level2.exists && x.level3.exists && x.level4.exists)
+    .map((x) => ({ text: x.name, value: x.id }))
+    .sort((a, b) => a.text.localeCompare(b.text));
+}
+
+const careerOpts = computed(() => genCareerOpts(selectedGenSpecies.value, careerLists.list5e.whList.value));
+
+watch(
+  careerOpts,
+  (newVal) => {
+    if (!newVal.some((x) => x.value === selectedGenCareer.value)) {
+      selectedGenCareer.value = newVal.length > 0 ? newVal[0].value : "";
+    }
+  },
+  { immediate: true },
+);
+
+const isGenerationDisabled = computed(() => generationDataLoading.value || careerOpts.value.length === 0);
+
+function rollCharacter() {
+  if (isGenerationDisabled.value) {
+    return;
+  }
+  const career = careerLists.list5e.whList.value.find((x) => x.id === selectedGenCareer.value);
+  if (!career) {
+    return;
+  }
+  wh.value = generateCharacter5e({
+    species: selectedGenSpecies.value,
+    career,
+    level: selectedGenLevel.value,
+    skills: skillLists.list5e.whList.value,
+    talents: talentLists.list5e.whList.value,
+    generationProps: generationPropsUtils.generationProps.value,
+  });
+
+  wh.value.hydrateAllModifiers({
+    talents: talentLists.list5e.whList.value,
+    mutations: mutationLists.list5e.whList.value,
+    traits: traitLists.list5e.whList.value,
+  });
+}
+
+function formGenerateStatusStanding() {
+  if (careerLists.loading.value) {
+    return;
+  }
+  populateStatusAndStanding(wh.value, careerLists.withAllowed.value);
+}
 
 const movement = computed(() => wh.value.getMovement());
 const wounds = computed(() => wh.value.getWounds());
@@ -219,6 +307,14 @@ const modifierAttributes = computed(() => {
     >
       {{ talentLists.list5e.apiError.value }}
     </AlertBlock>
+
+    <AlertBlock
+      v-if="generationPropsUtils.apiError.value && generationPropsUtils.showApiError.value"
+      alertType="red"
+      @close="generationPropsUtils.showApiError.value = false"
+    >
+      {{ generationPropsUtils.apiError.value }}
+    </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create 5e character' : canEdit ? 'Edit 5e character' : wh.name" />
   <div v-if="id !== 'create'" class="border border-neutral-700 rounded p-2 my-4">
@@ -228,6 +324,61 @@ const modifierAttributes = computed(() => {
       <LinkButton routeName="viewCharacter" :params="{ id: id }" :query="{ edition: EDITION }" class="btn btn-sm">
         View character
       </LinkButton>
+    </div>
+  </div>
+  <div v-if="canEdit && id === 'create'" class="border border-neutral-700 rounded p-2 my-4">
+    <div class="text-xl">Generate character</div>
+    <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
+    <div class="flex flex-col @2xl:flex-row gap-4">
+      <SelectInput
+        v-model="selectedGenSpecies"
+        title="Species"
+        :options="speciesOpts"
+        :disabled="!canEdit"
+        class="min-w-24 flex-1"
+      />
+      <SelectInput
+        v-model="selectedGenLevel"
+        title="Level"
+        :options="levelOpts"
+        :disabled="!canEdit"
+        class="min-w-24 flex-1"
+      />
+      <SelectInput
+        v-model="selectedGenCareer"
+        title="Career"
+        :options="careerOpts"
+        :disabled="!canEdit"
+        class="min-w-24 flex-1"
+      />
+    </div>
+    <div class="flex flex-wrap mt-4 gap-4">
+      <HintModal buttonText="More details" modalHeader="Character generation" modalId="charGenerationHint">
+        <p class="my-1">
+          A level 1 character is generated following the character creation chapter of the 5e rulebook, using 5e content
+          only. Species and career are chosen, not rolled, so the bonuses for keeping a rolled species or career are not
+          given.
+        </p>
+        <p class="my-1">
+          Characteristics are rolled and kept in order: the 6 extra points are spread at random over the 3
+          characteristics of the first career level and added to the rolls.
+        </p>
+        <p class="my-1">
+          The career box lists the 5e careers open to the selected species, including your custom 5e careers.
+        </p>
+        <p class="my-1">
+          Class trappings are added to the character sheet but career specific trappings are not and have to be added
+          manually afterward.
+        </p>
+        <p class="my-1">
+          Higher level characters are generated by creating a level 1 character and moving it up a level at a time. At
+          each level, the character takes 1 career talent and a +5 advance in each characteristic it can advance, and
+          the rest of the Career Advancement Tracker (10 ticks for level 2, 12 more for level 3, 14 more for level 4) is
+          filled with career skill advances. XP is spent as in the rulebook, plus 100 XP for each new level.
+        </p>
+        <p class="my-1">Generating will override all current entries on the character sheet.</p>
+      </HintModal>
+      <ActionButton class="btn btn-sm" :disabled="isGenerationDisabled" @click="rollCharacter"> Generate </ActionButton>
     </div>
   </div>
   <div class="border border-neutral-700 rounded p-2 my-4">
@@ -263,7 +414,11 @@ const modifierAttributes = computed(() => {
   <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit">
+          <ActionButton v-if="canEdit" class="ml-2 h-full btn btn-sm" @click="populateName(wh)">
+            Generate
+          </ActionButton>
+        </FormInput>
         <p class="-mb-3">Species</p>
         <div class="border border-neutral-300 rounded p-2">
           <SelectInput
@@ -274,7 +429,10 @@ const modifierAttributes = computed(() => {
             class="min-w-24 flex-1"
           />
         </div>
-        <p class="-mb-3">Fate and fortune</p>
+        <div class="flex flex-wrap items-center gap-2 -mb-3">
+          <p class="">Fate and fortune</p>
+          <ActionButton v-if="canEdit" class="btn btn-sm" @click="populateFateFortune5e(wh)">Generate</ActionButton>
+        </div>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex flex-col @2xl:flex-row gap-4">
             <FormInput
@@ -293,7 +451,17 @@ const modifierAttributes = computed(() => {
             />
           </div>
         </div>
-        <p class="-mb-3">Status and standing</p>
+        <div class="flex flex-wrap items-center gap-2 -mb-3">
+          <p class="">Status and standing</p>
+          <ActionButton
+            v-if="canEdit"
+            :disabled="careerLists.loading.value"
+            class="btn btn-sm"
+            @click="formGenerateStatusStanding"
+          >
+            Generate
+          </ActionButton>
+        </div>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex flex-col @2xl:flex-row gap-4">
             <SelectInput
@@ -407,7 +575,11 @@ const modifierAttributes = computed(() => {
           :validationStatus="validDesc"
           :disabled="!canEdit"
           class="mt-2 @3xl:mt-0"
-        />
+        >
+          <ActionButton v-if="canEdit" class="mb-1 btn btn-sm" @click="populateDescription(wh)">
+            Generate
+          </ActionButton>
+        </FormTextarea>
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!canEdit" />
         <Ignored4eModifiersWarning :names="ignored4eModifiers" />
         <p class="-mb-3">Calculated</p>
@@ -448,29 +620,33 @@ const modifierAttributes = computed(() => {
       :initSkills="wh.skills"
       :skillList="skillLists.withAllowed.value"
       :fourEIds="skillLists.fourEIds.value"
-      :loading="skillLists.loading.value"
+      :loading="skillLists.loading.value || generationPropsUtils.loading.value"
       :attributes="attributes"
       :validationStatus="validSkills"
-      :hideGenerate="true"
       :step="ADVANCE_STEP"
       class="flex-1"
       @reload="skillLists.reload"
       @clearAll="wh.clearSkills(true)"
       @updated="(event) => wh.updateSkills(event.id, event.number)"
+      @addSpeciesSkills="
+        populateSpeciesSkills5e(wh, skillLists.list5e.whList.value, generationPropsUtils.generationProps.value)
+      "
     />
     <CharacterTalents
       :disabled="!canEdit"
       :initTalents="wh.talents"
       :talentList="talentLists.withAllowed.value"
       :fourEIds="talentLists.fourEIds.value"
-      :loading="talentLists.loading.value"
+      :loading="talentLists.loading.value || generationPropsUtils.loading.value"
       :attributes="attributes"
       :validationStatus="validTalents"
-      :hideGenerate="true"
       class="flex-1"
       @reload="talentLists.reload"
       @clearAll="wh.clearTalents(true)"
       @updated="(event) => wh.updateTalents(event.id, event.number, talentLists.list5e.whList.value)"
+      @addSpeciesTalents="
+        populateSpeciesTalents(wh, talentLists.list5e.whList.value, generationPropsUtils.generationProps.value)
+      "
     />
   </div>
 
@@ -481,8 +657,7 @@ const modifierAttributes = computed(() => {
     :initStored="wh.storedItems"
     :itemList="itemLists.withAllowed.value"
     :fourEIds="itemLists.fourEIds.value"
-    :loading="itemLists.loading.value"
-    :hideGenerate="true"
+    :loading="itemLists.loading.value || careerLists.loading.value || generationPropsUtils.loading.value"
     :equippedValidationStatus="validEquipped"
     :carriedValidationStatus="validCarried"
     :storedValidationStatus="validStored"
@@ -492,6 +667,7 @@ const modifierAttributes = computed(() => {
     @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
     @carriedUpdated="(event) => wh.updateItems(event.id, event.number, 'carried')"
     @storedUpdated="(event) => wh.updateItems(event.id, event.number, 'stored')"
+    @addClassItems="populateClassItems(wh, careerLists.withAllowed.value, generationPropsUtils.generationProps.value)"
   />
 
   <div class="flex justify-between text-left gap-4 my-4 flex-wrap">

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { printSkillType, Skill } from "../services/wh/skill.ts";
+import { printSkillType, Skill } from "../services/wh/content/skill.ts";
 import { computed, ref, Ref, watch } from "vue";
-import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/attributes.ts";
+import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/core/attributes.ts";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ActionButton from "./ActionButton.vue";
@@ -13,7 +13,7 @@ import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
 import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
+import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
 
@@ -36,7 +36,6 @@ const props = defineProps<{
   loading?: boolean;
   attributes: Attributes;
   validationStatus: ValidationStatus;
-  hideGenerate?: boolean;
   step?: number;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
@@ -141,7 +140,7 @@ function onModifyClick() {
           <span class="flex-1">Modify</span>
         </ActionButton>
         <ActionButton
-          v-if="!disabled && !hideGenerate"
+          v-if="!disabled"
           :disabled="props.loading"
           class="whitespace-nowrap flex-1 btn btn-sm"
           @click="emit('addSpeciesSkills')"

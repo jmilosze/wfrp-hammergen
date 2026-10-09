@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Edition } from "../../../services/wh/common.ts";
+import { Edition } from "../../../services/wh/core/edition.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 import { useCharacterEdit } from "../../../composables/characterEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { Character, characterApi } from "../../../services/wh/character.ts";
+import { Character, characterApi, DEFAULT_CAREER_ID } from "../../../services/wh/character/character.ts";
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
@@ -13,56 +13,53 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import FormInput from "../../../components/FormInput.vue";
 import ActionButton from "../../../components/ActionButton.vue";
 import LinkButton from "../../../components/LinkButton.vue";
+import { printSize } from "../../../services/wh/character/size.ts";
 import {
-  DEFAULT_CAREER_ID,
   getDefaultSpeciesWithRegion,
   getSpeciesFromSpeciesWithRegion,
   getSpeciesWithRegionList,
-  printSize,
   printSpeciesRegion,
   SpeciesWithRegion,
-} from "../../../services/wh/characterUtils.ts";
+  printSpeciesName,
+  speciesList,
+  speciesWithRegionToSpecies,
+} from "../../../services/wh/core/species.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import { generateCharacter } from "../../../services/wh/characterGeneration/characterGenerator.ts";
-import {
-  populateClassItems,
-  populateDescription,
-  populateFateAndResilience,
-  populateName,
-  populateSpeciesSkills,
-  populateSpeciesTalents,
-  populateStatusAndStanding,
-} from "../../../services/wh/characterGeneration/populateCharacter.ts";
+import { generateCharacter4e } from "../../../services/wh/character/generation/4e/generator4e.ts";
+import { populateClassItems } from "../../../services/wh/character/generation/shared/trappings.ts";
+import { populateDescription } from "../../../services/wh/character/generation/shared/description.ts";
+import { populateName } from "../../../services/wh/character/generation/shared/name.ts";
+import { populateSpeciesTalents } from "../../../services/wh/character/generation/shared/talents.ts";
+import { populateStatusAndStanding } from "../../../services/wh/character/generation/shared/status.ts";
+import { populateFateAndResilience } from "../../../services/wh/character/generation/4e/fate4e.ts";
+import { populateSpeciesSkills4e } from "../../../services/wh/character/generation/4e/skills4e.ts";
 import {
   Career,
   careerApi,
-  printSpeciesName,
   printStatusStanding,
   printStatusTier,
-  speciesList,
-  speciesWithRegionToSpecies,
   statusStandingList,
   statusTierList,
-} from "../../../services/wh/career.ts";
+} from "../../../services/wh/content/career.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
 import SelectTable from "../../../components/SelectTable.vue";
 import SelectIdValueTable from "../../../components/SelectIdValueTable.vue";
-import { spellApi } from "../../../services/wh/spell.ts";
-import { mutationApi } from "../../../services/wh/mutation.ts";
-import { prayerApi } from "../../../services/wh/prayer.ts";
+import { spellApi } from "../../../services/wh/content/spell.ts";
+import { mutationApi } from "../../../services/wh/content/mutation.ts";
+import { prayerApi } from "../../../services/wh/content/prayer.ts";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import HintModal from "../../../components/HintModal.vue";
-import { skillApi } from "../../../services/wh/skill.ts";
-import { talentApi } from "../../../services/wh/talent.ts";
+import { skillApi } from "../../../services/wh/content/skill.ts";
+import { talentApi } from "../../../services/wh/content/talent.ts";
 import { useGenerationProps } from "../../../composables/generationProps.ts";
 import CharacterSkills from "../../../components/CharacterSkills.vue";
 import CharacterTalents from "../../../components/CharacterTalents.vue";
-import { itemApi } from "../../../services/wh/item.ts";
+import { itemApi } from "../../../services/wh/content/item.ts";
 import CharacterItems from "../../../components/CharacterItems.vue";
-import { traitApi } from "../../../services/wh/trait.ts";
+import { traitApi } from "../../../services/wh/content/trait.ts";
 
 const props = defineProps<{
   id: string;
@@ -297,7 +294,7 @@ function rollCharacter() {
   if (!career) {
     return;
   }
-  wh.value = generateCharacter({
+  wh.value = generateCharacter4e({
     species: selectedGenSpeciesWithRegion.value,
     career,
     skills: skillListUtils.whList.value,
@@ -687,7 +684,7 @@ const modifierAttributes = computed(() => {
       @clearAll="wh.clearSkills(true)"
       @updated="(event) => wh.updateSkills(event.id, event.number)"
       @addSpeciesSkills="
-        populateSpeciesSkills(wh, skillListUtils.whList.value, generationPropsUtils.generationProps.value)
+        populateSpeciesSkills4e(wh, skillListUtils.whList.value, generationPropsUtils.generationProps.value)
       "
     />
     <CharacterTalents

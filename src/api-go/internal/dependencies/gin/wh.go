@@ -241,7 +241,15 @@ func whListHandler(s warhammer.WhService, t warhammer.WhType) func(*gin.Context)
 
 func whGenerationPropsHandler(s warhammer.WhService) func(*gin.Context) {
 	return func(c *gin.Context) {
-		generationProps, err := s.GetGenerationProps(c.Request.Context())
+		// Without ?edition the 4e generation props are returned, as before.
+		e, ok := parseOptionalEdition(c)
+		if !ok {
+			return
+		}
+		if e == "" {
+			e = warhammer.Edition4e
+		}
+		generationProps, err := s.GetGenerationProps(c.Request.Context(), e)
 
 		if err != nil {
 			log.Println("error handling generation props", err)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/common.ts";
-import { defaultSource } from "../../../services/wh/source.ts";
-import { Talent, talentApi } from "../../../services/wh/talent.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
+import { Talent, talentApi } from "../../../services/wh/content/talent.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed, Ref, ref, watch } from "vue";
@@ -18,8 +18,8 @@ import DeleteBlock from "../../../components/DeleteBlock.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import SelectInput from "../../../components/SelectInput.vue";
-import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
-import { CharacterModifiers } from "../../../services/wh/characterModifiers.ts";
+import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/core/attributes.ts";
+import { CharacterModifiers } from "../../../services/wh/core/characterModifiers.ts";
 import SelectTable from "../../../components/SelectTable.vue";
 import { useWhList } from "../../../composables/whList.ts";
 import CareerReferencesTable from "../../../components/CareerReferencesTable.vue";

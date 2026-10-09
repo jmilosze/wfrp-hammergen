@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { Edition, EDITIONS } from "../../../services/wh/common.ts";
+import { Edition, EDITIONS } from "../../../services/wh/core/edition.ts";
 import ViewCharacter4e from "./ViewCharacter4e.vue";
 import ViewCharacter5e from "./ViewCharacter5e.vue";
 

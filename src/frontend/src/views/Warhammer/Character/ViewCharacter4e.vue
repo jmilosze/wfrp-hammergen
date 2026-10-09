@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import Header from "../../../components/PageHeader.vue";
 import { computed, ref } from "vue";
-import { characterApi } from "../../../services/wh/character.ts";
-import { Edition } from "../../../services/wh/common.ts";
+import { characterApi } from "../../../services/wh/character/character.ts";
+import { Edition } from "../../../services/wh/core/edition.ts";
 import { authRequest } from "../../../services/auth.ts";
 import {
   CharacterFullItem,
   CharacterFullSpell,
-  characterFullToCsv4e,
   newCharacterFull,
-} from "../../../services/wh/characterFull.ts";
+} from "../../../services/wh/character/characterFull.ts";
+import { characterFullToCsv4e } from "../../../services/wh/character/csv/csv4e.ts";
 import ActionButton from "../../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";

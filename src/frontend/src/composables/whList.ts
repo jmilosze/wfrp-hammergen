@@ -1,6 +1,9 @@
-import { ContentApi, Edition, SHORT_DESC_LENGTH, Visibility, WhProperty } from "../services/wh/common.ts";
+import { ContentApi } from "../services/wh/core/api.ts";
+import { Edition } from "../services/wh/core/edition.ts";
+import { SHORT_DESC_LENGTH } from "../services/wh/core/validators.ts";
+import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
 import { computed, MaybeRefOrGetter, Ref, ref, toValue, watch } from "vue";
-import { source } from "../services/wh/source.ts";
+import { source } from "../services/wh/core/source.ts";
 import { useAuth } from "./auth.ts";
 import { useRouteQuery } from "@vueuse/router";
 

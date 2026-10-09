@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import Header from "../../../components/PageHeader.vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 import {
   Career,
   careerApi,
   careerClassList,
   copyCareerLevel,
   printClassName,
-  printSpeciesName,
-  careerSpeciesByEdition,
   zeroCareerLevel,
-} from "../../../services/wh/career.ts";
-import { Visibility } from "../../../services/wh/common.ts";
+} from "../../../services/wh/content/career.ts";
+import { printSpeciesName, careerSpeciesByEdition } from "../../../services/wh/core/species.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed } from "vue";
@@ -27,8 +26,8 @@ import DeleteBlock from "../../../components/DeleteBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { useWhList } from "../../../composables/whList.ts";
-import { skillApi } from "../../../services/wh/skill.ts";
-import { talentApi } from "../../../services/wh/talent.ts";
+import { skillApi } from "../../../services/wh/content/skill.ts";
+import { talentApi } from "../../../services/wh/content/talent.ts";
 import CareerLevel from "../../../components/CareerLevel.vue";
 
 const props = defineProps<{

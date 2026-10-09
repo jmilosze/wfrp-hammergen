@@ -304,8 +304,8 @@ func whDocToWh(doc *whDocRead, t warhammer.WhType, e warhammer.Edition) (*warham
 	return &wh, nil
 }
 
-func (s *WhDbService) RetrieveGenerationProps(ctx context.Context) (*warhammer.GenProps, error) {
-	filter := bson.M{"name": "generationProps"}
+func (s *WhDbService) RetrieveGenerationProps(ctx context.Context, e warhammer.Edition) (*warhammer.GenProps, error) {
+	filter := bson.M{"name": warhammer.GenPropsName(e)}
 	var genProps warhammer.GenProps
 
 	err := s.Collections[warhammer.WhTypeOther].FindOne(ctx, filter).Decode(&genProps)

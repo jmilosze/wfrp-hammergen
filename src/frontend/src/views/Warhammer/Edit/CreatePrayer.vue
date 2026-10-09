@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/common.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
 import Header from "../../../components/PageHeader.vue";
-import { Prayer, prayerApi } from "../../../services/wh/prayer.ts";
+import { Prayer, prayerApi } from "../../../services/wh/content/prayer.ts";
 import { computed } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
@@ -14,7 +14,7 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 
 const props = defineProps<{
   id: string;

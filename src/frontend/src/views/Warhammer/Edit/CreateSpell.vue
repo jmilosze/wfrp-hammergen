@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/common.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
 import Header from "../../../components/PageHeader.vue";
-import { printSpellLabel, printSpellType, Spell, spellApi, SpellLabel } from "../../../services/wh/spell.ts";
+import { printSpellLabel, printSpellType, Spell, spellApi, SpellLabel } from "../../../services/wh/content/spell.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import FormInput from "../../../components/FormInput.vue";
@@ -14,7 +14,7 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 import SpellClassification from "../../../components/SpellClassification.vue";
 import DisplayLabels from "../../../components/DisplayLabels.vue";
 

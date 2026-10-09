@@ -5,7 +5,7 @@ Backlog of known bugs and improvements that are not part of the current work. Ad
 ## Features
 
 - [ ] **Read-only public links for your own characters and content** (characters, custom careers, items, etc.), so they can be shown to others, e.g. posted on Discord, without the viewer needing an account or edit rights. Today content is private, shared with linked users, or public (admin only). Needs a per-document "anyone with the link can view" option and a view page that works when logged out (a character also needs the content it references to be readable). *(2026-10-06)*
-- [ ] **Content metrics per edition:** browsing, search and custom-content usage split by 4e/5e (API-side, see `docs/5e/02-design.md` §4.6a). Removed from the 5e scope (tracker A3). *(2026-10-07)*
+- [ ] **Usage metrics per edition (4e vs 5e):** content browsing/search and custom content; characters created/viewed/edited/printed per edition; the "allow 4e content" switch; generator runs per edition; a report. API-side approach decided (`docs/5e/02-design.md` §4.6a, R14); no 4e baseline was taken before 5e launched. Removed from the 5e scope (tracker A1–A6). *(2026-10-07, extended 2026-10-09)*
 
 ## Validation
 
@@ -43,8 +43,9 @@ Backlog of known bugs and improvements that are not part of the current work. Ad
   - There are many different variants that don't look good together: `SelectTable` (checkbox), `SelectIdNumberTable` (number in the modal), `SelectIdValueTable` (value in the page table, "Add" for repeatable entries), plus the character editor's own pickers (`CharacterSkills`, `CharacterTalents`, `CharacterItems`, `CharacterCareer`).
   - Goal: one standard, convenient and better-looking picker pattern. Purely UX, so do it alongside the sidebar rework above.
 - [ ] **Allow group skills and talents to belong to other groups** (e.g. *Lore - Local* in *Lore*, *Secret Signs - Knight* in *Secret Signs*). The skill and talent editors currently clear and hide the group field for group entries. Character generation (career skills/talents given as a group, random picks, the character editor) must then handle nested groups, i.e. resolve a group to the members of its sub-groups too. *(2026-10-05)*
+- [ ] **Two `validAttributesFn`:** `services/wh/core/validators.ts` (field name in the message, used by characters) and `services/wh/core/attributes.ts` (used by modifiers) do the same check with different signatures and messages; keep one. *(2026-10-09)*
 - [ ] **Prettier:** about 40 files are not formatted (`npx prettier --check src`). *(2026-09-30)*
-- [ ] **Test fixtures cast with `as …ApiData`** (`skill.test.ts`, `career.test.ts`), which hides type errors — e.g. a stale `visibility` field went unnoticed. *(2026-09-30)*
+- [ ] **Test fixtures cast with `as …ApiData`** (`content/skill.spec.ts`, `content/career.spec.ts`), which hides type errors — e.g. a stale `visibility` field went unnoticed. *(2026-09-30)*
 - [ ] **Open tabs after an API change:** check whether the maintenance page reloads the app when maintenance ends; tabs still running the old frontend break after a frontend/backend shape change. *(2026-09-30)*
 
 ## Tooling and deployment

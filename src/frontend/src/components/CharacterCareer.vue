@@ -5,12 +5,12 @@ import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { Career, printClassName } from "../services/wh/career.ts";
+import { Career, printClassName } from "../services/wh/content/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
 import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
+import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
 

@@ -21,4 +21,23 @@ export default [
       "vue/html-self-closing": "off",
     },
   },
+  {
+    // Test code (specs, fixtures, src/testing.ts) must not end up in the app bundle.
+    files: ["src/**/*.{ts,vue}"],
+    ignores: ["src/**/*.spec.ts", "src/**/fixtures*.ts", "src/testing.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [{ name: "vitest", message: "Only spec and fixture files may import vitest." }],
+          patterns: [
+            {
+              group: ["**/*.spec.ts", "**/fixtures*.ts", "**/testing.ts"],
+              message: "App code must not import spec, fixture or testing files.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];

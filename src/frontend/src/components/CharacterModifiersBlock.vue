@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { Edition } from "../services/wh/common.ts";
+import { Edition } from "../services/wh/core/edition.ts";
 import ActionButton from "./ActionButton.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import CharacterModifiersAttributes from "./CharacterModifiersAttributes.vue";
 import { computed } from "vue";
-import { AttributeName, setAttributeValue } from "../services/wh/attributes.ts";
+import { AttributeName, setAttributeValue } from "../services/wh/core/attributes.ts";
 import SelectInput from "./SelectInput.vue";
-import { CharacterModifiers } from "../services/wh/characterModifiers.ts";
+import { CharacterModifiers } from "../services/wh/core/characterModifiers.ts";
 import FormInput from "./FormInput.vue";
 import CharacterModifierEffectTable from "./CharacterModifierEffectTable.vue";
 

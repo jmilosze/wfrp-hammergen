@@ -7,8 +7,8 @@ import {
   getCareersForSkill,
   getCareersForTalent,
   printClassName,
-} from "../services/wh/career.ts";
-import { Edition } from "../services/wh/common.ts";
+} from "../services/wh/content/career.ts";
+import { Edition } from "../services/wh/core/edition.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import AlertBlock from "./AlertBlock.vue";
 import TextLink from "./TextLink.vue";

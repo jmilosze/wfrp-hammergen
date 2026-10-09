@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { Icon } from "@iconify/vue";
-import { Visibility } from "../services/wh/common";
+import { Visibility } from "../services/wh/core/entity.ts";
 import { useAuth } from "../composables/auth";
 
 const props = defineProps<{

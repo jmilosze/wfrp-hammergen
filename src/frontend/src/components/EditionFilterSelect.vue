@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EditionFilter } from "../utils/editionFilter.ts";
+import { EditionFilter } from "../services/wh/core/edition.ts";
 
 const model = defineModel<EditionFilter>({ required: true });
 

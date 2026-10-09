@@ -6,17 +6,17 @@ import {
   itemPropertyApi,
   itemPropertyTypeList,
   printItemPropertyType,
-} from "../../../services/wh/itemproperty.ts";
+} from "../../../services/wh/content/itemproperty.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { source } from "../../../services/wh/source.ts";
+import { source } from "../../../services/wh/core/source.ts";
 import { computed } from "vue";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 
-import { getOptions } from "../../../utils/whList.ts";
+import { getOptions } from "../../../services/wh/core/listOptions.ts";
 import SelectInput from "../../../components/SelectInput.vue";
-import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
+import { itemTypeList, printItemType } from "../../../services/wh/content/item.ts";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";

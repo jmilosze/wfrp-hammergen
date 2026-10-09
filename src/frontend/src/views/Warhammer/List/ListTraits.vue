@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useSourceQuery, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
-import { Trait, traitApi } from "../../../services/wh/trait.ts";
+import { Trait, traitApi } from "../../../services/wh/content/trait.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { source } from "../../../services/wh/source.ts";
+import { source } from "../../../services/wh/core/source.ts";
 import { computed } from "vue";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 

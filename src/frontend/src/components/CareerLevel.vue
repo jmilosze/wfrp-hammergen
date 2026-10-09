@@ -4,7 +4,7 @@ import SelectInput from "./SelectInput.vue";
 import MultipleCheckboxInput from "./MultipleCheckboxInput.vue";
 import FormInput from "./FormInput.vue";
 import FormTextarea from "./FormTextarea.vue";
-import { AttributeName, attributeNameList, printAttributeName } from "../services/wh/attributes.ts";
+import { AttributeName, attributeNameList, printAttributeName } from "../services/wh/core/attributes.ts";
 import {
   printStatusStanding,
   printStatusTier,
@@ -12,9 +12,9 @@ import {
   statusStandingList,
   StatusTier,
   statusTierList,
-} from "../services/wh/career.ts";
-import type { Skill } from "../services/wh/skill.ts";
-import { Talent } from "../services/wh/talent.ts";
+} from "../services/wh/content/career.ts";
+import type { Skill } from "../services/wh/content/skill.ts";
+import { Talent } from "../services/wh/content/talent.ts";
 import { ValidationStatus } from "../utils/validation.ts";
 
 const name = defineModel<string>("name", { required: true });

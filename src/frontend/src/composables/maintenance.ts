@@ -6,7 +6,7 @@ export const STATUS_PATH = "/api/status";
 
 const maintenance = ref(false);
 
-export function isMaintenanceError(error: unknown): boolean {
+function isMaintenanceError(error: unknown): boolean {
   return isAxiosError(error) && error.response?.status === 503 && error.response.data?.message === MAINTENANCE_MESSAGE;
 }
 

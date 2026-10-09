@@ -6,13 +6,13 @@ import ActionButton from "./ActionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
-import { Item, printItemType } from "../services/wh/item.ts";
+import { Item, printItemType } from "../services/wh/content/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
 import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
+import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
 
@@ -40,7 +40,6 @@ const props = defineProps<{
   storedValidationStatus: ValidationStatus;
   carriedValidationStatus: ValidationStatus;
   loading?: boolean;
-  hideGenerate?: boolean;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
 }>();
@@ -170,7 +169,7 @@ function onModifyClick() {
           <span class="flex-1">Modify</span>
         </ActionButton>
         <ActionButton
-          v-if="!disabled && !hideGenerate"
+          v-if="!disabled"
           :disabled="props.loading"
           class="whitespace-nowrap flex-1 btn btn-sm"
           @click="emit('addClassItems')"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/common.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import {
@@ -9,8 +9,8 @@ import {
   Skill,
   skillApi,
   SkillType,
-} from "../../../services/wh/skill.ts";
-import { defaultSource } from "../../../services/wh/source.ts";
+} from "../../../services/wh/content/skill.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { useWhList } from "../../../composables/whList.ts";
@@ -18,7 +18,7 @@ import { computed, ref, Ref, watch } from "vue";
 import FormInput from "../../../components/FormInput.vue";
 import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
 import SelectInput from "../../../components/SelectInput.vue";
-import { AttributeName, printAttributeName } from "../../../services/wh/attributes.ts";
+import { AttributeName, printAttributeName } from "../../../services/wh/core/attributes.ts";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
-import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/source.ts";
-import { Edition } from "../services/wh/common.ts";
+import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/core/source.ts";
+import { Edition } from "../services/wh/core/edition.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import TableWithSearch from "./TableWithSearch.vue";

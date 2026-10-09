@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/common.ts";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { Mutation, mutationApi, mutationTypeList, printMutationType } from "../../../services/wh/mutation.ts";
+import { Mutation, mutationApi, mutationTypeList, printMutationType } from "../../../services/wh/content/mutation.ts";
 import { computed, ref } from "vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";

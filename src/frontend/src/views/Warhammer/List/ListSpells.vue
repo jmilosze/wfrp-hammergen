@@ -9,15 +9,15 @@ import {
   Spell,
   spellApi,
   spellTypeList,
-} from "../../../services/wh/spell.ts";
+} from "../../../services/wh/content/spell.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { source } from "../../../services/wh/source.ts";
+import { source } from "../../../services/wh/core/source.ts";
 import { computed, watch } from "vue";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 
-import { getOptions } from "../../../utils/whList.ts";
+import { getOptions } from "../../../services/wh/core/listOptions.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";

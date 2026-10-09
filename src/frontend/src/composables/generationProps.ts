@@ -1,14 +1,9 @@
-import { ref } from "vue";
-import { GenerationProps, getGenerationProps } from "../services/wh/generationProps.ts";
+import { ref, shallowRef } from "vue";
+import { GenerationProps, GenerationProps5e, getGenerationProps, getGenerationProps5e } from "../services/wh/character/generation/shared/generationProps.ts";
 import { AxiosInstance } from "axios";
 
-export function useGenerationProps(axiosInstance: AxiosInstance) {
-  const generationProps = ref<GenerationProps>({
-    classItems: [],
-    randomTalents: [],
-    speciesTalents: {},
-    speciesSkills: {},
-  });
+function useLoadedGenerationProps<T>(initial: T, load: () => Promise<T>) {
+  const generationProps = shallowRef<T>(initial);
 
   const apiError = ref("");
   const showApiError = ref(true);
@@ -22,7 +17,7 @@ export function useGenerationProps(axiosInstance: AxiosInstance) {
     loading.value = true;
     showApiError.value = true;
     try {
-      generationProps.value = await getGenerationProps(axiosInstance);
+      generationProps.value = await load();
     } catch {
       apiError.value = "Error. Could not pull data from server.";
     } finally {
@@ -37,4 +32,18 @@ export function useGenerationProps(axiosInstance: AxiosInstance) {
     loadGenerationProps,
     loading,
   };
+}
+
+export function useGenerationProps(axiosInstance: AxiosInstance) {
+  return useLoadedGenerationProps<GenerationProps>(
+    { classItems: [], randomTalents: [], speciesTalents: {}, speciesSkills: {} },
+    () => getGenerationProps(axiosInstance),
+  );
+}
+
+export function useGenerationProps5e(axiosInstance: AxiosInstance) {
+  return useLoadedGenerationProps<GenerationProps5e>(
+    { classItems: [], randomTalents: [], speciesTalents: {}, speciesSkills: {}, speciesLanguages: {} },
+    () => getGenerationProps5e(axiosInstance),
+  );
 }

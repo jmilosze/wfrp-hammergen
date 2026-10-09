@@ -1,9 +1,11 @@
 import { computed, ref, shallowRef, watch, WatchOptions } from "vue";
 import { useAuth } from "./auth.ts";
 import { useEdition } from "./edition.ts";
-import { ContentApi, Edition, EDITIONS, Variants, Visibility, WhProperty } from "../services/wh/common.ts";
+import { ContentApi } from "../services/wh/core/api.ts";
+import { Edition, EDITIONS, Variants } from "../services/wh/core/edition.ts";
+import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
 import { SubmissionState } from "../utils/submission.ts";
-import { copySource } from "../services/wh/source.ts";
+import { copySource } from "../services/wh/core/source.ts";
 
 function copyVariants<T extends WhProperty>(variants: Variants<T>): Variants<T> {
   const copies: Variants<T> = {};

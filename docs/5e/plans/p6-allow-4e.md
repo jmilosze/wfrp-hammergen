@@ -1,6 +1,6 @@
 # Plan P6 — "Allow 4e content" on 5e characters
 
-Status: **implemented** (2026-10-08); browser walkthrough passed on a local API against today's production snapshot (switch with confirmation, then disabled; pickers with 4e badges and 5e/4e filter; 4e career, talent with modifiers, weapon and spell; warning in editor, sheet and CSV; API refuses turning the switch off; 4e characters unchanged). Not deployed. Tracker items: O1–O4.
+Status: **implemented** (2026-10-08); browser walkthrough passed on a local API against today's production snapshot (switch with confirmation, then disabled; pickers with 4e badges and 5e/4e filter; 4e career, talent with modifiers, weapon and spell; warning in editor, sheet and CSV; API refuses turning the switch off; 4e characters unchanged). Deployed 2026-10-09. Tracker items: O1–O4.
 
 ## Goal
 

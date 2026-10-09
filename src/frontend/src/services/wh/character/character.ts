@@ -1,0 +1,720 @@
+import { SpeciesWithRegion } from "../core/species.ts";
+import { rulesFor } from "./rules/rules.ts";
+import { StatusStanding, StatusTier } from "../content/career.ts";
+import { Attributes, copyAttributes, multiplyAttributes, sumAttributes, zeroAttributes } from "../core/attributes.ts";
+import { CharacterApiResponse, WhApi, createWhApi, ServerEnvelope } from "../core/api.ts";
+import { Edition } from "../core/edition.ts";
+import {
+  validateIdNumber,
+  validAttributesFn,
+  validIntegerFn,
+  validLongDescFn,
+  validShortDescFn,
+} from "../core/validators.ts";
+import { Visibility, WhEntity } from "../core/entity.ts";
+import { sourceIsValid } from "../core/source.ts";
+import { CharacterModifiers, ModifierEffect } from "../core/characterModifiers.ts";
+import { clearObject } from "../../../utils/object.ts";
+import { AxiosInstance } from "axios";
+import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
+import { ValidationStatus } from "../../../utils/validation.ts";
+import { updateSet } from "../../../utils/set.ts";
+import { IdValue, validateValues } from "../../../utils/idValue.ts";
+import { copyIdNumberArray, IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../../utils/idNumber.ts";
+import { isEqualEntity } from "../../../utils/equal.ts";
+import { Talent } from "../content/talent.ts";
+import { Mutation } from "../content/mutation.ts";
+import { Trait } from "../content/trait.ts";
+
+export const DEFAULT_CAREER_ID = "5d16a8ad9ae1c87a18017578";
+
+const API_BASE_PATH = "/api/wh/character";
+
+export interface CharacterApiData {
+  edition: Edition;
+  name: string;
+  description: string;
+  notes: string;
+  species: SpeciesWithRegion;
+  fate: number;
+  fortune: number;
+  resilience: number;
+  resolve: number;
+  brass: number;
+  silver: number;
+  gold: number;
+  spentExp: number;
+  currentExp: number;
+  careerTicks: number;
+  allow4e: boolean;
+  sin: number;
+  corruption: number;
+  status: StatusTier;
+  standing: StatusStanding;
+  career: IdNumber;
+  baseAttributes: Attributes;
+  attributeAdvances: Attributes;
+  skills: IdNumber[];
+  talents: IdNumber[];
+  equippedItems: IdNumber[];
+  carriedItems: IdNumber[];
+  storedItems: IdNumber[];
+  spells: string[];
+  prayers: string[];
+  traits: IdValue[];
+  mutations: string[];
+  careerPath: IdNumber[];
+  visibility?: Visibility;
+}
+
+const CHARACTER_IGNORED_KEYS: ReadonlySet<string> = new Set(["modifiers"]);
+
+export class Character extends WhEntity {
+  edition: Edition;
+  notes: string;
+  species: SpeciesWithRegion;
+  fate: number;
+  fortune: number;
+  resilience: number;
+  resolve: number;
+  brass: number;
+  silver: number;
+  gold: number;
+  spentExp: number;
+  currentExp: number;
+  careerTicks: number;
+  allow4e: boolean;
+  sin: number;
+  corruption: number;
+  status: StatusTier;
+  standing: StatusStanding;
+  career: IdNumber;
+  attributeRolls: Attributes;
+  attributeAdvances: Attributes;
+  skills: Record<string, number>;
+  talents: Record<string, number>;
+  equippedItems: Record<string, number>;
+  carriedItems: Record<string, number>;
+  storedItems: Record<string, number>;
+  careerPath: IdNumber[];
+  spells: Set<string>;
+  prayers: Set<string>;
+  traits: IdValue[];
+  mutations: Set<string>;
+  modifiers: {
+    talents: Record<string, { number: number; value: CharacterModifiers }>;
+    mutations: Record<string, { value: CharacterModifiers }>;
+    traits: Record<string, { value: CharacterModifiers }>;
+  };
+
+  constructor({
+    id = "",
+    ownerId = "",
+    edition = "4e" as Edition,
+    name = "",
+    description = "",
+    notes = "",
+    species = SpeciesWithRegion.None,
+    fate = 0,
+    fortune = 0,
+    resilience = 0,
+    resolve = 0,
+    brass = 0,
+    silver = 0,
+    gold = 0,
+    spentExp = 0,
+    currentExp = 0,
+    careerTicks = 0,
+    allow4e = false,
+    sin = 0,
+    corruption = 0,
+    status = StatusTier.Brass,
+    standing = 0 as StatusStanding,
+    career = { id: DEFAULT_CAREER_ID, number: 1 } as IdNumber,
+    attributeRolls = zeroAttributes(),
+    attributeAdvances = zeroAttributes(),
+    skills = {} as Record<string, number>,
+    talents = {} as Record<string, number>,
+    equippedItems = {} as Record<string, number>,
+    carriedItems = {} as Record<string, number>,
+    storedItems = {} as Record<string, number>,
+    careerPath = [] as IdNumber[],
+    spells = new Set<string>(),
+    prayers = new Set<string>(),
+    traits = [] as IdValue[],
+    mutations = new Set<string>(),
+    visibility = Visibility.Private,
+    source = {},
+    modifiers = {
+      talents: {} as Record<string, { number: number; value: CharacterModifiers }>,
+      mutations: {} as Record<string, { value: CharacterModifiers }>,
+      traits: {} as Record<string, { value: CharacterModifiers }>,
+    },
+  } = {}) {
+    super({ id, ownerId, visibility, name, description, source });
+    this.edition = edition;
+    this.notes = notes;
+    this.species = species;
+    this.fate = fate;
+    this.fortune = fortune;
+    this.resilience = resilience;
+    this.resolve = resolve;
+    this.brass = brass;
+    this.silver = silver;
+    this.gold = gold;
+    this.spentExp = spentExp;
+    this.currentExp = currentExp;
+    this.careerTicks = careerTicks;
+    this.allow4e = allow4e;
+    this.sin = sin;
+    this.corruption = corruption;
+    this.status = status;
+    this.standing = standing;
+    this.career = career;
+    this.attributeRolls = attributeRolls;
+    this.attributeAdvances = attributeAdvances;
+    this.skills = skills;
+    this.talents = talents;
+    this.equippedItems = equippedItems;
+    this.carriedItems = carriedItems;
+    this.storedItems = storedItems;
+    this.careerPath = careerPath;
+    this.spells = spells;
+    this.prayers = prayers;
+    this.traits = traits;
+    this.mutations = mutations;
+    this.modifiers = modifiers;
+  }
+
+  override isEqualTo(otherCharacter: unknown): boolean {
+    return isEqualEntity(this, otherCharacter, { ignoredKeys: CHARACTER_IGNORED_KEYS });
+  }
+
+  validateName(): ValidationStatus {
+    return validShortDescFn(this.name);
+  }
+
+  validateDescription(): ValidationStatus {
+    return validLongDescFn(this.description);
+  }
+
+  validateNotes(): ValidationStatus {
+    return validLongDescFn(this.notes);
+  }
+
+  validateFate(): ValidationStatus {
+    return validIntegerFn(this.fate, 0, 1000);
+  }
+
+  validateFortune(): ValidationStatus {
+    return validIntegerFn(this.fortune, 0, 1000);
+  }
+
+  validateResilience(): ValidationStatus {
+    return validIntegerFn(this.resilience, 0, 1000);
+  }
+
+  validateResolve(): ValidationStatus {
+    return validIntegerFn(this.resolve, 0, 1000);
+  }
+
+  validateBrass(): ValidationStatus {
+    return validIntegerFn(this.brass, 0, 1000000);
+  }
+
+  validateSilver(): ValidationStatus {
+    return validIntegerFn(this.silver, 0, 1000000);
+  }
+
+  validateGold(): ValidationStatus {
+    return validIntegerFn(this.gold, 0, 1000000);
+  }
+
+  validateSin(): ValidationStatus {
+    return validIntegerFn(this.sin, 0, 1000);
+  }
+
+  validateCorruption(): ValidationStatus {
+    return validIntegerFn(this.corruption, 0, 1000);
+  }
+
+  validateCurrentExp(): ValidationStatus {
+    return validIntegerFn(this.currentExp, 0, 10000000);
+  }
+
+  validateSpentExp(): ValidationStatus {
+    return validIntegerFn(this.spentExp, 0, 10000000);
+  }
+
+  validateCareerTicks(): ValidationStatus {
+    return validIntegerFn(this.careerTicks, 0, 36);
+  }
+
+  validateRolls(): ValidationStatus {
+    return validAttributesFn("Rolls", this.attributeRolls, -99, 99);
+  }
+
+  validateAdvances(): ValidationStatus {
+    return validAttributesFn("Advances", this.attributeAdvances, -99, 99);
+  }
+
+  validateSkills(): ValidationStatus {
+    return validateIdNumber("Skills number", this.skills, 1, 1000);
+  }
+
+  validateTalents(): ValidationStatus {
+    return validateIdNumber("Talents number", this.talents, 1, 1000);
+  }
+
+  validateEquippedItems(): ValidationStatus {
+    return validateIdNumber("Equipped trappings number", this.equippedItems, 1, 1000);
+  }
+
+  validateCarriedItems(): ValidationStatus {
+    return validateIdNumber("Carried trappings number", this.carriedItems, 1, 1000);
+  }
+
+  validateStoredItems(): ValidationStatus {
+    return validateIdNumber("Stored trappings number", this.storedItems, 1, 1000);
+  }
+
+  validateTraits(): ValidationStatus {
+    return validateValues(
+      "Trait",
+      this.traits.map((x) => x.value),
+    );
+  }
+
+  isValid(): boolean {
+    return (
+      this.validateName().valid &&
+      this.validateDescription().valid &&
+      sourceIsValid(this.source) &&
+      this.validateNotes().valid &&
+      this.validateFate().valid &&
+      this.validateFortune().valid &&
+      this.validateResilience().valid &&
+      this.validateResolve().valid &&
+      this.validateBrass().valid &&
+      this.validateSilver().valid &&
+      this.validateGold().valid &&
+      this.validateSin().valid &&
+      this.validateCorruption().valid &&
+      this.validateCurrentExp().valid &&
+      this.validateSpentExp().valid &&
+      this.validateCareerTicks().valid &&
+      this.validateRolls().valid &&
+      this.validateAdvances().valid &&
+      this.validateSkills().valid &&
+      this.validateTalents().valid &&
+      this.validateEquippedItems().valid &&
+      this.validateCarriedItems().valid &&
+      this.validateStoredItems().valid &&
+      this.validateTraits().valid
+    );
+  }
+
+  getMovement(): number {
+    const mods =
+      Object.values(this.modifiers.talents)
+        .map((x) => x.number * x.value.movement)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.mutations)
+        .map((x) => x.value.movement)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.traits)
+        .map((x) => x.value.movement)
+        .reduce((a, b) => a + b, 0);
+
+    return rulesFor(this.edition).getMovement(this.species, mods);
+  }
+
+  getRacialAttributes(): Attributes {
+    return rulesFor(this.edition).getSpeciesAttributes(this.species);
+  }
+
+  getBaseAttributes(): Attributes {
+    return sumAttributes(this.getRacialAttributes(), this.attributeRolls);
+  }
+
+  getModifierAttributes(): Attributes {
+    const talentAttributes = sumAttributes(
+      ...Object.values(this.modifiers.talents).map((x) => multiplyAttributes(x.number, x.value.attributes)),
+    );
+
+    const mutationAttributes = sumAttributes(...Object.values(this.modifiers.mutations).map((x) => x.value.attributes));
+    const traitAttributes = sumAttributes(...Object.values(this.modifiers.traits).map((x) => x.value.attributes));
+
+    return sumAttributes(talentAttributes, mutationAttributes, traitAttributes);
+  }
+
+  getTotalAttributes(): Attributes {
+    return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.getModifierAttributes());
+  }
+
+  getHardyRanks(): number {
+    return (
+      Object.values(this.modifiers.talents).reduce(
+        (a, v) => a + v.number * (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
+        0,
+      ) +
+      Object.values(this.modifiers.mutations).reduce(
+        (a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
+        0,
+      ) +
+      Object.values(this.modifiers.traits).reduce((a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0), 0)
+    );
+  }
+
+  getSize(): number {
+    const mods: number =
+      Object.values(this.modifiers.talents)
+        .map((x) => x.number * x.value.size)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.mutations)
+        .map((x) => x.value.size)
+        .reduce((a, b) => a + b, 0) +
+      Object.values(this.modifiers.traits)
+        .map((x) => x.value.size)
+        .reduce((a, b) => a + b, 0);
+
+    return rulesFor(this.edition).getSize(mods);
+  }
+
+  getWounds(): number {
+    const attributeTotal = this.getTotalAttributes();
+    return rulesFor(this.edition).getWounds(
+      this.getSize(),
+      attributeTotal.T,
+      attributeTotal.WP,
+      attributeTotal.S,
+      this.getHardyRanks(),
+    );
+  }
+
+  updateCurrentCareer(id: string, number: number, selected: boolean) {
+    if (!selected) {
+      this.career.id = DEFAULT_CAREER_ID;
+      this.career.number = 1;
+    } else {
+      this.career.id = id;
+      this.career.number = number;
+    }
+  }
+
+  updatePastCareer(id: string, number: number, selected: boolean) {
+    if (!selected) {
+      for (const [i, pastCareer] of this.careerPath.entries()) {
+        if (pastCareer.id === id && pastCareer.number === number) {
+          this.careerPath.splice(i, 1);
+          return;
+        }
+      }
+    } else {
+      for (const pastCareer of this.careerPath) {
+        if (pastCareer.id === id && pastCareer.number === number) {
+          return;
+        }
+      }
+      this.careerPath.push({ id: id, number: number });
+    }
+  }
+
+  updateSpells(id: string, selected: boolean): void {
+    updateSet(this.spells, id, selected);
+  }
+
+  clearSpells(replace = true): void {
+    if (replace) {
+      this.spells = new Set<string>();
+    } else {
+      this.spells.clear();
+    }
+  }
+
+  updatePrayers(id: string, selected: boolean): void {
+    updateSet(this.prayers, id, selected);
+  }
+
+  clearPrayers(replace = true): void {
+    if (replace) {
+      this.prayers = new Set<string>();
+    } else {
+      this.prayers.clear();
+    }
+  }
+
+  hasTrait(id: string): boolean {
+    return this.traits.some((x) => x.id === id);
+  }
+
+  // addTrait adds the trait with an empty value. Traits that take a value can be added more than once
+  // (e.g. Hatred for Elves and for Dwarfs); their modifiers count once, as such traits have none.
+  addTrait(id: string, traits: Trait[]): void {
+    this.traits.push({ id: id, value: "" });
+    for (const trait of traits) {
+      if (trait.id === id) {
+        this.modifiers.traits[id] = { value: trait.modifiers.copy() };
+        return;
+      }
+    }
+  }
+
+  removeTrait(index: number): void {
+    const [removed] = this.traits.splice(index, 1);
+    if (!this.hasTrait(removed.id)) {
+      delete this.modifiers.traits[removed.id];
+    }
+  }
+
+  // updateTraits adds or removes every occurrence of the trait.
+  updateTraits(id: string, selected: boolean, traits: Trait[]): void {
+    if (selected) {
+      if (!this.hasTrait(id)) {
+        this.addTrait(id, traits);
+      }
+      return;
+    }
+    this.traits = this.traits.filter((x) => x.id !== id);
+    delete this.modifiers.traits[id];
+  }
+
+  updateTraitValue(index: number, value: string): void {
+    this.traits[index].value = value;
+  }
+
+  clearTraits(): void {
+    this.traits = [];
+    this.modifiers.traits = {};
+  }
+
+  updateMutations(id: string, selected: boolean, mutations: Mutation[]): void {
+    updateSet(this.mutations, id, selected);
+    if (!selected) {
+      delete this.modifiers.mutations[id];
+      return;
+    }
+    for (const mutation of mutations) {
+      if (mutation.id === id) {
+        this.modifiers.mutations[id] = { value: mutation.modifiers.copy() };
+        return;
+      }
+    }
+  }
+
+  clearMutations(replace = true): void {
+    if (replace) {
+      this.mutations = new Set<string>();
+    } else {
+      this.mutations.clear();
+    }
+    this.modifiers.mutations = {};
+  }
+
+  updateSkills(id: string, number: number): void {
+    updateIdNumberRecord(this.skills, { id: id, number: number });
+  }
+
+  clearSkills(replace = true): void {
+    if (replace) {
+      this.skills = {} as Record<string, number>;
+    } else {
+      clearObject(this.skills);
+    }
+  }
+
+  updateTalents(id: string, number: number, talents: Talent[]): void {
+    updateIdNumberRecord(this.talents, { id: id, number: number });
+    if (number === 0) {
+      delete this.modifiers.talents[id];
+      return;
+    }
+    for (const talent of talents) {
+      if (talent.id === id) {
+        this.modifiers.talents[id] = { number: number, value: talent.modifiers.copy() };
+        return;
+      }
+    }
+  }
+
+  clearTalents(replace: boolean): void {
+    if (replace) {
+      this.talents = {} as Record<string, number>;
+    } else {
+      clearObject(this.talents);
+    }
+    this.modifiers.talents = {};
+  }
+
+  updateItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {
+    switch (location) {
+      case "equipped":
+        updateIdNumberRecord(this.equippedItems, { id: id, number: number });
+        return;
+      case "carried":
+        updateIdNumberRecord(this.carriedItems, { id: id, number: number });
+        return;
+      case "stored":
+        updateIdNumberRecord(this.storedItems, { id: id, number: number });
+        return;
+      default:
+        return;
+    }
+  }
+
+  clearItems(replace: boolean): void {
+    if (replace) {
+      this.equippedItems = {} as Record<string, number>;
+      this.carriedItems = {} as Record<string, number>;
+      this.storedItems = {} as Record<string, number>;
+    } else {
+      clearObject(this.equippedItems);
+      clearObject(this.carriedItems);
+      clearObject(this.storedItems);
+    }
+  }
+
+  hydrateTalentModifiers(talents: Talent[]): void {
+    this.modifiers.talents = {};
+    for (const talent of talents) {
+      if (talent.id in this.talents) {
+        this.modifiers.talents[talent.id] = { number: this.talents[talent.id], value: talent.modifiers.copy() };
+      }
+    }
+  }
+
+  hydrateMutationModifiers(mutations: Mutation[]): void {
+    this.modifiers.mutations = {};
+    for (const mutation of mutations) {
+      if (this.mutations.has(mutation.id)) {
+        this.modifiers.mutations[mutation.id] = { value: mutation.modifiers.copy() };
+      }
+    }
+  }
+
+  hydrateTraitModifiers(traits: Trait[]): void {
+    this.modifiers.traits = {};
+    for (const trait of traits) {
+      if (this.hasTrait(trait.id)) {
+        this.modifiers.traits[trait.id] = { value: trait.modifiers.copy() };
+      }
+    }
+  }
+
+  hydrateAllModifiers(referenceData: { talents?: Talent[]; mutations?: Mutation[]; traits?: Trait[] }): void {
+    if (referenceData.talents) {
+      this.hydrateTalentModifiers(referenceData.talents);
+    }
+    if (referenceData.mutations) {
+      this.hydrateMutationModifiers(referenceData.mutations);
+    }
+    if (referenceData.traits) {
+      this.hydrateTraitModifiers(referenceData.traits);
+    }
+  }
+}
+
+export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterApiData>): Character {
+  const newCharacter = new Character({
+    id: characterApi.id,
+    ownerId: characterApi.ownerId,
+    visibility: characterApi.visibility,
+    edition: characterApi.object.edition,
+    name: characterApi.object.name,
+    description: characterApi.object.description,
+    notes: characterApi.object.notes,
+    species: characterApi.object.species,
+    fate: characterApi.object.fate,
+    fortune: characterApi.object.fortune,
+    resilience: characterApi.object.resilience,
+    resolve: characterApi.object.resolve,
+    brass: characterApi.object.brass,
+    silver: characterApi.object.silver,
+    gold: characterApi.object.gold,
+    spentExp: characterApi.object.spentExp,
+    currentExp: characterApi.object.currentExp,
+    careerTicks: characterApi.object.careerTicks,
+    allow4e: characterApi.object.allow4e,
+    sin: characterApi.object.sin,
+    corruption: characterApi.object.corruption,
+    status: characterApi.object.status,
+    standing: characterApi.object.standing,
+    career: characterApi.object.career,
+    attributeRolls: sumAttributes(
+      characterApi.object.baseAttributes,
+      multiplyAttributes(-1, rulesFor(characterApi.object.edition).getSpeciesAttributes(characterApi.object.species)),
+    ),
+    attributeAdvances: copyAttributes(characterApi.object.attributeAdvances),
+    skills: idNumberArrayToRecord(characterApi.object.skills),
+    talents: idNumberArrayToRecord(characterApi.object.talents),
+    equippedItems: idNumberArrayToRecord(characterApi.object.equippedItems),
+    carriedItems: idNumberArrayToRecord(characterApi.object.carriedItems),
+    storedItems: idNumberArrayToRecord(characterApi.object.storedItems),
+    careerPath: copyIdNumberArray(characterApi.object.careerPath),
+    spells: new Set(characterApi.object.spells),
+    prayers: new Set(characterApi.object.prayers),
+    traits: characterApi.object.traits.map((x) => ({ id: x.id, value: x.value })),
+    mutations: new Set(characterApi.object.mutations),
+  });
+
+  return newCharacter;
+}
+
+export function modelToApi(character: Character): CharacterApiData {
+  return {
+    edition: character.edition,
+    name: character.name,
+    description: character.description,
+    notes: character.notes,
+    species: character.species,
+    fate: character.fate,
+    fortune: character.fortune,
+    resilience: character.resilience,
+    resolve: character.resolve,
+    brass: character.brass,
+    silver: character.silver,
+    gold: character.gold,
+    spentExp: character.spentExp,
+    currentExp: character.currentExp,
+    careerTicks: character.careerTicks,
+    allow4e: character.allow4e,
+    sin: character.sin,
+    corruption: character.corruption,
+    status: character.status,
+    standing: character.standing,
+    career: character.career,
+    baseAttributes: character.getBaseAttributes(),
+    attributeAdvances: copyAttributes(character.attributeAdvances),
+    skills: Object.entries(character.skills).map((x) => ({ id: x[0], number: x[1] })),
+    talents: Object.entries(character.talents).map((x) => ({ id: x[0], number: x[1] })),
+    equippedItems: Object.entries(character.equippedItems).map((x) => ({ id: x[0], number: x[1] })),
+    carriedItems: Object.entries(character.carriedItems).map((x) => ({ id: x[0], number: x[1] })),
+    storedItems: Object.entries(character.storedItems).map((x) => ({ id: x[0], number: x[1] })),
+    careerPath: copyIdNumberArray(character.careerPath),
+    spells: [...character.spells],
+    prayers: [...character.prayers],
+    traits: character.traits.map((x) => ({ id: x.id, value: x.value })),
+    mutations: [...character.mutations],
+    visibility: character.visibility,
+  };
+}
+
+export interface CharacterApi extends WhApi<Character, CharacterApiResponse<CharacterApiData>> {
+  getElementForDisplay: (id: string, edition: Edition) => Promise<CharacterFull>;
+}
+
+export function characterApi(axios: AxiosInstance): CharacterApi {
+  const baseApi = createWhApi(API_BASE_PATH, axios, apiResponseToModel, modelToApi);
+  return {
+    ...baseApi,
+    getElementForDisplay: async (id: string, edition: Edition): Promise<CharacterFull> => {
+      const { data } = await axios.get<ServerEnvelope<CharacterApiResponse<CharacterFullApiData>>>(
+        `${API_BASE_PATH}/${id}`,
+        {
+          params: { full: true, edition },
+        },
+      );
+      return apiResponseToCharacterFull(data.data);
+    },
+  };
+}

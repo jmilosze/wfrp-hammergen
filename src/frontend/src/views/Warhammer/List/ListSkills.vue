@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { useSourceQuery, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
-import { Skill, skillApi, skillTypeList, printSkillType } from "../../../services/wh/skill.ts";
+import { Skill, skillApi, skillTypeList, printSkillType } from "../../../services/wh/content/skill.ts";
 import { authRequest } from "../../../services/auth.ts";
 import TableWithSearch from "../../../components/TableWithSearch.vue";
 import Header from "../../../components/PageHeader.vue";
-import { source } from "../../../services/wh/source.ts";
+import { source } from "../../../services/wh/core/source.ts";
 import { computed } from "vue";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
 
-import { getOptions } from "../../../utils/whList.ts";
+import { getOptions } from "../../../services/wh/core/listOptions.ts";
 import SelectInput from "../../../components/SelectInput.vue";
-import { attributeNameList, printAttributeName } from "../../../services/wh/attributes.ts";
+import { attributeNameList, printAttributeName } from "../../../services/wh/core/attributes.ts";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import LinkButton from "../../../components/LinkButton.vue";

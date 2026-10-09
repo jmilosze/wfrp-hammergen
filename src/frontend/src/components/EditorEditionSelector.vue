@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
 import router from "../router.ts";
-import { Edition } from "../services/wh/common.ts";
+import { Edition } from "../services/wh/core/edition.ts";
 import EditionSwitch from "./EditionSwitch.vue";
 
 defineProps<{

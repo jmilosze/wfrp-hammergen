@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/common.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
 import Header from "../../../components/PageHeader.vue";
 import {
   ItemProperty,
   itemPropertyApi,
   itemPropertyTypeList,
   printItemPropertyType,
-} from "../../../services/wh/itemproperty.ts";
+} from "../../../services/wh/content/itemproperty.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
@@ -20,10 +20,10 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
-import { defaultSource } from "../../../services/wh/source.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
 import SelectInput from "../../../components/SelectInput.vue";
 import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
-import { itemTypeList, printItemType } from "../../../services/wh/item.ts";
+import { itemTypeList, printItemType } from "../../../services/wh/content/item.ts";
 
 const props = defineProps<{
   id: string;

@@ -3,7 +3,7 @@ import ActionButton from "./ActionButton.vue";
 import LinkButton from "./LinkButton.vue";
 import { useAuth } from "../composables/auth.ts";
 import { Icon } from "@iconify/vue";
-import { Edition } from "../services/wh/common.ts";
+import { Edition } from "../services/wh/core/edition.ts";
 
 defineProps<{
   id: string;

@@ -9,7 +9,7 @@ import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
 import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
+import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
 import LinkButton from "./LinkButton.vue";
 import ReloadButton from "./ReloadButton.vue";
 

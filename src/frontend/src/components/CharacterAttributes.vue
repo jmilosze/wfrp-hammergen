@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { AttributeName, Attributes, setAttributeValue, sumAttributes } from "../services/wh/attributes.ts";
+import { AttributeName, Attributes, setAttributeValue, sumAttributes } from "../services/wh/core/attributes.ts";
 import FormInput from "./FormInput.vue";
 import { computed } from "vue";
 import { ValidationStatus } from "../utils/validation.ts";
 import ActionButton from "./ActionButton.vue";
-import { generateRolls } from "../services/wh/characterGeneration/generateAttributes.ts";
+import { generateRolls } from "../services/wh/character/generation/shared/characteristics.ts";
 import { rollDice } from "../utils/random.ts";
 
 const props = defineProps<{

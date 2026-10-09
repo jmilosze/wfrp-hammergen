@@ -1,5 +1,5 @@
 import { ref, watch } from "vue";
-import { Edition, EDITIONS } from "../services/wh/common.ts";
+import { Edition, EDITIONS } from "../services/wh/core/edition.ts";
 
 const LOCAL_STORAGE_KEY_EDITION = "edition";
 const DEFAULT_EDITION: Edition = "4e";

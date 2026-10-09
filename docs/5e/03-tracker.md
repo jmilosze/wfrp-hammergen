@@ -117,28 +117,28 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| G1 | 5e generation props (species skills/talents, random talents, class trappings, careers table) | ⬜ | |
-| G2 | 5e creation steps (discovery §3) | ⬜ | |
-| G3 | Higher-level generation (tracker ticks, 100 XP per level, 5e XP costs) | ⬜ | |
-| G4 | Tests | ⬜ | |
+| G1 | 5e generation props (species skills/talents, random talents, class trappings, careers table) | ✅ | [plans/p7-generator.md](plans/p7-generator.md) |
+| G2 | 5e creation steps (discovery §3) | ✅ | [plans/p7-generator.md](plans/p7-generator.md) |
+| G3 | Higher-level generation (tracker ticks, 100 XP per level, 5e XP costs) | ✅ | [plans/p7-generator.md](plans/p7-generator.md) |
+| G4 | Tests | ✅ | [plans/p7-generator.md](plans/p7-generator.md) |
 
 ### Analytics (runs alongside the phases)
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| A1 | Decide approach and metric list | 🟡 | approach decided (API-side); metric list to do — design §4.6a |
-| A2 | Baseline 4e usage before 5e launches | ⬜ | so there is something to compare against |
+| A1 | Decide approach and metric list | ✘ | removed from the 5e scope 2026-10-09; moved to `docs/todo.md` |
+| A2 | Baseline 4e usage before 5e launches | ✘ | removed from the 5e scope 2026-10-09; moved to `docs/todo.md` |
 | A3 | Content browsing/search/custom-content metrics per edition | ✘ | removed from the 5e scope 2026-10-07; moved to `docs/todo.md` |
-| A4 | Character create/view/edit/print metrics per edition, "allow 4e content" switch | ⬜ | ship with phases 3.2–3.3 |
-| A5 | Generator runs per edition | ⬜ | ship with phase 3.4 |
-| A6 | Report/dashboard | ⬜ | |
+| A4 | Character create/view/edit/print metrics per edition, "allow 4e content" switch | ✘ | removed from the 5e scope 2026-10-09; moved to `docs/todo.md` |
+| A5 | Generator runs per edition | ✘ | removed from the 5e scope 2026-10-09; moved to `docs/todo.md` |
+| A6 | Report/dashboard | ✘ | removed from the 5e scope 2026-10-09; moved to `docs/todo.md` |
 
 ### Release
 
 | # | Item | Status | Notes |
 |---|---|---|---|
 | X1 | Release plan per phase (flag, docs, announcement) | ⬜ | |
-| X2 | Update site texts that say "4th Edition" only (e.g. `<meta name="description">` in `index.html`, About page) | ⬜ | after 5e character creation is available (decided 2026-10-07) |
+| X2 | Update site texts that say "4th Edition" only (e.g. `<meta name="description">` in `index.html`, About page) | ⬜ | after the 5e character generator (G1–G4), decided 2026-10-09 |
 
 ---
 
@@ -190,3 +190,6 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-10-07 | Plan P5 implemented (H1–H6): separate 4e/5e character pages (`?edition=` in URLs), rules modules `rules4e.ts`/`rules5e.ts`, `careerTicks`, 5e species check, 5e editor and sheet (tracker, Known Languages, Shield row, 5e CSV). Walkthrough passed locally; not deployed. |
 | 2026-10-08 | P5 (5e characters) merged (PR #97, incl. `CharacterAttributes` merged back into one component) and deployed. |
 | 2026-10-08 | Plan P6 (allow 4e content, O1–O4) implemented: `allow4e` on characters (one-way, 5e only), 4e fallback for full characters, 4e badges and 5e/4e filter in all pickers, 4e trappings counted, 4e talent/trait/mutation modifiers ignored with a warning in editor/sheet/CSV. Walkthrough passed locally; not deployed. |
+| 2026-10-09 | P6 (allow 4e content) deployed, incl. the 4e badge wrapping fix. |
+| 2026-10-09 | Usage metrics (A1–A6) removed from the 5e scope and moved to `docs/todo.md`. Next: the 5e character generator (G1–G4), then site texts (X2). |
+| 2026-10-09 | Plan P7 (5e character generator, G1–G4) implemented: `generationProps5e` data and import script, `?edition=5e` on the generation endpoint, `generateCharacter5e` (level 1 creation, tracker-driven levels 2–4 with 5e XP costs), generate section and buttons in the 5e editor. Walkthrough passed locally; `generationProps5e` not yet imported to staging/production; not deployed. |

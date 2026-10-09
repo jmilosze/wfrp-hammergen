@@ -46,8 +46,8 @@ func (m *mockWhService) Get(_ context.Context, _ warhammer.WhType, _ *auth.Claim
 	return []*warhammer.Wh{{Id: "id1", Editions: map[warhammer.Edition]warhammer.WhObject{warhammer.Edition4e: &warhammer.Mutation{}}}}, nil
 }
 
-func (m *mockWhService) GetGenerationProps(_ context.Context) (*warhammer.GenProps, error) {
-	m.called = true
+func (m *mockWhService) GetGenerationProps(_ context.Context, e warhammer.Edition) (*warhammer.GenProps, error) {
+	m.called, m.edition = true, e
 	return &warhammer.GenProps{}, nil
 }
 
@@ -229,11 +229,17 @@ func TestWhCharacterWriteParsesEditionInObject(t *testing.T) {
 	}
 }
 
-func TestWhGenerationDoesNotTakeEdition(t *testing.T) {
-	ws := &mockWhService{}
-	w := serveWh(newWhTestRouter(ws), "GET", "/api/wh/generation", "")
+func TestWhGenerationEdition(t *testing.T) {
+	for query, want := range map[string]warhammer.Edition{"": warhammer.Edition4e, "?edition=4e": warhammer.Edition4e, "?edition=5e": warhammer.Edition5e} {
+		ws := &mockWhService{}
+		w := serveWh(newWhTestRouter(ws), "GET", "/api/wh/generation"+query, "")
+		if w.Code != http.StatusOK || ws.edition != want {
+			t.Errorf("%q: expected status 200 and edition %s, got %d and %s", query, want, w.Code, ws.edition)
+		}
+	}
 
-	if w.Code != http.StatusOK {
-		t.Fatalf("expected status 200, got %d", w.Code)
+	ws := &mockWhService{}
+	if w := serveWh(newWhTestRouter(ws), "GET", "/api/wh/generation?edition=6e", ""); w.Code != http.StatusBadRequest || ws.called {
+		t.Errorf("6e: expected status 400 without calling the service, got %d", w.Code)
 	}
 }

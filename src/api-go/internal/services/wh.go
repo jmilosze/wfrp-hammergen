@@ -422,8 +422,8 @@ func missingIds(ids []string, whs []*wh.Wh) []string {
 	return missing
 }
 
-func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, error) {
-	generationPropsMap, err := s.WhDbService.RetrieveGenerationProps(ctx)
+func (s *WhService) GetGenerationProps(ctx context.Context, e wh.Edition) (*wh.GenProps, error) {
+	generationPropsMap, err := s.WhDbService.RetrieveGenerationProps(ctx, e)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get generationProps: %w", err)
 	}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/common.ts";
-import { defaultSource } from "../../../services/wh/source.ts";
-import { Trait, traitApi } from "../../../services/wh/trait.ts";
+import { Visibility } from "../../../services/wh/core/entity.ts";
+import { defaultSource } from "../../../services/wh/core/source.ts";
+import { Trait, traitApi } from "../../../services/wh/content/trait.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed } from "vue";

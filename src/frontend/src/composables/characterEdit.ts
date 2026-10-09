@@ -1,8 +1,10 @@
 import { computed, ref } from "vue";
 import { useAuth } from "./auth.ts";
-import { ApiHeaders, Edition, Visibility, WhApi, WhProperty } from "../services/wh/common.ts";
+import { ApiHeaders, WhApi } from "../services/wh/core/api.ts";
+import { Edition } from "../services/wh/core/edition.ts";
+import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
 import { SubmissionState } from "../utils/submission.ts";
-import { copySource } from "../services/wh/source.ts";
+import { copySource } from "../services/wh/core/source.ts";
 
 // useCharacterEdit edits a single-edition entity (a character of the given edition).
 export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHeaders>(
