@@ -1,5 +1,4 @@
-
-FROM golang:1.27.0-alpine3.24 AS build
+FROM mirror.gcr.io/library/golang:1.27.0-alpine3.24 AS build
 
 
 WORKDIR /src
