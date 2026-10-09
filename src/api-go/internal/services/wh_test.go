@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -208,6 +209,120 @@ func TestCreateCharacterCareerTicksLimit(t *testing.T) {
 			}
 			if !wantErr && err != nil {
 				t.Errorf("expected no error, got %v", err)
+			}
+		})
+	}
+}
+
+func TestCharacterAllow4eOnlyIn5e(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+
+	character4e := newMockCharacter(wh.Edition4e)
+	character4e.Allow4e = true
+	_, err := s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: character4e}, &auth.Claims{Id: "user1"})
+	if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "allow4e") {
+		t.Errorf("4e: expected allow4e error, got %v", err)
+	}
+
+	character5e := newMockCharacter(wh.Edition5e)
+	character5e.Species = wh.CharacterSpeciesHumanReikland
+	character5e.Allow4e = true
+	if _, err = s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: character5e}, &auth.Claims{Id: "user1"}); err != nil {
+		t.Errorf("5e: expected no error, got %v", err)
+	}
+}
+
+func TestUpdateCharacterAllow4eCannotBeTurnedOff(t *testing.T) {
+	newCharacter := func(allow4e bool) *wh.Character {
+		character := newMockCharacter(wh.Edition5e)
+		character.Species = wh.CharacterSpeciesHumanReikland
+		character.Allow4e = allow4e
+		return character
+	}
+
+	for name, tc := range map[string]struct {
+		existing, updated bool
+		wantErr           bool
+	}{
+		"turn on":  {false, true, false},
+		"keep on":  {true, true, false},
+		"keep off": {false, false, false},
+		"turn off": {true, false, true},
+	} {
+		t.Run(name, func(t *testing.T) {
+			db := &fakeWhDb{existing: &wh.Wh{Id: "id1", OwnerId: "user1", Object: newCharacter(tc.existing)}}
+			s := newTestWhService(t, db)
+			_, err := s.Update(context.Background(), wh.WhTypeCharacter, &wh.Wh{Id: "id1", Object: newCharacter(tc.updated)}, &auth.Claims{Id: "user1"})
+			if tc.wantErr && (!errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "cannot be turned off")) {
+				t.Errorf("expected allow4e error, got %v", err)
+			}
+			if !tc.wantErr && err != nil {
+				t.Errorf("expected no error, got %v", err)
+			}
+		})
+	}
+}
+
+// editionWhDb returns the documents of a type that match the filter's ids and edition (characters by id only).
+type editionWhDb struct {
+	wh.WhDbService
+	docs map[wh.WhType][]*wh.Wh
+}
+
+func (f *editionWhDb) Retrieve(_ context.Context, t wh.WhType, _ []string, _ []string, filter wh.WhFilter) ([]*wh.Wh, error) {
+	result := make([]*wh.Wh, 0)
+	for _, w := range f.docs[t] {
+		if len(filter.WhIds) > 0 && !slices.Contains(filter.WhIds, w.Id) {
+			continue
+		}
+		if t != wh.WhTypeCharacter && filter.Edition != "" && w.Editions[filter.Edition] == nil {
+			continue
+		}
+		result = append(result, w)
+	}
+	return result, nil
+}
+
+func TestFullCharacterAllow4eResolves4eOnlyContent(t *testing.T) {
+	talent := func() *wh.Talent { return mock_data.NewMockTalents()[0].Object.(*wh.Talent) }
+	skill := func() *wh.Skill { return mock_data.NewMockSkills()[0].Object.(*wh.Skill) }
+	docs := map[wh.WhType][]*wh.Wh{
+		wh.WhTypeTalent: {
+			{Id: "talent5e", Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: talent(), wh.Edition5e: talent()}},
+			{Id: "talent4e", Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: talent()}},
+		},
+		wh.WhTypeSkill: {
+			{Id: "skill4e", Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: skill()}},
+		},
+		wh.WhTypeCareer: {
+			{Id: "career5e", Editions: map[wh.Edition]wh.WhObject{wh.Edition5e: newMockCareer("")}},
+		},
+	}
+
+	for _, allow4e := range []bool{true, false} {
+		t.Run(fmt.Sprintf("allow4e %v", allow4e), func(t *testing.T) {
+			character := newMockCharacter(wh.Edition5e)
+			character.Allow4e = allow4e
+			character.Talents = []wh.IdNumber{{Id: "talent5e", Number: 1}, {Id: "talent4e", Number: 1}}
+			character.Skills = []wh.IdNumber{{Id: "skill4e", Number: 5}}
+			character.EquippedItems, character.CarriedItems, character.StoredItems = nil, nil, nil
+			character.Spells, character.Prayers, character.Traits, character.Mutations = nil, nil, nil, nil
+			character.CareerPath, character.Career = nil, wh.IdNumber{Id: "career5e", Number: 1}
+			character.Init()
+			docs[wh.WhTypeCharacter] = []*wh.Wh{{Id: "char1", Object: character}}
+
+			s := newTestWhService(t, &editionWhDb{docs: docs})
+			result, err := s.Get(context.Background(), wh.WhTypeCharacter, &auth.Claims{Id: "user1"}, true, false, wh.WhFilter{Edition: wh.Edition5e, WhIds: []string{"char1"}})
+			if err != nil {
+				t.Fatalf("expected no error, got %v", err)
+			}
+			full := result[0].Object.(*wh.CharacterFull)
+			wantTalents, wantSkills := 1, 0
+			if allow4e {
+				wantTalents, wantSkills = 2, 1
+			}
+			if len(full.Talents) != wantTalents || len(full.Skills) != wantSkills {
+				t.Errorf("expected %d talents and %d skills, got %d and %d", wantTalents, wantSkills, len(full.Talents), len(full.Skills))
 			}
 		})
 	}

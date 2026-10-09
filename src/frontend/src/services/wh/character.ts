@@ -46,6 +46,7 @@ export interface CharacterApiData {
   spentExp: number;
   currentExp: number;
   careerTicks: number;
+  allow4e: boolean;
   sin: number;
   corruption: number;
   status: StatusTier;
@@ -82,6 +83,7 @@ export class Character extends WhEntity {
   spentExp: number;
   currentExp: number;
   careerTicks: number;
+  allow4e: boolean;
   sin: number;
   corruption: number;
   status: StatusTier;
@@ -123,6 +125,7 @@ export class Character extends WhEntity {
     spentExp = 0,
     currentExp = 0,
     careerTicks = 0,
+    allow4e = false,
     sin = 0,
     corruption = 0,
     status = StatusTier.Brass,
@@ -162,6 +165,7 @@ export class Character extends WhEntity {
     this.spentExp = spentExp;
     this.currentExp = currentExp;
     this.careerTicks = careerTicks;
+    this.allow4e = allow4e;
     this.sin = sin;
     this.corruption = corruption;
     this.status = status;
@@ -630,6 +634,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
     spentExp: characterApi.object.spentExp,
     currentExp: characterApi.object.currentExp,
     careerTicks: characterApi.object.careerTicks,
+    allow4e: characterApi.object.allow4e,
     sin: characterApi.object.sin,
     corruption: characterApi.object.corruption,
     status: characterApi.object.status,
@@ -672,6 +677,7 @@ export function modelToApi(character: Character): CharacterApiData {
     spentExp: character.spentExp,
     currentExp: character.currentExp,
     careerTicks: character.careerTicks,
+    allow4e: character.allow4e,
     sin: character.sin,
     corruption: character.corruption,
     status: character.status,

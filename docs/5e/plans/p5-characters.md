@@ -1,6 +1,6 @@
 # Plan P5 — 5e characters (editor and sheet)
 
-Status: **implemented** (2026-10-07); browser walkthrough passed on a local API against a copy of production (5e character created by hand; editor, sheet, tracker, Known Languages, Shield row and 5e CSV checked; 4e sheet and editor unchanged). Not deployed. Tracker items: H1–H6 (H6: a few cheap unit tests for the 5e formulas). Generator (G1–G4) and "allow 4e content" (O1–O4) are separate, later plans.
+Status: **implemented** (2026-10-07); browser walkthrough passed on a local API against a copy of production (5e character created by hand; editor, sheet, tracker, Known Languages, Shield row and 5e CSV checked; 4e sheet and editor unchanged). Merged (PR #97) and deployed 2026-10-08. Tracker items: H1–H6 (H6: a few cheap unit tests for the 5e formulas). Generator (G1–G4) and "allow 4e content" (O1–O4) are separate, later plans.
 
 ## Goal
 

@@ -10,6 +10,9 @@ import { Item, printItemType } from "../services/wh/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
+import Edition4eBadge from "./Edition4eBadge.vue";
+import EditionFilterSelect from "./EditionFilterSelect.vue";
+import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
 
@@ -38,6 +41,8 @@ const props = defineProps<{
   carriedValidationStatus: ValidationStatus;
   loading?: boolean;
   hideGenerate?: boolean;
+  // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
+  fourEIds?: Set<string>;
 }>();
 
 const emit = defineEmits<{
@@ -55,6 +60,10 @@ function anySelected(itemsWithNumber: ItemWithNumber): boolean {
 
 const itemsWithNumber: Ref<Record<string, ItemWithNumber>> = ref({});
 const itemsWithNumberList: Ref<ItemWithNumber[]> = ref([]);
+const editionFilter = ref<EditionFilter>("both");
+const itemsWithNumberListFiltered = computed(() =>
+  itemsWithNumberList.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
+);
 
 function updateItemsWithNumber(
   selectedEquipped: Record<string, number>,
@@ -199,6 +208,7 @@ function onModifyClick() {
                     <TextLink routeName="item" :params="{ id: src.id }">
                       {{ src.name }}
                     </TextLink>
+                    <Edition4eBadge v-if="fourEIds?.has(src.id)" />
                   </td>
                   <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.equipped }}</td>
                 </tr>
@@ -223,6 +233,7 @@ function onModifyClick() {
                     <TextLink routeName="item" :params="{ id: src.id }">
                       {{ src.name }}
                     </TextLink>
+                    <Edition4eBadge v-if="fourEIds?.has(src.id)" />
                   </td>
                   <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.carried }}</td>
                 </tr>
@@ -247,6 +258,7 @@ function onModifyClick() {
                     <TextLink routeName="item" :params="{ id: src.id }">
                       {{ src.name }}
                     </TextLink>
+                    <Edition4eBadge v-if="fourEIds?.has(src.id)" />
                   </td>
                   <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.stored }}</td>
                 </tr>
@@ -271,7 +283,7 @@ function onModifyClick() {
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"
-        :items="itemsWithNumberList"
+        :items="itemsWithNumberListFiltered"
         stackBreakpoint="3xl"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
@@ -280,9 +292,11 @@ function onModifyClick() {
           Create new
         </LinkButton>
         <ReloadButton @click="emit('reload')" />
+        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
 
         <template #name="{ id }: { id: string }">
           <TextLink routeName="item" :params="{ id: id }">{{ itemsWithNumber[id].name }}</TextLink>
+          <Edition4eBadge v-if="fourEIds?.has(id)" />
         </template>
 
         <template #equipped="{ id }: { id: string }">

@@ -7,6 +7,9 @@ import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
+import Edition4eBadge from "./Edition4eBadge.vue";
+import EditionFilterSelect from "./EditionFilterSelect.vue";
+import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
 import LinkButton from "./LinkButton.vue";
 import ReloadButton from "./ReloadButton.vue";
 
@@ -29,6 +32,8 @@ const props = defineProps<{
   clearAllBtn?: boolean;
   disableDescription?: boolean;
   truncateModalDescription?: number;
+  // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
+  fourEIds?: Set<string>;
 }>();
 
 const emit = defineEmits<{
@@ -39,6 +44,10 @@ const emit = defineEmits<{
 
 const itemsWithSelect: Ref<Record<string, ItemWithSelect>> = ref({});
 const itemsWithSelectList: Ref<ItemWithSelect[]> = ref([]);
+const editionFilter = ref<EditionFilter>("both");
+const itemsWithSelectListFiltered = computed(() =>
+  itemsWithSelectList.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
+);
 
 watch(
   [() => props.initSelectedItems, () => props.itemList],
@@ -118,7 +127,9 @@ function onModifyClick() {
         <thead>
           <tr class="text-left">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-            <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">Description</th>
+            <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">
+              Description
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -127,8 +138,11 @@ function onModifyClick() {
               <TextLink :routeName="routeName" :params="{ id: src.id }">
                 {{ src.name }}
               </TextLink>
+              <Edition4eBadge v-if="fourEIds?.has(src.id)" />
             </td>
-            <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">{{ src.description }}</td>
+            <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">
+              {{ src.description }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -139,7 +153,7 @@ function onModifyClick() {
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"
-        :items="itemsWithSelectList"
+        :items="itemsWithSelectListFiltered"
         stackBreakpoint="lg"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
@@ -148,11 +162,13 @@ function onModifyClick() {
           Create new
         </LinkButton>
         <ReloadButton @click="emit('reload')" />
+        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
 
         <template #name="{ id }: { id: string }">
           <TextLink :routeName="routeName" :params="{ id: id }">
             {{ itemsWithSelect[id].name }}
           </TextLink>
+          <Edition4eBadge v-if="fourEIds?.has(id)" />
         </template>
 
         <template #selected="{ id }: { id: string }">

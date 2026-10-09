@@ -4,8 +4,25 @@
     {
       "name": "frontend",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "src/frontend", "run", "dev", "--", "--port", "5173"],
+      "runtimeArgs": [
+        "--prefix",
+        "src/frontend",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5173"
+      ],
       "port": 5173
+    },
+    {
+      "name": "frontend-walkthrough",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "VITE_ROOT_API=http://127.0.0.1:8082 npm --prefix src/frontend run dev -- --port 5174 --strictPort"
+      ],
+      "port": 5174
     }
   ]
 }

@@ -134,6 +134,9 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 		if existingChar.Edition != updatedChar.Edition {
 			return nil, fmt.Errorf("%w: edition of wh %s cannot be changed", domain.ErrInvalidArguments, w.Id)
 		}
+		if existingChar.Allow4e && !updatedChar.Allow4e {
+			return nil, fmt.Errorf("%w: allow4e of wh %s cannot be turned off", domain.ErrInvalidArguments, w.Id)
+		}
 	}
 
 	w.OwnerId = existingWh.OwnerId
@@ -313,11 +316,15 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edit
 	allSpellIds := make([]string, 0)
 	allPrayerIds := make([]string, 0)
 	allTraitIds := make([]string, 0)
+	allSkillIds := make([]string, 0)
+	allow4e := false
 	for _, v := range characters {
 		character, ok := v.Object.(*wh.Character)
 		if !ok {
 			return nil, fmt.Errorf("failed to cast object to character")
 		}
+		allow4e = allow4e || (character.Edition == wh.Edition5e && character.Allow4e)
+		allSkillIds = deduplicate(allSkillIds, idNumbersToIds(character.Skills))
 		allItemIds = deduplicate(allItemIds, idNumbersToIds(character.EquippedItems), idNumbersToIds(character.CarriedItems), idNumbersToIds(character.StoredItems))
 		allTalentIds = deduplicate(allTalentIds, idNumbersToIds(character.Talents))
 		allCareerIds = deduplicate(allCareerIds, idNumbersToIds(character.CareerPath), []string{character.Career.Id})
@@ -364,6 +371,23 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edit
 		}
 	}
 
+	// 5e characters with allow4e may reference 4e content that has no 5e version: load the references that were
+	// not found in 5e with their 4e variant.
+	if allow4e && e == wh.Edition5e {
+		components[wh.WhTypeSkill].ids = allSkillIds
+		for k, v := range components {
+			missing := missingIds(v.ids, v.wh)
+			if len(missing) == 0 {
+				continue
+			}
+			found4e, err := whService.Get(ctx, k, claims, v.full, false, wh.WhFilter{Edition: wh.Edition4e, WhIds: missing})
+			if err != nil {
+				return nil, fmt.Errorf("failed to get 4e wh: %w", err)
+			}
+			v.wh = append(v.wh, found4e...)
+		}
+	}
+
 	fullCharacters := make([]*wh.Wh, 0)
 	for _, v := range characters {
 		character, ok := v.Object.(*wh.Character)
@@ -381,6 +405,21 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edit
 	}
 
 	return fullCharacters, nil
+}
+
+// missingIds returns the ids that are not in whs.
+func missingIds(ids []string, whs []*wh.Wh) []string {
+	found := make(map[string]bool, len(whs))
+	for _, w := range whs {
+		found[w.Id] = true
+	}
+	missing := make([]string, 0)
+	for _, id := range ids {
+		if !found[id] {
+			missing = append(missing, id)
+		}
+	}
+	return missing
 }
 
 func (s *WhService) GetGenerationProps(ctx context.Context) (*wh.GenProps, error) {

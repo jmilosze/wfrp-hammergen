@@ -29,18 +29,20 @@ type Character struct {
 	CurrentExp        int              `json:"currentExp" validate:"gte=0,lte=10000000"`
 	SpentExp          int              `json:"spentExp" validate:"gte=0,lte=10000000"`
 	// CareerTicks is the 5e Career Advancement Tracker: ticks in the current career (levels at 10/22/36).
-	CareerTicks int       `json:"careerTicks" bson:"careerticks,omitempty" validate:"gte=0,lte=36"`
-	Status      Status    `json:"status" validate:"status_valid"`
-	Standing    Standing  `json:"standing" validate:"standing_valid"`
-	Brass       int       `json:"brass" validate:"gte=0,lte=1000000"`
-	Silver      int       `json:"silver" validate:"gte=0,lte=1000000"`
-	Gold        int       `json:"gold" validate:"gte=0,lte=1000000"`
-	Spells      []string  `json:"spells" validate:"dive,id_valid"`
-	Prayers     []string  `json:"prayers" validate:"dive,id_valid"`
-	Traits      []IdValue `json:"traits" validate:"dive"`
-	Sin         int       `json:"sin" validate:"gte=0,lte=1000"`
-	Corruption  int       `json:"corruption" validate:"gte=0,lte=1000"`
-	Mutations   []string  `json:"mutations" validate:"dive,id_valid"`
+	CareerTicks int `json:"careerTicks" bson:"careerticks,omitempty" validate:"gte=0,lte=36"`
+	// Allow4e lets a 5e character use 4e content that has no 5e version (one-way: cannot be turned off).
+	Allow4e    bool      `json:"allow4e" bson:"allow4e,omitempty"`
+	Status     Status    `json:"status" validate:"status_valid"`
+	Standing   Standing  `json:"standing" validate:"standing_valid"`
+	Brass      int       `json:"brass" validate:"gte=0,lte=1000000"`
+	Silver     int       `json:"silver" validate:"gte=0,lte=1000000"`
+	Gold       int       `json:"gold" validate:"gte=0,lte=1000000"`
+	Spells     []string  `json:"spells" validate:"dive,id_valid"`
+	Prayers    []string  `json:"prayers" validate:"dive,id_valid"`
+	Traits     []IdValue `json:"traits" validate:"dive"`
+	Sin        int       `json:"sin" validate:"gte=0,lte=1000"`
+	Corruption int       `json:"corruption" validate:"gte=0,lte=1000"`
+	Mutations  []string  `json:"mutations" validate:"dive,id_valid"`
 }
 
 // characterSpecies5e are the species 5e characters can be (Human uses the Reikland code).
@@ -53,6 +55,9 @@ var characterSpecies5e = []CharacterSpecies{
 }
 
 func (character *Character) ValidateEdition(e Edition) error {
+	if e != Edition5e && character.Allow4e {
+		return fmt.Errorf("allow4e is only available in 5e")
+	}
 	if e == Edition5e && !slices.Contains(characterSpecies5e, character.Species) {
 		return fmt.Errorf("species %s is not available in 5e", character.Species)
 	}
@@ -92,7 +97,8 @@ func (character *Character) Init() {
 	}
 }
 
-// ToFull resolves the character's references; all content lists hold variants of the character's edition.
+// ToFull resolves the character's references; content lists hold the character's edition variant of each document,
+// and for a 5e character with Allow4e also 4e-only documents (4e content without a 5e version).
 func (character *Character) ToFull(
 	allItems []*Wh, allSkills []*Wh, allTalents []*Wh, allMutations []*Wh,
 	allSpells []*Wh, allPrayers []*Wh, allTraits []*Wh, allCareers []*Wh,
@@ -175,6 +181,7 @@ func (character *Character) ToFull(
 		CurrentExp:        character.CurrentExp,
 		SpentExp:          character.SpentExp,
 		CareerTicks:       character.CareerTicks,
+		Allow4e:           character.Allow4e,
 		Status:            character.Status,
 		Standing:          character.Standing,
 		Brass:             character.Brass,
@@ -224,6 +231,10 @@ func skillIdNumberListToWhNumberList(e Edition, skillIdNumberList []IdNumber, al
 		if ok {
 			whNumberList = append(whNumberList, WhNumber{Wh: v, Number: skillNumber})
 		} else {
+			if _, has := v.Editions[e]; !has {
+				// A 4e-only skill loaded for a 5e character with allow4e; only skills of the edition are shown at 0.
+				continue
+			}
 			allSkill, ok := v.Editions[e].(*Skill)
 			if !ok {
 				return nil, errors.New("error asserting skill")
@@ -413,6 +424,7 @@ type CharacterFull struct {
 	CurrentExp        int              `json:"currentExp"`
 	SpentExp          int              `json:"spentExp"`
 	CareerTicks       int              `json:"careerTicks"`
+	Allow4e           bool             `json:"allow4e"`
 	Status            Status           `json:"status"`
 	Standing          Standing         `json:"standing"`
 	Brass             int              `json:"brass"`

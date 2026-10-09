@@ -33,6 +33,7 @@ const characterFullApiData: CharacterFullApiData = {
   spentExp: 1000,
   currentExp: 230,
   careerTicks: 0,
+  allow4e: false,
   status: 1,
   standing: 2,
   description: "character display",
@@ -1046,6 +1047,7 @@ const characterFull = {
   currentExp: 230,
   totalExp: 1230,
   careerTicks: 0,
+  allow4e: false,
   status: "Silver",
   standing: 2,
   description: "character display",
@@ -1098,6 +1100,7 @@ const characterFull = {
     },
   ],
   languageSkills: [],
+  ignored4eModifiers: [],
   advancedSkills: [
     {
       id: "id5",
@@ -1296,4 +1299,22 @@ const characterFull = {
 
 test("apiResponseToCharacterFull returns expected item", () => {
   expect(apiResponseToCharacterFull(characterFullApiResponse)).toMatchObject(characterFull);
+});
+
+test("apiResponseToCharacterFull of a 5e character with 4e content counts 4e trappings and ignores 4e modifiers", () => {
+  const data5e: CharacterFullApiData = { ...characterFullApiData, edition: "5e", allow4e: true };
+  const full = apiResponseToCharacterFull({ ...characterFullApiResponse, object: data5e });
+
+  // All content in the fixture is 4e-only: talent, trait and mutation modifiers are not applied...
+  expect(full.otherAttributes).toEqual({ WS: 0, BS: 0, S: 0, T: 0, I: 0, Ag: 0, Dex: 0, Int: 0, WP: 0, Fel: 0 });
+  expect(full.ignored4eModifiers).toEqual(expect.arrayContaining(["talent_1", "talent_2", "talent_3"]));
+  // ...trappings count as usual...
+  expect([full.encWeapon, full.encArmor, full.encOther, full.encCarried]).toEqual([
+    characterFull.encWeapon,
+    characterFull.encArmor,
+    characterFull.encOther,
+    characterFull.encCarried,
+  ]);
+  // ...and 4e content is marked.
+  expect(full.talents.map((x) => x.name)).toEqual(["talent_1 (4e)", "talent_2 (4e)", "talent_3 (4e)"]);
 });

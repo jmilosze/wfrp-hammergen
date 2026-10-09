@@ -7,6 +7,9 @@ import { useModal } from "../composables/modal.ts";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
+import Edition4eBadge from "./Edition4eBadge.vue";
+import EditionFilterSelect from "./EditionFilterSelect.vue";
+import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
 import LinkButton from "./LinkButton.vue";
 import ReloadButton from "./ReloadButton.vue";
 import FormInput from "./FormInput.vue";
@@ -32,6 +35,8 @@ const props = defineProps<{
   disableDescription?: boolean;
   truncateModalDescription?: number;
   validationStatus: ValidationStatus;
+  // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
+  fourEIds?: Set<string>;
 }>();
 
 const emit = defineEmits<{
@@ -69,6 +74,10 @@ function isRepeatable(id: string): boolean {
 
 // Modal rows are sorted when the modal opens, so that rows do not jump while selecting.
 const modalItems = ref<{ id: string; name: string; description: string }[]>([]);
+const editionFilter = ref<EditionFilter>("both");
+const modalItemsFiltered = computed(() =>
+  modalItems.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
+);
 
 const modal = useModal();
 const searchTerm = ref("");
@@ -136,6 +145,7 @@ const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
               <TextLink :routeName="routeName" :params="{ id: row.entity.id }">
                 {{ row.entity.name }}
               </TextLink>
+              <Edition4eBadge v-if="fourEIds?.has(row.entity.id)" />
             </td>
             <td v-if="showValueColumn" :class="tdClass">
               <template v-if="row.entity.hasValue">
@@ -176,7 +186,7 @@ const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"
-        :items="modalItems"
+        :items="modalItemsFiltered"
         stackBreakpoint="lg"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
@@ -185,11 +195,13 @@ const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
           Create new
         </LinkButton>
         <ReloadButton @click="emit('reload')" />
+        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
 
         <template #name="{ id, name }: { id: string; name: string }">
           <TextLink :routeName="routeName" :params="{ id: id }">
             {{ name }}
           </TextLink>
+          <Edition4eBadge v-if="fourEIds?.has(id)" />
         </template>
 
         <template #selected="{ id }: { id: string }">

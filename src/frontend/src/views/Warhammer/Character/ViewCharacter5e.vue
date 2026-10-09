@@ -15,6 +15,7 @@ import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import TextLink from "../../../components/TextLink.vue";
 import CareerAdvancementTracker from "../../../components/CareerAdvancementTracker.vue";
+import Ignored4eModifiersWarning from "../../../components/Ignored4eModifiersWarning.vue";
 
 const props = defineProps<{
   id: string;
@@ -467,6 +468,7 @@ const grimoiresDisp = ref(
     <ActionButton class="m-1 btn btn-sm" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
   </div>
 
+  <Ignored4eModifiersWarning :names="character.ignored4eModifiers" class="my-3" />
   <div class="flex flex-wrap md:flex-nowrap justify-between text-left gap-5 my-5">
     <div class="grow">
       <div class="mb-1">Basic</div>

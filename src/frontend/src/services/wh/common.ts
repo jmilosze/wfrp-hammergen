@@ -128,6 +128,22 @@ export function variant<WhApiData>(api: ApiResponse<WhApiData>, edition: Edition
   return data;
 }
 
+// contentEdition returns the edition of a document's variant that applies to a character of edition e: its own
+// edition, or 4e for 4e content without a 5e version on a 5e character that allows 4e content.
+export function contentEdition<WhApiData>(api: ApiResponse<WhApiData>, e: Edition): Edition {
+  return api.editions[e] !== undefined ? e : "4e";
+}
+
+// variantFor returns the variant of a document that applies to a character of edition e (see contentEdition).
+export function variantFor<WhApiData>(api: ApiResponse<WhApiData>, e: Edition): WhApiData {
+  return variant(api, contentEdition(api, e));
+}
+
+// with4eMark marks the name of 4e content on a 5e character.
+export function with4eMark<WhApiData>(api: ApiResponse<WhApiData>, e: Edition, name: string): string {
+  return contentEdition(api, e) === e ? name : `${name} (4e)`;
+}
+
 // API of a content type: lists one edition, reads and writes whole documents (all variants).
 export interface ContentApi<T> {
   listElements: (edition: Edition) => Promise<T[]>;

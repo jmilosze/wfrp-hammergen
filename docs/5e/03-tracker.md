@@ -108,10 +108,10 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| O1 | One-way "allow 4e content" switch (R6) | ⬜ | |
-| O2 | Offer 4e content where no 5e version exists (R7) | ⬜ | Q-VERSION |
-| O3 | Show 4e content on sheet without affecting numbers (R8) | ⬜ | |
-| O4 | Tests | ⬜ | |
+| O1 | One-way "allow 4e content" switch (R6) | ✅ | [plans/p6-allow-4e.md](plans/p6-allow-4e.md) |
+| O2 | Offer 4e content where no 5e version exists (R7) | ✅ | [plans/p6-allow-4e.md](plans/p6-allow-4e.md); Q-VERSION |
+| O3 | Show 4e content on sheet (R8, Q-4E-EFFECT) | ✅ | [plans/p6-allow-4e.md](plans/p6-allow-4e.md); trappings count fully, talents/traits/mutations without modifiers (Q-4E-EFFECT) |
+| O4 | Tests | ✅ | [plans/p6-allow-4e.md](plans/p6-allow-4e.md) |
 
 ### Phase 3.4 — 5e generator
 
@@ -188,3 +188,5 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-10-06 | 5e core rulebook update (2026-10-01, `books/WFRP5_Core_Rulebook_06_10_26.pdf`) compared with the imported data; page numbers unchanged up to p. 365. Q-SIZE revised to five 5e steps. Changes applied via the data files and `db/scripts/update_5e_book_0610.py` (remove 5e Size - Tiny, Size - Little, Melee - Parry; rename Remedy - Wounded → Remedy - Infection). Run on staging and production 2026-10-06 (10 talents, 3 prayers, 13 spells, 5 qualities/flaws, 5 traits, 6 trappings re-imported with `--update`), production backup `db/hammergen_06_10_2026_before_5e_book_update`. Careers will be taken from the new PDF. |
 | 2026-10-07 | Character decisions: Q-ADV points (as today), Q-TRACKER one running tick count for the current career (skulls at 10/22/36), Q-AMBITION not now (description/notes), Q-RULES sheet values only with XP typed in as in 4e. |
 | 2026-10-07 | Plan P5 implemented (H1–H6): separate 4e/5e character pages (`?edition=` in URLs), rules modules `rules4e.ts`/`rules5e.ts`, `careerTicks`, 5e species check, 5e editor and sheet (tracker, Known Languages, Shield row, 5e CSV). Walkthrough passed locally; not deployed. |
+| 2026-10-08 | P5 (5e characters) merged (PR #97, incl. `CharacterAttributes` merged back into one component) and deployed. |
+| 2026-10-08 | Plan P6 (allow 4e content, O1–O4) implemented: `allow4e` on characters (one-way, 5e only), 4e fallback for full characters, 4e badges and 5e/4e filter in all pickers, 4e trappings counted, 4e talent/trait/mutation modifiers ignored with a warning in editor/sheet/CSV. Walkthrough passed locally; not deployed. |

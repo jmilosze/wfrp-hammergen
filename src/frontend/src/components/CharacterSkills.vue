@@ -11,6 +11,9 @@ import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
+import Edition4eBadge from "./Edition4eBadge.vue";
+import EditionFilterSelect from "./EditionFilterSelect.vue";
+import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
 
@@ -35,6 +38,8 @@ const props = defineProps<{
   validationStatus: ValidationStatus;
   hideGenerate?: boolean;
   step?: number;
+  // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
+  fourEIds?: Set<string>;
 }>();
 
 const emit = defineEmits<{
@@ -50,6 +55,10 @@ function isNonzero(skillWithNumber: SkillWithNumber): boolean {
 
 const skillsWithNumber: Ref<Record<string, SkillWithNumber>> = ref({});
 const skillsWithNumberList: Ref<SkillWithNumber[]> = ref([]);
+const editionFilter = ref<EditionFilter>("both");
+const skillsWithNumberListFiltered = computed(() =>
+  skillsWithNumberList.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
+);
 
 function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillList: Skill[], attributes: Attributes) {
   skillsWithNumber.value = {};
@@ -168,6 +177,7 @@ function onModifyClick() {
               <TextLink routeName="skill" :params="{ id: src.id }">
                 {{ src.name }}
               </TextLink>
+              <Edition4eBadge v-if="fourEIds?.has(src.id)" />
             </td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
@@ -185,7 +195,7 @@ function onModifyClick() {
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"
-        :items="skillsWithNumberList"
+        :items="skillsWithNumberListFiltered"
         stackBreakpoint="lg"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
@@ -194,9 +204,11 @@ function onModifyClick() {
           Create new
         </LinkButton>
         <ReloadButton @click="emit('reload')" />
+        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
 
         <template #name="{ id }: { id: string }">
           <TextLink routeName="skill" :params="{ id: id }">{{ skillsWithNumber[id].name }}</TextLink>
+          <Edition4eBadge v-if="fourEIds?.has(id)" />
         </template>
 
         <template #number="{ id }: { id: string }">

@@ -7,7 +7,12 @@ export function characterFullToCsv5e(characterFull: CharacterFull): string {
   const basicSkills = characterFull.basicSkills.filter((x) => !languageIds.has(x.id));
   const advancedSkills = characterFull.advancedSkills.filter((x) => !languageIds.has(x.id));
 
-  let csv = "Name,Species,Career,Class,Status,Career Advancement Tracker,,,,,\n";
+  let csv = "";
+  if (characterFull.ignored4eModifiers.length > 0) {
+    csv += csvStr("Modifiers of 4e content are not taken into account: " + characterFull.ignored4eModifiers.join(", "));
+    csv += ",,,,,,,,,,\n";
+  }
+  csv += "Name,Species,Career,Class,Status,Career Advancement Tracker,,,,,\n";
   csv += csvStr(characterFull.name) + ",";
   csv += csvStr(characterFull.species) + ",";
   csv += csvStr(`${characterFull.currentCareer.name} (${characterFull.currentCareer.levelName})`) + ",";

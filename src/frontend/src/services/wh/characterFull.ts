@@ -9,7 +9,16 @@ import {
   sumAttributes,
   zeroAttributes,
 } from "./attributes.ts";
-import { ApiResponse, CharacterApiResponse, Edition, variant, Visibility } from "./common.ts";
+import {
+  ApiResponse,
+  CharacterApiResponse,
+  contentEdition,
+  Edition,
+  variant,
+  variantFor,
+  Visibility,
+  with4eMark,
+} from "./common.ts";
 import { SkillApiData } from "./skill.ts";
 import { TalentApiData } from "./talent.ts";
 import {
@@ -35,7 +44,7 @@ import { PrayerApiData } from "./prayer.ts";
 import { MutationApiData, printMutationType } from "./mutation.ts";
 import { Source } from "./source.ts";
 import { ItemPropertyApiData } from "./itemproperty.ts";
-import { ModifierEffect } from "./characterModifiers.ts";
+import { CharacterModifiersData, hasModifiers, ModifierEffect } from "./characterModifiers.ts";
 import { TraitApiData } from "./trait.ts";
 import { RuneApiData } from "./rune.ts";
 import { printWithValue } from "../../utils/idValue.ts";
@@ -85,6 +94,7 @@ export interface CharacterFullApiData {
   spentExp: number;
   currentExp: number;
   careerTicks: number;
+  allow4e: boolean;
   sin: number;
   corruption: number;
   status: StatusTier;
@@ -191,6 +201,9 @@ export interface CharacterFull {
   id: string;
   ownerId: string;
   edition: Edition;
+  allow4e: boolean;
+  // Names of 4e talents, traits and mutations whose modifiers are not applied (shown as a warning).
+  ignored4eModifiers: string[];
   visibility: Visibility;
   name: string;
   description: string;
@@ -253,6 +266,8 @@ export function newCharacterFull({
   id = "",
   ownerId = "",
   edition = "4e" as Edition,
+  allow4e = false,
+  ignored4eModifiers = [] as string[],
   visibility = Visibility.Private,
   name = "",
   description = "",
@@ -306,6 +321,8 @@ export function newCharacterFull({
     id: id,
     ownerId: ownerId,
     edition: edition,
+    allow4e: allow4e,
+    ignored4eModifiers: ignored4eModifiers,
     visibility: visibility,
     name: name,
     description: description,
@@ -364,18 +381,30 @@ export function apiResponseToCharacterFull(
   const e = fullCharacterApi.object.edition;
   // A trait that takes a value can be on the character more than once; its modifiers count once.
   const uniqueTraits = [...new Map(fullCharacterApi.object.traits.map((x) => [x.wh.id, x.wh])).values()];
-  const mutationAttributes: Attributes = fullCharacterApi.object.mutations.reduce(
-    (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
+  // Modifiers of 4e talents, traits and mutations on a 5e character are not applied (R8); 4e trappings count fully.
+  const modTalents = fullCharacterApi.object.talents.filter((x) => contentEdition(x.wh, e) === e);
+  const modTraits = uniqueTraits.filter((x) => contentEdition(x, e) === e);
+  const modMutations = fullCharacterApi.object.mutations.filter((x) => contentEdition(x, e) === e);
+  const ignored4eModifiers = [
+    ...namesWithIgnoredModifiers(
+      e,
+      fullCharacterApi.object.talents.map((x) => x.wh),
+    ),
+    ...namesWithIgnoredModifiers(e, uniqueTraits),
+    ...namesWithIgnoredModifiers(e, fullCharacterApi.object.mutations),
+  ];
+  const mutationAttributes: Attributes = modMutations.reduce(
+    (a, v) => sumAttributes(a, variantFor(v, e).modifiers.attributes),
     zeroAttributes(),
   );
 
-  const traitAttributes: Attributes = uniqueTraits.reduce(
-    (a, v) => sumAttributes(a, variant(v, e).modifiers.attributes),
+  const traitAttributes: Attributes = modTraits.reduce(
+    (a, v) => sumAttributes(a, variantFor(v, e).modifiers.attributes),
     zeroAttributes(),
   );
 
-  const talentAttributes: Attributes = fullCharacterApi.object.talents.reduce(
-    (a, v) => sumAttributes(a, multiplyAttributes(v.number, variant(v.wh, e).modifiers.attributes)),
+  const talentAttributes: Attributes = modTalents.reduce(
+    (a, v) => sumAttributes(a, multiplyAttributes(v.number, variantFor(v.wh, e).modifiers.attributes)),
     zeroAttributes(),
   );
 
@@ -388,43 +417,45 @@ export function apiResponseToCharacterFull(
   );
 
   const sizeModifier: number =
-    fullCharacterApi.object.mutations.reduce((a, v) => a + variant(v, e).modifiers.size, 0) +
-    uniqueTraits.reduce((a, v) => a + variant(v, e).modifiers.size, 0) +
-    fullCharacterApi.object.talents.reduce((a, v) => a + v.number * variant(v.wh, e).modifiers.size, 0);
+    modMutations.reduce((a, v) => a + variantFor(v, e).modifiers.size, 0) +
+    modTraits.reduce((a, v) => a + variantFor(v, e).modifiers.size, 0) +
+    modTalents.reduce((a, v) => a + v.number * variantFor(v.wh, e).modifiers.size, 0);
   const movementModifier =
-    fullCharacterApi.object.mutations.reduce((a, v) => a + variant(v, e).modifiers.movement, 0) +
-    uniqueTraits.reduce((a, v) => a + variant(v, e).modifiers.movement, 0) +
-    fullCharacterApi.object.talents.reduce((a, v) => a + v.number * variant(v.wh, e).modifiers.movement, 0);
+    modMutations.reduce((a, v) => a + variantFor(v, e).modifiers.movement, 0) +
+    modTraits.reduce((a, v) => a + variantFor(v, e).modifiers.movement, 0) +
+    modTalents.reduce((a, v) => a + v.number * variantFor(v.wh, e).modifiers.movement, 0);
 
   const rules = rulesFor(e);
   const size = rules.getSize(sizeModifier);
 
   const hardyRanks =
-    fullCharacterApi.object.mutations.reduce(
-      (a, v) => a + (variant(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
+    modMutations.reduce(
+      (a, v) => a + (variantFor(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
       0,
     ) +
-    uniqueTraits.reduce((a, v) => a + (variant(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0), 0) +
-    fullCharacterApi.object.talents.reduce(
-      (a, v) => a + v.number * (variant(v.wh, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
+    modTraits.reduce((a, v) => a + (variantFor(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0), 0) +
+    modTalents.reduce(
+      (a, v) => a + v.number * (variantFor(v.wh, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
       0,
     );
 
   const [basicSkills, advancedSkills] = getSkills(e, fullCharacterApi.object.skills, attributes);
   const languageSkills = getLanguageSkills(e, fullCharacterApi.object.skills, attributes);
 
-  const equippedArmor = fullCharacterApi.object.equippedItems.filter((x) => variant(x.wh, e).type === ItemType.Armour);
+  const equippedArmor = fullCharacterApi.object.equippedItems.filter((x) => variantFor(x.wh, e).type === ItemType.Armour);
   const equippedWeapon = fullCharacterApi.object.equippedItems.filter((x) =>
-    [ItemType.Melee, ItemType.Ranged, ItemType.Ammunition].includes(variant(x.wh, e).type),
+    [ItemType.Melee, ItemType.Ranged, ItemType.Ammunition].includes(variantFor(x.wh, e).type),
   );
   const equippedOther = fullCharacterApi.object.equippedItems.filter((x) =>
-    [ItemType.Container, ItemType.Other].includes(variant(x.wh, e).type),
+    [ItemType.Container, ItemType.Other].includes(variantFor(x.wh, e).type),
   );
 
   return {
     id: fullCharacterApi.id,
     ownerId: fullCharacterApi.ownerId,
     edition: e,
+    allow4e: fullCharacterApi.object.allow4e,
+    ignored4eModifiers: ignored4eModifiers,
     visibility: fullCharacterApi.visibility ?? Visibility.Private,
     name: fullCharacterApi.object.name,
     description: fullCharacterApi.object.description,
@@ -451,13 +482,13 @@ export function apiResponseToCharacterFull(
       id: fullCharacterApi.object.career.wh.id,
       name: getCareerName(e, fullCharacterApi.object.career),
       levelName: getCareerLevel(e, fullCharacterApi.object.career),
-      className: printClassName(variant(fullCharacterApi.object.career.wh, e).class),
+      className: printClassName(variantFor(fullCharacterApi.object.career.wh, e).class),
     },
     pastCareers: fullCharacterApi.object.careerPath.map((x) => ({
       id: x.wh.id,
       name: getCareerName(e, x),
       levelName: getCareerLevel(e, x),
-      className: printClassName(variant(x.wh, e).class),
+      className: printClassName(variantFor(x.wh, e).class),
     })),
 
     baseAttributes: fullCharacterApi.object.baseAttributes,
@@ -470,7 +501,11 @@ export function apiResponseToCharacterFull(
     run: 4 * rules.getMovement(fullCharacterApi.object.species, movementModifier),
     wounds: rules.getWounds(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
 
-    talents: fullCharacterApi.object.talents.map((x) => ({ id: x.wh.id, name: variant(x.wh, e).name, rank: x.number })),
+    talents: fullCharacterApi.object.talents.map((x) => ({
+      id: x.wh.id,
+      name: with4eMark(x.wh, e, variantFor(x.wh, e).name),
+      rank: x.number,
+    })),
     basicSkills: basicSkills,
     advancedSkills: advancedSkills,
     languageSkills: languageSkills,
@@ -486,31 +521,41 @@ export function apiResponseToCharacterFull(
     traits: getTraits(e, fullCharacterApi.object.traits),
     mutations: getMutations(e, fullCharacterApi.object.mutations),
 
-    encWeapon: equippedWeapon.map((x) => variant(x.wh, e).enc * x.number).reduce((x, y) => x + y, 0),
+    encWeapon: equippedWeapon.map((x) => variantFor(x.wh, e).enc * x.number).reduce((x, y) => x + y, 0),
     encArmor: equippedArmor
-      .map((x) => (variant(x.wh, e).enc > 0 ? variant(x.wh, e).enc - 1 : 0) * x.number)
+      .map((x) => (variantFor(x.wh, e).enc > 0 ? variantFor(x.wh, e).enc - 1 : 0) * x.number)
       .reduce((x, y) => x + y, 0),
     encOther: equippedOther
-      .map((x) => (variant(x.wh, e).enc > 0 ? variant(x.wh, e).enc - 1 : 0) * x.number)
+      .map((x) => (variantFor(x.wh, e).enc > 0 ? variantFor(x.wh, e).enc - 1 : 0) * x.number)
       .reduce((x, y) => x + y, 0),
-    encCarried: fullCharacterApi.object.carriedItems.map((x) => variant(x.wh, e).enc).reduce((x, y) => x + y, 0),
+    encCarried: fullCharacterApi.object.carriedItems.map((x) => variantFor(x.wh, e).enc).reduce((x, y) => x + y, 0),
   };
 }
 
+// namesWithIgnoredModifiers returns the names of 4e content (on a 5e character) whose modifiers are not applied.
+function namesWithIgnoredModifiers<T extends { name: string; modifiers: CharacterModifiersData }>(
+  e: Edition,
+  docs: ApiResponse<T>[],
+): string[] {
+  return docs
+    .filter((x) => contentEdition(x, e) !== e && hasModifiers(variantFor(x, e).modifiers))
+    .map((x) => variantFor(x, e).name);
+}
+
 function getCareerName(e: Edition, career: WhNumber<CareerApiData>): string {
-  return `${variant(career.wh, e).name} ${career.number}`;
+  return with4eMark(career.wh, e, `${variantFor(career.wh, e).name} ${career.number}`);
 }
 
 function getCareerLevel(e: Edition, career: WhNumber<CareerApiData>): string {
   switch (career.number) {
     case 1:
-      return variant(career.wh, e).level1.name;
+      return variantFor(career.wh, e).level1.name;
     case 2:
-      return variant(career.wh, e).level2.name;
+      return variantFor(career.wh, e).level2.name;
     case 3:
-      return variant(career.wh, e).level3.name;
+      return variantFor(career.wh, e).level3.name;
     case 4:
-      return variant(career.wh, e).level4.name;
+      return variantFor(career.wh, e).level4.name;
     default:
       return "";
   }
@@ -522,7 +567,7 @@ function getSkills(e: Edition, characterSkills: WhNumber<SkillApiData>[], attrib
 
   for (const skill of characterSkills) {
     const formattedSkill = skillForDisplay(e, skill.wh, skill.number, attributes);
-    if (variant(skill.wh, e).type === 0) {
+    if (variantFor(skill.wh, e).type === 0) {
       basicSkills.push(formattedSkill);
     } else {
       advancedSkills.push(formattedSkill);
@@ -536,7 +581,7 @@ function getSkills(e: Edition, characterSkills: WhNumber<SkillApiData>[], attrib
 const LANGUAGE_GROUP_IDS = ["5cadc6a3828dc9389cc7b15a", "5d187bb123353e73dca2ec60"];
 
 function isLanguage(e: Edition, skill: ApiResponse<SkillApiData>): boolean {
-  return LANGUAGE_GROUP_IDS.includes(skill.id) || variant(skill, e).group.some((x) => LANGUAGE_GROUP_IDS.includes(x));
+  return LANGUAGE_GROUP_IDS.includes(skill.id) || variantFor(skill, e).group.some((x) => LANGUAGE_GROUP_IDS.includes(x));
 }
 
 function getLanguageSkills(e: Edition, characterSkills: WhNumber<SkillApiData>[], attributes: Attributes) {
@@ -554,11 +599,15 @@ function skillForDisplay(
 ): CharacterFullSkill {
   return {
     id: rawSkill.id,
-    name: variant(rawSkill, e).isGroup ? `${variant(rawSkill, e).name} (Any)` : variant(rawSkill, e).name,
-    attributeName: printAttributeName(variant(rawSkill, e).attribute),
-    attributeValue: getAttributeValue(variant(rawSkill, e).attribute, attributes),
+    name: with4eMark(
+      rawSkill,
+      e,
+      variantFor(rawSkill, e).isGroup ? `${variantFor(rawSkill, e).name} (Any)` : variantFor(rawSkill, e).name,
+    ),
+    attributeName: printAttributeName(variantFor(rawSkill, e).attribute),
+    attributeValue: getAttributeValue(variantFor(rawSkill, e).attribute, attributes),
     advances: skillRank,
-    skill: getAttributeValue(variant(rawSkill, e).attribute, attributes) + skillRank,
+    skill: getAttributeValue(variantFor(rawSkill, e).attribute, attributes) + skillRank,
   };
 }
 
@@ -575,64 +624,66 @@ function getItems(
   const items = [] as CharacterFullItem[];
 
   for (const charItem of characterItems) {
+    // The item and its qualities, runes and spells are read in the item's edition (4e for 4e content on a 5e character).
+    const ie = contentEdition(charItem.wh, e);
     const item = {
       id: charItem.wh.id,
-      name: variant(charItem.wh, e).name,
-      enc: variant(charItem.wh, e).enc,
-      qualitiesFlaws: variant(charItem.wh, e).properties.map((x) => ({
-        name: printWithValue(variant(x.wh, e).name, variant(x.wh, e).hasValue, x.value),
+      name: with4eMark(charItem.wh, e, variant(charItem.wh, ie).name),
+      enc: variant(charItem.wh, ie).enc,
+      qualitiesFlaws: variant(charItem.wh, ie).properties.map((x) => ({
+        name: printWithValue(variant(x.wh, ie).name, variant(x.wh, ie).hasValue, x.value),
         id: x.wh.id,
       })),
-      runes: variant(charItem.wh, e).runes.map((x) => ({ name: variant(x.wh, e).name, id: x.wh.id, number: x.number })),
+      runes: variant(charItem.wh, ie).runes.map((x) => ({ name: variant(x.wh, ie).name, id: x.wh.id, number: x.number })),
       number: charItem.number,
-      description: variant(charItem.wh, e).description,
-      type: printItemType(variant(charItem.wh, e).type),
+      description: variant(charItem.wh, ie).description,
+      type: printItemType(variant(charItem.wh, ie).type),
     } as CharacterFullItem;
 
-    if (variant(charItem.wh, e).type === ItemType.Melee) {
-      item.group = printMeleeGroup(variant(charItem.wh, e).melee.group);
-      item.rng = printMeleeReach(variant(charItem.wh, e).melee.reach);
-      item.dmg = (variant(charItem.wh, e).melee.dmg + variant(charItem.wh, e).melee.dmgSbMult * SB).toString();
-    } else if (variant(charItem.wh, e).type === ItemType.Ranged) {
-      item.group = printRangedGroup(variant(charItem.wh, e).ranged.group);
-      item.rng = (variant(charItem.wh, e).ranged.rng + variant(charItem.wh, e).ranged.rngSbMult * SB).toString();
-      item.dmg = (variant(charItem.wh, e).ranged.dmg + variant(charItem.wh, e).ranged.dmgSbMult * SB).toString();
-    } else if (variant(charItem.wh, e).type === ItemType.Ammunition) {
+    if (variant(charItem.wh, ie).type === ItemType.Melee) {
+      item.group = printMeleeGroup(variant(charItem.wh, ie).melee.group);
+      item.rng = printMeleeReach(variant(charItem.wh, ie).melee.reach);
+      item.dmg = (variant(charItem.wh, ie).melee.dmg + variant(charItem.wh, ie).melee.dmgSbMult * SB).toString();
+    } else if (variant(charItem.wh, ie).type === ItemType.Ranged) {
+      item.group = printRangedGroup(variant(charItem.wh, ie).ranged.group);
+      item.rng = (variant(charItem.wh, ie).ranged.rng + variant(charItem.wh, ie).ranged.rngSbMult * SB).toString();
+      item.dmg = (variant(charItem.wh, ie).ranged.dmg + variant(charItem.wh, ie).ranged.dmgSbMult * SB).toString();
+    } else if (variant(charItem.wh, ie).type === ItemType.Ammunition) {
       let range =
-        variant(charItem.wh, e).ammunition.rngMult !== 1
-          ? `Weapon x${variant(charItem.wh, e).ammunition.rngMult}`
+        variant(charItem.wh, ie).ammunition.rngMult !== 1
+          ? `Weapon x${variant(charItem.wh, ie).ammunition.rngMult}`
           : "Weapon";
-      if (variant(charItem.wh, e).ammunition.rng > 0) {
-        range += `+${variant(charItem.wh, e).ammunition.rng.toString()}`;
-      } else if (variant(charItem.wh, e).ammunition.rng < 0) {
-        range += `${variant(charItem.wh, e).ammunition.rng.toString()}`;
+      if (variant(charItem.wh, ie).ammunition.rng > 0) {
+        range += `+${variant(charItem.wh, ie).ammunition.rng.toString()}`;
+      } else if (variant(charItem.wh, ie).ammunition.rng < 0) {
+        range += `${variant(charItem.wh, ie).ammunition.rng.toString()}`;
       }
 
       let damage = "Weapon";
-      if (variant(charItem.wh, e).ammunition.dmg > 0) {
-        damage += `+${variant(charItem.wh, e).ammunition.dmg.toString()}`;
-      } else if (variant(charItem.wh, e).ammunition.rng < 0) {
-        damage += `${variant(charItem.wh, e).ammunition.dmg.toString()}`;
+      if (variant(charItem.wh, ie).ammunition.dmg > 0) {
+        damage += `+${variant(charItem.wh, ie).ammunition.dmg.toString()}`;
+      } else if (variant(charItem.wh, ie).ammunition.rng < 0) {
+        damage += `${variant(charItem.wh, ie).ammunition.dmg.toString()}`;
       }
 
-      item.group = printAmmoGroup(variant(charItem.wh, e).ammunition.group);
+      item.group = printAmmoGroup(variant(charItem.wh, ie).ammunition.group);
       item.rng = range;
       item.dmg = damage;
-    } else if (variant(charItem.wh, e).type === ItemType.Armour) {
-      item.group = printArmourGroup(variant(charItem.wh, e).armour.group);
+    } else if (variant(charItem.wh, ie).type === ItemType.Armour) {
+      item.group = printArmourGroup(variant(charItem.wh, ie).armour.group);
       // 5e shields are armour in the Shield group, with no hit location.
       item.locations =
-        variant(charItem.wh, e).armour.group === ArmourGroup.Shield
+        variant(charItem.wh, ie).armour.group === ArmourGroup.Shield
           ? ["Shield"]
-          : variant(charItem.wh, e).armour.location.map((x) => printArmourLocation(x));
-      item.ap = variant(charItem.wh, e).armour.points;
-    } else if (variant(charItem.wh, e).type === ItemType.Grimoire) {
-      item.spells = getSpells(e, variant(charItem.wh, e).grimoire.spells);
+          : variant(charItem.wh, ie).armour.location.map((x) => printArmourLocation(x));
+      item.ap = variant(charItem.wh, ie).armour.points;
+    } else if (variant(charItem.wh, ie).type === ItemType.Grimoire) {
+      item.spells = getSpells(ie, variant(charItem.wh, ie).grimoire.spells);
     } else {
       item.description =
-        (variant(charItem.wh, e).type === ItemType.Container
-          ? `(Capacity ${variant(charItem.wh, e).container.capacity}) `
-          : "") + variant(charItem.wh, e).description;
+        (variant(charItem.wh, ie).type === ItemType.Container
+          ? `(Capacity ${variant(charItem.wh, ie).container.capacity}) `
+          : "") + variant(charItem.wh, ie).description;
     }
     items.push(item);
   }
@@ -643,31 +694,31 @@ function getItems(
 function getSpells(e: Edition, spells: ApiResponse<SpellApiData>[]): CharacterFullSpell[] {
   return spells.map((x) => ({
     id: x.id,
-    name: variant(x, e).name,
-    range: variant(x, e).range,
-    target: variant(x, e).target,
-    duration: variant(x, e).duration,
-    description: variant(x, e).description,
-    cn: variant(x, e).cn,
+    name: with4eMark(x, e, variantFor(x, e).name),
+    range: variantFor(x, e).range,
+    target: variantFor(x, e).target,
+    duration: variantFor(x, e).duration,
+    description: variantFor(x, e).description,
+    cn: variantFor(x, e).cn,
   }));
 }
 
 function getPrayers(e: Edition, prayers: ApiResponse<PrayerApiData>[]): CharacterFullPrayer[] {
   return prayers.map((x) => ({
     id: x.id,
-    name: variant(x, e).name,
-    range: variant(x, e).range,
-    target: variant(x, e).target,
-    duration: variant(x, e).duration,
-    description: variant(x, e).description,
+    name: with4eMark(x, e, variantFor(x, e).name),
+    range: variantFor(x, e).range,
+    target: variantFor(x, e).target,
+    duration: variantFor(x, e).duration,
+    description: variantFor(x, e).description,
   }));
 }
 
 function getTraits(e: Edition, traits: WhValue<TraitApiData>[]): CharacterFullTrait[] {
   return traits.map((x) => ({
     id: x.wh.id,
-    name: printWithValue(variant(x.wh, e).name, variant(x.wh, e).hasValue, x.value),
-    description: variant(x.wh, e).description,
+    name: with4eMark(x.wh, e, printWithValue(variantFor(x.wh, e).name, variantFor(x.wh, e).hasValue, x.value)),
+    description: variantFor(x.wh, e).description,
   }));
 }
 
@@ -675,9 +726,9 @@ function getMutations(e: Edition, mutations: ApiResponse<MutationApiData>[]): Ch
   return mutations.map((x) => {
     return {
       id: x.id,
-      name: variant(x, e).name,
-      type: printMutationType(variant(x, e).type),
-      description: variant(x, e).description,
+      name: with4eMark(x, e, variantFor(x, e).name),
+      type: printMutationType(variantFor(x, e).type),
+      description: variantFor(x, e).description,
     };
   });
 }

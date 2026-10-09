@@ -23,7 +23,7 @@ import {
   statusStandingList,
   statusTierList,
 } from "../../../services/wh/career.ts";
-import { useWhList } from "../../../composables/whList.ts";
+import { useWith4eContentList } from "../../../composables/with4eContent.ts";
 import CharacterCareer from "../../../components/CharacterCareer.vue";
 import CharacterAttributes from "../../../components/CharacterAttributes.vue";
 import SelectTable from "../../../components/SelectTable.vue";
@@ -39,6 +39,10 @@ import CharacterTalents from "../../../components/CharacterTalents.vue";
 import { itemApi } from "../../../services/wh/item.ts";
 import CharacterItems from "../../../components/CharacterItems.vue";
 import { traitApi } from "../../../services/wh/trait.ts";
+import ModalWindow from "../../../components/ModalWindow.vue";
+import ActionButton from "../../../components/ActionButton.vue";
+import Ignored4eModifiersWarning from "../../../components/Ignored4eModifiersWarning.vue";
+import { useModal } from "../../../composables/modal.ts";
 
 const props = defineProps<{
   id: string;
@@ -70,22 +74,14 @@ const {
   showSubmissionStatus,
 } = useCharacterEdit(newCharacter, characterApi(authRequest), EDITION);
 
-const careerListUtils = useWhList(careerApi(authRequest), EDITION);
-careerListUtils.loadWhList();
-const spellListUtils = useWhList(spellApi(authRequest), EDITION);
-spellListUtils.loadWhList();
-const prayerListUtils = useWhList(prayerApi(authRequest), EDITION);
-prayerListUtils.loadWhList();
-const traitListUtils = useWhList(traitApi(authRequest), EDITION);
-traitListUtils.loadWhList();
-const mutationListUtils = useWhList(mutationApi(authRequest), EDITION);
-mutationListUtils.loadWhList();
-const skillListUtils = useWhList(skillApi(authRequest), EDITION);
-skillListUtils.loadWhList();
-const talentListUtils = useWhList(talentApi(authRequest), EDITION);
-talentListUtils.loadWhList();
-const itemListUtils = useWhList(itemApi(authRequest), EDITION);
-itemListUtils.loadWhList();
+const careerLists = useWith4eContentList(careerApi(authRequest), () => wh.value.allow4e);
+const spellLists = useWith4eContentList(spellApi(authRequest), () => wh.value.allow4e);
+const prayerLists = useWith4eContentList(prayerApi(authRequest), () => wh.value.allow4e);
+const traitLists = useWith4eContentList(traitApi(authRequest), () => wh.value.allow4e);
+const mutationLists = useWith4eContentList(mutationApi(authRequest), () => wh.value.allow4e);
+const skillLists = useWith4eContentList(skillApi(authRequest), () => wh.value.allow4e);
+const talentLists = useWith4eContentList(talentApi(authRequest), () => wh.value.allow4e);
+const itemLists = useWith4eContentList(itemApi(authRequest), () => wh.value.allow4e);
 
 await loadWh(props.id);
 
@@ -119,7 +115,7 @@ const wounds = computed(() => wh.value.getWounds());
 const size = computed(() => printSize(wh.value.getSize()));
 
 watch(
-  () => talentListUtils.whList.value,
+  () => talentLists.list5e.whList.value,
   (newVal) => {
     wh.value.hydrateTalentModifiers(newVal);
   },
@@ -127,7 +123,7 @@ watch(
 );
 
 watch(
-  () => mutationListUtils.whList.value,
+  () => mutationLists.list5e.whList.value,
   (newVal) => {
     wh.value.hydrateMutationModifiers(newVal);
   },
@@ -135,11 +131,30 @@ watch(
 );
 
 watch(
-  () => traitListUtils.whList.value,
+  () => traitLists.list5e.whList.value,
   (newVal) => {
     wh.value.hydrateTraitModifiers(newVal);
   },
   { immediate: true },
+);
+
+const modal = useModal();
+
+// Turning on 4e content is one-way (R6): it asks for confirmation and cannot be undone once saved.
+function confirmAllow4e() {
+  wh.value.allow4e = true;
+  modal.hideModal();
+}
+
+// 4e talents, traits and mutations whose modifiers are not applied (R8).
+const ignored4eModifiers = computed(() =>
+  [
+    ...talentLists.fourEOnly.value.filter((x) => x.id in wh.value.talents),
+    ...traitLists.fourEOnly.value.filter((x) => wh.value.hasTrait(x.id)),
+    ...mutationLists.fourEOnly.value.filter((x) => wh.value.mutations.has(x.id)),
+  ]
+    .filter((x) => x.modifiers.hasModifiers())
+    .map((x) => x.name),
 );
 
 const attributes = computed(() => {
@@ -158,51 +173,51 @@ const modifierAttributes = computed(() => {
     </AlertBlock>
 
     <AlertBlock
-      v-if="careerListUtils.apiError.value && careerListUtils.showApiError.value"
+      v-if="careerLists.list5e.apiError.value && careerLists.list5e.showApiError.value"
       alertType="red"
-      @close="careerListUtils.showApiError.value = false"
+      @close="careerLists.list5e.showApiError.value = false"
     >
-      {{ careerListUtils.apiError.value }}
+      {{ careerLists.list5e.apiError.value }}
     </AlertBlock>
 
     <AlertBlock
-      v-if="spellListUtils.apiError.value && spellListUtils.showApiError.value"
+      v-if="spellLists.list5e.apiError.value && spellLists.list5e.showApiError.value"
       alertType="red"
-      @close="spellListUtils.showApiError.value = false"
+      @close="spellLists.list5e.showApiError.value = false"
     >
-      {{ spellListUtils.apiError.value }}
+      {{ spellLists.list5e.apiError.value }}
     </AlertBlock>
 
     <AlertBlock
-      v-if="prayerListUtils.apiError.value && prayerListUtils.showApiError.value"
+      v-if="prayerLists.list5e.apiError.value && prayerLists.list5e.showApiError.value"
       alertType="red"
-      @close="prayerListUtils.showApiError.value = false"
+      @close="prayerLists.list5e.showApiError.value = false"
     >
-      {{ prayerListUtils.apiError.value }}
+      {{ prayerLists.list5e.apiError.value }}
     </AlertBlock>
 
     <AlertBlock
-      v-if="mutationListUtils.apiError.value && mutationListUtils.showApiError.value"
+      v-if="mutationLists.list5e.apiError.value && mutationLists.list5e.showApiError.value"
       alertType="red"
-      @close="mutationListUtils.showApiError.value = false"
+      @close="mutationLists.list5e.showApiError.value = false"
     >
-      {{ mutationListUtils.apiError.value }}
+      {{ mutationLists.list5e.apiError.value }}
     </AlertBlock>
 
     <AlertBlock
-      v-if="skillListUtils.apiError.value && skillListUtils.showApiError.value"
+      v-if="skillLists.list5e.apiError.value && skillLists.list5e.showApiError.value"
       alertType="red"
-      @close="skillListUtils.showApiError.value = false"
+      @close="skillLists.list5e.showApiError.value = false"
     >
-      {{ skillListUtils.apiError.value }}
+      {{ skillLists.list5e.apiError.value }}
     </AlertBlock>
 
     <AlertBlock
-      v-if="talentListUtils.apiError.value && talentListUtils.showApiError.value"
+      v-if="talentLists.list5e.apiError.value && talentLists.list5e.showApiError.value"
       alertType="red"
-      @close="talentListUtils.showApiError.value = false"
+      @close="talentLists.list5e.showApiError.value = false"
     >
-      {{ talentListUtils.apiError.value }}
+      {{ talentLists.list5e.apiError.value }}
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create 5e character' : canEdit ? 'Edit 5e character' : wh.name" />
@@ -215,6 +230,36 @@ const modifierAttributes = computed(() => {
       </LinkButton>
     </div>
   </div>
+  <div class="border border-neutral-700 rounded p-2 my-4">
+    <div class="text-xl">4e content</div>
+    <div class="mb-2">
+      Allow this character to use 4e content that has no 5e version (marked 4e). 4e trappings count as usual; the
+      modifiers of 4e talents, traits and mutations are not applied. This cannot be undone.
+    </div>
+    <label class="flex items-center gap-2 w-fit">
+      <input
+        type="checkbox"
+        class="w-5 h-5 accent-neutral-600"
+        :checked="wh.allow4e"
+        :disabled="!canEdit || wh.allow4e"
+        @click.prevent="modal.showModal('allow4eModal')"
+      />
+      Allow 4e content
+    </label>
+  </div>
+  <ModalWindow id="allow4eModal">
+    <template #header> Allow 4e content </template>
+    <template #buttons>
+      <div class="flex gap-2">
+        <ActionButton class="btn" @click="confirmAllow4e">Allow 4e content</ActionButton>
+        <ActionButton class="btn btn-secondary" @click="modal.hideModal()">Cancel</ActionButton>
+      </div>
+    </template>
+    <div>
+      Once saved, 4e content cannot be turned off for this character. Its pickers will also list 4e content that has no
+      5e version.
+    </div>
+  </ModalWindow>
   <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
@@ -337,11 +382,12 @@ const modifierAttributes = computed(() => {
           :disabled="!canEdit"
           :initSelectedCurrentCareer="wh.career"
           :initSelectedPastCareers="wh.careerPath"
-          :careerList="careerListUtils.whList.value"
+          :careerList="careerLists.withAllowed.value"
+          :fourEIds="careerLists.fourEIds.value"
           title="Career"
           modalTitle="Modify career"
-          :loading="careerListUtils.loading.value"
-          @reload="careerListUtils.loadWhList"
+          :loading="careerLists.loading.value"
+          @reload="careerLists.reload"
           @currentSelected="(event) => wh.updateCurrentCareer(event.id, event.number, event.selected)"
           @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
         />
@@ -363,6 +409,7 @@ const modifierAttributes = computed(() => {
           class="mt-2 @3xl:mt-0"
         />
         <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!canEdit" />
+        <Ignored4eModifiersWarning :names="ignored4eModifiers" />
         <p class="-mb-3">Calculated</p>
         <div class="border border-neutral-300 rounded p-2">
           <div class="flex flex-col @2xl:flex-row gap-4">
@@ -383,6 +430,7 @@ const modifierAttributes = computed(() => {
       </div>
     </div>
   </div>
+  <Ignored4eModifiersWarning :names="ignored4eModifiers" class="mb-2" />
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
     v-model:attributeAdvances="wh.attributeAdvances"
@@ -398,29 +446,31 @@ const modifierAttributes = computed(() => {
     <CharacterSkills
       :disabled="!canEdit"
       :initSkills="wh.skills"
-      :skillList="skillListUtils.whList.value"
-      :loading="skillListUtils.loading.value"
+      :skillList="skillLists.withAllowed.value"
+      :fourEIds="skillLists.fourEIds.value"
+      :loading="skillLists.loading.value"
       :attributes="attributes"
       :validationStatus="validSkills"
       :hideGenerate="true"
       :step="ADVANCE_STEP"
       class="flex-1"
-      @reload="skillListUtils.loadWhList"
+      @reload="skillLists.reload"
       @clearAll="wh.clearSkills(true)"
       @updated="(event) => wh.updateSkills(event.id, event.number)"
     />
     <CharacterTalents
       :disabled="!canEdit"
       :initTalents="wh.talents"
-      :talentList="talentListUtils.whList.value"
-      :loading="talentListUtils.loading.value"
+      :talentList="talentLists.withAllowed.value"
+      :fourEIds="talentLists.fourEIds.value"
+      :loading="talentLists.loading.value"
       :attributes="attributes"
       :validationStatus="validTalents"
       :hideGenerate="true"
       class="flex-1"
-      @reload="talentListUtils.loadWhList"
+      @reload="talentLists.reload"
       @clearAll="wh.clearTalents(true)"
-      @updated="(event) => wh.updateTalents(event.id, event.number, talentListUtils.whList.value)"
+      @updated="(event) => wh.updateTalents(event.id, event.number, talentLists.list5e.whList.value)"
     />
   </div>
 
@@ -429,14 +479,15 @@ const modifierAttributes = computed(() => {
     :initEquipped="wh.equippedItems"
     :initCarried="wh.carriedItems"
     :initStored="wh.storedItems"
-    :itemList="itemListUtils.whList.value"
-    :loading="itemListUtils.loading.value"
+    :itemList="itemLists.withAllowed.value"
+    :fourEIds="itemLists.fourEIds.value"
+    :loading="itemLists.loading.value"
     :hideGenerate="true"
     :equippedValidationStatus="validEquipped"
     :carriedValidationStatus="validCarried"
     :storedValidationStatus="validStored"
     class="flex-1"
-    @reload="itemListUtils.loadWhList"
+    @reload="itemLists.reload"
     @clearAll="wh.clearItems(true)"
     @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
     @carriedUpdated="(event) => wh.updateItems(event.id, event.number, 'carried')"
@@ -447,34 +498,36 @@ const modifierAttributes = computed(() => {
     <SelectTable
       :disabled="!canEdit"
       :initSelectedItems="wh.spells"
-      :itemList="spellListUtils.whList.value"
+      :itemList="spellLists.withAllowed.value"
+      :fourEIds="spellLists.fourEIds.value"
       title="Spells"
       modalTitle="Modify spells"
       modalId="characterSpells"
-      :loading="spellListUtils.loading.value"
+      :loading="spellLists.loading.value"
       :clearAllBtn="true"
       :disableDescription="true"
       routeName="spell"
       :truncateModalDescription="100"
       class="flex-1 min-w-52"
-      @reload="spellListUtils.loadWhList"
+      @reload="spellLists.reload"
       @selected="(e) => wh.updateSpells(e.id, e.selected)"
       @clearAll="wh.clearSpells(true)"
     />
     <SelectTable
       :disabled="!canEdit"
       :initSelectedItems="wh.prayers"
-      :itemList="prayerListUtils.whList.value"
+      :itemList="prayerLists.withAllowed.value"
+      :fourEIds="prayerLists.fourEIds.value"
       title="Prayers"
       modalTitle="Modify prayers"
       modalId="characterPrayers"
-      :loading="prayerListUtils.loading.value"
+      :loading="prayerLists.loading.value"
       :clearAllBtn="true"
       :disableDescription="true"
       routeName="prayer"
       :truncateModalDescription="100"
       class="flex-1 min-w-52"
-      @reload="prayerListUtils.loadWhList"
+      @reload="prayerLists.reload"
       @selected="(e) => wh.updatePrayers(e.id, e.selected)"
       @clearAll="wh.clearPrayers(true)"
     />
@@ -484,27 +537,29 @@ const modifierAttributes = computed(() => {
     <SelectTable
       :disabled="!canEdit"
       :initSelectedItems="wh.mutations"
-      :itemList="mutationListUtils.whList.value"
+      :itemList="mutationLists.withAllowed.value"
+      :fourEIds="mutationLists.fourEIds.value"
       title="Mutations"
       modalTitle="Modify mutations"
       modalId="characterMutations"
-      :loading="mutationListUtils.loading.value"
+      :loading="mutationLists.loading.value"
       :clearAllBtn="true"
       :disableDescription="true"
       routeName="mutation"
       :truncateModalDescription="100"
       class="flex-1 min-w-56"
-      @reload="mutationListUtils.loadWhList"
-      @selected="(e) => wh.updateMutations(e.id, e.selected, mutationListUtils.whList.value)"
+      @reload="mutationLists.reload"
+      @selected="(e) => wh.updateMutations(e.id, e.selected, mutationLists.list5e.whList.value)"
       @clearAll="wh.clearMutations(true)"
     />
     <SelectIdValueTable
       :disabled="!canEdit"
       :selected="wh.traits"
-      :itemList="traitListUtils.whList.value"
+      :itemList="traitLists.withAllowed.value"
+      :fourEIds="traitLists.fourEIds.value"
       title="Creature traits"
       modalTitle="Modify traits"
-      :loading="traitListUtils.loading.value"
+      :loading="traitLists.loading.value"
       :clearAllBtn="true"
       :disableDescription="true"
       :allowRepeat="true"
@@ -512,10 +567,10 @@ const modifierAttributes = computed(() => {
       routeName="trait"
       :truncateModalDescription="100"
       class="flex-1 min-w-56"
-      @reload="traitListUtils.loadWhList"
-      @add="(id) => wh.addTrait(id, traitListUtils.whList.value)"
+      @reload="traitLists.reload"
+      @add="(id) => wh.addTrait(id, traitLists.list5e.whList.value)"
       @remove="(e) => wh.removeTrait(e.index)"
-      @selected="(e) => wh.updateTraits(e.id, e.selected, traitListUtils.whList.value)"
+      @selected="(e) => wh.updateTraits(e.id, e.selected, traitLists.list5e.whList.value)"
       @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
       @clearAll="wh.clearTraits()"
     />

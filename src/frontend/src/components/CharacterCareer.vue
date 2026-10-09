@@ -8,6 +8,9 @@ import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Career, printClassName } from "../services/wh/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
+import Edition4eBadge from "./Edition4eBadge.vue";
+import EditionFilterSelect from "./EditionFilterSelect.vue";
+import { EditionFilter, matchesEditionFilter } from "../utils/editionFilter.ts";
 import ReloadButton from "./ReloadButton.vue";
 import LinkButton from "./LinkButton.vue";
 
@@ -33,6 +36,8 @@ const props = defineProps<{
   initSelectedCurrentCareer: IdNumber;
   initSelectedPastCareers: IdNumber[];
   loading?: boolean;
+  // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
+  fourEIds?: Set<string>;
 }>();
 
 const emit = defineEmits<{
@@ -43,6 +48,10 @@ const emit = defineEmits<{
 
 const careersWithSelect: Ref<Record<string, CareerWithSelect>> = ref({});
 const careersWithSelectList: Ref<CareerWithSelect[]> = ref([]);
+const editionFilter = ref<EditionFilter>("both");
+const careersWithSelectListFiltered = computed(() =>
+  careersWithSelectList.value.filter((x) => matchesEditionFilter(x.careerId, props.fourEIds, editionFilter.value)),
+);
 let currentId = "";
 
 watch(
@@ -194,8 +203,10 @@ function emitPastSelected(id: string) {
       <div class="mb-1">Current career</div>
       <div v-if="selectedCurrentCareer">
         <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }" class="mr-3">
-          {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} - {{ selectedCurrentCareer.levelName }}
+          {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} -
+          {{ selectedCurrentCareer.levelName }}
         </TextLink>
+        <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
       </div>
       <div class="border-t border-neutral-300 my-1" />
       <div class="mb-1">Past careers</div>
@@ -203,6 +214,7 @@ function emitPastSelected(id: string) {
         <TextLink routeName="career" :params="{ id: pastCareer.careerId }" class="mr-3">
           {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}
         </TextLink>
+        <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
       </div>
     </div>
     <ModalWindow id="modifyCareersModal" size="md">
@@ -210,7 +222,7 @@ function emitPastSelected(id: string) {
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"
-        :items="careersWithSelectList"
+        :items="careersWithSelectListFiltered"
         stackBreakpoint="2xl"
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
@@ -219,11 +231,13 @@ function emitPastSelected(id: string) {
           Create new
         </LinkButton>
         <ReloadButton @click="emit('reload')" />
+        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
 
         <template #name="{ id }: { id: string }">
           <TextLink routeName="career" :params="{ id: careersWithSelect[id].careerId }">
             {{ careersWithSelect[id].name + ` (level ${careersWithSelect[id].level})` }}
           </TextLink>
+          <Edition4eBadge v-if="fourEIds?.has(careersWithSelect[id].careerId)" />
         </template>
 
         <template #current="{ id }: { id: string }">

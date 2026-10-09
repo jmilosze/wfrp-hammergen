@@ -54,6 +54,16 @@ export interface CharacterModifiersData {
   effects: number[];
 }
 
+// hasModifiers reports whether the modifiers change anything (size, movement, characteristics or effects).
+export function hasModifiers(modifiers: CharacterModifiersData): boolean {
+  return (
+    modifiers.size !== 0 ||
+    modifiers.movement !== 0 ||
+    modifiers.effects.length > 0 ||
+    Object.values(modifiers.attributes).some((x) => x !== 0)
+  );
+}
+
 export class CharacterModifiers {
   size: number;
   movement: number;
@@ -65,6 +75,11 @@ export class CharacterModifiers {
     this.movement = movement;
     this.attributes = attributes;
     this.effects = new Set(effects);
+  }
+
+  // hasModifiers reports whether the modifiers change anything (size, movement, characteristics or effects).
+  hasModifiers(): boolean {
+    return hasModifiers({ ...this, effects: [...this.effects] });
   }
 
   isNonZero(): boolean {
