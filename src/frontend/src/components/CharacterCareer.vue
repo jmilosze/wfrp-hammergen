@@ -54,12 +54,13 @@ const careersWithSelectListFiltered = computed(() =>
 );
 let currentId = "";
 
+// A new current career only updates the ticks, so rows don't move while the modal is open (selected careers go to
+// the top when it is opened again).
 watch(
   () => props.initSelectedCurrentCareer,
   (newVal) => {
-    updateCareersWithSelect(newVal, props.initSelectedPastCareers, props.careerList);
+    markCurrentCareer(newVal);
   },
-  { immediate: true },
 );
 
 watch(
@@ -77,6 +78,19 @@ watch(
   },
   { immediate: true },
 );
+
+function markCurrentCareer(selectedCurrentCareer: IdNumber | undefined) {
+  currentId = "";
+  for (const careerWithSelect of Object.values(careersWithSelect.value)) {
+    careerWithSelect.current =
+      selectedCurrentCareer !== undefined &&
+      careerWithSelect.careerId === selectedCurrentCareer.id &&
+      careerWithSelect.level === selectedCurrentCareer.number;
+    if (careerWithSelect.current) {
+      currentId = careerWithSelect.id;
+    }
+  }
+}
 
 function updateCareersWithSelect(
   selectedCurrentCareer: IdNumber | undefined,
