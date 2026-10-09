@@ -6,8 +6,9 @@ export function characterFullToCsv4e(characterFull: CharacterFull): string {
   let csv = "Name,Species,Career,Class,Status,,,,,,\n";
   csv += csvStr(characterFull.name) + ",";
   csv += csvStr(characterFull.species) + ",";
-  csv += csvStr(`${characterFull.currentCareer.name} (${characterFull.currentCareer.levelName})`) + ",";
-  csv += csvStr(characterFull.currentCareer.className) + ",";
+  const career = characterFull.currentCareer;
+  csv += (career ? csvStr(`${career.name} (${career.levelName})`) : "") + ",";
+  csv += (career ? csvStr(career.className) : "") + ",";
   csv += csvStr(characterFull.status + " " + characterFull.standing) + ",";
   csv += ",,,,,\n";
 

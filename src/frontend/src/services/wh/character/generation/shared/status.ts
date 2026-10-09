@@ -13,14 +13,16 @@ export function generateStatusAndStanding(
   return { status: StatusTier.Brass, standing: 0 };
 }
 
+// Without a current career (or when it is not in the list), status is Brass 0.
 export function populateStatusAndStanding(character: Character, careerList: Career[]): void {
-  const career = careerList.find((x) => x.id === character.career.id);
-  if (!career) {
+  const current = character.career;
+  const career = current && careerList.find((x) => x.id === current.id);
+  if (!current || !career) {
     character.status = StatusTier.Brass;
     character.standing = 0;
     return;
   }
-  const { status, standing } = generateStatusAndStanding(career, character.career.number);
+  const { status, standing } = generateStatusAndStanding(career, current.number);
   character.status = status;
   character.standing = standing;
 }

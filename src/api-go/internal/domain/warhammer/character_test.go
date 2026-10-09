@@ -33,7 +33,7 @@ func TestIdNumberToWhNumber(t *testing.T) {
 }
 
 func TestCharacterToFullMissingCareer(t *testing.T) {
-	character := &Character{Edition: Edition4e, Career: IdNumber{Id: missingId, Number: 2}}
+	character := &Character{Edition: Edition4e, Career: &IdNumber{Id: missingId, Number: 2}}
 	character.Init()
 
 	// Repeat to make sure the result does not depend on map iteration order.
@@ -54,12 +54,25 @@ func TestCharacterToFullMissingCareer(t *testing.T) {
 	}
 }
 
+func TestCharacterToFullWithoutCareer(t *testing.T) {
+	character := &Character{Edition: Edition4e}
+	character.Init()
+
+	full, err := character.ToFull([]*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, testCareers())
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if full.Career != nil {
+		t.Fatalf("got career %v, want none", full.Career)
+	}
+}
+
 func TestCharacterToFullKeepsTraitValues(t *testing.T) {
 	traitId := "dddddddddddddddddddddddd"
 	traits := []*Wh{{Id: traitId, Editions: map[Edition]WhObject{Edition4e: &Trait{Name: "Hatred", HasValue: true}}}}
 	character := &Character{
 		Edition: Edition4e,
-		Career:  IdNumber{Id: careerAId, Number: 1},
+		Career:  &IdNumber{Id: careerAId, Number: 1},
 		Traits:  []IdValue{{Id: traitId, Value: "Elves"}, {Id: missingId, Value: "8"}, {Id: traitId, Value: "Dwarfs"}},
 	}
 	character.Init()

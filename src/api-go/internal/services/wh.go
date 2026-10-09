@@ -59,9 +59,11 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 func extraCharacterValidation(t wh.WhType, w *wh.Wh, validator *validator.Validate) error {
 	if t == wh.WhTypeCharacter {
 		char := w.Object.(*wh.Character)
-		err := validator.Var(char.Career.Number, "gte=1,lte=4")
-		if err != nil {
-			return err
+		if char.Career != nil {
+			err := validator.Var(char.Career.Number, "gte=1,lte=4")
+			if err != nil {
+				return err
+			}
 		}
 		for _, v := range char.CareerPath {
 			err := validator.Var(v.Number, "gte=1,lte=4")
@@ -327,7 +329,10 @@ func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edit
 		allSkillIds = deduplicate(allSkillIds, idNumbersToIds(character.Skills))
 		allItemIds = deduplicate(allItemIds, idNumbersToIds(character.EquippedItems), idNumbersToIds(character.CarriedItems), idNumbersToIds(character.StoredItems))
 		allTalentIds = deduplicate(allTalentIds, idNumbersToIds(character.Talents))
-		allCareerIds = deduplicate(allCareerIds, idNumbersToIds(character.CareerPath), []string{character.Career.Id})
+		allCareerIds = deduplicate(allCareerIds, idNumbersToIds(character.CareerPath))
+		if character.Career != nil {
+			allCareerIds = deduplicate(allCareerIds, []string{character.Career.Id})
+		}
 
 		allMutationIds = deduplicate(allMutationIds, character.Mutations)
 		allSpellIds = deduplicate(allSpellIds, character.Spells)

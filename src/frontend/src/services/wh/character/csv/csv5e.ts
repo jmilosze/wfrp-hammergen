@@ -16,8 +16,9 @@ export function characterFullToCsv5e(characterFull: CharacterFull): string {
   csv += "Name,Species,Career,Class,Status,Career Advancement Tracker,,,,,\n";
   csv += csvStr(characterFull.name) + ",";
   csv += csvStr(characterFull.species) + ",";
-  csv += csvStr(`${characterFull.currentCareer.name} (${characterFull.currentCareer.levelName})`) + ",";
-  csv += csvStr(characterFull.currentCareer.className) + ",";
+  const career = characterFull.currentCareer;
+  csv += (career ? csvStr(`${career.name} (${career.levelName})`) : "") + ",";
+  csv += (career ? csvStr(career.className) : "") + ",";
   csv += csvStr(characterFull.status + " " + characterFull.standing) + ",";
   csv += characterFull.careerTicks + ",,,,,\n";
 

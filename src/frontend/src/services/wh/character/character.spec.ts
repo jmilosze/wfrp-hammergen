@@ -248,13 +248,19 @@ describe("isEqualTo returns false", () => {
   test("when other character has different value of career level");
   {
     const otherCharacter = character.copy();
-    otherCharacter.career.number = 1;
+    otherCharacter.career = { id: "careerId3", number: 1 };
+    expect(character.isEqualTo(otherCharacter)).toBe(false);
+  }
+  test("when other character has no career");
+  {
+    const otherCharacter = character.copy();
+    otherCharacter.career = undefined;
     expect(character.isEqualTo(otherCharacter)).toBe(false);
   }
   test("when other character has different value of career id");
   {
     const otherCharacter = character.copy();
-    otherCharacter.career.id = "otherId";
+    otherCharacter.career = { id: "otherId", number: 3 };
     expect(character.isEqualTo(otherCharacter)).toBe(false);
   }
 
@@ -487,6 +493,14 @@ describe("isEqualTo returns false", () => {
     otherCharacter.mutations = t.value;
     expect(character.isEqualTo(otherCharacter)).toBe(false);
   });
+});
+
+test("updateCurrentCareer sets the current career and clears it when unselected", () => {
+  const otherCharacter = character.copy();
+  otherCharacter.updateCurrentCareer("careerId1", 2, true);
+  expect(otherCharacter.career).toEqual({ id: "careerId1", number: 2 });
+  otherCharacter.updateCurrentCareer("careerId1", 2, false);
+  expect(otherCharacter.career).toBeUndefined();
 });
 
 test("getWounds returns correct value", () => {

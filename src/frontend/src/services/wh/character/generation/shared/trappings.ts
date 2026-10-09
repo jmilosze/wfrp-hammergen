@@ -56,7 +56,8 @@ export function populateClassItems(
   rollDiceFn: RollDiceFn = rollDice,
   selectRandomFn: SelectRandomFn = selectRandom,
 ): void {
-  const selectedCareer = careerList.find((x) => x.id === character.career.id);
+  const current = character.career;
+  const selectedCareer = current && careerList.find((x) => x.id === current.id);
   if (!selectedCareer) {
     return;
   }

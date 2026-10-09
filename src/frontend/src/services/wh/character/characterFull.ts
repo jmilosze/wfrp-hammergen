@@ -95,7 +95,8 @@ export interface CharacterFullApiData {
   standing: StatusStanding;
   baseAttributes: Attributes;
   attributeAdvances: Attributes;
-  career: WhNumber<CareerApiData>;
+  // Absent when the character has no current career.
+  career?: WhNumber<CareerApiData>;
   skills: WhNumber<SkillApiData>[];
   talents: WhNumber<TalentApiData>[];
   equippedItems: WhNumber<ItemFullApiData>[];
@@ -220,7 +221,7 @@ export interface CharacterFull {
   status: string;
   standing: StatusStanding;
 
-  currentCareer: CharacterFullCareer;
+  currentCareer: CharacterFullCareer | undefined;
   pastCareers: CharacterFullCareer[];
 
   baseAttributes: Attributes;
@@ -283,7 +284,7 @@ export function newCharacterFull({
   corruption = 0,
   status = printStatusTier(StatusTier.Brass),
   standing = 0 as StatusStanding,
-  currentCareer = {} as CharacterFullCareer,
+  currentCareer = undefined as CharacterFullCareer | undefined,
   pastCareers = [] as CharacterFullCareer[],
   baseAttributes = zeroAttributes(),
   attributeAdvances = zeroAttributes(),
@@ -471,18 +472,8 @@ export function apiResponseToCharacterFull(
     status: printStatusTier(fullCharacterApi.object.status),
     standing: fullCharacterApi.object.standing,
 
-    currentCareer: {
-      id: fullCharacterApi.object.career.wh.id,
-      name: getCareerName(e, fullCharacterApi.object.career),
-      levelName: getCareerLevel(e, fullCharacterApi.object.career),
-      className: printClassName(variantFor(fullCharacterApi.object.career.wh, e).class),
-    },
-    pastCareers: fullCharacterApi.object.careerPath.map((x) => ({
-      id: x.wh.id,
-      name: getCareerName(e, x),
-      levelName: getCareerLevel(e, x),
-      className: printClassName(variantFor(x.wh, e).class),
-    })),
+    currentCareer: fullCharacterApi.object.career ? getFullCareer(e, fullCharacterApi.object.career) : undefined,
+    pastCareers: fullCharacterApi.object.careerPath.map((x) => getFullCareer(e, x)),
 
     baseAttributes: fullCharacterApi.object.baseAttributes,
     attributeAdvances: fullCharacterApi.object.attributeAdvances,
@@ -533,6 +524,15 @@ function namesWithIgnoredModifiers<T extends { name: string; modifiers: Characte
   return docs
     .filter((x) => contentEdition(x, e) !== e && hasModifiers(variantFor(x, e).modifiers))
     .map((x) => variantFor(x, e).name);
+}
+
+function getFullCareer(e: Edition, career: WhNumber<CareerApiData>): CharacterFullCareer {
+  return {
+    id: career.wh.id,
+    name: getCareerName(e, career),
+    levelName: getCareerLevel(e, career),
+    className: printClassName(variantFor(career.wh, e).class),
+  };
 }
 
 function getCareerName(e: Edition, career: WhNumber<CareerApiData>): string {

@@ -5,7 +5,7 @@ import Header from "../../../components/PageHeader.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
 import { useCharacterEdit } from "../../../composables/characterEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
-import { Character, characterApi, DEFAULT_CAREER_ID } from "../../../services/wh/character/character.ts";
+import { Character, characterApi } from "../../../services/wh/character/character.ts";
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
@@ -83,7 +83,7 @@ const selectedGenSpeciesWithRegionOpts = computed(() =>
 );
 
 const selectedGenLevel = ref<1 | 2 | 3 | 4>(1);
-const selectedGenCareer = ref(DEFAULT_CAREER_ID);
+const selectedGenCareer = ref("");
 
 const {
   wh,
@@ -250,7 +250,7 @@ watch(
       if (careerOpts.value.length > 0) {
         selectedGenCareer.value = careerOpts.value[0].value;
       } else {
-        selectedGenCareer.value = DEFAULT_CAREER_ID;
+        selectedGenCareer.value = "";
       }
     }
   },
@@ -265,7 +265,7 @@ watch(
       if (careerOpts.value.length > 0) {
         selectedGenCareer.value = careerOpts.value[0].value;
       } else {
-        selectedGenCareer.value = DEFAULT_CAREER_ID;
+        selectedGenCareer.value = "";
       }
     }
   },

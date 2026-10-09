@@ -214,6 +214,33 @@ func TestCreateCharacterCareerTicksLimit(t *testing.T) {
 	}
 }
 
+func TestCreateCharacterCareer(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+
+	cases := map[string]struct {
+		career  *wh.IdNumber
+		wantErr bool
+	}{
+		"no career":      {nil, false},
+		"valid career":   {&wh.IdNumber{Id: "aaaaaaaaaaaaaaaaaaaaaaaa", Number: 4}, false},
+		"empty id":       {&wh.IdNumber{Id: "", Number: 1}, true},
+		"level too high": {&wh.IdNumber{Id: "aaaaaaaaaaaaaaaaaaaaaaaa", Number: 5}, true},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			character := newMockCharacter(wh.Edition4e)
+			character.Career = tc.career
+			_, err := s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: character}, &auth.Claims{Id: "user1"})
+			if tc.wantErr && !errors.Is(err, domain.ErrInvalidArguments) {
+				t.Errorf("expected ErrInvalidArguments, got %v", err)
+			}
+			if !tc.wantErr && err != nil {
+				t.Errorf("expected no error, got %v", err)
+			}
+		})
+	}
+}
+
 func TestCharacterAllow4eOnlyIn5e(t *testing.T) {
 	s := newTestWhService(t, &fakeWhDb{})
 
@@ -307,7 +334,7 @@ func TestFullCharacterAllow4eResolves4eOnlyContent(t *testing.T) {
 			character.Skills = []wh.IdNumber{{Id: "skill4e", Number: 5}}
 			character.EquippedItems, character.CarriedItems, character.StoredItems = nil, nil, nil
 			character.Spells, character.Prayers, character.Traits, character.Mutations = nil, nil, nil, nil
-			character.CareerPath, character.Career = nil, wh.IdNumber{Id: "career5e", Number: 1}
+			character.CareerPath, character.Career = nil, &wh.IdNumber{Id: "career5e", Number: 1}
 			character.Init()
 			docs[wh.WhTypeCharacter] = []*wh.Wh{{Id: "char1", Object: character}}
 

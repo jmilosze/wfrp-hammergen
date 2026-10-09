@@ -1319,3 +1319,11 @@ test("apiResponseToCharacterFull of a 5e character with 4e content counts 4e tra
   // ...and 4e content is marked.
   expect(full.talents.map((x) => x.name)).toEqual(["talent_1 (4e)", "talent_2 (4e)", "talent_3 (4e)"]);
 });
+
+test("apiResponseToCharacterFull of a character without a current career", () => {
+  const withoutCareer: CharacterFullApiData = { ...characterFullApiData, career: undefined };
+  const full = apiResponseToCharacterFull({ ...characterFullApiResponse, object: withoutCareer });
+
+  expect(full.currentCareer).toBeUndefined();
+  expect(full.pastCareers).toEqual(characterFull.pastCareers);
+});

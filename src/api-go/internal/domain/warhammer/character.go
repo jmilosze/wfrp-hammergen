@@ -21,13 +21,14 @@ type Character struct {
 	BaseAttributes    Attributes       `json:"baseAttributes"`
 	AttributeAdvances Attributes       `json:"attributeAdvances"`
 	CareerPath        []IdNumber       `json:"careerPath" validate:"dive"`
-	Career            IdNumber         `json:"career"`
-	Fate              int              `json:"fate" validate:"gte=0,lte=1000"`
-	Fortune           int              `json:"fortune" validate:"gte=0,lte=1000"`
-	Resilience        int              `json:"resilience" validate:"gte=0,lte=1000"`
-	Resolve           int              `json:"resolve" validate:"gte=0,lte=1000"`
-	CurrentExp        int              `json:"currentExp" validate:"gte=0,lte=10000000"`
-	SpentExp          int              `json:"spentExp" validate:"gte=0,lte=10000000"`
+	// Career is the current career; nil when the character has none.
+	Career     *IdNumber `json:"career,omitempty" bson:"career,omitempty"`
+	Fate       int       `json:"fate" validate:"gte=0,lte=1000"`
+	Fortune    int       `json:"fortune" validate:"gte=0,lte=1000"`
+	Resilience int       `json:"resilience" validate:"gte=0,lte=1000"`
+	Resolve    int       `json:"resolve" validate:"gte=0,lte=1000"`
+	CurrentExp int       `json:"currentExp" validate:"gte=0,lte=10000000"`
+	SpentExp   int       `json:"spentExp" validate:"gte=0,lte=10000000"`
 	// CareerTicks is the 5e Career Advancement Tracker: ticks in the current career (levels at 10/22/36).
 	CareerTicks int `json:"careerTicks" bson:"careerticks,omitempty" validate:"gte=0,lte=36"`
 	// Allow4e lets a 5e character use 4e content that has no 5e version (one-way: cannot be turned off).
@@ -147,16 +148,16 @@ func (character *Character) ToFull(
 
 	allCareerIdMap := whListToIdWhMap(allCareers)
 	careerPath := idNumberListToWhNumberList(character.CareerPath, allCareerIdMap)
-	career, err := idNumberToWhNumber(character.Career, allCareerIdMap)
-	if err != nil {
-		if character.Career.Id != "" {
+	var career *WhNumber
+	if character.Career != nil {
+		found, err := idNumberToWhNumber(*character.Career, allCareerIdMap)
+		if err != nil {
 			log.Printf("Error finding career %s, using empty career instead", character.Career.Id)
 			careerWh := &Wh{Id: "000000000000000000000000", Editions: map[Edition]WhObject{e: &Career{}}}
 			careerWh.Init()
-			career = WhNumber{Wh: careerWh, Number: 1}
-		} else {
-			return nil, err
+			found = WhNumber{Wh: careerWh, Number: 1}
 		}
+		career = &found
 	}
 
 	fullChar := &CharacterFull{
@@ -416,7 +417,7 @@ type CharacterFull struct {
 	BaseAttributes    Attributes       `json:"baseAttributes"`
 	AttributeAdvances Attributes       `json:"attributeAdvances"`
 	CareerPath        []WhNumber       `json:"careerPath"`
-	Career            WhNumber         `json:"career"`
+	Career            *WhNumber        `json:"career,omitempty"`
 	Fate              int              `json:"fate"`
 	Fortune           int              `json:"fortune"`
 	Resilience        int              `json:"resilience"`

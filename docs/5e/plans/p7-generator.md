@@ -1,6 +1,6 @@
 # Plan P7 — 5e character generator
 
-Status: **implemented** (2026-10-09); browser walkthrough passed on a local API against the 2026-10-07 production snapshot. `generationProps5e` imported locally only; staging and production import pending. Tracker items: G1–G4.
+Status: **implemented** (2026-10-09); browser walkthrough passed on a local API against the 2026-10-07 production snapshot. `generationProps5e` imported to staging and production 2026-10-09. Tracker items: G1–G4.
 
 ## Goal
 

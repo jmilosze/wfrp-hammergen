@@ -23,4 +23,14 @@ describe("status", () => {
     expect(char.status).toEqual(StatusTier.Gold);
     expect(char.standing).toEqual(2);
   });
+
+  test("populateStatusAndStanding sets Brass 0 when the character has no career", () => {
+    const career = new Career({ id: "c1" });
+    career.level1.status = StatusTier.Gold;
+    const char = new Character({ status: StatusTier.Silver, standing: 3 });
+
+    populateStatusAndStanding(char, [career]);
+    expect(char.status).toEqual(StatusTier.Brass);
+    expect(char.standing).toEqual(0);
+  });
 });

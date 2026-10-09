@@ -491,7 +491,12 @@ const grimoiresDisp = ref(
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Current</span>
-                <TextLink routeName="career" :params="{ id: character.currentCareer.id }" class="mr-3">
+                <TextLink
+                  v-if="character.currentCareer"
+                  routeName="career"
+                  :params="{ id: character.currentCareer.id }"
+                  class="mr-3"
+                >
                   {{ character.currentCareer.name }}
                 </TextLink>
               </div>
@@ -499,7 +504,7 @@ const grimoiresDisp = ref(
             <td class="border border-neutral-400 p-2">
               <div class="flex flex-wrap">
                 <span class="mr-3 font-semibold">Class</span>
-                <span class="mr-3"> {{ character.currentCareer.className }}</span>
+                <span v-if="character.currentCareer" class="mr-3"> {{ character.currentCareer.className }}</span>
               </div>
             </td>
             <td class="border border-neutral-400 p-2">

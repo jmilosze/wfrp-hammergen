@@ -33,7 +33,7 @@ function anySelected(careerWithSelect: CareerWithSelect): boolean {
 const props = defineProps<{
   disabled?: boolean;
   careerList: Career[];
-  initSelectedCurrentCareer: IdNumber;
+  initSelectedCurrentCareer: IdNumber | undefined;
   initSelectedPastCareers: IdNumber[];
   loading?: boolean;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
@@ -79,11 +79,12 @@ watch(
 );
 
 function updateCareersWithSelect(
-  selectedCurrentCareer: IdNumber,
+  selectedCurrentCareer: IdNumber | undefined,
   selectedPastCareers: IdNumber[],
   careerList: Career[],
 ) {
   careersWithSelect.value = {};
+  currentId = "";
   for (const career of careerList) {
     for (const i of [1, 2, 3, 4, 5]) {
       const lvl = career.getLevel(i as 1 | 2 | 3 | 4 | 5);

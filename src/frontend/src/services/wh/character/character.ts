@@ -26,8 +26,6 @@ import { Talent } from "../content/talent.ts";
 import { Mutation } from "../content/mutation.ts";
 import { Trait } from "../content/trait.ts";
 
-export const DEFAULT_CAREER_ID = "5d16a8ad9ae1c87a18017578";
-
 const API_BASE_PATH = "/api/wh/character";
 
 export interface CharacterApiData {
@@ -51,7 +49,8 @@ export interface CharacterApiData {
   corruption: number;
   status: StatusTier;
   standing: StatusStanding;
-  career: IdNumber;
+  // The current career; absent when the character has none.
+  career?: IdNumber;
   baseAttributes: Attributes;
   attributeAdvances: Attributes;
   skills: IdNumber[];
@@ -88,7 +87,7 @@ export class Character extends WhEntity {
   corruption: number;
   status: StatusTier;
   standing: StatusStanding;
-  career: IdNumber;
+  career: IdNumber | undefined;
   attributeRolls: Attributes;
   attributeAdvances: Attributes;
   skills: Record<string, number>;
@@ -130,7 +129,7 @@ export class Character extends WhEntity {
     corruption = 0,
     status = StatusTier.Brass,
     standing = 0 as StatusStanding,
-    career = { id: DEFAULT_CAREER_ID, number: 1 } as IdNumber,
+    career = undefined as IdNumber | undefined,
     attributeRolls = zeroAttributes(),
     attributeAdvances = zeroAttributes(),
     skills = {} as Record<string, number>,
@@ -393,13 +392,7 @@ export class Character extends WhEntity {
   }
 
   updateCurrentCareer(id: string, number: number, selected: boolean) {
-    if (!selected) {
-      this.career.id = DEFAULT_CAREER_ID;
-      this.career.number = 1;
-    } else {
-      this.career.id = id;
-      this.career.number = number;
-    }
+    this.career = selected ? { id: id, number: number } : undefined;
   }
 
   updatePastCareer(id: string, number: number, selected: boolean) {
