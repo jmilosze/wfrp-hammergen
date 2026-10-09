@@ -5,12 +5,13 @@ import TextLink from "../../components/TextLink.vue";
 
 <template>
   <Header title="How to Use Hammergen?" />
-  <p class="my-2 text-2xl">Warhammer 4th ed database</p>
+  <p class="my-2 text-2xl">Warhammer database (4th and 5th Edition)</p>
   <p>
     The most basic was to use Hammergen is to treat it as a large online index of all skills, talents, trappings,
-    qualities, spells, and mutations published in any of Warhammer 4th ed book. Hammergen contains almost all of them
-    with partial description and note which book and page they are from. Please keep in mind that descriptions of those
-    items are often incomplete, abbreviated, and cannot replace original descriptions from the source books.
+    qualities, spells, and mutations published in Warhammer Fantasy Roleplay 4th Edition books and the 5th Edition Core
+    Rulebook. Use the 4e | 5e switch in the side navigation bar to choose the edition. Hammergen contains almost all of
+    them with partial description and note which book and page they are from. Please keep in mind that descriptions of
+    those items are often incomplete, abbreviated, and cannot replace original descriptions from the source books.
   </p>
   <p>
     In addition, Hammergen includes a large number of special filters that allow to lookup all things that match some

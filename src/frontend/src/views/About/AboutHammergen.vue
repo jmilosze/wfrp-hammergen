@@ -29,8 +29,13 @@ const currentView = useRouteQuery("view", viewNames[0].value);
 
     <div class="text-2xl font-semibold mt-5">Source books</div>
     <p>Hammergen includes contents from the following source books:</p>
+    <p class="mt-2 font-semibold">5th Edition</p>
     <ul class="list-disc ml-6 mt-1">
-      <li>Warhammer Fantasy Roleplay Rulebook</li>
+      <li>Warhammer Fantasy Roleplay 5th Edition Core Rulebook</li>
+    </ul>
+    <p class="mt-2 font-semibold">4th Edition</p>
+    <ul class="list-disc ml-6 mt-1">
+      <li>Warhammer Fantasy Roleplay Rulebook (4th Edition)</li>
       <li>Rough Nights & Hard Days</li>
       <li>Archives of the Empire: Volume I, II, and III</li>
       <li>Up in Arms</li>

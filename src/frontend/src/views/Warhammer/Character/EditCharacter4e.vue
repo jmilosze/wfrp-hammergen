@@ -431,7 +431,7 @@ const modifierAttributes = computed(() => {
     <div class="flex flex-wrap mt-4 gap-4">
       <HintModal buttonText="More details" modalHeader="Character generation" modalId="charGenerationHint">
         <p class="my-1">
-          The generation process of a level 1 character follows all steps from character chapter of the rulebook with
+          The generation process of a level 1 character follows all steps from character chapter of the 4e rulebook with
           the exception that species and career cannot be chosen as random at this moment.
         </p>
         <p class="my-1">

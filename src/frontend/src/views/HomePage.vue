@@ -4,7 +4,7 @@ import AlertBlock from "../components/AlertBlock.vue";
 import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 
-const showAlert = ref(false);
+const showAlert = ref(true);
 </script>
 
 <template>
@@ -16,19 +16,15 @@ const showAlert = ref(false);
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
     <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
       <div class="pl-2">
-        <p class="text-2xl font-semibold">The Temple of Spite & Sylvania: The Cursed County</p>
+        <p class="text-2xl font-semibold">Warhammer Fantasy Roleplay 5th Edition</p>
         <p>
-          We are happy to announce that contents of
-          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-temple-of-spite" target="_blank">
-            The Temple of Spite
-          </TextLink>
-          and
-          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sylvania-setting-guide" target="_blank">
-            Sylvania: The Cursed County
-          </TextLink>
-          are now available on Hammergen! This includes the Lore of Dark Magic (with 24 new spells), traits, talents
-          (including Gifts of Khaine), weapons, and trappings.
+          We are happy to announce that Hammergen now supports 5th Edition! Use the 4e | 5e switch in the side
+          navigation bar to browse the 5th Edition careers, skills, talents, trappings, spells, prayers, and more. You
+          can create 5th Edition characters by hand or generate them (level 1-4), and view, print, and download them
+          like 4th Edition characters. 5th Edition characters can also use 4th Edition content that has no 5th Edition
+          version yet.
         </p>
+        <p class="mt-3">Your 4th Edition characters and custom content stay exactly as they were.</p>
         <p class="mt-3">
           As always if you enjoy Hammergen, please consider supporting us on
           <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>. Any donations will help to cover hosting costs.
@@ -37,14 +33,14 @@ const showAlert = ref(false);
     </AlertBlock>
     <div class="text-2xl font-semibold mt-10">What is Hammergen?</div>
     <p>
-      Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th Edition character generator. It lets you create,
-      store, and manage characters as well as custom character properties such as skills, talents, etc. You can share
-      everything you create with other players!
+      Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th and 5th Edition character generator. It lets you
+      create, store, and manage characters as well as custom character properties such as skills, talents, etc. You can
+      share everything you create with other players!
     </p>
     <p>
-      Hammergen includes all trappings, careers, skills, talents, mutations, spells, and qualities from WFRP 4th ed
-      Rulebook and almost all other 4th ed books published by
-      <TextLink href="https://cubicle7games.com/warhammer-fantasy">Cubicle 7</TextLink>.
+      Hammergen includes all trappings, careers, skills, talents, mutations, spells, and qualities from the WFRP 4th
+      Edition Rulebook and almost all other 4th Edition books, and from the WFRP 5th Edition Core Rulebook, all
+      published by <TextLink href="https://cubicle7games.com/warhammer-fantasy">Cubicle 7</TextLink>.
       <span class="font-semibold">
         Please keep in mind that descriptions of those items are often incomplete, abbreviated, and cannot replace
         original descriptions from the source books.
@@ -71,8 +67,10 @@ const showAlert = ref(false);
     </ul>
     <p class="mt-1 text-xl">Warhammer database</p>
     <p>
-      Hammergen has almost all trappings, careers, skills, talents, mutations, spells, and qualities from WFRP 4th ed
-      Rulebook and all other 4th ed books published. Full list of included source books can be found in
+      Hammergen has almost all trappings, careers, skills, talents, mutations, spells, and qualities from the WFRP 4th
+      Edition Rulebook and all other 4th Edition books published, and from the WFRP 5th Edition Core Rulebook. Use the
+      4e | 5e switch in the side navigation bar to choose which edition you browse. Full list of included source books
+      can be found in
       <TextLink routeName="about">About</TextLink>
       section. Each of them has a reference to the source book and page they are from. Some examples of what you can use
       filters for are:
@@ -98,7 +96,7 @@ const showAlert = ref(false);
     </p>
     <p>
       After registering and logging in, all you need to do is go to Characters (in top navigation bar), and click Create
-      New button.
+      New button. New characters use the edition selected with the 4e | 5e switch.
     </p>
     <p>
       You can share any custom property (character, skill, trapping, etc.) you made with other players! When a property

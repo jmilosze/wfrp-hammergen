@@ -6,6 +6,20 @@ import TextLink from "../../components/TextLink.vue";
 <template>
   <Header title="Updates" />
   <div>
+    <div class="text-xl mt-2 mb-1">9 Oct 2026</div>
+    <p class="mb-1">
+      Added Warhammer Fantasy Roleplay 5th Edition. The 4e | 5e switch in the side navigation bar chooses which edition you
+      browse; all content from the 5th Edition Core Rulebook is available.
+    </p>
+    <p class="mb-1">
+      You can create 5th Edition characters by hand or generate them (level 1-4), view and print them, and download them
+      as a spreadsheet or JSON file. A 5th Edition character can allow 4th Edition content that has no 5th Edition version
+      yet; 4th Edition trappings count as usual, but modifiers of 4th Edition talents, traits, and mutations are not
+      applied.
+    </p>
+  </div>
+
+  <div>
     <div class="text-xl mt-2 mb-1">30 Sep 2026</div>
     <p class="mb-1">
       Trapping prices are now displayed and edited in Gold Crowns (GC), Silver Shillings (/-), and Brass Pennies (d), and the Trappings list now displays item prices in this format.

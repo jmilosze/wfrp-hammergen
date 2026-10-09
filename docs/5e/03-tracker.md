@@ -138,7 +138,7 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | # | Item | Status | Notes |
 |---|---|---|---|
 | X1 | Release plan per phase (flag, docs, announcement) | ⬜ | |
-| X2 | Update site texts that say "4th Edition" only (e.g. `<meta name="description">` in `index.html`, About page) | ⬜ | after the 5e character generator (G1–G4), decided 2026-10-09 |
+| X2 | Update site texts that say "4th Edition" only (e.g. `<meta name="description">` in `index.html`, About page) | ✅ | 2026-10-09: meta description, home page (text + 5e announcement banner), How To, About source books (4th/5th Edition lists), Updates entry, 4e generator hint |
 
 ---
 
@@ -193,3 +193,4 @@ Delivered in four phases (see [02-design.md §2a](02-design.md#2a-delivery-phase
 | 2026-10-09 | P6 (allow 4e content) deployed, incl. the 4e badge wrapping fix. |
 | 2026-10-09 | Usage metrics (A1–A6) removed from the 5e scope and moved to `docs/todo.md`. Next: the 5e character generator (G1–G4), then site texts (X2). |
 | 2026-10-09 | Plan P7 (5e character generator, G1–G4) implemented: `generationProps5e` data and import script, `?edition=5e` on the generation endpoint, `generateCharacter5e` (level 1 creation, tracker-driven levels 2–4 with 5e XP costs), generate section and buttons in the 5e editor. Walkthrough passed locally; `generationProps5e` not yet imported to staging/production; not deployed. |
+| 2026-10-09 | X2 site texts updated for 5th Edition (meta description, home page with announcement banner, How To, About source books, Updates entry). Not deployed. |
