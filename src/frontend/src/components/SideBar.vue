@@ -43,7 +43,9 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
     </div>
     <div class="px-3 divide-y divide-neutral-700">
       <div class="text-xl pb-2">
-        <NavLink routeName="characters" :class="LINK" @click="open = false"> Characters </NavLink>
+        <NavLink routeName="characters" icon="lucide:user-round" :class="LINK" @click="open = false">
+          Characters
+        </NavLink>
       </div>
       <div class="py-2">
         <button
@@ -57,6 +59,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
             class="size-5 transition-transform"
             :class="{ 'rotate-180': compendiumOpen }"
           />
+          <Icon icon="lucide:book-open" class="size-[1em] ml-1 mr-0.5" />
           Compendium
         </button>
         <!-- Animates the height: the grid row goes from 0fr to 1fr. -->
@@ -93,9 +96,13 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
         <NavLink routeName="login" :class="LINK" @click="open = false">Login</NavLink>
       </div>
       <div class="pt-2">
-        <NavLink href="https://dice.hammergen.net/" :class="LINK" @click="open = false">Roll dice!</NavLink>
-        <NavLink href="https://ko-fi.com/Q5Q12E0KB" :class="LINK" @click="open = false">Support Hammergen</NavLink>
-        <NavLink routeName="about" :class="LINK" @click="open = false">About</NavLink>
+        <NavLink href="https://dice.hammergen.net/" icon="lucide:dices" :class="LINK" @click="open = false">
+          Roll dice!
+        </NavLink>
+        <NavLink href="https://ko-fi.com/Q5Q12E0KB" icon="lucide:heart" :class="LINK" @click="open = false">
+          Support Hammergen
+        </NavLink>
+        <NavLink routeName="about" icon="lucide:info" :class="LINK" @click="open = false">About</NavLink>
       </div>
     </div>
   </div>

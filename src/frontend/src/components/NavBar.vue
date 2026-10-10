@@ -41,7 +41,7 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
         </RouterLink>
         <div class="hidden lg:flex items-center gap-1">
           <EditionSwitch v-model="edition" dark class="text-xs mr-3" />
-          <NavLink routeName="characters" :class="TOP_LINK">Characters</NavLink>
+          <NavLink routeName="characters" icon="lucide:user-round" :class="TOP_LINK">Characters</NavLink>
           <div ref="compendiumMenu" class="relative">
             <button
               type="button"
@@ -50,6 +50,7 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
               :aria-expanded="showCompendiumMenu"
               @click="showCompendiumMenu = !showCompendiumMenu"
             >
+              <Icon icon="lucide:book-open" class="size-[1em] mr-0.5" />
               Compendium
               <Icon
                 icon="lucide:chevron-down"
@@ -65,7 +66,7 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
             >
               <div
                 v-if="showCompendiumMenu"
-                class="absolute left-0 top-full mt-1 w-max p-3 grid grid-cols-2 gap-x-4 gap-y-3 bg-primary-300 text-neutral-900 border border-neutral-700 rounded shadow-lg"
+                class="absolute z-10 left-0 top-full mt-1 w-max p-3 grid grid-cols-2 gap-x-4 gap-y-3 bg-primary-300 text-neutral-900 border border-neutral-700 rounded shadow-lg"
               >
                 <div v-for="section in COMPENDIUM_SECTIONS" :key="section.title">
                   <div
@@ -109,9 +110,11 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
     </nav>
     <nav class="hidden lg:block bg-neutral-200 border-b border-neutral-300 text-sm">
       <div class="max-w-7xl mx-auto h-8 px-4 flex items-center justify-center gap-1">
-        <NavLink href="https://dice.hammergen.net/" :class="SECONDARY_LINK">Roll dice!</NavLink>
-        <NavLink href="https://ko-fi.com/Q5Q12E0KB" :class="SECONDARY_LINK">Support Hammergen</NavLink>
-        <NavLink routeName="about" :class="SECONDARY_LINK">About</NavLink>
+        <NavLink href="https://dice.hammergen.net/" icon="lucide:dices" :class="SECONDARY_LINK">Roll dice!</NavLink>
+        <NavLink href="https://ko-fi.com/Q5Q12E0KB" icon="lucide:heart" :class="SECONDARY_LINK">
+          Support Hammergen
+        </NavLink>
+        <NavLink routeName="about" icon="lucide:info" :class="SECONDARY_LINK">About</NavLink>
       </div>
     </nav>
   </header>
