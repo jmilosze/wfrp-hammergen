@@ -693,21 +693,28 @@ export function modelToApi(character: Character): CharacterApiData {
 }
 
 export interface CharacterApi extends WhApi<Character, CharacterApiResponse<CharacterApiData>> {
-  getElementForDisplay: (id: string, edition: Edition) => Promise<CharacterFull>;
+  getElementForDisplay: (id: string) => Promise<CharacterFull>;
+  getEdition: (id: string) => Promise<Edition>;
 }
 
 export function characterApi(axios: AxiosInstance): CharacterApi {
   const baseApi = createWhApi(API_BASE_PATH, axios, apiResponseToModel, modelToApi);
   return {
     ...baseApi,
-    getElementForDisplay: async (id: string, edition: Edition): Promise<CharacterFull> => {
+    getElementForDisplay: async (id: string): Promise<CharacterFull> => {
       const { data } = await axios.get<ServerEnvelope<CharacterApiResponse<CharacterFullApiData>>>(
         `${API_BASE_PATH}/${id}`,
         {
-          params: { full: true, edition },
+          params: { full: true },
         },
       );
       return apiResponseToCharacterFull(data.data);
+    },
+    getEdition: async (id: string): Promise<Edition> => {
+      const { data } = await axios.get<ServerEnvelope<CharacterApiResponse<CharacterApiData>>>(
+        `${API_BASE_PATH}/${id}`,
+      );
+      return data.data.object.edition;
     },
   };
 }

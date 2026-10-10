@@ -174,8 +174,11 @@ func (s *WhService) Delete(ctx context.Context, t wh.WhType, e wh.Edition, whId 
 }
 
 func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full bool, errIfNotFound bool, filter wh.WhFilter) ([]*wh.Wh, error) {
-	if filter.Edition == "" && (full || len(filter.SkillIds) > 0 || len(filter.TalentIds) > 0) {
-		return nil, fmt.Errorf("%w: edition is required with full or career filters", domain.ErrInvalidArguments)
+	// Full characters are resolved in each character's own edition, so they do not need one.
+	fullContent := full && t != wh.WhTypeCharacter
+	careerFilter := len(filter.SkillIds) > 0 || len(filter.TalentIds) > 0
+	if filter.Edition == "" && (fullContent || careerFilter) {
+		return nil, fmt.Errorf("%w: edition is required with full content or career filters", domain.ErrInvalidArguments)
 	}
 
 	users := []string{c.Id}
@@ -196,7 +199,7 @@ func (s *WhService) Get(ctx context.Context, t wh.WhType, c *auth.Claims, full b
 		if t == wh.WhTypeItem {
 			whsRet, whErr = retrieveFullItems(ctx, s, filter.Edition, c, whsRet)
 		} else if t == wh.WhTypeCharacter {
-			whsRet, whErr = retrieveFullCharacters(ctx, s, filter.Edition, c, whsRet)
+			whsRet, whErr = retrieveFullCharacters(ctx, s, c, whsRet)
 		}
 		if whErr != nil {
 			return nil, whErr
@@ -310,7 +313,36 @@ func idValuesToIds(items []wh.IdValue) []string {
 	return ids
 }
 
-func retrieveFullCharacters(ctx context.Context, whService *WhService, e wh.Edition, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, error) {
+// retrieveFullCharacters resolves the references of each character in the character's own edition.
+func retrieveFullCharacters(ctx context.Context, whService *WhService, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, error) {
+	byEdition := make(map[wh.Edition][]*wh.Wh)
+	for _, v := range characters {
+		character, ok := v.Object.(*wh.Character)
+		if !ok {
+			return nil, fmt.Errorf("failed to cast object to character")
+		}
+		byEdition[character.Edition] = append(byEdition[character.Edition], v)
+	}
+
+	fullById := make(map[string]*wh.Wh, len(characters))
+	for e, editionCharacters := range byEdition {
+		fullCharacters, err := retrieveFullCharactersOfEdition(ctx, whService, e, claims, editionCharacters)
+		if err != nil {
+			return nil, err
+		}
+		for _, v := range fullCharacters {
+			fullById[v.Id] = v
+		}
+	}
+
+	fullCharacters := make([]*wh.Wh, 0, len(characters))
+	for _, v := range characters {
+		fullCharacters = append(fullCharacters, fullById[v.Id])
+	}
+	return fullCharacters, nil
+}
+
+func retrieveFullCharactersOfEdition(ctx context.Context, whService *WhService, e wh.Edition, claims *auth.Claims, characters []*wh.Wh) ([]*wh.Wh, error) {
 	allItemIds := make([]string, 0)
 	allTalentIds := make([]string, 0)
 	allCareerIds := make([]string, 0)

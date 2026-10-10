@@ -28,7 +28,7 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
 
 ## Frontend (`src/frontend/src`)
 
-- `views/`: pages. `views/Warhammer/List` (content lists), `Edit` (content editors), `Character` (character list, editors and sheets per edition: `EditCharacter4e/5e.vue`, `ViewCharacter4e/5e.vue`, chosen from `?edition=` in the URL; missing means 4e).
+- `views/`: pages. `views/Warhammer/List` (content lists), `Edit` (content editors), `Character` (character list, editors and sheets per edition: `EditCharacter4e/5e.vue`, `ViewCharacter4e/5e.vue`, chosen from the character's own edition, a new character uses the selected edition).
 - `components/`: shared components (pickers, tables, modals, the 4e badge…).
 - `composables/`: Vue state helpers (auth, lists, editing, edition, 4e content lists…).
 - `services/wh/`: Warhammer domain code, by area:
@@ -54,7 +54,7 @@ Both editions exist side by side permanently; 4e behaviour stays as it was befor
 
 - Every content document (MongoDB) has per-edition variants under one id: `{ _id, ownerid, visibility, editions: { "4e": {...}, "5e": {...} } }`. A document may have one or both variants. BSON keys are lowercase.
 - A 4e item "has a 5e version" exactly when its 5e variant exists. Link a 5e variant to a 4e document only when the match is clearly 1-to-1 (renames are fine, e.g. Diceman → Dicer); for splits, merges or doubtful matches create a separate 5e-only document. Linking is permanent in practice.
-- List endpoints take `?edition=` and return only that edition's variant; editors load the whole document. The content editors have a 4e/5e toggle.
+- List endpoints take `?edition=` and return only that edition's variant; editors load the whole document. Full characters (`?full=true`) are resolved in each character's own edition and need no `?edition=`. The content editors have a 4e/5e toggle.
 - Owner and visibility are shared by both variants. Public content is admin-only; users create custom content in either edition.
 - Everything that differs between editions lives inside the variant: name, description, source and page, type, group membership, rules fields. Fields that exist in one edition only are optional (`omitempty`) on the shared Go/TS type, with per-edition rules in `ValidateEdition`.
 - Sources: 5e core rulebook is source `44`; the editors offer each edition's own sources (`sourcesByEdition`).

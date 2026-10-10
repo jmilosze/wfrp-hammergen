@@ -81,7 +81,6 @@ function handleSampleCharacters() {
     :items="items"
     stackBreakpoint="4xl"
     rowRouteName="character"
-    :rowRouteQuery="{ edition: edition }"
     class="mx-1"
   >
     <LinkButton
@@ -89,13 +88,12 @@ function handleSampleCharacters() {
       class="mr-2 mb-2 shrink-0 btn"
       routeName="character"
       :params="{ id: 'create' }"
-      :query="{ edition: edition }"
     >
       Create new
     </LinkButton>
 
     <template #actions="{ id }: { id: string }">
-      <ActionButtonsCharacter :id="id" :edition="edition" @copy="(copiedId) => whList.copyWh(copiedId)" />
+      <ActionButtonsCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
     </template>
 
     <template #tooltip="{ ownerId, visibility }: { ownerId: string; visibility?: number }">

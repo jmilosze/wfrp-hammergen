@@ -339,7 +339,7 @@ func TestFullCharacterAllow4eResolves4eOnlyContent(t *testing.T) {
 			docs[wh.WhTypeCharacter] = []*wh.Wh{{Id: "char1", Object: character}}
 
 			s := newTestWhService(t, &editionWhDb{docs: docs})
-			result, err := s.Get(context.Background(), wh.WhTypeCharacter, &auth.Claims{Id: "user1"}, true, false, wh.WhFilter{Edition: wh.Edition5e, WhIds: []string{"char1"}})
+			result, err := s.Get(context.Background(), wh.WhTypeCharacter, &auth.Claims{Id: "user1"}, true, false, wh.WhFilter{WhIds: []string{"char1"}})
 			if err != nil {
 				t.Fatalf("expected no error, got %v", err)
 			}
@@ -352,6 +352,51 @@ func TestFullCharacterAllow4eResolves4eOnlyContent(t *testing.T) {
 				t.Errorf("expected %d talents and %d skills, got %d and %d", wantTalents, wantSkills, len(full.Talents), len(full.Skills))
 			}
 		})
+	}
+}
+
+func TestFullCharactersResolvedInOwnEdition(t *testing.T) {
+	talent := func() *wh.Talent { return mock_data.NewMockTalents()[0].Object.(*wh.Talent) }
+	newCharacter := func(e wh.Edition, talentId string) *wh.Character {
+		character := newMockCharacter(e)
+		character.Talents = []wh.IdNumber{{Id: talentId, Number: 1}}
+		character.Skills, character.EquippedItems, character.CarriedItems, character.StoredItems = nil, nil, nil, nil
+		character.Spells, character.Prayers, character.Traits, character.Mutations = nil, nil, nil, nil
+		character.CareerPath, character.Career = nil, nil
+		character.Init()
+		return character
+	}
+	docs := map[wh.WhType][]*wh.Wh{
+		wh.WhTypeTalent: {
+			{Id: "talent4e", Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: talent()}},
+			{Id: "talent5e", Editions: map[wh.Edition]wh.WhObject{wh.Edition5e: talent()}},
+		},
+		wh.WhTypeCharacter: {
+			{Id: "char5e", Object: newCharacter(wh.Edition5e, "talent5e")},
+			{Id: "char4e", Object: newCharacter(wh.Edition4e, "talent4e")},
+			{Id: "char5eWith4eTalent", Object: newCharacter(wh.Edition5e, "talent4e")},
+		},
+	}
+
+	s := newTestWhService(t, &editionWhDb{docs: docs})
+	result, err := s.Get(context.Background(), wh.WhTypeCharacter, &auth.Claims{Id: "user1"}, true, false, wh.WhFilter{})
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	for i, want := range []struct {
+		id      string
+		edition wh.Edition
+		talents int
+	}{
+		{id: "char5e", edition: wh.Edition5e, talents: 1},
+		{id: "char4e", edition: wh.Edition4e, talents: 1},
+		{id: "char5eWith4eTalent", edition: wh.Edition5e, talents: 0},
+	} {
+		full := result[i].Object.(*wh.CharacterFull)
+		if result[i].Id != want.id || full.Edition != want.edition || len(full.Talents) != want.talents {
+			t.Errorf("result %d: expected %s (%s) with %d talents, got %s (%s) with %d", i, want.id, want.edition, want.talents, result[i].Id, full.Edition, len(full.Talents))
+		}
 	}
 }
 

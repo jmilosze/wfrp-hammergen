@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import Header from "../../../components/PageHeader.vue";
-import { computed, ref } from "vue";
-import { characterApi } from "../../../services/wh/character/character.ts";
-import { Edition } from "../../../services/wh/core/edition.ts";
-import { authRequest } from "../../../services/auth.ts";
-import {
-  CharacterFullItem,
-  CharacterFullSpell,
-  newCharacterFull,
-} from "../../../services/wh/character/characterFull.ts";
+import { computed, ref, toRef } from "vue";
+import { CharacterFullItem, CharacterFullSpell, CharacterFull } from "../../../services/wh/character/characterFull.ts";
 import { characterFullToCsv5e } from "../../../services/wh/character/csv/csv5e.ts";
 import ActionButton from "../../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
@@ -16,37 +9,20 @@ import { useRouter } from "vue-router";
 import ViewCharacterTable from "../../../components/ViewCharacterTable.vue";
 import { usePrint } from "../../../composables/print.ts";
 import { useAuth } from "../../../composables/auth.ts";
-import AlertBlock from "../../../components/AlertBlock.vue";
 import TextLink from "../../../components/TextLink.vue";
 import CareerAdvancementTracker from "../../../components/CareerAdvancementTracker.vue";
 import Ignored4eModifiersWarning from "../../../components/Ignored4eModifiersWarning.vue";
 
 const props = defineProps<{
-  id: string;
+  character: CharacterFull;
 }>();
-
-const EDITION: Edition = "5e";
-
-const apiError = ref("");
-const showApiError = ref(true);
 
 const router = useRouter();
 const auth = useAuth();
 const { print, printing } = usePrint();
 
-const api = characterApi(authRequest);
-
-const character = ref(newCharacterFull());
+const character = toRef(props, "character");
 const canEdit = computed(() => auth.canEdit(character.value.ownerId));
-await loadCharacter();
-
-async function loadCharacter() {
-  try {
-    character.value = await api.getElementForDisplay(props.id, EDITION);
-  } catch {
-    apiError.value = "Error. Could not pull data from server.";
-  }
-}
 
 function saveJson() {
   const blob = new Blob([JSON.stringify(character.value, null, 2)], {
@@ -454,9 +430,6 @@ const grimoiresDisp = ref(
 </script>
 
 <template>
-  <AlertBlock v-if="apiError && showApiError" alertType="red" :centered="true" @close="showApiError = false">
-    {{ apiError }}
-  </AlertBlock>
   <Header :title="character.name" />
   <div v-if="!printing" class="flex flex-wrap">
     <ActionButton class="m-1 btn btn-sm" @click="saveCsv()">Download CSV</ActionButton>
@@ -465,7 +438,7 @@ const grimoiresDisp = ref(
     <ActionButton
       v-if="canEdit"
       class="m-1 btn btn-sm"
-      @click="router.push({ name: 'character', params: { id: id }, query: { edition: EDITION } })"
+      @click="router.push({ name: 'character', params: { id: character.id } })"
     >
       Edit
     </ActionButton>

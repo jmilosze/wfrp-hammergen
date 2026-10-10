@@ -20,7 +20,6 @@ const props = defineProps<{
   loading?: boolean;
   resetPagination?: number;
   rowRouteName?: string;
-  rowRouteQuery?: Record<string, string>;
 }>();
 
 const emit = defineEmits<{
@@ -174,7 +173,7 @@ async function scrollToTop(): Promise<void> {
               >
                 <RouterLink
                   v-if="props.rowRouteName && field.name !== 'actions'"
-                  :to="{ name: props.rowRouteName, params: { id: item.id }, query: props.rowRouteQuery }"
+                  :to="{ name: props.rowRouteName, params: { id: item.id } }"
                   :tabindex="fieldIndex === 0 ? undefined : -1"
                   class="py-2 px-5 flex items-center w-full h-full text-inherit no-underline hover:text-inherit"
                 >
@@ -202,7 +201,7 @@ async function scrollToTop(): Promise<void> {
                 <template v-for="(field, fieldIndex) in fields" :key="field.name">
                   <RouterLink
                     v-if="props.rowRouteName && field.name !== 'actions'"
-                    :to="{ name: props.rowRouteName, params: { id: item.id }, query: props.rowRouteQuery }"
+                    :to="{ name: props.rowRouteName, params: { id: item.id } }"
                     :tabindex="fieldIndex === 0 ? undefined : -1"
                     class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2 text-inherit no-underline hover:text-inherit"
                     :class="[

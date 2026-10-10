@@ -386,9 +386,7 @@ const modifierAttributes = computed(() => {
     <div class="text-xl">View character</div>
     <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
     <div class="flex">
-      <LinkButton routeName="viewCharacter" :params="{ id: id }" :query="{ edition: EDITION }" class="btn btn-sm">
-        View character
-      </LinkButton>
+      <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View character </LinkButton>
     </div>
   </div>
   <div v-if="canEdit && id === 'create'" class="border border-neutral-700 rounded p-2 my-4">
