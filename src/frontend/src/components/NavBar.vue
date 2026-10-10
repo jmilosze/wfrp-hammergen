@@ -97,8 +97,8 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
     <nav class="hidden lg:block bg-neutral-200 border-b border-neutral-300 text-sm">
       <div class="max-w-7xl mx-auto h-8 px-4 flex items-center justify-end gap-1">
         <NavLink href="https://dice.hammergen.net/" variant="secondary">Roll dice!</NavLink>
-        <NavLink routeName="about" variant="secondary">About</NavLink>
         <NavLink href="https://ko-fi.com/Q5Q12E0KB" variant="secondary">Support Hammergen</NavLink>
+        <NavLink routeName="about" variant="secondary">About</NavLink>
       </div>
     </nav>
   </header>

@@ -101,8 +101,8 @@ const compendiumSelected = computed(() => !compendiumOpen.value && isCompendiumR
       </div>
       <div class="pt-2">
         <NavLink href="https://dice.hammergen.net/" variant="side" @click="open = false">Roll dice!</NavLink>
-        <NavLink routeName="about" variant="side" @click="open = false">About</NavLink>
         <NavLink href="https://ko-fi.com/Q5Q12E0KB" variant="side" @click="open = false">Support Hammergen</NavLink>
+        <NavLink routeName="about" variant="side" @click="open = false">About</NavLink>
       </div>
     </div>
   </div>
