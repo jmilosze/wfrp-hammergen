@@ -16,7 +16,7 @@ function reload() {
       <h1 class="text-2xl mb-4">Maintenance in progress</h1>
       <p class="mb-2">Hammergen is being updated and is temporarily unavailable.</p>
       <p class="mb-8">Your characters and content are safe. Please try again in a few minutes.</p>
-      <button class="bg-neutral-700 text-amber-300 hover:bg-neutral-600 rounded px-4 py-2" @click="reload">
+      <button class="bg-neutral-700 text-primary-300 hover:bg-neutral-600 rounded px-4 py-2" @click="reload">
         Try again
       </button>
     </div>

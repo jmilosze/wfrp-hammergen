@@ -1,32 +1,29 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { useRoute } from "vue-router";
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import NavLink from "./NavLink.vue";
 import EditionSwitch from "./EditionSwitch.vue";
 import { useAuth } from "../composables/auth.ts";
 import { useEdition } from "../composables/edition.ts";
-import { CHARACTER_ROUTES, COMPENDIUM_SECTIONS, isCompendiumRoute } from "../navigation.ts";
+import { COMPENDIUM_SECTIONS } from "../navigation.ts";
 
 const LOCAL_STORAGE_KEY_COMPENDIUM_OPEN = "sidebarCompendiumOpen";
+
+const LINK = "block w-full py-1 px-2 rounded select-none text-end transition-colors duration-150 hover:bg-primary-200";
 
 // Slide-in navigation for screens below lg; large screens use the links in NavBar.
 const open = defineModel<boolean>({ required: true });
 
 const auth = useAuth();
 const { edition } = useEdition();
-const route = useRoute();
 
 // Remembered between visits.
 const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false);
-// A collapsed Compendium is highlighted when the current page is inside it.
-const compendiumSelected = computed(() => !compendiumOpen.value && isCompendiumRoute(route.name));
 </script>
 
 <template>
   <div
-    class="lg:hidden fixed top-0 right-0 overflow-auto h-full w-64 z-30 bg-amber-300 border-l border-neutral-400 text-neutral-900 transition-transform duration-300"
+    class="lg:hidden fixed top-0 right-0 overflow-auto h-full w-64 z-30 bg-primary-300 border-l border-neutral-400 text-neutral-900 transition-transform duration-300"
     :class="open ? 'translate-x-0' : 'translate-x-full'"
   >
     <!-- Equal flex-1 sides keep the title centred. -->
@@ -36,7 +33,7 @@ const compendiumSelected = computed(() => !compendiumOpen.value && isCompendiumR
         Hammergen
       </RouterLink>
       <div class="flex-1 flex justify-end">
-        <button class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded mr-2" @click="open = false">
+        <button class="hover:bg-primary-200 transition-colors duration-150 p-1 rounded mr-2" @click="open = false">
           <Icon icon="lucide:x" class="size-6" />
         </button>
       </div>
@@ -46,15 +43,12 @@ const compendiumSelected = computed(() => !compendiumOpen.value && isCompendiumR
     </div>
     <div class="px-3 divide-y divide-neutral-700">
       <div class="text-xl pb-2">
-        <NavLink routeName="characters" :activeRoutes="CHARACTER_ROUTES" variant="side" @click="open = false">
-          Characters
-        </NavLink>
+        <NavLink routeName="characters" :class="LINK" @click="open = false"> Characters </NavLink>
       </div>
       <div class="py-2">
         <button
           type="button"
-          class="w-full flex items-center justify-end gap-1 py-1 px-2 rounded select-none text-xl"
-          :class="compendiumSelected ? 'bg-neutral-700 text-amber-300' : 'hover:bg-neutral-700 hover:text-amber-300'"
+          class="w-full flex items-center justify-end gap-1 py-1 px-2 rounded select-none text-xl transition-colors duration-150 hover:bg-primary-200"
           :aria-expanded="compendiumOpen"
           @click="compendiumOpen = !compendiumOpen"
         >
@@ -73,7 +67,7 @@ const compendiumSelected = computed(() => !compendiumOpen.value && isCompendiumR
           <div class="overflow-hidden" :inert="!compendiumOpen">
             <div v-for="section in COMPENDIUM_SECTIONS" :key="section.title" class="pb-1">
               <div
-                class="mx-2 mt-2 mb-1 pb-0.5 border-b border-amber-600 text-[0.7rem] font-bold uppercase tracking-widest text-amber-800 text-end select-none"
+                class="mx-2 mt-2 mb-1 pb-0.5 border-b border-primary-600 text-[0.7rem] font-bold uppercase tracking-widest text-primary-800 text-end select-none"
               >
                 {{ section.title }}
               </div>
@@ -81,8 +75,7 @@ const compendiumSelected = computed(() => !compendiumOpen.value && isCompendiumR
                 v-for="link in section.links"
                 :key="link.listRoute"
                 :routeName="link.listRoute"
-                :activeRoutes="[link.editRoute]"
-                variant="side"
+                :class="LINK"
                 @click="open = false"
               >
                 {{ link.text }}
@@ -92,17 +85,17 @@ const compendiumSelected = computed(() => !compendiumOpen.value && isCompendiumR
         </div>
       </div>
       <div v-if="auth.loggedIn.value" class="py-2">
-        <NavLink routeName="manage" variant="side" @click="open = false">Manage account</NavLink>
-        <NavLink variant="side" @click="auth.logout">Logout</NavLink>
+        <NavLink routeName="manage" :class="LINK" @click="open = false">Manage account</NavLink>
+        <NavLink :class="LINK" @click="auth.logout">Logout</NavLink>
       </div>
       <div v-else class="py-2">
-        <NavLink routeName="register" variant="side" @click="open = false">Register</NavLink>
-        <NavLink routeName="login" variant="side" @click="open = false">Login</NavLink>
+        <NavLink routeName="register" :class="LINK" @click="open = false">Register</NavLink>
+        <NavLink routeName="login" :class="LINK" @click="open = false">Login</NavLink>
       </div>
       <div class="pt-2">
-        <NavLink href="https://dice.hammergen.net/" variant="side" @click="open = false">Roll dice!</NavLink>
-        <NavLink href="https://ko-fi.com/Q5Q12E0KB" variant="side" @click="open = false">Support Hammergen</NavLink>
-        <NavLink routeName="about" variant="side" @click="open = false">About</NavLink>
+        <NavLink href="https://dice.hammergen.net/" :class="LINK" @click="open = false">Roll dice!</NavLink>
+        <NavLink href="https://ko-fi.com/Q5Q12E0KB" :class="LINK" @click="open = false">Support Hammergen</NavLink>
+        <NavLink routeName="about" :class="LINK" @click="open = false">About</NavLink>
       </div>
     </div>
   </div>
@@ -110,7 +103,7 @@ const compendiumSelected = computed(() => !compendiumOpen.value && isCompendiumR
   <Transition name="fade">
     <div
       v-show="open"
-      class="lg:hidden fixed top-0 w-screen h-screen z-20 bg-zinc-500 opacity-70"
+      class="lg:hidden fixed top-0 w-screen h-screen z-20 bg-neutral-500 opacity-70"
       @click="open = false"
     />
   </Transition>

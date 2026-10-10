@@ -687,10 +687,10 @@ function newRolls() {
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
-    <div class="text-sm text-red-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-danger-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
       {{ rollsValidationStatus.message }}
     </div>
-    <div class="text-sm text-red-600 mt-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-danger-600 mt-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
       {{ advancesValidationStatus.message }}
     </div>
   </div>

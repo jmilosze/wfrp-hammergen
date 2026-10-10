@@ -76,9 +76,9 @@ onMounted(async () => {
     </main>
     <!-- Footer -->
     <footer v-if="!printing" class="flex-none bg-neutral-700 w-full">
-      <div class="text-center text-sm my-2 text-amber-300">
+      <div class="text-center text-sm my-2 text-primary-300">
         Contact:
-        <a class="hover:text-amber-100" href="mailto:admin@hammergen.net">admin@hammergen.net</a>
+        <a class="hover:text-primary-100" href="mailto:admin@hammergen.net">admin@hammergen.net</a>
       </div>
     </footer>
   </div>
@@ -87,7 +87,7 @@ onMounted(async () => {
   <Transition name="fade">
     <div
       v-show="modal.show.value"
-      class="fixed top-0 w-full h-full z-40 bg-zinc-500 opacity-70"
+      class="fixed top-0 w-full h-full z-40 bg-neutral-500 opacity-70"
       @click="modal.hideModal()"
     />
   </Transition>

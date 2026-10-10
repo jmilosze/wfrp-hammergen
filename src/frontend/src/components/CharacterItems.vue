@@ -268,13 +268,13 @@ function onModifyClick() {
         </div>
       </div>
     </div>
-    <div class="text-sm text-red-600 mt-1" :class="[equippedValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-danger-600 mt-1" :class="[equippedValidationStatus.valid ? 'hidden' : '']">
       {{ equippedValidationStatus.message }}
     </div>
-    <div class="text-sm text-red-600 mt-1" :class="[carriedValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-danger-600 mt-1" :class="[carriedValidationStatus.valid ? 'hidden' : '']">
       {{ carriedValidationStatus.message }}
     </div>
-    <div class="text-sm text-red-600 mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-danger-600 mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
       {{ storedValidationStatus.message }}
     </div>
     <ModalWindow id="modifyItemsModal" size="lg">

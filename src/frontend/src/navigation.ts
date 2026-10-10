@@ -1,10 +1,7 @@
-import type { RouteRecordNameGeneric } from "vue-router";
-
-// A compendium content type: its list page and its editor page.
+// A compendium content type and its list page.
 export interface CompendiumLink {
   text: string;
   listRoute: string;
-  editRoute: string;
 }
 
 // Compendium content types grouped under a sub-heading.
@@ -17,39 +14,31 @@ export const COMPENDIUM_SECTIONS: CompendiumSection[] = [
   {
     title: "Careers & Skills",
     links: [
-      { text: "Careers", listRoute: "careers", editRoute: "career" },
-      { text: "Skills", listRoute: "skills", editRoute: "skill" },
-      { text: "Talents", listRoute: "talents", editRoute: "talent" },
+      { text: "Careers", listRoute: "careers" },
+      { text: "Skills", listRoute: "skills" },
+      { text: "Talents", listRoute: "talents" },
     ],
   },
   {
     title: "Equipment",
     links: [
-      { text: "Trappings", listRoute: "items", editRoute: "item" },
-      { text: "Qualities and flaws", listRoute: "properties", editRoute: "property" },
-      { text: "Runes", listRoute: "runes", editRoute: "rune" },
+      { text: "Trappings", listRoute: "items" },
+      { text: "Qualities and flaws", listRoute: "properties" },
+      { text: "Runes", listRoute: "runes" },
     ],
   },
   {
     title: "Magic & Faith",
     links: [
-      { text: "Spells", listRoute: "spells", editRoute: "spell" },
-      { text: "Prayers", listRoute: "prayers", editRoute: "prayer" },
+      { text: "Spells", listRoute: "spells" },
+      { text: "Prayers", listRoute: "prayers" },
     ],
   },
   {
     title: "Corruption & Creatures",
     links: [
-      { text: "Mutations", listRoute: "mutations", editRoute: "mutation" },
-      { text: "Creature traits", listRoute: "traits", editRoute: "trait" },
+      { text: "Mutations", listRoute: "mutations" },
+      { text: "Creature traits", listRoute: "traits" },
     ],
   },
 ];
-
-export const CHARACTER_ROUTES = ["characters", "character", "viewCharacter"];
-
-export function isCompendiumRoute(name: RouteRecordNameGeneric): boolean {
-  return COMPENDIUM_SECTIONS.some((section) =>
-    section.links.some((link) => link.listRoute === name || link.editRoute === name),
-  );
-}

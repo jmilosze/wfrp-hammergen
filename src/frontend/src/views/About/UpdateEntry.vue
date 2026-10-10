@@ -11,7 +11,7 @@ defineProps<{ date: string }>();
     </div>
     <div class="relative flex justify-center">
       <div class="absolute inset-y-0 w-0.5 bg-neutral-300" />
-      <div class="relative mt-4 size-3 rounded-full bg-amber-400 ring-4 ring-white" />
+      <div class="relative mt-4 size-3 rounded-full bg-primary-400 ring-4 ring-white" />
     </div>
     <div class="pb-5">
       <div class="md:hidden pt-3 pb-1 text-sm font-semibold text-neutral-600">{{ date }}</div>

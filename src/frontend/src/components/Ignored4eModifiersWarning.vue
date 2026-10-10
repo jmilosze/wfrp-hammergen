@@ -6,7 +6,11 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="names.length > 0" role="note" class="p-2 rounded border bg-amber-100 text-amber-900 border-amber-700">
+  <div
+    v-if="names.length > 0"
+    role="note"
+    class="p-2 rounded border bg-primary-100 text-primary-900 border-primary-700"
+  >
     Modifiers of 4e content are not taken into account: {{ names.join(", ") }}.
   </div>
 </template>

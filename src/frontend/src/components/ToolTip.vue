@@ -30,7 +30,7 @@ function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): Tooltip
       tile: "material-symbols:globe",
       label: "Public",
       content: "This item is owned by Hammergen",
-      badgeClass: "bg-blue-100 text-blue-800 border border-blue-300",
+      badgeClass: "bg-info-100 text-info-800 border border-info-300",
     };
   } else if (visibility === Visibility.Shared) {
     if (canEdit) {
@@ -38,14 +38,14 @@ function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): Tooltip
         tile: "material-symbols:backup",
         label: "Shared",
         content: "This item is shared with linked accounts",
-        badgeClass: "bg-green-100 text-green-800 border border-green-300",
+        badgeClass: "bg-success-100 text-success-800 border border-success-300",
       };
     } else {
       return {
         tile: "material-symbols:cloud-download",
         label: "Shared",
         content: "This item is being shared from a linked account",
-        badgeClass: "bg-purple-100 text-purple-800 border border-purple-300",
+        badgeClass: "bg-linked-100 text-linked-800 border border-linked-300",
       };
     }
   } else {

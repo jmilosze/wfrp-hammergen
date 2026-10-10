@@ -290,7 +290,7 @@ watchWh(
               />
             </div>
             <div class="text-xs text-neutral-500 mt-2">Total: {{ formattedPrice }}</div>
-            <div v-if="!validPrice.valid && validCoins" role="alert" class="text-sm text-red-600 mt-1">
+            <div v-if="!validPrice.valid && validCoins" role="alert" class="text-sm text-danger-600 mt-1">
               {{ validPrice.message }}
             </div>
           </div>

@@ -54,7 +54,7 @@ async function submitForm() {
 </script>
 
 <template>
-  <div class="mt-3 p-2 border-4 border-red-600 rounded-lg">
+  <div class="mt-3 p-2 border-4 border-danger-600 rounded-lg">
     <div class="text-xl">Delete account</div>
     <p>The account and all its data will be deleted. It will be impossible to recover.</p>
     <div class="pt-2 md:w-96">

@@ -60,7 +60,7 @@ const value = computed({
       v-if="validationStatus"
       :id="errorId"
       role="alert"
-      class="text-sm text-red-600 mt-1"
+      class="text-sm text-danger-600 mt-1"
       :class="[validationStatus.valid ? 'hidden' : '']"
     >
       {{ validationStatus.message }}

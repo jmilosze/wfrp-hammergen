@@ -7,7 +7,7 @@ defineProps<{ labelList: string[] }>();
     <div
       v-for="(label, i) in labelList.toSorted((a, b) => a.localeCompare(b))"
       :key="i"
-      class="border p-1 border-neutral-500 rounded bg-amber-200"
+      class="border p-1 border-neutral-500 rounded bg-primary-200"
     >
       {{ label }}
     </div>

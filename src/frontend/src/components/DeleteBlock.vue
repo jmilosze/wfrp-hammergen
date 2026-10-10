@@ -64,7 +64,7 @@ async function onConfirmDelete() {
 </script>
 
 <template>
-  <div class="mt-4 p-2 border-4 border-red-600 rounded-lg text-left">
+  <div class="mt-4 p-2 border-4 border-danger-600 rounded-lg text-left">
     <div class="text-xl">{{ titleText }}</div>
     <p>{{ disclaimerText }}</p>
     <ActionButton class="mt-3 btn btn-danger" :spinner="deleting" @click="onDeleteClick">

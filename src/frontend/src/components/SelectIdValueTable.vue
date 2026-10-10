@@ -166,7 +166,7 @@ const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
             </td>
             <td v-if="!disabled" :class="tdClass" class="w-0">
               <button
-                class="hover:bg-neutral-700 hover:text-amber-300 p-1 rounded"
+                class="hover:bg-neutral-700 hover:text-primary-300 p-1 rounded"
                 :aria-label="`Remove ${row.entity.name}`"
                 @click="emit('remove', { index: row.index, id: row.entity.id })"
               >
@@ -178,7 +178,7 @@ const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
-    <div class="text-sm text-red-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
     <ModalWindow :id="modalId">

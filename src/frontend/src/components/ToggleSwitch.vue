@@ -5,14 +5,14 @@ const COLORS = {
   light: {
     border: "border-neutral-700",
     pill: "bg-neutral-700",
-    selected: "text-amber-300",
+    selected: "text-primary-300",
     unselected: "text-neutral-700 hover:text-neutral-950",
   },
   dark: {
-    border: "border-amber-300",
-    pill: "bg-amber-300",
+    border: "border-primary-300",
+    pill: "bg-primary-300",
     selected: "text-neutral-900",
-    unselected: "text-amber-300 hover:text-amber-100",
+    unselected: "text-primary-300 hover:text-primary-100",
   },
 };
 

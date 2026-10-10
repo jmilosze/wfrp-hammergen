@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const linkClass = ["hover:underline", "font-semibold"];
 if (!props.noColour) {
-  linkClass.push("text-red-700");
+  linkClass.push("text-danger-700");
 }
 </script>
 
