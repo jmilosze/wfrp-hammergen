@@ -23,7 +23,7 @@ type Career struct {
 
 // ValidateEdition checks rules that depend on the edition:
 //   - income skill (every edition): when set, it must be one of the level 1 skills;
-//   - species (5e): only the five 5e species (R12).
+//   - species (5e): only the five 5e species.
 func (career *Career) ValidateEdition(e Edition) error {
 	if career.IncomeSkill != "" && !slices.Contains(career.Level1.Skills, career.IncomeSkill) {
 		return errors.New("income skill must be one of the level 1 skills")

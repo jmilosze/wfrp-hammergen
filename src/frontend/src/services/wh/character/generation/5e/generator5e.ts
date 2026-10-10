@@ -1,4 +1,4 @@
-// 5e character generator (plan P7, docs/5e/plans/p7-generator.md; rules pp. 22–44, 191, 196).
+// 5e character generator (rules pp. 22–44, 191, 196).
 // Species and career are chosen; characteristics are always "kept in order".
 import { Character } from "../../character.ts";
 import { SpeciesWithRegion } from "../../../core/species.ts";

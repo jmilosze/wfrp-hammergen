@@ -16,4 +16,4 @@ dist/
 src/frontend/pnpm-lock.yaml
 books/
 .obsidian/
-docs/5e/data/
+db/data/

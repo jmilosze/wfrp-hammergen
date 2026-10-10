@@ -24,7 +24,7 @@ import { allocateCreationCareerAdvances5e } from "./skills5e.ts";
 import { takeCareerTalent5e } from "./talents5e.ts";
 
 // Career Advancement Tracker ticks at each career level (p. 196): 10 for level 2, 12 more for level 3, 14 more
-// for level 4. One running count for the current career (Q-TRACKER).
+// for level 4. One running count for the current career; past careers keep no count.
 export const CAREER_TICKS_5E: PerGenerationLevel<number> = [0, 10, 22, 36];
 
 export interface CareerAdvances5eContext {

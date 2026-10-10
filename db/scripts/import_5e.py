@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Imports 5e content of one type from its data file in docs/5e/data (plan C6b, docs/5e/03-tracker.md),
+Imports 5e content of one type from its data file in db/data/5e,
 e.g. --type trait reads traits-5e.json.
 
 Entries with `id4e` add `editions.5e` to that public 4e document.
@@ -26,7 +26,7 @@ DEFAULT_MONGO_URI = os.environ.get(
     "MONGO_URI", "mongodb://admin:admin@localhost:27017"
 )
 DEFAULT_DB_NAME = os.environ.get("DB_NAME", "hammergenGo")
-DATA_DIR = Path(__file__).resolve().parents[2] / "docs/5e/data"
+DATA_DIR = Path(__file__).resolve().parents[1] / "data/5e"
 
 VISIBILITY_PUBLIC = 2
 ATTRIBUTES = ["ws", "bs", "s", "t", "i", "ag", "dex", "int", "wp", "fel"]

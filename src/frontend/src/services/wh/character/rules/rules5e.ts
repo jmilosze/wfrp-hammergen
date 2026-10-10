@@ -12,7 +12,7 @@ import {
 } from "../../core/species.ts";
 import type { CharacterRules } from "./rules.ts";
 
-// The five 5e species (R12); a 5e Human uses the Human (Reikland) code.
+// The five 5e species (no Gnome, Ogre or regional variants); a 5e Human uses the Human (Reikland) code.
 export const SPECIES_5E: SpeciesWithRegion[] = [
   SpeciesWithRegion.HumanReikland,
   SpeciesWithRegion.HalflingDefault,

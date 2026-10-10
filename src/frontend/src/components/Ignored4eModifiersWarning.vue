@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Warns that modifiers of 4e talents, traits and mutations on a 5e character are not applied (R8).
+// Warns that modifiers of 4e talents, traits and mutations on a 5e character are not applied.
 defineProps<{
   names: string[];
 }>();

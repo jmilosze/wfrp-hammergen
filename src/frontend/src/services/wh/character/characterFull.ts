@@ -376,7 +376,7 @@ export function apiResponseToCharacterFull(
   const e = fullCharacterApi.object.edition;
   // A trait that takes a value can be on the character more than once; its modifiers count once.
   const uniqueTraits = [...new Map(fullCharacterApi.object.traits.map((x) => [x.wh.id, x.wh])).values()];
-  // Modifiers of 4e talents, traits and mutations on a 5e character are not applied (R8); 4e trappings count fully.
+  // Modifiers of 4e talents, traits and mutations on a 5e character are not applied; 4e trappings count fully.
   const modTalents = fullCharacterApi.object.talents.filter((x) => contentEdition(x.wh, e) === e);
   const modTraits = uniqueTraits.filter((x) => contentEdition(x, e) === e);
   const modMutations = fullCharacterApi.object.mutations.filter((x) => contentEdition(x, e) === e);

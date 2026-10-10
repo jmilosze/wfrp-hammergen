@@ -41,6 +41,12 @@ The backend connects to MongoDB. You have a few options to run it:
 
   To stop the containers, run `make dev-down`.
 
+## Developer docs
+
+- [docs/architecture.md](docs/architecture.md): code layout, conventions, and the 4e/5e edition model
+- [docs/operations.md](docs/operations.md): local servers, tests, data scripts, databases, backups, deploying
+- [docs/issues.md](docs/issues.md): backlog of known issues and ideas
+
 ## Running tests
 
 Go to the source directory:

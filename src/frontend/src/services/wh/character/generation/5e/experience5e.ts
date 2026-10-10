@@ -1,5 +1,5 @@
 // 5e Advancement XP costs (p. 191).
-// 5e Advancement XP costs (p. 191). Advances are stored as points (Q-ADV); one Advance is +5.
+// 5e Advancement XP costs (p. 191). Advances are stored as points; one Advance is +5.
 export const ADVANCE_POINTS_5E = 5;
 
 export const TALENT_COST_5E = 100;

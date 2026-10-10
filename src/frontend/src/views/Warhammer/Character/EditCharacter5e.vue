@@ -61,7 +61,7 @@ const props = defineProps<{
 }>();
 
 const EDITION: Edition = "5e";
-// One 5e Advance adds +5 (Q-ADV: advances are stored as points).
+// One 5e Advance adds +5 (advances are stored as points).
 const ADVANCE_STEP = 5;
 
 const newCharacter = new Character({
@@ -97,7 +97,7 @@ const itemLists = useWith4eContentList(itemApi(authRequest), () => wh.value.allo
 const generationPropsUtils = useGenerationProps5e(authRequest);
 generationPropsUtils.loadGenerationProps();
 
-// The generator uses 5e content only (R9), whether or not 4e content is allowed.
+// The generator uses 5e content only, whether or not 4e content is allowed.
 const generationDataLoading = computed(
   () =>
     careerLists.list5e.loading.value ||
@@ -228,13 +228,13 @@ watch(
 
 const modal = useModal();
 
-// Turning on 4e content is one-way (R6): it asks for confirmation and cannot be undone once saved.
+// Turning on 4e content is one-way: it asks for confirmation and cannot be undone once saved.
 function confirmAllow4e() {
   wh.value.allow4e = true;
   modal.hideModal();
 }
 
-// 4e talents, traits and mutations whose modifiers are not applied (R8).
+// 4e talents, traits and mutations whose modifiers are not applied.
 const ignored4eModifiers = computed(() =>
   [
     ...talentLists.fourEOnly.value.filter((x) => x.id in wh.value.talents),
