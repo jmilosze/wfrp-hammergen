@@ -8,8 +8,8 @@ import TextLink from "../../components/TextLink.vue";
   <div>
     <div class="text-xl mt-2 mb-1">9 Oct 2026</div>
     <p class="mb-1">
-      Added Warhammer Fantasy Roleplay 5th Edition. The 4e | 5e switch in the side navigation bar chooses which edition
-      you browse; all content from the 5th Edition Core Rulebook is available.
+      Added Warhammer Fantasy Roleplay 5th Edition. The 4e | 5e switch in the navigation bar chooses which edition you
+      browse; all content from the 5th Edition Core Rulebook is available.
     </p>
     <p class="mb-1">
       You can create 5th Edition characters by hand or generate them (level 1-4), view and print them, and download them
@@ -17,6 +17,7 @@ import TextLink from "../../components/TextLink.vue";
       version yet; 4th Edition trappings count as usual, but modifiers of 4th Edition talents, traits, and mutations are
       not applied.
     </p>
+    <p class="mb-1">Your 4th Edition characters and custom content stay exactly as they were.</p>
   </div>
 
   <div>

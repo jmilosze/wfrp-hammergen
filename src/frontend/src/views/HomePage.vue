@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import TextLink from "../components/TextLink.vue";
-import AlertBlock from "../components/AlertBlock.vue";
-import { ref } from "vue";
 import { Icon } from "@iconify/vue";
-
-const showAlert = ref(true);
 </script>
 
 <template>
@@ -14,23 +10,6 @@ const showAlert = ref(true);
       <div>Hammergen</div>
     </div>
     <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
-    <AlertBlock v-if="showAlert" alertType="green" class="mt-5" @close="showAlert = false">
-      <div class="pl-2">
-        <p class="text-2xl font-semibold">Warhammer Fantasy Roleplay 5th Edition</p>
-        <p>
-          We are happy to announce that Hammergen now supports 5th Edition! Use the 4e | 5e switch in the side
-          navigation bar to browse the 5th Edition careers, skills, talents, trappings, spells, prayers, and more. You
-          can create 5th Edition characters by hand or generate them (level 1-4), and view, print, and download them
-          like 4th Edition characters. 5th Edition characters can also use 4th Edition content that has no 5th Edition
-          version yet.
-        </p>
-        <p class="mt-3">Your 4th Edition characters and custom content stay exactly as they were.</p>
-        <p class="mt-3">
-          As always if you enjoy Hammergen, please consider supporting us on
-          <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>. Any donations will help to cover hosting costs.
-        </p>
-      </div>
-    </AlertBlock>
     <div class="text-2xl font-semibold mt-10">What is Hammergen?</div>
     <p>
       Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th and 5th Edition character generator. It lets you
@@ -69,8 +48,8 @@ const showAlert = ref(true);
     <p>
       Hammergen has almost all trappings, careers, skills, talents, mutations, spells, and qualities from the WFRP 4th
       Edition Rulebook and all other 4th Edition books published, and from the WFRP 5th Edition Core Rulebook. Use the
-      4e | 5e switch in the side navigation bar to choose which edition you browse. Full list of included source books
-      can be found in
+      4e | 5e switch in the navigation bar to choose which edition you browse. Full list of included source books can be
+      found in
       <TextLink routeName="about">About</TextLink>
       section. Each of them has a reference to the source book and page they are from. Some examples of what you can use
       filters for are:
@@ -83,7 +62,7 @@ const showAlert = ref(true);
     <p>
       You can see example characters (even without registering) by going to
       <TextLink routeName="characters">Characters</TextLink>
-      in the side navigation bar.
+      in the navigation bar.
     </p>
     <div class="text-2xl font-semibold mt-5">How do I use it?</div>
     <p>
@@ -95,7 +74,7 @@ const showAlert = ref(true);
       email addresses so you can use a fake email, but if you do, the password reset functionality will not work.
     </p>
     <p>
-      After registering and logging in, all you need to do is go to Characters (in top navigation bar), and click Create
+      After registering and logging in, all you need to do is go to Characters (in the navigation bar), and click Create
       New button. New characters use the edition selected with the 4e | 5e switch.
     </p>
     <p>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+import AnnouncementBar from "./components/AnnouncementBar.vue";
+import { ANNOUNCEMENT } from "./announcement.ts";
 import NavBar from "./components/NavBar.vue";
 import SideBar from "./components/SideBar.vue";
 import SpinnerAnimation from "./components/SpinnerAnimation.vue";
@@ -53,6 +55,7 @@ onMounted(async () => {
   <!-- Maintenance screen covers the whole app -->
   <MaintenancePage v-if="maintenance" />
   <div class="min-h-screen flex flex-col">
+    <AnnouncementBar v-if="!printing && ANNOUNCEMENT !== null" :text="ANNOUNCEMENT" />
     <NavBar v-if="!printing" @openMenu="showSideBar = true" />
     <!-- Content -->
     <main class="@container flex-auto mx-auto p-8 max-w-7xl w-full">

@@ -38,6 +38,7 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
 - `utils/`: generic helpers (random, clone, equality, currency…).
 - `services/auth.ts`, `services/user.ts`: login and account.
 - `navigation.ts`: the navigation links (Characters, the Compendium content types grouped in sections), shared by the top bar (`NavBar.vue`, large screens) and the slide-in sidebar (`SideBar.vue`, small screens).
+- `announcement.ts`: the text of the announcement bar above the navigation (`AnnouncementBar.vue`), linking to the Updates tab of About (`views/About/UpdateList.vue`). A visitor who opens Updates from the bar or dismisses it doesn't see it again until the text changes; `null` turns the bar off.
 
 ### Code organisation rules
 
