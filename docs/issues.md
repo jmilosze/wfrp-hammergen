@@ -86,19 +86,10 @@ Unkeyed `bson.E` struct literals in `internal/dependencies/mongodb/user.go`.
 
 ## Frontend
 
-### HG-14 Reorganise the sidebar into Characters and Compendium
-Frontend · 2026-10-02
-
-- **Characters** stays a direct link at the top.
-- **Compendium** is a collapsible section (not a pop-out menu) with sub-headings: *Careers & Skills* (Careers, Skills, Talents), *Equipment* (Trappings, Qualities and flaws, Runes), *Magic & Faith* (Spells, Prayers), *Corruption & Creatures* (Mutations, Creature traits).
-- Compendium opens automatically on any compendium page and remembers its open/closed state; same on mobile (slide-in sidebar).
-- The 4e | 5e switch affects both characters and the compendium, so it stays at the top.
-- "Compendium" was chosen over "Other", "Library", "Game Content", "Reference", "Codex"/"Tome"; "Archives" clashes with the *Archives of the Empire* sources.
-
 ### HG-15 One standard picker (select table)
 Frontend · 2026-10-03
 
-The pickers used to choose content (trappings, skills, talents, traits, qualities and flaws…) come in many variants that don't look good together: `SelectTable` (checkbox), `SelectIdNumberTable` (number in the modal), `SelectIdValueTable` (value in the page table, "Add" for repeatable entries), plus the character editor's `CharacterSkills`, `CharacterTalents`, `CharacterItems` and `CharacterCareer`. Goal: one convenient, better-looking pattern. Purely UX; do it with HG-14.
+The pickers used to choose content (trappings, skills, talents, traits, qualities and flaws…) come in many variants that don't look good together: `SelectTable` (checkbox), `SelectIdNumberTable` (number in the modal), `SelectIdValueTable` (value in the page table, "Add" for repeatable entries), plus the character editor's `CharacterSkills`, `CharacterTalents`, `CharacterItems` and `CharacterCareer`. Goal: one convenient, better-looking pattern. Purely UX.
 
 ### HG-16 Group skills and talents inside other groups
 Frontend + Data · 2026-10-05

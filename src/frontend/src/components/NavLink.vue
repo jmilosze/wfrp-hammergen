@@ -2,43 +2,46 @@
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 
-const SIDE_VARIANT = {
-  static: [
-    "block",
-    "hover:bg-neutral-700",
-    "hover:text-amber-300",
-    "py-1",
-    "px-2",
-    "rounded",
-    "select-none",
-    "text-end",
-    "lg:text-start",
-  ],
-  unselected: [],
-  selected: ["font-bold"],
-};
-const TOP_VARIANT = {
-  static: ["hover:bg-neutral-800", "p-3", "rounded", "select-none"],
-  unselected: ["text-amber-300"],
-  selected: ["text-amber-100"],
+// top: dark top bar, secondary: light bar under it, menu: dropdown panel, side: mobile sidebar.
+const VARIANTS = {
+  top: {
+    static: ["block", "px-3", "py-2", "rounded", "select-none", "whitespace-nowrap", "hover:bg-neutral-800"],
+    unselected: ["text-amber-300"],
+    selected: ["bg-neutral-800", "text-amber-100"],
+  },
+  secondary: {
+    static: ["block", "px-3", "py-0.5", "rounded", "select-none", "whitespace-nowrap", "hover:bg-neutral-300"],
+    unselected: ["text-neutral-600", "hover:text-neutral-900"],
+    selected: ["bg-neutral-300", "text-neutral-900"],
+  },
+  menu: {
+    static: ["block", "px-3", "py-1.5", "rounded", "select-none", "whitespace-nowrap"],
+    unselected: ["hover:bg-neutral-700", "hover:text-amber-300"],
+    selected: ["bg-neutral-700", "text-amber-300"],
+  },
+  side: {
+    static: ["block", "w-full", "py-1", "px-2", "rounded", "select-none", "text-end"],
+    unselected: ["hover:bg-neutral-700", "hover:text-amber-300"],
+    selected: ["bg-neutral-700", "text-amber-300"],
+  },
 };
 
-const props = defineProps<{ routeName?: string; href?: string; variant: "top" | "side" }>();
+// activeRoutes: other routes on which the link counts as selected (e.g. the editor of a list).
+const props = defineProps<{
+  routeName?: string;
+  href?: string;
+  activeRoutes?: string[];
+  variant: keyof typeof VARIANTS;
+}>();
 
 const route = useRoute();
 
 const linkClass = computed(() => {
-  if (props.variant == "top") {
-    if (route.name == props.routeName) {
-      return TOP_VARIANT.static.concat(TOP_VARIANT.selected);
-    }
-    return TOP_VARIANT.static.concat(TOP_VARIANT.unselected);
-  } else {
-    if (route.name == props.routeName) {
-      return SIDE_VARIANT.static.concat(SIDE_VARIANT.selected);
-    }
-    return SIDE_VARIANT.static.concat(SIDE_VARIANT.unselected);
-  }
+  const variant = VARIANTS[props.variant];
+  const name = route.name;
+  const selected =
+    name === props.routeName || (typeof name === "string" && props.activeRoutes?.includes(name) === true);
+  return variant.static.concat(selected ? variant.selected : variant.unselected);
 });
 </script>
 
@@ -49,7 +52,7 @@ const linkClass = computed(() => {
   <a v-else-if="href" :href="href" target="_blank" :class="linkClass">
     <slot />
   </a>
-  <button v-else :class="[...linkClass, 'w-full', 'h-fit']">
+  <button v-else :class="linkClass">
     <slot />
   </button>
 </template>

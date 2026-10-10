@@ -46,7 +46,7 @@ import TextLink from "../../components/TextLink.vue";
     Any character or compendium item (skill, talent, etc.) you make, you can share with other Hammergen users. In order
     for them to use it, you must mark it as "shared". Next, they will need to add you to "linked users". It can be done
     in
-    <TextLink routeName="manage" :query="{ view: 'linked' }">Linked Users</TextLink> tab visible in the left-hand
+    <TextLink routeName="manage" :query="{ view: 'linked' }">Linked Users</TextLink> tab of Manage account, in the
     navigation menu after logging in. Every shared character and compendium item is in read-only mode. It means that
     only the original owner can modify or delete it.
   </p>

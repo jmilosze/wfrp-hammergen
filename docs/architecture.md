@@ -37,6 +37,7 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
   - `character/`: `character.ts` (editable model), `characterFull.ts` (sheet model), `size.ts`, `rules/` (`rules4e.ts`, `rules5e.ts`, `rules.ts` picks by edition), `csv/` (CSV export per edition), `generation/` (`shared/`, `4e/`, `5e/` generator code and the generation data API).
 - `utils/`: generic helpers (random, clone, equality, currency…).
 - `services/auth.ts`, `services/user.ts`: login and account.
+- `navigation.ts`: the navigation links (Characters, the Compendium content types grouped in sections), shared by the top bar (`NavBar.vue`, large screens) and the slide-in sidebar (`SideBar.vue`, small screens).
 
 ### Code organisation rules
 
