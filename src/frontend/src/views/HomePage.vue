@@ -1,106 +1,87 @@
 <script setup lang="ts">
-import TextLink from "../components/TextLink.vue";
 import { Icon } from "@iconify/vue";
+import TextLink from "../components/TextLink.vue";
+import LinkButton from "../components/LinkButton.vue";
+import { useAuth } from "../composables/auth.ts";
+
+const auth = useAuth();
+
+const FEATURES = [
+  {
+    icon: "lucide:dices",
+    title: "Generate characters",
+    text: "Roll species, careers, characteristics, names and looks using the rulebook rules, then save, print or export the result.",
+    routeName: "characters",
+    linkText: "Characters",
+  },
+  {
+    icon: "lucide:book-open",
+    title: "Search the compendium",
+    text: "Careers, skills, talents, trappings, spells and more, each with its source book and page. No account needed.",
+    routeName: "careers",
+    linkText: "Browse",
+  },
+  {
+    icon: "lucide:users",
+    title: "Share with your group",
+    text: "Create your own careers, talents or trappings and share them, together with your characters, with other players.",
+    routeName: "about",
+    query: { view: "faq" },
+    linkText: "How sharing works",
+  },
+];
 </script>
 
 <template>
-  <div>
-    <div class="text-center mt-5 mb-2 font-hammergen text-6xl md:text-8xl flex justify-center items-center gap-3">
+  <section class="flex flex-col items-center text-center pt-6 pb-12">
+    <div class="flex items-center gap-3 font-hammergen text-6xl md:text-8xl">
       <Icon icon="game-icons:warhammer" />
-      <div>Hammergen</div>
+      <h1>Hammergen</h1>
     </div>
-    <div class="text-center font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</div>
-    <div class="text-2xl font-semibold mt-10">What is Hammergen?</div>
-    <p>
-      Hammergen is an online Warhammer Fantasy Roleplay (WFRP) 4th and 5th Edition character generator. It lets you
-      create, store, and manage characters as well as custom character properties such as skills, talents, etc. You can
-      share everything you create with other players!
+    <p class="mt-2 font-hammergen text-2xl md:text-4xl">Warhammer Fantasy Roleplay character generator</p>
+    <p class="mt-4 max-w-2xl text-lg text-neutral-600">
+      Create characters and look up rules content for the 4th and 5th Edition of WFRP.
     </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <LinkButton
+        v-if="auth.loggedIn.value"
+        routeName="character"
+        :params="{ id: 'create' }"
+        class="btn btn-primary text-lg px-5"
+      >
+        Create a character
+      </LinkButton>
+      <LinkButton v-else routeName="register" class="btn btn-primary text-lg px-5">Create an account</LinkButton>
+      <LinkButton routeName="careers" class="btn btn-secondary text-lg px-5">Browse the compendium</LinkButton>
+    </div>
+  </section>
+
+  <section class="grid gap-6 md:grid-cols-3">
+    <div
+      v-for="feature in FEATURES"
+      :key="feature.title"
+      class="flex flex-col p-6 bg-neutral-50 border border-neutral-200 rounded-lg"
+    >
+      <Icon :icon="feature.icon" class="size-10 text-primary-600" />
+      <h2 class="mt-3 text-xl font-semibold">{{ feature.title }}</h2>
+      <p class="mt-2 flex-auto text-neutral-700">{{ feature.text }}</p>
+      <TextLink :routeName="feature.routeName" :query="feature.query" sameWindow class="mt-4">
+        {{ feature.linkText }} →
+      </TextLink>
+    </div>
+  </section>
+
+  <section class="mt-12 pt-4 border-t border-neutral-200 text-sm text-neutral-600 text-center space-y-1">
     <p>
-      Hammergen includes all trappings, careers, skills, talents, mutations, spells, and qualities from the WFRP 4th
-      Edition Rulebook and almost all other 4th Edition books, and from the WFRP 5th Edition Core Rulebook, all
-      published by <TextLink href="https://cubicle7games.com/warhammer-fantasy">Cubicle 7</TextLink>.
-      <span class="font-semibold">
-        Please keep in mind that descriptions of those items are often incomplete, abbreviated, and cannot replace
-        original descriptions from the source books.
-      </span>
-    </p>
-    <p class="mt-2">
-      If at any point you need to roll dices, you can head over to
-      <TextLink href="https://dice.hammergen.net/">Hammergen Dice</TextLink>
-      where you can roll various RPG dices by yourself or with friends.
-    </p>
-    <div class="text-2xl font-semibold mt-5">What exactly can I do here?</div>
-    <p class="mt-1 text-xl">Generate characters</p>
-    <ul class="list-disc ml-6 mt-1">
-      <li>Auto-generate new characters using rulebook character creation rules</li>
-      <li>Create custom skills, talents, careers, trappings, qualities, spells, and mutations</li>
-      <li>Share everything you created with other players.</li>
-      <li>Generate names and physical descriptions using rulebook rules.</li>
-      <li>
-        Generate random attribute rolls with one press of a button, appropriate racial bonuses are added automatically.
-      </li>
-      <li>Save your character and edit it later at any time.</li>
-      <li>View your character in a clear printable format.</li>
-      <li>Download your character in spreadsheet format or as JSON file.</li>
-    </ul>
-    <p class="mt-1 text-xl">Warhammer database</p>
-    <p>
-      Hammergen has almost all trappings, careers, skills, talents, mutations, spells, and qualities from the WFRP 4th
-      Edition Rulebook and all other 4th Edition books published, and from the WFRP 5th Edition Core Rulebook. Use the
-      4e | 5e switch in the navigation bar to choose which edition you browse. Full list of included source books can be
-      found in
-      <TextLink routeName="about">About</TextLink>
-      section. Each of them has a reference to the source book and page they are from. Some examples of what you can use
-      filters for are:
-    </p>
-    <ul class="list-disc ml-6 mt-1">
-      <li>Find all new trappings from Up in Arms.</li>
-      <li>Find which source book contains Chantyman career.</li>
-      <li>List all melee weapons from Fencing group.</li>
-    </ul>
-    <p>
-      You can see example characters (even without registering) by going to
-      <TextLink routeName="characters">Characters</TextLink>
-      in the navigation bar.
-    </p>
-    <div class="text-2xl font-semibold mt-5">How do I use it?</div>
-    <p>
-      To use it as Warhammer database you don't have to signup or login. Just head up to the relevant section and start
-      browsing!
+      Descriptions are shortened and do not replace the rulebooks published by
+      <TextLink href="https://cubicle7games.com/warhammer-fantasy">Cubicle 7</TextLink>.
     </p>
     <p>
-      To start making characters you need to create an account using email address as login name. We do not verify the
-      email addresses so you can use a fake email, but if you do, the password reset functionality will not work.
+      Questions? See the <TextLink routeName="about" :query="{ view: 'faq' }" sameWindow>FAQ</TextLink>. Need dice? Try
+      <TextLink href="https://dice.hammergen.net/">Hammergen Dice</TextLink>. Enjoying Hammergen? Support it on
+      <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>.
     </p>
-    <p>
-      After registering and logging in, all you need to do is go to Characters (in the navigation bar), and click Create
-      New button. New characters use the edition selected with the 4e | 5e switch.
-    </p>
-    <p>
-      You can share any character or compendium item (skill, talent, etc.) you made with other players! When it is
-      marked as <span class="font-bold">Shared</span>, anyone you give your username to can see it in read-only mode.
-      Sharing is explained in the
-      <TextLink routeName="manage" :query="{ view: 'linked' }">Manage account/Linked users</TextLink> sections available
-      after logging in. You can also get there by clicking <TextLink routeName="manage">Manage account</TextLink> tab in
-      the navigation bar and then selecting <span class="font-semibold">Linked users</span> section.
-    </p>
-    <p>
-      More in-depth description of how to use Hammergen features can be found in
-      <TextLink routeName="about" :query="{ view: 'howto' }">How to use Hammergen</TextLink>.
-    </p>
-    <div class="text-2xl font-semibold mt-5">About</div>
-    <p>
-      Hi there! Hammergen is a non-commercial hobby project run by an overworked middle-aged man. If you have any
-      comments, discovered bugs, or have any suggestions on how to improve Hammergen, you can contact me by email:
-      <TextLink href="mailto:admin@hammergen.net">admin@hammergen.net</TextLink>. I try to answer emails/fix bugs on the
-      same or next day but sometimes life gets in the way so please be patient.
-    </p>
-    <p>
-      If you enjoy using Hammergen, please consider supporting me on
-      <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>. Any donations will help to cover hosting costs.
-    </p>
-  </div>
+  </section>
 </template>
 
 <style scoped></style>

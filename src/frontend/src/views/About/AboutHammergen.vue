@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import Header from "../../components/PageHeader.vue";
 import TextLink from "../../components/TextLink.vue";
-import HowTo from "./HowTo.vue";
+import HammergenFaq from "./HammergenFaq.vue";
 import UpdateList from "./UpdateList.vue";
 import ToggleSwitch from "../../components/ToggleSwitch.vue";
 import { useRouteQuery } from "@vueuse/router";
 
 const viewNames = [
   { value: "about", text: "About" },
-  { value: "howto", text: "How To Use It?" },
+  { value: "faq", text: "FAQ" },
   { value: "updates", text: "Updates" },
 ];
 
@@ -65,7 +65,7 @@ const currentView = useRouteQuery("view", viewNames[0].value);
     </ul>
   </div>
   <div v-else-if="currentView === viewNames[1].value">
-    <HowTo />
+    <HammergenFaq />
   </div>
   <div v-else>
     <UpdateList />
