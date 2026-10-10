@@ -3,7 +3,7 @@ import Header from "../../components/PageHeader.vue";
 import TextLink from "../../components/TextLink.vue";
 import HowTo from "./HowTo.vue";
 import UpdateList from "./UpdateList.vue";
-import HorizontalNavBar from "../../components/HorizontalNavBar.vue";
+import ToggleSwitch from "../../components/ToggleSwitch.vue";
 import { useRouteQuery } from "@vueuse/router";
 
 const viewNames = [
@@ -16,7 +16,9 @@ const currentView = useRouteQuery("view", viewNames[0].value);
 </script>
 
 <template>
-  <HorizontalNavBar v-model="currentView" :viewNames="viewNames" />
+  <div class="flex justify-center mb-4">
+    <ToggleSwitch v-model="currentView" :options="viewNames" label="About view" />
+  </div>
   <div v-if="currentView === viewNames[0].value">
     <Header title="About Hammergen" />
     <div class="text-2xl font-semibold mt-5">The author</div>

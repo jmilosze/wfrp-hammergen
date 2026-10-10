@@ -49,12 +49,7 @@ const value = computed({
       :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
       :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
     />
-    <p
-      :id="errorId"
-      role="alert"
-      class="text-sm text-red-600"
-      :class="[validationStatus.valid ? 'hidden' : '']"
-    >
+    <p :id="errorId" role="alert" class="text-sm text-red-600" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </p>
   </div>

@@ -57,7 +57,7 @@ Both editions exist side by side permanently; 4e behaviour stays as it was befor
 - List endpoints take `?edition=` and return only that edition's variant; editors load the whole document. Full characters (`?full=true`) are resolved in each character's own edition and need no `?edition=`. The content editors have a 4e/5e toggle.
 - Owner and visibility are shared by both variants. Public content is admin-only; users create custom content in either edition.
 - Everything that differs between editions lives inside the variant: name, description, source and page, type, group membership, rules fields. Fields that exist in one edition only are optional (`omitempty`) on the shared Go/TS type, with per-edition rules in `ValidateEdition`.
-- Sources: 5e core rulebook is source `44`; the editors offer each edition's own sources (`sourcesByEdition`).
+- Sources: 5e core rulebook is source `44`. 5e content can use any source (4e books included); 4e content any but `44` (`sourcesByEdition`).
 - Generation data (species skills/talents, Random Talents, class trappings) is one document per edition in the `other` collection: `generationProps` (4e) and `generationProps5e`, served by `api/wh/generation?edition=`.
 
 ### Characters

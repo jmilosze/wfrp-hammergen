@@ -6,9 +6,11 @@ import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
 import { SubmissionState } from "../utils/submission.ts";
 import { copySource } from "../services/wh/core/source.ts";
 
-// useCharacterEdit edits a single-edition entity (a character of the given edition).
+// useCharacterEdit edits a single-edition entity (a character of the given edition): the loaded one, or a new one
+// started from whInstance when nothing is loaded.
 export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHeaders>(
   whInstance: T,
+  loaded: T | undefined,
   elementApi: WhApi<T, TResponse>,
   edition: Edition,
 ) {
@@ -18,30 +20,12 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
     whInstance.visibility = Visibility.Public;
   }
 
-  const wh = ref(whInstance.copy());
-  const whOriginal = ref(whInstance.copy());
+  const wh = ref((loaded ?? whInstance).copy());
+  const whOriginal = ref(wh.value.copy());
   const initSources = ref(copySource(wh.value.source));
-
-  const apiError = ref("");
-  const showApiError = ref(true);
 
   const submissionState = ref(new SubmissionState());
   const showSubmissionStatus = ref(false);
-
-  async function loadWh(id: string): Promise<void> {
-    if (id === "create") {
-      return;
-    }
-
-    showApiError.value = true;
-    try {
-      wh.value = await elementApi.getElement(id, edition);
-      whOriginal.value = wh.value.copy();
-      initSources.value = copySource(wh.value.source);
-    } catch {
-      apiError.value = "Error. Could not pull data from server.";
-    }
-  }
 
   const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
 
@@ -101,9 +85,6 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
     canEdit,
     whOriginal,
     initSources,
-    apiError,
-    showApiError,
-    loadWh,
     submitForm,
     deleteItem,
     hasChanged,

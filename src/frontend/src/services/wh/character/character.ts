@@ -694,7 +694,6 @@ export function modelToApi(character: Character): CharacterApiData {
 
 export interface CharacterApi extends WhApi<Character, CharacterApiResponse<CharacterApiData>> {
   getElementForDisplay: (id: string) => Promise<CharacterFull>;
-  getEdition: (id: string) => Promise<Edition>;
 }
 
 export function characterApi(axios: AxiosInstance): CharacterApi {
@@ -709,12 +708,6 @@ export function characterApi(axios: AxiosInstance): CharacterApi {
         },
       );
       return apiResponseToCharacterFull(data.data);
-    },
-    getEdition: async (id: string): Promise<Edition> => {
-      const { data } = await axios.get<ServerEnvelope<CharacterApiResponse<CharacterApiData>>>(
-        `${API_BASE_PATH}/${id}`,
-      );
-      return data.data.object.edition;
     },
   };
 }

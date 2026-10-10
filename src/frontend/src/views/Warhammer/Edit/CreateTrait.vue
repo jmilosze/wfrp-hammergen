@@ -7,13 +7,14 @@ import { authRequest } from "../../../services/auth.ts";
 import { computed } from "vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
+import CheckboxInput from "../../../components/CheckboxInput.vue";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
+import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
@@ -60,10 +61,11 @@ const validDesc = computed(() => wh.value.validateDescription());
     </AlertBlock>
   </div>
 
+  <EditorEditionSelector v-model="edition" />
   <Header :title="id === 'create' ? 'Create creature trait' : canEdit ? 'Edit creature trait' : wh.name" />
-  <EditorEditionSelector
-    v-model="edition"
-    :hasVariant="hasVariant"
+  <MissingEditionVariant
+    v-if="!hasVariant"
+    :edition="edition"
     :canEdit="canEdit"
     propertyName="Creature trait"
     @add="addVariant"
@@ -72,14 +74,13 @@ const validDesc = computed(() => wh.value.validateDescription());
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1">
         <div class="flex flex-col gap-4">
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <DoubleRadioButton
+          <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!canEdit" />
+          <CheckboxInput
             v-model="wh.hasValue"
             title="Takes a value? E.g. Ward (8) or Hatred (Elves)"
-            trueText="Yes"
-            falseText="No"
             :disabled="!canEdit"
           />
+          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
         </div>
       </div>
       <FormTextarea
@@ -101,9 +102,6 @@ const validDesc = computed(() => wh.value.validateDescription());
           :initSources="initSources"
           @selected="(e) => wh.updateSource(e)"
         />
-      </div>
-      <div class="my-3 flex-1">
-        <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!canEdit" />
       </div>
     </div>
   </template>

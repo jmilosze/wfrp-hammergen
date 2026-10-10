@@ -6,7 +6,10 @@ import { useWhList } from "./whList.ts";
 // useWith4eContentList loads the 5e list of a content type and, while allow4e is on, also the 4e list. withAllowed
 // is the 5e list plus the 4e content that has no 5e version; fourEIds are the ids of that 4e content.
 // list5e alone is used where 4e content must not count (talent, trait and mutation modifiers).
-export function useWith4eContentList<T extends WhProperty>(elementApi: ContentApi<T>, allow4e: MaybeRefOrGetter<boolean>) {
+export function useWith4eContentList<T extends WhProperty>(
+  elementApi: ContentApi<T>,
+  allow4e: MaybeRefOrGetter<boolean>,
+) {
   const list5e = useWhList(elementApi, "5e");
   const list4e = useWhList(elementApi, "4e");
 

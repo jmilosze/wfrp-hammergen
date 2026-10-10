@@ -24,8 +24,7 @@ function onCheckboxChange(event: Event) {
 <template>
   <div>
     <!-- Admin view -->
-    <div v-if="isAdmin">
-      <div class="mb-1">{{ propertyName }} visibility</div>
+    <div v-if="isAdmin" class="flex flex-wrap gap-4 items-center">
       <div class="flex flex-wrap gap-4 items-center">
         <label class="flex items-center cursor-pointer">
           <input
@@ -67,17 +66,8 @@ function onCheckboxChange(event: Event) {
     </div>
 
     <!-- Non-admin view -->
-    <div v-else>
-      <div class="flex items-center">
-        <div class="mb-1 mr-2">Public {{ propertyName }}?</div>
-        <HintModal buttonText="What does it mean?" modalHeader="Public property" modalId="publicHelpModal">
-          When a property (character, skill, item, etc.) is marked as <span class="font-semibold">public</span>, anyone
-          you give your username to, can see that property in read-only mode. Property sharing is explained in the
-          <TextLink routeName="manage" :query="{ view: 'linked' }">Manage account/Linked users</TextLink> section
-          (available after logging in).
-        </HintModal>
-      </div>
-      <div class="flex items-center">
+    <div v-else class="flex items-center gap-2">
+      <label class="flex items-center gap-2">
         <input
           :checked="visibility === Visibility.Shared || visibility === Visibility.Public"
           type="checkbox"
@@ -85,8 +75,14 @@ function onCheckboxChange(event: Event) {
           class="w-5 h-5 accent-neutral-600"
           @change="onCheckboxChange"
         />
-        <div class="ml-2">Public</div>
-      </div>
+        Shared?
+      </label>
+      <HintModal buttonText="?" square modalHeader="Sharing" modalId="sharedHelpModal">
+        A character or compendium item (skill, talent, etc.) marked as <span class="font-semibold">shared</span> can be
+        seen in read-only mode by anyone you give your username to. Sharing is explained in the
+        <TextLink routeName="manage" :query="{ view: 'linked' }">Manage account/Linked users</TextLink> section
+        (available after logging in).
+      </HintModal>
     </div>
   </div>
 </template>

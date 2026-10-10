@@ -36,7 +36,7 @@ export function useCharacterList(
   async function copyWh(whId: string): Promise<void> {
     showApiError.value = true;
     try {
-      const whCopy = await characterApi.getElement(whId, edition.value);
+      const whCopy = await characterApi.getElement(whId);
       whCopy.name = whCopy.name + " - copy";
       if (!whCopy.validateName().valid) {
         whCopy.name = whCopy.name.slice(0, SHORT_DESC_LENGTH);

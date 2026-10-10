@@ -44,6 +44,7 @@ import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
+import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
@@ -237,10 +238,11 @@ watchWh(
       {{ spellListUtils.apiError.value }}
     </AlertBlock>
   </div>
+  <EditorEditionSelector v-model="edition" />
   <Header :title="id === 'create' ? 'Create trapping' : canEdit ? 'Edit trapping' : wh.name" />
-  <EditorEditionSelector
-    v-model="edition"
-    :hasVariant="hasVariant"
+  <MissingEditionVariant
+    v-if="!hasVariant"
+    :edition="edition"
     :canEdit="canEdit"
     propertyName="Trapping"
     @add="addVariant"
@@ -249,6 +251,7 @@ watchWh(
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1">
         <div class="flex flex-col gap-4">
+          <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!canEdit" />
           <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
           <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
           <SelectInput
@@ -555,9 +558,6 @@ watchWh(
           :initSources="initSources"
           @selected="(e) => wh.updateSource(e)"
         />
-      </div>
-      <div class="my-3 flex-1">
-        <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!canEdit" />
       </div>
     </div>
   </template>

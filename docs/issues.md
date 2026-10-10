@@ -110,11 +110,6 @@ Frontend · 2026-10-09
 
 `services/wh/core/validators.ts` (field name in the message, used by characters) and `services/wh/core/attributes.ts` (used by modifiers) do the same check with different signatures and messages; keep one.
 
-### HG-18 Prettier
-Frontend · 2026-09-30
-
-About 40 files are not formatted (`npx prettier --check src` in `src/frontend`). Format them in one dedicated change, so it doesn't mix with real changes.
-
 ### HG-19 Test fixtures cast with `as …ApiData`
 Frontend · 2026-09-30
 

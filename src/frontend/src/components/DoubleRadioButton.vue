@@ -21,7 +21,7 @@ const options = computed(() =>
     : [
         { value: true, text: props.trueText },
         { value: false, text: props.falseText },
-      ]
+      ],
 );
 </script>
 

@@ -36,7 +36,7 @@ export interface ContentApi<T> {
 
 // API of characters: one character, one edition.
 export interface WhApi<T, TResponse extends ApiHeaders> {
-  getElement: (id: string, edition: Edition) => Promise<T>;
+  getElement: (id: string) => Promise<T>;
   listElements: (edition: Edition) => Promise<T[]>;
   createElement: (wh: T) => Promise<TResponse>;
   updateElement: (wh: T) => Promise<TResponse>;
@@ -54,8 +54,8 @@ export function createWhApi<TModel extends { id: string }, TResponse extends Api
   toRequest: (model: TModel) => TRequest,
 ): WhApi<TModel, TResponse> {
   return {
-    getElement: async (id: string, edition: Edition): Promise<TModel> => {
-      const { data } = await axios.get<ServerEnvelope<TResponse>>(`${basePath}/${id}`, { params: { edition } });
+    getElement: async (id: string): Promise<TModel> => {
+      const { data } = await axios.get<ServerEnvelope<TResponse>>(`${basePath}/${id}`);
       return toModel(data.data);
     },
     listElements: async (edition: Edition): Promise<TModel[]> => {

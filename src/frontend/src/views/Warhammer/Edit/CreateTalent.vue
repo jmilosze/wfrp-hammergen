@@ -9,11 +9,12 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
+import CheckboxInput from "../../../components/CheckboxInput.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
+import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
@@ -106,10 +107,11 @@ watchWh(
     </AlertBlock>
   </div>
 
+  <EditorEditionSelector v-model="edition" />
   <Header :title="id === 'create' ? 'Create talent' : canEdit ? 'Edit talent' : wh.name" />
-  <EditorEditionSelector
-    v-model="edition"
-    :hasVariant="hasVariant"
+  <MissingEditionVariant
+    v-if="!hasVariant"
+    :edition="edition"
     :canEdit="canEdit"
     propertyName="Talent"
     @add="addVariant"
@@ -118,15 +120,9 @@ watchWh(
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1">
         <div class="flex flex-col gap-4">
+          <PublicPropertyBox v-model="wh.visibility" propertyName="Talent" :disabled="!canEdit" />
+          <CheckboxInput v-model="wh.isGroup" title="Is group talent" :disabled="!canEdit" />
           <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <DoubleRadioButton
-            v-model="wh.isGroup"
-            title="Individual talent/group of talents"
-            :invertOrder="true"
-            trueText="Group"
-            falseText="Individual"
-            :disabled="!canEdit"
-          />
           <FormTextarea
             v-model="wh.description"
             title="Description"
@@ -206,9 +202,6 @@ watchWh(
           :initSources="initSources"
           @selected="(e) => wh.updateSource(e)"
         />
-      </div>
-      <div class="my-3 flex-1">
-        <PublicPropertyBox v-model="wh.visibility" propertyName="Talent" :disabled="!canEdit" />
       </div>
     </div>
   </template>

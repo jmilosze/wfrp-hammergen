@@ -8,6 +8,7 @@ import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
+import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
@@ -63,10 +64,11 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
       {{ apiError }}
     </AlertBlock>
   </div>
+  <EditorEditionSelector v-model="edition" />
   <Header :title="id === 'create' ? 'Create rune' : canEdit ? 'Edit rune' : wh.name" />
-  <EditorEditionSelector
-    v-model="edition"
-    :hasVariant="hasVariant"
+  <MissingEditionVariant
+    v-if="!hasVariant"
+    :edition="edition"
     :canEdit="canEdit"
     propertyName="Rune"
     @add="addVariant"
@@ -76,6 +78,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1">
         <div class="flex flex-col gap-4">
+          <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
           <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
           <MultipleCheckboxColumnInput
             v-model="wh.applicableTo"
@@ -111,9 +114,6 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
           :initSources="initSources"
           @selected="(e) => wh.updateSource(e)"
         />
-      </div>
-      <div class="flex-1">
-        <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
       </div>
     </div>
   </template>

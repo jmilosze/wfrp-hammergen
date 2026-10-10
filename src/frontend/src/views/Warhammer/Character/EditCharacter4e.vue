@@ -63,6 +63,8 @@ import { traitApi } from "../../../services/wh/content/trait.ts";
 
 const props = defineProps<{
   id: string;
+  // The loaded character; absent for a new one.
+  character?: Character;
 }>();
 
 const EDITION: Edition = "4e";
@@ -85,19 +87,8 @@ const selectedGenSpeciesWithRegionOpts = computed(() =>
 const selectedGenLevel = ref<1 | 2 | 3 | 4>(1);
 const selectedGenCareer = ref("");
 
-const {
-  wh,
-  canEdit,
-  apiError,
-  showApiError,
-  loadWh,
-  submitForm,
-  deleteItem,
-  hasChanged,
-  submissionState,
-  resetForm,
-  showSubmissionStatus,
-} = useCharacterEdit(newCharacter, characterApi(authRequest), EDITION);
+const { wh, canEdit, submitForm, deleteItem, hasChanged, submissionState, resetForm, showSubmissionStatus } =
+  useCharacterEdit(newCharacter, props.character, characterApi(authRequest), EDITION);
 
 const careerListUtils = useWhList(careerApi(authRequest), EDITION);
 careerListUtils.loadWhList();
@@ -130,8 +121,6 @@ const referenceDataLoading = computed(
     itemListUtils.loading.value ||
     generationPropsUtils.loading.value,
 );
-
-await loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -321,10 +310,6 @@ const modifierAttributes = computed(() => {
 
 <template>
   <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-
     <AlertBlock
       v-if="careerListUtils.apiError.value && careerListUtils.showApiError.value"
       alertType="red"
@@ -453,6 +438,13 @@ const modifierAttributes = computed(() => {
       </HintModal>
       <ActionButton class="btn btn-sm" :disabled="isGenerationDisabled" @click="rollCharacter"> Generate </ActionButton>
     </div>
+  </div>
+  <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+    <div class="flex items-center gap-2">
+      Edition
+      <span class="px-2 py-0.5 rounded text-sm font-semibold bg-neutral-200 border border-neutral-400">4e</span>
+    </div>
+    <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!canEdit" />
   </div>
   <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
@@ -797,10 +789,6 @@ const modifierAttributes = computed(() => {
       @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
       @clearAll="wh.clearTraits()"
     />
-  </div>
-
-  <div class="my-4">
-    <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!canEdit" />
   </div>
 
   <div class="mt-4">

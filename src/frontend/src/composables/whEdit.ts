@@ -29,7 +29,8 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
   }
 
   const edition = ref<Edition>(globalEdition.value);
-  const start = whInstance.copy();
+  // A new document starts with the selected edition's variant, following that edition's rules.
+  const start = whInstance.forEdition(edition.value);
   const variants = shallowRef<Variants<T>>({ [edition.value]: start });
   const variantsOriginal = shallowRef<Variants<T>>(copyVariants(variants.value));
   const wh = ref(start);
@@ -154,7 +155,7 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
   }
 
   function resetForm() {
-    const fresh = whInstance.copy();
+    const fresh = whInstance.forEdition(edition.value);
     variants.value = { [edition.value]: fresh };
     variantsOriginal.value = copyVariants(variants.value);
     show(fresh);

@@ -4,7 +4,7 @@ import { validVeryShortDescFn } from "./validators.ts";
 
 export const source: Record<string, string> = {
   0: "Custom",
-  1: "WFRP",
+  1: "WFRP 4e",
   2: "Rough Nights & Hard Days",
   3: "Archives Volume I",
   4: "Archives Volume II",
@@ -50,10 +50,11 @@ export const source: Record<string, string> = {
   44: "WFRP 5e",
 };
 
-// Sources offered when editing content of each edition; Custom is in both.
+// Sources offered when editing content of each edition: 5e content may come from any book, 4e content from any
+// but the 5e core rulebook.
 export const sourcesByEdition: Record<Edition, string[]> = {
   "4e": Object.keys(source).filter((id) => id !== "44"),
-  "5e": ["0", "44"],
+  "5e": Object.keys(source),
 };
 
 export type Source = Record<string, string>;

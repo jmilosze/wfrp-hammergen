@@ -99,9 +99,9 @@ const showAlert = ref(true);
       New button. New characters use the edition selected with the 4e | 5e switch.
     </p>
     <p>
-      You can share any custom property (character, skill, trapping, etc.) you made with other players! When a property
-      is marked as <span class="font-bold">Public</span>, anyone you give your username to, can see that item in
-      read-only mode. Sharing is explained in the
+      You can share any character or compendium item (skill, talent, etc.) you made with other players! When it is
+      marked as <span class="font-bold">Shared</span>, anyone you give your username to can see it in read-only mode.
+      Sharing is explained in the
       <TextLink routeName="manage" :query="{ view: 'linked' }">Manage account/Linked users</TextLink> sections available
       after logging in. You can also get there by clicking <TextLink routeName="manage">Manage account</TextLink> tab in
       the navigation bar and then selecting <span class="font-semibold">Linked users</span> section.

@@ -16,7 +16,7 @@ import { authRequest } from "../../../services/auth.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import { computed, ref, Ref, watch } from "vue";
 import FormInput from "../../../components/FormInput.vue";
-import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
+import CheckboxInput from "../../../components/CheckboxInput.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import { AttributeName, printAttributeName } from "../../../services/wh/core/attributes.ts";
 import FormTextarea from "../../../components/FormTextarea.vue";
@@ -25,6 +25,7 @@ import SourceTable from "../../../components/SourceTable.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
+import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SelectTable from "../../../components/SelectTable.vue";
 import CareerReferencesTable from "../../../components/CareerReferencesTable.vue";
@@ -117,10 +118,11 @@ watchWh(
       {{ skillListUtils.apiError.value }}
     </AlertBlock>
   </div>
+  <EditorEditionSelector v-model="edition" />
   <Header :title="id === 'create' ? 'Create skill' : canEdit ? 'Edit skill' : wh.name" />
-  <EditorEditionSelector
-    v-model="edition"
-    :hasVariant="hasVariant"
+  <MissingEditionVariant
+    v-if="!hasVariant"
+    :edition="edition"
     :canEdit="canEdit"
     propertyName="Skill"
     @add="addVariant"
@@ -129,23 +131,10 @@ watchWh(
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1">
         <div class="flex flex-col gap-4">
+          <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
+          <CheckboxInput v-model="wh.isGroup" title="Is group skill" :disabled="!canEdit" />
+          <CheckboxInput v-model="wh.displayZero" title="Display if skill/group not taken?" :disabled="!canEdit" />
           <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <DoubleRadioButton
-            v-model="wh.isGroup"
-            title="Individual skill/group of skills"
-            :invertOrder="true"
-            trueText="Group"
-            falseText="Individual"
-            :disabled="!canEdit"
-          />
-          <SelectInput
-            v-model="wh.attribute"
-            :options="attOptions"
-            :disabled="!canEdit"
-            title="Attribute"
-            class="min-w-24"
-          />
-          <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
           <FormTextarea
             v-model="wh.description"
             title="Description"
@@ -156,13 +145,14 @@ watchWh(
       </div>
       <div class="flex-1">
         <div class="flex flex-col gap-4">
-          <DoubleRadioButton
-            v-model="wh.displayZero"
-            title="Display if skill/group not taken?"
-            trueText="Yes"
-            falseText="No"
+          <SelectInput
+            v-model="wh.attribute"
+            :options="attOptions"
             :disabled="!canEdit"
+            title="Attribute"
+            class="min-w-24"
           />
+          <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
           <SelectTable
             :disabled="!canEdit || wh.isGroup"
             :initSelectedItems="wh.group"
@@ -193,9 +183,6 @@ watchWh(
           :initSources="initSources"
           @selected="(e) => wh.updateSource(e)"
         />
-      </div>
-      <div class="my-3 flex-1">
-        <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
       </div>
     </div>
   </template>

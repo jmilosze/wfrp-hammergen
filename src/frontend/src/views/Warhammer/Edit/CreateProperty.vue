@@ -9,11 +9,12 @@ import {
 } from "../../../services/wh/content/itemproperty.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
-import DoubleRadioButton from "../../../components/DoubleRadioButton.vue";
+import CheckboxInput from "../../../components/CheckboxInput.vue";
 import FormInput from "../../../components/FormInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
+import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
@@ -69,10 +70,11 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
       {{ apiError }}
     </AlertBlock>
   </div>
+  <EditorEditionSelector v-model="edition" />
   <Header :title="id === 'create' ? 'Create quality/flaw' : canEdit ? 'Edit quality/flaw' : wh.name" />
-  <EditorEditionSelector
-    v-model="edition"
-    :hasVariant="hasVariant"
+  <MissingEditionVariant
+    v-if="!hasVariant"
+    :edition="edition"
     :canEdit="canEdit"
     propertyName="Quality/flaw"
     @add="addVariant"
@@ -81,15 +83,10 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1">
         <div class="flex flex-col gap-4">
+          <PublicPropertyBox v-model="wh.visibility" propertyName="Quality/flaw" :disabled="!canEdit" />
+          <CheckboxInput v-model="wh.hasValue" title="Takes a value? E.g. Blast (3)" :disabled="!canEdit" />
           <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
           <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
-          <DoubleRadioButton
-            v-model="wh.hasValue"
-            title="Takes a value? E.g. Blast (3)"
-            trueText="Yes"
-            falseText="No"
-            :disabled="!canEdit"
-          />
           <MultipleCheckboxColumnInput
             v-model="wh.applicableTo"
             :options="applicableToOptions"
@@ -118,9 +115,6 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
           :initSources="initSources"
           @selected="(e) => wh.updateSource(e)"
         />
-      </div>
-      <div class="flex-1">
-        <PublicPropertyBox v-model="wh.visibility" propertyName="Quality/flaw" :disabled="!canEdit" />
       </div>
     </div>
   </template>

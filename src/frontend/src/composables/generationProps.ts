@@ -1,5 +1,10 @@
 import { ref, shallowRef } from "vue";
-import { GenerationProps, GenerationProps5e, getGenerationProps, getGenerationProps5e } from "../services/wh/character/generation/shared/generationProps.ts";
+import {
+  GenerationProps,
+  GenerationProps5e,
+  getGenerationProps,
+  getGenerationProps5e,
+} from "../services/wh/character/generation/shared/generationProps.ts";
 import { AxiosInstance } from "axios";
 
 function useLoadedGenerationProps<T>(initial: T, load: () => Promise<T>) {

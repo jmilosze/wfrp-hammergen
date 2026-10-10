@@ -10,9 +10,9 @@ import { CharacterModifiers, ModifierEffect } from "./characterModifiers.ts";
 
 describe("forEdition", () => {
   test("keeps sources offered for the edition, otherwise uses Custom", () => {
-    const skill = new Skill({ name: "Charm", source: { 0: "custom notes", 1: "p. 121" } });
-    expect(skill.forEdition("5e").source).toEqual({ 0: "custom notes" });
-    expect(new Skill({ source: { 1: "p. 121" } }).forEdition("5e").source).toEqual({ 0: "" });
+    const skill = new Skill({ name: "Charm", source: { 11: "p. 50", 44: "p. 98" } });
+    expect(skill.forEdition("5e").source).toEqual({ 11: "p. 50", 44: "p. 98" });
+    expect(skill.forEdition("4e").source).toEqual({ 11: "p. 50" });
     expect(new Skill({ source: { 44: "p. 98" } }).forEdition("4e").source).toEqual({ 0: "" });
   });
 

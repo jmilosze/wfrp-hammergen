@@ -5,6 +5,8 @@ import ModalWindow from "./ModalWindow.vue";
 
 const props = defineProps<{
   buttonText: string;
+  // Makes the button as wide as it is high, for a one-character text such as "?".
+  square?: boolean;
   modalHeader?: string;
   modalId?: string;
 }>();
@@ -15,7 +17,7 @@ const modalId = props.modalId ? props.modalId : "hintModal";
 </script>
 
 <template>
-  <ActionButton class="btn btn-sm" @click="modal.showModal(modalId)">
+  <ActionButton class="btn btn-secondary btn-sm" :class="{ 'w-9 px-0': square }" @click="modal.showModal(modalId)">
     {{ buttonText }}
   </ActionButton>
 

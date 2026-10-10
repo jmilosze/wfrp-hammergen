@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { source, sourcesByEdition } from "./source.ts";
 
 describe("sources by edition", () => {
-  test("5e offers Custom and the 5e core rulebook", () => {
-    expect(sourcesByEdition["5e"]).toEqual(["0", "44"]);
+  test("5e offers every source", () => {
+    expect(sourcesByEdition["5e"]).toEqual(Object.keys(source));
     expect(source["44"]).toBe("WFRP 5e");
   });
 

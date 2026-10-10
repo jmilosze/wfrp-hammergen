@@ -15,6 +15,7 @@ import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
+import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 
@@ -61,10 +62,11 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
       {{ apiError }}
     </AlertBlock>
   </div>
+  <EditorEditionSelector v-model="edition" />
   <Header :title="id === 'create' ? 'Create mutation' : canEdit ? 'Edit mutation' : wh.name" />
-  <EditorEditionSelector
-    v-model="edition"
-    :hasVariant="hasVariant"
+  <MissingEditionVariant
+    v-if="!hasVariant"
+    :edition="edition"
     :canEdit="canEdit"
     propertyName="Mutation"
     @add="addVariant"
@@ -73,6 +75,7 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1">
         <div class="flex flex-col gap-4">
+          <PublicPropertyBox v-model="wh.visibility" propertyName="Mutation" :disabled="!canEdit" />
           <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
           <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
         </div>
@@ -99,9 +102,6 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
           :initSources="initSources"
           @selected="(e) => wh.updateSource(e)"
         />
-      </div>
-      <div class="flex-1">
-        <PublicPropertyBox v-model="wh.visibility" propertyName="Mutation" :disabled="!canEdit" />
       </div>
     </div>
   </template>

@@ -58,6 +58,8 @@ import { populateStatusAndStanding } from "../../../services/wh/character/genera
 
 const props = defineProps<{
   id: string;
+  // The loaded character; absent for a new one.
+  character?: Character;
 }>();
 
 const EDITION: Edition = "5e";
@@ -72,19 +74,8 @@ const newCharacter = new Character({
   source: defaultSource(),
 });
 
-const {
-  wh,
-  canEdit,
-  apiError,
-  showApiError,
-  loadWh,
-  submitForm,
-  deleteItem,
-  hasChanged,
-  submissionState,
-  resetForm,
-  showSubmissionStatus,
-} = useCharacterEdit(newCharacter, characterApi(authRequest), EDITION);
+const { wh, canEdit, submitForm, deleteItem, hasChanged, submissionState, resetForm, showSubmissionStatus } =
+  useCharacterEdit(newCharacter, props.character, characterApi(authRequest), EDITION);
 
 const careerLists = useWith4eContentList(careerApi(authRequest), () => wh.value.allow4e);
 const spellLists = useWith4eContentList(spellApi(authRequest), () => wh.value.allow4e);
@@ -106,8 +97,6 @@ const generationDataLoading = computed(
     itemLists.list5e.loading.value ||
     generationPropsUtils.loading.value,
 );
-
-await loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -256,10 +245,6 @@ const modifierAttributes = computed(() => {
 
 <template>
   <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-
     <AlertBlock
       v-if="careerLists.list5e.apiError.value && careerLists.list5e.showApiError.value"
       alertType="red"
@@ -316,7 +301,7 @@ const modifierAttributes = computed(() => {
       {{ generationPropsUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create 5e character' : canEdit ? 'Edit 5e character' : wh.name" />
+  <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
   <div v-if="id !== 'create'" class="border border-neutral-700 rounded p-2 my-4">
     <div class="text-xl">View character</div>
     <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
@@ -379,22 +364,34 @@ const modifierAttributes = computed(() => {
       <ActionButton class="btn btn-sm" :disabled="isGenerationDisabled" @click="rollCharacter"> Generate </ActionButton>
     </div>
   </div>
-  <div class="border border-neutral-700 rounded p-2 my-4">
-    <div class="text-xl">4e content</div>
-    <div class="mb-2">
-      Allow this character to use 4e content that has no 5e version (marked 4e). 4e trappings count as usual; the
-      modifiers of 4e talents, traits and mutations are not applied. This cannot be undone.
+  <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+    <div class="flex items-center gap-2">
+      Edition
+      <span class="px-2 py-0.5 rounded text-sm font-semibold bg-neutral-200 border border-neutral-400">5e</span>
     </div>
-    <label class="flex items-center gap-2 w-fit">
-      <input
-        type="checkbox"
-        class="w-5 h-5 accent-neutral-600"
-        :checked="wh.allow4e"
-        :disabled="!canEdit || wh.allow4e"
-        @click.prevent="modal.showModal('allow4eModal')"
-      />
-      Allow 4e content
-    </label>
+    <div class="flex items-center gap-2">
+      <label class="flex items-center gap-2">
+        <input
+          type="checkbox"
+          class="w-5 h-5 accent-neutral-600"
+          :checked="wh.allow4e"
+          :disabled="!canEdit || wh.allow4e"
+          @click.prevent="modal.showModal('allow4eModal')"
+        />
+        Allow 4e content
+      </label>
+      <HintModal buttonText="?" square modalHeader="Allow 4e content" modalId="allow4eHint">
+        <p class="my-1">
+          The character can use 4e content that has no 5e version. Such content is marked 4e in the pickers and on the
+          character sheet.
+        </p>
+        <p class="my-1">
+          4e trappings count as usual. 4e talents, traits and mutations are listed, but their modifiers are not applied.
+        </p>
+        <p class="my-1">Once saved, 4e content cannot be turned off for this character.</p>
+      </HintModal>
+    </div>
+    <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!canEdit" />
   </div>
   <ModalWindow id="allow4eModal">
     <template #header> Allow 4e content </template>
@@ -748,10 +745,6 @@ const modifierAttributes = computed(() => {
       @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
       @clearAll="wh.clearTraits()"
     />
-  </div>
-
-  <div class="my-4">
-    <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!canEdit" />
   </div>
 
   <div class="mt-4">

@@ -10,10 +10,7 @@ defineProps<{
 <template>
   <div v-if="items.length" class="text-left">
     <div class="mb-1">{{ title }}</div>
-    <table
-      class="border-collapse w-full"
-      :class="[stackable ? 'hidden md:table print:table' : '']"
-    >
+    <table class="border-collapse w-full" :class="[stackable ? 'hidden md:table print:table' : '']">
       <tbody>
         <tr>
           <th
@@ -32,10 +29,7 @@ defineProps<{
         </tr>
       </tbody>
     </table>
-    <table
-      v-if="stackable"
-      class="border-collapse w-full md:hidden print:hidden"
-    >
+    <table v-if="stackable" class="border-collapse w-full md:hidden print:hidden">
       <tbody>
         <tr v-for="(item, i) in items" :key="i">
           <td class="border border-neutral-400 p-2">

@@ -34,15 +34,15 @@ const testModel: TestModel = { id: "item-1", name: "Test Item", visibility: Visi
 describe("crudGenerator", () => {
   const basePath = "/api/test";
 
-  test("getElement fetches by ID with edition and transforms response", async () => {
+  test("getElement fetches by ID and transforms response", async () => {
     const mockAxios = {
       get: vi.fn().mockResolvedValue({ data: { data: mockApiResponse } }),
     } as unknown as AxiosInstance;
 
     const api = createWhApi(basePath, mockAxios, toModel, toApi);
-    const result = await api.getElement("item-1", "4e");
+    const result = await api.getElement("item-1");
 
-    expect(mockAxios.get).toHaveBeenCalledWith("/api/test/item-1", { params: { edition: "4e" } });
+    expect(mockAxios.get).toHaveBeenCalledWith("/api/test/item-1");
     expect(result).toEqual(testModel);
   });
 

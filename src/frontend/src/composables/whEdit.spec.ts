@@ -57,6 +57,14 @@ describe("useWhEdit", () => {
     expect(edit.hasChanged.value).toBe(false);
   });
 
+  test("a new document follows the selected edition's rules", () => {
+    useEdition().edition.value = "5e";
+    expect(useWhEdit(new Talent({ id: "create" }), fakeApi({})).wh.value.maxRank).toBe(1);
+
+    useEdition().edition.value = "4e";
+    expect(useWhEdit(new Talent({ id: "create" }), fakeApi({})).wh.value.maxRank).toBe(0);
+  });
+
   test("a missing variant is reported and can be added, pre-filled for its edition", async () => {
     useEdition().edition.value = "5e";
     const edit = useWhEdit(new Talent({ id: "create" }), fakeApi({ "4e": talent4e() }));
@@ -69,7 +77,7 @@ describe("useWhEdit", () => {
     expect(edit.wh.value.name).toBe("Luck");
     expect(edit.wh.value.tests).toBe("");
     expect(edit.wh.value.attribute).toBe(AttributeName.None);
-    expect(edit.wh.value.source).toEqual({ 0: "" });
+    expect(edit.wh.value.source).toEqual({ 1: "" });
     expect(edit.hasChanged.value).toBe(true);
   });
 

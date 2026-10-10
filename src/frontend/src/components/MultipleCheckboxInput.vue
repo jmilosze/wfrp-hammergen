@@ -25,11 +25,7 @@ function toggle(optionValue: T) {
 <template>
   <fieldset>
     <legend v-if="title" class="mb-1">{{ title }}</legend>
-    <label
-      v-for="option in options"
-      :key="String(option.value)"
-      class="inline-flex items-center cursor-pointer"
-    >
+    <label v-for="option in options" :key="String(option.value)" class="inline-flex items-center cursor-pointer">
       <input
         type="checkbox"
         :checked="isSelected(option.value)"
