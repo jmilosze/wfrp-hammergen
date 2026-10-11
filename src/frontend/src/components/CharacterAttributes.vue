@@ -49,9 +49,9 @@ function newRolls() {
     <template v-if="!disabled" #actions>
       <SectionButton icon="lucide:dices" variant="neutral" @click="newRolls">Generate rolls</SectionButton>
     </template>
-    <div class="@container w-full p-2">
-      <div class="flex flex-col gap-4 @5xl:hidden">
-        <div class="bg-white border border-neutral-300 min-w-fit">
+    <div class="@container w-full">
+      <div class="flex flex-col divide-y divide-neutral-400 @5xl:hidden">
+        <div class="bg-white min-w-fit">
           <table class="w-full">
             <thead>
               <tr>
@@ -131,7 +131,7 @@ function newRolls() {
             </tbody>
           </table>
         </div>
-        <div class="bg-white border border-neutral-300 min-w-fit">
+        <div class="bg-white min-w-fit">
           <table class="w-full">
             <thead>
               <tr>
@@ -259,7 +259,7 @@ function newRolls() {
             </tbody>
           </table>
         </div>
-        <div class="bg-white border border-neutral-300 min-w-fit">
+        <div class="bg-white min-w-fit">
           <table class="w-full">
             <thead>
               <tr>
@@ -388,7 +388,7 @@ function newRolls() {
           </table>
         </div>
       </div>
-      <div class="hidden @5xl:block bg-white border border-neutral-300 min-w-fit">
+      <div class="hidden @5xl:block bg-white min-w-fit">
         <table class="w-full">
           <thead>
             <tr>
@@ -684,10 +684,10 @@ function newRolls() {
           </tbody>
         </table>
       </div>
-      <div class="text-sm text-danger-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
+      <div class="text-sm text-danger-600 px-2 py-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
         {{ rollsValidationStatus.message }}
       </div>
-      <div class="text-sm text-danger-600 mt-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
+      <div class="text-sm text-danger-600 px-2 py-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
         {{ advancesValidationStatus.message }}
       </div>
     </div>
