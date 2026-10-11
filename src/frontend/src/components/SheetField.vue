@@ -34,8 +34,8 @@ const value = computed({
 </script>
 
 <template>
-  <div class="min-w-0 bg-white">
-    <div class="flex items-stretch focus-within:outline-2 focus-within:-outline-offset-2 outline-neutral-700">
+  <div class="flex flex-col min-w-0 bg-white">
+    <div class="flex grow items-stretch focus-within:outline-2 focus-within:-outline-offset-2 outline-neutral-700">
       <label
         :for="inputId"
         data-sheet-label
@@ -51,7 +51,7 @@ const value = computed({
         :maxlength="maxlength"
         :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
         :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
-        class="flex-1 min-w-0 h-9 px-2 bg-white outline-none disabled:bg-neutral-200"
+        class="flex-1 min-w-0 min-h-9 px-2 bg-white outline-none disabled:bg-neutral-200"
       />
     </div>
     <div
