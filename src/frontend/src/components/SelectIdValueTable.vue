@@ -4,7 +4,8 @@ import { computed, ref } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import SectionCard from "./SectionCard.vue";
+import SectionButton from "./SectionButton.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
@@ -90,7 +91,7 @@ const modalColumns = [
 const modalId = window.crypto.randomUUID();
 const resetPaginationCounter = ref(0);
 
-function onModifyClick() {
+function onEditClick() {
   if (props.loading) {
     return;
   }
@@ -112,72 +113,69 @@ const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1">
-      <div v-if="title">{{ title }}</div>
-      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
-        Modify
-      </ActionButton>
-      <ActionButton
-        v-if="!disabled && clearAllBtn"
-        :disabled="props.loading"
-        class="btn btn-danger btn-sm"
-        @click="emit('clearAll')"
-      >
-        Clear all
-      </ActionButton>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="@container bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr class="text-left">
-            <th :class="thClass">Name</th>
-            <th v-if="showValueColumn" :class="thClass">Value</th>
-            <th v-if="!disableDescription" class="hidden @2xl:table-cell" :class="thClass">Description</th>
-            <th v-if="!disabled" :class="thClass" />
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in selectedRows" :key="row.index" class="bg-white hover:bg-neutral-200">
-            <td :class="tdClass">
-              <TextLink :routeName="routeName" :params="{ id: row.entity.id }">
-                {{ row.entity.name }}
-              </TextLink>
-              <Edition4eBadge v-if="fourEIds?.has(row.entity.id)" />
-            </td>
-            <td v-if="showValueColumn" :class="tdClass">
-              <template v-if="row.entity.hasValue">
-                <FormInput
-                  v-if="!disabled"
-                  :modelValue="row.value"
-                  :maxlength="MAX_VALUE_LENGTH"
-                  class="min-w-24 max-w-48"
-                  @update:modelValue="
-                    (value: string) => emit('updateValue', { index: row.index, id: row.entity.id, value: value })
-                  "
-                />
-                <span v-else>{{ row.value }}</span>
-              </template>
-            </td>
-            <td v-if="!disableDescription" class="hidden @2xl:table-cell" :class="tdClass">
-              {{ truncate(row.entity.description, truncateModalDescription) }}
-            </td>
-            <td v-if="!disabled" :class="tdClass" class="w-0">
-              <button
-                class="hover:bg-neutral-700 hover:text-primary-300 p-1 rounded"
-                :aria-label="`Remove ${row.entity.name}`"
-                @click="emit('remove', { index: row.index, id: row.entity.id })"
-              >
-                <Icon icon="lucide:x" class="size-5" />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
+    <SectionCard :title="title" :loading="props.loading">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+        <SectionButton
+          v-if="clearAllBtn"
+          icon="lucide:trash-2"
+          variant="danger"
+          :disabled="props.loading"
+          @click="emit('clearAll')"
+        >
+          Clear all
+        </SectionButton>
+      </template>
+      <div class="@container">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left">
+              <th :class="thClass">Name</th>
+              <th v-if="showValueColumn" :class="thClass">Value</th>
+              <th v-if="!disableDescription" class="hidden @2xl:table-cell" :class="thClass">Description</th>
+              <th v-if="!disabled" :class="thClass" />
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in selectedRows" :key="row.index" class="bg-white hover:bg-neutral-200">
+              <td :class="tdClass">
+                <TextLink :routeName="routeName" :params="{ id: row.entity.id }">
+                  {{ row.entity.name }}
+                </TextLink>
+                <Edition4eBadge v-if="fourEIds?.has(row.entity.id)" />
+              </td>
+              <td v-if="showValueColumn" :class="tdClass">
+                <template v-if="row.entity.hasValue">
+                  <FormInput
+                    v-if="!disabled"
+                    :modelValue="row.value"
+                    :maxlength="MAX_VALUE_LENGTH"
+                    class="min-w-24 max-w-48"
+                    @update:modelValue="
+                      (value: string) => emit('updateValue', { index: row.index, id: row.entity.id, value: value })
+                    "
+                  />
+                  <span v-else>{{ row.value }}</span>
+                </template>
+              </td>
+              <td v-if="!disableDescription" class="hidden @2xl:table-cell" :class="tdClass">
+                {{ truncate(row.entity.description, truncateModalDescription) }}
+              </td>
+              <td v-if="!disabled" :class="tdClass" class="w-0">
+                <button
+                  class="hover:bg-neutral-700 hover:text-primary-300 p-1 rounded"
+                  :aria-label="`Remove ${row.entity.name}`"
+                  @click="emit('remove', { index: row.index, id: row.entity.id })"
+                >
+                  <Icon icon="lucide:x" class="size-5" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
+      </div>
+    </SectionCard>
     <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>

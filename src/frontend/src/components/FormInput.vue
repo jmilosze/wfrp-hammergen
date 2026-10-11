@@ -48,7 +48,7 @@ const value = computed({
           :step="step"
           :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
           :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
-          class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline-2 disabled:bg-neutral-200"
+          class="border border-neutral-300 rounded w-full h-10 px-2 bg-white focus:outline-neutral-700 focus:border-transparent focus:outline-2 disabled:bg-neutral-200"
           :class="centerText ? ['text-center'] : []"
         />
       </div>

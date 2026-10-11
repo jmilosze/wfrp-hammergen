@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import SectionCard from "./SectionCard.vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/core/source.ts";
 import { Edition } from "../services/wh/core/edition.ts";
@@ -56,7 +57,7 @@ const selectedSourcesValid = computed(() => {
   return true;
 });
 
-function onModifyClick() {
+function onEditClick() {
   modal.showModal("modifySourceModal");
   searchTerm.value = "";
   sourcesList.value.sort((a, b) => {
@@ -67,11 +68,10 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center mb-1">
-      <div class="mr-2">Sources</div>
-      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
-    </div>
-    <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+    <SectionCard title="Sources">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
+      </template>
       <table class="w-full">
         <thead>
           <tr class="text-left">
@@ -87,12 +87,12 @@ function onModifyClick() {
         </tbody>
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
+    </SectionCard>
     <p class="text-sm text-danger-600 mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
       Some of the sources are invalid.
     </p>
     <ModalWindow id="modifySourceModal">
-      <template #header> Modify sources </template>
+      <template #header> Edit sources </template>
       <div>
         <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="sourcesList" stackBreakpoint="lg">
           <template #selected="{ id }: { id: string }">

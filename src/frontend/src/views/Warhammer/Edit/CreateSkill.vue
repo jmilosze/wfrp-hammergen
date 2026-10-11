@@ -158,7 +158,7 @@ watchWh(
             :initSelectedItems="wh.group"
             :itemList="groupSkills"
             title="Belongs to group"
-            modalTitle="Modify groups"
+            modalTitle="Edit groups"
             :loading="skillListUtils.loading.value"
             routeName="skill"
             :truncateModalDescription="100"

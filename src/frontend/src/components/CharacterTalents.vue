@@ -5,10 +5,10 @@ import { Attributes, printAttributeName } from "../services/wh/core/attributes.t
 import { isEqualEntity } from "../utils/equal.ts";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
-import ActionButton from "./ActionButton.vue";
+import SectionButton from "./SectionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import SectionCard from "./SectionCard.vue";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
@@ -135,7 +135,7 @@ const modalColumns = [
 
 const resetPaginationCounter = ref(0);
 
-function onModifyClick() {
+function onEditClick() {
   if (props.loading) {
     return;
   }
@@ -150,34 +150,21 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1 flex-wrap">
-      <div>Talents</div>
-      <div class="flex gap-2 flex-wrap">
-        <ActionButton v-if="!disabled" :disabled="props.loading" class="flex-1 btn btn-sm" @click="onModifyClick">
-          <span class="flex-1">Modify</span>
-        </ActionButton>
-        <ActionButton
-          v-if="!disabled"
+    <SectionCard title="Talents" :loading="props.loading">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+        <SectionButton
+          icon="lucide:plus"
+          variant="neutral"
           :disabled="props.loading"
-          class="whitespace-nowrap flex-1 btn btn-sm"
           @click="emit('addSpeciesTalents')"
         >
-          <span class="flex-1">Add species talents</span>
-        </ActionButton>
-        <ActionButton
-          v-if="!disabled"
-          :disabled="props.loading"
-          class="whitespace-nowrap flex-1 btn btn-danger btn-sm"
-          @click="emit('clearAll')"
-        >
-          <span class="flex-1">Clear all</span>
-        </ActionButton>
-      </div>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+          Add species talents
+        </SectionButton>
+        <SectionButton icon="lucide:trash-2" variant="danger" :disabled="props.loading" @click="emit('clearAll')">
+          Clear all
+        </SectionButton>
+      </template>
       <table class="w-full">
         <thead>
           <tr class="text-left">
@@ -198,12 +185,12 @@ function onModifyClick() {
         </tbody>
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
+    </SectionCard>
     <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
     <ModalWindow id="modifyTalentsModal">
-      <template #header> Modify talents </template>
+      <template #header> Edit talents </template>
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"

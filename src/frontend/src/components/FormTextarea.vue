@@ -43,7 +43,7 @@ const value = computed({
     <textarea
       :id="textareaId"
       v-model="value"
-      class="border border-neutral-300 rounded w-full p-2 focus:outline-neutral-700 focus:border-transparent focus:outline-2 disabled:bg-neutral-200"
+      class="border border-neutral-300 rounded w-full p-2 bg-white focus:outline-neutral-700 focus:border-transparent focus:outline-2 disabled:bg-neutral-200"
       :class="size ? heightClasses[size] : 'h-36'"
       :disabled="disabled"
       :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"

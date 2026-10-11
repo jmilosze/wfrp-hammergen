@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import SectionCard from "./SectionCard.vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
@@ -52,7 +53,7 @@ watch(
 
 const selectedSources = computed(() => effectList.value.filter((x) => x.selected));
 
-function onModifyClick() {
+function onEditClick() {
   modal.showModal("modifyEffectsModal");
   searchTerm.value = "";
   effectList.value.sort((a, b) => {
@@ -63,11 +64,10 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center mb-1">
-      <div class="mr-2">Effects</div>
-      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
-    </div>
-    <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+    <SectionCard title="Effects">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
+      </template>
       <table class="w-full">
         <thead>
           <tr class="text-left">
@@ -83,9 +83,9 @@ function onModifyClick() {
         </tbody>
       </table>
       <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
+    </SectionCard>
     <ModalWindow id="modifyEffectsModal">
-      <template #header> Modify sources </template>
+      <template #header> Edit effects </template>
       <div class="">
         <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="effectList" stackBreakpoint="2xl">
           <template #selected="{ id }: { id: number }">

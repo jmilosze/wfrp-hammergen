@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import SectionCard from "./SectionCard.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import LinkButton from "./LinkButton.vue";
@@ -86,7 +86,7 @@ const modalColumns = [
 const modalId = window.crypto.randomUUID();
 const resetPaginationCounter = ref(0);
 
-function onModifyClick() {
+function onEditClick() {
   if (props.loading) {
     return;
   }
@@ -101,50 +101,47 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1">
-      <div v-if="title">{{ title }}</div>
-      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
-        Modify
-      </ActionButton>
-      <ActionButton
-        v-if="!disabled && clearAllBtn"
-        :disabled="props.loading"
-        class="btn btn-danger btn-sm"
-        @click="emit('clearAll')"
-      >
-        Clear all
-      </ActionButton>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="@container bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-            <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">
-              Description
-            </th>
-            <th class="border-b border-neutral-300 py-2 px-2">Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="src in nonzeroItems" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-2 border-b border-neutral-300">
-              <TextLink :routeName="routeName" :params="{ id: src.id }">
-                {{ src.name }}
-              </TextLink>
-            </td>
-            <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">
-              {{ src.description }}
-            </td>
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
+    <SectionCard :title="title" :loading="props.loading">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+        <SectionButton
+          v-if="clearAllBtn"
+          icon="lucide:trash-2"
+          variant="danger"
+          :disabled="props.loading"
+          @click="emit('clearAll')"
+        >
+          Clear all
+        </SectionButton>
+      </template>
+      <div class="@container">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left">
+              <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+              <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">
+                Description
+              </th>
+              <th class="border-b border-neutral-300 py-2 px-2">Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="src in nonzeroItems" :key="src.id" class="bg-white hover:bg-neutral-200">
+              <td class="py-2 px-2 border-b border-neutral-300">
+                <TextLink :routeName="routeName" :params="{ id: src.id }">
+                  {{ src.name }}
+                </TextLink>
+              </td>
+              <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">
+                {{ src.description }}
+              </td>
+              <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
+      </div>
+    </SectionCard>
     <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>

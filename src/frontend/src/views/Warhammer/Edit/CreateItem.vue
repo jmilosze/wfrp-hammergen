@@ -40,6 +40,7 @@ import {
 } from "../../../services/wh/content/item.ts";
 import { computed, ref, watch } from "vue";
 import FormInput from "../../../components/FormInput.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
@@ -261,39 +262,40 @@ watchWh(
             title="Availability"
             class="min-w-24"
           />
-          <p class="-mb-3">Price</p>
-          <div class="border border-neutral-300 rounded p-2">
-            <div class="flex flex-col @2xl:flex-row gap-4">
-              <FormInput
-                v-model="priceGold"
-                type="number"
-                title="Gold (GC)"
-                :validationStatus="validPriceGold"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-              <FormInput
-                v-model="priceSilver"
-                type="number"
-                title="Silver (/-)"
-                :validationStatus="validPriceSilver"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-              <FormInput
-                v-model="priceBrass"
-                type="number"
-                title="Brass (d)"
-                :validationStatus="validPriceBrass"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
+          <SectionCard title="Price">
+            <div class="p-2">
+              <div class="flex flex-col @2xl:flex-row gap-4">
+                <FormInput
+                  v-model="priceGold"
+                  type="number"
+                  title="Gold (GC)"
+                  :validationStatus="validPriceGold"
+                  :disabled="!canEdit"
+                  class="flex-1"
+                />
+                <FormInput
+                  v-model="priceSilver"
+                  type="number"
+                  title="Silver (/-)"
+                  :validationStatus="validPriceSilver"
+                  :disabled="!canEdit"
+                  class="flex-1"
+                />
+                <FormInput
+                  v-model="priceBrass"
+                  type="number"
+                  title="Brass (d)"
+                  :validationStatus="validPriceBrass"
+                  :disabled="!canEdit"
+                  class="flex-1"
+                />
+              </div>
+              <div class="text-xs text-neutral-500 mt-2">Total: {{ formattedPrice }}</div>
+              <div v-if="!validPrice.valid && validCoins" role="alert" class="text-sm text-danger-600 mt-1">
+                {{ validPrice.message }}
+              </div>
             </div>
-            <div class="text-xs text-neutral-500 mt-2">Total: {{ formattedPrice }}</div>
-            <div v-if="!validPrice.valid && validCoins" role="alert" class="text-sm text-danger-600 mt-1">
-              {{ validPrice.message }}
-            </div>
-          </div>
+          </SectionCard>
           <FormInput
             v-model="wh.enc"
             title="Encumbrance"
@@ -509,7 +511,7 @@ watchWh(
             :initSelectedItems="wh.grimoire.spells"
             :itemList="spellListUtils.whList.value"
             title="Spells"
-            modalTitle="Add/remove spells"
+            modalTitle="Edit spells"
             :loading="spellListUtils.loading.value"
             routeName="spell"
             :truncateModalDescription="100"
@@ -523,7 +525,7 @@ watchWh(
           :selected="Object.entries(wh.properties).map(([id, value]) => ({ id: id, value: value }))"
           :itemList="propertyList"
           title="Qualities and flaws"
-          modalTitle="Modify qualities and flaws"
+          modalTitle="Edit qualities and flaws"
           :loading="propertyListUtils.loading.value"
           :validationStatus="wh.validateProperties()"
           routeName="property"
@@ -539,7 +541,7 @@ watchWh(
           :initItems="wh.runes"
           :allItemList="runeList"
           title="Runes"
-          modalTitle="Modify runes"
+          modalTitle="Edit runes"
           :loading="runeListUtils.loading.value"
           routeName="rune"
           :truncateModalDescription="100"

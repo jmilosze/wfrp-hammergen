@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Edition } from "../services/wh/core/edition.ts";
 import HintModal from "./HintModal.vue";
+import SectionCard from "./SectionCard.vue";
 import CharacterModifiersAttributes from "./CharacterModifiersAttributes.vue";
 import { computed } from "vue";
 import { AttributeName, setAttributeValue } from "../services/wh/core/attributes.ts";
@@ -69,131 +70,132 @@ const validAtts = computed(() => {
 
 <template>
   <div class="@container">
-    <div class="flex items-center mb-2">
-      <div class="mr-2">Character modifiers</div>
-      <HintModal modalHeader="Character modifiers" modalId="modifiersHelpModal">
-        <div>
-          Talent modifiers are automatically added to character sheet in both edit and view modes. For example, if you
-          add a talent that modifies the Size, it will automatically affect the number of Wounds. Sum of all Attribute
-          modifiers is displayed in "other" row in character sheet.
-        </div>
-        <div>
-          All characters have default size Average, by using size modifier you can change is to Small (-1), Large (+1)
-          etc.
-        </div>
-      </HintModal>
-    </div>
-    <div class="border p-2 rounded border-neutral-400">
-      <CharacterModifiersAttributes>
-        <template #WS>
-          <FormInput
-            :modelValue="modelValue.attributes.WS"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.WS, $event)"
-          />
-        </template>
-        <template #BS>
-          <FormInput
-            :modelValue="modelValue.attributes.BS"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.BS, $event)"
-          />
-        </template>
-        <template #S>
-          <FormInput
-            :modelValue="modelValue.attributes.S"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.S, $event)"
-          />
-        </template>
-        <template #T>
-          <FormInput
-            :modelValue="modelValue.attributes.T"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.T, $event)"
-          />
-        </template>
-        <template #I>
-          <FormInput
-            :modelValue="modelValue.attributes.I"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.I, $event)"
-          />
-        </template>
-        <template #Ag>
-          <FormInput
-            :modelValue="modelValue.attributes.Ag"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.Ag, $event)"
-          />
-        </template>
-        <template #Dex>
-          <FormInput
-            :modelValue="modelValue.attributes.Dex"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.Dex, $event)"
-          />
-        </template>
-        <template #Int>
-          <FormInput
-            :modelValue="modelValue.attributes.Int"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.Int, $event)"
-          />
-        </template>
-        <template #WP>
-          <FormInput
-            :modelValue="modelValue.attributes.WP"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.WP, $event)"
-          />
-        </template>
-        <template #Fel>
-          <FormInput
-            :modelValue="modelValue.attributes.Fel"
-            type="number"
-            :disabled="props.disabled"
-            @update:modelValue="updateAttributes(AttributeName.Fel, $event)"
-          />
-        </template>
-      </CharacterModifiersAttributes>
-      <p class="text-sm text-danger-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
+    <SectionCard title="Character modifiers">
+      <template #hint>
+        <HintModal modalHeader="Character modifiers" modalId="modifiersHelpModal">
+          <div>
+            Talent modifiers are automatically added to character sheet in both edit and view modes. For example, if you
+            add a talent that modifies the Size, it will automatically affect the number of Wounds. Sum of all Attribute
+            modifiers is displayed in "other" row in character sheet.
+          </div>
+          <div>
+            All characters have default size Average, by using size modifier you can change is to Small (-1), Large (+1)
+            etc.
+          </div>
+        </HintModal>
+      </template>
+      <div class="p-2">
+        <CharacterModifiersAttributes>
+          <template #WS>
+            <FormInput
+              :modelValue="modelValue.attributes.WS"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.WS, $event)"
+            />
+          </template>
+          <template #BS>
+            <FormInput
+              :modelValue="modelValue.attributes.BS"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.BS, $event)"
+            />
+          </template>
+          <template #S>
+            <FormInput
+              :modelValue="modelValue.attributes.S"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.S, $event)"
+            />
+          </template>
+          <template #T>
+            <FormInput
+              :modelValue="modelValue.attributes.T"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.T, $event)"
+            />
+          </template>
+          <template #I>
+            <FormInput
+              :modelValue="modelValue.attributes.I"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.I, $event)"
+            />
+          </template>
+          <template #Ag>
+            <FormInput
+              :modelValue="modelValue.attributes.Ag"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.Ag, $event)"
+            />
+          </template>
+          <template #Dex>
+            <FormInput
+              :modelValue="modelValue.attributes.Dex"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.Dex, $event)"
+            />
+          </template>
+          <template #Int>
+            <FormInput
+              :modelValue="modelValue.attributes.Int"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.Int, $event)"
+            />
+          </template>
+          <template #WP>
+            <FormInput
+              :modelValue="modelValue.attributes.WP"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.WP, $event)"
+            />
+          </template>
+          <template #Fel>
+            <FormInput
+              :modelValue="modelValue.attributes.Fel"
+              type="number"
+              :disabled="props.disabled"
+              @update:modelValue="updateAttributes(AttributeName.Fel, $event)"
+            />
+          </template>
+        </CharacterModifiersAttributes>
+        <p class="text-sm text-danger-600 mt-1" :class="[validAtts.valid ? 'hidden' : '']">{{ validAtts.message }}</p>
 
-      <div class="flex flex-col @5xl:flex-row justify-between text-left gap-4 mt-4">
-        <CharacterModifierEffectTable
-          :initEffects="modelValue.effects"
-          :edition="edition"
-          :disabled="props.disabled ? props.disabled : false"
-          class="mt-1 flex-1"
-          @selected="(event) => updateEffects(event.id, event.selected)"
-        />
-        <SelectInput
-          :modelValue="modelValue.size"
-          :options="sizeOptions"
-          title="Character size"
-          class="flex-1 mt-4"
-          :disabled="props.disabled ? props.disabled : false"
-          @update:modelValue="(event) => updateSize(event)"
-        />
-        <SelectInput
-          :modelValue="modelValue.movement"
-          :options="movementOptions"
-          title="Character movement"
-          :disabled="props.disabled ? props.disabled : false"
-          class="flex-1 mt-4"
-          @update:modelValue="(event) => updateMovement(event)"
-        />
+        <div class="flex flex-col @5xl:flex-row justify-between text-left gap-4 mt-4">
+          <CharacterModifierEffectTable
+            :initEffects="modelValue.effects"
+            :edition="edition"
+            :disabled="props.disabled ? props.disabled : false"
+            class="mt-1 flex-1"
+            @selected="(event) => updateEffects(event.id, event.selected)"
+          />
+          <SelectInput
+            :modelValue="modelValue.size"
+            :options="sizeOptions"
+            title="Character size"
+            class="flex-1 mt-4"
+            :disabled="props.disabled ? props.disabled : false"
+            @update:modelValue="(event) => updateSize(event)"
+          />
+          <SelectInput
+            :modelValue="modelValue.movement"
+            :options="movementOptions"
+            title="Character movement"
+            :disabled="props.disabled ? props.disabled : false"
+            class="flex-1 mt-4"
+            @update:modelValue="(event) => updateMovement(event)"
+          />
+        </div>
       </div>
-    </div>
+    </SectionCard>
   </div>
 </template>
 

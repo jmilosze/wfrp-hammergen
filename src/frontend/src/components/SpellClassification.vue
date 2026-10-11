@@ -12,6 +12,8 @@ import {
 import SelectInput from "./SelectInput.vue";
 import { Ref, ref, watch } from "vue";
 import ActionButton from "./ActionButton.vue";
+import SectionButton from "./SectionButton.vue";
+import SectionCard from "./SectionCard.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
@@ -98,7 +100,7 @@ watch(
   { immediate: true },
 );
 
-function onModifyClick() {
+function onEditClick() {
   modal.showModal("modifySpellLabelsModal");
   searchTerm.value = "";
 }
@@ -107,31 +109,32 @@ function onModifyClick() {
 <template>
   <div>
     <div class="@container">
-      <p class="mb-1">Classification</p>
-      <div class="border p-2 rounded border-neutral-400">
-        <div class="flex flex-col @2xl:flex-row gap-4">
-          <SelectInput
-            :modelValue="props.modelValue.type"
-            :options="typeOptions"
-            :disabled="props.disabled"
-            title="Type"
-            class="flex-1"
-            @update:modelValue="updateType($event)"
-          />
-          <div class="flex-1">
-            <div class="flex items-center mb-1">
-              <div class="mr-2">Labels</div>
-              <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
+      <SectionCard title="Classification">
+        <div class="p-2">
+          <div class="flex flex-col @2xl:flex-row gap-4">
+            <SelectInput
+              :modelValue="props.modelValue.type"
+              :options="typeOptions"
+              :disabled="props.disabled"
+              title="Type"
+              class="flex-1"
+              @update:modelValue="updateType($event)"
+            />
+            <div class="flex-1">
+              <div class="flex items-center mb-1">
+                <div class="mr-2">Labels</div>
+                <SectionButton v-if="!disabled" icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
+              </div>
+              <span v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)" :key="i">
+                {{ printSpellLabel(label) + (i !== simplifiedLabels.length - 1 ? ", " : "") }}
+              </span>
             </div>
-            <span v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)" :key="i">
-              {{ printSpellLabel(label) + (i !== simplifiedLabels.length - 1 ? ", " : "") }}
-            </span>
           </div>
         </div>
-      </div>
+      </SectionCard>
     </div>
     <ModalWindow id="modifySpellLabelsModal" size="xs">
-      <template #header>Modify labels</template>
+      <template #header>Edit labels</template>
       <div>
         <TableWithSearch
           v-model="searchTerm"

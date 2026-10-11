@@ -174,7 +174,7 @@ watchWh(
             :initSelectedItems="wh.group"
             :itemList="groupTalents"
             title="Belongs to group"
-            modalTitle="Modify groups"
+            modalTitle="Edit groups"
             :loading="talentListUtils.loading.value"
             routeName="talent"
             :truncateModalDescription="100"

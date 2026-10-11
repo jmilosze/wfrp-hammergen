@@ -2,10 +2,10 @@
 import { computed, ref, Ref, watch } from "vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
-import ActionButton from "./ActionButton.vue";
+import SectionButton from "./SectionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import SectionCard from "./SectionCard.vue";
 import { Item, printItemType } from "../services/wh/content/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
@@ -147,7 +147,7 @@ const modalColumns = [
 
 const resetPaginationCounter = ref(0);
 
-function onModifyClick() {
+function onEditClick() {
   if (props.loading) {
     return;
   }
@@ -162,35 +162,17 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1 flex-wrap">
-      <div>Trappings</div>
-      <div class="flex gap-2 flex-wrap">
-        <ActionButton v-if="!disabled" :disabled="props.loading" class="flex-1 btn btn-sm" @click="onModifyClick">
-          <span class="flex-1">Modify</span>
-        </ActionButton>
-        <ActionButton
-          v-if="!disabled"
-          :disabled="props.loading"
-          class="whitespace-nowrap flex-1 btn btn-sm"
-          @click="emit('addClassItems')"
-        >
-          <span class="flex-1">Add class items</span>
-        </ActionButton>
-        <ActionButton
-          v-if="!disabled"
-          :disabled="props.loading"
-          class="whitespace-nowrap flex-1 btn btn-danger btn-sm"
-          @click="emit('clearAll')"
-        >
-          <span class="flex-1">Clear all</span>
-        </ActionButton>
-      </div>
-    </div>
-    <div class="border border-neutral-300 rounded p-2">
-      <div v-if="props.loading" class="flex justify-center">
-        <SpinnerAnimation class="w-14 m-2" />
-      </div>
-      <div v-else class="flex flex-col md:flex-row gap-4">
+    <SectionCard title="Trappings" :loading="props.loading">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+        <SectionButton icon="lucide:plus" variant="neutral" :disabled="props.loading" @click="emit('addClassItems')">
+          Add class items
+        </SectionButton>
+        <SectionButton icon="lucide:trash-2" variant="danger" :disabled="props.loading" @click="emit('clearAll')">
+          Clear all
+        </SectionButton>
+      </template>
+      <div class="flex flex-col md:flex-row gap-4 p-2">
         <div class="flex-1">
           <div class="mb-1">Equipped</div>
           <div class="bg-neutral-50 rounded-xl border border-neutral-300">
@@ -267,7 +249,7 @@ function onModifyClick() {
           </div>
         </div>
       </div>
-    </div>
+    </SectionCard>
     <div class="text-sm text-danger-600 mt-1" :class="[equippedValidationStatus.valid ? 'hidden' : '']">
       {{ equippedValidationStatus.message }}
     </div>
@@ -278,7 +260,7 @@ function onModifyClick() {
       {{ storedValidationStatus.message }}
     </div>
     <ModalWindow id="modifyItemsModal" size="lg">
-      <template #header> Modify trappings </template>
+      <template #header> Edit trappings </template>
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"

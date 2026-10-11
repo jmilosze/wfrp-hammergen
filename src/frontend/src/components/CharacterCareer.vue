@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import SectionCard from "./SectionCard.vue";
 import { Career, printClassName } from "../services/wh/content/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
@@ -149,7 +149,7 @@ const modalColumns = [
 
 const resetPaginationCounter = ref(0);
 
-function onModifyClick() {
+function onEditClick() {
   if (props.loading) {
     return;
   }
@@ -205,35 +205,31 @@ function emitPastSelected(id: string) {
 
 <template>
   <div>
-    <div class="flex items-center mb-1">
-      <div class="mr-1">Career</div>
-      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
-        Modify
-      </ActionButton>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="border border-neutral-300 rounded p-2">
-      <div class="mb-1">Current career</div>
-      <div v-if="selectedCurrentCareer">
-        <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }" class="mr-3">
-          {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} -
-          {{ selectedCurrentCareer.levelName }}
-        </TextLink>
-        <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
+    <SectionCard title="Career" :loading="props.loading">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+      </template>
+      <div class="p-2">
+        <div class="mb-1">Current career</div>
+        <div v-if="selectedCurrentCareer">
+          <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }" class="mr-3">
+            {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} -
+            {{ selectedCurrentCareer.levelName }}
+          </TextLink>
+          <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
+        </div>
+        <div class="border-t border-neutral-300 my-1" />
+        <div class="mb-1">Past careers</div>
+        <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
+          <TextLink routeName="career" :params="{ id: pastCareer.careerId }" class="mr-3">
+            {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}
+          </TextLink>
+          <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
+        </div>
       </div>
-      <div class="border-t border-neutral-300 my-1" />
-      <div class="mb-1">Past careers</div>
-      <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
-        <TextLink routeName="career" :params="{ id: pastCareer.careerId }" class="mr-3">
-          {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}
-        </TextLink>
-        <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
-      </div>
-    </div>
+    </SectionCard>
     <ModalWindow id="modifyCareersModal" size="md">
-      <template #header> Modify career </template>
+      <template #header> Edit career </template>
       <TableWithSearch
         v-model="searchTerm"
         :fields="modalColumns"

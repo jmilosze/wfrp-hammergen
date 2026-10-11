@@ -3,7 +3,8 @@ import { AttributeName, Attributes, setAttributeValue, sumAttributes } from "../
 import FormInput from "./FormInput.vue";
 import { computed } from "vue";
 import { ValidationStatus } from "../utils/validation.ts";
-import ActionButton from "./ActionButton.vue";
+import SectionCard from "./SectionCard.vue";
+import SectionButton from "./SectionButton.vue";
 import { generateRolls } from "../services/wh/character/generation/shared/characteristics.ts";
 import { rollDice } from "../utils/random.ts";
 
@@ -44,19 +45,367 @@ function newRolls() {
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-2 mb-1">
-    <div class="mb-1">{{ title }}</div>
-    <ActionButton v-if="!disabled" class="btn btn-sm" @click="newRolls">Generate rolls</ActionButton>
-  </div>
-  <div class="@container w-full">
-    <div class="flex flex-col gap-4 @5xl:hidden">
-      <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+  <SectionCard :title="title">
+    <template v-if="!disabled" #actions>
+      <SectionButton icon="lucide:dices" variant="neutral" @click="newRolls">Generate rolls</SectionButton>
+    </template>
+    <div class="@container w-full p-2">
+      <div class="flex flex-col gap-4 @5xl:hidden">
+        <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th :class="thClass">Source</th>
+                <th :class="thClass">WS</th>
+                <th :class="thClass">BS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="bg-white">
+                <td :class="tdClass">Rolls</td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    :modelValue="attributeRolls.WS"
+                    type="number"
+                    @update:modelValue="updateRolls(AttributeName.WS, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    :modelValue="attributeRolls.BS"
+                    type="number"
+                    @update:modelValue="updateRolls(AttributeName.BS, $event)"
+                  />
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClass">Racial</td>
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.WS }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.BS }}
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClass">Other</td>
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.WS }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.BS }}
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClass">Advances</td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.WS"
+                    @update:modelValue="updateAdvances(AttributeName.WS, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.BS"
+                    @update:modelValue="updateAdvances(AttributeName.BS, $event)"
+                  />
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClass">Sum</td>
+                <td :class="tdClassNoInput">
+                  {{ total.WS }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ total.BS }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
+        </div>
+        <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th :class="thClass">S</th>
+                <th :class="thClass">T</th>
+                <th :class="thClass">I</th>
+                <th :class="thClass">Ag</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="bg-white">
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :modelValue="attributeRolls.S"
+                    @update:modelValue="updateRolls(AttributeName.S, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :modelValue="attributeRolls.T"
+                    @update:modelValue="updateRolls(AttributeName.T, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :modelValue="attributeRolls.I"
+                    @update:modelValue="updateRolls(AttributeName.I, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :modelValue="attributeRolls.Ag"
+                    @update:modelValue="updateRolls(AttributeName.Ag, $event)"
+                  />
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.S }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.T }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.I }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.Ag }}
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.S }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.T }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.I }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.Ag }}
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.S"
+                    @update:modelValue="updateAdvances(AttributeName.S, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.T"
+                    @update:modelValue="updateAdvances(AttributeName.T, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.I"
+                    @update:modelValue="updateAdvances(AttributeName.I, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.Ag"
+                    @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
+                  />
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClassNoInput">
+                  {{ total.S }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ total.T }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ total.I }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ total.Ag }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
+        </div>
+        <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th :class="thClass">Dex</th>
+                <th :class="thClass">Int</th>
+                <th :class="thClass">WP</th>
+                <th :class="thClass">Fel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="bg-white">
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :modelValue="attributeRolls.Dex"
+                    @update:modelValue="updateRolls(AttributeName.Dex, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :modelValue="attributeRolls.Int"
+                    @update:modelValue="updateRolls(AttributeName.Int, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :modelValue="attributeRolls.WP"
+                    @update:modelValue="updateRolls(AttributeName.WP, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :modelValue="attributeRolls.Fel"
+                    @update:modelValue="updateRolls(AttributeName.Fel, $event)"
+                  />
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.Dex }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.Int }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.WP }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ speciesAttributes.Fel }}
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.Dex }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.Int }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.WP }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ otherAttributes.Fel }}
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.Dex"
+                    @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.Int"
+                    @update:modelValue="updateAdvances(AttributeName.Int, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.WP"
+                    @update:modelValue="updateAdvances(AttributeName.WP, $event)"
+                  />
+                </td>
+                <td :class="tdClass">
+                  <FormInput
+                    :disabled="props.disabled"
+                    type="number"
+                    :step="advanceStep"
+                    :modelValue="attributeAdvances.Fel"
+                    @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
+                  />
+                </td>
+              </tr>
+              <tr class="bg-white">
+                <td :class="tdClassNoInput">
+                  {{ total.Dex }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ total.Int }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ total.WP }}
+                </td>
+                <td :class="tdClassNoInput">
+                  {{ total.Fel }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
+        </div>
+      </div>
+      <div class="hidden @5xl:block bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
         <table class="w-full">
           <thead>
             <tr>
               <th :class="thClass">Source</th>
               <th :class="thClass">WS</th>
               <th :class="thClass">BS</th>
+              <th :class="thClass">S</th>
+              <th :class="thClass">T</th>
+              <th :class="thClass">I</th>
+              <th :class="thClass">Ag</th>
+              <th :class="thClass">Dex</th>
+              <th :class="thClass">Int</th>
+              <th :class="thClass">WP</th>
+              <th :class="thClass">Fel</th>
             </tr>
           </thead>
           <tbody>
@@ -65,84 +414,19 @@ function newRolls() {
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :modelValue="attributeRolls.WS"
                   type="number"
+                  :modelValue="attributeRolls.WS"
                   @update:modelValue="updateRolls(AttributeName.WS, $event)"
                 />
               </td>
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
-                  :modelValue="attributeRolls.BS"
                   type="number"
+                  :modelValue="attributeRolls.BS"
                   @update:modelValue="updateRolls(AttributeName.BS, $event)"
                 />
               </td>
-            </tr>
-            <tr class="bg-white">
-              <td :class="tdClass">Racial</td>
-              <td :class="tdClassNoInput">
-                {{ speciesAttributes.WS }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ speciesAttributes.BS }}
-              </td>
-            </tr>
-            <tr class="bg-white">
-              <td :class="tdClass">Other</td>
-              <td :class="tdClassNoInput">
-                {{ otherAttributes.WS }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ otherAttributes.BS }}
-              </td>
-            </tr>
-            <tr class="bg-white">
-              <td :class="tdClass">Advances</td>
-              <td :class="tdClass">
-                <FormInput
-                  :disabled="props.disabled"
-                  type="number"
-                  :step="advanceStep"
-                  :modelValue="attributeAdvances.WS"
-                  @update:modelValue="updateAdvances(AttributeName.WS, $event)"
-                />
-              </td>
-              <td :class="tdClass">
-                <FormInput
-                  :disabled="props.disabled"
-                  type="number"
-                  :step="advanceStep"
-                  :modelValue="attributeAdvances.BS"
-                  @update:modelValue="updateAdvances(AttributeName.BS, $event)"
-                />
-              </td>
-            </tr>
-            <tr class="bg-white">
-              <td :class="tdClass">Sum</td>
-              <td :class="tdClassNoInput">
-                {{ total.WS }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ total.BS }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-      </div>
-      <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th :class="thClass">S</th>
-              <th :class="thClass">T</th>
-              <th :class="thClass">I</th>
-              <th :class="thClass">Ag</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="bg-white">
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
@@ -175,8 +459,47 @@ function newRolls() {
                   @update:modelValue="updateRolls(AttributeName.Ag, $event)"
                 />
               </td>
+              <td :class="tdClass">
+                <FormInput
+                  :disabled="props.disabled"
+                  type="number"
+                  :modelValue="attributeRolls.Dex"
+                  @update:modelValue="updateRolls(AttributeName.Dex, $event)"
+                />
+              </td>
+              <td :class="tdClass">
+                <FormInput
+                  :disabled="props.disabled"
+                  type="number"
+                  :modelValue="attributeRolls.Int"
+                  @update:modelValue="updateRolls(AttributeName.Int, $event)"
+                />
+              </td>
+              <td :class="tdClass">
+                <FormInput
+                  :disabled="props.disabled"
+                  type="number"
+                  :modelValue="attributeRolls.WP"
+                  @update:modelValue="updateRolls(AttributeName.WP, $event)"
+                />
+              </td>
+              <td :class="tdClass">
+                <FormInput
+                  :disabled="props.disabled"
+                  type="number"
+                  :modelValue="attributeRolls.Fel"
+                  @update:modelValue="updateRolls(AttributeName.Fel, $event)"
+                />
+              </td>
             </tr>
             <tr class="bg-white">
+              <td :class="tdClass">Racial</td>
+              <td :class="tdClassNoInput">
+                {{ speciesAttributes.WS }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ speciesAttributes.BS }}
+              </td>
               <td :class="tdClassNoInput">
                 {{ speciesAttributes.S }}
               </td>
@@ -189,8 +512,27 @@ function newRolls() {
               <td :class="tdClassNoInput">
                 {{ speciesAttributes.Ag }}
               </td>
+              <td :class="tdClassNoInput">
+                {{ speciesAttributes.Dex }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ speciesAttributes.Int }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ speciesAttributes.WP }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ speciesAttributes.Fel }}
+              </td>
             </tr>
             <tr class="bg-white">
+              <td :class="tdClass">Other</td>
+              <td :class="tdClassNoInput">
+                {{ otherAttributes.WS }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ otherAttributes.BS }}
+              </td>
               <td :class="tdClassNoInput">
                 {{ otherAttributes.S }}
               </td>
@@ -203,8 +545,39 @@ function newRolls() {
               <td :class="tdClassNoInput">
                 {{ otherAttributes.Ag }}
               </td>
+              <td :class="tdClassNoInput">
+                {{ otherAttributes.Dex }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ otherAttributes.Int }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ otherAttributes.WP }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ otherAttributes.Fel }}
+              </td>
             </tr>
             <tr class="bg-white">
+              <td :class="tdClass">Adv</td>
+              <td :class="tdClass">
+                <FormInput
+                  :disabled="props.disabled"
+                  type="number"
+                  :step="advanceStep"
+                  :modelValue="attributeAdvances.WS"
+                  @update:modelValue="updateAdvances(AttributeName.WS, $event)"
+                />
+              </td>
+              <td :class="tdClass">
+                <FormInput
+                  :disabled="props.disabled"
+                  type="number"
+                  :step="advanceStep"
+                  :modelValue="attributeAdvances.BS"
+                  @update:modelValue="updateAdvances(AttributeName.BS, $event)"
+                />
+              </td>
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
@@ -241,99 +614,6 @@ function newRolls() {
                   @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
                 />
               </td>
-            </tr>
-            <tr class="bg-white">
-              <td :class="tdClassNoInput">
-                {{ total.S }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ total.T }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ total.I }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ total.Ag }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-      </div>
-      <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th :class="thClass">Dex</th>
-              <th :class="thClass">Int</th>
-              <th :class="thClass">WP</th>
-              <th :class="thClass">Fel</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="bg-white">
-              <td :class="tdClass">
-                <FormInput
-                  :disabled="props.disabled"
-                  type="number"
-                  :modelValue="attributeRolls.Dex"
-                  @update:modelValue="updateRolls(AttributeName.Dex, $event)"
-                />
-              </td>
-              <td :class="tdClass">
-                <FormInput
-                  :disabled="props.disabled"
-                  type="number"
-                  :modelValue="attributeRolls.Int"
-                  @update:modelValue="updateRolls(AttributeName.Int, $event)"
-                />
-              </td>
-              <td :class="tdClass">
-                <FormInput
-                  :disabled="props.disabled"
-                  type="number"
-                  :modelValue="attributeRolls.WP"
-                  @update:modelValue="updateRolls(AttributeName.WP, $event)"
-                />
-              </td>
-              <td :class="tdClass">
-                <FormInput
-                  :disabled="props.disabled"
-                  type="number"
-                  :modelValue="attributeRolls.Fel"
-                  @update:modelValue="updateRolls(AttributeName.Fel, $event)"
-                />
-              </td>
-            </tr>
-            <tr class="bg-white">
-              <td :class="tdClassNoInput">
-                {{ speciesAttributes.Dex }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ speciesAttributes.Int }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ speciesAttributes.WP }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ speciesAttributes.Fel }}
-              </td>
-            </tr>
-            <tr class="bg-white">
-              <td :class="tdClassNoInput">
-                {{ otherAttributes.Dex }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ otherAttributes.Int }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ otherAttributes.WP }}
-              </td>
-              <td :class="tdClassNoInput">
-                {{ otherAttributes.Fel }}
-              </td>
-            </tr>
-            <tr class="bg-white">
               <td :class="tdClass">
                 <FormInput
                   :disabled="props.disabled"
@@ -372,6 +652,25 @@ function newRolls() {
               </td>
             </tr>
             <tr class="bg-white">
+              <td :class="tdClass">Sum</td>
+              <td :class="tdClassNoInput">
+                {{ total.WS }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ total.BS }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ total.S }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ total.T }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ total.I }}
+              </td>
+              <td :class="tdClassNoInput">
+                {{ total.Ag }}
+              </td>
               <td :class="tdClassNoInput">
                 {{ total.Dex }}
               </td>
@@ -389,311 +688,14 @@ function newRolls() {
         </table>
         <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
       </div>
+      <div class="text-sm text-danger-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
+        {{ rollsValidationStatus.message }}
+      </div>
+      <div class="text-sm text-danger-600 mt-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
+        {{ advancesValidationStatus.message }}
+      </div>
     </div>
-    <div class="hidden @5xl:block bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr>
-            <th :class="thClass">Source</th>
-            <th :class="thClass">WS</th>
-            <th :class="thClass">BS</th>
-            <th :class="thClass">S</th>
-            <th :class="thClass">T</th>
-            <th :class="thClass">I</th>
-            <th :class="thClass">Ag</th>
-            <th :class="thClass">Dex</th>
-            <th :class="thClass">Int</th>
-            <th :class="thClass">WP</th>
-            <th :class="thClass">Fel</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="bg-white">
-            <td :class="tdClass">Rolls</td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.WS"
-                @update:modelValue="updateRolls(AttributeName.WS, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.BS"
-                @update:modelValue="updateRolls(AttributeName.BS, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.S"
-                @update:modelValue="updateRolls(AttributeName.S, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.T"
-                @update:modelValue="updateRolls(AttributeName.T, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.I"
-                @update:modelValue="updateRolls(AttributeName.I, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.Ag"
-                @update:modelValue="updateRolls(AttributeName.Ag, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.Dex"
-                @update:modelValue="updateRolls(AttributeName.Dex, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.Int"
-                @update:modelValue="updateRolls(AttributeName.Int, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.WP"
-                @update:modelValue="updateRolls(AttributeName.WP, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :modelValue="attributeRolls.Fel"
-                @update:modelValue="updateRolls(AttributeName.Fel, $event)"
-              />
-            </td>
-          </tr>
-          <tr class="bg-white">
-            <td :class="tdClass">Racial</td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.WS }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.BS }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.S }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.T }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.I }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.Ag }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.Dex }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.Int }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.WP }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ speciesAttributes.Fel }}
-            </td>
-          </tr>
-          <tr class="bg-white">
-            <td :class="tdClass">Other</td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.WS }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.BS }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.S }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.T }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.I }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.Ag }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.Dex }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.Int }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.WP }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ otherAttributes.Fel }}
-            </td>
-          </tr>
-          <tr class="bg-white">
-            <td :class="tdClass">Adv</td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.WS"
-                @update:modelValue="updateAdvances(AttributeName.WS, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.BS"
-                @update:modelValue="updateAdvances(AttributeName.BS, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.S"
-                @update:modelValue="updateAdvances(AttributeName.S, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.T"
-                @update:modelValue="updateAdvances(AttributeName.T, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.I"
-                @update:modelValue="updateAdvances(AttributeName.I, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.Ag"
-                @update:modelValue="updateAdvances(AttributeName.Ag, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.Dex"
-                @update:modelValue="updateAdvances(AttributeName.Dex, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.Int"
-                @update:modelValue="updateAdvances(AttributeName.Int, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.WP"
-                @update:modelValue="updateAdvances(AttributeName.WP, $event)"
-              />
-            </td>
-            <td :class="tdClass">
-              <FormInput
-                :disabled="props.disabled"
-                type="number"
-                :step="advanceStep"
-                :modelValue="attributeAdvances.Fel"
-                @update:modelValue="updateAdvances(AttributeName.Fel, $event)"
-              />
-            </td>
-          </tr>
-          <tr class="bg-white">
-            <td :class="tdClass">Sum</td>
-            <td :class="tdClassNoInput">
-              {{ total.WS }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.BS }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.S }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.T }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.I }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.Ag }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.Dex }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.Int }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.WP }}
-            </td>
-            <td :class="tdClassNoInput">
-              {{ total.Fel }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
-      {{ rollsValidationStatus.message }}
-    </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
-      {{ advancesValidationStatus.message }}
-    </div>
-  </div>
+  </SectionCard>
 </template>
 
 <style scoped></style>
