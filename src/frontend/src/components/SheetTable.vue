@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // A table of labelled cells in the style of the paper character sheet. Cells (SheetField, SheetSelect) sit in a
 // grid that drops to one column when narrow; the 1px gaps show the background and draw the cell borders.
-// An optional title is a small header row above the cells; actions sit in a cell on the right.
+// An optional title is a small header row above the cells; actions fill a cell on the right.
 type Columns = 1 | 2 | 3;
 
 withDefaults(defineProps<{ title?: string; columns?: Columns }>(), { title: "", columns: 1 });
@@ -26,7 +26,7 @@ const COLUMNS_CLASS: Record<Columns, string> = {
         <div :class="COLUMNS_CLASS[columns]" class="grid flex-1 min-w-0 gap-px">
           <slot />
         </div>
-        <div v-if="$slots.actions" class="flex items-center px-1 bg-white">
+        <div v-if="$slots.actions" class="flex flex-col gap-1 p-1 bg-white *:flex-1">
           <slot name="actions" />
         </div>
       </div>

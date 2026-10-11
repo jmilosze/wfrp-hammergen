@@ -4,7 +4,9 @@ import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
-import SectionCard from "./SectionCard.vue";
+import SheetTable from "./SheetTable.vue";
+import SheetCell from "./SheetCell.vue";
+import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Career, printClassName } from "../services/wh/content/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
@@ -205,29 +207,35 @@ function emitPastSelected(id: string) {
 
 <template>
   <div>
-    <SectionCard title="Career" :loading="props.loading">
-      <template v-if="!disabled" #actions>
-        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
-      </template>
-      <div class="p-2">
-        <div class="mb-1">Current career</div>
-        <div v-if="selectedCurrentCareer">
-          <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }" class="mr-3">
-            {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} -
-            {{ selectedCurrentCareer.levelName }}
-          </TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
-        </div>
-        <div class="border-t border-neutral-300 my-1" />
-        <div class="mb-1">Past careers</div>
-        <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
-          <TextLink routeName="career" :params="{ id: pastCareer.careerId }" class="mr-3">
-            {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}
-          </TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
-        </div>
+    <SheetTable>
+      <div v-if="props.loading" class="flex justify-center bg-white">
+        <SpinnerAnimation class="w-14 m-2" />
       </div>
-    </SectionCard>
+      <template v-else>
+        <SheetCell title="Current">
+          <div v-if="selectedCurrentCareer">
+            <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }">
+              {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} -
+              {{ selectedCurrentCareer.levelName }}
+            </TextLink>
+            <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
+          </div>
+        </SheetCell>
+        <SheetCell title="Past">
+          <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
+            <TextLink routeName="career" :params="{ id: pastCareer.careerId }">
+              {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}
+            </TextLink>
+            <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
+          </div>
+        </SheetCell>
+      </template>
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" iconOnlyWhenNarrow :disabled="props.loading" @click="onEditClick">
+          Edit
+        </SectionButton>
+      </template>
+    </SheetTable>
     <ModalWindow id="modifyCareersModal" size="md">
       <template #header> Edit career </template>
       <TableWithSearch

@@ -38,7 +38,7 @@ const value = computed({
     <div class="flex items-stretch focus-within:outline-2 focus-within:-outline-offset-2 outline-neutral-700">
       <label
         :for="inputId"
-        class="flex items-center shrink-0 min-w-28 px-2 border-r border-neutral-300 font-semibold whitespace-nowrap"
+        class="flex items-center shrink-0 min-w-32 px-2 border-r border-neutral-300 font-semibold whitespace-nowrap"
       >
         {{ title }}
       </label>

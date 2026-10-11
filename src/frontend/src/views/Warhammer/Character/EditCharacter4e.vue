@@ -459,7 +459,7 @@ const modifierAttributes = computed(() => {
           <SheetTable>
             <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
             <template v-if="canEdit" #actions>
-              <SectionButton icon="lucide:dices" variant="ghost" iconOnlyWhenNarrow @click="formGenerateName">
+              <SectionButton icon="lucide:dices" variant="secondary" iconOnlyWhenNarrow @click="formGenerateName">
                 Generate
               </SectionButton>
             </template>
@@ -473,9 +473,7 @@ const modifierAttributes = computed(() => {
               :disabled="!canEdit || speciesWithRegionOpts.length <= 1"
             />
           </SheetTable>
-        </div>
-        <div>
-          <SheetTable :columns="2">
+          <SheetTable :columns="2" class="-mt-px">
             <SheetField
               v-model="wh.fate"
               type="number"
@@ -505,21 +503,11 @@ const modifierAttributes = computed(() => {
               :disabled="!canEdit"
             />
             <template v-if="canEdit" #actions>
-              <SectionButton icon="lucide:dices" variant="ghost" iconOnlyWhenNarrow @click="formGenerateFateResilience">
-                Generate
-              </SectionButton>
-            </template>
-          </SheetTable>
-          <SheetTable :columns="2" class="-mt-px">
-            <SheetSelect v-model="wh.status" title="Status" :options="statusTierOpts" :disabled="!canEdit" />
-            <SheetSelect v-model="wh.standing" title="Standing" :options="statusStandingOpts" :disabled="!canEdit" />
-            <template v-if="canEdit" #actions>
               <SectionButton
                 icon="lucide:dices"
-                variant="ghost"
+                variant="secondary"
                 iconOnlyWhenNarrow
-                :disabled="careerListUtils.loading.value"
-                @click="formGenerateStatusStanding"
+                @click="formGenerateFateResilience"
               >
                 Generate
               </SectionButton>
@@ -595,18 +583,34 @@ const modifierAttributes = computed(() => {
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <CharacterCareer
-          :disabled="!canEdit"
-          :initSelectedCurrentCareer="wh.career"
-          :initSelectedPastCareers="wh.careerPath"
-          :careerList="careerListUtils.whList.value"
-          title="Career"
-          modalTitle="Edit career"
-          :loading="careerListUtils.loading.value"
-          @reload="careerListUtils.loadWhList"
-          @currentSelected="(event) => wh.updateCurrentCareer(event.id, event.number, event.selected)"
-          @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
-        />
+        <div>
+          <SheetTable title="Career" :columns="2">
+            <SheetSelect v-model="wh.status" title="Status" :options="statusTierOpts" :disabled="!canEdit" />
+            <SheetSelect v-model="wh.standing" title="Standing" :options="statusStandingOpts" :disabled="!canEdit" />
+            <template v-if="canEdit" #actions>
+              <SectionButton
+                icon="lucide:dices"
+                variant="secondary"
+                iconOnlyWhenNarrow
+                :disabled="careerListUtils.loading.value"
+                @click="formGenerateStatusStanding"
+              >
+                Generate
+              </SectionButton>
+            </template>
+          </SheetTable>
+          <CharacterCareer
+            class="-mt-px"
+            :disabled="!canEdit"
+            :initSelectedCurrentCareer="wh.career"
+            :initSelectedPastCareers="wh.careerPath"
+            :careerList="careerListUtils.whList.value"
+            :loading="careerListUtils.loading.value"
+            @reload="careerListUtils.loadWhList"
+            @currentSelected="(event) => wh.updateCurrentCareer(event.id, event.number, event.selected)"
+            @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
+          />
+        </div>
         <SectionCard title="Description" class="mt-2 @3xl:mt-0">
           <template v-if="canEdit" #actions>
             <SectionButton icon="lucide:dices" variant="neutral" @click="formGenerateDescription">
