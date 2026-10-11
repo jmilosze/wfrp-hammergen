@@ -133,7 +133,8 @@ async function scrollToTop(): Promise<void> {
       />
     </div>
 
-    <div v-if="props.loading" class="flex justify-center">
+    <!-- Only before there are rows: on a reload the rows stay in place and the reload button shows the progress. -->
+    <div v-if="props.loading && searchedItems.length === 0" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
     </div>
     <div v-if="searchedItems.length > 0">

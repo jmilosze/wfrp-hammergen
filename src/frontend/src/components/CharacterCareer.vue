@@ -249,7 +249,7 @@ function emitPastSelected(id: string) {
         <LinkButton class="mr-2 mb-2 shrink-0 btn" routeName="career" :params="{ id: 'create' }" :newWindow="true">
           Create new
         </LinkButton>
-        <ReloadButton @click="emit('reload')" />
+        <ReloadButton :loading="props.loading" @click="emit('reload')" />
         <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
 
         <template #name="{ id }: { id: string }">

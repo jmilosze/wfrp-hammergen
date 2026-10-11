@@ -148,7 +148,7 @@ function onEditClick() {
         <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
           Create new
         </LinkButton>
-        <ReloadButton @click="emit('reload')" />
+        <ReloadButton :loading="props.loading" @click="emit('reload')" />
 
         <template #name="{ id }: { id: string }">
           <TextLink :routeName="routeName" :params="{ id: id }">

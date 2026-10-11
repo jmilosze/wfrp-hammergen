@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import ActionButton from "./ActionButton.vue";
+
+// loading: the arrows spin and the button is disabled while the list reloads.
+defineProps<{ loading?: boolean }>();
 </script>
 
 <template>
-  <ActionButton class="mr-2 mb-2 shrink-0 btn">
+  <ActionButton class="mr-2 mb-2 shrink-0 btn" :disabled="loading" :aria-busy="loading" aria-label="Reload">
     <svg
       class="w-6 h-6"
+      :class="{ 'animate-spin': loading }"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
