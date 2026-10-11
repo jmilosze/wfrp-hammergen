@@ -13,6 +13,41 @@ const viewNames = [
 ];
 
 const currentView = useRouteQuery("view", viewNames[0].value);
+
+// Core rulebook first, the rest alphabetically.
+const SOURCE_BOOKS = [
+  { title: "5th Edition", books: ["Warhammer Fantasy Roleplay 5th Edition Core Rulebook"] },
+  {
+    title: "4th Edition",
+    books: [
+      "Warhammer Fantasy Roleplay Rulebook (4th Edition)",
+      "Altdorf - Crown of the Empire",
+      "Archives of the Empire: Volume I, II, and III",
+      "Death on the Reik Companion",
+      "Deft Steps Light Fingers",
+      "Dwarf Player's Guide",
+      "Enemy in Shadows",
+      "Enemy in Shadows Companion",
+      "High Elf Player's Guide",
+      "Lords of Stone and Steel",
+      "Lustria",
+      "Middenheim City of the White Wolf",
+      "Reikland Miscellanea",
+      "Rough Nights & Hard Days",
+      "Salzenmund, City of Salt and Silver",
+      "Sea of Claws",
+      "Starter Set",
+      "Sylvania: The Cursed County",
+      "The Imperial Zoo",
+      "The Temple of Spite",
+      "Tribes and Tribulations",
+      "Ubersreik Adventures",
+      "Ubersreik Adventures 2",
+      "Up in Arms",
+      "Winds of Magic",
+    ],
+  },
+];
 </script>
 
 <template>
@@ -45,39 +80,20 @@ const currentView = useRouteQuery("view", viewNames[0].value);
         <TextLink href="https://cubicle7games.com/warhammer-fantasy">Buy the books from Cubicle 7</TextLink>
       </p>
     </div>
-    <p>Hammergen includes contents from the following source books:</p>
-    <p class="mt-2 font-semibold">5th Edition</p>
-    <ul class="list-disc ml-6 mt-1">
-      <li>Warhammer Fantasy Roleplay 5th Edition Core Rulebook</li>
-    </ul>
-    <p class="mt-2 font-semibold">4th Edition</p>
-    <ul class="list-disc ml-6 mt-1">
-      <li>Warhammer Fantasy Roleplay Rulebook (4th Edition)</li>
-      <li>Rough Nights & Hard Days</li>
-      <li>Archives of the Empire: Volume I, II, and III</li>
-      <li>Up in Arms</li>
-      <li>Winds of Magic</li>
-      <li>Middenheim City of the White Wolf</li>
-      <li>Salzenmund, City of Salt and Silver</li>
-      <li>Sea of Claws</li>
-      <li>Lustria</li>
-      <li>Enemy in Shadows</li>
-      <li>Enemy in Shadows Companion</li>
-      <li>Death on the Reik Companion</li>
-      <li>Starter Set</li>
-      <li>Ubersreik Adventures</li>
-      <li>Ubersreik Adventures 2</li>
-      <li>Altdorf - Crown of the Empire</li>
-      <li>The Imperial Zoo</li>
-      <li>Reikland Miscellanea</li>
-      <li>Tribes and Tribulations</li>
-      <li>Dwarf Player's Guide</li>
-      <li>Deft Steps Light Fingers</li>
-      <li>High Elf Player's Guide</li>
-      <li>Lords of Stone and Steel</li>
-      <li>The Temple of Spite</li>
-      <li>Sylvania: The Cursed County</li>
-    </ul>
+    <div class="mt-3 grid gap-4 md:grid-cols-[1fr_3fr]">
+      <div
+        v-for="edition in SOURCE_BOOKS"
+        :key="edition.title"
+        class="p-4 bg-neutral-50 border border-neutral-200 rounded-lg"
+      >
+        <div class="mb-2 pb-1 border-b border-primary-600 text-sm font-bold uppercase tracking-widest text-primary-800">
+          {{ edition.title }}
+        </div>
+        <ul class="list-disc ml-5 gap-x-8" :class="{ 'sm:columns-2 lg:columns-3': edition.books.length > 1 }">
+          <li v-for="book in edition.books" :key="book" class="break-inside-avoid py-0.5">{{ book }}</li>
+        </ul>
+      </div>
+    </div>
   </div>
   <div v-else-if="currentView === viewNames[1].value">
     <HammergenFaq />

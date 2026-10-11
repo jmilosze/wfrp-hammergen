@@ -110,11 +110,9 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
     </nav>
     <nav class="hidden lg:block bg-neutral-200 border-b border-neutral-300 text-sm">
       <div class="max-w-7xl mx-auto h-8 px-4 flex items-center justify-center gap-1">
-        <NavLink href="https://dice.hammergen.net/" icon="lucide:dices" :class="SECONDARY_LINK">Roll dice!</NavLink>
-        <NavLink href="https://ko-fi.com/Q5Q12E0KB" icon="lucide:heart" :class="SECONDARY_LINK">
-          Support Hammergen
-        </NavLink>
-        <NavLink routeName="about" icon="lucide:info" :class="SECONDARY_LINK">About</NavLink>
+        <NavLink href="https://dice.hammergen.net/" :class="SECONDARY_LINK">Roll dice!</NavLink>
+        <NavLink href="https://ko-fi.com/Q5Q12E0KB" :class="SECONDARY_LINK"> Support Hammergen </NavLink>
+        <NavLink routeName="about" :class="SECONDARY_LINK">About</NavLink>
       </div>
     </nav>
   </header>

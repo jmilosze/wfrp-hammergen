@@ -96,13 +96,9 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
         <NavLink routeName="login" :class="LINK" @click="open = false">Login</NavLink>
       </div>
       <div class="pt-2">
-        <NavLink href="https://dice.hammergen.net/" icon="lucide:dices" :class="LINK" @click="open = false">
-          Roll dice!
-        </NavLink>
-        <NavLink href="https://ko-fi.com/Q5Q12E0KB" icon="lucide:heart" :class="LINK" @click="open = false">
-          Support Hammergen
-        </NavLink>
-        <NavLink routeName="about" icon="lucide:info" :class="LINK" @click="open = false">About</NavLink>
+        <NavLink href="https://dice.hammergen.net/" :class="LINK" @click="open = false"> Roll dice! </NavLink>
+        <NavLink href="https://ko-fi.com/Q5Q12E0KB" :class="LINK" @click="open = false"> Support Hammergen </NavLink>
+        <NavLink routeName="about" :class="LINK" @click="open = false">About</NavLink>
       </div>
     </div>
   </div>
