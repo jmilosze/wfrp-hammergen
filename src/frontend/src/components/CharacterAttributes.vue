@@ -51,7 +51,7 @@ function newRolls() {
     </template>
     <div class="@container w-full p-2">
       <div class="flex flex-col gap-4 @5xl:hidden">
-        <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+        <div class="bg-white border border-neutral-300 min-w-fit">
           <table class="w-full">
             <thead>
               <tr>
@@ -130,9 +130,8 @@ function newRolls() {
               </tr>
             </tbody>
           </table>
-          <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
         </div>
-        <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+        <div class="bg-white border border-neutral-300 min-w-fit">
           <table class="w-full">
             <thead>
               <tr>
@@ -259,9 +258,8 @@ function newRolls() {
               </tr>
             </tbody>
           </table>
-          <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
         </div>
-        <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+        <div class="bg-white border border-neutral-300 min-w-fit">
           <table class="w-full">
             <thead>
               <tr>
@@ -388,10 +386,9 @@ function newRolls() {
               </tr>
             </tbody>
           </table>
-          <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
         </div>
       </div>
-      <div class="hidden @5xl:block bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+      <div class="hidden @5xl:block bg-white border border-neutral-300 min-w-fit">
         <table class="w-full">
           <thead>
             <tr>
@@ -686,7 +683,6 @@ function newRolls() {
             </tr>
           </tbody>
         </table>
-        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
       </div>
       <div class="text-sm text-danger-600 mt-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
         {{ rollsValidationStatus.message }}

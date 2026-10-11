@@ -9,7 +9,8 @@ withDefaults(defineProps<{ title?: string; columns?: Columns }>(), { title: "", 
 const COLUMNS_CLASS: Record<Columns, string> = {
   1: "",
   2: "@md:grid-cols-2",
-  3: "@xl:grid-cols-3",
+  // Three short cells fit side by side once labels shrink to their text.
+  3: "@md:grid-cols-3 @md:[&_label]:min-w-0",
 };
 </script>
 
@@ -18,7 +19,7 @@ const COLUMNS_CLASS: Record<Columns, string> = {
     <div class="flex flex-col gap-px border border-neutral-400 bg-neutral-300">
       <div
         v-if="title"
-        class="px-2 py-1 bg-white text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
+        class="px-2 py-1 bg-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
       >
         {{ title }}
       </div>

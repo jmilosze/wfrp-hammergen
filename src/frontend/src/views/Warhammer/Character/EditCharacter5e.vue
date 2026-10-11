@@ -455,13 +455,7 @@ const modifierAttributes = computed(() => {
           </SheetTable>
         </div>
         <SheetTable title="Wealth" :columns="3">
-          <SheetField
-            v-model="wh.brass"
-            type="number"
-            title="Brass"
-            :validationStatus="validBrass"
-            :disabled="!canEdit"
-          />
+          <SheetField v-model="wh.gold" type="number" title="Gold" :validationStatus="validGold" :disabled="!canEdit" />
           <SheetField
             v-model="wh.silver"
             type="number"
@@ -469,30 +463,14 @@ const modifierAttributes = computed(() => {
             :validationStatus="validSilver"
             :disabled="!canEdit"
           />
-          <SheetField v-model="wh.gold" type="number" title="Gold" :validationStatus="validGold" :disabled="!canEdit" />
+          <SheetField
+            v-model="wh.brass"
+            type="number"
+            title="Brass"
+            :validationStatus="validBrass"
+            :disabled="!canEdit"
+          />
         </SheetTable>
-        <SectionCard title="Sin and corruption">
-          <div class="p-2">
-            <div class="flex flex-col @2xl:flex-row gap-4">
-              <FormInput
-                v-model="wh.sin"
-                type="number"
-                title="Sin"
-                :validationStatus="validSin"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-              <FormInput
-                v-model="wh.corruption"
-                type="number"
-                title="Corruption"
-                :validationStatus="validCorruption"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-            </div>
-          </div>
-        </SectionCard>
         <SectionCard title="Experience">
           <div class="p-2">
             <div class="flex flex-col @2xl:flex-row gap-4">
@@ -666,85 +644,104 @@ const modifierAttributes = computed(() => {
   />
 
   <div class="flex justify-between text-left gap-4 my-4 flex-wrap">
-    <SelectTable
-      :disabled="!canEdit"
-      :initSelectedItems="wh.spells"
-      :itemList="spellLists.withAllowed.value"
-      :fourEIds="spellLists.fourEIds.value"
-      title="Spells"
-      modalTitle="Edit spells"
-      modalId="characterSpells"
-      :loading="spellLists.loading.value"
-      :clearAllBtn="true"
-      :disableDescription="true"
-      routeName="spell"
-      :truncateModalDescription="100"
-      class="flex-1 min-w-52"
-      @reload="spellLists.reload"
-      @selected="(e) => wh.updateSpells(e.id, e.selected)"
-      @clearAll="wh.clearSpells(true)"
-    />
-    <SelectTable
-      :disabled="!canEdit"
-      :initSelectedItems="wh.prayers"
-      :itemList="prayerLists.withAllowed.value"
-      :fourEIds="prayerLists.fourEIds.value"
-      title="Prayers"
-      modalTitle="Edit prayers"
-      modalId="characterPrayers"
-      :loading="prayerLists.loading.value"
-      :clearAllBtn="true"
-      :disableDescription="true"
-      routeName="prayer"
-      :truncateModalDescription="100"
-      class="flex-1 min-w-52"
-      @reload="prayerLists.reload"
-      @selected="(e) => wh.updatePrayers(e.id, e.selected)"
-      @clearAll="wh.clearPrayers(true)"
-    />
-  </div>
-
-  <div class="flex justify-between text-left gap-4 my-4 flex-wrap">
-    <SelectTable
-      :disabled="!canEdit"
-      :initSelectedItems="wh.mutations"
-      :itemList="mutationLists.withAllowed.value"
-      :fourEIds="mutationLists.fourEIds.value"
-      title="Mutations"
-      modalTitle="Edit mutations"
-      modalId="characterMutations"
-      :loading="mutationLists.loading.value"
-      :clearAllBtn="true"
-      :disableDescription="true"
-      routeName="mutation"
-      :truncateModalDescription="100"
-      class="flex-1 min-w-56"
-      @reload="mutationLists.reload"
-      @selected="(e) => wh.updateMutations(e.id, e.selected, mutationLists.list5e.whList.value)"
-      @clearAll="wh.clearMutations(true)"
-    />
-    <SelectIdValueTable
-      :disabled="!canEdit"
-      :selected="wh.traits"
-      :itemList="traitLists.withAllowed.value"
-      :fourEIds="traitLists.fourEIds.value"
-      title="Creature traits"
-      modalTitle="Edit traits"
-      :loading="traitLists.loading.value"
-      :clearAllBtn="true"
-      :disableDescription="true"
-      :allowRepeat="true"
-      :validationStatus="wh.validateTraits()"
-      routeName="trait"
-      :truncateModalDescription="100"
-      class="flex-1 min-w-56"
-      @reload="traitLists.reload"
-      @add="(id) => wh.addTrait(id, traitLists.list5e.whList.value)"
-      @remove="(e) => wh.removeTrait(e.index)"
-      @selected="(e) => wh.updateTraits(e.id, e.selected, traitLists.list5e.whList.value)"
-      @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
-      @clearAll="wh.clearTraits()"
-    />
+    <div class="grow basis-80">
+      <SheetTable title="Magic and Faith">
+        <SheetField
+          v-model="wh.sin"
+          type="number"
+          title="Sin Points"
+          :validationStatus="validSin"
+          :disabled="!canEdit"
+        />
+      </SheetTable>
+      <SelectTable
+        :disabled="!canEdit"
+        :initSelectedItems="wh.prayers"
+        :itemList="prayerLists.withAllowed.value"
+        :fourEIds="prayerLists.fourEIds.value"
+        title="Prayers"
+        modalTitle="Edit prayers"
+        modalId="characterPrayers"
+        :loading="prayerLists.loading.value"
+        :clearAllBtn="true"
+        :disableDescription="true"
+        routeName="prayer"
+        :truncateModalDescription="100"
+        class="-mt-px"
+        @reload="prayerLists.reload"
+        @selected="(e) => wh.updatePrayers(e.id, e.selected)"
+        @clearAll="wh.clearPrayers(true)"
+      />
+      <SelectTable
+        :disabled="!canEdit"
+        :initSelectedItems="wh.spells"
+        :itemList="spellLists.withAllowed.value"
+        :fourEIds="spellLists.fourEIds.value"
+        title="Spells"
+        modalTitle="Edit spells"
+        modalId="characterSpells"
+        :loading="spellLists.loading.value"
+        :clearAllBtn="true"
+        :disableDescription="true"
+        routeName="spell"
+        :truncateModalDescription="100"
+        class="-mt-px"
+        @reload="spellLists.reload"
+        @selected="(e) => wh.updateSpells(e.id, e.selected)"
+        @clearAll="wh.clearSpells(true)"
+      />
+    </div>
+    <div class="grow basis-80">
+      <SheetTable title="Traits and Corruption">
+        <SheetField
+          v-model="wh.corruption"
+          type="number"
+          title="Corruption Points"
+          :validationStatus="validCorruption"
+          :disabled="!canEdit"
+        />
+      </SheetTable>
+      <SelectTable
+        :disabled="!canEdit"
+        :initSelectedItems="wh.mutations"
+        :itemList="mutationLists.withAllowed.value"
+        :fourEIds="mutationLists.fourEIds.value"
+        title="Mutations"
+        modalTitle="Edit mutations"
+        modalId="characterMutations"
+        :loading="mutationLists.loading.value"
+        :clearAllBtn="true"
+        :disableDescription="true"
+        routeName="mutation"
+        :truncateModalDescription="100"
+        class="-mt-px"
+        @reload="mutationLists.reload"
+        @selected="(e) => wh.updateMutations(e.id, e.selected, mutationLists.list5e.whList.value)"
+        @clearAll="wh.clearMutations(true)"
+      />
+      <SelectIdValueTable
+        :disabled="!canEdit"
+        :selected="wh.traits"
+        :itemList="traitLists.withAllowed.value"
+        :fourEIds="traitLists.fourEIds.value"
+        title="Creature Traits"
+        modalTitle="Edit traits"
+        :loading="traitLists.loading.value"
+        :clearAllBtn="true"
+        :disableDescription="true"
+        :allowRepeat="true"
+        :validationStatus="wh.validateTraits()"
+        routeName="trait"
+        :truncateModalDescription="100"
+        class="-mt-px"
+        @reload="traitLists.reload"
+        @add="(id) => wh.addTrait(id, traitLists.list5e.whList.value)"
+        @remove="(e) => wh.removeTrait(e.index)"
+        @selected="(e) => wh.updateTraits(e.id, e.selected, traitLists.list5e.whList.value)"
+        @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
+        @clearAll="wh.clearTraits()"
+      />
+    </div>
   </div>
 
   <div class="mt-4">

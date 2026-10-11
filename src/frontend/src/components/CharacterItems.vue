@@ -175,7 +175,7 @@ function onEditClick() {
       <div class="flex flex-col md:flex-row gap-4 p-2">
         <div class="flex-1">
           <div class="mb-1">Equipped</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
+          <div class="bg-white border border-neutral-300">
             <table class="w-full">
               <thead>
                 <tr class="text-left">
@@ -195,12 +195,11 @@ function onEditClick() {
                 </tr>
               </tbody>
             </table>
-            <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
           </div>
         </div>
         <div class="flex-1">
           <div class="mb-1">Carried</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
+          <div class="bg-white border border-neutral-300">
             <table class="w-full">
               <thead>
                 <tr class="text-left">
@@ -220,12 +219,11 @@ function onEditClick() {
                 </tr>
               </tbody>
             </table>
-            <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
           </div>
         </div>
         <div class="flex-1">
           <div class="mb-1">Stored</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
+          <div class="bg-white border border-neutral-300">
             <table class="w-full">
               <thead>
                 <tr class="text-left">
@@ -245,7 +243,6 @@ function onEditClick() {
                 </tr>
               </tbody>
             </table>
-            <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
           </div>
         </div>
       </div>

@@ -23,11 +23,7 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
 
 <template>
   <div ref="container" class="flex flex-col gap-4">
-    <div
-      v-for="(row, index) in attributeRows"
-      :key="index"
-      class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit"
-    >
+    <div v-for="(row, index) in attributeRows" :key="index" class="bg-white border border-neutral-300 min-w-fit">
       <table class="w-full">
         <thead>
           <tr>
@@ -44,7 +40,6 @@ const tdClass = ["px-2", "py-2", "border-b", "border-neutral-300"];
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
     </div>
   </div>
 </template>
