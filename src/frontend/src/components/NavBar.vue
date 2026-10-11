@@ -92,11 +92,11 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
         <div class="hidden lg:flex items-center gap-1">
           <template v-if="auth.loggedIn.value">
             <NavLink routeName="manage" :class="TOP_LINK">Manage account</NavLink>
-            <NavLink :class="TOP_LINK" @click="auth.logout">Logout</NavLink>
+            <NavLink :class="TOP_LINK" @click="auth.logout">Log out</NavLink>
           </template>
           <template v-else>
             <NavLink routeName="register" :class="TOP_LINK">Register</NavLink>
-            <NavLink routeName="login" :class="TOP_LINK">Login</NavLink>
+            <NavLink routeName="login" :class="TOP_LINK">Log in</NavLink>
           </template>
         </div>
         <button

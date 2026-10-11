@@ -89,11 +89,11 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
       </div>
       <div v-if="auth.loggedIn.value" class="py-2">
         <NavLink routeName="manage" :class="LINK" @click="open = false">Manage account</NavLink>
-        <NavLink :class="LINK" @click="auth.logout">Logout</NavLink>
+        <NavLink :class="LINK" @click="auth.logout">Log out</NavLink>
       </div>
       <div v-else class="py-2">
         <NavLink routeName="register" :class="LINK" @click="open = false">Register</NavLink>
-        <NavLink routeName="login" :class="LINK" @click="open = false">Login</NavLink>
+        <NavLink routeName="login" :class="LINK" @click="open = false">Log in</NavLink>
       </div>
       <div class="pt-2">
         <NavLink href="https://dice.hammergen.net/" :class="LINK" @click="open = false"> Roll dice! </NavLink>
