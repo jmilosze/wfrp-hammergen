@@ -8,7 +8,7 @@ import ModalWindow from "./ModalWindow.vue";
 import SectionButton from "./SectionButton.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import FormInput from "./FormInput.vue";
-import ListTable from "./ListTable.vue";
+import SectionCard from "./SectionCard.vue";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
@@ -150,7 +150,7 @@ function onEditClick() {
 
 <template>
   <div>
-    <ListTable title="Talents" :loading="props.loading">
+    <SectionCard title="Talents" :loading="props.loading">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
         <SectionButton
@@ -165,19 +165,25 @@ function onEditClick() {
           Clear all
         </SectionButton>
       </template>
-      <template #headers>
-        <th class="border-b border-neutral-300 py-2 px-2">Times taken</th>
-      </template>
-      <tr v-for="src in selectedTalents" :key="src.id" class="bg-white hover:bg-neutral-200">
-        <td class="py-2 px-2 border-b border-neutral-300">
-          <TextLink routeName="talent" :params="{ id: src.id }">
-            {{ src.name }}
-          </TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(src.id)" />
-        </td>
-        <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
-      </tr>
-    </ListTable>
+      <table class="w-full">
+        <thead>
+          <tr class="text-left">
+            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="src in selectedTalents" :key="src.id" class="bg-white hover:bg-neutral-200">
+            <td class="py-2 px-2 border-b border-neutral-300">
+              <TextLink routeName="talent" :params="{ id: src.id }">
+                {{ src.name }}
+              </TextLink>
+              <span v-if="src.number > 1" class="ml-1">x{{ src.number }}</span>
+              <Edition4eBadge v-if="fourEIds?.has(src.id)" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </SectionCard>
     <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>

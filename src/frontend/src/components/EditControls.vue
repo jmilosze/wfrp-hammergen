@@ -32,13 +32,15 @@ onBeforeRouteLeave((_, __, next) => {
 
 const addAnother = ref(false);
 
-async function navigateToList() {
+// leaveAfterSave returns to the previous page in the browser history. A page opened in a new tab (e.g. "Create new"
+// in a picker) has no previous page, so it goes to the list instead.
+async function leaveAfterSave() {
   leaveWithoutConfirmation.value = true;
-  const previousState = router.options.history.state.back;
-  const queryString = typeof previousState === "string" ? previousState.split("?")[1] : "";
-  const queryParams = new URLSearchParams(queryString || "");
-  const allParams = Object.fromEntries(queryParams.entries());
-  await router.push({ name: props.list, query: allParams });
+  if (router.options.history.state.back === null) {
+    await router.push({ name: props.list });
+  } else {
+    router.back();
+  }
 }
 
 async function onSave() {
@@ -51,7 +53,7 @@ async function onSave() {
   if (addAnother.value) {
     props.resetForm();
   } else {
-    await navigateToList();
+    await leaveAfterSave();
   }
 }
 </script>

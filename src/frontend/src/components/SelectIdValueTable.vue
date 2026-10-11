@@ -164,7 +164,7 @@ const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
         </td>
         <td v-if="!disabled" :class="tdClass" class="w-0">
           <button
-            class="hover:bg-neutral-700 hover:text-primary-300 p-1 rounded"
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
             :aria-label="`Remove ${row.entity.name}`"
             @click="emit('remove', { index: row.index, id: row.entity.id })"
           >

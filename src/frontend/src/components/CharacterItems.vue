@@ -166,7 +166,7 @@ function onEditClick() {
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
         <SectionButton icon="lucide:plus" variant="neutral" :disabled="props.loading" @click="emit('addClassItems')">
-          Add class items
+          Add class trappings
         </SectionButton>
         <SectionButton icon="lucide:trash-2" variant="danger" :disabled="props.loading" @click="emit('clearAll')">
           Clear all

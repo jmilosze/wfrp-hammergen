@@ -18,7 +18,7 @@ withDefaults(
   <div class="@container bg-white border border-neutral-400 min-w-fit [&_tbody>tr:last-child>td]:border-b-0">
     <table class="w-full">
       <thead>
-        <tr class="text-left">
+        <tr class="text-left bg-primary-50">
           <th :colspan="titleColspan" class="py-1 px-2 border-b border-neutral-300">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <span>{{ title }}</span>

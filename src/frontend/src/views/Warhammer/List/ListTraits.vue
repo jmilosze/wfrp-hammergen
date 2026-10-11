@@ -62,7 +62,7 @@ function formatTraitRow(trait: Trait) {
   >
     {{ whList.apiError.value }}
   </AlertBlock>
-  <Header title="Creature traits" />
+  <Header title="Creature Traits" />
   <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
   <TableWithSearch
     v-model="searchTerm"

@@ -38,7 +38,7 @@ export const COMPENDIUM_SECTIONS: CompendiumSection[] = [
     title: "Corruption & Creatures",
     links: [
       { text: "Mutations", listRoute: "mutations" },
-      { text: "Creature traits", listRoute: "traits" },
+      { text: "Creature Traits", listRoute: "traits" },
     ],
   },
 ];
