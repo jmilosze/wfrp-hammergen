@@ -542,17 +542,6 @@ const modifierAttributes = computed(() => {
             @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
           />
         </div>
-        <SectionCard title="Description" class="mt-2 @3xl:mt-0">
-          <template v-if="canEdit" #actions>
-            <SectionButton icon="lucide:dices" variant="neutral" @click="populateDescription(wh)">
-              Generate
-            </SectionButton>
-          </template>
-          <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" class="p-2" />
-        </SectionCard>
-        <SectionCard title="Notes">
-          <FormTextarea v-model="wh.notes" :validationStatus="validNotes" :disabled="!canEdit" class="p-2" />
-        </SectionCard>
         <Ignored4eModifiersWarning :names="ignored4eModifiers" />
         <SectionCard title="Calculated">
           <div class="p-2">
@@ -575,6 +564,12 @@ const modifierAttributes = computed(() => {
       </div>
     </div>
   </div>
+  <SectionCard title="Description" class="my-4">
+    <template v-if="canEdit" #actions>
+      <SectionButton icon="lucide:dices" variant="neutral" @click="populateDescription(wh)">Generate</SectionButton>
+    </template>
+    <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" class="p-2" />
+  </SectionCard>
   <Ignored4eModifiersWarning :names="ignored4eModifiers" class="mb-2" />
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
@@ -743,6 +738,10 @@ const modifierAttributes = computed(() => {
       />
     </div>
   </div>
+
+  <SectionCard title="Notes" class="my-4">
+    <FormTextarea v-model="wh.notes" :validationStatus="validNotes" :disabled="!canEdit" class="p-2" />
+  </SectionCard>
 
   <div class="mt-4">
     <AfterSubmit
