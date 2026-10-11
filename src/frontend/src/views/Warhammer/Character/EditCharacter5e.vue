@@ -602,7 +602,7 @@ const modifierAttributes = computed(() => {
     <SheetTable title="Encumbrance" :columns="3" class="grow basis-80">
       <SheetCell title="Weapons">{{ encumbrance.weapons }}</SheetCell>
       <SheetCell title="Armour">{{ encumbrance.armour }}</SheetCell>
-      <SheetCell title="Other Equipped">{{ encumbrance.otherEquipped }}</SheetCell>
+      <SheetCell title="Other">{{ encumbrance.otherEquipped }}</SheetCell>
       <SheetCell title="Carried">{{ encumbrance.carried }}</SheetCell>
       <SheetCell title="Total">
         <span

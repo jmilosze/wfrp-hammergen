@@ -142,7 +142,7 @@ const modalColumns = [
   { name: "description", displayName: "Description", skipStackedTitle: true },
   { name: "equipped", displayName: "Equipped", skipStackedTitle: false },
   { name: "carried", displayName: "Carried", skipStackedTitle: false },
-  { name: "stored", displayName: "Stored", skipStackedTitle: false },
+  { name: "stored", displayName: "Stored/Assets", skipStackedTitle: false },
 ];
 
 const resetPaginationCounter = ref(0);
@@ -222,7 +222,7 @@ function onEditClick() {
           </div>
         </div>
         <div class="flex-1">
-          <div class="mb-1">Stored</div>
+          <div class="mb-1">Stored/Assets</div>
           <div class="bg-white border border-neutral-300">
             <table class="w-full">
               <thead>
