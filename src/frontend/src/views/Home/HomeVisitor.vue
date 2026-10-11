@@ -44,7 +44,7 @@ const FEATURES = [
     <!-- The compendium button spans both columns; smaller text on phones keeps the first two side by side. The
     LinkButton's inner row is centred. -->
     <div class="mt-8 grid grid-cols-2 w-full max-w-md gap-3 text-base sm:text-lg *:*:justify-center">
-      <LinkButton routeName="register" class="btn btn-primary px-2 whitespace-normal">Create account</LinkButton>
+      <LinkButton routeName="register" class="btn btn-primary px-2">Create account</LinkButton>
       <LinkButton routeName="login" class="btn btn-primary px-2">Log in</LinkButton>
       <LinkButton routeName="careers" class="col-span-2 btn btn-secondary">Browse the compendium</LinkButton>
     </div>

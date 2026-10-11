@@ -46,6 +46,7 @@ import ActionButton from "../../../components/ActionButton.vue";
 import Ignored4eModifiersWarning from "../../../components/Ignored4eModifiersWarning.vue";
 import { useModal } from "../../../composables/modal.ts";
 import HintModal from "../../../components/HintModal.vue";
+import EditionBadge from "../../../components/EditionBadge.vue";
 import { useGenerationProps5e } from "../../../composables/generationProps.ts";
 import { generateCharacter5e } from "../../../services/wh/character/generation/5e/generator5e.ts";
 import { populateFateFortune5e } from "../../../services/wh/character/generation/5e/fate5e.ts";
@@ -367,7 +368,7 @@ const modifierAttributes = computed(() => {
   <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
     <div class="flex items-center gap-2">
       Edition
-      <span class="px-2 py-0.5 rounded text-sm font-semibold bg-neutral-200 border border-neutral-400">5e</span>
+      <EditionBadge edition="5e" large />
     </div>
     <div class="flex items-center gap-2">
       <label class="flex items-center gap-2">
@@ -380,7 +381,7 @@ const modifierAttributes = computed(() => {
         />
         Allow 4e content
       </label>
-      <HintModal buttonText="?" square modalHeader="Allow 4e content" modalId="allow4eHint">
+      <HintModal modalHeader="Allow 4e content" modalId="allow4eHint">
         <p class="my-1">
           The character can use 4e content that has no 5e version. Such content is marked 4e in the pickers and on the
           character sheet.

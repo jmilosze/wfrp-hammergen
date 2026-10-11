@@ -75,7 +75,7 @@ Talents, traits and mutations share one `modifiers` block (size, movement, chara
 ### HG-12 4e Bless group contains Invoke talents
 Data · 2026-10-04
 
-In the public 4e data, *Invoke - Shallya*, *Invoke - Ranald*, *Invoke - The Night Prowler*, *Invoke - The Gamester*, *Invoke - The Deceiver* and *Invoke - The Protector* are in the Bless group instead of the Invoke group, so they are missing from Invoke. Fix with a `db/scripts` fix script (see `fix_4e_skills.py`).
+In the public 4e data, *Invoke - Shallya*, *Invoke - Ranald*, *Invoke - The Night Prowler*, *Invoke - The Gamester*, *Invoke - The Deceiver* and *Invoke - The Protector* are in the Bless group instead of the Invoke group, so they are missing from Invoke. Fix with a `db/scripts` fix script.
 
 ## Backend
 

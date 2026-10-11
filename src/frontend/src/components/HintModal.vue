@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import ActionButton from "./ActionButton.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 
 const props = defineProps<{
-  buttonText: string;
-  // Makes the button as wide as it is high, for a one-character text such as "?".
-  square?: boolean;
+  // Without a text, the modal opens from a question mark icon.
+  buttonText?: string;
   modalHeader?: string;
   modalId?: string;
 }>();
@@ -17,9 +17,18 @@ const modalId = props.modalId ? props.modalId : "hintModal";
 </script>
 
 <template>
-  <ActionButton class="btn btn-secondary btn-sm" :class="{ 'w-9 px-0': square }" @click="modal.showModal(modalId)">
+  <ActionButton v-if="buttonText" class="btn btn-secondary btn-sm" @click="modal.showModal(modalId)">
     {{ buttonText }}
   </ActionButton>
+  <button
+    v-else
+    type="button"
+    :aria-label="modalHeader ? `Help: ${modalHeader}` : 'Help'"
+    class="text-neutral-500 bg-neutral-200 hover:text-neutral-950 hover:bg-neutral-400 rounded-full cursor-pointer"
+    @click="modal.showModal(modalId)"
+  >
+    <Icon icon="lucide:circle-help" class="size-6" />
+  </button>
 
   <ModalWindow :id="modalId">
     <template v-if="modalHeader" #header> {{ modalHeader }} </template>

@@ -71,7 +71,7 @@ const validAtts = computed(() => {
   <div class="@container">
     <div class="flex items-center mb-2">
       <div class="mr-2">Character modifiers</div>
-      <HintModal buttonText="?" square modalHeader="Character modifiers" modalId="modifiersHelpModal">
+      <HintModal modalHeader="Character modifiers" modalId="modifiersHelpModal">
         <div>
           Talent modifiers are automatically added to character sheet in both edit and view modes. For example, if you
           add a talent that modifies the Size, it will automatically affect the number of Wounds. Sum of all Attribute

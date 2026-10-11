@@ -52,6 +52,7 @@ import { mutationApi } from "../../../services/wh/content/mutation.ts";
 import { prayerApi } from "../../../services/wh/content/prayer.ts";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import HintModal from "../../../components/HintModal.vue";
+import EditionBadge from "../../../components/EditionBadge.vue";
 import { skillApi } from "../../../services/wh/content/skill.ts";
 import { talentApi } from "../../../services/wh/content/talent.ts";
 import { useGenerationProps } from "../../../composables/generationProps.ts";
@@ -442,7 +443,7 @@ const modifierAttributes = computed(() => {
   <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
     <div class="flex items-center gap-2">
       Edition
-      <span class="px-2 py-0.5 rounded text-sm font-semibold bg-neutral-200 border border-neutral-400">4e</span>
+      <EditionBadge edition="4e" large />
     </div>
     <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!canEdit" />
   </div>
