@@ -10,6 +10,7 @@ export interface CharacterRules {
   getMovement(species: SpeciesWithRegion, mods: number): number;
   getSize(mods: number): number;
   getWounds(size: number, T: number, WP: number, S: number, hardyRanks: number): number;
+  getMaxEncumbrance(S: number, T: number, strongBackRanks: number, sturdyRanks: number): number;
 }
 
 export function rulesFor(edition: Edition): CharacterRules {

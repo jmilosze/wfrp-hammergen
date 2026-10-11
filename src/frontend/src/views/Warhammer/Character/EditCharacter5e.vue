@@ -10,7 +10,6 @@ import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import AfterSubmit from "../../../components/AfterSubmit.vue";
-import FormInput from "../../../components/FormInput.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import { printSize } from "../../../services/wh/character/size.ts";
 import { printSpeciesWithRegion, SpeciesWithRegion } from "../../../services/wh/core/species.ts";
@@ -51,6 +50,8 @@ import SectionButton from "../../../components/SectionButton.vue";
 import SheetField from "../../../components/SheetField.vue";
 import SheetSelect from "../../../components/SheetSelect.vue";
 import SheetTable from "../../../components/SheetTable.vue";
+import SheetCell from "../../../components/SheetCell.vue";
+import { encumbranceItems, getEncumbrance } from "../../../services/wh/character/encumbrance.ts";
 import EditionBadge from "../../../components/EditionBadge.vue";
 import { useGenerationProps5e } from "../../../composables/generationProps.ts";
 import { generateCharacter5e } from "../../../services/wh/character/generation/5e/generator5e.ts";
@@ -195,6 +196,13 @@ function formGenerateStatusStanding() {
 
 const movement = computed(() => wh.value.getMovement());
 const wounds = computed(() => wh.value.getWounds());
+const encumbrance = computed(() =>
+  getEncumbrance(
+    encumbranceItems(wh.value.equippedItems, itemLists.withAllowed.value),
+    encumbranceItems(wh.value.carriedItems, itemLists.withAllowed.value),
+  ),
+);
+const maxEncumbrance = computed(() => wh.value.getMaxEncumbrance());
 const size = computed(() => printSize(wh.value.getSize()));
 
 watch(
@@ -453,50 +461,29 @@ const modifierAttributes = computed(() => {
               </SectionButton>
             </template>
           </SheetTable>
+          <SheetTable :columns="3" class="-mt-px">
+            <SheetCell title="Movement">{{ movement }}</SheetCell>
+            <SheetCell title="Size">{{ size }}</SheetCell>
+            <SheetCell title="Wounds">{{ wounds }}</SheetCell>
+          </SheetTable>
         </div>
-        <SheetTable title="Wealth" :columns="3">
-          <SheetField v-model="wh.gold" type="number" title="Gold" :validationStatus="validGold" :disabled="!canEdit" />
+        <SheetTable title="Experience" :columns="3">
           <SheetField
-            v-model="wh.silver"
+            v-model="wh.currentExp"
             type="number"
-            title="Silver"
-            :validationStatus="validSilver"
+            title="Unspent"
+            :validationStatus="validCurrentExp"
             :disabled="!canEdit"
           />
           <SheetField
-            v-model="wh.brass"
+            v-model="wh.spentExp"
             type="number"
-            title="Brass"
-            :validationStatus="validBrass"
+            title="Spent"
+            :validationStatus="validSpentExp"
             :disabled="!canEdit"
           />
+          <SheetCell title="Total">{{ wh.currentExp + wh.spentExp }}</SheetCell>
         </SheetTable>
-        <SectionCard title="Experience">
-          <div class="p-2">
-            <div class="flex flex-col @2xl:flex-row gap-4">
-              <FormInput
-                v-model="wh.currentExp"
-                type="number"
-                title="Unspent"
-                :validationStatus="validCurrentExp"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-              <FormInput
-                v-model="wh.spentExp"
-                type="number"
-                title="Spent"
-                :validationStatus="validSpentExp"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-              <div>
-                <p class="mb-3">Total</p>
-                <div class="ml-2">{{ wh.currentExp + wh.spentExp }}</div>
-              </div>
-            </div>
-          </div>
-        </SectionCard>
       </div>
     </div>
     <div class="flex-1">
@@ -543,24 +530,6 @@ const modifierAttributes = computed(() => {
           />
         </div>
         <Ignored4eModifiersWarning :names="ignored4eModifiers" />
-        <SectionCard title="Calculated">
-          <div class="p-2">
-            <div class="flex flex-col @2xl:flex-row gap-4">
-              <div class="flex-1">
-                <p class="mb-3">Movement</p>
-                <div class="ml-1">{{ movement }}</div>
-              </div>
-              <div class="flex-1">
-                <p class="mb-3">Size</p>
-                <div>{{ size }}</div>
-              </div>
-              <div class="flex-1">
-                <p class="mb-3">Wounds</p>
-                <div class="ml-1">{{ wounds }}</div>
-              </div>
-            </div>
-          </div>
-        </SectionCard>
       </div>
     </div>
   </div>
@@ -568,7 +537,7 @@ const modifierAttributes = computed(() => {
     <template v-if="canEdit" #actions>
       <SectionButton icon="lucide:dices" variant="neutral" @click="populateDescription(wh)">Generate</SectionButton>
     </template>
-    <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" class="p-2" />
+    <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare />
   </SectionCard>
   <Ignored4eModifiersWarning :names="ignored4eModifiers" class="mb-2" />
   <CharacterAttributes
@@ -618,6 +587,34 @@ const modifierAttributes = computed(() => {
     />
   </div>
 
+  <div class="flex flex-wrap gap-4 my-4">
+    <SheetTable title="Wealth" :columns="3" class="grow basis-80">
+      <SheetField v-model="wh.gold" type="number" title="Gold" :validationStatus="validGold" :disabled="!canEdit" />
+      <SheetField
+        v-model="wh.silver"
+        type="number"
+        title="Silver"
+        :validationStatus="validSilver"
+        :disabled="!canEdit"
+      />
+      <SheetField v-model="wh.brass" type="number" title="Brass" :validationStatus="validBrass" :disabled="!canEdit" />
+    </SheetTable>
+    <SheetTable title="Encumbrance" :columns="3" class="grow basis-80">
+      <SheetCell title="Weapons">{{ encumbrance.weapons }}</SheetCell>
+      <SheetCell title="Armour">{{ encumbrance.armour }}</SheetCell>
+      <SheetCell title="Other Equipped">{{ encumbrance.otherEquipped }}</SheetCell>
+      <SheetCell title="Carried">{{ encumbrance.carried }}</SheetCell>
+      <SheetCell title="Total">
+        <span
+          :class="{ 'text-danger-600 font-semibold': encumbrance.total > maxEncumbrance }"
+          :title="encumbrance.total > maxEncumbrance ? 'Over the Encumbrance limit' : undefined"
+        >
+          {{ encumbrance.total }}
+        </span>
+      </SheetCell>
+      <SheetCell title="Max">{{ maxEncumbrance }}</SheetCell>
+    </SheetTable>
+  </div>
   <CharacterItems
     :disabled="!canEdit"
     :initEquipped="wh.equippedItems"
@@ -740,7 +737,7 @@ const modifierAttributes = computed(() => {
   </div>
 
   <SectionCard title="Notes" class="my-4">
-    <FormTextarea v-model="wh.notes" :validationStatus="validNotes" :disabled="!canEdit" class="p-2" />
+    <FormTextarea v-model="wh.notes" :validationStatus="validNotes" :disabled="!canEdit" bare />
   </SectionCard>
 
   <div class="mt-4">

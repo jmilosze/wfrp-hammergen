@@ -88,9 +88,15 @@ export function getWounds4e(size: number, T: number, WP: number, S: number, hard
   return base + TB * hardyRanks;
 }
 
+// 4e talents carry no Strong Back or Sturdy effects yet (HG-25), so the limit is SB + TB.
+export function getMaxEncumbrance4e(S: number, T: number): number {
+  return Math.floor(S / 10) + Math.floor(T / 10);
+}
+
 export const rules4e: CharacterRules = {
   getSpeciesAttributes: getSpeciesAttributes4e,
   getMovement: getMovement4e,
   getSize: getSize4e,
   getWounds: getWounds4e,
+  getMaxEncumbrance: getMaxEncumbrance4e,
 };

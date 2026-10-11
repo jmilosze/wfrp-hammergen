@@ -5,7 +5,10 @@ defineProps<{ title: string }>();
 
 <template>
   <div class="flex items-stretch min-w-0 bg-white">
-    <div class="flex items-center shrink-0 min-w-32 px-2 border-r border-neutral-300 font-semibold whitespace-nowrap">
+    <div
+      data-sheet-label
+      class="flex items-center shrink-0 min-w-32 px-2 border-r border-neutral-300 font-semibold whitespace-nowrap"
+    >
       {{ title }}
     </div>
     <div class="flex flex-col justify-center flex-1 min-w-0 min-h-9 px-2 py-1">

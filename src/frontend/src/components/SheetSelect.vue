@@ -19,6 +19,7 @@ const selectId = useId();
   >
     <label
       :for="selectId"
+      data-sheet-label
       class="flex items-center shrink-0 min-w-32 px-2 border-r border-neutral-300 font-semibold whitespace-nowrap"
     >
       {{ title }}

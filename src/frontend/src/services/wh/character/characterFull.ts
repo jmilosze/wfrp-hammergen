@@ -42,6 +42,7 @@ import { CharacterModifiersData, hasModifiers, ModifierEffect } from "../core/ch
 import { TraitApiData } from "../content/trait.ts";
 import { RuneApiData } from "../content/rune.ts";
 import { printWithValue } from "../../../utils/idValue.ts";
+import { getEncumbrance } from "./encumbrance.ts";
 
 export interface ItemFullApiData {
   name: string;
@@ -332,6 +333,15 @@ export function apiResponseToCharacterFull(
     [ItemType.Container, ItemType.Other].includes(variantFor(x.wh, e).type),
   );
 
+  const toEncumbranceItem = (x: WhNumber<ItemFullApiData>) => ({
+    type: variantFor(x.wh, e).type,
+    enc: variantFor(x.wh, e).enc,
+    number: x.number,
+  });
+  const encumbrance = getEncumbrance(
+    fullCharacterApi.object.equippedItems.map(toEncumbranceItem),
+    fullCharacterApi.object.carriedItems.map(toEncumbranceItem),
+  );
   return {
     id: fullCharacterApi.id,
     ownerId: fullCharacterApi.ownerId,
@@ -393,14 +403,10 @@ export function apiResponseToCharacterFull(
     traits: getTraits(e, fullCharacterApi.object.traits),
     mutations: getMutations(e, fullCharacterApi.object.mutations),
 
-    encWeapon: equippedWeapon.map((x) => variantFor(x.wh, e).enc * x.number).reduce((x, y) => x + y, 0),
-    encArmor: equippedArmor
-      .map((x) => (variantFor(x.wh, e).enc > 0 ? variantFor(x.wh, e).enc - 1 : 0) * x.number)
-      .reduce((x, y) => x + y, 0),
-    encOther: equippedOther
-      .map((x) => (variantFor(x.wh, e).enc > 0 ? variantFor(x.wh, e).enc - 1 : 0) * x.number)
-      .reduce((x, y) => x + y, 0),
-    encCarried: fullCharacterApi.object.carriedItems.map((x) => variantFor(x.wh, e).enc).reduce((x, y) => x + y, 0),
+    encWeapon: encumbrance.weapons,
+    encArmor: encumbrance.armour,
+    encOther: encumbrance.otherEquipped,
+    encCarried: encumbrance.carried,
   };
 }
 

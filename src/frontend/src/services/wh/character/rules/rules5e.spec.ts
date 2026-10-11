@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getMovement5e, getSize5e, getSpeciesAttributes5e, getWounds5e } from "./rules5e.ts";
+import { getMaxEncumbrance5e, getMovement5e, getSize5e, getSpeciesAttributes5e, getWounds5e } from "./rules5e.ts";
 import { Size } from "../size.ts";
 import { SpeciesWithRegion } from "../../core/species.ts";
 
@@ -61,5 +61,17 @@ describe("getWounds5e", () => {
     { name: "monstrous", size: Size.Monstrous, hardy: 0, expected: 96 },
   ])("when size is $name", (t) => {
     expect(getWounds5e(t.size, 34, 27, 41, t.hardy)).toEqual(t.expected);
+  });
+});
+
+describe("getMaxEncumbrance5e", () => {
+  test.each([
+    { name: "SB + TB", S: 34, T: 41, strongBack: 0, sturdy: 0, expected: 7 },
+    { name: "Sturdy counts SB twice", S: 34, T: 41, strongBack: 0, sturdy: 1, expected: 10 },
+    { name: "Strong Back once adds 1", S: 34, T: 41, strongBack: 1, sturdy: 0, expected: 8 },
+    { name: "Strong Back twice adds 3", S: 34, T: 41, strongBack: 2, sturdy: 0, expected: 10 },
+    { name: "both", S: 34, T: 41, strongBack: 2, sturdy: 1, expected: 13 },
+  ])("$name", ({ S, T, strongBack, sturdy, expected }) => {
+    expect(getMaxEncumbrance5e(S, T, strongBack, sturdy)).toBe(expected);
   });
 });

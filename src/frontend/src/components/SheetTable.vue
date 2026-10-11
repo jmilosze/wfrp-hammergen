@@ -10,7 +10,7 @@ const COLUMNS_CLASS: Record<Columns, string> = {
   1: "",
   2: "@md:grid-cols-2",
   // Three short cells fit side by side once labels shrink to their text.
-  3: "@md:grid-cols-3 @md:[&_label]:min-w-0",
+  3: "@md:grid-cols-3 @md:[&_[data-sheet-label]]:min-w-0",
 };
 </script>
 

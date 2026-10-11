@@ -355,17 +355,12 @@ export class Character extends WhEntity {
     return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.getModifierAttributes());
   }
 
-  getHardyRanks(): number {
+  // getEffectRanks counts an effect over talents (per rank taken), mutations and traits.
+  getEffectRanks(effect: ModifierEffect): number {
     return (
-      Object.values(this.modifiers.talents).reduce(
-        (a, v) => a + v.number * (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
-        0,
-      ) +
-      Object.values(this.modifiers.mutations).reduce(
-        (a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
-        0,
-      ) +
-      Object.values(this.modifiers.traits).reduce((a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0), 0)
+      Object.values(this.modifiers.talents).reduce((a, v) => a + v.number * (v.value.effects.has(effect) ? 1 : 0), 0) +
+      Object.values(this.modifiers.mutations).reduce((a, v) => a + (v.value.effects.has(effect) ? 1 : 0), 0) +
+      Object.values(this.modifiers.traits).reduce((a, v) => a + (v.value.effects.has(effect) ? 1 : 0), 0)
     );
   }
 
@@ -391,7 +386,17 @@ export class Character extends WhEntity {
       attributeTotal.T,
       attributeTotal.WP,
       attributeTotal.S,
-      this.getHardyRanks(),
+      this.getEffectRanks(ModifierEffect.Hardy),
+    );
+  }
+
+  getMaxEncumbrance(): number {
+    const attributeTotal = this.getTotalAttributes();
+    return rulesFor(this.edition).getMaxEncumbrance(
+      attributeTotal.S,
+      attributeTotal.T,
+      this.getEffectRanks(ModifierEffect.StrongBack),
+      this.getEffectRanks(ModifierEffect.Sturdy),
     );
   }
 

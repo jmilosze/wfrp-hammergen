@@ -15,6 +15,8 @@ const props = defineProps<{
   validationStatus: ValidationStatus;
   modelValue: string;
   size?: BoxHeight;
+  // bare: no border or rounded corners of its own, to fill a box (e.g. SectionCard) edge to edge.
+  bare?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -43,13 +45,21 @@ const value = computed({
     <textarea
       :id="textareaId"
       v-model="value"
-      class="border border-neutral-300 rounded w-full p-2 bg-white focus:outline-neutral-700 focus:border-transparent focus:outline-2 disabled:bg-neutral-200"
-      :class="size ? heightClasses[size] : 'h-36'"
+      class="w-full p-2 bg-white focus:outline-neutral-700 focus:outline-2 disabled:bg-neutral-200"
+      :class="[
+        size ? heightClasses[size] : 'h-36',
+        bare ? 'block focus:-outline-offset-2' : 'border border-neutral-300 rounded focus:border-transparent',
+      ]"
       :disabled="disabled"
       :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
       :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
     />
-    <p :id="errorId" role="alert" class="text-sm text-danger-600" :class="[validationStatus.valid ? 'hidden' : '']">
+    <p
+      :id="errorId"
+      role="alert"
+      class="text-sm text-danger-600"
+      :class="[validationStatus.valid ? 'hidden' : '', bare ? 'px-2 py-1' : '']"
+    >
       {{ validationStatus.message }}
     </p>
   </div>
