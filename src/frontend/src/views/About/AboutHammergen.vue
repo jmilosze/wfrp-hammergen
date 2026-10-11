@@ -28,8 +28,23 @@ const currentView = useRouteQuery("view", viewNames[0].value);
       <TextLink href="mailto:admin@hammergen.net">admin@hammergen.net</TextLink>
       . I try to answer emails/fix bugs on the same or next day but sometimes life gets in the way so please be patient.
     </p>
+    <p class="mt-2">
+      Hammergen is free to use. If you enjoy it and would like to support it, you can do so on
+      <TextLink href="https://ko-fi.com/Q5Q12E0KB">Ko-fi</TextLink>. Donations help cover the hosting costs.
+    </p>
 
     <div class="text-2xl font-semibold mt-5">Source books</div>
+    <div class="my-3 p-4 border-l-4 border-primary-500 bg-primary-50 rounded">
+      <p class="font-semibold">Hammergen does not replace the rulebooks.</p>
+      <p class="mt-1">
+        The compendium has entries from every book listed below, but their descriptions are incomplete. Most cover only
+        the game mechanics, such as tests, modifiers and effects, and leave out the full rules text. To use Hammergen
+        you need the books themselves.
+      </p>
+      <p class="mt-2">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy">Buy the books from Cubicle 7</TextLink>
+      </p>
+    </div>
     <p>Hammergen includes contents from the following source books:</p>
     <p class="mt-2 font-semibold">5th Edition</p>
     <ul class="list-disc ml-6 mt-1">
