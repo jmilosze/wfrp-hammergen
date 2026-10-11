@@ -42,6 +42,7 @@ Main scripts:
 - `import_5e_generation.py [--update]`: builds `generationProps5e` from `db/data/5e/generation-5e.json` (names are resolved to public 5e ids).
 - `fix_4e_*.py`: one-off fixes of public 4e data (each documents what it fixes). Add new fixes of the same kind to these scripts.
 - `update_5e_book_0610.py`: structural changes for the 2026-10-01 5e rulebook update.
+- `backfill_modified_on.py`: sets `modifiedon` on documents written before the API started setting it, from the creation time in their id. Run once per database after deploying the API that sets `modifiedon`.
 
 The data files in `db/data/` are gitignored and exist only locally; keep them, they are the source for re-imports.
 

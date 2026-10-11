@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	d "github.com/jmilosze/wfrp-hammergen-go/internal/domain"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
@@ -23,6 +24,7 @@ type whDocWrite struct {
 	Id         bson.ObjectID                            `bson:"_id"`
 	OwnerId    string                                   `bson:"ownerid"`
 	Visibility warhammer.Visibility                     `bson:"visibility"`
+	ModifiedOn time.Time                                `bson:"modifiedon"`
 	Object     warhammer.WhObject                       `bson:"object,omitempty"`
 	Editions   map[warhammer.Edition]warhammer.WhObject `bson:"editions,omitempty"`
 }
@@ -31,6 +33,7 @@ type whDocRead struct {
 	Id         bson.ObjectID                  `bson:"_id"`
 	OwnerId    string                         `bson:"ownerid"`
 	Visibility warhammer.Visibility           `bson:"visibility"`
+	ModifiedOn time.Time                      `bson:"modifiedon"`
 	Object     bson.Raw                       `bson:"object"`
 	Editions   map[warhammer.Edition]bson.Raw `bson:"editions"`
 }
@@ -85,6 +88,7 @@ func newWhDocWrite(t warhammer.WhType, w *warhammer.Wh) (*whDocWrite, error) {
 		Id:         id,
 		OwnerId:    w.OwnerId,
 		Visibility: w.Visibility,
+		ModifiedOn: w.ModifiedOn,
 	}
 	if warhammer.HasEditions(t) {
 		whDoc.Editions = w.Editions
@@ -121,7 +125,7 @@ func (s *WhDbService) Update(ctx context.Context, t warhammer.WhType, w *warhamm
 	findByIdQuery := bson.M{"$and": bson.A{bson.M{"_id": id}, bson.M{"ownerid": userId}}}
 
 	// $set only the variants being written so other edition variants of the document are kept.
-	set := bson.M{"visibility": w.Visibility}
+	set := bson.M{"visibility": w.Visibility, "modifiedon": w.ModifiedOn}
 	if warhammer.HasEditions(t) {
 		for e, obj := range w.Editions {
 			set[variantPath(e)] = obj
@@ -279,6 +283,7 @@ func whDocToWh(doc *whDocRead, t warhammer.WhType, e warhammer.Edition) (*warham
 		Id:         doc.Id.Hex(),
 		OwnerId:    doc.OwnerId,
 		Visibility: doc.Visibility,
+		ModifiedOn: doc.ModifiedOn,
 	}
 
 	if !warhammer.HasEditions(t) {

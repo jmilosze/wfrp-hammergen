@@ -1027,6 +1027,7 @@ const characterFullApiData: CharacterFullApiData = {
 const characterFullApiResponse: CharacterApiResponse<CharacterFullApiData> = {
   id: "id",
   ownerId: "owner",
+  modifiedOn: "2026-10-11T10:00:00Z",
   visibility: Visibility.Shared,
   object: characterFullApiData,
 };

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
@@ -47,6 +48,7 @@ func (s *WhService) Create(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 
 	w.OwnerId = c.Id
 	w.Id = hex.EncodeToString(xid.New().Bytes())
+	w.ModifiedOn = time.Now().UTC()
 
 	createdWh, err := s.WhDbService.Create(ctx, t, w)
 	if err != nil {
@@ -142,6 +144,7 @@ func (s *WhService) Update(ctx context.Context, t wh.WhType, w *wh.Wh, c *auth.C
 	}
 
 	w.OwnerId = existingWh.OwnerId
+	w.ModifiedOn = time.Now().UTC()
 	updatedWh, err := s.WhDbService.Update(ctx, t, w, c.Id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update wh: %w", err)

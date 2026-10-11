@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/jmilosze/wfrp-hammergen-go/internal/dependencies/validator"
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain"
@@ -127,6 +128,29 @@ func newTestWhService(t *testing.T, db wh.WhDbService) *WhService {
 		t.Fatal(err)
 	}
 	return NewWhService(val, db)
+}
+
+func TestCreateAndUpdateSetModifiedOn(t *testing.T) {
+	db := &fakeWhDb{existing: &wh.Wh{Id: "id1", OwnerId: "user1", Object: newMockCharacter(wh.Edition4e)}}
+	s := newTestWhService(t, db)
+	claims := &auth.Claims{Id: "user1"}
+	before := time.Now()
+
+	created, err := s.Create(context.Background(), wh.WhTypeCharacter, &wh.Wh{Object: newMockCharacter(wh.Edition4e)}, claims)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if created.ModifiedOn.Before(before) {
+		t.Errorf("create: modifiedOn %v not set", created.ModifiedOn)
+	}
+
+	updated, err := s.Update(context.Background(), wh.WhTypeCharacter, &wh.Wh{Id: "id1", Object: newMockCharacter(wh.Edition4e)}, claims)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if updated.ModifiedOn.Before(before) {
+		t.Errorf("update: modifiedOn %v not set", updated.ModifiedOn)
+	}
 }
 
 func TestUpdateCharacterEditionCannotChange(t *testing.T) {

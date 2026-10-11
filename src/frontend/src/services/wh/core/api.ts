@@ -13,8 +13,10 @@ export interface ApiResponse<WhApiData> extends ApiHeaders {
   editions: Partial<Record<Edition, WhApiData>>;
 }
 
-// Character as returned by the API; its fixed edition is part of the character data.
+// Character as returned by the API; its fixed edition is part of the character data. modifiedOn is the time of the
+// last create or update (RFC 3339).
 export interface CharacterApiResponse<CharacterData> extends ApiHeaders {
+  modifiedOn: string;
   object: CharacterData;
 }
 

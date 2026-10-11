@@ -69,6 +69,8 @@ export interface CharacterApiData {
 const CHARACTER_IGNORED_KEYS: ReadonlySet<string> = new Set(["modifiers"]);
 
 export class Character extends WhEntity {
+  // Set by the API on save (RFC 3339); empty for a character that was never saved.
+  modifiedOn: string;
   edition: Edition;
   notes: string;
   species: SpeciesWithRegion;
@@ -109,6 +111,7 @@ export class Character extends WhEntity {
   constructor({
     id = "",
     ownerId = "",
+    modifiedOn = "",
     edition = "4e" as Edition,
     name = "",
     description = "",
@@ -151,6 +154,7 @@ export class Character extends WhEntity {
     },
   } = {}) {
     super({ id, ownerId, visibility, name, description, source });
+    this.modifiedOn = modifiedOn;
     this.edition = edition;
     this.notes = notes;
     this.species = species;
@@ -611,6 +615,7 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
   const newCharacter = new Character({
     id: characterApi.id,
     ownerId: characterApi.ownerId,
+    modifiedOn: characterApi.modifiedOn,
     visibility: characterApi.visibility,
     edition: characterApi.object.edition,
     name: characterApi.object.name,

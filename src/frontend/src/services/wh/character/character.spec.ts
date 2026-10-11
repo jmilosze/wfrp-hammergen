@@ -73,6 +73,7 @@ const characterApiData: CharacterApiData = {
 const characterApiResponse: CharacterApiResponse<CharacterApiData> = {
   id: "id",
   ownerId: "owner",
+  modifiedOn: "2026-10-11T10:00:00Z",
   visibility: Visibility.Shared,
   object: characterApiData,
 };
@@ -80,6 +81,7 @@ const characterApiResponse: CharacterApiResponse<CharacterApiData> = {
 const character = new Character({
   id: "id",
   ownerId: "owner",
+  modifiedOn: "2026-10-11T10:00:00Z",
   name: "char name",
   description: "character 1",
   notes: "some notes",

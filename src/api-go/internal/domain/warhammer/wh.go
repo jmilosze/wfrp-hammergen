@@ -3,6 +3,7 @@ package warhammer
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 type Visibility int
@@ -52,10 +53,12 @@ type EditionValidator interface {
 
 // Wh is a content document or a character.
 // Content holds its edition variants in Editions. A character holds its data, including its fixed edition, in Object.
+// ModifiedOn is set by the service on every create and update.
 type Wh struct {
 	Id         string               `json:"id"`
 	OwnerId    string               `json:"ownerId"`
 	Visibility Visibility           `json:"visibility" validate:"visibility_valid"`
+	ModifiedOn time.Time            `json:"modifiedOn"`
 	Object     WhObject             `json:"object,omitempty"`
 	Editions   map[Edition]WhObject `json:"editions,omitempty" validate:"dive"`
 }
