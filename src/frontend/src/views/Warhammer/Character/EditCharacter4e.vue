@@ -527,23 +527,6 @@ const modifierAttributes = computed(() => {
             <SheetCell title="Wounds">{{ wounds }}</SheetCell>
           </SheetTable>
         </div>
-        <SheetTable title="Experience" :columns="3">
-          <SheetField
-            v-model="wh.currentExp"
-            type="number"
-            title="Unspent"
-            :validationStatus="validCurrentExp"
-            :disabled="!canEdit"
-          />
-          <SheetField
-            v-model="wh.spentExp"
-            type="number"
-            title="Spent"
-            :validationStatus="validSpentExp"
-            :disabled="!canEdit"
-          />
-          <SheetCell title="Total">{{ wh.currentExp + wh.spentExp }}</SheetCell>
-        </SheetTable>
       </div>
     </div>
     <div class="flex-1">
@@ -576,6 +559,23 @@ const modifierAttributes = computed(() => {
             @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
           />
         </div>
+        <SheetTable title="Experience" :columns="3">
+          <SheetField
+            v-model="wh.currentExp"
+            type="number"
+            title="Unspent"
+            :validationStatus="validCurrentExp"
+            :disabled="!canEdit"
+          />
+          <SheetField
+            v-model="wh.spentExp"
+            type="number"
+            title="Spent"
+            :validationStatus="validSpentExp"
+            :disabled="!canEdit"
+          />
+          <SheetCell title="Total">{{ wh.currentExp + wh.spentExp }}</SheetCell>
+        </SheetTable>
       </div>
     </div>
   </div>
