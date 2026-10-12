@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SheetCheckbox from "./SheetCheckbox.vue";
 import { computed } from "vue";
 import HintModal from "./HintModal.vue";
 import TextLink from "./TextLink.vue";
@@ -68,11 +69,9 @@ function onCheckboxChange(event: Event) {
     <!-- Non-admin view -->
     <div v-else class="flex items-center gap-2">
       <label class="flex items-center gap-2">
-        <input
+        <SheetCheckbox
           :checked="visibility === Visibility.Shared || visibility === Visibility.Public"
-          type="checkbox"
           :disabled="disabled ? disabled : false"
-          class="w-5 h-5 accent-neutral-600"
           @change="onCheckboxChange"
         />
         Shared?

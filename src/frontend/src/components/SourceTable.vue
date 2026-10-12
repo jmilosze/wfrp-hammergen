@@ -74,7 +74,7 @@ function onEditClick() {
       </template>
       <table class="w-full">
         <thead>
-          <tr class="text-left">
+          <tr class="text-left bg-primary-50">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
             <th class="border-b border-neutral-300 py-2 px-2">Notes</th>
           </tr>

@@ -49,6 +49,7 @@ import SectionButton from "../../../components/SectionButton.vue";
 import SheetField from "../../../components/SheetField.vue";
 import SheetSelect from "../../../components/SheetSelect.vue";
 import SheetTable from "../../../components/SheetTable.vue";
+import SheetCheckbox from "../../../components/SheetCheckbox.vue";
 import SheetCell from "../../../components/SheetCell.vue";
 import { encumbranceItems, getEncumbrance } from "../../../services/wh/character/encumbrance.ts";
 import EditionBadge from "../../../components/EditionBadge.vue";
@@ -384,9 +385,7 @@ const modifierAttributes = computed(() => {
     </div>
     <div class="flex items-center gap-2">
       <label class="flex items-center gap-2">
-        <input
-          type="checkbox"
-          class="w-5 h-5 accent-neutral-600"
+        <SheetCheckbox
           :checked="wh.allow4e"
           :disabled="!canEdit || wh.allow4e"
           @click.prevent="modal.showModal('allow4eModal')"
