@@ -4,7 +4,9 @@ import Header from "../../../components/PageHeader.vue";
 import { printRuneLabel, Rune, runeApi, runeLabelList } from "../../../services/wh/content/rune.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
-import FormInput from "../../../components/FormInput.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
@@ -74,47 +76,38 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
   />
   <template v-if="hasVariant">
     <DisplayLabels :labelList="wh.labels.map((x) => printRuneLabel(x))" class="mt-1" />
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
+    </div>
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+      <div class="flex-1 flex flex-col gap-4">
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+        </SheetTable>
+        <SectionCard title="Applicable to">
           <MultipleCheckboxColumnInput
             v-model="wh.applicableTo"
             :options="applicableToOptions"
             :disabled="!canEdit"
-            title="Applicable to"
+            bare
           />
-          <MultipleCheckboxColumnInput
-            v-model="wh.labels"
-            :options="labelOptions"
-            :disabled="!canEdit"
-            title="Labels"
-          />
-        </div>
+        </SectionCard>
+        <SectionCard title="Labels">
+          <MultipleCheckboxColumnInput v-model="wh.labels" :options="labelOptions" :disabled="!canEdit" bare />
+        </SectionCard>
       </div>
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
-      </div>
+      <SectionCard title="Description" class="flex-1">
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="sm" />
+      </SectionCard>
     </div>
 
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
   </template>
   <div v-show="hasVariant" class="mt-4">
     <div class="flex flex-col md:flex-row gap-4">
