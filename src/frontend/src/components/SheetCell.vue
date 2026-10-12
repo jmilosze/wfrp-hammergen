@@ -1,6 +1,8 @@
 <script setup lang="ts">
-// A labelled read-only cell of a SheetTable; the slot is the cell's content.
-defineProps<{ title: string }>();
+// A labelled cell of a SheetTable that shows content rather than an input; the slot is the cell's content.
+// editable: the content can be changed elsewhere (e.g. picked with an Edit button), so it gets the faint yellow of
+// editable cells.
+defineProps<{ title: string; editable?: boolean }>();
 </script>
 
 <template>
@@ -11,7 +13,7 @@ defineProps<{ title: string }>();
     >
       {{ title }}
     </div>
-    <div class="flex flex-col justify-center flex-1 min-w-0 min-h-9 px-2 py-1">
+    <div class="flex flex-col justify-center flex-1 min-w-0 min-h-9 px-2 py-1" :class="{ 'bg-primary-50': editable }">
       <slot />
     </div>
   </div>

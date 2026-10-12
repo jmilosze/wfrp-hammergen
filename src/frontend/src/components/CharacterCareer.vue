@@ -212,7 +212,7 @@ function emitPastSelected(id: string) {
         <SpinnerAnimation class="w-14 m-2" />
       </div>
       <template v-else>
-        <SheetCell title="Current">
+        <SheetCell title="Current" :editable="!disabled">
           <div v-if="selectedCurrentCareer">
             <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }">
               {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} -
@@ -221,7 +221,7 @@ function emitPastSelected(id: string) {
             <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
           </div>
         </SheetCell>
-        <SheetCell title="Past">
+        <SheetCell title="Past" :editable="!disabled">
           <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
             <TextLink routeName="career" :params="{ id: pastCareer.careerId }">
               {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}

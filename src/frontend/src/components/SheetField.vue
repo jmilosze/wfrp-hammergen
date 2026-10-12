@@ -51,7 +51,7 @@ const value = computed({
         :maxlength="maxlength"
         :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
         :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
-        class="flex-1 min-w-0 min-h-9 px-2 bg-white outline-none disabled:bg-neutral-200"
+        class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-primary-50 disabled:bg-white disabled:text-neutral-900 disabled:opacity-100"
       />
     </div>
     <div

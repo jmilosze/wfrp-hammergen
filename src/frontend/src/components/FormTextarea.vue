@@ -15,7 +15,8 @@ const props = defineProps<{
   validationStatus: ValidationStatus;
   modelValue: string;
   size?: BoxHeight;
-  // bare: no border or rounded corners of its own, to fill a box (e.g. SectionCard) edge to edge.
+  // bare: no border or rounded corners of its own, to fill a box (e.g. SectionCard) edge to edge; styled like an
+  // editable sheet cell (faint yellow, white when disabled).
   bare?: boolean;
 }>();
 
@@ -45,11 +46,13 @@ const value = computed({
     <textarea
       :id="textareaId"
       v-model="value"
-      class="w-full p-2 bg-white focus:outline-neutral-700 focus:outline-2 disabled:bg-neutral-200"
+      class="w-full p-2 focus:outline-neutral-700 focus:outline-2"
       :class="[
         size ? heightClasses[size] : 'h-36',
         { grow: bare },
-        bare ? 'block focus:-outline-offset-2' : 'border border-neutral-300 rounded focus:border-transparent',
+        bare
+          ? 'block focus:-outline-offset-2 bg-primary-50 disabled:bg-white disabled:text-neutral-900 disabled:opacity-100'
+          : 'border border-neutral-300 rounded focus:border-transparent bg-white disabled:bg-neutral-200',
       ]"
       :disabled="disabled"
       :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"

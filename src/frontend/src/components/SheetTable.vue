@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // A table of labelled cells in the style of the paper character sheet. Cells (SheetField, SheetSelect) sit in a
 // grid that drops to one column when narrow; the 1px gaps show the background and draw the cell borders.
+// Editable cells (SheetField, SheetSelect) have a faint yellow fill; read-only and calculated cells are white.
 // An optional title is a small header row above the cells; actions fill a cell on the right.
 type Columns = 1 | 2 | 3;
 

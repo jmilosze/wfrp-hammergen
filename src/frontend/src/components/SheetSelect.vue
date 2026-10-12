@@ -28,7 +28,7 @@ const selectId = useId();
       :id="selectId"
       v-model="value"
       :disabled="disabled"
-      class="flex-1 min-w-0 h-9 px-1 bg-white outline-none disabled:bg-neutral-200"
+      class="flex-1 min-w-0 h-9 px-1 outline-none bg-primary-50 disabled:bg-white disabled:text-neutral-900 disabled:opacity-100 disabled:appearance-none"
     >
       <option v-for="option in options" :key="String(option.value)" :value="option.value">
         {{ option.text }}
