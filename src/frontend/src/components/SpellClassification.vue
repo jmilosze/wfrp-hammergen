@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import {
+  expandLabel,
   getAllowedLabels,
   getSimplifiedLabels,
+  loreGroups,
   printSpellLabel,
   printSpellType,
   SpellClassification,
@@ -12,22 +14,15 @@ import {
 import SheetTable from "./SheetTable.vue";
 import SheetSelect from "./SheetSelect.vue";
 import SheetCell from "./SheetCell.vue";
-import DisplayLabels from "./DisplayLabels.vue";
-import { Ref, ref, watch } from "vue";
-import ActionButton from "./ActionButton.vue";
-import SectionButton from "./SectionButton.vue";
-import { useModal } from "../composables/modal.ts";
-import ModalWindow from "./ModalWindow.vue";
-import TableWithSearch from "./TableWithSearch.vue";
+import LabelChips from "./LabelChips.vue";
+import LabelAddSelect from "./LabelAddSelect.vue";
+import { computed } from "vue";
 
 const props = defineProps<{ modelValue: SpellClassification; disabled?: boolean; stacked?: boolean }>();
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: SpellClassification): void;
 }>();
-
-const modal = useModal();
-const searchTerm = ref("");
 
 const typeOptions = spellTypeList.map((x) => ({ text: printSpellType(x), value: x }));
 
@@ -38,118 +33,62 @@ function updateType(newType: SpellType) {
   emit("update:modelValue", { type: newType, labels: new Set<SpellLabel>() });
 }
 
-function updateLabel(label: SpellLabel, selected: boolean) {
-  const newLabels = new Set(props.modelValue.labels);
-
-  if (selected) {
-    newLabels.add(label);
-  } else {
-    newLabels.delete(label);
-  }
-
-  emit("update:modelValue", { type: props.modelValue.type, labels: newLabels });
+function toLabel(label: SpellLabel) {
+  return { text: printSpellLabel(label), value: label };
 }
 
-function selectAllLabels() {
-  emit("update:modelValue", {
-    type: props.modelValue.type,
-    labels: new Set<SpellLabel>(getAllowedLabels(props.modelValue.type)),
-  });
-}
-
-const modalColumns = [
-  { name: "name", displayName: "Label", skipStackedTitle: false },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
-];
-
-const labelsWithSelect: Ref<Record<SpellLabel, boolean>> = ref({} as Record<SpellLabel, boolean>);
-const labelsWithSelectList: Ref<{ id: SpellLabel; name: string; selected: boolean }[]> = ref([]);
-const simplifiedLabels: Ref<SpellLabel[]> = ref(new Array<SpellLabel>());
-
-function updateLabelsWithSelect(newValue: SpellClassification) {
-  const labelsForType = getAllowedLabels(newValue.type);
-
-  labelsWithSelect.value = {} as Record<SpellLabel, boolean>;
-  for (const label of labelsForType) {
-    labelsWithSelect.value[label] = false;
-  }
-
-  for (const label of newValue.labels) {
-    if (label in labelsWithSelect.value) {
-      labelsWithSelect.value[label] = true;
-    }
-  }
-
-  labelsWithSelectList.value = [];
-  for (const [k, v] of Object.entries(labelsWithSelect.value)) {
-    const lb = parseInt(k);
-    labelsWithSelectList.value.push({ id: lb, name: printSpellLabel(lb), selected: v });
-  }
-}
-
-function updateSimplifiedLabels(newValue: SpellClassification) {
-  simplifiedLabels.value = [...getSimplifiedLabels(newValue.type, newValue.labels)];
-}
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    updateLabelsWithSelect(newValue);
-    updateSimplifiedLabels(newValue);
-  },
-  { immediate: true },
+// Labels are shown simplified: a full group of lores is one label (e.g. Any Colour Lore), removed as a whole.
+const shownLabels = computed(() =>
+  [...getSimplifiedLabels(props.modelValue.type, props.modelValue.labels)]
+    .map(toLabel)
+    .sort((a, b) => a.text.localeCompare(b.text)),
 );
 
-function onEditClick() {
-  modal.showModal("modifySpellLabelsModal");
-  searchTerm.value = "";
+// Add offers the lore groups the type allows that are not complete yet, then the single labels not selected yet.
+const addOptions = computed(() => {
+  const allowed = getAllowedLabels(props.modelValue.type);
+  const selected = props.modelValue.labels;
+  const groups = [...loreGroups]
+    .filter(([, lores]) => [...lores].every((x) => allowed.includes(x)) && [...lores].some((x) => !selected.has(x)))
+    .map(([group]) => toLabel(group));
+  const singles = allowed
+    .filter((x) => !selected.has(x))
+    .map(toLabel)
+    .sort((a, b) => a.text.localeCompare(b.text));
+  return [...groups, ...singles];
+});
+
+function addLabel(label: SpellLabel) {
+  const labels = new Set([...props.modelValue.labels, ...expandLabel(label)]);
+  emit("update:modelValue", { type: props.modelValue.type, labels: labels });
+}
+
+function removeLabel(label: SpellLabel) {
+  const removed = expandLabel(label);
+  const labels = new Set([...props.modelValue.labels].filter((x) => !removed.has(x)));
+  emit("update:modelValue", { type: props.modelValue.type, labels: labels });
 }
 </script>
 
 <template>
   <div>
-    <div>
-      <SheetTable title="Classification">
-        <SheetSelect
-          :modelValue="props.modelValue.type"
-          :options="typeOptions"
-          :disabled="props.disabled"
-          title="Type"
-          @update:modelValue="updateType($event)"
-        />
-      </SheetTable>
-      <SheetTable class="-mt-px">
-        <SheetCell title="Labels" :editable="!disabled">
-          <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="py-1" />
-        </SheetCell>
-        <template v-if="!disabled" #actions>
-          <SectionButton icon="lucide:pencil" iconOnlyWhenNarrow @click="onEditClick">Edit</SectionButton>
-        </template>
-      </SheetTable>
-    </div>
-    <ModalWindow id="modifySpellLabelsModal" size="xs">
-      <template #header>Edit labels</template>
-      <div>
-        <TableWithSearch
-          v-model="searchTerm"
-          :fields="modalColumns"
-          :items="labelsWithSelectList"
-          stackBreakpoint="none"
-        >
-          <ActionButton class="mr-2 mb-2 shrink-0 btn" @click="selectAllLabels">Select all</ActionButton>
-          <template #selected="{ id }: { id: SpellLabel }">
-            <div>
-              <input
-                v-model="labelsWithSelect[id]"
-                type="checkbox"
-                class="w-5 h-5 accent-neutral-600"
-                @input="updateLabel(id, !labelsWithSelect[id])"
-              />
-            </div>
-          </template>
-        </TableWithSearch>
-      </div>
-    </ModalWindow>
+    <SheetTable title="Classification">
+      <SheetSelect
+        :modelValue="props.modelValue.type"
+        :options="typeOptions"
+        :disabled="props.disabled"
+        title="Type"
+        @update:modelValue="updateType($event)"
+      />
+    </SheetTable>
+    <SheetTable class="-mt-px">
+      <SheetCell title="Labels">
+        <LabelChips :labels="shownLabels" :removable="!disabled" class="py-1" @remove="removeLabel" />
+      </SheetCell>
+      <template v-if="!disabled" #actions>
+        <LabelAddSelect :options="addOptions" ariaLabel="Add label" @add="addLabel" />
+      </template>
+    </SheetTable>
   </div>
 </template>
 

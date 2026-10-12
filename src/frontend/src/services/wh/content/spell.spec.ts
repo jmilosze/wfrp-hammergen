@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
 import {
   apiResponseToModel,
+  colourLores,
+  expandLabel,
   getSimplifiedLabels,
   modelToApi,
   printSpellLabel,
@@ -131,5 +133,15 @@ describe("Dark Magic lore", () => {
     const labels = new Set([SpellLabel.SpellLabelDarkMagic]);
     const simplified = getSimplifiedLabels(SpellType.SpellTypeLore, labels);
     expect(simplified).toEqual(new Set([SpellLabel.SpellLabelDarkMagic]));
+  });
+});
+
+describe("expandLabel", () => {
+  test("returns the lores of a lore group", () => {
+    expect(expandLabel(SpellLabel.SpellLabelLoreColour)).toEqual(colourLores);
+  });
+
+  test("returns a single label itself", () => {
+    expect(expandLabel(SpellLabel.SpellLabelRitual)).toEqual(new Set([SpellLabel.SpellLabelRitual]));
   });
 });
