@@ -10,6 +10,7 @@ import Header from "../../../components/PageHeader.vue";
 import SheetTable from "../../../components/SheetTable.vue";
 import SheetField from "../../../components/SheetField.vue";
 import SheetSelect from "../../../components/SheetSelect.vue";
+import SheetGroup from "../../../components/SheetGroup.vue";
 import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import CheckboxInput from "../../../components/CheckboxInput.vue";
@@ -125,62 +126,47 @@ watchWh(
     <!-- Name, max rank, tests (4e) and group in one column, the description in the other. -->
     <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
       <div class="flex-1 flex flex-col gap-4">
-        <!-- Name, max rank and tests (4e) form one joined group. -->
-        <div>
-          <SheetTable>
-            <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-            <SheetField
-              v-if="edition === '4e'"
-              v-model="wh.tests"
-              title="Tests"
-              :validationStatus="validTests"
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SheetField
+            v-if="edition === '4e'"
+            v-model="wh.tests"
+            title="Tests"
+            :validationStatus="validTests"
+            :disabled="!canEdit || wh.isGroup"
+          />
+          <SheetField
+            v-if="edition === '5e'"
+            v-model="wh.maxRank"
+            type="number"
+            title="Max rank"
+            :validationStatus="validMaxRank"
+            :disabled="!canEdit || wh.isGroup"
+          />
+          <!-- 4e: Max rank is a characteristic bonus, plus another, plus a number. -->
+          <SheetGroup v-else title="Max rank" :columns="3">
+            <SheetSelect
+              v-model="wh.attribute"
+              title="Att 1"
+              :options="attOptions"
+              :disabled="!canEdit || wh.isGroup"
+            />
+            <SheetSelect
+              v-model="wh.attribute2"
+              title="Att 2"
+              :options="attOptions"
               :disabled="!canEdit || wh.isGroup"
             />
             <SheetField
-              v-if="edition === '5e'"
               v-model="wh.maxRank"
               type="number"
-              title="Max rank"
+              title="Const"
               :validationStatus="validMaxRank"
               :disabled="!canEdit || wh.isGroup"
             />
-          </SheetTable>
-          <template v-if="edition === '4e'">
-            <!-- 4e: Max rank is a characteristic bonus, plus another, plus a number. -->
-            <!-- A "Max rank" label cell beside its three parts, matching the Name and Tests rows above. -->
-            <div class="@container flex -mt-px border border-neutral-400 bg-white">
-              <div
-                class="flex items-center shrink-0 min-w-32 px-2 border-r border-neutral-300 font-semibold whitespace-nowrap"
-              >
-                Max rank
-              </div>
-              <div class="grid flex-1 min-w-0 gap-px bg-neutral-300 @lg:grid-cols-3 @lg:[&_[data-sheet-label]]:min-w-0">
-                <SheetSelect
-                  v-model="wh.attribute"
-                  title="Att 1"
-                  :options="attOptions"
-                  :disabled="!canEdit || wh.isGroup"
-                />
-                <SheetSelect
-                  v-model="wh.attribute2"
-                  title="Att 2"
-                  :options="attOptions"
-                  :disabled="!canEdit || wh.isGroup"
-                />
-                <SheetField
-                  v-model="wh.maxRank"
-                  type="number"
-                  title="Const"
-                  :validationStatus="validMaxRank"
-                  :disabled="!canEdit || wh.isGroup"
-                />
-                <p class="col-span-full px-2 py-1 bg-white text-xs text-neutral-600">
-                  Max rank = Att 1 Bonus + Att 2 Bonus + Const.
-                </p>
-              </div>
-            </div>
-          </template>
-        </div>
+            <template #note>Max rank = Att 1 Bonus + Att 2 Bonus + Const.</template>
+          </SheetGroup>
+        </SheetTable>
         <SelectTable
           v-if="!wh.isGroup"
           :disabled="!canEdit"

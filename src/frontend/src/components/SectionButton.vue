@@ -29,7 +29,7 @@ const VARIANT_CLASS: Record<Variant, string> = {
       :icon="busy ? 'lucide:loader-circle' : icon"
       :class="[iconOnlyWhenNarrow ? 'size-6 @lg:size-4' : 'size-4', { 'animate-spin': busy }]"
     />
-    <span :class="{ 'sr-only @lg:not-sr-only': iconOnlyWhenNarrow }"><slot /></span>
+    <span :class="{ 'sr-only @lg:not-sr-only @lg:whitespace-nowrap': iconOnlyWhenNarrow }"><slot /></span>
   </button>
 </template>
 
