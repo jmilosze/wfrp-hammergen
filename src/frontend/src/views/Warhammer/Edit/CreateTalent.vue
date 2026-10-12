@@ -119,7 +119,7 @@ watchWh(
   />
   <template v-if="hasVariant">
     <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
-      <CheckboxInput v-model="wh.isGroup" title="Is group talent" :disabled="!canEdit" />
+      <CheckboxInput v-model="wh.isGroup" title="Group talent" :disabled="!canEdit" />
       <PublicPropertyBox v-model="wh.visibility" propertyName="Talent" :disabled="!canEdit" />
     </div>
     <!-- Name, max rank, tests (4e) and group in one column, the description in the other. -->
