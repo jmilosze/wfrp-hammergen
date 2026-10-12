@@ -120,6 +120,17 @@ test("apiResponseToModel returns expected item", () => {
   expect(apiResponseToModel(itemApiResponse, "4e")).toMatchObject(item);
 });
 
+test("apiResponseToModel resets groups the edition doesn't have", () => {
+  const data = {
+    ...itemApiData,
+    melee: { ...itemApiData.melee, group: MeleeGroup.Parry },
+    armour: { ...itemApiData.armour, group: ArmourGroup.SoftLeather },
+  };
+  const model = apiResponseToModel({ ...itemApiResponse, editions: { "5e": data } }, "5e");
+  expect(model.melee.group).toBe(MeleeGroup.Basic);
+  expect(model.armour.group).toBe(ArmourGroup.Leather);
+});
+
 test("modelToApi returns expected api item data", () => {
   expect(modelToApi(item)).toMatchObject(itemApiData);
 });

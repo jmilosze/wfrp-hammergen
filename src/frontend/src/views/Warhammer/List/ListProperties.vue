@@ -100,7 +100,7 @@ const filteredApplicableToOptions = computed(() => {
   >
     {{ whList.apiError.value }}
   </AlertBlock>
-  <Header title="Qualities and flaws" />
+  <Header title="Qualities and Flaws" />
   <div class="flex flex-wrap justify-between">
     <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
     <SelectInput v-model="typeTerm" :options="filteredTypeOptions" class="grow mb-2 mx-1" />

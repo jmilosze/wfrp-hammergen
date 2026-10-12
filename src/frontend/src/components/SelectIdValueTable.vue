@@ -67,10 +67,9 @@ const counts = computed(() => {
 
 const showValueColumn = computed(() => selectedRows.value.some((x) => x.entity.hasValue));
 
-// The title cell spans the value column and, without a description column, the remove column too: neither has a
-// header, so the actions sit at the right edge.
+// The title cell spans every column (none has a header of its own), so the actions sit at the right edge.
 const titleColspan = computed(
-  () => 1 + (showValueColumn.value ? 1 : 0) + (props.disableDescription && !props.disabled ? 1 : 0),
+  () => 1 + (showValueColumn.value ? 1 : 0) + (props.disableDescription ? 0 : 1) + (props.disabled ? 0 : 1),
 );
 
 function isRepeatable(id: string): boolean {
@@ -111,7 +110,6 @@ function onEditClick() {
   modal.showModal(modalId);
 }
 
-const thClass = ["border-b", "border-neutral-300", "py-2", "px-2"];
 const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
 // A cell holding an input: the input fills the cell, so the cell has no padding of its own.
 const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
@@ -122,12 +120,6 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
     <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="titleColspan">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
-      </template>
-      <template #headers>
-        <template v-if="!disableDescription">
-          <th class="hidden @2xl:table-cell" :class="thClass">Description</th>
-          <th v-if="!disabled" :class="thClass" class="w-0" />
-        </template>
       </template>
       <tr v-for="row in selectedRows" :key="row.index" class="bg-white hover:bg-neutral-200">
         <td :class="tdClass">

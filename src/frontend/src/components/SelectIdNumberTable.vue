@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
@@ -27,8 +28,6 @@ const props = defineProps<{
   disabled?: boolean;
   modalTitle?: string;
   loading?: boolean;
-  clearAllBtn?: boolean;
-  disableDescription?: boolean;
   truncateModalDescription?: number;
   validationStatus: ValidationStatus;
 }>();
@@ -36,7 +35,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "updated", value: { id: string; number: number }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
 }>();
 
 const itemsWithNumber: Ref<Record<string, ItemWithNumber>> = ref({});
@@ -86,6 +84,11 @@ const modalColumns = [
 const modalId = window.crypto.randomUUID();
 const resetPaginationCounter = ref(0);
 
+function onRemoveClick(id: string) {
+  itemsWithNumber.value[id].number = 0;
+  emit("updated", { id: id, number: 0 });
+}
+
 function onEditClick() {
   if (props.loading) {
     return;
@@ -101,35 +104,27 @@ function onEditClick() {
 
 <template>
   <div>
-    <ListTable :editable="!disabled" :title="title" :loading="props.loading">
+    <!-- The title cell spans the remove column, which has no header, so the actions sit at the right edge. -->
+    <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="disabled ? 1 : 2">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
-        <SectionButton
-          v-if="clearAllBtn"
-          icon="lucide:trash-2"
-          variant="danger"
-          :disabled="props.loading"
-          @click="emit('clearAll')"
-        >
-          Clear all
-        </SectionButton>
-      </template>
-      <template #headers>
-        <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">
-          Description
-        </th>
-        <th class="border-b border-neutral-300 py-2 px-2">Number</th>
       </template>
       <tr v-for="src in nonzeroItems" :key="src.id" class="bg-white hover:bg-neutral-200">
         <td class="py-2 px-2 border-b border-neutral-300">
           <TextLink :routeName="routeName" :params="{ id: src.id }">
             {{ src.name }}
           </TextLink>
+          <span v-if="src.number > 1" class="ml-1">x{{ src.number }}</span>
         </td>
-        <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">
-          {{ src.description }}
+        <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+          <button
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+            :aria-label="`Remove ${src.name}`"
+            @click="onRemoveClick(src.id)"
+          >
+            <Icon icon="lucide:x" class="size-5" />
+          </button>
         </td>
-        <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
       </tr>
     </ListTable>
     <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">

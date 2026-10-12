@@ -42,6 +42,7 @@ import SheetTable from "../../../components/SheetTable.vue";
 import SheetField from "../../../components/SheetField.vue";
 import SheetSelect from "../../../components/SheetSelect.vue";
 import SheetGroup from "../../../components/SheetGroup.vue";
+import SheetCell from "../../../components/SheetCell.vue";
 import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
@@ -400,11 +401,21 @@ watchWh(
             <SheetField
               v-model="wh.armour.points"
               type="number"
-              title="Armour points"
+              title="AP"
               :validationStatus="validArmourPoints"
               :disabled="!canEdit"
             />
             <SheetSelect v-model="wh.armour.group" title="Group" :options="armourGroupOpts" :disabled="!canEdit" />
+            <SheetCell title="Location">
+              <MultipleCheckboxColumnInput
+                v-model="wh.armour.location"
+                :options="ArmourLocationOpts"
+                :disabled="!canEdit"
+                bare
+                twoColumns
+                class="-mx-2"
+              />
+            </SheetCell>
           </template>
           <template v-else-if="wh.type === ItemType.Container">
             <SheetField
@@ -429,14 +440,6 @@ watchWh(
             :disabled="!canEdit"
           />
         </SheetTable>
-        <SectionCard v-if="wh.type === ItemType.Armour" title="Armour location">
-          <MultipleCheckboxColumnInput
-            v-model="wh.armour.location"
-            :options="ArmourLocationOpts"
-            :disabled="!canEdit"
-            bare
-          />
-        </SectionCard>
         <SelectTable
           v-if="wh.type === ItemType.Grimoire"
           modalId="grimoire"
@@ -451,34 +454,44 @@ watchWh(
           @reload="spellListUtils.loadWhList"
           @selected="(e) => wh.updateSpells(e.id, e.selected)"
         />
-        <SelectIdValueTable
-          :disabled="!canEdit"
-          :selected="Object.entries(wh.properties).map(([id, value]) => ({ id: id, value: value }))"
-          :itemList="propertyList"
-          title="Qualities and flaws"
-          modalTitle="Edit qualities and flaws"
-          :loading="propertyListUtils.loading.value"
-          :validationStatus="wh.validateProperties()"
-          routeName="property"
-          :truncateModalDescription="100"
-          @reload="propertyListUtils.loadWhList"
-          @remove="(e) => wh.updateProperties(e.id, false)"
-          @selected="(e) => wh.updateProperties(e.id, e.selected)"
-          @updateValue="(e) => wh.updatePropertyValue(e.id, e.value)"
-        />
-        <SelectIdNumberTable
-          :disabled="!canEdit"
-          :initItems="wh.runes"
-          :allItemList="runeList"
-          title="Runes"
-          modalTitle="Edit runes"
-          :loading="runeListUtils.loading.value"
-          routeName="rune"
-          :truncateModalDescription="100"
-          :validationStatus="validRunes"
-          @reload="runeListUtils.loadWhList"
-          @updated="(e) => wh.updateRunes(e.id, e.number)"
-        />
+        <!-- Qualities, flaws and runes joined under one title band, like the character sheet's groups. -->
+        <div>
+          <div
+            class="px-2 py-1 border border-neutral-400 bg-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
+          >
+            Properties
+          </div>
+          <SelectIdValueTable
+            :disabled="!canEdit"
+            :selected="Object.entries(wh.properties).map(([id, value]) => ({ id: id, value: value }))"
+            :itemList="propertyList"
+            title="Qualities and Flaws"
+            modalTitle="Edit Qualities and Flaws"
+            :loading="propertyListUtils.loading.value"
+            :validationStatus="wh.validateProperties()"
+            routeName="property"
+            :truncateModalDescription="100"
+            class="-mt-px"
+            @reload="propertyListUtils.loadWhList"
+            @remove="(e) => wh.updateProperties(e.id, false)"
+            @selected="(e) => wh.updateProperties(e.id, e.selected)"
+            @updateValue="(e) => wh.updatePropertyValue(e.id, e.value)"
+          />
+          <SelectIdNumberTable
+            :disabled="!canEdit"
+            :initItems="wh.runes"
+            :allItemList="runeList"
+            title="Runes"
+            modalTitle="Edit runes"
+            :loading="runeListUtils.loading.value"
+            routeName="rune"
+            :truncateModalDescription="100"
+            class="-mt-px"
+            :validationStatus="validRunes"
+            @reload="runeListUtils.loadWhList"
+            @updated="(e) => wh.updateRunes(e.id, e.number)"
+          />
+        </div>
       </div>
     </div>
     <SourceTable
