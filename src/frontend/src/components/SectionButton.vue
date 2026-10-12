@@ -4,7 +4,10 @@ import { Icon } from "@iconify/vue";
 type Variant = "primary" | "secondary" | "neutral" | "danger";
 
 // iconOnlyWhenNarrow: inside a narrow @container, show only the icon; the label stays for screen readers.
-withDefaults(defineProps<{ icon: string; variant?: Variant; iconOnlyWhenNarrow?: boolean }>(), { variant: "primary" });
+// busy: the icon becomes a spinner and the button is disabled, e.g. while saving.
+withDefaults(defineProps<{ icon: string; variant?: Variant; iconOnlyWhenNarrow?: boolean; busy?: boolean }>(), {
+  variant: "primary",
+});
 
 const VARIANT_CLASS: Record<Variant, string> = {
   primary: "bg-primary-200 border-primary-400 text-neutral-900 hover:bg-primary-300",
@@ -19,8 +22,13 @@ const VARIANT_CLASS: Record<Variant, string> = {
     type="button"
     :class="VARIANT_CLASS[variant]"
     class="inline-flex items-center justify-center gap-1 rounded border px-2 py-1 text-sm font-medium whitespace-nowrap select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+    :disabled="busy || undefined"
+    :aria-busy="busy || undefined"
   >
-    <Icon :icon="icon" :class="iconOnlyWhenNarrow ? 'size-6 @lg:size-4' : 'size-4'" />
+    <Icon
+      :icon="busy ? 'lucide:loader-circle' : icon"
+      :class="[iconOnlyWhenNarrow ? 'size-6 @lg:size-4' : 'size-4', { 'animate-spin': busy }]"
+    />
     <span :class="{ 'sr-only @lg:not-sr-only': iconOnlyWhenNarrow }"><slot /></span>
   </button>
 </template>
