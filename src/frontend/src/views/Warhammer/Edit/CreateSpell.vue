@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/core/entity.ts";
 import Header from "../../../components/PageHeader.vue";
-import { printSpellLabel, printSpellType, Spell, spellApi, SpellLabel } from "../../../services/wh/content/spell.ts";
-import { computed, ref } from "vue";
+import { Spell, spellApi } from "../../../services/wh/content/spell.ts";
+import { computed } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import SheetTable from "../../../components/SheetTable.vue";
 import SheetField from "../../../components/SheetField.vue";
@@ -18,7 +18,6 @@ import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
 import SpellClassification from "../../../components/SpellClassification.vue";
-import DisplayLabels from "../../../components/DisplayLabels.vue";
 
 const props = defineProps<{
   id: string;
@@ -51,8 +50,6 @@ const {
 
 await loadWh(props.id);
 
-const simplifiedLabels = ref(new Array<SpellLabel>());
-
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validRange = computed(() => wh.value.validateRange());
@@ -77,8 +74,6 @@ const validCn = computed(() => wh.value.validateCn());
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
-    <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="mt-1" />
     <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
       <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!canEdit" />
     </div>
@@ -95,12 +90,7 @@ const validCn = computed(() => wh.value.validateCn());
       </SectionCard>
     </div>
 
-    <SpellClassification
-      v-model="wh.classification"
-      :disabled="!canEdit"
-      class="my-4"
-      @update:simplifiedLabels="simplifiedLabels = $event"
-    />
+    <SpellClassification v-model="wh.classification" :disabled="!canEdit" class="my-4" />
 
     <SourceTable
       :edition="edition"

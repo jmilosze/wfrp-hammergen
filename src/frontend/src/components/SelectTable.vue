@@ -105,7 +105,7 @@ function onEditClick() {
 
 <template>
   <div>
-    <ListTable :editable="!disabled" :title="title" :loading="props.loading">
+    <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="disableDescription ? 1 : 2">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
         <SectionButton
@@ -117,11 +117,6 @@ function onEditClick() {
         >
           Clear all
         </SectionButton>
-      </template>
-      <template #headers>
-        <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">
-          Description
-        </th>
       </template>
       <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
         <td class="py-2 px-2 border-b border-neutral-300">

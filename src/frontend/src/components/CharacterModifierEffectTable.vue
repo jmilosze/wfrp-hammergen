@@ -22,34 +22,36 @@ const modalColumns = [
   { name: "selected", displayName: "Select", skipStackedTitle: false },
 ];
 
-const effects: Ref<Record<string, { id: number; name: string; desc: string; selected: boolean }>> = ref({});
 const effectList: Ref<{ id: number; name: string; desc: string; selected: boolean }[]> = ref([]);
+
+// The list is built per edition; ticking an effect only updates its selected flag, so the popup's order (ticked first,
+// set when it opens) does not change while it is open.
+watch(
+  () => props.edition,
+  (edition) => {
+    effectList.value = modifierEffectsByEdition[edition]
+      .map((effectType) => ({
+        id: effectType,
+        name: printEffectName(effectType),
+        desc: printEffectDesc(effectType),
+        selected: props.initEffects.has(effectType),
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  },
+  { immediate: true },
+);
 
 watch(
   () => props.initEffects,
   (newVal) => {
-    effects.value = {};
-    for (const effectType of modifierEffectsByEdition[props.edition]) {
-      if (newVal && newVal.has(effectType)) {
-        effects.value[effectType] = {
-          id: effectType,
-          name: printEffectName(effectType),
-          desc: printEffectDesc(effectType),
-          selected: true,
-        };
-      } else {
-        effects.value[effectType] = {
-          id: effectType,
-          name: printEffectName(effectType),
-          desc: printEffectDesc(effectType),
-          selected: false,
-        };
-      }
+    for (const effect of effectList.value) {
+      effect.selected = newVal.has(effect.id);
     }
-    effectList.value = Object.values(effects.value).sort((a, b) => a.name.localeCompare(b.name));
   },
-  { immediate: true },
 );
+
+// Lookup by id for the popup's checkboxes; its entries are the list's own objects.
+const effects = computed(() => Object.fromEntries(effectList.value.map((x) => [x.id, x])));
 
 const selectedSources = computed(() => effectList.value.filter((x) => x.selected));
 
@@ -63,13 +65,10 @@ function onEditClick() {
 </script>
 
 <template>
-  <div>
-    <ListTable :editable="!disabled" title="Effects">
+  <div class="flex flex-col">
+    <ListTable :editable="!disabled" title="Effects" :titleColspan="2" class="grow">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
-      </template>
-      <template #headers>
-        <th class="border-b border-neutral-300 py-2 px-2">Notes</th>
       </template>
       <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
         <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>

@@ -12,6 +12,7 @@ import {
 import SheetTable from "./SheetTable.vue";
 import SheetSelect from "./SheetSelect.vue";
 import SheetCell from "./SheetCell.vue";
+import DisplayLabels from "./DisplayLabels.vue";
 import { Ref, ref, watch } from "vue";
 import ActionButton from "./ActionButton.vue";
 import SectionButton from "./SectionButton.vue";
@@ -23,7 +24,6 @@ const props = defineProps<{ modelValue: SpellClassification; disabled?: boolean;
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: SpellClassification): void;
-  (e: "update:simplifiedLabels", value: SpellLabel[]): void;
 }>();
 
 const modal = useModal();
@@ -89,7 +89,6 @@ function updateLabelsWithSelect(newValue: SpellClassification) {
 
 function updateSimplifiedLabels(newValue: SpellClassification) {
   simplifiedLabels.value = [...getSimplifiedLabels(newValue.type, newValue.labels)];
-  emit("update:simplifiedLabels", [...simplifiedLabels.value]);
 }
 
 watch(
@@ -121,11 +120,7 @@ function onEditClick() {
       </SheetTable>
       <SheetTable class="-mt-px">
         <SheetCell title="Labels" :editable="!disabled">
-          <span>
-            <span v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)" :key="i">
-              {{ printSpellLabel(label) + (i !== simplifiedLabels.length - 1 ? ", " : "") }}
-            </span>
-          </span>
+          <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="py-1" />
         </SheetCell>
         <template v-if="!disabled" #actions>
           <SectionButton icon="lucide:pencil" iconOnlyWhenNarrow @click="onEditClick">Edit</SectionButton>

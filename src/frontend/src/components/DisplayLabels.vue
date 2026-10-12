@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Read-only tags (e.g. spell or rune labels), styled so they are not mistaken for buttons.
 defineProps<{ labelList: string[] }>();
 </script>
 
@@ -7,7 +8,7 @@ defineProps<{ labelList: string[] }>();
     <div
       v-for="(label, i) in labelList.toSorted((a, b) => a.localeCompare(b))"
       :key="i"
-      class="border p-1 border-neutral-500 rounded bg-primary-200"
+      class="px-2 py-0.5 rounded-full border-2 border-neutral-600 bg-neutral-100 text-sm text-neutral-700 select-none"
     >
       {{ label }}
     </div>

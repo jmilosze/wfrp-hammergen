@@ -7,7 +7,10 @@ import { authRequest } from "../../../services/auth.ts";
 import { computed, Ref, ref, watch } from "vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import FormInput from "../../../components/FormInput.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SheetSelect from "../../../components/SheetSelect.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import CheckboxInput from "../../../components/CheckboxInput.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
@@ -17,7 +20,6 @@ import MissingEditionVariant from "../../../components/MissingEditionVariant.vue
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
-import SelectInput from "../../../components/SelectInput.vue";
 import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/core/attributes.ts";
 import { CharacterModifiers } from "../../../services/wh/core/characterModifiers.ts";
 import SelectTable from "../../../components/SelectTable.vue";
@@ -116,76 +118,93 @@ watchWh(
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Talent" :disabled="!canEdit" />
-          <CheckboxInput v-model="wh.isGroup" title="Is group talent" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <div>
-            <p class="mb-1">Max rank</p>
-            <div class="flex flex-wrap justify-left">
-              <template v-if="edition === '4e'">
-                <SelectInput
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <CheckboxInput v-model="wh.isGroup" title="Is group talent" :disabled="!canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Talent" :disabled="!canEdit" />
+    </div>
+    <!-- Name, max rank, tests (4e) and group in one column, the description in the other. -->
+    <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
+      <div class="flex-1 flex flex-col gap-4">
+        <!-- Name, max rank and tests (4e) form one joined group. -->
+        <div>
+          <SheetTable>
+            <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+            <SheetField
+              v-if="edition === '4e'"
+              v-model="wh.tests"
+              title="Tests"
+              :validationStatus="validTests"
+              :disabled="!canEdit || wh.isGroup"
+            />
+            <SheetField
+              v-if="edition === '5e'"
+              v-model="wh.maxRank"
+              type="number"
+              title="Max rank"
+              :validationStatus="validMaxRank"
+              :disabled="!canEdit || wh.isGroup"
+            />
+          </SheetTable>
+          <template v-if="edition === '4e'">
+            <!-- 4e: Max rank is a characteristic bonus, plus another, plus a number. -->
+            <!-- A "Max rank" label cell beside its three parts, matching the Name and Tests rows above. -->
+            <div class="@container flex -mt-px border border-neutral-400 bg-white">
+              <div
+                class="flex items-center shrink-0 min-w-32 px-2 border-r border-neutral-300 font-semibold whitespace-nowrap"
+              >
+                Max rank
+              </div>
+              <div class="grid flex-1 min-w-0 gap-px bg-neutral-300 @lg:grid-cols-3 @lg:[&_[data-sheet-label]]:min-w-0">
+                <SheetSelect
                   v-model="wh.attribute"
+                  title="Att 1"
                   :options="attOptions"
                   :disabled="!canEdit || wh.isGroup"
-                  class="mb-2"
                 />
-                <div class="shrink-0 mx-2 pt-2 mb-2">Bonus +</div>
-                <SelectInput
+                <SheetSelect
                   v-model="wh.attribute2"
+                  title="Att 2"
                   :options="attOptions"
                   :disabled="!canEdit || wh.isGroup"
-                  class="mb-2"
                 />
-                <div class="shrink-0 mx-2 pt-2 mb-2">Bonus +</div>
-              </template>
-              <FormInput
-                v-model="wh.maxRank"
-                :validationStatus="validMaxRank"
-                :disabled="!canEdit || wh.isGroup"
-                type="number"
-                class="flex-auto w-14 mb-2"
-              />
+                <SheetField
+                  v-model="wh.maxRank"
+                  type="number"
+                  title="Const"
+                  :validationStatus="validMaxRank"
+                  :disabled="!canEdit || wh.isGroup"
+                />
+                <p class="col-span-full px-2 py-1 bg-white text-xs text-neutral-600">
+                  Max rank = Att 1 Bonus + Att 2 Bonus + Const.
+                </p>
+              </div>
             </div>
-          </div>
-          <FormTextarea
-            v-if="edition === '4e'"
-            v-model="wh.tests"
-            title="Tests"
-            size="sm"
-            :validationStatus="validTests"
-            :disabled="!canEdit || wh.isGroup"
-          />
-          <SelectTable
-            :disabled="!canEdit || wh.isGroup"
-            :initSelectedItems="wh.group"
-            :itemList="groupTalents"
-            title="Belongs to group"
-            modalTitle="Edit groups"
-            :loading="talentListUtils.loading.value"
-            routeName="talent"
-            :truncateModalDescription="100"
-            @reload="talentListUtils.loadWhList"
-            @selected="(e) => wh.updateGroup(e.id, e.selected)"
-          />
+          </template>
         </div>
+        <SelectTable
+          v-if="!wh.isGroup"
+          :disabled="!canEdit"
+          :initSelectedItems="wh.group"
+          :itemList="groupTalents"
+          title="Belongs to group"
+          modalTitle="Edit groups"
+          :loading="talentListUtils.loading.value"
+          routeName="talent"
+          :truncateModalDescription="100"
+          @reload="talentListUtils.loadWhList"
+          @selected="(e) => wh.updateGroup(e.id, e.selected)"
+        />
       </div>
+      <SectionCard title="Description" class="flex-1">
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
+      </SectionCard>
     </div>
-    <div class="my-4">
-      <CharacterModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit || wh.isGroup" />
-    </div>
+    <CharacterModifiersBlock
+      v-model="wh.modifiers"
+      :edition="edition"
+      :disabled="!canEdit || wh.isGroup"
+      class="my-4"
+    />
     <CareerReferencesTable
       v-if="id !== 'create'"
       :edition="edition"
@@ -193,16 +212,13 @@ watchWh(
       :parentGroupIds="wh.group"
       type="talent"
     />
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="my-3 flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
   </template>
   <div v-show="hasVariant" class="mt-4">
     <div class="flex flex-col md:flex-row gap-4">
