@@ -83,7 +83,7 @@ const validDuration = computed(() => wh.value.validateDuration());
         <SheetField v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!canEdit" />
       </SheetTable>
       <SectionCard title="Description" class="flex-1">
-        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="sm" />
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
       </SectionCard>
     </div>
 

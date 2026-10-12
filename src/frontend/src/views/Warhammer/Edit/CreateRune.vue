@@ -97,7 +97,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
         </SectionCard>
       </div>
       <SectionCard title="Description" class="flex-1">
-        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="sm" />
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
       </SectionCard>
     </div>
 

@@ -2,11 +2,14 @@
 import { ValidationStatus } from "../utils/validation.ts";
 import { computed, useId } from "vue";
 
-type BoxHeight = "sm" | "md";
+// beside: next to a column it should match (two-column editor layout from @3xl): starts small and stretches with the
+// box; full height when the columns stack.
+type BoxHeight = "sm" | "md" | "beside";
 
 const heightClasses: Record<BoxHeight, string> = {
   sm: "h-18",
   md: "h-36",
+  beside: "h-36 @3xl:h-18",
 };
 
 const props = defineProps<{
