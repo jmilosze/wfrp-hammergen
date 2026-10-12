@@ -24,7 +24,7 @@ const modalId = props.modalId ? props.modalId : "hintModal";
     v-else
     type="button"
     :aria-label="modalHeader ? `Help: ${modalHeader}` : 'Help'"
-    class="text-neutral-500 bg-neutral-200 hover:text-neutral-900 hover:bg-pneutral-400 rounded-full cursor-pointer"
+    class="text-neutral-900 bg-primary-200 hover:bg-primary-300 rounded-full cursor-pointer"
     @click="modal.showModal(modalId)"
   >
     <Icon icon="lucide:circle-help" class="size-6" />
