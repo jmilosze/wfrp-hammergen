@@ -3,6 +3,7 @@ import { nextTick, ref } from "vue";
 import DeleteModal from "./DeleteModal.vue";
 import SectionButton from "./SectionButton.vue";
 import router from "../router.ts";
+import { returnToPreviousPage } from "../utils/history.ts";
 
 const props = defineProps<{
   propertyName: string;
@@ -21,14 +22,6 @@ function onDeleteClick() {
   });
 }
 
-async function navigateToList() {
-  const previousState = router.options.history.state.back;
-  const queryString = typeof previousState === "string" ? previousState.split("?")[1] : "";
-  const queryParams = new URLSearchParams(queryString || "");
-  const allParams = Object.fromEntries(queryParams.entries());
-  await router.push({ name: props.list, query: allParams });
-}
-
 async function onConfirmDelete() {
   if (deleting.value) {
     return;
@@ -38,7 +31,7 @@ async function onConfirmDelete() {
   deleting.value = false;
   elementToDelete.value = { id: "", name: "" };
   if (success) {
-    await navigateToList();
+    await returnToPreviousPage(router, props.list);
   }
 }
 </script>

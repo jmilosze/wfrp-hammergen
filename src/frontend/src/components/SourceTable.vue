@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ListTable from "./ListTable.vue";
+import SectionCard from "./SectionCard.vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/core/source.ts";
@@ -68,18 +68,25 @@ function onEditClick() {
 
 <template>
   <div>
-    <ListTable title="Sources">
+    <SectionCard title="Sources">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
       </template>
-      <template #headers>
-        <th class="border-b border-neutral-300 py-2 px-2">Notes</th>
-      </template>
-      <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
-        <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
-        <td class="py-2 px-2 border-b border-neutral-300">{{ src.notes }}</td>
-      </tr>
-    </ListTable>
+      <table class="w-full">
+        <thead>
+          <tr class="text-left">
+            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.notes }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </SectionCard>
     <p class="text-sm text-danger-600 mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
       Some of the sources are invalid.
     </p>

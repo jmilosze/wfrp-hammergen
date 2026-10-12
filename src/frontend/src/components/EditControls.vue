@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import router from "../router.ts";
+import { returnToPreviousPage } from "../utils/history.ts";
 import { onBeforeRouteLeave } from "vue-router";
 import { onBeforeUnmount, ref, watch } from "vue";
 import SectionButton from "./SectionButton.vue";
@@ -35,15 +36,9 @@ onBeforeRouteLeave((_, __, next) => {
   }
 });
 
-// leaveAfterSave returns to the previous page in the browser history. A page opened in a new tab (e.g. "Create new"
-// in a picker) has no previous page, so it goes to the list instead.
 async function leaveAfterSave() {
   leaveWithoutConfirmation.value = true;
-  if (router.options.history.state.back === null) {
-    await router.push({ name: props.list });
-  } else {
-    router.back();
-  }
+  await returnToPreviousPage(router, props.list);
 }
 
 async function onSave(addAnother: boolean) {

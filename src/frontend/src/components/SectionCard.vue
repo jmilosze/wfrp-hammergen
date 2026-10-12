@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="bg-white border border-neutral-400 min-w-fit [&_tbody>tr:last-child>td]:border-b-0">
+  <div class="flex flex-col bg-white border border-neutral-400 min-w-fit [&_tbody>tr:last-child>td]:border-b-0">
     <div class="flex flex-wrap items-center justify-between gap-2 px-2 py-1 border-b border-neutral-300 bg-neutral-200">
       <div class="flex items-center gap-2">
         <span class="text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none">{{ title }}</span>

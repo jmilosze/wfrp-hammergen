@@ -37,7 +37,7 @@ const value = computed({
 </script>
 
 <template>
-  <div class="w-full">
+  <div class="w-full" :class="{ 'flex flex-col grow': bare }">
     <div class="flex items-center">
       <label v-if="title" :for="textareaId" class="mb-1 mr-2">{{ title }}</label>
       <slot />
@@ -48,6 +48,7 @@ const value = computed({
       class="w-full p-2 bg-white focus:outline-neutral-700 focus:outline-2 disabled:bg-neutral-200"
       :class="[
         size ? heightClasses[size] : 'h-36',
+        { grow: bare },
         bare ? 'block focus:-outline-offset-2' : 'border border-neutral-300 rounded focus:border-transparent',
       ]"
       :disabled="disabled"

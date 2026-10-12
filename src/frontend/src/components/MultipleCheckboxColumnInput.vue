@@ -4,6 +4,8 @@ const props = defineProps<{
   title?: string;
   disabled?: boolean;
   options: { text: string; value: T }[];
+  // bare: no border or rounded corners of its own, to sit inside a box (e.g. SectionCard).
+  bare?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -25,7 +27,7 @@ function toggle(optionValue: T) {
 <template>
   <fieldset>
     <legend v-if="title" class="mb-1">{{ title }}</legend>
-    <div class="@container w-full border border-neutral-300 rounded px-2">
+    <div class="@container w-full px-2" :class="{ 'border border-neutral-300 rounded': !bare }">
       <ul class="columns-1 @sm:columns-2 @lg:columns-3 gap-4 list-none p-0 m-0">
         <li v-for="option in options" :key="String(option.value)" class="break-inside-avoid py-2 flex">
           <label class="inline-flex items-center cursor-pointer">
