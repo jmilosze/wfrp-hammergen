@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import ListTable from "./ListTable.vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
@@ -55,6 +56,11 @@ const effects = computed(() => Object.fromEntries(effectList.value.map((x) => [x
 
 const selectedSources = computed(() => effectList.value.filter((x) => x.selected));
 
+function onRemoveClick(id: number) {
+  effects.value[id].selected = false;
+  emit("selected", { id: id, selected: false });
+}
+
 function onEditClick() {
   modal.showModal("modifyEffectsModal");
   searchTerm.value = "";
@@ -66,13 +72,22 @@ function onEditClick() {
 
 <template>
   <div class="flex flex-col">
-    <ListTable :editable="!disabled" title="Effects" :titleColspan="2" class="grow">
+    <ListTable :editable="!disabled" title="Effects" :titleColspan="disabled ? 2 : 3" class="grow">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
       </template>
       <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
         <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
         <td class="py-2 px-2 border-b border-neutral-300">{{ src.desc }}</td>
+        <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+          <button
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+            :aria-label="`Remove ${src.name}`"
+            @click="onRemoveClick(src.id)"
+          >
+            <Icon icon="lucide:x" class="size-5" />
+          </button>
+        </td>
       </tr>
     </ListTable>
     <ModalWindow id="modifyEffectsModal">

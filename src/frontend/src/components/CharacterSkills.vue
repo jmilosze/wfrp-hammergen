@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import { printSkillType, Skill } from "../services/wh/content/skill.ts";
 import { computed, ref, Ref, watch } from "vue";
 import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/core/attributes.ts";
@@ -44,7 +45,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "updated", value: { id: string; number: number }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
   (e: "addSpeciesSkills"): void;
 }>();
 
@@ -118,6 +118,11 @@ const modalColumns = [
 
 const resetPaginationCounter = ref(0);
 
+function removeSkill(id: string) {
+  skillsWithNumber.value[id].number = 0;
+  emit("updated", { id: id, number: 0 });
+}
+
 function onEditClick() {
   if (props.loading) {
     return;
@@ -139,9 +144,6 @@ function onEditClick() {
         <SectionButton icon="lucide:plus" variant="neutral" :disabled="props.loading" @click="emit('addSpeciesSkills')">
           Add species skills
         </SectionButton>
-        <SectionButton icon="lucide:trash-2" variant="danger" :disabled="props.loading" @click="emit('clearAll')">
-          Clear all
-        </SectionButton>
       </template>
       <table class="w-full">
         <thead>
@@ -150,6 +152,7 @@ function onEditClick() {
             <th class="border-b border-neutral-300 py-2 px-2">Att</th>
             <th class="border-b border-neutral-300 py-2 px-2">Adv</th>
             <th class="border-b border-neutral-300 py-2 px-2">Skill</th>
+            <th v-if="!disabled" class="border-b border-neutral-300 py-2 px-2 w-0" />
           </tr>
         </thead>
         <tbody>
@@ -163,6 +166,15 @@ function onEditClick() {
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
+            <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+              <button
+                class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+                :aria-label="`Remove ${src.name}`"
+                @click="removeSkill(src.id)"
+              >
+                <Icon icon="lucide:x" class="size-5" />
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>

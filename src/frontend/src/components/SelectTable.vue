@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
@@ -29,7 +30,8 @@ const props = defineProps<{
   modalTitle?: string;
   loading?: boolean;
   modalId?: string;
-  clearAllBtn?: boolean;
+  // Each row gets a cross that deselects it.
+  removable?: boolean;
   disableDescription?: boolean;
   truncateModalDescription?: number;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
@@ -39,7 +41,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "selected", value: { id: string; selected: boolean }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
 }>();
 
 const itemsWithSelect: Ref<Record<string, ItemWithSelect>> = ref({});
@@ -90,6 +91,15 @@ const modalId = props.modalId ? props.modalId : "modifyItemsModal";
 
 const resetPaginationCounter = ref(0);
 
+const showRemove = computed(() => props.removable && !props.disabled);
+// The title cell spans the remove column, which has no header, so the actions sit at the right edge.
+const titleColspan = computed(() => (props.disableDescription ? 1 : 2) + (showRemove.value ? 1 : 0));
+
+function onRemoveClick(id: string) {
+  itemsWithSelect.value[id].selected = false;
+  emit("selected", { id: id, selected: false });
+}
+
 function onEditClick() {
   if (props.loading) {
     return;
@@ -105,18 +115,9 @@ function onEditClick() {
 
 <template>
   <div>
-    <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="disableDescription ? 1 : 2">
+    <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="titleColspan">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
-        <SectionButton
-          v-if="clearAllBtn"
-          icon="lucide:trash-2"
-          variant="danger"
-          :disabled="props.loading"
-          @click="emit('clearAll')"
-        >
-          Clear all
-        </SectionButton>
       </template>
       <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
         <td class="py-2 px-2 border-b border-neutral-300">
@@ -127,6 +128,15 @@ function onEditClick() {
         </td>
         <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">
           {{ src.description }}
+        </td>
+        <td v-if="showRemove" class="py-2 px-2 border-b border-neutral-300 w-0">
+          <button
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+            :aria-label="`Remove ${src.name}`"
+            @click="onRemoveClick(src.id)"
+          >
+            <Icon icon="lucide:x" class="size-5" />
+          </button>
         </td>
       </tr>
     </ListTable>

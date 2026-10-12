@@ -604,7 +604,6 @@ const modifierAttributes = computed(() => {
       :validationStatus="validSkills"
       class="flex-1"
       @reload="skillListUtils.loadWhList"
-      @clearAll="wh.clearSkills(true)"
       @updated="(event) => wh.updateSkills(event.id, event.number)"
       @addSpeciesSkills="
         populateSpeciesSkills4e(wh, skillListUtils.whList.value, generationPropsUtils.generationProps.value)
@@ -619,7 +618,6 @@ const modifierAttributes = computed(() => {
       :validationStatus="validTalents"
       class="flex-1"
       @reload="talentListUtils.loadWhList"
-      @clearAll="wh.clearTalents(true)"
       @updated="(event) => wh.updateTalents(event.id, event.number, talentListUtils.whList.value)"
       @addSpeciesTalents="
         populateSpeciesTalents(wh, talentListUtils.whList.value, generationPropsUtils.generationProps.value)
@@ -693,14 +691,13 @@ const modifierAttributes = computed(() => {
         modalTitle="Edit prayers"
         modalId="characterPrayers"
         :loading="prayerListUtils.loading.value"
-        :clearAllBtn="true"
+        removable
         :disableDescription="true"
         routeName="prayer"
         :truncateModalDescription="100"
         class="-mt-px"
         @reload="prayerListUtils.loadWhList"
         @selected="(e) => wh.updatePrayers(e.id, e.selected)"
-        @clearAll="wh.clearPrayers(true)"
       />
       <SelectTable
         :disabled="!canEdit"
@@ -710,14 +707,13 @@ const modifierAttributes = computed(() => {
         modalTitle="Edit spells"
         modalId="characterSpells"
         :loading="spellListUtils.loading.value"
-        :clearAllBtn="true"
+        removable
         :disableDescription="true"
         routeName="spell"
         :truncateModalDescription="100"
         class="-mt-px"
         @reload="spellListUtils.loadWhList"
         @selected="(e) => wh.updateSpells(e.id, e.selected)"
-        @clearAll="wh.clearSpells(true)"
       />
     </div>
     <div class="grow basis-80">
@@ -738,14 +734,13 @@ const modifierAttributes = computed(() => {
         modalTitle="Edit mutations"
         modalId="characterMutations"
         :loading="mutationListUtils.loading.value"
-        :clearAllBtn="true"
+        removable
         :disableDescription="true"
         routeName="mutation"
         :truncateModalDescription="100"
         class="-mt-px"
         @reload="mutationListUtils.loadWhList"
         @selected="(e) => wh.updateMutations(e.id, e.selected, mutationListUtils.whList.value)"
-        @clearAll="wh.clearMutations(true)"
       />
       <SelectIdValueTable
         :disabled="!canEdit"
@@ -754,7 +749,6 @@ const modifierAttributes = computed(() => {
         title="Creature Traits"
         modalTitle="Edit traits"
         :loading="traitListUtils.loading.value"
-        :clearAllBtn="true"
         :disableDescription="true"
         :allowRepeat="true"
         :validationStatus="wh.validateTraits()"
@@ -766,7 +760,6 @@ const modifierAttributes = computed(() => {
         @remove="(e) => wh.removeTrait(e.index)"
         @selected="(e) => wh.updateTraits(e.id, e.selected, traitListUtils.whList.value)"
         @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
-        @clearAll="wh.clearTraits()"
       />
     </div>
   </div>

@@ -32,7 +32,6 @@ const props = defineProps<{
   disabled?: boolean;
   modalTitle?: string;
   loading?: boolean;
-  clearAllBtn?: boolean;
   disableDescription?: boolean;
   truncateModalDescription?: number;
   validationStatus: ValidationStatus;
@@ -46,7 +45,6 @@ const emit = defineEmits<{
   (e: "selected", value: { id: string; selected: boolean }): void;
   (e: "updateValue", value: { index: number; id: string; value: string }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
 }>();
 
 const entities = computed(() => new Map(props.itemList.map((x) => [x.id, x])));
@@ -124,15 +122,6 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
     <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="titleColspan">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
-        <SectionButton
-          v-if="clearAllBtn"
-          icon="lucide:trash-2"
-          variant="danger"
-          :disabled="props.loading"
-          @click="emit('clearAll')"
-        >
-          Clear all
-        </SectionButton>
       </template>
       <template #headers>
         <template v-if="!disableDescription">

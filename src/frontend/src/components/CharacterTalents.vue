@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import { Talent } from "../services/wh/content/talent.ts";
 import { computed, ref, Ref, watch } from "vue";
 import { Attributes, printAttributeName } from "../services/wh/core/attributes.ts";
@@ -45,7 +46,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "updated", value: { id: string; number: number }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
   (e: "addSpeciesTalents"): void;
 }>();
 
@@ -135,6 +135,11 @@ const modalColumns = [
 
 const resetPaginationCounter = ref(0);
 
+function removeTalent(id: string) {
+  talentsWithNumber.value[id].number = 0;
+  emit("updated", { id: id, number: 0 });
+}
+
 function onEditClick() {
   if (props.loading) {
     return;
@@ -161,14 +166,12 @@ function onEditClick() {
         >
           Add species talents
         </SectionButton>
-        <SectionButton icon="lucide:trash-2" variant="danger" :disabled="props.loading" @click="emit('clearAll')">
-          Clear all
-        </SectionButton>
       </template>
       <table class="w-full">
         <thead>
           <tr class="text-left" :class="{ 'bg-primary-50': !disabled }">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+            <th v-if="!disabled" class="border-b border-neutral-300 py-2 px-2 w-0" />
           </tr>
         </thead>
         <tbody>
@@ -179,6 +182,15 @@ function onEditClick() {
               </TextLink>
               <span v-if="src.number > 1" class="ml-1">x{{ src.number }}</span>
               <Edition4eBadge v-if="fourEIds?.has(src.id)" />
+            </td>
+            <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+              <button
+                class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+                :aria-label="`Remove ${src.name}`"
+                @click="removeTalent(src.id)"
+              >
+                <Icon icon="lucide:x" class="size-5" />
+              </button>
             </td>
           </tr>
         </tbody>

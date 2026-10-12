@@ -173,6 +173,8 @@ watchWh(
           :initSelectedItems="wh.group"
           :itemList="groupTalents"
           title="Belongs to group"
+          removable
+          disableDescription
           modalTitle="Edit groups"
           :loading="talentListUtils.loading.value"
           routeName="talent"

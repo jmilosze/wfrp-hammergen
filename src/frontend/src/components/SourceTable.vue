@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import SectionCard from "./SectionCard.vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
@@ -57,6 +58,11 @@ const selectedSourcesValid = computed(() => {
   return true;
 });
 
+function onRemoveClick(id: string) {
+  sources.value[id].selected = false;
+  emit("selected", { id: id, notes: sources.value[id].notes, selected: false });
+}
+
 function onEditClick() {
   modal.showModal("modifySourceModal");
   searchTerm.value = "";
@@ -77,12 +83,22 @@ function onEditClick() {
           <tr class="text-left" :class="{ 'bg-primary-50': !disabled }">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
             <th class="border-b border-neutral-300 py-2 px-2">Notes</th>
+            <th v-if="!disabled" class="border-b border-neutral-300 py-2 px-2 w-0" />
           </tr>
         </thead>
         <tbody>
           <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.notes }}</td>
+            <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+              <button
+                class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+                :aria-label="`Remove ${src.name}`"
+                @click="onRemoveClick(src.id)"
+              >
+                <Icon icon="lucide:x" class="size-5" />
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>

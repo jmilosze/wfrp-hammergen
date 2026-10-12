@@ -426,24 +426,8 @@ export class Character extends WhEntity {
     updateSet(this.spells, id, selected);
   }
 
-  clearSpells(replace = true): void {
-    if (replace) {
-      this.spells = new Set<string>();
-    } else {
-      this.spells.clear();
-    }
-  }
-
   updatePrayers(id: string, selected: boolean): void {
     updateSet(this.prayers, id, selected);
-  }
-
-  clearPrayers(replace = true): void {
-    if (replace) {
-      this.prayers = new Set<string>();
-    } else {
-      this.prayers.clear();
-    }
   }
 
   hasTrait(id: string): boolean {
@@ -485,11 +469,6 @@ export class Character extends WhEntity {
     this.traits[index].value = value;
   }
 
-  clearTraits(): void {
-    this.traits = [];
-    this.modifiers.traits = {};
-  }
-
   updateMutations(id: string, selected: boolean, mutations: Mutation[]): void {
     updateSet(this.mutations, id, selected);
     if (!selected) {
@@ -504,25 +483,8 @@ export class Character extends WhEntity {
     }
   }
 
-  clearMutations(replace = true): void {
-    if (replace) {
-      this.mutations = new Set<string>();
-    } else {
-      this.mutations.clear();
-    }
-    this.modifiers.mutations = {};
-  }
-
   updateSkills(id: string, number: number): void {
     updateIdNumberRecord(this.skills, { id: id, number: number });
-  }
-
-  clearSkills(replace = true): void {
-    if (replace) {
-      this.skills = {} as Record<string, number>;
-    } else {
-      clearObject(this.skills);
-    }
   }
 
   updateTalents(id: string, number: number, talents: Talent[]): void {
@@ -537,15 +499,6 @@ export class Character extends WhEntity {
         return;
       }
     }
-  }
-
-  clearTalents(replace: boolean): void {
-    if (replace) {
-      this.talents = {} as Record<string, number>;
-    } else {
-      clearObject(this.talents);
-    }
-    this.modifiers.talents = {};
   }
 
   updateItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {
