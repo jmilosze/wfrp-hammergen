@@ -105,7 +105,7 @@ function onEditClick() {
 
 <template>
   <div>
-    <ListTable :title="title" :loading="props.loading">
+    <ListTable :editable="!disabled" :title="title" :loading="props.loading">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
         <SectionButton

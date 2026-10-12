@@ -7,7 +7,7 @@ const props = defineProps<{
   disabled?: boolean;
   options: { text: string; value: T }[];
   // bare: no border or rounded corners of its own, to sit inside a box (e.g. SectionCard). Its checkboxes are drawn
-  // like editable sheet cells: faint yellow inside, white when disabled.
+  // like editable sheet cells: faint yellow inside, greyed out when disabled.
   bare?: boolean;
 }>();
 

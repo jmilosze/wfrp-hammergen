@@ -115,11 +115,13 @@ function onEditClick() {
 
 const thClass = ["border-b", "border-neutral-300", "py-2", "px-2"];
 const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
+// A cell holding an input: the input fills the cell, so the cell has no padding of its own.
+const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
 </script>
 
 <template>
   <div>
-    <ListTable :title="title" :loading="props.loading" :titleColspan="titleColspan">
+    <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="titleColspan">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
         <SectionButton
@@ -145,13 +147,14 @@ const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
           </TextLink>
           <Edition4eBadge v-if="fourEIds?.has(row.entity.id)" />
         </td>
-        <td v-if="showValueColumn" :class="tdClass">
+        <td v-if="showValueColumn" :class="row.entity.hasValue && !disabled ? tdInputClass : tdClass">
           <template v-if="row.entity.hasValue">
             <FormInput
               v-if="!disabled"
               :modelValue="row.value"
               :maxlength="MAX_VALUE_LENGTH"
-              class="min-w-24 max-w-48"
+              bare
+              class="min-w-24"
               @update:modelValue="
                 (value: string) => emit('updateValue', { index: row.index, id: row.entity.id, value: value })
               "

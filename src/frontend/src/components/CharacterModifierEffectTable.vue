@@ -64,7 +64,7 @@ function onEditClick() {
 
 <template>
   <div>
-    <ListTable title="Effects">
+    <ListTable :editable="!disabled" title="Effects">
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
       </template>
