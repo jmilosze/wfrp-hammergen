@@ -21,7 +21,7 @@ import AlertBlock from "../../../components/AlertBlock.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
-import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
+import LabelPicker from "../../../components/LabelPicker.vue";
 import SheetTable from "../../../components/SheetTable.vue";
 import SheetField from "../../../components/SheetField.vue";
 import SheetSelect from "../../../components/SheetSelect.vue";
@@ -100,25 +100,20 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     </div>
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1 flex flex-col gap-4">
-        <div>
-          <SheetTable>
-            <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          </SheetTable>
-          <SheetTable class="-mt-px">
-            <SheetSelect v-model="wh.type" title="Type" :options="typeOptions" :disabled="!canEdit" />
-          </SheetTable>
-        </div>
-        <SectionCard title="Applicable to">
-          <MultipleCheckboxColumnInput
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SheetSelect v-model="wh.type" title="Type" :options="typeOptions" :disabled="!canEdit" />
+          <LabelPicker
             v-model="wh.applicableTo"
+            title="Applicable to"
             :options="applicableToOptions"
             :disabled="!canEdit"
-            bare
+            sheetRow
           />
-        </SectionCard>
+        </SheetTable>
       </div>
       <SectionCard title="Description" class="flex-1">
-        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare />
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
       </SectionCard>
     </div>
 
