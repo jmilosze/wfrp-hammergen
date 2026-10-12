@@ -9,11 +9,12 @@ import {
   SpellType,
   spellTypeList,
 } from "../services/wh/content/spell.ts";
-import SelectInput from "./SelectInput.vue";
+import SheetTable from "./SheetTable.vue";
+import SheetSelect from "./SheetSelect.vue";
+import SheetCell from "./SheetCell.vue";
 import { Ref, ref, watch } from "vue";
 import ActionButton from "./ActionButton.vue";
 import SectionButton from "./SectionButton.vue";
-import SectionCard from "./SectionCard.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
@@ -108,30 +109,28 @@ function onEditClick() {
 
 <template>
   <div>
-    <div class="@container">
-      <SectionCard title="Classification">
-        <div class="p-2">
-          <div class="flex flex-col @2xl:flex-row gap-4">
-            <SelectInput
-              :modelValue="props.modelValue.type"
-              :options="typeOptions"
-              :disabled="props.disabled"
-              title="Type"
-              class="flex-1"
-              @update:modelValue="updateType($event)"
-            />
-            <div class="flex-1">
-              <div class="flex items-center mb-1">
-                <div class="mr-2">Labels</div>
-                <SectionButton v-if="!disabled" icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
-              </div>
-              <span v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)" :key="i">
-                {{ printSpellLabel(label) + (i !== simplifiedLabels.length - 1 ? ", " : "") }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </SectionCard>
+    <div>
+      <SheetTable title="Classification">
+        <SheetSelect
+          :modelValue="props.modelValue.type"
+          :options="typeOptions"
+          :disabled="props.disabled"
+          title="Type"
+          @update:modelValue="updateType($event)"
+        />
+      </SheetTable>
+      <SheetTable class="-mt-px">
+        <SheetCell title="Labels" :editable="!disabled">
+          <span>
+            <span v-for="(label, i) in simplifiedLabels.sort((a, b) => b - a)" :key="i">
+              {{ printSpellLabel(label) + (i !== simplifiedLabels.length - 1 ? ", " : "") }}
+            </span>
+          </span>
+        </SheetCell>
+        <template v-if="!disabled" #actions>
+          <SectionButton icon="lucide:pencil" iconOnlyWhenNarrow @click="onEditClick">Edit</SectionButton>
+        </template>
+      </SheetTable>
     </div>
     <ModalWindow id="modifySpellLabelsModal" size="xs">
       <template #header>Edit labels</template>
