@@ -3,16 +3,12 @@ import { Icon } from "@iconify/vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
-import TableWithSearch from "./TableWithSearch.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 import { useModal } from "../composables/modal.ts";
 import ListTable from "./ListTable.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
-import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
-import LinkButton from "./LinkButton.vue";
-import ReloadButton from "./ReloadButton.vue";
 
 type ItemWithSelect = {
   id: string;
@@ -45,10 +41,6 @@ const emit = defineEmits<{
 
 const itemsWithSelect: Ref<Record<string, ItemWithSelect>> = ref({});
 const itemsWithSelectList: Ref<ItemWithSelect[]> = ref([]);
-const editionFilter = ref<EditionFilter>("both");
-const itemsWithSelectListFiltered = computed(() =>
-  itemsWithSelectList.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
-);
 
 watch(
   [() => props.initSelectedItems, () => props.itemList],
@@ -80,16 +72,10 @@ function updateItemsWithSelect(
 const selectedItems = computed(() => itemsWithSelectList.value.filter((x) => x.selected));
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
-];
 
 const modalId = props.modalId ? props.modalId : "modifyItemsModal";
 
-const resetPaginationCounter = ref(0);
+const openedCounter = ref(0);
 
 const showRemove = computed(() => props.removable && !props.disabled);
 // The title cell spans the remove column, which has no header, so the actions sit at the right edge.
@@ -104,12 +90,16 @@ function onEditClick() {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  modal.showModal(modalId);
-  searchTerm.value = "";
   itemsWithSelectList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
   });
+  openedCounter.value += 1;
+  modal.showModal(modalId);
+}
+
+function onToggle(id: string, selected: boolean) {
+  itemsWithSelect.value[id].selected = selected;
+  emit("selected", { id: id, selected: selected });
 }
 </script>
 
@@ -140,40 +130,17 @@ function onEditClick() {
         </td>
       </tr>
     </ListTable>
-    <ModalWindow :id="modalId">
+    <ModalWindow :id="modalId" fullHeight>
       <template #header> {{ modalTitle }} </template>
-      <TableWithSearch
-        v-model="searchTerm"
-        :fields="modalColumns"
-        :items="itemsWithSelectListFiltered"
-        stackBreakpoint="lg"
+      <ChecklistPicker
+        :items="itemsWithSelectList"
+        :routeName="routeName"
+        :opened="openedCounter"
         :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
-      >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
-          Create new
-        </LinkButton>
-        <ReloadButton :loading="props.loading" @click="emit('reload')" />
-        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
-
-        <template #name="{ id }: { id: string }">
-          <TextLink :routeName="routeName" :params="{ id: id }">
-            {{ itemsWithSelect[id].name }}
-          </TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(id)" />
-        </template>
-
-        <template #selected="{ id }: { id: string }">
-          <div>
-            <input
-              v-model="itemsWithSelect[id].selected"
-              type="checkbox"
-              class="w-5 h-5 accent-neutral-600 my-1"
-              @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
-            />
-          </div>
-        </template>
-      </TableWithSearch>
+        :fourEIds="fourEIds"
+        @toggle="(e) => onToggle(e.id, e.selected)"
+        @reload="emit('reload')"
+      />
     </ModalWindow>
   </div>
 </template>
