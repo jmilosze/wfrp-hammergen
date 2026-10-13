@@ -111,7 +111,7 @@ function setNotes(id: string, notes: string) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
+          <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-100">
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.notes }}</td>
             <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">

@@ -219,18 +219,21 @@ function emitPastSelected(id: string) {
         <SheetCell title="Current" :editable="!disabled">
           <div v-if="selectedCurrentCareer">
             <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }">
-              {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} -
-              {{ selectedCurrentCareer.levelName }}
+              {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }}
             </TextLink>
             <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
           </div>
         </SheetCell>
         <SheetCell title="Past" :editable="!disabled">
-          <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
-            <TextLink routeName="career" :params="{ id: pastCareer.careerId }">
-              {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}
-            </TextLink>
-            <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
+          <!-- One line, comma separated, wrapping only when it runs out of room. -->
+          <div>
+            <span v-for="(pastCareer, i) in selectedPastCareers" :key="pastCareer.id">
+              <TextLink routeName="career" :params="{ id: pastCareer.careerId }">
+                {{ pastCareer.name }} {{ pastCareer.level }}
+              </TextLink>
+              <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
+              <template v-if="i < selectedPastCareers.length - 1">, </template>
+            </span>
           </div>
         </SheetCell>
       </template>

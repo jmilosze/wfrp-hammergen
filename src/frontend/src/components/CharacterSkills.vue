@@ -160,7 +160,7 @@ function setNumber(id: string, number: number) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
+          <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-100">
             <td class="py-2 px-2 border-b border-neutral-300">
               <TextLink routeName="skill" :params="{ id: src.id }">
                 {{ src.name }}

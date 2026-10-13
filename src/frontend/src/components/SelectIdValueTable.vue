@@ -124,7 +124,7 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
       </template>
-      <tr v-for="row in selectedRows" :key="row.index" class="bg-white hover:bg-neutral-200">
+      <tr v-for="row in selectedRows" :key="row.index" class="bg-white hover:bg-neutral-100">
         <td :class="tdClass">
           <TextLink :routeName="routeName" :params="{ id: row.entity.id }">
             {{ row.entity.name }}

@@ -76,7 +76,7 @@ function onEditClick() {
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
       </template>
-      <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
+      <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-100">
         <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
         <td class="py-2 px-2 border-b border-neutral-300">{{ src.desc }}</td>
         <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">

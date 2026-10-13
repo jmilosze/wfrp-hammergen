@@ -109,7 +109,7 @@ function onToggle(id: string, selected: boolean) {
       <template v-if="!disabled" #actions>
         <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
       </template>
-      <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
+      <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-100">
         <td class="py-2 px-2 border-b border-neutral-300">
           <TextLink :routeName="routeName" :params="{ id: src.id }">
             {{ src.name }}
