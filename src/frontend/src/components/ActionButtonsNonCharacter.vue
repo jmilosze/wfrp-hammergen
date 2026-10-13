@@ -16,17 +16,15 @@ const auth = useAuth();
 
 <template>
   <div class="flex gap-2 my-1 shrink-0">
+    <!-- An icon-only button; its name comes from the label and tooltip. -->
     <ActionButton
       v-if="auth.loggedIn.value"
-      class="btn btn-secondary btn-sm"
+      class="rounded border border-neutral-400 bg-white p-1.5 text-neutral-800 hover:bg-neutral-200 cursor-pointer"
       title="Copy"
       aria-label="Copy"
       @click="emit('copy', id)"
     >
-      <span class="flex items-center gap-1.5">
-        <Icon icon="lucide:copy" class="size-4" />
-        <span>Copy</span>
-      </span>
+      <Icon icon="lucide:copy" class="size-4" />
     </ActionButton>
   </div>
 </template>

@@ -3,71 +3,37 @@ import { computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { Visibility } from "../services/wh/core/entity.ts";
 import { useAuth } from "../composables/auth";
+import { VISIBILITY_KINDS, visibilityKind } from "./visibilityKind.ts";
+import InfoTip from "./InfoTip.vue";
 
 const props = defineProps<{
   ownerId?: string;
   visibility?: Visibility;
+  // iconOnly: just the coloured icon, sized to the surrounding text (e.g. after an entry's type); tapping or hovering it
+  // shows what it means.
+  iconOnly?: boolean;
 }>();
 
 const auth = useAuth();
 const canEdit = computed(() => auth.canEdit(props.ownerId));
 
-const tileAndContent = computed(() => {
-  const vis = props.visibility ?? Visibility.Private;
-  return getSharedItemTooltip(canEdit.value, vis);
-});
-
-interface TooltipInfo {
-  tile: string;
-  label: string;
-  content: string;
-  badgeClass: string;
-}
-
-function getSharedItemTooltip(canEdit: boolean, visibility: Visibility): TooltipInfo {
-  if (visibility === Visibility.Public) {
-    return {
-      tile: "material-symbols:globe",
-      label: "Public",
-      content: "This item is owned by Hammergen",
-      badgeClass: "bg-info-100 text-info-800 border border-info-300",
-    };
-  } else if (visibility === Visibility.Shared) {
-    if (canEdit) {
-      return {
-        tile: "material-symbols:backup",
-        label: "Shared",
-        content: "This item is shared with linked accounts",
-        badgeClass: "bg-success-100 text-success-800 border border-success-300",
-      };
-    } else {
-      return {
-        tile: "material-symbols:cloud-download",
-        label: "Shared",
-        content: "This item is being shared from a linked account",
-        badgeClass: "bg-linked-100 text-linked-800 border border-linked-300",
-      };
-    }
-  } else {
-    return {
-      tile: "material-symbols:lock",
-      label: "Private",
-      content: "This item is not shared",
-      badgeClass: "bg-neutral-100 text-neutral-700 border border-neutral-300",
-    };
-  }
-}
+const kind = computed(() => VISIBILITY_KINDS[visibilityKind(canEdit.value, props.visibility ?? Visibility.Private)]);
 </script>
 
 <template>
+  <InfoTip v-if="iconOnly" :label="kind.label" :text="`${kind.label}: ${kind.description}`">
+    <Icon :icon="kind.icon" :class="kind.iconClass" class="size-[1em]" />
+  </InfoTip>
   <span
-    :title="tileAndContent.content"
-    :class="tileAndContent.badgeClass"
+    v-else
+    :title="kind.description"
+    :class="kind.badgeClass"
     class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap select-none cursor-default"
   >
     <slot name="tile">
-      <Icon :icon="tileAndContent.tile" class="size-4" />
+      <Icon :icon="kind.icon" class="size-4" />
     </slot>
-    <span>{{ tileAndContent.label }}</span>
+    <!-- Only the icon on small screens; the label stays for screen readers and the tooltip explains it. -->
+    <span class="sr-only @md:not-sr-only">{{ kind.label }}</span>
   </span>
 </template>

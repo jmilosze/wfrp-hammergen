@@ -2,7 +2,7 @@ import { ContentApi } from "../services/wh/core/api.ts";
 import { Edition } from "../services/wh/core/edition.ts";
 import { SHORT_DESC_LENGTH } from "../services/wh/core/validators.ts";
 import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
-import { computed, MaybeRefOrGetter, Ref, ref, toValue, watch } from "vue";
+import { computed, MaybeRefOrGetter, Ref, ref, toValue, watch, WritableComputedRef } from "vue";
 import { source } from "../services/wh/core/source.ts";
 import { useAuth } from "./auth.ts";
 import { useRouteQuery } from "@vueuse/router";
@@ -23,6 +23,21 @@ export function useSourceQuery(edition: MaybeRefOrGetter<Edition>): Ref<string> 
     },
   );
   return sourceTerm;
+}
+
+// splitQuery views a comma-separated query string value as a list, e.g. the ticked options of a list filter.
+export function splitQuery(term: Ref<string>): WritableComputedRef<string[]> {
+  return computed({
+    get: () => (term.value === "" ? [] : term.value.split(",")),
+    set: (values) => {
+      term.value = values.join(",");
+    },
+  });
+}
+
+// useListQuery is a multi-value list filter kept in the named query string value.
+export function useListQuery(name: string): WritableComputedRef<string[]> {
+  return splitQuery(useRouteQuery(name, ""));
 }
 
 // useWhList loads one edition of a content type and reloads when the edition changes.

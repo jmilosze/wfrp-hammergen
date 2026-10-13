@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { refDebounced } from "@vueuse/core";
-import { RouterLink } from "vue-router";
 import { Icon } from "@iconify/vue";
 import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
 import ChecklistRow from "./ChecklistRow.vue";
 import { ChecklistItem } from "./checklistItem.ts";
 import SectionButton from "./SectionButton.vue";
+import SectionLink from "./SectionLink.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 
 // The content of a picker popup, in the style of the character sheet: a search row, then the items as a checklist, each
@@ -87,7 +87,8 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
         >
           <span class="flex items-center gap-1 px-2 border-r border-neutral-300 font-semibold">
             <Icon icon="lucide:search" class="size-4" />
-            Search
+            <!-- Only the magnifying glass on small screens; the word stays for screen readers. -->
+            <span class="sr-only @md:not-sr-only">Search</span>
           </span>
           <input
             v-model="searchTerm"
@@ -107,15 +108,16 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
               {{ option.text }}
             </option>
           </select>
-          <RouterLink
+          <SectionLink
             v-if="routeName"
-            :to="{ name: routeName, params: { id: 'create' } }"
-            target="_blank"
-            class="inline-flex items-center gap-1 rounded border px-2 py-1 text-sm font-medium bg-white border-neutral-400 text-neutral-800 hover:bg-neutral-200"
+            icon="lucide:plus"
+            variant="neutral"
+            :routeName="routeName"
+            :params="{ id: 'create' }"
+            newWindow
           >
-            <Icon icon="lucide:plus" class="size-4" />
             Create new
-          </RouterLink>
+          </SectionLink>
           <SectionButton
             v-if="routeName"
             icon="lucide:refresh-cw"
