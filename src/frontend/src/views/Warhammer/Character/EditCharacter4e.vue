@@ -9,7 +9,6 @@ import { Character, characterApi } from "../../../services/wh/character/characte
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
-import ActionButton from "../../../components/ActionButton.vue";
 import LinkButton from "../../../components/LinkButton.vue";
 import { printSize } from "../../../services/wh/character/size.ts";
 import {
@@ -22,7 +21,6 @@ import {
   speciesList,
   speciesWithRegionToSpecies,
 } from "../../../services/wh/core/species.ts";
-import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import { generateCharacter4e } from "../../../services/wh/character/generation/4e/generator4e.ts";
 import { populateClassItems } from "../../../services/wh/character/generation/shared/trappings.ts";
@@ -49,7 +47,7 @@ import { spellApi } from "../../../services/wh/content/spell.ts";
 import { mutationApi } from "../../../services/wh/content/mutation.ts";
 import { prayerApi } from "../../../services/wh/content/prayer.ts";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
-import HintModal from "../../../components/HintModal.vue";
+import CharacterStartPanel from "../../../components/CharacterStartPanel.vue";
 import SectionCard from "../../../components/SectionCard.vue";
 import SectionButton from "../../../components/SectionButton.vue";
 import SheetField from "../../../components/SheetField.vue";
@@ -287,6 +285,16 @@ function setCareerOpts(species: SpeciesWithRegion, careerList: Career[]): { text
 }
 
 const isGenerationDisabled = computed(() => referenceDataLoading.value || careerOpts.value.length === 0);
+// What the generator is set to, shown in the start strip after generating.
+const generationSummary = computed(() =>
+  [
+    selectedGenSpeciesWithRegionOpts.value.find((x) => x.value === selectedGenSpeciesWithRegion.value)?.text,
+    careerOpts.value.find((x) => x.value === selectedGenCareer.value)?.text,
+    `Level ${selectedGenLevel.value}`,
+  ]
+    .filter((x) => x !== undefined)
+    .join(" · "),
+);
 
 function rollCharacter() {
   if (isGenerationDisabled.value) {
@@ -387,71 +395,50 @@ const modifierAttributes = computed(() => {
       <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View character </LinkButton>
     </div>
   </div>
-  <div v-if="canEdit && id === 'create'" class="border border-neutral-700 rounded p-2 my-4 print:hidden">
-    <div class="text-xl">Generate character</div>
-    <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
-    <div class="flex flex-col @5xl:flex-row gap-4">
-      <div class="flex-auto flex flex-col @2xl:flex-row gap-4">
-        <SelectInput
-          v-model="selectedGenSpecies"
-          title="Species"
-          :options="speciesOpts"
-          :disabled="!canEdit"
-          class="min-w-24 flex-1"
-        />
-        <SelectInput
+  <CharacterStartPanel
+    v-if="canEdit && id === 'create'"
+    :generateDisabled="isGenerationDisabled"
+    :generationSummary="generationSummary"
+    @generate="rollCharacter"
+  >
+    <template #fields>
+      <SheetTable :columns="2">
+        <SheetSelect v-model="selectedGenSpecies" title="Species" :options="speciesOpts" />
+        <SheetSelect
           v-model="selectedGenSpeciesWithRegion"
           title="Region/Group"
           :options="selectedGenSpeciesWithRegionOpts"
-          :disabled="!canEdit || selectedGenSpeciesWithRegionOpts.length <= 1"
-          class="min-w-24 flex-1"
+          :disabled="selectedGenSpeciesWithRegionOpts.length <= 1"
         />
-      </div>
-      <div class="flex-auto flex flex-col @2xl:flex-row gap-4">
-        <SelectInput
-          v-model="selectedGenLevel"
-          title="Level"
-          :options="levelOpts"
-          :disabled="!canEdit"
-          class="min-w-24 flex-1"
-        />
-        <SelectInput
-          v-model="selectedGenCareer"
-          title="Career"
-          :options="careerOpts"
-          :disabled="!canEdit"
-          class="min-w-24 flex-1"
-        />
-      </div>
-    </div>
-    <div class="flex flex-wrap mt-4 gap-4">
-      <HintModal buttonText="More details" modalHeader="Character generation" modalId="charGenerationHint">
-        <p class="my-1">
-          The generation process of a level 1 character follows all steps from character chapter of the 4e rulebook with
-          the exception that species and career cannot be chosen as random at this moment.
-        </p>
-        <p class="my-1">
-          The careers in career box depend on selected species. You can only select careers that are available for that
-          species. You can use custom careers to generate characters too.
-        </p>
-        <p class="my-1">
-          Class trappings are added to the character sheet but career specific trappings are not and have to be added
-          manually afterward.
-        </p>
-        <p class="my-1">Generating will override all current entries on the character sheet.</p>
-        <p class="my-1">
-          High level characters are generated by creating level 1 character and then leveling it up. At each level, the
-          character gets 2 talents, 5 attribute advances, and 5 times number of sills for that level (30, 20, 10) of
-          skill advances. Skill advances are allocated to the skills from the level character is on. Before advancing to
-          next level, 8 skills are selected at random from all available skills (all levels) and advanced enough to
-          satisfy criteria of career advancement. Attributes are increased so that each one has enough of advances to
-          level up the career.
-        </p>
-        <p class="my-1">Generating will override all current entries on the character sheet.</p>
-      </HintModal>
-      <ActionButton class="btn btn-sm" :disabled="isGenerationDisabled" @click="rollCharacter"> Generate </ActionButton>
-    </div>
-  </div>
+        <SheetSelect v-model="selectedGenCareer" title="Career" :options="careerOpts" />
+        <SheetSelect v-model="selectedGenLevel" title="Level" :options="levelOpts" />
+      </SheetTable>
+    </template>
+    <template #hint>
+      <p class="my-1">
+        The generation process of a level 1 character follows all steps from character chapter of the 4e rulebook with
+        the exception that species and career cannot be chosen as random at this moment.
+      </p>
+      <p class="my-1">
+        The careers in career box depend on selected species. You can only select careers that are available for that
+        species. You can use custom careers to generate characters too.
+      </p>
+      <p class="my-1">
+        Class trappings are added to the character sheet but career specific trappings are not and have to be added
+        manually afterward.
+      </p>
+      <p class="my-1">Generating will override all current entries on the character sheet.</p>
+      <p class="my-1">
+        High level characters are generated by creating level 1 character and then leveling it up. At each level, the
+        character gets 2 talents, 5 attribute advances, and 5 times number of sills for that level (30, 20, 10) of skill
+        advances. Skill advances are allocated to the skills from the level character is on. Before advancing to next
+        level, 8 skills are selected at random from all available skills (all levels) and advanced enough to satisfy
+        criteria of career advancement. Attributes are increased so that each one has enough of advances to level up the
+        career.
+      </p>
+      <p class="my-1">Generating will override all current entries on the character sheet.</p>
+    </template>
+  </CharacterStartPanel>
   <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
     <div class="flex items-center gap-2">
       Edition
