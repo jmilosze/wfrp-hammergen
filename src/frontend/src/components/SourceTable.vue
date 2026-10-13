@@ -7,7 +7,7 @@ import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/c
 import { Edition } from "../services/wh/core/edition.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
-import TableWithSearch from "./TableWithSearch.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 
 const props = defineProps<{ initSources: Record<string, string>; edition: Edition; disabled?: boolean }>();
 
@@ -16,12 +16,7 @@ const emit = defineEmits<{
 }>();
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "notes", displayName: "Notes", skipStackedTitle: false },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
-];
+const openedCounter = ref(0);
 
 const sources: Ref<Record<string, { id: string; name: string; notes: string; selected: boolean }>> = ref({});
 const sourcesList: Ref<{ id: string; name: string; notes: string; selected: boolean }[]> = ref([]);
@@ -64,11 +59,35 @@ function onRemoveClick(id: string) {
 }
 
 function onEditClick() {
-  modal.showModal("modifySourceModal");
-  searchTerm.value = "";
   sourcesList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
   });
+  openedCounter.value += 1;
+  modal.showModal("modifySourceModal");
+}
+
+const modalItems = computed(() =>
+  sourcesList.value.map((x) => {
+    const valid = validateSourceRecord(x.notes);
+    return {
+      id: x.id,
+      name: x.name,
+      description: "",
+      selected: x.selected,
+      text: x.notes,
+      textError: valid.valid ? undefined : valid.message,
+    };
+  }),
+);
+
+function setSelected(id: string, selected: boolean) {
+  sources.value[id].selected = selected;
+  emit("selected", { id: id, notes: sources.value[id].notes, selected: selected });
+}
+
+function setNotes(id: string, notes: string) {
+  sources.value[id].notes = notes;
+  emit("selected", { id: id, notes: notes, selected: sources.value[id].selected });
 }
 </script>
 
@@ -106,33 +125,15 @@ function onEditClick() {
     <p class="text-sm text-danger-600 mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
       Some of the sources are invalid.
     </p>
-    <ModalWindow id="modifySourceModal">
+    <ModalWindow id="modifySourceModal" fullHeight>
       <template #header> Edit sources </template>
-      <div>
-        <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="sourcesList" stackBreakpoint="lg">
-          <template #selected="{ id }: { id: string }">
-            <div>
-              <input
-                v-model="sources[id].selected"
-                type="checkbox"
-                class="w-5 h-5 accent-neutral-600"
-                @input="emit('selected', { id: id, notes: sources[id].notes, selected: !sources[id].selected })"
-              />
-            </div>
-          </template>
-
-          <template #notes="{ id }: { id: string }">
-            <input
-              v-model="sources[id].notes"
-              class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2"
-              @input="emit('selected', { id: id, notes: sources[id].notes, selected: sources[id].selected })"
-            />
-            <p class="text-sm text-danger-600" :class="[validateSourceRecord(sources[id].notes).valid ? 'hidden' : '']">
-              {{ validateSourceRecord(sources[id].notes).message }}
-            </p>
-          </template>
-        </TableWithSearch>
-      </div>
+      <ChecklistPicker
+        :items="modalItems"
+        :opened="openedCounter"
+        textLabel="Notes"
+        @toggle="(e) => setSelected(e.id, e.selected)"
+        @setText="(e) => setNotes(e.id, e.text)"
+      />
     </ModalWindow>
   </div>
 </template>

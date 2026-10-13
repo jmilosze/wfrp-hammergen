@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
 import { computed, ref } from "vue";
 import ModalWindow from "./ModalWindow.vue";
-import TableWithSearch from "./TableWithSearch.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 import { useModal } from "../composables/modal.ts";
 import ListTable from "./ListTable.vue";
 import SectionButton from "./SectionButton.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
-import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
-import LinkButton from "./LinkButton.vue";
-import ReloadButton from "./ReloadButton.vue";
 import FormInput from "./FormInput.vue";
 import { IdValue, MAX_VALUE_LENGTH } from "../utils/idValue.ts";
 import { ValidationStatus } from "../utils/validation.ts";
@@ -76,37 +71,29 @@ function isRepeatable(id: string): boolean {
   return Boolean(props.allowRepeat && entities.value.get(id)?.hasValue);
 }
 
-// Modal rows are sorted when the modal opens, so that rows do not jump while selecting.
-const modalItems = ref<{ id: string; name: string; description: string }[]>([]);
-const editionFilter = ref<EditionFilter>("both");
-const modalItemsFiltered = computed(() =>
-  modalItems.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
+// The popup's rows, by name; the popup lists the picked ones first.
+const modalItems = computed(() =>
+  props.itemList
+    .map((x) => ({
+      id: x.id,
+      name: x.name,
+      description: truncate(x.description, props.truncateModalDescription),
+      selected: x.id in counts.value,
+      repeatable: isRepeatable(x.id),
+      count: counts.value[x.id],
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name)),
 );
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
-];
-
 const modalId = window.crypto.randomUUID();
-const resetPaginationCounter = ref(0);
+const openedCounter = ref(0);
 
 function onEditClick() {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  searchTerm.value = "";
-  modalItems.value = props.itemList
-    .map((x) => ({ id: x.id, name: x.name, description: truncate(x.description, props.truncateModalDescription) }))
-    .sort((a, b) => {
-      const aSelected = a.id in counts.value;
-      const bSelected = b.id in counts.value;
-      return aSelected === bSelected ? a.name.localeCompare(b.name) : aSelected ? -1 : 1;
-    });
+  openedCounter.value += 1;
   modal.showModal(modalId);
 }
 
@@ -160,44 +147,18 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
     <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
-    <ModalWindow :id="modalId">
+    <ModalWindow :id="modalId" fullHeight>
       <template #header> {{ modalTitle }} </template>
-      <TableWithSearch
-        v-model="searchTerm"
-        :fields="modalColumns"
-        :items="modalItemsFiltered"
-        stackBreakpoint="lg"
+      <ChecklistPicker
+        :items="modalItems"
+        :routeName="routeName"
+        :opened="openedCounter"
         :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
-      >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
-          Create new
-        </LinkButton>
-        <ReloadButton :loading="props.loading" @click="emit('reload')" />
-        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
-
-        <template #name="{ id, name }: { id: string; name: string }">
-          <TextLink :routeName="routeName" :params="{ id: id }">
-            {{ name }}
-          </TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(id)" />
-        </template>
-
-        <template #selected="{ id }: { id: string }">
-          <div v-if="isRepeatable(id)" class="flex items-center gap-2">
-            <ActionButton class="btn btn-sm" @click="emit('add', id)">Add</ActionButton>
-            <span v-if="counts[id]">×{{ counts[id] }}</span>
-          </div>
-          <div v-else>
-            <input
-              :checked="id in counts"
-              type="checkbox"
-              class="w-5 h-5 accent-neutral-600 my-1"
-              @change="emit('selected', { id: id, selected: !(id in counts) })"
-            />
-          </div>
-        </template>
-      </TableWithSearch>
+        :fourEIds="fourEIds"
+        @toggle="(e) => emit('selected', e)"
+        @add="(id) => emit('add', id)"
+        @reload="emit('reload')"
+      />
     </ModalWindow>
   </div>
 </template>

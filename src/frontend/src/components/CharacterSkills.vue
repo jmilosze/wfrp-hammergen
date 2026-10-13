@@ -5,18 +5,13 @@ import { computed, ref, Ref, watch } from "vue";
 import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/core/attributes.ts";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 import SectionButton from "./SectionButton.vue";
-import TableWithSearch from "./TableWithSearch.vue";
-import FormInput from "./FormInput.vue";
 import SectionCard from "./SectionCard.vue";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
-import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
-import ReloadButton from "./ReloadButton.vue";
-import LinkButton from "./LinkButton.vue";
 
 const DESC_CHARS = 100;
 
@@ -54,10 +49,6 @@ function isNonzero(skillWithNumber: SkillWithNumber): boolean {
 
 const skillsWithNumber: Ref<Record<string, SkillWithNumber>> = ref({});
 const skillsWithNumberList: Ref<SkillWithNumber[]> = ref([]);
-const editionFilter = ref<EditionFilter>("both");
-const skillsWithNumberListFiltered = computed(() =>
-  skillsWithNumberList.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
-);
 
 function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillList: Skill[], attributes: Attributes) {
   skillsWithNumber.value = {};
@@ -109,14 +100,7 @@ watch(
 const selectedSkills = computed(() => skillsWithNumberList.value.filter((x) => isNonzero(x)));
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "number", displayName: "Rank", skipStackedTitle: false },
-];
-
-const resetPaginationCounter = ref(0);
+const openedCounter = ref(0);
 
 function removeSkill(id: string) {
   skillsWithNumber.value[id].number = 0;
@@ -127,12 +111,27 @@ function onEditClick() {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  modal.showModal("modifySkillsModal");
-  searchTerm.value = "";
   skillsWithNumberList.value.sort((a, b) => {
     return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
   });
+  openedCounter.value += 1;
+  modal.showModal("modifySkillsModal");
+}
+
+const modalItems = computed(() =>
+  skillsWithNumberList.value.map((x) => ({
+    id: x.id,
+    name: x.name,
+    description: truncate(x.description, DESC_CHARS),
+    selected: isNonzero(x),
+    number: x.number,
+    note: `${x.type} · ${x.attributeName}`,
+  })),
+);
+
+function setNumber(id: string, number: number) {
+  skillsWithNumber.value[id].number = number;
+  emit("updated", { id: id, number: number });
 }
 </script>
 
@@ -182,47 +181,19 @@ function onEditClick() {
     <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
-    <ModalWindow id="modifySkillsModal">
+    <ModalWindow id="modifySkillsModal" fullHeight>
       <template #header> Edit skills </template>
-      <TableWithSearch
-        v-model="searchTerm"
-        :fields="modalColumns"
-        :items="skillsWithNumberListFiltered"
-        stackBreakpoint="lg"
+      <ChecklistPicker
+        :items="modalItems"
+        routeName="skill"
+        :opened="openedCounter"
         :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
-      >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" routeName="skill" :params="{ id: 'create' }" :newWindow="true">
-          Create new
-        </LinkButton>
-        <ReloadButton :loading="props.loading" @click="emit('reload')" />
-        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
-
-        <template #name="{ id }: { id: string }">
-          <TextLink routeName="skill" :params="{ id: id }">{{ skillsWithNumber[id].name }}</TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(id)" />
-        </template>
-
-        <template #number="{ id }: { id: string }">
-          <FormInput
-            v-model="skillsWithNumber[id].number"
-            type="number"
-            :step="step"
-            class="min-w-16 w-full"
-            @update:modelValue="emit('updated', { id: id, number: skillsWithNumber[id].number })"
-          />
-        </template>
-
-        <template #description="{ id }: { id: string }">
-          <div>
-            {{ truncate(skillsWithNumber[id].description, DESC_CHARS) }}
-            <div class="mb-1"><span class="font-semibold mr-1">Type</span> {{ skillsWithNumber[id].type }}</div>
-            <div class="mb-1">
-              <span class="font-semibold mr-1">Attribute</span> {{ skillsWithNumber[id].attributeName }}
-            </div>
-          </div>
-        </template>
-      </TableWithSearch>
+        :fourEIds="fourEIds"
+        numberLabel="Adv"
+        :numberStep="step"
+        @setNumber="(e) => setNumber(e.id, e.number)"
+        @reload="emit('reload')"
+      />
     </ModalWindow>
   </div>
 </template>
