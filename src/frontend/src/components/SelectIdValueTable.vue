@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, reactive, ref, watchEffect } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
 import { useModal } from "../composables/modal.ts";
@@ -52,12 +52,24 @@ const selectedRows = computed(() =>
     .sort((a, b) => a.entity.name.localeCompare(b.entity.name) || a.index - b.index),
 );
 
-const counts = computed(() => {
-  const counts: Record<string, number> = {};
+// How many times each entity is selected. Kept as one reactive record updated key by key, so a popup row that reads
+// its own count is redrawn only when that count changes.
+const counts = reactive<Record<string, number>>({});
+watchEffect(() => {
+  const fresh: Record<string, number> = {};
   for (const x of props.selected) {
-    counts[x.id] = (counts[x.id] ?? 0) + 1;
+    fresh[x.id] = (fresh[x.id] ?? 0) + 1;
   }
-  return counts;
+  for (const id of Object.keys(counts)) {
+    if (!(id in fresh)) {
+      delete counts[id];
+    }
+  }
+  for (const [id, count] of Object.entries(fresh)) {
+    if (counts[id] !== count) {
+      counts[id] = count;
+    }
+  }
 });
 
 const showValueColumn = computed(() => selectedRows.value.some((x) => x.entity.hasValue));
@@ -78,9 +90,13 @@ const modalItems = computed(() =>
       id: x.id,
       name: x.name,
       description: truncate(x.description, props.truncateModalDescription),
-      selected: x.id in counts.value,
       repeatable: isRepeatable(x.id),
-      count: counts.value[x.id],
+      get selected() {
+        return x.id in counts;
+      },
+      get count() {
+        return counts[x.id];
+      },
     }))
     .sort((a, b) => a.name.localeCompare(b.name)),
 );

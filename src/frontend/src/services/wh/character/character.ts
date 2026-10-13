@@ -14,7 +14,6 @@ import {
 import { Visibility, WhEntity } from "../core/entity.ts";
 import { sourceIsValid } from "../core/source.ts";
 import { CharacterModifiers, ModifierEffect } from "../core/characterModifiers.ts";
-import { clearObject } from "../../../utils/object.ts";
 import { AxiosInstance } from "axios";
 import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
 import { ValidationStatus } from "../../../utils/validation.ts";
@@ -514,18 +513,6 @@ export class Character extends WhEntity {
         return;
       default:
         return;
-    }
-  }
-
-  clearItems(replace: boolean): void {
-    if (replace) {
-      this.equippedItems = {} as Record<string, number>;
-      this.carriedItems = {} as Record<string, number>;
-      this.storedItems = {} as Record<string, number>;
-    } else {
-      clearObject(this.equippedItems);
-      clearObject(this.carriedItems);
-      clearObject(this.storedItems);
     }
   }
 

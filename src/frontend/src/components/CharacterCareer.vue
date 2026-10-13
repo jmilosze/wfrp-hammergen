@@ -146,18 +146,23 @@ function onEditClick() {
 }
 
 // One row per career level, with Current and Past ticks; a level can't be both.
+// Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
 const modalItems = computed(() =>
   careersWithSelectList.value.map((x) => ({
     id: x.id,
     linkId: x.careerId,
     name: x.name,
     description: "",
-    selected: anySelected(x),
     note: `Level ${x.level}: ${x.levelName} · ${x.careerClass}`,
-    choices: [
-      { key: "current", label: "Current", checked: x.current, disabled: x.past },
-      { key: "past", label: "Past", checked: x.past, disabled: x.current },
-    ],
+    get selected() {
+      return anySelected(x);
+    },
+    get choices() {
+      return [
+        { key: "current", label: "Current", checked: x.current, disabled: x.past },
+        { key: "past", label: "Past", checked: x.past, disabled: x.current },
+      ];
+    },
   })),
 );
 

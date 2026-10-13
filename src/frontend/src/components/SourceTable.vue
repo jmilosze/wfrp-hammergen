@@ -66,18 +66,23 @@ function onEditClick() {
   modal.showModal("modifySourceModal");
 }
 
+// Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
 const modalItems = computed(() =>
-  sourcesList.value.map((x) => {
-    const valid = validateSourceRecord(x.notes);
-    return {
-      id: x.id,
-      name: x.name,
-      description: "",
-      selected: x.selected,
-      text: x.notes,
-      textError: valid.valid ? undefined : valid.message,
-    };
-  }),
+  sourcesList.value.map((x) => ({
+    id: x.id,
+    name: x.name,
+    description: "",
+    get selected() {
+      return x.selected;
+    },
+    get text() {
+      return x.notes;
+    },
+    get textError() {
+      const valid = validateSourceRecord(x.notes);
+      return valid.valid ? undefined : valid.message;
+    },
+  })),
 );
 
 function setSelected(id: string, selected: boolean) {

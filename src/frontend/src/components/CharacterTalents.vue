@@ -135,14 +135,21 @@ function onEditClick() {
   modal.showModal("modifyTalentsModal");
 }
 
+// Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
 const modalItems = computed(() =>
   talentsWithNumberList.value.map((x) => ({
     id: x.id,
     name: x.name,
     description: truncate(x.description, DESC_CHARS),
-    selected: isNonzero(x),
-    number: x.number,
-    note: `Max rank ${x.maxRank}` + (x.maxRankFormula.includes("Bonus") ? ` (${x.maxRankFormula})` : ""),
+    get selected() {
+      return isNonzero(x);
+    },
+    get number() {
+      return x.number;
+    },
+    get note() {
+      return `Max rank ${x.maxRank}` + (x.maxRankFormula.includes("Bonus") ? ` (${x.maxRankFormula})` : "");
+    },
   })),
 );
 

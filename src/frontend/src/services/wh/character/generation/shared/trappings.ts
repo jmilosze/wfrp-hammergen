@@ -2,31 +2,26 @@
 import { Career } from "../../../content/career.ts";
 import { GenerationProps } from "./generationProps.ts";
 import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
-import { IdNumber, fillUpIdNumberRecord, idNumberArrayToRecord } from "../../../../../utils/idNumber.ts";
+import { fillUpIdNumberRecord } from "../../../../../utils/idNumber.ts";
 import { Character } from "../../character.ts";
 
+// generateClassItems returns the class trappings as one list: they all start carried, and players equip them themselves.
+// The generation data still names some as equipped; a trapping named in both lists gets the sum of the quantities.
 export function generateClassItems(
   career: Career,
   generationProps: GenerationProps,
   rollDiceFn: RollDiceFn = rollDice,
   selectRandomFn: SelectRandomFn = selectRandom,
-): { equipped: IdNumber[]; carried: IdNumber[] } {
+): Record<string, number> {
   if (generationProps.classItems.length === 0 || !(career.careerClass in generationProps.classItems)) {
-    return { equipped: [], carried: [] };
+    return {};
   }
   const classItems = generationProps.classItems[career.careerClass];
-  const items: { equipped: IdNumber[]; carried: IdNumber[] } = { equipped: [], carried: [] };
+  const items: Record<string, number> = {};
 
-  for (const [itemIds, itemNumber] of Object.entries(classItems.equipped)) {
+  for (const [itemIds, itemNumber] of [...Object.entries(classItems.equipped), ...Object.entries(classItems.carried)]) {
     const id = selectIdFromCandidates(itemIds, selectRandomFn);
-    const number = parseQuantityOrRoll(itemNumber, rollDiceFn);
-    items.equipped.push({ id, number });
-  }
-
-  for (const [itemIds, itemNumber] of Object.entries(classItems.carried)) {
-    const id = selectIdFromCandidates(itemIds, selectRandomFn);
-    const number = parseQuantityOrRoll(itemNumber, rollDiceFn);
-    items.carried.push({ id, number });
+    items[id] = (items[id] ?? 0) + parseQuantityOrRoll(itemNumber, rollDiceFn);
   }
 
   return items;
@@ -61,11 +56,7 @@ export function populateClassItems(
   if (!selectedCareer) {
     return;
   }
-  const generatedItems = generateClassItems(selectedCareer, generationProps, rollDiceFn, selectRandomFn);
-  const newEquipped = { ...character.equippedItems };
   const newCarried = { ...character.carriedItems };
-  fillUpIdNumberRecord(newEquipped, idNumberArrayToRecord(generatedItems.equipped));
-  fillUpIdNumberRecord(newCarried, idNumberArrayToRecord(generatedItems.carried));
-  character.equippedItems = newEquipped;
+  fillUpIdNumberRecord(newCarried, generateClassItems(selectedCareer, generationProps, rollDiceFn, selectRandomFn));
   character.carriedItems = newCarried;
 }

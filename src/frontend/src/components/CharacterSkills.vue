@@ -118,14 +118,19 @@ function onEditClick() {
   modal.showModal("modifySkillsModal");
 }
 
+// Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
 const modalItems = computed(() =>
   skillsWithNumberList.value.map((x) => ({
     id: x.id,
     name: x.name,
     description: truncate(x.description, DESC_CHARS),
-    selected: isNonzero(x),
-    number: x.number,
     note: `${x.type} · ${x.attributeName}`,
+    get selected() {
+      return isNonzero(x);
+    },
+    get number() {
+      return x.number;
+    },
   })),
 );
 

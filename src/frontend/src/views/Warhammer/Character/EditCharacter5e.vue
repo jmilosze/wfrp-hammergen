@@ -624,7 +624,6 @@ const modifierAttributes = computed(() => {
     :storedValidationStatus="validStored"
     class="flex-1"
     @reload="itemLists.reload"
-    @clearAll="wh.clearItems(true)"
     @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
     @carriedUpdated="(event) => wh.updateItems(event.id, event.number, 'carried')"
     @storedUpdated="(event) => wh.updateItems(event.id, event.number, 'stored')"

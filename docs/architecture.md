@@ -89,5 +89,5 @@ Both editions exist side by side permanently; 4e behaviour stays as it was befor
 
 - Species and career are chosen in the form, not rolled. Separate generators per edition (`generation/4e/generator4e.ts`, `generation/5e/generator5e.ts`) reuse the shared steps.
 - The 5e generator uses 5e content only, even when the character allows 4e content.
-- 5e level 1: characteristics are "kept in order" (2d10 + species, plus 6 points spread over the three level 1 career characteristics, added to the rolls); species Fate/Fortune; fluent languages +30; five species skills +5; eight career skill Advances with at most +15 per skill; species talents (choices and Random Talents) plus one career talent; class trappings; 5e starting wealth.
+- 5e level 1: characteristics are "kept in order" (2d10 + species, plus 6 points spread over the three level 1 career characteristics, added to the rolls); species Fate/Fortune; fluent languages +30; five species skills +5; eight career skill Advances with at most +15 per skill; species talents (choices and Random Talents) plus one career talent; class trappings (all carried; players equip them); 5e starting wealth.
 - 5e levels 2–4: per level, one career talent, one +5 Advance in each unlocked characteristic, the rest career skill Advances until the tracker reaches 10/22/36; XP spent with the 5e cost table plus 100 XP per level.

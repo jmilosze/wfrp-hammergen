@@ -8,7 +8,6 @@ import { Talent } from "../../../content/talent.ts";
 import { GenerationProps5e } from "../shared/generationProps.ts";
 import { defaultSource } from "../../../core/source.ts";
 import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
-import { idNumberArrayToRecord } from "../../../../../utils/idNumber.ts";
 import { sumAttributes } from "../../../core/attributes.ts";
 import { getSpeciesAttributes5e } from "../../rules/rules5e.ts";
 import { generateSpeciesTalents } from "../shared/talents.ts";
@@ -72,8 +71,7 @@ export function generateCharacter5e(
   character.attributeRolls = generateRolls5e(getCareerAttributesByLevel(career)[0], rollDiceFn, selectRandomFn);
 
   const classItems = generateClassItems(career, generationProps, rollDiceFn, selectRandomFn);
-  character.equippedItems = idNumberArrayToRecord(classItems.equipped);
-  character.carriedItems = idNumberArrayToRecord(classItems.carried);
+  character.carriedItems = classItems;
 
   const skillGroupMap = resolveEntityGroups(context.skills);
   const talentGroupMap = resolveEntityGroups(context.talents);

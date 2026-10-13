@@ -22,7 +22,8 @@ if (props.size === "md") {
 </script>
 
 <template>
-  <Teleport v-if="id === modal.modalId.value" to="#modal">
+  <!-- Only the open popup is rendered: a closed one would otherwise be redrawn on every change of what it shows. -->
+  <Teleport v-if="modal.show.value && id === modal.modalId.value" to="#modal">
     <div class="w-full flex justify-center">
       <div
         class="bg-white rounded-lg shadow border mx-5 my-5 border-neutral-500 flex flex-col max-h-[95svh] w-full"
