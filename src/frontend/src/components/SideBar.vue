@@ -23,7 +23,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
 
 <template>
   <div
-    class="lg:hidden fixed top-0 right-0 overflow-auto h-full w-64 z-30 bg-primary-300 border-l border-neutral-400 text-neutral-900 transition-transform duration-300"
+    class="lg:hidden print:hidden fixed top-0 right-0 overflow-auto h-full w-64 z-30 bg-primary-300 border-l border-neutral-400 text-neutral-900 transition-transform duration-300"
     :class="open ? 'translate-x-0' : 'translate-x-full'"
   >
     <!-- Equal flex-1 sides keep the title centred. -->

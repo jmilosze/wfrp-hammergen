@@ -323,7 +323,7 @@ const modifierAttributes = computed(() => {
       <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View character </LinkButton>
     </div>
   </div>
-  <div v-if="canEdit && id === 'create'" class="border border-neutral-700 rounded p-2 my-4">
+  <div v-if="canEdit && id === 'create'" class="border border-neutral-700 rounded p-2 my-4 print:hidden">
     <div class="text-xl">Generate character</div>
     <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
     <div class="flex flex-col @2xl:flex-row gap-4">
