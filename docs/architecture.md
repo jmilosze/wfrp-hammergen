@@ -32,7 +32,7 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
 - `components/`: shared components (pickers, tables, modals, the 4e badge…).
 - `composables/`: Vue state helpers (auth, lists, editing, edition, 4e content lists…).
 - `services/wh/`: Warhammer domain code, by area:
-  - `core/`: what content and characters share: `api.ts` (API types and `createWhApi`/`defineContentApi`), `entity.ts` (base entity, visibility), `edition.ts` (edition types, variant helpers, 4e/5e filter), `validators.ts`, `species.ts`, `attributes.ts`, `characterModifiers.ts`, `source.ts`, `listOptions.ts`.
+  - `core/`: what content and characters share: `api.ts` (API types and `createWhApi`/`defineContentApi`), `entity.ts` (base entity, visibility), `edition.ts` (edition types, variant helpers, 4e/5e filter), `validators.ts`, `species.ts`, `attributes.ts`, `characterModifiers.ts`, `source.ts`.
   - `content/`: one file per content type (career, item, itemproperty, mutation, prayer, rune, skill, spell, talent, trait).
   - `character/`: `character.ts` (editable model), `characterFull.ts` (sheet model), `size.ts`, `rules/` (`rules4e.ts`, `rules5e.ts`, `rules.ts` picks by edition), `csv/` (CSV export per edition), `generation/` (`shared/`, `4e/`, `5e/` generator code and the generation data API).
 - `utils/`: generic helpers (random, clone, equality, currency…).

@@ -16,19 +16,25 @@ const auth = useAuth();
 </script>
 
 <template>
+  <!-- Icon-only buttons; their names come from the labels and tooltips. -->
   <div class="flex gap-2 my-1 shrink-0">
-    <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View </LinkButton>
+    <LinkButton
+      routeName="viewCharacter"
+      :params="{ id: id }"
+      class="rounded border border-neutral-400 bg-white p-1.5 text-neutral-800 hover:bg-neutral-200"
+      title="View"
+      aria-label="View"
+    >
+      <Icon icon="lucide:eye" class="size-4" />
+    </LinkButton>
     <ActionButton
       v-if="auth.loggedIn.value"
-      class="btn btn-secondary btn-sm"
+      class="rounded border border-neutral-400 bg-white p-1.5 text-neutral-800 hover:bg-neutral-200 cursor-pointer"
       title="Copy"
       aria-label="Copy"
       @click="emit('copy', id)"
     >
-      <span class="flex items-center gap-1.5">
-        <Icon icon="lucide:copy" class="size-4" />
-        <span>Copy</span>
-      </span>
+      <Icon icon="lucide:copy" class="size-4" />
     </ActionButton>
   </div>
 </template>

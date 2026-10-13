@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { useSourceQuery, useWhList } from "../../../composables/whList.ts";
+import { splitQuery, useListQuery, useSourceQuery, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
 import { Skill, skillApi, skillTypeList, printSkillType } from "../../../services/wh/content/skill.ts";
+import { attributeNameList, printAttributeName } from "../../../services/wh/core/attributes.ts";
 import { authRequest } from "../../../services/auth.ts";
-import TableWithSearch from "../../../components/TableWithSearch.vue";
+import BrowseList from "../../../components/BrowseList.vue";
 import Header from "../../../components/PageHeader.vue";
-import { source } from "../../../services/wh/core/source.ts";
 import { computed } from "vue";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
-
-import { getOptions } from "../../../services/wh/core/listOptions.ts";
-import SelectInput from "../../../components/SelectInput.vue";
-import { attributeNameList, printAttributeName } from "../../../services/wh/core/attributes.ts";
+import FilterSidebar from "../../../components/FilterSidebar.vue";
+import { FilterSection } from "../../../components/filterSection.ts";
+import SectionLink from "../../../components/SectionLink.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
-import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
@@ -22,60 +20,70 @@ const { edition } = useEdition();
 const whList = useWhList(skillApi(authRequest), edition);
 await whList.loadWhList();
 
-const searchTerm = useRouteQuery("search", "");
-const sourceTerm = useSourceQuery(edition);
-const typeTerm = useRouteQuery("type", "");
-const attributeTerm = useRouteQuery("attribute", "");
-
 const auth = useAuth();
 
-const columns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "tooltip", displayName: "Visibility", skipStackedTitle: true },
-  { name: "actions", displayName: "Actions", skipStackedTitle: true },
-];
+// The filters, kept in the query string.
+const searchTerm = useRouteQuery("search", "");
+const sourceTerm = splitQuery(useSourceQuery(edition));
+const typeTerm = useListQuery("type");
+const attributeTerm = useListQuery("attribute");
 
-const items = computed(() => {
-  return whList.whList.value
-    .filter((wh) => sourceTerm.value === "" || sourceTerm.value in wh.source)
-    .filter((wh) => typeTerm.value === "" || typeTerm.value === wh.type.toString())
-    .filter((wh) => attributeTerm.value === "" || attributeTerm.value === wh.attribute.toString())
-    .map((x) => formatSkillRow(x))
-    .sort((a, b) => a.name.localeCompare(b.name));
+const filters = computed({
+  get: () => ({ type: typeTerm.value, attribute: attributeTerm.value, source: sourceTerm.value }),
+  set: (value: Record<string, string[]>) => {
+    typeTerm.value = value.type ?? [];
+    attributeTerm.value = value.attribute ?? [];
+    sourceTerm.value = value.source ?? [];
+  },
 });
+
+// In a section an entry matches any ticked value; the sections combine.
+const items = computed(() =>
+  whList.whList.value
+    .filter((wh) => sourceTerm.value.length === 0 || sourceTerm.value.some((x) => x in wh.source))
+    .filter((wh) => typeTerm.value.length === 0 || typeTerm.value.includes(wh.type.toString()))
+    .filter((wh) => attributeTerm.value.length === 0 || attributeTerm.value.includes(wh.attribute.toString()))
+    .map((x) => formatSkillRow(x))
+    .sort((a, b) => a.name.localeCompare(b.name)),
+);
 
 function formatSkillRow(skill: Skill) {
   return {
-    name: skill.name,
-    type: printSkillType(skill.type),
-    attribute: printAttributeName(skill.attribute),
-    source: Object.keys(skill.source)
-      .map((x) => source[x])
-      .join(", "),
-    description: skill.description,
     id: skill.id,
+    name: skill.name,
+    meta: `${printSkillType(skill.type)} · ${printAttributeName(skill.attribute)}`,
+    description: skill.description,
     ownerId: skill.ownerId,
     visibility: skill.visibility,
   };
 }
 
-const filteredTypeOptions = computed(() => {
-  return getOptions(
-    skillTypeList,
-    whList.whList.value.map((wh) => wh.type),
-    printSkillType,
-    "Any type",
-  );
-});
-
-const filteredAttributeOptions = computed(() => {
-  return getOptions(
-    attributeNameList,
-    whList.whList.value.map((wh) => wh.attribute),
-    printAttributeName,
-    "Any attribute",
-  );
+// Types, characteristics and sources are offered when some skill has them.
+const sections = computed<FilterSection[]>(() => {
+  const typesInData = new Set(whList.whList.value.map((wh) => wh.type));
+  const attributesInData = new Set(whList.whList.value.map((wh) => wh.attribute));
+  return [
+    {
+      key: "type",
+      title: "Type",
+      options: skillTypeList
+        .filter((x) => typesInData.has(x))
+        .map((x) => ({ text: printSkillType(x), value: x.toString() })),
+    },
+    {
+      key: "attribute",
+      title: "Characteristic",
+      options: attributeNameList
+        .filter((x) => attributesInData.has(x))
+        .map((x) => ({ text: printAttributeName(x), value: x.toString() })),
+    },
+    {
+      key: "source",
+      title: "Source",
+      collapsed: true,
+      options: whList.filteredSourceOptions.value.filter((x) => x.value !== ""),
+    },
+  ];
 });
 </script>
 
@@ -89,31 +97,26 @@ const filteredAttributeOptions = computed(() => {
     {{ whList.apiError.value }}
   </AlertBlock>
   <Header title="Skills" />
-  <div class="flex flex-wrap justify-between">
-    <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="grow mb-2 mx-1" />
-    <SelectInput v-model="typeTerm" :options="filteredTypeOptions" class="grow mb-2 mx-1" />
-    <SelectInput v-model="attributeTerm" :options="filteredAttributeOptions" class="grow mb-2 mx-1" />
+  <div class="flex flex-col @3xl/page:flex-row gap-4">
+    <FilterSidebar v-model="filters" :sections="sections">
+      <template v-if="auth.loggedIn.value" #actions>
+        <SectionLink icon="lucide:plus" routeName="skill" :params="{ id: 'create' }">Create new</SectionLink>
+      </template>
+    </FilterSidebar>
+    <BrowseList v-model="searchTerm" :items="items" routeName="skill" class="flex-1 min-w-0">
+      <!-- Beside the search, except on very small screens, where it is beside the Filters button. -->
+      <span v-if="auth.loggedIn.value" class="hidden @md/page:flex">
+        <SectionLink icon="lucide:plus" routeName="skill" :params="{ id: 'create' }">Create new</SectionLink>
+      </span>
+
+      <template #badge="{ ownerId, visibility }: { ownerId: string; visibility: number }">
+        <ToolTip :ownerId="ownerId" :visibility="visibility" iconOnly />
+      </template>
+      <template #end="{ id }: { id: string }">
+        <ActionButtonsNonCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
+      </template>
+    </BrowseList>
   </div>
-  <TableWithSearch
-    v-model="searchTerm"
-    :fields="columns"
-    :items="items"
-    stackBreakpoint="4xl"
-    rowRouteName="skill"
-    class="mx-1"
-  >
-    <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="skill" :params="{ id: 'create' }">
-      Create new
-    </LinkButton>
-
-    <template #actions="{ id }: { id: string }">
-      <ActionButtonsNonCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
-    </template>
-
-    <template #tooltip="{ ownerId, visibility }: { ownerId: string; visibility?: number }">
-      <ToolTip :ownerId="ownerId" :visibility="visibility" />
-    </template>
-  </TableWithSearch>
 </template>
 
 <style scoped></style>
