@@ -168,7 +168,7 @@ async function scrollToTop(): Promise<void> {
                 :class="[
                   field.name === 'name' ? 'wrap-break-word' : '',
                   field.name === 'description' ? 'wrap-anywhere' : '',
-                  props.rowRouteName && field.name !== 'actions' ? 'table-cell-link-container' : 'py-2 px-5',
+                  props.rowRouteName ? 'table-cell-link-container' : 'py-2 px-5',
                 ]"
               >
                 <RouterLink
@@ -179,6 +179,17 @@ async function scrollToTop(): Promise<void> {
                 >
                   <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
                 </RouterLink>
+                <div v-else-if="props.rowRouteName" class="relative py-2 px-5 h-full">
+                  <RouterLink
+                    :to="{ name: props.rowRouteName, params: { id: item.id } }"
+                    tabindex="-1"
+                    aria-hidden="true"
+                    class="absolute inset-0"
+                  />
+                  <div class="relative w-fit">
+                    <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
+                  </div>
+                </div>
                 <slot v-else :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
               </td>
             </tr>
@@ -218,10 +229,20 @@ async function scrollToTop(): Promise<void> {
                     :class="[
                       field.name === 'name' ? 'wrap-break-word' : '',
                       field.name === 'description' ? 'wrap-anywhere' : '',
+                      props.rowRouteName ? 'relative' : '',
                     ]"
                   >
+                    <RouterLink
+                      v-if="props.rowRouteName"
+                      :to="{ name: props.rowRouteName, params: { id: item.id } }"
+                      tabindex="-1"
+                      aria-hidden="true"
+                      class="absolute inset-0"
+                    />
                     <div v-if="!field.skipStackedTitle" class="font-bold">{{ field.displayName }}</div>
-                    <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
+                    <div :class="props.rowRouteName ? 'relative' : ''">
+                      <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
+                    </div>
                   </div>
                 </template>
                 <div class="border-b-4 border-neutral-400" />
