@@ -49,8 +49,9 @@ function moveToLastPage(direction: -1 | 1): void {
 </script>
 
 <template>
-  <!-- First and previous, the rows shown, then next and last; the buttons at an end of the list are greyed out. -->
-  <div class="flex items-center justify-end gap-1.5">
+  <!-- First and previous, the rows shown, then next and last; the buttons at an end of the list are greyed out.
+  Centred on very small screens, at the right otherwise. -->
+  <div class="flex items-center justify-center @md:justify-end gap-1.5">
     <button
       type="button"
       :class="BUTTON_CLASS"

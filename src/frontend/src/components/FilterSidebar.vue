@@ -52,7 +52,7 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
 </script>
 
 <template>
-  <!-- On narrow screens: the Filters button, with the page's actions (the slot, e.g. Create new) beside it. -->
+  <!-- On narrow screens: the Filters button, with the page's actions (the slot, e.g. Create new) beside it on very small ones. -->
   <div class="flex items-stretch gap-2 @3xl/page:hidden">
     <button
       type="button"
@@ -62,7 +62,10 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
       <Icon icon="lucide:filter" class="size-4" />
       Filters<span v-if="activeCount > 0"> ({{ activeCount }})</span>
     </button>
-    <slot name="actions" />
+    <!-- Only on very small screens; above that the page shows its actions elsewhere (e.g. beside the search). -->
+    <div class="flex items-stretch gap-2 @md/page:hidden">
+      <slot name="actions" />
+    </div>
   </div>
   <!-- A drawer over the page on narrow screens, sliding in from the left like the navigation drawer (the shade fades,
   and the closed drawer is hidden once it has slid out); a column that scrolls on its own beside the list on wide ones. -->

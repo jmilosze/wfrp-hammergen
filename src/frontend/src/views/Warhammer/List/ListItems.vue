@@ -158,8 +158,8 @@ watch(typeTerm, (types) => {
       </template>
     </FilterSidebar>
     <BrowseList v-model="searchTerm" :items="items" routeName="item" class="flex-1 min-w-0">
-      <!-- Beside the search on wide screens; beside the Filters button on narrow ones. -->
-      <span v-if="auth.loggedIn.value" class="hidden @3xl/page:flex">
+      <!-- Beside the search, except on very small screens, where it is beside the Filters button. -->
+      <span v-if="auth.loggedIn.value" class="hidden @md/page:flex">
         <SectionLink icon="lucide:plus" routeName="item" :params="{ id: 'create' }">Create new</SectionLink>
       </span>
 
