@@ -13,11 +13,11 @@ import { COMPENDIUM_SECTIONS } from "../navigation.ts";
 const emit = defineEmits<{ openMenu: [] }>();
 
 const TOP_LINK =
-  "block px-3 py-2 select-none whitespace-nowrap text-primary-300 transition-colors duration-150 hover:text-primary-100";
+  "block px-3 py-2 select-none whitespace-nowrap text-parchment transition-colors duration-150 hover:text-parchment-light";
 const SECONDARY_LINK =
   "block px-3 py-0.5 rounded select-none whitespace-nowrap text-neutral-600 hover:bg-neutral-300 hover:text-neutral-900";
 const MENU_LINK =
-  "block px-3 py-1.5 rounded select-none whitespace-nowrap transition-colors duration-150 hover:bg-primary-200";
+  "block px-3 py-1.5 rounded select-none whitespace-nowrap transition-colors duration-150 hover:bg-neutral-200";
 
 const auth = useAuth();
 const { edition } = useEdition();
@@ -30,11 +30,11 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
 
 <template>
   <header class="sticky top-0 z-20">
-    <nav class="bg-neutral-700 text-primary-300">
+    <nav class="bg-oxblood text-parchment">
       <div class="max-w-7xl mx-auto h-14 px-4 flex items-center gap-1">
         <RouterLink
           :to="{ name: 'home' }"
-          class="flex items-center gap-2 font-hammergen text-3xl mr-6 drop-shadow-md transition-colors duration-150 hover:text-primary-100"
+          class="flex items-center gap-2 font-hammergen text-3xl mr-6 drop-shadow-md transition-colors duration-150 hover:text-parchment-light"
         >
           <Icon icon="game-icons:warhammer" class="size-8" />
           Hammergen
@@ -45,8 +45,8 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
           <div ref="compendiumMenu" class="relative">
             <button
               type="button"
-              class="flex items-center gap-1 px-3 py-2 select-none transition-colors duration-150 hover:text-primary-100"
-              :class="{ 'text-primary-100': showCompendiumMenu }"
+              class="flex items-center gap-1 px-3 py-2 select-none transition-colors duration-150 hover:text-parchment-light"
+              :class="{ 'text-parchment-light': showCompendiumMenu }"
               :aria-expanded="showCompendiumMenu"
               @click="showCompendiumMenu = !showCompendiumMenu"
             >
@@ -66,7 +66,7 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
             >
               <div
                 v-if="showCompendiumMenu"
-                class="absolute z-10 left-0 top-full mt-1 w-max p-3 grid grid-cols-2 gap-x-4 gap-y-3 bg-primary-300 text-neutral-900 border border-neutral-700 rounded shadow-lg"
+                class="absolute z-10 left-0 top-full mt-1 w-max p-3 grid grid-cols-2 gap-x-4 gap-y-3 bg-neutral-100 text-neutral-900 border border-neutral-400 rounded shadow-lg"
               >
                 <div v-for="section in COMPENDIUM_SECTIONS" :key="section.title">
                   <div
@@ -100,7 +100,7 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
           </template>
         </div>
         <button
-          class="lg:hidden p-1 transition-colors duration-150 hover:text-primary-100"
+          class="lg:hidden p-1 transition-colors duration-150 hover:text-parchment-light"
           aria-label="Menu"
           @click="emit('openMenu')"
         >

@@ -45,7 +45,7 @@ const recentCharacters = computed(() =>
   <section class="flex flex-col gap-x-6 gap-y-3 pt-2 pb-8">
     <h1 class="font-hammergen text-4xl md:text-5xl">Welcome back</h1>
     <div class="flex flex-wrap gap-3">
-      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="primary" size="lg">
+      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="dark" size="lg">
         New character
       </SectionLink>
       <SectionLink icon="lucide:users" routeName="characters" variant="dark" size="lg">All characters</SectionLink>

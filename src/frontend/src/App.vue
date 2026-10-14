@@ -76,10 +76,10 @@ onMounted(async () => {
       </RouterView>
     </main>
     <!-- Footer -->
-    <footer v-if="!printing" class="flex-none bg-neutral-700 w-full print:hidden">
-      <div class="text-center text-sm my-2 text-primary-300">
+    <footer v-if="!printing" class="flex-none bg-oxblood w-full print:hidden">
+      <div class="text-center text-sm my-2 text-parchment">
         Contact:
-        <a class="hover:text-primary-100" href="mailto:admin@hammergen.net">admin@hammergen.net</a>
+        <a class="hover:text-parchment-light" href="mailto:admin@hammergen.net">admin@hammergen.net</a>
       </div>
     </footer>
   </div>

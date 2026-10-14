@@ -105,4 +105,11 @@
   --color-linked-800: oklch(43.8% 0.218 303.724);
   --color-linked-900: oklch(38.1% 0.176 304.987);
   --color-linked-950: oklch(29.1% 0.149 302.717);
+
+  /* oxblood and parchment: the top bar's pair (also the footer, the Filters header and dark buttons). */
+  --color-oxblood: #4a1c1c;
+  --color-oxblood-dark: #2e1010;
+  --color-parchment: #f1e6cc;
+  --color-parchment-light: #fbf6ea;
+  --color-parchment-dark: #e2d3ad;
 }

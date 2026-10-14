@@ -9,7 +9,7 @@ import { COMPENDIUM_SECTIONS } from "../navigation.ts";
 
 const LOCAL_STORAGE_KEY_COMPENDIUM_OPEN = "sidebarCompendiumOpen";
 
-const LINK = "block w-full py-1 px-2 rounded select-none text-end transition-colors duration-150 hover:bg-primary-200";
+const LINK = "block w-full py-1 px-2 rounded select-none text-end transition-colors duration-150 hover:bg-neutral-200";
 
 // Slide-in navigation for screens below lg; large screens use the links in NavBar.
 const open = defineModel<boolean>({ required: true });
@@ -23,7 +23,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
 
 <template>
   <div
-    class="lg:hidden print:hidden fixed top-0 right-0 overflow-auto h-full w-64 z-30 bg-primary-300 border-l border-neutral-400 text-neutral-900 transition-transform duration-300"
+    class="lg:hidden print:hidden fixed top-0 right-0 overflow-auto h-full w-64 z-30 bg-neutral-100 border-l border-neutral-400 text-neutral-900 transition-transform duration-300"
     :class="open ? 'translate-x-0' : 'translate-x-full'"
   >
     <!-- Equal flex-1 sides keep the title centred. -->
@@ -33,7 +33,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
         Hammergen
       </RouterLink>
       <div class="flex-1 flex justify-end">
-        <button class="hover:bg-primary-200 transition-colors duration-150 p-1 rounded mr-2" @click="open = false">
+        <button class="hover:bg-neutral-200 transition-colors duration-150 p-1 rounded mr-2" @click="open = false">
           <Icon icon="lucide:x" class="size-6" />
         </button>
       </div>
@@ -41,7 +41,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
     <div class="px-3 mb-5 flex justify-center text-xs">
       <EditionSwitch v-model="edition" />
     </div>
-    <div class="px-3 divide-y divide-neutral-700">
+    <div class="px-3 divide-y divide-neutral-300">
       <div class="text-xl pb-2">
         <NavLink routeName="characters" icon="lucide:user-round" :class="LINK" @click="open = false">
           Characters
@@ -50,7 +50,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
       <div class="py-2">
         <button
           type="button"
-          class="w-full flex items-center justify-end gap-1 py-1 px-2 rounded select-none text-xl transition-colors duration-150 hover:bg-primary-200"
+          class="w-full flex items-center justify-end gap-1 py-1 px-2 rounded select-none text-xl transition-colors duration-150 hover:bg-neutral-200"
           :aria-expanded="compendiumOpen"
           @click="compendiumOpen = !compendiumOpen"
         >

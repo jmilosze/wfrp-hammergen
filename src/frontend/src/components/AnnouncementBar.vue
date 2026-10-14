@@ -17,7 +17,7 @@ function markSeen() {
 </script>
 
 <template>
-  <div v-if="show" class="bg-danger-900 text-primary-100 text-sm">
+  <div v-if="show" class="bg-parchment text-oxblood text-sm border-b border-parchment-dark">
     <div class="max-w-7xl mx-auto px-4 py-1.5 flex items-center gap-2">
       <div class="flex-auto flex flex-wrap justify-center items-center gap-x-3 gap-y-0.5 text-center">
         <span class="flex items-center gap-2 font-semibold">
@@ -26,13 +26,18 @@ function markSeen() {
         </span>
         <RouterLink
           :to="{ name: 'about', query: { view: 'updates' } }"
-          class="underline underline-offset-2 whitespace-nowrap hover:text-white"
+          class="underline underline-offset-2 whitespace-nowrap hover:text-oxblood-dark"
           @click="markSeen"
         >
           Read more
         </RouterLink>
       </div>
-      <button type="button" class="p-1 rounded hover:bg-danger-800" aria-label="Dismiss announcement" @click="markSeen">
+      <button
+        type="button"
+        class="p-1 rounded hover:bg-parchment-dark"
+        aria-label="Dismiss announcement"
+        @click="markSeen"
+      >
         <Icon icon="lucide:x" class="size-4" />
       </button>
     </div>

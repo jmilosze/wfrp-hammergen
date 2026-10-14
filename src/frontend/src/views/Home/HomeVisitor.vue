@@ -43,7 +43,7 @@ const FEATURES = [
     </p>
     <!-- The compendium button spans both columns. -->
     <div class="mt-8 grid grid-cols-2 w-full max-w-md gap-3">
-      <SectionLink icon="lucide:user-plus" routeName="register" variant="primary" size="lg">Create account</SectionLink>
+      <SectionLink icon="lucide:user-plus" routeName="register" variant="dark" size="lg">Create account</SectionLink>
       <SectionLink icon="lucide:log-in" routeName="login" variant="dark" size="lg">Log in</SectionLink>
       <SectionLink icon="lucide:book-open" routeName="careers" variant="dark" size="lg" class="col-span-2">
         Browse the compendium
@@ -57,7 +57,7 @@ const FEATURES = [
       :key="feature.title"
       class="flex flex-col p-6 bg-neutral-50 border border-neutral-200 rounded-lg"
     >
-      <Icon :icon="feature.icon" class="size-10 text-primary-600" />
+      <Icon :icon="feature.icon" class="size-10 text-oxblood" />
       <h2 class="mt-3 text-xl font-semibold">{{ feature.title }}</h2>
       <p class="mt-2 flex-auto text-neutral-700">{{ feature.text }}</p>
       <TextLink :routeName="feature.routeName" :query="feature.query" sameWindow class="mt-4">
