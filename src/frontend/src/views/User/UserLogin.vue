@@ -76,6 +76,7 @@ async function submitForm() {
       />
       <SectionButton
         icon="lucide:log-in"
+        variant="light"
         size="lg"
         class="w-full"
         :busy="submissionState.status === 'inProgress'"

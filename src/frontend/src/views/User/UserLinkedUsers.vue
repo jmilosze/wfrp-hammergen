@@ -159,7 +159,7 @@ async function submitForm() {
     >
       <SectionButton
         icon="lucide:plus"
-        variant="neutral"
+        variant="light"
         iconOnlyWhenNarrow
         aria-label="Add user"
         class="ml-2 h-full"
@@ -171,6 +171,7 @@ async function submitForm() {
     </FormInput>
     <SectionButton
       icon="lucide:check"
+      variant="light"
       size="lg"
       class="self-start"
       :busy="applyChangesSubmissionState.status === 'inProgress'"

@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import SectionButton from "../../../components/SectionButton.vue";
-import Header from "../../../components/PageHeader.vue";
-import { computed, toRef } from "vue";
+import ViewCharacterHeader from "../../../components/ViewCharacterHeader.vue";
 import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
 import { characterFullToCsv5e } from "../../../services/wh/character/csv/csv5e.ts";
-import { saveAs } from "file-saver";
-import { useRouter } from "vue-router";
-import { usePrint } from "../../../composables/print.ts";
-import { useAuth } from "../../../composables/auth.ts";
 import TextLink from "../../../components/TextLink.vue";
 import SheetTable from "../../../components/SheetTable.vue";
 import SheetCell from "../../../components/SheetCell.vue";
@@ -21,48 +15,13 @@ import ViewCharacterTrappings from "../../../components/ViewCharacterTrappings.v
 import ViewCharacterMagic from "../../../components/ViewCharacterMagic.vue";
 
 // The 5e character sheet, read-only, laid out like the editor. Empty sections are left out.
-const props = defineProps<{
+defineProps<{
   character: CharacterFull;
 }>();
-
-const router = useRouter();
-const auth = useAuth();
-const { print, printing } = usePrint();
-
-const character = toRef(props, "character");
-const canEdit = computed(() => auth.canEdit(character.value.ownerId));
-
-function saveJson() {
-  const blob = new Blob([JSON.stringify(character.value, null, 2)], {
-    type: "text/plain;charset=utf-8",
-  });
-  saveAs(blob, `${character.value.name}.json`);
-}
-
-function saveCsv() {
-  const blob = new Blob([characterFullToCsv5e(character.value)], {
-    type: "text/plain;charset=utf-8",
-  });
-  saveAs(blob, `${character.value.name}.csv`);
-}
 </script>
 
 <template>
-  <Header :title="character.name" />
-  <div v-if="!printing" class="flex flex-wrap gap-2 mt-4">
-    <SectionButton icon="lucide:file-spreadsheet" @click="saveCsv()">Download CSV</SectionButton>
-    <SectionButton icon="lucide:file-json" @click="saveJson()">Download JSON</SectionButton>
-    <SectionButton icon="lucide:printer" @click="print()">Print</SectionButton>
-    <SectionButton
-      v-if="canEdit"
-      icon="lucide:pencil"
-      variant="dark"
-      @click="router.push({ name: 'character', params: { id: character.id } })"
-    >
-      Edit
-    </SectionButton>
-    <SectionButton icon="lucide:arrow-left" @click="router.push({ name: 'characters' })">Back to list</SectionButton>
-  </div>
+  <ViewCharacterHeader :character="character" :toCsv="characterFullToCsv5e" />
 
   <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1 flex flex-col gap-4">

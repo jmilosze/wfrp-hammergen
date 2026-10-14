@@ -123,6 +123,7 @@ async function submitForm() {
       />
       <SectionButton
         icon="lucide:user-plus"
+        variant="light"
         size="lg"
         class="w-full"
         :busy="submissionState.status === 'inProgress'"

@@ -87,6 +87,7 @@ async function submitForm() {
     />
     <SectionButton
       icon="lucide:save"
+      variant="light"
       class="self-start"
       :busy="submissionState.status === 'inProgress'"
       size="lg"

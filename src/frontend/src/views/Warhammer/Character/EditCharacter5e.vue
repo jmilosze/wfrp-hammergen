@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SectionLink from "../../../components/SectionLink.vue";
+import TextLink from "../../../components/TextLink.vue";
 import { Edition } from "../../../services/wh/core/edition.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -324,13 +324,10 @@ const modifierAttributes = computed(() => {
       {{ generationPropsUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name">
-    <template v-if="id !== 'create'" #nextToHeader>
-      <SectionLink icon="lucide:eye" routeName="viewCharacter" :params="{ id: id }" size="responsive">
-        View character
-      </SectionLink>
-    </template>
-  </Header>
+  <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
+  <p v-if="id !== 'create'" class="mt-2">
+    <TextLink routeName="viewCharacter" :params="{ id: id }" sameWindow>View character</TextLink>
+  </p>
   <CharacterStartPanel
     v-if="canEdit && id === 'create'"
     :generateDisabled="isGenerationDisabled"

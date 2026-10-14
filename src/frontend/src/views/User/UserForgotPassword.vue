@@ -85,6 +85,7 @@ async function submitForm() {
       <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" />
       <SectionButton
         icon="lucide:send"
+        variant="light"
         size="lg"
         class="w-full"
         :busy="submissionState.status === 'inProgress'"
