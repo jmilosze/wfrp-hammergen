@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 const props = defineProps<{
-  alertType?: "green" | "red" | "amber" | "blue";
+  alertType?: "green" | "red";
   centered?: boolean;
 }>();
 
@@ -14,17 +14,11 @@ const blockClass = ref(["p-2", "rounded", "border", "flex", "justify-between", "
 const btnClass = ref(["p-2", "hover:text-neutral-900", "rounded", "h-fit"]);
 
 if (props.alertType === "red") {
-  blockClass.value.push(...["bg-danger-200", "text-danger-800", "border-danger-500"]);
-  btnClass.value.push(...["text-danger-800", "hover:bg-danger-300"]);
-} else if (props.alertType === "amber") {
-  blockClass.value.push(...["bg-primary-300", "text-primary-900", "border-primary-800"]);
-  btnClass.value.push(...["text-primary-800", "hover:bg-primary-400"]);
-} else if (props.alertType === "blue") {
-  blockClass.value.push(...["bg-info-100", "text-info-900", "border-info-800"]);
-  btnClass.value.push(...["text-info-800", "hover:bg-info-400"]);
+  blockClass.value.push(...["bg-alert-error-bg", "text-alert-error-text", "border-alert-error-border"]);
+  btnClass.value.push(...["text-alert-error-text", "hover:bg-alert-error-hover"]);
 } else {
-  blockClass.value.push(...["bg-success-200", "text-success-800", "border-success-500"]);
-  btnClass.value.push(...["text-success-800", "hover:bg-success-300"]);
+  blockClass.value.push(...["bg-alert-success-bg", "text-alert-success-text", "border-alert-success-border"]);
+  btnClass.value.push(...["text-alert-success-text", "hover:bg-alert-success-hover"]);
 }
 
 const centerClass = ref([] as string[]);

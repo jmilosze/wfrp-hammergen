@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const linkClass = ["group", "hover:underline", "font-semibold"];
 if (!props.noColour) {
-  linkClass.push("text-danger-800");
+  linkClass.push("text-link");
 }
 </script>
 

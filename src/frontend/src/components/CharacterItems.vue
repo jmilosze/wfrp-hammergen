@@ -249,7 +249,7 @@ const sections = computed(() => [
             :value="item.number"
             type="number"
             :aria-label="`Quantity of ${item.name}`"
-            class="w-14 min-h-8 px-2 border border-neutral-400 rounded-sm bg-primary-50 outline-neutral-700 focus:outline-2"
+            class="w-14 min-h-8 px-2 border border-neutral-400 rounded-sm bg-editable outline-neutral-700 focus:outline-2"
             @input="onQuantityInput(item.id, section.location, $event)"
           />
           <button
@@ -264,13 +264,13 @@ const sections = computed(() => [
         </div>
       </template>
     </SectionCard>
-    <div class="text-sm text-danger-600 mt-1" :class="[equippedValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-error mt-1" :class="[equippedValidationStatus.valid ? 'hidden' : '']">
       {{ equippedValidationStatus.message }}
     </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[carriedValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-error mt-1" :class="[carriedValidationStatus.valid ? 'hidden' : '']">
       {{ carriedValidationStatus.message }}
     </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-error mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
       {{ storedValidationStatus.message }}
     </div>
     <ModalWindow id="addItemsModal" size="lg" fullHeight>

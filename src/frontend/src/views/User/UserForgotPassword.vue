@@ -92,7 +92,7 @@ async function submitForm() {
       >
         Send reset link
       </SectionButton>
-      <div class="p-3 border-l-4 border-primary-500 bg-primary-50 rounded text-sm">
+      <div class="p-3 border-l-4 border-brand bg-parchment-light rounded text-sm">
         <p class="font-semibold">No email at all?</p>
         <p class="mt-1">
           Email providers (for example Microsoft or Google) sometimes block the service Hammergen sends emails with.

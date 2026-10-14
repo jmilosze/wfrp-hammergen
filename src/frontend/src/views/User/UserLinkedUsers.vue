@@ -110,7 +110,7 @@ async function submitForm() {
       whoever you want to share with. Once they add you here, they see all your shared content read-only.
     </p>
   </Header>
-  <div class="my-4 p-4 border-l-4 border-primary-500 bg-primary-50 rounded">
+  <div class="my-4 p-4 border-l-4 border-brand bg-parchment-light rounded">
     <p class="font-semibold">Share what your content uses</p>
     <p class="mt-1">
       When you share a custom compendium entry (for example a trapping), share the custom entries it uses as well (for

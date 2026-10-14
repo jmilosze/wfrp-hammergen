@@ -30,9 +30,9 @@ function onGenerate() {
 <template>
   <div
     v-if="!dismissed"
-    class="relative flex flex-wrap items-center gap-3 my-4 pl-3 pr-11 py-2 bg-primary-100 border border-dashed border-primary-500 rounded-lg print:hidden"
+    class="relative flex flex-wrap items-center gap-3 my-4 pl-3 pr-11 py-2 bg-parchment-light border border-dashed border-brand-rule rounded-lg print:hidden"
   >
-    <Icon icon="lucide:sparkles" class="size-5 text-primary-700" />
+    <Icon icon="lucide:sparkles" class="size-5 text-brand" />
     <template v-if="generatedSummary">
       <div class="flex-1 min-w-48">
         <div class="font-semibold">Character generated</div>
@@ -70,7 +70,7 @@ function onGenerate() {
     <!-- Always in the top right corner, however the rest wraps. -->
     <button
       type="button"
-      class="absolute top-1.5 right-1.5 text-neutral-500 hover:bg-primary-200 hover:text-neutral-900 rounded p-1"
+      class="absolute top-1.5 right-1.5 text-neutral-500 hover:bg-parchment hover:text-neutral-900 rounded p-1"
       aria-label="Dismiss"
       @click="dismissed = true"
     >

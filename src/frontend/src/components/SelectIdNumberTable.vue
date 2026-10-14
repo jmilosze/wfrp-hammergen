@@ -126,7 +126,7 @@ function onEditClick() {
         </td>
       </tr>
     </ListTable>
-    <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-error mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
     <ModalWindow :id="modalId">

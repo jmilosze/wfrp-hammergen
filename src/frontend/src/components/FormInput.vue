@@ -55,7 +55,7 @@ const value = computed({
           :class="[
             centerText ? 'text-center' : '',
             bare
-              ? 'block focus:-outline-offset-2 bg-primary-50 disabled:bg-white disabled:text-neutral-900 disabled:opacity-100'
+              ? 'block focus:-outline-offset-2 bg-editable disabled:bg-white disabled:text-neutral-900 disabled:opacity-100'
               : 'border border-neutral-300 rounded bg-white focus:border-transparent disabled:bg-neutral-200',
           ]"
         />
@@ -68,7 +68,7 @@ const value = computed({
       v-if="validationStatus"
       :id="errorId"
       role="alert"
-      class="text-sm text-danger-600 mt-1"
+      class="text-sm text-error mt-1"
       :class="[validationStatus.valid ? 'hidden' : '']"
     >
       {{ validationStatus.message }}

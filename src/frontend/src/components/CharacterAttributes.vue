@@ -728,10 +728,10 @@ function newRolls() {
           </tbody>
         </table>
       </div>
-      <div class="text-sm text-danger-600 px-2 py-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
+      <div class="text-sm text-error px-2 py-1" :class="[rollsValidationStatus.valid ? 'hidden' : '']">
         {{ rollsValidationStatus.message }}
       </div>
-      <div class="text-sm text-danger-600 px-2 py-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
+      <div class="text-sm text-error px-2 py-1" :class="[advancesValidationStatus.valid ? 'hidden' : '']">
         {{ advancesValidationStatus.message }}
       </div>
     </div>

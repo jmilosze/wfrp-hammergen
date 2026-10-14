@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
         v-if="showSubmissionStatus && submissionState.message !== '' && !statusExpired"
         role="status"
         class="mr-auto flex items-center gap-1 text-sm"
-        :class="submissionState.status === 'success' ? 'text-success-700' : 'text-danger-600'"
+        :class="submissionState.status === 'success' ? 'text-success' : 'text-error'"
       >
         <Icon
           :icon="submissionState.status === 'success' ? 'lucide:circle-check' : 'lucide:circle-alert'"

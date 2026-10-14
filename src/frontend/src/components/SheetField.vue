@@ -51,14 +51,14 @@ const value = computed({
         :maxlength="maxlength"
         :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
         :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
-        class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-primary-50 disabled:bg-white disabled:text-neutral-900 disabled:opacity-100"
+        class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-editable disabled:bg-white disabled:text-neutral-900 disabled:opacity-100"
       />
     </div>
     <div
       v-if="validationStatus"
       :id="errorId"
       role="alert"
-      class="text-sm text-danger-600 px-2 py-1"
+      class="text-sm text-error px-2 py-1"
       :class="[validationStatus.valid ? 'hidden' : '']"
     >
       {{ validationStatus.message }}

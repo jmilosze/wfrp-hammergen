@@ -3,15 +3,15 @@ import { computed } from "vue";
 
 const COLORS = {
   light: {
-    border: "border-oxblood",
-    pill: "bg-oxblood",
+    border: "border-brand",
+    pill: "bg-brand",
     selected: "text-parchment",
-    unselected: "text-oxblood hover:text-oxblood-dark",
+    unselected: "text-brand hover:text-brand-dark",
   },
   dark: {
     border: "border-parchment",
     pill: "bg-parchment",
-    selected: "text-oxblood",
+    selected: "text-brand",
     unselected: "text-parchment hover:text-parchment-light",
   },
 };

@@ -70,7 +70,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
           <div class="overflow-hidden" :inert="!compendiumOpen">
             <div v-for="section in COMPENDIUM_SECTIONS" :key="section.title" class="pb-1">
               <div
-                class="mx-2 mt-2 mb-1 pb-0.5 border-b border-primary-600 text-[0.7rem] font-bold uppercase tracking-widest text-primary-800 text-end select-none"
+                class="mx-2 mt-2 mb-1 pb-0.5 border-b border-brand-rule text-[0.7rem] font-bold uppercase tracking-widest text-brand text-end select-none"
               >
                 {{ section.title }}
               </div>

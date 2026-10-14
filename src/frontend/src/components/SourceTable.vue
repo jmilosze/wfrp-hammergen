@@ -104,7 +104,7 @@ function setNotes(id: string, notes: string) {
       </template>
       <table class="w-full">
         <thead>
-          <tr class="text-left" :class="{ 'bg-primary-50': !disabled }">
+          <tr class="text-left" :class="{ 'bg-editable': !disabled }">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
             <th class="border-b border-neutral-300 py-2 px-2">Notes</th>
             <th v-if="!disabled" class="border-b border-neutral-300 py-2 px-2 w-0" />
@@ -127,7 +127,7 @@ function setNotes(id: string, notes: string) {
         </tbody>
       </table>
     </SectionCard>
-    <p class="text-sm text-danger-600 mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
+    <p class="text-sm text-error mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
       Some of the sources are invalid.
     </p>
     <ModalWindow id="modifySourceModal" fullHeight>

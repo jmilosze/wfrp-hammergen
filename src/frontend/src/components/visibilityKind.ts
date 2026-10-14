@@ -12,8 +12,8 @@ export const VISIBILITY_KINDS: Record<
     icon: "material-symbols:globe",
     label: "Public",
     description: "Hammergen content, for everyone",
-    badgeClass: "bg-info-100 text-info-800 border border-info-300",
-    iconClass: "text-info-500",
+    badgeClass: "bg-public-bg text-public-text border border-public-border",
+    iconClass: "text-public-icon",
   },
   mine: {
     icon: "material-symbols:lock",
@@ -26,15 +26,15 @@ export const VISIBILITY_KINDS: Record<
     icon: "material-symbols:backup",
     label: "Shared by me",
     description: "yours, shared with linked accounts",
-    badgeClass: "bg-success-100 text-success-800 border border-success-300",
-    iconClass: "text-success-600",
+    badgeClass: "bg-shared-by-me-bg text-shared-by-me-text border border-shared-by-me-border",
+    iconClass: "text-shared-by-me-icon",
   },
   sharedWithMe: {
     icon: "material-symbols:cloud-download",
     label: "Shared with me",
     description: "shared from a linked account",
-    badgeClass: "bg-linked-100 text-linked-800 border border-linked-300",
-    iconClass: "text-linked-500",
+    badgeClass: "bg-shared-with-me-bg text-shared-with-me-text border border-shared-with-me-border",
+    iconClass: "text-shared-with-me-icon",
   },
 };
 

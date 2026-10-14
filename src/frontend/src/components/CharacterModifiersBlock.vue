@@ -170,7 +170,7 @@ const validAtts = computed(() => {
               :value="row.name"
               :disabled="disabled"
               :aria-label="`Characteristic (${printAttributeName(row.name)})`"
-              class="w-full h-10 px-1 font-semibold outline-none bg-primary-50 focus:outline-2 focus:-outline-offset-2 outline-neutral-700 disabled:bg-white disabled:text-neutral-900 disabled:opacity-100 disabled:appearance-none"
+              class="w-full h-10 px-1 font-semibold outline-none bg-editable focus:outline-2 focus:-outline-offset-2 outline-neutral-700 disabled:bg-white disabled:text-neutral-900 disabled:opacity-100 disabled:appearance-none"
               @change="onCharacteristicChange(row.name, $event)"
             >
               <option v-for="option in characteristicOptions(row.name)" :key="option.value" :value="option.value">
@@ -223,7 +223,7 @@ const validAtts = computed(() => {
         @update:modelValue="(event) => updateMovement(event)"
       />
     </SheetTable>
-    <p class="text-sm text-danger-600 px-2 py-1" :class="[validAtts.valid ? 'hidden' : '']">
+    <p class="text-sm text-error px-2 py-1" :class="[validAtts.valid ? 'hidden' : '']">
       {{ validAtts.message }}
     </p>
   </div>

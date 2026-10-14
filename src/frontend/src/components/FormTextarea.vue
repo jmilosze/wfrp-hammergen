@@ -54,7 +54,7 @@ const value = computed({
         size ? heightClasses[size] : 'h-36',
         { grow: bare },
         bare
-          ? 'block focus:-outline-offset-2 bg-primary-50 disabled:bg-white disabled:text-neutral-900 disabled:opacity-100'
+          ? 'block focus:-outline-offset-2 bg-editable disabled:bg-white disabled:text-neutral-900 disabled:opacity-100'
           : 'border border-neutral-300 rounded focus:border-transparent bg-white disabled:bg-neutral-200',
       ]"
       :disabled="disabled"
@@ -64,7 +64,7 @@ const value = computed({
     <p
       :id="errorId"
       role="alert"
-      class="text-sm text-danger-600"
+      class="text-sm text-error"
       :class="[validationStatus.valid ? 'hidden' : '', bare ? 'px-2 py-1' : '']"
     >
       {{ validationStatus.message }}

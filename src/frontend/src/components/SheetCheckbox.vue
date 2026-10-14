@@ -14,7 +14,7 @@ defineProps<{ plain?: boolean }>();
     <input
       v-bind="$attrs"
       type="checkbox"
-      :class="plain ? 'bg-white' : 'bg-primary-50'"
+      :class="plain ? 'bg-white' : 'bg-editable'"
       class="peer appearance-none size-5 rounded-sm border border-neutral-500 cursor-pointer checked:bg-neutral-600 checked:border-neutral-600 focus-visible:outline-2 focus-visible:outline-offset-2 outline-neutral-700 disabled:cursor-default disabled:bg-neutral-200 disabled:border-neutral-300 disabled:checked:bg-neutral-400 disabled:checked:border-neutral-400"
     />
     <Icon

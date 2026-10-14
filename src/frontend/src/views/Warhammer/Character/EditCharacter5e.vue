@@ -589,7 +589,7 @@ const modifierAttributes = computed(() => {
       <SheetCell title="Carried">{{ encumbrance.carried }}</SheetCell>
       <SheetCell title="Total">
         <span
-          :class="{ 'text-danger-600 font-semibold': encumbrance.total > maxEncumbrance }"
+          :class="{ 'text-error font-semibold': encumbrance.total > maxEncumbrance }"
           :title="encumbrance.total > maxEncumbrance ? 'Over the Encumbrance limit' : undefined"
         >
           {{ encumbrance.total }}

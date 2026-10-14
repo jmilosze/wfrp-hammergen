@@ -30,7 +30,7 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
 
 <template>
   <header class="sticky top-0 z-20">
-    <nav class="bg-oxblood text-parchment">
+    <nav class="bg-brand text-parchment">
       <div class="max-w-7xl mx-auto h-14 px-4 flex items-center gap-1">
         <RouterLink
           :to="{ name: 'home' }"
@@ -70,7 +70,7 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
               >
                 <div v-for="section in COMPENDIUM_SECTIONS" :key="section.title">
                   <div
-                    class="mx-3 mb-1 pb-1 border-b border-primary-600 text-[0.7rem] font-bold uppercase tracking-widest text-primary-800 whitespace-nowrap select-none"
+                    class="mx-3 mb-1 pb-1 border-b border-brand-rule text-[0.7rem] font-bold uppercase tracking-widest text-brand whitespace-nowrap select-none"
                   >
                     {{ section.title }}
                   </div>

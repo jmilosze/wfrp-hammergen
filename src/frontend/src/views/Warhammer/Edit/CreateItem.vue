@@ -290,7 +290,7 @@ watchWh(
             <div
               v-if="!validPrice.valid && validCoins"
               role="alert"
-              class="col-span-full px-2 py-1 bg-white text-sm text-danger-600"
+              class="col-span-full px-2 py-1 bg-white text-sm text-error"
             >
               {{ validPrice.message }}
             </div>

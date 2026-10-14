@@ -10,9 +10,9 @@ defineProps<{ title: string; icon: string; danger?: boolean; headingLevel?: 1 | 
 <template>
   <section
     class="flex flex-col p-4 sm:p-6 rounded-lg border bg-neutral-50"
-    :class="danger ? 'border-danger-300' : 'border-neutral-200'"
+    :class="danger ? 'border-danger-border' : 'border-neutral-200'"
   >
-    <Icon :icon="icon" class="size-9" :class="danger ? 'text-danger-600' : 'text-oxblood'" />
+    <Icon :icon="icon" class="size-9" :class="danger ? 'text-error' : 'text-brand'" />
     <component :is="headingLevel === 1 ? 'h1' : 'h2'" class="mt-3 font-semibold text-2xl">{{ title }}</component>
     <div v-if="$slots.description" class="mt-2 text-neutral-700">
       <slot name="description" />

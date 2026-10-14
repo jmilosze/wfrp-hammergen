@@ -81,7 +81,7 @@ const recentCharacters = computed(() =>
       class="flex flex-col items-center gap-3 p-8 border-2 border-dashed border-neutral-300 rounded-lg text-center"
     >
       <p class="text-neutral-700">You have no {{ edition }} characters yet.</p>
-      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="primary" size="lg">
+      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="dark" size="lg">
         Create your first character
       </SectionLink>
     </div>
@@ -95,9 +95,7 @@ const recentCharacters = computed(() =>
         :key="section.title"
         class="p-4 bg-neutral-50 border border-neutral-200 rounded-lg"
       >
-        <div
-          class="mb-2 pb-1 border-b border-primary-600 text-[0.7rem] font-bold uppercase tracking-widest text-primary-800"
-        >
+        <div class="mb-2 pb-1 border-b border-brand-rule text-[0.7rem] font-bold uppercase tracking-widest text-brand">
           {{ section.title }}
         </div>
         <RouterLink

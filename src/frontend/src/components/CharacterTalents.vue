@@ -175,7 +175,7 @@ function setNumber(id: string, number: number) {
       </template>
       <table class="w-full">
         <thead>
-          <tr class="text-left" :class="{ 'bg-primary-50': !disabled }">
+          <tr class="text-left" :class="{ 'bg-editable': !disabled }">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
             <th v-if="!disabled" class="border-b border-neutral-300 py-2 px-2 w-0" />
           </tr>
@@ -202,7 +202,7 @@ function setNumber(id: string, number: number) {
         </tbody>
       </table>
     </SectionCard>
-    <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-error mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
     <ModalWindow id="modifyTalentsModal" fullHeight>

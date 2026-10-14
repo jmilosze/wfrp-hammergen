@@ -13,7 +13,7 @@ defineProps<{ title: string; editable?: boolean }>();
     >
       {{ title }}
     </div>
-    <div class="flex flex-col justify-center flex-1 min-w-0 min-h-9 px-2 py-1" :class="{ 'bg-primary-50': editable }">
+    <div class="flex flex-col justify-center flex-1 min-w-0 min-h-9 px-2 py-1" :class="{ 'bg-editable': editable }">
       <slot />
     </div>
   </div>

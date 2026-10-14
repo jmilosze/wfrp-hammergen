@@ -79,7 +79,7 @@ async function onBottomPageChange() {
           <!-- The link covers the whole row (after:), so the row opens the entry; the end slot sits above it. -->
           <RouterLink
             :to="{ name: routeName, params: { id: item.id } }"
-            class="font-semibold text-danger-800 hover:underline after:absolute after:inset-0"
+            class="font-semibold text-link hover:underline after:absolute after:inset-0"
           >
             {{ item.name }}
           </RouterLink>

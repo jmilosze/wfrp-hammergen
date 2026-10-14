@@ -34,7 +34,7 @@ watch(
   <ModalWindow id="deleteModal" size="xs">
     <template #header>Delete {{ elementToDelete.name }}?</template>
     <div class="flex items-start gap-3">
-      <Icon icon="lucide:triangle-alert" class="size-6 shrink-0 text-danger-600" />
+      <Icon icon="lucide:triangle-alert" class="size-6 shrink-0 text-error" />
       <p>
         <span class="font-semibold">{{ elementToDelete.name }}</span> and all its data will be deleted. This can't be
         undone.

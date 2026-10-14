@@ -49,7 +49,7 @@ function onTextInput(id: string, event: Event) {
   <component
     :is="clickable(item) ? 'label' : 'div'"
     class="flex items-start gap-3 px-2 py-2 border-b border-neutral-300 last:border-b-0 [content-visibility:auto] [contain-intrinsic-size:auto_4rem]"
-    :class="[item.selected ? 'bg-primary-50' : 'bg-white', { 'cursor-pointer hover:bg-neutral-100': clickable(item) }]"
+    :class="[item.selected ? 'bg-editable' : 'bg-white', { 'cursor-pointer hover:bg-neutral-100': clickable(item) }]"
   >
     <span class="pt-0.5">
       <!-- Repeatable and number rows keep the checkbox's space, so the names line up. -->
@@ -81,7 +81,7 @@ function onTextInput(id: string, event: Event) {
         type="number"
         :step="numberStep"
         :aria-label="`${numberLabel} ${item.name}`"
-        class="w-16 min-h-8 px-2 border border-neutral-400 rounded-sm bg-primary-50 outline-neutral-700 focus:outline-2"
+        class="w-16 min-h-8 px-2 border border-neutral-400 rounded-sm bg-editable outline-neutral-700 focus:outline-2"
         @input="onNumberInput(item.id, $event)"
       />
     </span>
@@ -93,11 +93,11 @@ function onTextInput(id: string, event: Event) {
           type="text"
           :aria-label="`${textLabel} ${item.name}`"
           :aria-invalid="item.textError ? 'true' : undefined"
-          class="flex-1 min-w-0 min-h-8 px-2 border border-neutral-400 rounded-sm bg-primary-50 outline-neutral-700 focus:outline-2"
+          class="flex-1 min-w-0 min-h-8 px-2 border border-neutral-400 rounded-sm bg-editable outline-neutral-700 focus:outline-2"
           @input="onTextInput(item.id, $event)"
         />
       </span>
-      <span v-if="item.textError" role="alert" class="text-sm text-danger-600">{{ item.textError }}</span>
+      <span v-if="item.textError" role="alert" class="text-sm text-error">{{ item.textError }}</span>
     </span>
     <span v-if="item.choices" class="flex items-center gap-3 shrink-0 self-center">
       <label

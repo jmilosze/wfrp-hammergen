@@ -56,7 +56,7 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
   <div class="flex items-stretch gap-2 @3xl/page:hidden">
     <button
       type="button"
-      class="inline-flex items-center gap-2 rounded border border-oxblood-dark bg-oxblood px-3 py-1.5 font-semibold text-parchment"
+      class="inline-flex items-center gap-2 rounded border border-brand-dark bg-brand px-3 py-1.5 font-semibold text-parchment"
       @click="drawerOpen = true"
     >
       <Icon icon="lucide:filter" class="size-4" />
@@ -79,7 +79,7 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
       :class="drawerOpen ? 'translate-x-0' : '-translate-x-full'"
       class="flex flex-col w-72 max-w-[85vw] h-full bg-white border-r border-neutral-400 overflow-hidden transition-transform duration-300 @3xl/page:translate-x-0 @3xl/page:w-full @3xl/page:h-auto @3xl/page:max-h-[calc(100svh-2rem)] @3xl/page:border @3xl/page:rounded-lg"
     >
-      <div class="flex items-center gap-2 px-3 py-2 bg-oxblood text-parchment font-semibold">
+      <div class="flex items-center gap-2 px-3 py-2 bg-brand text-parchment font-semibold">
         <Icon icon="lucide:filter" class="size-4" />
         <span class="flex-1">Filters</span>
         <button
@@ -114,7 +114,7 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
             <span class="flex-1 text-left">{{ section.title }}</span>
             <span
               v-if="(selected[section.key] ?? []).length > 0"
-              class="px-1.5 rounded-full bg-primary-200 text-xs text-neutral-900"
+              class="px-1.5 rounded-full bg-parchment text-xs text-brand"
             >
               {{ (selected[section.key] ?? []).length }}
             </span>

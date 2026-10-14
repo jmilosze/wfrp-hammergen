@@ -16,7 +16,7 @@ const emit = defineEmits<{
       v-for="label in labels"
       :key="label.text"
       class="inline-flex items-center gap-1 rounded border border-neutral-400 px-2 py-0.5 font-semibold"
-      :class="removable ? 'bg-primary-50 pr-0.5' : 'bg-white'"
+      :class="removable ? 'bg-editable pr-0.5' : 'bg-white'"
     >
       {{ label.text }}
       <button
