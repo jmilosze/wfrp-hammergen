@@ -5,7 +5,7 @@ import ViewCharacterTable from "./ViewCharacterTable.vue";
 import { CharacterFull } from "../services/wh/character/characterFull.ts";
 
 // The character view's Skills in the paper sheet's three columns: the basic skills over the first two, the advanced
-// skills in the third. withoutLanguages: language skills are left out (the 5e sheet lists them as Known languages).
+// skills in the third. withoutLanguages: language skills are left out (the 5e sheet lists them under Languages).
 const props = defineProps<{ character: CharacterFull; withoutLanguages?: boolean }>();
 
 const languageIds = new Set(props.withoutLanguages ? props.character.languageSkills.map((x) => x.id) : []);

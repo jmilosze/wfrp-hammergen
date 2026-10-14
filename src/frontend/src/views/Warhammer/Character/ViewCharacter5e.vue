@@ -18,7 +18,7 @@ import { characterFullToCsv5e } from "../../../services/wh/character/csv/csv5e.t
 import { sumAttributes } from "../../../services/wh/core/attributes.ts";
 
 // The 5e character sheet, read-only, laid out like the paper sheet. First page: name and experience, career with the
-// advancement tracker, characteristics with fate and wounds, movement and known languages, skills, talents. Then the
+// advancement tracker, characteristics with fate and wounds, movement and languages, skills, talents. Then the
 // second page (ViewCharacterSecondPage). Empty sections are left out.
 const props = defineProps<{
   character: CharacterFull;
@@ -76,11 +76,13 @@ const LANGUAGE_FIELDS = [
     <SectionCard title="Movement">
       <ViewCharacterTable :fields="MOVEMENT_FIELDS" :items="[character]" />
     </SectionCard>
-    <ViewCharacterTable title="Known languages" :fields="LANGUAGE_FIELDS" :items="character.languageSkills">
-      <template #name="item">
-        <TextLink routeName="skill" :params="{ id: item.id }">{{ item.name }}</TextLink>
-      </template>
-    </ViewCharacterTable>
+    <SectionCard v-if="character.languageSkills.length > 0" title="Languages">
+      <ViewCharacterTable :fields="LANGUAGE_FIELDS" :items="character.languageSkills">
+        <template #name="item">
+          <TextLink routeName="skill" :params="{ id: item.id }">{{ item.name }}</TextLink>
+        </template>
+      </ViewCharacterTable>
+    </SectionCard>
   </div>
   <ViewCharacterSkills :character="character" withoutLanguages class="my-4" />
   <SectionCard v-if="character.talents.length > 0" title="Talents" class="my-4 text-left">
