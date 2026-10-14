@@ -2,6 +2,7 @@
 import ActionButton from "./ActionButton.vue";
 import { useAuth } from "../composables/auth.ts";
 import { Icon } from "@iconify/vue";
+import { BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS } from "./buttonStyle.ts";
 
 defineProps<{
   id: string;
@@ -12,6 +13,8 @@ const emit = defineEmits<{
 }>();
 
 const auth = useAuth();
+
+const buttonClass = [BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS.light, "p-1.5"];
 </script>
 
 <template>
@@ -19,7 +22,7 @@ const auth = useAuth();
     <!-- An icon-only button; its name comes from the label and tooltip. -->
     <ActionButton
       v-if="auth.loggedIn.value"
-      class="rounded border border-neutral-400 bg-white p-1.5 text-neutral-800 hover:bg-neutral-200 cursor-pointer"
+      :class="buttonClass"
       title="Copy"
       aria-label="Copy"
       @click="emit('copy', id)"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { Icon } from "@iconify/vue";
+import { BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS } from "./buttonStyle.ts";
 
 const props = defineProps<{
   rowsPerPage: number;
@@ -34,10 +35,12 @@ const lastStartRow = computed(
 const onFirstPage = computed(() => startRow.value === 0);
 const onLastPage = computed(() => startRow.value >= lastStartRow.value);
 
-const BUTTON_CLASS =
-  "inline-flex items-center justify-center size-8 rounded border border-neutral-400 bg-white text-neutral-800 " +
-  "hover:bg-neutral-200 cursor-pointer disabled:cursor-default disabled:border-neutral-300 disabled:bg-neutral-100 " +
-  "disabled:text-neutral-400";
+// The light button colours, as the rows' View and Copy buttons; a button at an end of the list is faded.
+const BUTTON_CLASS = [
+  BUTTON_BASE_CLASS,
+  BUTTON_VARIANT_CLASS.light,
+  "size-8 disabled:opacity-50 disabled:cursor-default disabled:hover:bg-parchment",
+];
 
 function moveToLastPage(direction: -1 | 1): void {
   if (direction === -1) {
@@ -49,7 +52,7 @@ function moveToLastPage(direction: -1 | 1): void {
 </script>
 
 <template>
-  <!-- First and previous, the rows shown, then next and last; the buttons at an end of the list are greyed out.
+  <!-- First and previous, the rows shown, then next and last; the buttons at an end of the list are faded.
   Centred on very small screens, at the right otherwise. -->
   <div class="flex items-center justify-center @md:justify-end gap-1.5">
     <button
