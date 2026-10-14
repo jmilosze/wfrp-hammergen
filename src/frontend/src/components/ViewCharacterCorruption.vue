@@ -5,16 +5,14 @@ import ViewCharacterList from "./ViewCharacterList.vue";
 import { CharacterFull } from "../services/wh/character/characterFull.ts";
 
 // The character view's Corruption and Mutation box: Corruption Points, then the mutations and creature traits as
-// compact lists of names. Left out when there are no points and no entries.
-const props = defineProps<{ character: CharacterFull }>();
+// compact lists of names. The page leaves it out when there are no points and no entries.
+defineProps<{ character: CharacterFull }>();
 
-const shown =
-  props.character.corruption > 0 || props.character.mutations.length > 0 || props.character.traits.length > 0;
 const bandClass = "px-2 py-1 bg-neutral-100 border-y border-neutral-300 font-semibold";
 </script>
 
 <template>
-  <SectionCard v-if="shown" title="Corruption and Mutation">
+  <SectionCard title="Corruption and Mutation">
     <SheetCell title="Corruption Points">{{ character.corruption }}</SheetCell>
     <template v-if="character.mutations.length > 0">
       <div :class="bandClass">Mutations</div>

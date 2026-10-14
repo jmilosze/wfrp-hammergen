@@ -10,12 +10,12 @@ defineProps<{ character: CharacterFull }>();
 
 <template>
   <div class="contents text-left">
-    <SheetTable title="Wealth" tight class="grow basis-80">
+    <SheetTable title="Wealth" columns="short" class="grow basis-80">
       <SheetCell title="Gold">{{ character.gold }}</SheetCell>
       <SheetCell title="Silver">{{ character.silver }}</SheetCell>
       <SheetCell title="Brass">{{ character.brass }}</SheetCell>
     </SheetTable>
-    <SheetTable title="Encumbrance" tight class="grow basis-80">
+    <SheetTable title="Encumbrance" columns="short-6" class="grow basis-80">
       <SheetCell title="Weapons">{{ character.encWeapon }}</SheetCell>
       <SheetCell title="Armour">{{ character.encArmor }}</SheetCell>
       <SheetCell title="Other">{{ character.encOther }}</SheetCell>

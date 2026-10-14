@@ -4,19 +4,20 @@
 // Editable cells (SheetField, SheetSelect) have a faint yellow fill; read-only and calculated cells are white.
 // Stretched taller than its content (e.g. next to a taller table in a row), the rows share the extra height.
 // An optional title is a small header row above the cells; actions fill a cell on the right.
-// tight: three columns from a narrower width (instead of columns), for read-only cells whose values are a few
-// characters (e.g. Wealth).
-type Columns = 1 | 2 | 3;
+// Columns "short" and "short-6": short read-only cells (values of a few characters, e.g. Wealth) in three columns from a
+// narrower width; "short-6" makes a single row of six cells once there is room (e.g. Encumbrance).
+type Columns = 1 | 2 | 3 | "short" | "short-6";
 
-withDefaults(defineProps<{ title?: string; columns?: Columns; tight?: boolean }>(), { title: "", columns: 1 });
+withDefaults(defineProps<{ title?: string; columns?: Columns }>(), { title: "", columns: 1 });
 
 const COLUMNS_CLASS: Record<Columns, string> = {
   1: "",
   2: "@md:grid-cols-2",
   // Three short cells fit side by side once labels shrink to their text.
   3: "@md:grid-cols-3 @md:[&_[data-sheet-label]]:min-w-0",
+  short: "@xs:grid-cols-3 @xs:[&_[data-sheet-label]]:min-w-0",
+  "short-6": "@xs:grid-cols-3 @2xl:grid-cols-6 @xs:[&_[data-sheet-label]]:min-w-0",
 };
-const TIGHT_COLUMNS_CLASS = "@xs:grid-cols-3 @xs:[&_[data-sheet-label]]:min-w-0";
 </script>
 
 <template>
@@ -29,7 +30,7 @@ const TIGHT_COLUMNS_CLASS = "@xs:grid-cols-3 @xs:[&_[data-sheet-label]]:min-w-0"
         {{ title }}
       </div>
       <div class="flex grow gap-px">
-        <div :class="tight ? TIGHT_COLUMNS_CLASS : COLUMNS_CLASS[columns]" class="grid flex-1 min-w-0 gap-px">
+        <div :class="COLUMNS_CLASS[columns]" class="grid flex-1 min-w-0 gap-px">
           <slot />
         </div>
         <div v-if="$slots.actions" class="flex flex-col gap-1 p-1 bg-white *:flex-1">
