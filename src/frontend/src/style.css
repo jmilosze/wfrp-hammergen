@@ -56,7 +56,7 @@
   --color-parchment-dark: #e2d3ad;
 
   /* link: links (names of entries, TextLink). */
-  --color-link: oklch(44.4% 0.177 26.899);
+  --color-link: #4a1c1c;
 
   /* editable: the faint yellow of cells, fields and checkboxes that can be edited. */
   --color-editable: oklch(98.7% 0.022 95.277);
