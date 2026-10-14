@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-
-type Variant = "primary" | "neutral";
+import {
+  BUTTON_BASE_CLASS,
+  BUTTON_ICON_SIZE_CLASS,
+  BUTTON_SIZE_CLASS,
+  BUTTON_VARIANT_CLASS,
+  ButtonSize,
+  ButtonVariant,
+} from "./buttonStyle.ts";
 
 // A link that looks like a SectionButton, e.g. Create new.
 withDefaults(
@@ -10,25 +16,20 @@ withDefaults(
     routeName: string;
     params?: Record<string, string>;
     newWindow?: boolean;
-    variant?: Variant;
+    variant?: ButtonVariant;
+    size?: ButtonSize;
   }>(),
-  { params: () => ({}), variant: "primary" },
+  { params: () => ({}), variant: "primary", size: "md" },
 );
-
-const VARIANT_CLASS: Record<Variant, string> = {
-  primary: "bg-primary-200 border-primary-400 text-neutral-900 hover:bg-primary-300",
-  neutral: "bg-white border-neutral-400 text-neutral-800 hover:bg-neutral-200",
-};
 </script>
 
 <template>
   <RouterLink
     :to="{ name: routeName, params: params }"
     :target="newWindow ? '_blank' : undefined"
-    :class="VARIANT_CLASS[variant]"
-    class="inline-flex items-center justify-center gap-1 rounded border px-2 py-1 text-sm font-medium whitespace-nowrap select-none"
+    :class="[BUTTON_BASE_CLASS, BUTTON_SIZE_CLASS[size], BUTTON_VARIANT_CLASS[variant]]"
   >
-    <Icon :icon="icon" class="size-4" />
+    <Icon :icon="icon" :class="BUTTON_ICON_SIZE_CLASS[size]" />
     <slot />
   </RouterLink>
 </template>

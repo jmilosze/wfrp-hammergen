@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SectionLink from "../../../components/SectionLink.vue";
 import { Edition } from "../../../services/wh/core/edition.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -9,7 +10,6 @@ import { Character, characterApi } from "../../../services/wh/character/characte
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
-import LinkButton from "../../../components/LinkButton.vue";
 import { printSize } from "../../../services/wh/character/size.ts";
 import { printSpeciesWithRegion, SpeciesWithRegion } from "../../../services/wh/core/species.ts";
 import { SPECIES_5E } from "../../../services/wh/character/rules/rules5e.ts";
@@ -39,7 +39,6 @@ import { itemApi } from "../../../services/wh/content/item.ts";
 import CharacterItems from "../../../components/CharacterItems.vue";
 import { traitApi } from "../../../services/wh/content/trait.ts";
 import ModalWindow from "../../../components/ModalWindow.vue";
-import ActionButton from "../../../components/ActionButton.vue";
 import Ignored4eModifiersWarning from "../../../components/Ignored4eModifiersWarning.vue";
 import { useModal } from "../../../composables/modal.ts";
 import HintModal from "../../../components/HintModal.vue";
@@ -330,7 +329,9 @@ const modifierAttributes = computed(() => {
     <div class="text-xl">View character</div>
     <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
     <div class="flex">
-      <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View character </LinkButton>
+      <SectionLink icon="lucide:eye" routeName="viewCharacter" :params="{ id: id }" variant="neutral">
+        View character
+      </SectionLink>
     </div>
   </div>
   <CharacterStartPanel
@@ -403,8 +404,8 @@ const modifierAttributes = computed(() => {
     <template #header> Allow 4e content </template>
     <template #buttons>
       <div class="flex gap-2">
-        <ActionButton class="btn" @click="confirmAllow4e">Allow 4e content</ActionButton>
-        <ActionButton class="btn btn-secondary" @click="modal.hideModal()">Cancel</ActionButton>
+        <SectionButton icon="lucide:check" @click="confirmAllow4e">Allow 4e content</SectionButton>
+        <SectionButton icon="lucide:x" variant="neutral" @click="modal.hideModal()">Cancel</SectionButton>
       </div>
     </template>
     <div>

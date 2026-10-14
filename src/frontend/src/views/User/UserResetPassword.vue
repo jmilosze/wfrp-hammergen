@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import Header from "../../components/PageHeader.vue";
+import SectionButton from "../../components/SectionButton.vue";
+import AccountCard from "../../components/AccountCard.vue";
 import { computed, ref } from "vue";
 import FormInput from "../../components/FormInput.vue";
 import router from "../../router.ts";
@@ -8,7 +9,6 @@ import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
-import ActionButton from "../../components/ActionButton.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -76,29 +76,27 @@ async function submitForm() {
 </script>
 
 <template>
-  <div>
-    <Header title="Reset password">Create a new password.</Header>
-    <div class="pt-2 md:w-96">
+  <div class="flex justify-center py-6">
+    <AccountCard title="Reset password" icon="lucide:lock-keyhole" :headingLevel="1" class="w-full max-w-md">
+      <template #description>Choose a new password.</template>
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-
-      <FormInput
-        v-model="user.newPassword"
-        type="password"
-        title="Password"
-        :validationStatus="validPassword"
-        class="mt-3"
-      />
+      <FormInput v-model="user.newPassword" type="password" title="New password" :validationStatus="validPassword" />
       <FormInput
         v-model="user.confirmNewPassword"
         type="password"
-        title="Confirm Password"
+        title="Confirm new password"
         :validationStatus="passwordMatch"
-        class="mt-3"
       />
-      <ActionButton class="mt-3 btn" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
-        Submit
-      </ActionButton>
-    </div>
+      <SectionButton
+        icon="lucide:save"
+        size="lg"
+        class="w-full"
+        :busy="submissionState.status === 'inProgress'"
+        @click="submitForm"
+      >
+        Save new password
+      </SectionButton>
+    </AccountCard>
   </div>
 </template>
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SectionLink from "./SectionLink.vue";
 import { Icon } from "@iconify/vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
@@ -8,8 +9,6 @@ import { useModal } from "../composables/modal.ts";
 import ListTable from "./ListTable.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
-import LinkButton from "./LinkButton.vue";
-import ReloadButton from "./ReloadButton.vue";
 import FormInput from "./FormInput.vue";
 import { ValidationStatus } from "../utils/validation.ts";
 
@@ -140,10 +139,12 @@ function onEditClick() {
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
       >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
+        <SectionLink icon="lucide:plus" variant="neutral" :routeName="routeName" :params="{ id: 'create' }" newWindow>
           Create new
-        </LinkButton>
-        <ReloadButton :loading="props.loading" @click="emit('reload')" />
+        </SectionLink>
+        <SectionButton icon="lucide:refresh-cw" variant="neutral" :busy="props.loading" @click="emit('reload')">
+          Reload
+        </SectionButton>
 
         <template #name="{ id }: { id: string }">
           <TextLink :routeName="routeName" :params="{ id: id }">

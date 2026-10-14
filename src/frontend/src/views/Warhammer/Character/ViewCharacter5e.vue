@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import SectionButton from "../../../components/SectionButton.vue";
 import Header from "../../../components/PageHeader.vue";
 import { computed, ref, toRef } from "vue";
 import { CharacterFullItem, CharacterFullSpell, CharacterFull } from "../../../services/wh/character/characterFull.ts";
 import { characterFullToCsv5e } from "../../../services/wh/character/csv/csv5e.ts";
-import ActionButton from "../../../components/ActionButton.vue";
 import { saveAs } from "file-saver";
 import { useRouter } from "vue-router";
 import ViewCharacterTable from "../../../components/ViewCharacterTable.vue";
@@ -432,17 +432,24 @@ const grimoiresDisp = ref(
 <template>
   <Header :title="character.name" />
   <div v-if="!printing" class="flex flex-wrap">
-    <ActionButton class="m-1 btn btn-sm" @click="saveCsv()">Download CSV</ActionButton>
-    <ActionButton class="m-1 btn btn-sm" @click="saveJson()">Download JSON</ActionButton>
-    <ActionButton class="m-1 btn btn-sm" @click="print()">Print</ActionButton>
-    <ActionButton
+    <SectionButton icon="lucide:file-spreadsheet" variant="neutral" class="m-1" @click="saveCsv()">
+      Download CSV
+    </SectionButton>
+    <SectionButton icon="lucide:file-json" variant="neutral" class="m-1" @click="saveJson()">
+      Download JSON
+    </SectionButton>
+    <SectionButton icon="lucide:printer" variant="neutral" class="m-1" @click="print()">Print</SectionButton>
+    <SectionButton
       v-if="canEdit"
-      class="m-1 btn btn-sm"
+      icon="lucide:pencil"
+      class="m-1"
       @click="router.push({ name: 'character', params: { id: character.id } })"
     >
       Edit
-    </ActionButton>
-    <ActionButton class="m-1 btn btn-sm" @click="router.push({ name: 'characters' })">Back to list</ActionButton>
+    </SectionButton>
+    <SectionButton icon="lucide:arrow-left" variant="neutral" class="m-1" @click="router.push({ name: 'characters' })">
+      Back to list
+    </SectionButton>
   </div>
 
   <Ignored4eModifiersWarning :names="character.ignored4eModifiers" class="my-3" />

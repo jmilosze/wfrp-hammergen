@@ -1,33 +1,40 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
+import {
+  BUTTON_BASE_CLASS,
+  BUTTON_ICON_SIZE_CLASS,
+  BUTTON_SIZE_CLASS,
+  BUTTON_VARIANT_CLASS,
+  ButtonSize,
+  ButtonVariant,
+} from "./buttonStyle.ts";
 
-type Variant = "primary" | "secondary" | "neutral" | "danger";
-
+// The app's button: bordered, with an icon (see buttonStyle.ts).
 // iconOnlyWhenNarrow: inside a narrow @container, show only the icon; the label stays for screen readers.
 // busy: the icon becomes a spinner and the button is disabled, e.g. while saving.
-withDefaults(defineProps<{ icon: string; variant?: Variant; iconOnlyWhenNarrow?: boolean; busy?: boolean }>(), {
-  variant: "primary",
-});
-
-const VARIANT_CLASS: Record<Variant, string> = {
-  primary: "bg-primary-200 border-primary-400 text-neutral-900 hover:bg-primary-300",
-  secondary: "bg-neutral-200 border-neutral-400 text-neutral-900 hover:bg-neutral-300",
-  neutral: "bg-white border-neutral-400 text-neutral-800 hover:bg-neutral-200",
-  danger: "bg-white border-danger-400 text-danger-700 hover:bg-danger-50",
-};
+withDefaults(
+  defineProps<{
+    icon: string;
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    iconOnlyWhenNarrow?: boolean;
+    busy?: boolean;
+  }>(),
+  { variant: "primary", size: "md" },
+);
 </script>
 
 <template>
   <button
     type="button"
-    :class="VARIANT_CLASS[variant]"
-    class="inline-flex items-center justify-center gap-1 rounded border px-2 py-1 text-sm font-medium whitespace-nowrap select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+    :class="[BUTTON_BASE_CLASS, BUTTON_SIZE_CLASS[size], BUTTON_VARIANT_CLASS[variant]]"
+    class="disabled:opacity-50 disabled:cursor-not-allowed"
     :disabled="busy || undefined"
     :aria-busy="busy || undefined"
   >
     <Icon
       :icon="busy ? 'lucide:loader-circle' : icon"
-      :class="[iconOnlyWhenNarrow ? 'size-6 @lg:size-4' : 'size-4', { 'animate-spin': busy }]"
+      :class="[iconOnlyWhenNarrow ? 'size-6 @lg:size-4' : BUTTON_ICON_SIZE_CLASS[size], { 'animate-spin': busy }]"
     />
     <span :class="{ 'sr-only @lg:not-sr-only @lg:whitespace-nowrap': iconOnlyWhenNarrow }"><slot /></span>
   </button>

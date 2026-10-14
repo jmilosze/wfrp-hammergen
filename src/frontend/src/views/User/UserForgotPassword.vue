@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import Header from "../../components/PageHeader.vue";
+import SectionButton from "../../components/SectionButton.vue";
+import AccountCard from "../../components/AccountCard.vue";
 import TextLink from "../../components/TextLink.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
@@ -9,7 +10,6 @@ import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
-import ActionButton from "../../components/ActionButton.vue";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -75,29 +75,36 @@ async function submitForm() {
 </script>
 
 <template>
-  <div>
-    <Header title="Forgot your password?">
-      Please submit email address you used as a account login. We will send you password reset link. If you cannot see
-      the email please check your junk/spam folders.
-    </Header>
-    <div class="text-xl mt-3">Please be advised</div>
-    <div class="mt-1">
-      <p>
-        Occasionally when using "Forgot your password" you might not get the email at all. This is because email
-        provides (for example Microsoft or Google) sometimes block IP addresses of the service Hammergen uses to send
-        emails. If that happens to you, please wait a minute or two and try again few more times. If you still do not
-        see any email from us, please contact us at
-        <TextLink href="mailto:admin@hammergen.net">admin@hammergen.net</TextLink> to restore your account.
-      </p>
-    </div>
+  <div class="flex justify-center py-6">
+    <AccountCard title="Forgot your password?" icon="lucide:key-round" :headingLevel="1" class="w-full max-w-md">
+      <template #description>
+        Enter the email you log in with and we'll send you a link to reset your password. If it doesn't arrive, check
+        your junk or spam folder.
+      </template>
+      <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
+      <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" />
+      <SectionButton
+        icon="lucide:send"
+        size="lg"
+        class="w-full"
+        :busy="submissionState.status === 'inProgress'"
+        @click="submitForm"
+      >
+        Send reset link
+      </SectionButton>
+      <div class="p-3 border-l-4 border-primary-500 bg-primary-50 rounded text-sm">
+        <p class="font-semibold">No email at all?</p>
+        <p class="mt-1">
+          Email providers (for example Microsoft or Google) sometimes block the service Hammergen sends emails with.
+          Wait a minute or two and try again a few times. If still nothing arrives, contact
+          <TextLink href="mailto:admin@hammergen.net">admin@hammergen.net</TextLink> to restore your account.
+        </p>
+      </div>
+      <template #footer>
+        <p>Remembered it? <TextLink routeName="login" :sameWindow="true">Log in</TextLink></p>
+      </template>
+    </AccountCard>
   </div>
-  <div class="pt-2 md:w-96">
-    <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-    <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" class="mt-3" />
-  </div>
-  <ActionButton class="mt-3 btn" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
-    Submit
-  </ActionButton>
 </template>
 
 <style scoped></style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SectionLink from "../../../components/SectionLink.vue";
 import { Edition } from "../../../services/wh/core/edition.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -9,7 +10,6 @@ import { Character, characterApi } from "../../../services/wh/character/characte
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
-import LinkButton from "../../../components/LinkButton.vue";
 import { printSize } from "../../../services/wh/character/size.ts";
 import {
   getDefaultSpeciesWithRegion,
@@ -392,7 +392,9 @@ const modifierAttributes = computed(() => {
     <div class="text-xl">View character</div>
     <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
     <div class="flex">
-      <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View character </LinkButton>
+      <SectionLink icon="lucide:eye" routeName="viewCharacter" :params="{ id: id }" variant="neutral">
+        View character
+      </SectionLink>
     </div>
   </div>
   <CharacterStartPanel

@@ -18,28 +18,6 @@
   }
 }
 
-@layer components {
-  .btn {
-    @apply rounded active:outline-2 outline-neutral-400 select-none font-medium px-3 py-2 bg-neutral-600 hover:bg-neutral-800 text-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap;
-  }
-
-  .btn-primary {
-    @apply bg-neutral-600 hover:bg-neutral-800 text-neutral-100;
-  }
-
-  .btn-secondary {
-    @apply bg-primary-300 hover:bg-primary-400 text-neutral-700;
-  }
-
-  .btn-danger {
-    @apply bg-danger-600 hover:bg-danger-800 text-neutral-100;
-  }
-
-  .btn-sm {
-    @apply p-2 text-sm;
-  }
-}
-
 @theme {
   --font-hammergen: "Hammergen", serif;
 

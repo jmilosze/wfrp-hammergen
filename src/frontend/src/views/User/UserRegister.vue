@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import SectionButton from "../../components/SectionButton.vue";
+import AccountCard from "../../components/AccountCard.vue";
+import TextLink from "../../components/TextLink.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import Header from "../../components/PageHeader.vue";
 import FormInput from "../../components/FormInput.vue";
 import { anonRequest } from "../../services/auth";
 import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
@@ -9,7 +11,6 @@ import AfterSubmit from "../../components/AfterSubmit.vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
-import ActionButton from "../../components/ActionButton.vue";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -100,40 +101,39 @@ async function submitForm() {
 </script>
 
 <template>
-  <div>
-    <Header title="Create a new account">
-      <p>
-        The email field will be your login username. We do not verify the email addresses so you can use a fake email,
-        but if you do, the password reset functionality will not work.
-      </p>
-    </Header>
-    <div class="pt-2 md:w-96">
+  <div class="flex justify-center py-6">
+    <AccountCard title="Create an account" icon="lucide:user-plus" :headingLevel="1" class="w-full max-w-md">
+      <template #description>
+        The email is your login username. Email addresses aren't verified, so any will do, but password reset only works
+        with a real one.
+      </template>
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormInput
         v-model="user.email"
         title="Email"
         :validationStatus="validEmail"
-        class="mt-3"
         @input="user.email = ($event.target as HTMLInputElement).value.trim()"
       />
-      <FormInput
-        v-model="user.newPassword"
-        type="password"
-        title="Password"
-        :validationStatus="validPassword"
-        class="mt-3"
-      />
+      <FormInput v-model="user.newPassword" type="password" title="Password" :validationStatus="validPassword" />
       <FormInput
         v-model="user.confirmNewPassword"
         type="password"
-        title="Confirm Password"
+        title="Confirm password"
         :validationStatus="passwordMatch"
-        class="mt-3"
       />
-    </div>
-    <ActionButton class="mt-3 btn" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
-      Register
-    </ActionButton>
+      <SectionButton
+        icon="lucide:user-plus"
+        size="lg"
+        class="w-full"
+        :busy="submissionState.status === 'inProgress'"
+        @click="submitForm"
+      >
+        Create account
+      </SectionButton>
+      <template #footer>
+        <p>Already have an account? <TextLink routeName="login" :sameWindow="true">Log in</TextLink></p>
+      </template>
+    </AccountCard>
   </div>
 </template>
 

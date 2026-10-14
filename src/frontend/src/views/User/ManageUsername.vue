@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import SectionButton from "../../components/SectionButton.vue";
+import AccountCard from "../../components/AccountCard.vue";
 import FormInput from "../../components/FormInput.vue";
 import { computed, ref } from "vue";
 import { User, UserApi } from "../../services/user.ts";
@@ -6,7 +8,6 @@ import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { authRequest } from "../../services/auth.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
-import ActionButton from "../../components/ActionButton.vue";
 import { useAuth } from "../../composables/auth.ts";
 
 const user = ref(new User());
@@ -67,23 +68,26 @@ async function submitForm() {
 </script>
 
 <template>
-  <div class="mt-5 pb-2 pl-2 border-b-2 border-neutral-200">
-    <div class="text-xl">Change username (email)</div>
-    <div class="pt-2 md:w-96">
-      <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-      <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" class="mt-1" />
-      <FormInput
-        v-model="user.currentPassword"
-        type="password"
-        title="Current password"
-        :validationStatus="validCurrentPassword"
-        class="mt-3"
-      />
-      <ActionButton class="mt-3 btn" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
-        Update email
-      </ActionButton>
-    </div>
-  </div>
+  <AccountCard title="Change email" icon="lucide:mail">
+    <template #description>Your email is also your login username.</template>
+    <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
+    <FormInput v-model="user.email" title="New email" :validationStatus="validEmail" />
+    <FormInput
+      v-model="user.currentPassword"
+      type="password"
+      title="Current password"
+      :validationStatus="validCurrentPassword"
+    />
+    <SectionButton
+      icon="lucide:save"
+      size="lg"
+      class="self-start"
+      :busy="submissionState.status === 'inProgress'"
+      @click="submitForm"
+    >
+      Update email
+    </SectionButton>
+  </AccountCard>
 </template>
 
 <style scoped></style>

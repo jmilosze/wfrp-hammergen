@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import SectionButton from "../../components/SectionButton.vue";
+import AccountCard from "../../components/AccountCard.vue";
 import { computed, ref } from "vue";
 import { User, UserApi } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
@@ -6,7 +8,6 @@ import { authRequest } from "../../services/auth.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import FormInput from "../../components/FormInput.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
-import ActionButton from "../../components/ActionButton.vue";
 import { useAuth } from "../../composables/auth.ts";
 
 const user = ref(new User());
@@ -54,23 +55,27 @@ async function submitForm() {
 </script>
 
 <template>
-  <div class="mt-3 p-2 border-4 border-danger-600 rounded-lg">
-    <div class="text-xl">Delete account</div>
-    <p>The account and all its data will be deleted. It will be impossible to recover.</p>
-    <div class="pt-2 md:w-96">
-      <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-      <FormInput
-        v-model="user.currentPassword"
-        type="password"
-        class="mt-3"
-        title="Current password"
-        :validationStatus="validCurrentPassword"
-      />
-      <ActionButton class="mt-3 btn btn-danger" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
-        Delete account
-      </ActionButton>
-    </div>
-  </div>
+  <AccountCard title="Delete account" icon="lucide:trash-2" danger>
+    <template #description>The account and all its data will be deleted. This can't be undone.</template>
+    <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
+    <FormInput
+      v-model="user.currentPassword"
+      type="password"
+      title="Current password"
+      :validationStatus="validCurrentPassword"
+      class="md:w-96"
+    />
+    <SectionButton
+      icon="lucide:trash-2"
+      size="lg"
+      variant="danger"
+      class="self-start"
+      :busy="submissionState.status === 'inProgress'"
+      @click="submitForm"
+    >
+      Delete account
+    </SectionButton>
+  </AccountCard>
 </template>
 
 <style scoped></style>
