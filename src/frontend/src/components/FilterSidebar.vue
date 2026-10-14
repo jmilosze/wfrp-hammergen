@@ -56,7 +56,7 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
   <div class="flex items-stretch gap-2 @3xl/page:hidden">
     <button
       type="button"
-      class="inline-flex items-center gap-2 rounded border border-neutral-700 bg-neutral-700 px-3 py-1.5 font-semibold text-primary-200"
+      class="inline-flex items-center gap-2 rounded border border-neutral-700 bg-neutral-700 px-3 py-1.5 font-semibold text-primary-300"
       @click="drawerOpen = true"
     >
       <Icon icon="lucide:filter" class="size-4" />
@@ -79,7 +79,7 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
       :class="drawerOpen ? 'translate-x-0' : '-translate-x-full'"
       class="flex flex-col w-72 max-w-[85vw] h-full bg-white border-r border-neutral-400 overflow-hidden transition-transform duration-300 @3xl/page:translate-x-0 @3xl/page:w-full @3xl/page:h-auto @3xl/page:max-h-[calc(100svh-2rem)] @3xl/page:border @3xl/page:rounded-lg"
     >
-      <div class="flex items-center gap-2 px-3 py-2 bg-neutral-700 text-primary-200 font-semibold">
+      <div class="flex items-center gap-2 px-3 py-2 bg-neutral-700 text-primary-300 font-semibold">
         <Icon icon="lucide:filter" class="size-4" />
         <span class="flex-1">Filters</span>
         <button
@@ -127,6 +127,7 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
               </div>
               <label class="flex items-center gap-2 py-0.5 cursor-pointer">
                 <SheetCheckbox
+                  plain
                   :checked="isTicked(section.key, option.value)"
                   @change="toggle(section.key, option.value)"
                 />

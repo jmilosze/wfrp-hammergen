@@ -43,9 +43,9 @@ const FEATURES = [
     </p>
     <!-- The compendium button spans both columns. -->
     <div class="mt-8 grid grid-cols-2 w-full max-w-md gap-3">
-      <SectionLink icon="lucide:user-plus" routeName="register" size="lg">Create account</SectionLink>
-      <SectionLink icon="lucide:log-in" routeName="login" size="lg">Log in</SectionLink>
-      <SectionLink icon="lucide:book-open" routeName="careers" variant="neutral" size="lg" class="col-span-2">
+      <SectionLink icon="lucide:user-plus" routeName="register" variant="primary" size="lg">Create account</SectionLink>
+      <SectionLink icon="lucide:log-in" routeName="login" variant="dark" size="lg">Log in</SectionLink>
+      <SectionLink icon="lucide:book-open" routeName="careers" variant="dark" size="lg" class="col-span-2">
         Browse the compendium
       </SectionLink>
     </div>

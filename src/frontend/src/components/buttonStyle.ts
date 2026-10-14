@@ -1,13 +1,17 @@
-// The look of SectionButton and SectionLink: bordered, with an icon. primary (yellow) is a page's or form's main
-// action, neutral (white) the others, danger (red outline) deleting. lg is for the few big calls to action (e.g. the
-// front page and the log in form).
-export type ButtonVariant = "primary" | "secondary" | "neutral" | "danger";
+// The look of SectionButton and SectionLink: bordered, with an icon. The app uses only these four:
+// - primary: emphasised amber, for the main call to action outside the editors (e.g. on the front page);
+// - dark: emphasised dark grey, e.g. Create new on the lists;
+// - neutral (the default): white, for every ordinary action, and the only kind in the editors and account pages
+//   besides danger;
+// - danger: red outline, for deleting.
+// lg is for the few big calls to action (e.g. the front page and the log in form).
+export type ButtonVariant = "primary" | "dark" | "neutral" | "danger";
 export type ButtonSize = "md" | "lg";
 
 export const BUTTON_VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: "bg-primary-200 border-primary-400 text-neutral-900 hover:bg-primary-300",
-  secondary: "bg-neutral-200 border-neutral-400 text-neutral-900 hover:bg-neutral-300",
-  neutral: "bg-white border-neutral-400 text-neutral-800 hover:bg-neutral-200",
+  primary: "bg-primary-300 border-primary-500 text-neutral-700 hover:bg-primary-400",
+  dark: "bg-neutral-600 border-neutral-800 text-primary-300 hover:bg-neutral-800",
+  neutral: "bg-neutral-100 border-neutral-400 text-neutral-800 hover:bg-neutral-200",
   danger: "bg-white border-danger-400 text-danger-700 hover:bg-danger-50",
 };
 

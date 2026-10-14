@@ -59,7 +59,7 @@ async function onBottomPageChange() {
           <!-- Only the magnifying glass on small screens; the word stays for screen readers. -->
           <span class="sr-only @md:not-sr-only">Search</span>
         </span>
-        <input v-model="searchTerm" type="text" class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-primary-50" />
+        <input v-model="searchTerm" type="text" class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-white" />
       </label>
       <div v-if="$slots.default" class="contents">
         <slot />

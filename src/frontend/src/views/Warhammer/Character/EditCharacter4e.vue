@@ -455,9 +455,7 @@ const modifierAttributes = computed(() => {
           <SheetTable>
             <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
             <template v-if="canEdit" #actions>
-              <SectionButton icon="lucide:dices" variant="secondary" iconOnlyWhenNarrow @click="formGenerateName">
-                Generate
-              </SectionButton>
+              <SectionButton icon="lucide:dices" iconOnlyWhenNarrow @click="formGenerateName"> Generate </SectionButton>
             </template>
           </SheetTable>
           <SheetTable class="-mt-px">
@@ -499,12 +497,7 @@ const modifierAttributes = computed(() => {
               :disabled="!canEdit"
             />
             <template v-if="canEdit" #actions>
-              <SectionButton
-                icon="lucide:dices"
-                variant="secondary"
-                iconOnlyWhenNarrow
-                @click="formGenerateFateResilience"
-              >
+              <SectionButton icon="lucide:dices" iconOnlyWhenNarrow @click="formGenerateFateResilience">
                 Generate
               </SectionButton>
             </template>
@@ -526,7 +519,6 @@ const modifierAttributes = computed(() => {
             <template v-if="canEdit" #actions>
               <SectionButton
                 icon="lucide:dices"
-                variant="secondary"
                 iconOnlyWhenNarrow
                 :disabled="careerListUtils.loading.value"
                 @click="formGenerateStatusStanding"

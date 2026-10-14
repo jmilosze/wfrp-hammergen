@@ -94,7 +94,7 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
             v-model="searchTerm"
             type="text"
             :placeholder="items.some((x) => x.description) ? 'Name or description' : 'Name'"
-            class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-primary-50"
+            class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-white"
           />
         </label>
         <div v-if="routeName || fourEIds" class="flex flex-wrap grow items-center gap-1 p-1 bg-white">

@@ -45,10 +45,10 @@ const recentCharacters = computed(() =>
   <section class="flex flex-col gap-x-6 gap-y-3 pt-2 pb-8">
     <h1 class="font-hammergen text-4xl md:text-5xl">Welcome back</h1>
     <div class="flex flex-wrap gap-3">
-      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" size="lg">
+      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="primary" size="lg">
         New character
       </SectionLink>
-      <SectionLink icon="lucide:users" routeName="characters" variant="neutral" size="lg">All characters</SectionLink>
+      <SectionLink icon="lucide:users" routeName="characters" variant="dark" size="lg">All characters</SectionLink>
     </div>
   </section>
 
@@ -81,7 +81,7 @@ const recentCharacters = computed(() =>
       class="flex flex-col items-center gap-3 p-8 border-2 border-dashed border-neutral-300 rounded-lg text-center"
     >
       <p class="text-neutral-700">You have no {{ edition }} characters yet.</p>
-      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" size="lg">
+      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="primary" size="lg">
         Create your first character
       </SectionLink>
     </div>

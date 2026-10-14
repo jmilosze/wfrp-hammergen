@@ -100,13 +100,17 @@ const sections = computed<FilterSection[]>(() => {
   <div class="flex flex-col @3xl/page:flex-row gap-4">
     <FilterSidebar v-model="filters" :sections="sections">
       <template v-if="auth.loggedIn.value" #actions>
-        <SectionLink icon="lucide:plus" routeName="skill" :params="{ id: 'create' }">Create new</SectionLink>
+        <SectionLink icon="lucide:plus" variant="dark" routeName="skill" :params="{ id: 'create' }">
+          Create new
+        </SectionLink>
       </template>
     </FilterSidebar>
     <BrowseList v-model="searchTerm" :items="items" routeName="skill" class="flex-1 min-w-0">
       <!-- Beside the search, except on very small screens, where it is beside the Filters button. -->
       <span v-if="auth.loggedIn.value" class="hidden @md/page:flex">
-        <SectionLink icon="lucide:plus" routeName="skill" :params="{ id: 'create' }">Create new</SectionLink>
+        <SectionLink icon="lucide:plus" variant="dark" routeName="skill" :params="{ id: 'create' }">
+          Create new
+        </SectionLink>
       </span>
 
       <template #badge="{ ownerId, visibility }: { ownerId: string; visibility: number }">

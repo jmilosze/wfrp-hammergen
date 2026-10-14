@@ -413,22 +413,19 @@ const grimoiresDisp = ref(
 <template>
   <Header :title="character.name" />
   <div v-if="!printing" class="flex flex-wrap">
-    <SectionButton icon="lucide:file-spreadsheet" variant="neutral" class="m-1" @click="saveCsv()">
-      Download CSV
-    </SectionButton>
-    <SectionButton icon="lucide:file-json" variant="neutral" class="m-1" @click="saveJson()">
-      Download JSON
-    </SectionButton>
-    <SectionButton icon="lucide:printer" variant="neutral" class="m-1" @click="print()">Print</SectionButton>
+    <SectionButton icon="lucide:file-spreadsheet" class="m-1" @click="saveCsv()"> Download CSV </SectionButton>
+    <SectionButton icon="lucide:file-json" class="m-1" @click="saveJson()"> Download JSON </SectionButton>
+    <SectionButton icon="lucide:printer" class="m-1" @click="print()">Print</SectionButton>
     <SectionButton
       v-if="canEdit"
       icon="lucide:pencil"
+      variant="dark"
       class="m-1"
       @click="router.push({ name: 'character', params: { id: character.id } })"
     >
       Edit
     </SectionButton>
-    <SectionButton icon="lucide:arrow-left" variant="neutral" class="m-1" @click="router.push({ name: 'characters' })">
+    <SectionButton icon="lucide:arrow-left" class="m-1" @click="router.push({ name: 'characters' })">
       Back to list
     </SectionButton>
   </div>

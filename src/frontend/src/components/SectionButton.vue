@@ -20,7 +20,7 @@ withDefaults(
     iconOnlyWhenNarrow?: boolean;
     busy?: boolean;
   }>(),
-  { variant: "primary", size: "md" },
+  { variant: "neutral", size: "md" },
 );
 </script>
 

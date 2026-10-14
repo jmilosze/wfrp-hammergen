@@ -19,7 +19,7 @@ withDefaults(
     variant?: ButtonVariant;
     size?: ButtonSize;
   }>(),
-  { params: () => ({}), variant: "primary", size: "md" },
+  { params: () => ({}), variant: "neutral", size: "md" },
 );
 </script>
 

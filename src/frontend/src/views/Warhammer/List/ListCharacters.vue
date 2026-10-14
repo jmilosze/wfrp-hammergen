@@ -72,13 +72,17 @@ function formatCharacterRow(character: Character) {
   <div class="flex flex-col @3xl/page:flex-row gap-4">
     <FilterSidebar v-model="filters" :sections="sections">
       <template v-if="auth.loggedIn.value" #actions>
-        <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }">Create new</SectionLink>
+        <SectionLink icon="lucide:plus" variant="dark" routeName="character" :params="{ id: 'create' }">
+          Create new
+        </SectionLink>
       </template>
     </FilterSidebar>
     <BrowseList v-model="searchTerm" :items="items" routeName="character" class="flex-1 min-w-0">
       <!-- Beside the search, except on very small screens, where it is beside the Filters button. -->
       <span v-if="auth.loggedIn.value" class="hidden @md/page:flex">
-        <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }">Create new</SectionLink>
+        <SectionLink icon="lucide:plus" variant="dark" routeName="character" :params="{ id: 'create' }">
+          Create new
+        </SectionLink>
       </span>
 
       <template #badge="{ ownerId, visibility }: { ownerId: string; visibility: number }">
