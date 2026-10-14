@@ -215,6 +215,23 @@ export const allLores = new Set(
   ),
 );
 
+// The labels standing for a whole group of lores, as getSimplifiedLabels shows them, with the lores they stand for.
+export const loreGroups = new Map<SpellLabel, Set<SpellLabel>>([
+  [SpellLabel.SpellLabelLoreAny, allLores],
+  [SpellLabel.SpellLabelLoreColour, colourLores],
+  [SpellLabel.SpellLabelLoreDark, darkLores],
+  [SpellLabel.SpellLabelLoreWitch, witchLores],
+  [SpellLabel.SpellLabelLoreChaos, chaosLores],
+  [SpellLabel.SpellLabelLoreHighMagic, highMagicLores],
+  [SpellLabel.SpellLabelLoreWaaagh, waaaghLores],
+  [SpellLabel.SpellLabelLoreSkaven, skavenLores],
+]);
+
+// expandLabel returns the labels a label stands for: a lore group's lores, or the label itself.
+export function expandLabel(label: SpellLabel): Set<SpellLabel> {
+  return loreGroups.get(label) ?? new Set([label]);
+}
+
 export const allSpellLabelList = [
   SpellLabel.SpellLabelSkaven,
   SpellLabel.SpellLabelChaos,

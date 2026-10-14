@@ -69,7 +69,7 @@ const SOURCE_BOOKS = [
     </p>
 
     <div class="text-2xl font-semibold mt-5">Source books</div>
-    <div class="my-3 p-4 border-l-4 border-primary-500 bg-primary-50 rounded">
+    <div class="my-3 p-4 border-l-4 border-brand bg-parchment-light rounded">
       <p class="font-semibold">Hammergen does not replace the rulebooks.</p>
       <p class="mt-1">
         The compendium has entries from every book listed below, but their descriptions are incomplete. Most cover only
@@ -86,7 +86,7 @@ const SOURCE_BOOKS = [
         :key="edition.title"
         class="p-4 bg-neutral-50 border border-neutral-200 rounded-lg"
       >
-        <div class="mb-2 pb-1 border-b border-primary-600 text-sm font-bold uppercase tracking-widest text-primary-800">
+        <div class="mb-2 pb-1 border-b border-brand-rule text-sm font-bold uppercase tracking-widest text-brand">
           {{ edition.title }}
         </div>
         <ul class="list-disc ml-5 gap-x-8" :class="{ 'sm:columns-2 lg:columns-3': edition.books.length > 1 }">

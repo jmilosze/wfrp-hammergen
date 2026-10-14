@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import Header from "../../components/PageHeader.vue";
+import SectionButton from "../../components/SectionButton.vue";
+import AccountCard from "../../components/AccountCard.vue";
 import FormInput from "../../components/FormInput.vue";
 import { computed, ref } from "vue";
 import TextLink from "../../components/TextLink.vue";
@@ -7,7 +8,6 @@ import { User } from "../../services/user.ts";
 import { SubmissionState } from "../../utils/submission.ts";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { setValidationStatus } from "../../utils/validation.ts";
-import ActionButton from "../../components/ActionButton.vue";
 import { useAuth } from "../../composables/auth.ts";
 import { useRoute } from "vue-router";
 
@@ -64,34 +64,40 @@ async function submitForm() {
 </script>
 
 <template>
-  <div>
-    <Header title="Log in" />
-    <div class="pt-2 md:w-96">
+  <div class="flex justify-center py-6">
+    <AccountCard title="Log in" icon="lucide:log-in" :headingLevel="1" class="w-full max-w-md">
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
-      <FormInput v-model="user.email" title="Username (email)" :validationStatus="validEmail" class="mt-3" />
+      <FormInput v-model="user.email" title="Username (email)" :validationStatus="validEmail" />
       <FormInput
         v-model="user.currentPassword"
         type="password"
         title="Password"
         :validationStatus="validCurrentPassword"
-        class="mt-3"
       />
-    </div>
-    <ActionButton class="mt-3 btn" :spinner="submissionState.status === 'inProgress'" @click="submitForm">
-      Log in
-    </ActionButton>
-    <div class="mt-5">
-      <TextLink routeName="forgotpassword" :sameWindow="true">Forgot your password?</TextLink>
-    </div>
-    <div class="mt-3">
-      <TextLink
-        routeName="register"
-        :query="route.query.redirect ? { redirect: route.query.redirect } : undefined"
-        :sameWindow="true"
+      <SectionButton
+        icon="lucide:log-in"
+        variant="light"
+        size="lg"
+        class="w-full"
+        :busy="submissionState.status === 'inProgress'"
+        @click="submitForm"
       >
-        Register as a new user.
-      </TextLink>
-    </div>
+        Log in
+      </SectionButton>
+      <template #footer>
+        <TextLink routeName="forgotpassword" :sameWindow="true">Forgot your password?</TextLink>
+        <p>
+          New here?
+          <TextLink
+            routeName="register"
+            :query="route.query.redirect ? { redirect: route.query.redirect } : undefined"
+            :sameWindow="true"
+          >
+            Create an account
+          </TextLink>
+        </p>
+      </template>
+    </AccountCard>
   </div>
 </template>
 

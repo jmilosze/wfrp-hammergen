@@ -10,7 +10,7 @@ import {
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
 import CheckboxInput from "../../../components/CheckboxInput.vue";
-import FormInput from "../../../components/FormInput.vue";
+import HintModal from "../../../components/HintModal.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
@@ -18,12 +18,14 @@ import MissingEditionVariant from "../../../components/MissingEditionVariant.vue
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
-import SelectInput from "../../../components/SelectInput.vue";
-import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
+import LabelPicker from "../../../components/LabelPicker.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SheetSelect from "../../../components/SheetSelect.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import { itemTypeList, printItemType } from "../../../services/wh/content/item.ts";
 
 const props = defineProps<{
@@ -80,69 +82,73 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     @add="addVariant"
   />
   <template v-if="hasVariant">
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <div class="flex items-center gap-2">
+        <CheckboxInput v-model="wh.hasValue" title="Takes a value?" :disabled="!canEdit" />
+        <HintModal modalHeader="Takes a value" modalId="propertyValueHint">
+          <p class="my-1">
+            Some qualities and flaws come with a value written in brackets after the name, such as a number in Blast
+            (3).
+          </p>
+          <p class="my-1">
+            Tick this for such a quality or flaw. When it is added to a trapping, the trapping editor then asks for its
+            value.
+          </p>
+        </HintModal>
+      </div>
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Quality/flaw" :disabled="!canEdit" />
+    </div>
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Quality/flaw" :disabled="!canEdit" />
-          <CheckboxInput v-model="wh.hasValue" title="Takes a value? E.g. Blast (3)" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
-          <MultipleCheckboxColumnInput
+      <div class="flex-1 flex flex-col gap-4">
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SheetSelect v-model="wh.type" title="Type" :options="typeOptions" :disabled="!canEdit" />
+          <LabelPicker
             v-model="wh.applicableTo"
+            title="Applicable to"
             :options="applicableToOptions"
             :disabled="!canEdit"
-            title="Applicable to"
+            sheetRow
           />
-        </div>
+        </SheetTable>
       </div>
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
-      </div>
+      <SectionCard title="Description" class="flex-1">
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
+      </SectionCard>
     </div>
 
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
   </template>
   <div v-show="hasVariant" class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="properties"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Quality/flaw"
-      :name="wh.name"
-      list="properties"
-      :deleteItem="deleteItem"
-    />
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Quality/flaw"
+        :saving="submissionState.status === 'inProgress'"
+        list="properties"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Quality/flaw"
+        :name="wh.name"
+        list="properties"
+        :deleteItem="deleteItem"
+        class="flex-1"
+      />
+    </div>
   </div>
 </template>
 

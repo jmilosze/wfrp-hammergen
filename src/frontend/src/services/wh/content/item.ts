@@ -617,12 +617,7 @@ export class Item extends WhEntity {
   // forEdition resets weapon and armour groups the edition doesn't have.
   forEdition(edition: Edition): this {
     const variant = super.forEdition(edition);
-    if (!meleeGroupsByEdition[edition].includes(variant.melee.group)) {
-      variant.melee.group = meleeGroupsByEdition[edition][0];
-    }
-    if (!armourGroupsByEdition[edition].includes(variant.armour.group)) {
-      variant.armour.group = armourGroupsByEdition[edition][0];
-    }
+    fitGroupsToEdition(variant, edition);
     return variant;
   }
 
@@ -764,6 +759,18 @@ export class Item extends WhEntity {
   }
 }
 
+// fitGroupsToEdition resets melee and armour groups the edition doesn't have to its first group. Stored variants keep
+// a group for every type, also the unused ones, and these may be another edition's (e.g. 5e variants saved with the
+// 4e default Soft leather), which would leave the group empty when the type changes.
+function fitGroupsToEdition(item: Item, edition: Edition) {
+  if (!meleeGroupsByEdition[edition].includes(item.melee.group)) {
+    item.melee.group = meleeGroupsByEdition[edition][0];
+  }
+  if (!armourGroupsByEdition[edition].includes(item.armour.group)) {
+    item.armour.group = armourGroupsByEdition[edition][0];
+  }
+}
+
 export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>, edition: Edition): Item {
   const data = variant(itemApi, edition);
   const newItem = new Item({
@@ -787,6 +794,7 @@ export function apiResponseToModel(itemApi: ApiResponse<ItemApiData>, edition: E
     other: data.other,
     source: data.source,
   });
+  fitGroupsToEdition(newItem, edition);
 
   return newItem;
 }

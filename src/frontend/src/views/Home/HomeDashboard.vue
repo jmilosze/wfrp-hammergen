@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import SectionLink from "../../components/SectionLink.vue";
 // Landing page for logged-in users: their most recently edited characters of the current edition and the compendium.
 import { computed, watch } from "vue";
 import { formatTimeAgo } from "@vueuse/core";
 import { RouterLink } from "vue-router";
 import AlertBlock from "../../components/AlertBlock.vue";
-import LinkButton from "../../components/LinkButton.vue";
 import TextLink from "../../components/TextLink.vue";
 import HomeNotes from "./HomeNotes.vue";
 import { useAuth } from "../../composables/auth.ts";
@@ -45,8 +45,10 @@ const recentCharacters = computed(() =>
   <section class="flex flex-col gap-x-6 gap-y-3 pt-2 pb-8">
     <h1 class="font-hammergen text-4xl md:text-5xl">Welcome back</h1>
     <div class="flex flex-wrap gap-3">
-      <LinkButton routeName="character" :params="{ id: 'create' }" class="btn btn-primary">New character</LinkButton>
-      <LinkButton routeName="characters" class="btn btn-secondary">All characters</LinkButton>
+      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="dark" size="lg">
+        New character
+      </SectionLink>
+      <SectionLink icon="lucide:users" routeName="characters" variant="dark" size="lg">All characters</SectionLink>
     </div>
   </section>
 
@@ -56,7 +58,7 @@ const recentCharacters = computed(() =>
       <div
         v-for="character in recentCharacters"
         :key="character.id"
-        class="flex flex-col p-4 bg-neutral-50 border border-neutral-200 rounded-lg"
+        class="flex flex-col p-4 bg-parchment-light border border-parchment-dark rounded-lg"
       >
         <RouterLink
           :to="{ name: 'viewCharacter', params: { id: character.id } }"
@@ -79,9 +81,9 @@ const recentCharacters = computed(() =>
       class="flex flex-col items-center gap-3 p-8 border-2 border-dashed border-neutral-300 rounded-lg text-center"
     >
       <p class="text-neutral-700">You have no {{ edition }} characters yet.</p>
-      <LinkButton routeName="character" :params="{ id: 'create' }" class="btn btn-primary">
+      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="dark" size="lg">
         Create your first character
-      </LinkButton>
+      </SectionLink>
     </div>
   </section>
 
@@ -91,11 +93,9 @@ const recentCharacters = computed(() =>
       <div
         v-for="section in COMPENDIUM_SECTIONS"
         :key="section.title"
-        class="p-4 bg-neutral-50 border border-neutral-200 rounded-lg"
+        class="p-4 bg-parchment-light border border-parchment-dark rounded-lg"
       >
-        <div
-          class="mb-2 pb-1 border-b border-primary-600 text-[0.7rem] font-bold uppercase tracking-widest text-primary-800"
-        >
+        <div class="mb-2 pb-1 border-b border-brand-rule text-[0.7rem] font-bold uppercase tracking-widest text-brand">
           {{ section.title }}
         </div>
         <RouterLink

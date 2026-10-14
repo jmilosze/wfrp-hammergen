@@ -7,11 +7,12 @@ import { Mutation, mutationApi, mutationTypeList, printMutationType } from "../.
 import { computed, ref } from "vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
-import FormInput from "../../../components/FormInput.vue";
-import SelectInput from "../../../components/SelectInput.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SheetSelect from "../../../components/SheetSelect.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
@@ -72,64 +73,49 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Mutation" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <SelectInput v-model="wh.type" :options="typeOptions" :disabled="!canEdit" title="Type" />
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
-      </div>
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Mutation" :disabled="!canEdit" />
     </div>
-    <div class="my-4">
-      <CharacterModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit" />
-    </div>
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
+    <SheetTable :columns="2" class="my-4">
+      <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+      <SheetSelect v-model="wh.type" title="Type" :options="typeOptions" :disabled="!canEdit" />
+    </SheetTable>
+    <SectionCard title="Description" class="my-4">
+      <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare />
+    </SectionCard>
+    <CharacterModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit" class="my-4" />
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
   </template>
   <div v-show="hasVariant" class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="mutations"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Mutation"
-      :name="wh.name"
-      list="mutations"
-      :deleteItem="deleteItem"
-    />
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Mutation"
+        :saving="submissionState.status === 'inProgress'"
+        list="mutations"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Mutation"
+        :name="wh.name"
+        list="mutations"
+        :deleteItem="deleteItem"
+        class="flex-1"
+      />
+    </div>
   </div>
 </template>
 

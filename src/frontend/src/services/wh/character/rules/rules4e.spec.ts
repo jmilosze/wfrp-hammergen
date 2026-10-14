@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getSpeciesAttributes4e, getWounds4e } from "./rules4e.ts";
+import { getMaxEncumbrance4e, getSpeciesAttributes4e, getWounds4e } from "./rules4e.ts";
 import { SpeciesWithRegion } from "../../core/species.ts";
 import { Size } from "../size.ts";
 
@@ -61,4 +61,8 @@ describe("getWounds4e returns correct value", () => {
   ])("when size = $size, T = $T, WP = $WP, S = $S", (t) => {
     expect(getWounds4e(t.size, t.T, t.WP, t.S, t.hardy)).toEqual(t.expected);
   });
+});
+
+test("getMaxEncumbrance4e is SB + TB", () => {
+  expect(getMaxEncumbrance4e(34, 41)).toBe(7);
 });

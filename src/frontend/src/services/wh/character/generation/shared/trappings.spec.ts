@@ -21,8 +21,7 @@ describe("generateClassItems", () => {
   test("generateClassItems returns items for valid career class", () => {
     const career = new Career({ careerClass: 0 });
     const result = generateClassItems(career, dummyGenProps, () => 5);
-    expect(result.equipped.length).toEqual(2);
-    expect(result.carried.length).toEqual(1);
+    expect(result).toEqual({ item1: 1, item2: 2, item3: 5 });
   });
 });
 
@@ -46,12 +45,12 @@ describe("populateClassItems", () => {
     },
   };
 
-  test("populateClassItems updates equipped and carried items on character", () => {
+  test("populateClassItems adds all class items to carried items", () => {
     const career = new Career({ id: "c1", careerClass: 0 });
-    const char = new Character({ career: { id: "c1", number: 1 } });
+    const char = new Character({ career: { id: "c1", number: 1 }, carriedItems: { item1: 1 } });
 
     populateClassItems(char, [career], dummyGenProps, () => 3);
-    expect(Object.keys(char.equippedItems).length).toBe(2);
-    expect(Object.keys(char.carriedItems).length).toBe(1);
+    expect(char.equippedItems).toEqual({});
+    expect(char.carriedItems).toEqual({ item1: 1, item2: 2, item3: 3 });
   });
 });

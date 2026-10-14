@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
-import TableWithSearch from "./TableWithSearch.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 import { useModal } from "../composables/modal.ts";
+import SheetTable from "./SheetTable.vue";
+import SheetCell from "./SheetCell.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { Career, printClassName } from "../services/wh/content/career.ts";
 import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
-import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
-import ReloadButton from "./ReloadButton.vue";
-import LinkButton from "./LinkButton.vue";
 
 type CareerWithSelect = {
   id: string;
@@ -48,10 +46,6 @@ const emit = defineEmits<{
 
 const careersWithSelect: Ref<Record<string, CareerWithSelect>> = ref({});
 const careersWithSelectList: Ref<CareerWithSelect[]> = ref([]);
-const editionFilter = ref<EditionFilter>("both");
-const careersWithSelectListFiltered = computed(() =>
-  careersWithSelectList.value.filter((x) => matchesEditionFilter(x.careerId, props.fourEIds, editionFilter.value)),
-);
 let currentId = "";
 
 // A new current career only updates the ticks, so rows don't move while the modal is open (selected careers go to
@@ -138,27 +132,47 @@ const selectedPastCareers = computed(() => careersWithSelectList.value.filter((x
 const selectedCurrentCareer = computed(() => careersWithSelectList.value.find((x) => x.current));
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "levelName", displayName: "Level name", skipStackedTitle: false },
-  { name: "careerClass", displayName: "Class", skipStackedTitle: false },
-  { name: "current", displayName: "Current", skipStackedTitle: false },
-  { name: "past", displayName: "Past", skipStackedTitle: false },
-];
+const openedCounter = ref(0);
 
-const resetPaginationCounter = ref(0);
-
-function onModifyClick() {
+function onEditClick() {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  modal.showModal("modifyCareersModal");
-  searchTerm.value = "";
   careersWithSelectList.value.sort((a, b) => {
     return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
   });
+  openedCounter.value += 1;
+  modal.showModal("modifyCareersModal");
+}
+
+// One row per career level, with Current and Past ticks; a level can't be both.
+// Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
+const modalItems = computed(() =>
+  careersWithSelectList.value.map((x) => ({
+    id: x.id,
+    linkId: x.careerId,
+    name: x.name,
+    description: "",
+    note: `Level ${x.level}: ${x.levelName} · ${x.careerClass}`,
+    get selected() {
+      return anySelected(x);
+    },
+    get choices() {
+      return [
+        { key: "current", label: "Current", checked: x.current, disabled: x.past },
+        { key: "past", label: "Past", checked: x.past, disabled: x.current },
+      ];
+    },
+  })),
+);
+
+function onChoose(id: string, key: string) {
+  if (key === "current") {
+    selectNewCurrent(id);
+  } else {
+    emitPastSelected(id);
+    careersWithSelect.value[id].past = !careersWithSelect.value[id].past;
+  }
 }
 
 function selectNewCurrent(id: string) {
@@ -186,14 +200,6 @@ function emitCurrentSelected(id: string) {
   });
 }
 
-function selectNewPast(id: string) {
-  if (careersWithSelect.value[id].past) {
-    emitPastSelected(id);
-    return;
-  }
-  emitPastSelected(id);
-}
-
 function emitPastSelected(id: string) {
   emit("pastSelected", {
     id: careersWithSelect.value[id].careerId,
@@ -205,79 +211,49 @@ function emitPastSelected(id: string) {
 
 <template>
   <div>
-    <div class="flex items-center mb-1">
-      <div class="mr-1">Career</div>
-      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
-        Modify
-      </ActionButton>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="border border-neutral-300 rounded p-2">
-      <div class="mb-1">Current career</div>
-      <div v-if="selectedCurrentCareer">
-        <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }" class="mr-3">
-          {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }} -
-          {{ selectedCurrentCareer.levelName }}
-        </TextLink>
-        <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
+    <SheetTable>
+      <div v-if="props.loading" class="flex justify-center bg-white">
+        <SpinnerAnimation class="w-14 m-2" />
       </div>
-      <div class="border-t border-neutral-300 my-1" />
-      <div class="mb-1">Past careers</div>
-      <div v-for="pastCareer in selectedPastCareers" :key="pastCareer.id">
-        <TextLink routeName="career" :params="{ id: pastCareer.careerId }" class="mr-3">
-          {{ pastCareer.name }} {{ pastCareer.level }} - {{ pastCareer.levelName }}
-        </TextLink>
-        <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
-      </div>
-    </div>
-    <ModalWindow id="modifyCareersModal" size="md">
-      <template #header> Modify career </template>
-      <TableWithSearch
-        v-model="searchTerm"
-        :fields="modalColumns"
-        :items="careersWithSelectListFiltered"
-        stackBreakpoint="2xl"
+      <template v-else>
+        <SheetCell title="Current" :editable="!disabled">
+          <div v-if="selectedCurrentCareer">
+            <TextLink routeName="career" :params="{ id: selectedCurrentCareer.careerId }">
+              {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }}
+            </TextLink>
+            <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
+          </div>
+        </SheetCell>
+        <SheetCell title="Past" :editable="!disabled">
+          <!-- One line, comma separated, wrapping only when it runs out of room. -->
+          <div>
+            <span v-for="(pastCareer, i) in selectedPastCareers" :key="pastCareer.id">
+              <TextLink routeName="career" :params="{ id: pastCareer.careerId }">
+                {{ pastCareer.name }} {{ pastCareer.level }}
+              </TextLink>
+              <Edition4eBadge v-if="fourEIds?.has(pastCareer.careerId)" />
+              <template v-if="i < selectedPastCareers.length - 1">, </template>
+            </span>
+          </div>
+        </SheetCell>
+      </template>
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" iconOnlyWhenNarrow :disabled="props.loading" @click="onEditClick">
+          Edit
+        </SectionButton>
+      </template>
+    </SheetTable>
+    <ModalWindow id="modifyCareersModal" size="md" fullHeight>
+      <template #header> Edit career </template>
+      <ChecklistPicker
+        :items="modalItems"
+        routeName="career"
+        :opened="openedCounter"
         :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
-      >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" routeName="career" :params="{ id: 'create' }" :newWindow="true">
-          Create new
-        </LinkButton>
-        <ReloadButton @click="emit('reload')" />
-        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
-
-        <template #name="{ id }: { id: string }">
-          <TextLink routeName="career" :params="{ id: careersWithSelect[id].careerId }">
-            {{ careersWithSelect[id].name + ` (level ${careersWithSelect[id].level})` }}
-          </TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(careersWithSelect[id].careerId)" />
-        </template>
-
-        <template #current="{ id }: { id: string }">
-          <div>
-            <input
-              v-model="careersWithSelect[id].current"
-              type="checkbox"
-              :disabled="careersWithSelect[id].past"
-              class="w-5 h-5 accent-neutral-600 my-1"
-              @input="selectNewCurrent(id)"
-            />
-          </div>
-        </template>
-        <template #past="{ id }: { id: string }">
-          <div>
-            <input
-              v-model="careersWithSelect[id].past"
-              type="checkbox"
-              :disabled="careersWithSelect[id].current"
-              class="w-5 h-5 accent-neutral-600 my-1"
-              @input="selectNewPast(id)"
-            />
-          </div>
-        </template>
-      </TableWithSearch>
+        :fourEIds="fourEIds"
+        @choose="(e) => onChoose(e.id, e.key)"
+        @reload="emit('reload')"
+      />
     </ModalWindow>
   </div>
 </template>

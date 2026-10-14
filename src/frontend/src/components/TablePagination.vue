@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { Icon } from "@iconify/vue";
+import { BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS } from "./buttonStyle.ts";
 
 const props = defineProps<{
   rowsPerPage: number;
@@ -27,46 +29,75 @@ function moveToNextPage(direction: -1 | 1): void {
   }
 }
 
+const lastStartRow = computed(
+  () => Math.max(0, Math.ceil(props.totalRows / props.rowsPerPage) - 1) * props.rowsPerPage,
+);
+const onFirstPage = computed(() => startRow.value === 0);
+const onLastPage = computed(() => startRow.value >= lastStartRow.value);
+
+// The light button colours, as the rows' View and Copy buttons; a button at an end of the list is faded.
+const BUTTON_CLASS = [
+  BUTTON_BASE_CLASS,
+  BUTTON_VARIANT_CLASS.light,
+  "size-8 disabled:opacity-50 disabled:cursor-default disabled:hover:bg-parchment",
+];
+
 function moveToLastPage(direction: -1 | 1): void {
   if (direction === -1) {
     startRow.value = 0;
   } else {
-    startRow.value = Math.max(0, Math.ceil(props.totalRows / props.rowsPerPage) - 1) * props.rowsPerPage;
+    startRow.value = lastStartRow.value;
   }
 }
 </script>
 
 <template>
-  <div class="flex flex-wrap">
+  <!-- First and previous, the rows shown, then next and last; the buttons at an end of the list are faded.
+  Centred on very small screens, at the right otherwise. -->
+  <div class="flex items-center justify-center @md:justify-end gap-1.5">
     <button
-      class="bg-neutral-50 py-1 px-2 border border-neutral-200 hover:bg-neutral-200 rounded-l-md select-none"
+      type="button"
+      :class="BUTTON_CLASS"
+      aria-label="First page"
+      :disabled="onFirstPage"
       @click="moveToLastPage(-1)"
     >
-      {{ "<<" }}
+      <Icon icon="lucide:chevrons-left" class="size-4" />
     </button>
     <button
-      class="bg-neutral-50 py-1 px-2 border-r border-t border-b border-neutral-200 hover:bg-neutral-200 select-none"
+      type="button"
+      :class="BUTTON_CLASS"
+      aria-label="Previous page"
+      :disabled="onFirstPage"
       @click="moveToNextPage(-1)"
     >
-      {{ "<" }}
+      <Icon icon="lucide:chevron-left" class="size-4" />
     </button>
-
+    <span class="px-1.5 text-sm text-neutral-700 tabular-nums" aria-live="polite">
+      <template v-if="totalRows > 0">
+        {{ startRow + 1 }}–{{ Math.min(startRow + rowsPerPage, totalRows) }} <span class="text-neutral-500">of</span>
+        {{ totalRows }}
+      </template>
+      <template v-else>No results</template>
+    </span>
     <button
-      class="bg-neutral-50 py-1 px-2 border-t border-b border-neutral-200 hover:bg-neutral-200 select-none"
+      type="button"
+      :class="BUTTON_CLASS"
+      aria-label="Next page"
+      :disabled="onLastPage"
       @click="moveToNextPage(1)"
     >
-      {{ ">" }}
+      <Icon icon="lucide:chevron-right" class="size-4" />
     </button>
     <button
-      class="bg-neutral-50 py-1 px-2 border border-neutral-200 hover:bg-neutral-200 rounded-r-md select-none"
+      type="button"
+      :class="BUTTON_CLASS"
+      aria-label="Last page"
+      :disabled="onLastPage"
       @click="moveToLastPage(1)"
     >
-      {{ ">>" }}
+      <Icon icon="lucide:chevrons-right" class="size-4" />
     </button>
-    <div v-if="totalRows > 0" class="pl-2 py-1">
-      Results {{ startRow + 1 }} - {{ Math.min(startRow + rowsPerPage, totalRows) }} out of {{ totalRows }}
-    </div>
-    <div v-else class="pl-2 py-1">Results 0</div>
   </div>
 </template>
 

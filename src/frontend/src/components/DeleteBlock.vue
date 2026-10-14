@@ -1,52 +1,25 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from "vue";
-import ActionButton from "./ActionButton.vue";
+import { nextTick, ref } from "vue";
 import DeleteModal from "./DeleteModal.vue";
+import SectionButton from "./SectionButton.vue";
 import router from "../router.ts";
+import { returnToPreviousPage } from "../utils/history.ts";
 
-const props = withDefaults(
-  defineProps<{
-    propertyName: string;
-    name: string;
-    list: string;
-    deleteItem: () => Promise<boolean>;
-    title?: string;
-    disclaimer?: string;
-    buttonText?: string;
-  }>(),
-  {
-    title: "",
-    disclaimer: "",
-    buttonText: "",
-  },
-);
+const props = defineProps<{
+  propertyName: string;
+  name: string;
+  list: string;
+  deleteItem: () => Promise<boolean>;
+}>();
 
 const deleting = ref(false);
 const elementToDelete = ref({ id: "", name: "" });
-
-const titleText = computed(() => (props.title ? props.title : `Delete ${props.propertyName.toLowerCase()}`));
-const disclaimerText = computed(() =>
-  props.disclaimer
-    ? props.disclaimer
-    : `The ${props.propertyName.toLowerCase()} and all its data will be deleted. It will be impossible to recover.`,
-);
-const actionButtonText = computed(() =>
-  props.buttonText ? props.buttonText : `Delete ${props.propertyName.toLowerCase()}`,
-);
 
 function onDeleteClick() {
   elementToDelete.value = { id: "", name: "" };
   nextTick(() => {
     elementToDelete.value = { id: "delete", name: props.name };
   });
-}
-
-async function navigateToList() {
-  const previousState = router.options.history.state.back;
-  const queryString = typeof previousState === "string" ? previousState.split("?")[1] : "";
-  const queryParams = new URLSearchParams(queryString || "");
-  const allParams = Object.fromEntries(queryParams.entries());
-  await router.push({ name: props.list, query: allParams });
 }
 
 async function onConfirmDelete() {
@@ -58,18 +31,26 @@ async function onConfirmDelete() {
   deleting.value = false;
   elementToDelete.value = { id: "", name: "" };
   if (success) {
-    await navigateToList();
+    await returnToPreviousPage(router, props.list);
   }
 }
 </script>
 
 <template>
-  <div class="mt-4 p-2 border-4 border-danger-600 rounded-lg text-left">
-    <div class="text-xl">{{ titleText }}</div>
-    <p>{{ disclaimerText }}</p>
-    <ActionButton class="mt-3 btn btn-danger" :spinner="deleting" @click="onDeleteClick">
-      {{ actionButtonText }}
-    </ActionButton>
+  <div class="flex flex-col border border-neutral-400 bg-white text-left">
+    <div
+      class="px-2 py-1 border-b border-neutral-300 bg-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
+    >
+      Delete {{ propertyName.toLowerCase() }}
+    </div>
+    <div class="flex grow items-center justify-between gap-2 px-2 py-1.5">
+      <p class="flex-1 min-w-0 text-sm">
+        The {{ propertyName.toLowerCase() }} and all its data will be deleted. It will be impossible to recover.
+      </p>
+      <SectionButton icon="lucide:trash-2" variant="danger" :busy="deleting" class="shrink-0" @click="onDeleteClick">
+        Delete
+      </SectionButton>
+    </div>
     <DeleteModal :elementToDelete="elementToDelete" @deleteConfirmed="onConfirmDelete" />
   </div>
 </template>

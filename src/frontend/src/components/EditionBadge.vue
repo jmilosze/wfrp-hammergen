@@ -9,7 +9,7 @@ defineProps<{ edition: Edition; large?: boolean }>();
   <span
     :title="printEditionName(edition)"
     :class="large ? 'px-2 py-0.5 text-sm' : 'px-1.5 text-xs'"
-    class="inline-block whitespace-nowrap rounded border bg-primary-200 border-primary-400 font-semibold text-neutral-900 align-middle select-none"
+    class="inline-block whitespace-nowrap rounded border bg-parchment border-brand-rule font-semibold text-brand align-middle select-none"
   >
     {{ edition }}
   </span>

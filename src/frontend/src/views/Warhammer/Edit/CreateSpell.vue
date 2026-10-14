@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/core/entity.ts";
 import Header from "../../../components/PageHeader.vue";
-import { printSpellLabel, printSpellType, Spell, spellApi, SpellLabel } from "../../../services/wh/content/spell.ts";
-import { computed, ref } from "vue";
+import { Spell, spellApi } from "../../../services/wh/content/spell.ts";
+import { computed } from "vue";
 import { authRequest } from "../../../services/auth.ts";
-import FormInput from "../../../components/FormInput.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
@@ -12,12 +14,10 @@ import MissingEditionVariant from "../../../components/MissingEditionVariant.vue
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
 import SpellClassification from "../../../components/SpellClassification.vue";
-import DisplayLabels from "../../../components/DisplayLabels.vue";
 
 const props = defineProps<{
   id: string;
@@ -50,8 +50,6 @@ const {
 
 await loadWh(props.id);
 
-const simplifiedLabels = ref(new Array<SpellLabel>());
-
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
 const validRange = computed(() => wh.value.validateRange());
@@ -76,78 +74,55 @@ const validCn = computed(() => wh.value.validateCn());
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <p class="text-2xl">{{ printSpellType(wh.classification.type) }}</p>
-    <DisplayLabels :labelList="simplifiedLabels.map((x) => printSpellLabel(x))" class="mt-1" />
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!canEdit" />
+    </div>
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
-      </div>
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormInput v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!canEdit" />
-          <FormInput v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!canEdit" />
-          <FormInput v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!canEdit" />
-          <FormInput
-            v-model="wh.cn"
-            title="Casting number"
-            type="number"
-            :validationStatus="validCn"
-            :disabled="!canEdit"
-          />
-        </div>
-      </div>
+      <SheetTable class="flex-1 self-start w-full">
+        <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+        <SheetField v-model="wh.range" title="Range" :validationStatus="validRange" :disabled="!canEdit" />
+        <SheetField v-model="wh.target" title="Target" :validationStatus="validTarget" :disabled="!canEdit" />
+        <SheetField v-model="wh.duration" title="Duration" :validationStatus="validDuration" :disabled="!canEdit" />
+        <SheetField v-model="wh.cn" type="number" title="CN" :validationStatus="validCn" :disabled="!canEdit" />
+      </SheetTable>
+      <SectionCard title="Description" class="flex-1">
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
+      </SectionCard>
     </div>
 
-    <SpellClassification
-      v-model="wh.classification"
+    <SpellClassification v-model="wh.classification" :disabled="!canEdit" class="my-4" />
+
+    <SourceTable
+      :edition="edition"
       :disabled="!canEdit"
-      @update:simplifiedLabels="simplifiedLabels = $event"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
     />
-
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
   </template>
   <div v-show="hasVariant" class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="spells"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Spell"
-      :name="wh.name"
-      list="spells"
-      :deleteItem="deleteItem"
-    />
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Spell"
+        :saving="submissionState.status === 'inProgress'"
+        list="spells"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Spell"
+        :name="wh.name"
+        list="spells"
+        :deleteItem="deleteItem"
+        class="flex-1"
+      />
+    </div>
   </div>
 </template>

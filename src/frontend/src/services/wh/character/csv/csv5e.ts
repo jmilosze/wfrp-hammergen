@@ -179,7 +179,7 @@ export function characterFullToCsv5e(characterFull: CharacterFull): string {
 
   csv += ",,,,,,,,,,\n";
   csv += "Encumbrance,,,,,,,,,,\n";
-  csv += "Armor,Weapon,Other,Carried,,,,,,,\n";
+  csv += "Armor,Weapon,Other,Carried,Total,Max,,,,,\n";
   csv +=
     characterFull.encArmor +
     "," +
@@ -188,8 +188,12 @@ export function characterFullToCsv5e(characterFull: CharacterFull): string {
     characterFull.encOther +
     "," +
     characterFull.encCarried +
+    "," +
+    characterFull.encTotal +
+    "," +
+    characterFull.encMax +
     ",";
-  csv += ",,,,,,\n";
+  csv += ",,,,\n";
 
   csv += ",,,,,,,,,,\n";
   csv += "Stored,,,,,,,,,,\n";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import SectionButton from "./SectionButton.vue";
 import router from "../router.ts";
 import { Edition } from "../services/wh/core/edition.ts";
 
@@ -19,8 +19,8 @@ const emit = defineEmits<{
     <p class="my-4">This {{ propertyName.toLowerCase() }} has no {{ edition }} version.</p>
     <!-- Back works like the one next to Save; the page's leave guard warns about unsaved changes. -->
     <div class="flex gap-2">
-      <ActionButton v-if="canEdit" class="btn" @click="emit('add')">Add {{ edition }} version</ActionButton>
-      <ActionButton class="btn" @click="router.go(-1)">Back</ActionButton>
+      <SectionButton v-if="canEdit" icon="lucide:plus" @click="emit('add')">Add {{ edition }} version</SectionButton>
+      <SectionButton icon="lucide:arrow-left" variant="neutral" @click="router.go(-1)">Back</SectionButton>
     </div>
   </div>
 </template>

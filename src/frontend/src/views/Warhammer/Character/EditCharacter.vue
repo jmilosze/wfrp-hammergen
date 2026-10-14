@@ -30,6 +30,9 @@ const edition = computed(() => (props.id === "create" ? selectedEdition.value : 
 
 <template>
   <AlertBlock v-if="apiError" alertType="red" :centered="true" @close="apiError = ''">{{ apiError }}</AlertBlock>
-  <EditCharacter5e v-else-if="edition === '5e'" :id="id" :character="character" />
-  <EditCharacter4e v-else-if="edition === '4e'" :id="id" :character="character" />
+  <!-- data-print-desktop: printed at desktop layout, scaled to the paper (see style.css). -->
+  <div v-else data-print-desktop>
+    <EditCharacter5e v-if="edition === '5e'" :id="id" :character="character" />
+    <EditCharacter4e v-else-if="edition === '4e'" :id="id" :character="character" />
+  </div>
 </template>

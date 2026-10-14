@@ -11,6 +11,9 @@ const props = defineProps<{
   centerText?: boolean;
   maxlength?: number;
   step?: number;
+  // bare: no border or rounded corners, filling a table cell; styled like an editable sheet cell (faint yellow, white
+  // when disabled).
+  bare?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -48,8 +51,13 @@ const value = computed({
           :step="step"
           :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
           :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"
-          class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline-2 disabled:bg-neutral-200"
-          :class="centerText ? ['text-center'] : []"
+          class="w-full h-10 px-2 focus:outline-neutral-700 focus:outline-2"
+          :class="[
+            centerText ? 'text-center' : '',
+            bare
+              ? 'block focus:-outline-offset-2 bg-editable disabled:bg-white disabled:text-neutral-900 disabled:opacity-100'
+              : 'border border-neutral-300 rounded bg-white focus:border-transparent disabled:bg-neutral-200',
+          ]"
         />
       </div>
       <div>
@@ -60,7 +68,7 @@ const value = computed({
       v-if="validationStatus"
       :id="errorId"
       role="alert"
-      class="text-sm text-danger-600 mt-1"
+      class="text-sm text-error mt-1"
       :class="[validationStatus.valid ? 'hidden' : '']"
     >
       {{ validationStatus.message }}

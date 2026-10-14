@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import SectionLink from "./SectionLink.vue";
+import { Icon } from "@iconify/vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
 import { useModal } from "../composables/modal.ts";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import ListTable from "./ListTable.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
-import LinkButton from "./LinkButton.vue";
-import ReloadButton from "./ReloadButton.vue";
 import FormInput from "./FormInput.vue";
 import { ValidationStatus } from "../utils/validation.ts";
 
@@ -27,8 +27,6 @@ const props = defineProps<{
   disabled?: boolean;
   modalTitle?: string;
   loading?: boolean;
-  clearAllBtn?: boolean;
-  disableDescription?: boolean;
   truncateModalDescription?: number;
   validationStatus: ValidationStatus;
 }>();
@@ -36,7 +34,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "updated", value: { id: string; number: number }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
 }>();
 
 const itemsWithNumber: Ref<Record<string, ItemWithNumber>> = ref({});
@@ -86,7 +83,12 @@ const modalColumns = [
 const modalId = window.crypto.randomUUID();
 const resetPaginationCounter = ref(0);
 
-function onModifyClick() {
+function onRemoveClick(id: string) {
+  itemsWithNumber.value[id].number = 0;
+  emit("updated", { id: id, number: 0 });
+}
+
+function onEditClick() {
   if (props.loading) {
     return;
   }
@@ -101,51 +103,30 @@ function onModifyClick() {
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1">
-      <div v-if="title">{{ title }}</div>
-      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
-        Modify
-      </ActionButton>
-      <ActionButton
-        v-if="!disabled && clearAllBtn"
-        :disabled="props.loading"
-        class="btn btn-danger btn-sm"
-        @click="emit('clearAll')"
-      >
-        Clear all
-      </ActionButton>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="@container bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-            <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">
-              Description
-            </th>
-            <th class="border-b border-neutral-300 py-2 px-2">Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="src in nonzeroItems" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-2 border-b border-neutral-300">
-              <TextLink :routeName="routeName" :params="{ id: src.id }">
-                {{ src.name }}
-              </TextLink>
-            </td>
-            <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">
-              {{ src.description }}
-            </td>
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+    <!-- The title cell spans the remove column, which has no header, so the actions sit at the right edge. -->
+    <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="disabled ? 1 : 2">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+      </template>
+      <tr v-for="src in nonzeroItems" :key="src.id" class="bg-white hover:bg-neutral-100">
+        <td class="py-2 px-2 border-b border-neutral-300">
+          <TextLink :routeName="routeName" :params="{ id: src.id }">
+            {{ src.name }}
+          </TextLink>
+          <span v-if="src.number > 1" class="ml-1">x{{ src.number }}</span>
+        </td>
+        <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+          <button
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+            :aria-label="`Remove ${src.name}`"
+            @click="onRemoveClick(src.id)"
+          >
+            <Icon icon="lucide:x" class="size-5" />
+          </button>
+        </td>
+      </tr>
+    </ListTable>
+    <div class="text-sm text-error mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
     <ModalWindow :id="modalId">
@@ -158,10 +139,12 @@ function onModifyClick() {
         :loading="props.loading"
         :resetPagination="resetPaginationCounter"
       >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
+        <SectionLink icon="lucide:plus" variant="neutral" :routeName="routeName" :params="{ id: 'create' }" newWindow>
           Create new
-        </LinkButton>
-        <ReloadButton @click="emit('reload')" />
+        </SectionLink>
+        <SectionButton icon="lucide:refresh-cw" variant="neutral" :busy="props.loading" @click="emit('reload')">
+          Reload
+        </SectionButton>
 
         <template #name="{ id }: { id: string }">
           <TextLink :routeName="routeName" :params="{ id: id }">

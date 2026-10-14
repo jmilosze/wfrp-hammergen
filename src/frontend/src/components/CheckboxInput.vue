@@ -1,5 +1,13 @@
 <script setup lang="ts">
+import SheetCheckbox from "./SheetCheckbox.vue";
+
 const checked = defineModel<boolean>({ required: true });
+
+function onChange(event: Event) {
+  if (event.target instanceof HTMLInputElement) {
+    checked.value = event.target.checked;
+  }
+}
 
 defineProps<{
   title: string;
@@ -9,7 +17,7 @@ defineProps<{
 
 <template>
   <label class="flex items-center gap-2 w-fit">
-    <input v-model="checked" type="checkbox" class="w-5 h-5 accent-neutral-600 shrink-0" :disabled="disabled" />
+    <SheetCheckbox :checked="checked" :disabled="disabled" @change="onChange" />
     {{ title }}
   </label>
 </template>

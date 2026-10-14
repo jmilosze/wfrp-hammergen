@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import { Icon } from "@iconify/vue";
+import SectionCard from "./SectionCard.vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/core/source.ts";
 import { Edition } from "../services/wh/core/edition.ts";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
-import TableWithSearch from "./TableWithSearch.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 
 const props = defineProps<{ initSources: Record<string, string>; edition: Edition; disabled?: boolean }>();
 
@@ -14,12 +16,7 @@ const emit = defineEmits<{
 }>();
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "notes", displayName: "Notes", skipStackedTitle: false },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
-];
+const openedCounter = ref(0);
 
 const sources: Ref<Record<string, { id: string; name: string; notes: string; selected: boolean }>> = ref({});
 const sourcesList: Ref<{ id: string; name: string; notes: string; selected: boolean }[]> = ref([]);
@@ -56,68 +53,92 @@ const selectedSourcesValid = computed(() => {
   return true;
 });
 
-function onModifyClick() {
-  modal.showModal("modifySourceModal");
-  searchTerm.value = "";
+function onRemoveClick(id: string) {
+  sources.value[id].selected = false;
+  emit("selected", { id: id, notes: sources.value[id].notes, selected: false });
+}
+
+function onEditClick() {
   sourcesList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
   });
+  openedCounter.value += 1;
+  modal.showModal("modifySourceModal");
+}
+
+// Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
+const modalItems = computed(() =>
+  sourcesList.value.map((x) => ({
+    id: x.id,
+    name: x.name,
+    description: "",
+    get selected() {
+      return x.selected;
+    },
+    get text() {
+      return x.notes;
+    },
+    get textError() {
+      const valid = validateSourceRecord(x.notes);
+      return valid.valid ? undefined : valid.message;
+    },
+  })),
+);
+
+function setSelected(id: string, selected: boolean) {
+  sources.value[id].selected = selected;
+  emit("selected", { id: id, notes: sources.value[id].notes, selected: selected });
+}
+
+function setNotes(id: string, notes: string) {
+  sources.value[id].notes = notes;
+  emit("selected", { id: id, notes: notes, selected: sources.value[id].selected });
 }
 </script>
 
 <template>
   <div>
-    <div class="flex items-center mb-1">
-      <div class="mr-2">Sources</div>
-      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
-    </div>
-    <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+    <SectionCard title="Sources">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
+      </template>
       <table class="w-full">
         <thead>
-          <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-5">Name</th>
-            <th class="border-b border-neutral-300 py-2 px-5">Notes</th>
+          <tr class="text-left" :class="{ 'bg-editable': !disabled }">
+            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
+            <th class="border-b border-neutral-300 py-2 px-2">Notes</th>
+            <th v-if="!disabled" class="border-b border-neutral-300 py-2 px-2 w-0" />
           </tr>
         </thead>
         <tbody>
-          <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.notes }}</td>
+          <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-100">
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.notes }}</td>
+            <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+              <button
+                class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+                :aria-label="`Remove ${src.name}`"
+                @click="onRemoveClick(src.id)"
+              >
+                <Icon icon="lucide:x" class="size-5" />
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
-    <p class="text-sm text-danger-600 mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
+    </SectionCard>
+    <p class="text-sm text-error mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
       Some of the sources are invalid.
     </p>
-    <ModalWindow id="modifySourceModal">
-      <template #header> Modify sources </template>
-      <div>
-        <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="sourcesList" stackBreakpoint="lg">
-          <template #selected="{ id }: { id: string }">
-            <div>
-              <input
-                v-model="sources[id].selected"
-                type="checkbox"
-                class="w-5 h-5 accent-neutral-600"
-                @input="emit('selected', { id: id, notes: sources[id].notes, selected: !sources[id].selected })"
-              />
-            </div>
-          </template>
-
-          <template #notes="{ id }: { id: string }">
-            <input
-              v-model="sources[id].notes"
-              class="border border-neutral-300 rounded w-full h-10 px-2 focus:outline-neutral-700 focus:border-transparent focus:outline focus:outline-2"
-              @input="emit('selected', { id: id, notes: sources[id].notes, selected: sources[id].selected })"
-            />
-            <p class="text-sm text-danger-600" :class="[validateSourceRecord(sources[id].notes).valid ? 'hidden' : '']">
-              {{ validateSourceRecord(sources[id].notes).message }}
-            </p>
-          </template>
-        </TableWithSearch>
-      </div>
+    <ModalWindow id="modifySourceModal" fullHeight>
+      <template #header> Edit sources </template>
+      <ChecklistPicker
+        :items="modalItems"
+        :opened="openedCounter"
+        textLabel="Notes"
+        @toggle="(e) => setSelected(e.id, e.selected)"
+        @setText="(e) => setNotes(e.id, e.text)"
+      />
     </ModalWindow>
   </div>
 </template>

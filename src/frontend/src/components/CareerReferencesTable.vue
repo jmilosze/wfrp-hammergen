@@ -9,7 +9,7 @@ import {
   printClassName,
 } from "../services/wh/content/career.ts";
 import { Edition } from "../services/wh/core/edition.ts";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import ListTable from "./ListTable.vue";
 import AlertBlock from "./AlertBlock.vue";
 import TextLink from "./TextLink.vue";
 
@@ -69,51 +69,34 @@ watch(
 
 <template>
   <div v-if="entityId && entityId !== 'create'" class="my-4 text-left">
-    <div class="text-xl font-bold mb-2">Careers with this {{ type === "skill" ? "skill" : "talent" }}</div>
-
     <AlertBlock v-if="apiError" alertType="red" @close="apiError = ''">
       {{ apiError }}
     </AlertBlock>
 
-    <div v-if="loading" class="flex justify-center my-4">
-      <SpinnerAnimation class="w-8 h-8" />
-    </div>
-
-    <div v-else-if="careerMatches.length === 0" class="text-neutral-500 italic py-2">
-      No careers have this {{ type === "skill" ? "skill" : "talent" }}.
-    </div>
-
-    <div v-else class="border border-neutral-300 rounded-xl overflow-hidden">
-      <table class="w-full text-left">
-        <thead>
-          <tr class="bg-neutral-50 text-neutral-500 font-bold border-b border-neutral-300">
-            <th class="py-2 px-5">Career</th>
-            <th class="py-2 px-5">Class</th>
-            <th class="py-2 px-5">Levels</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="match in careerMatches"
-            :key="match.id"
-            class="bg-white hover:bg-neutral-200 border-b border-neutral-300 last:border-b-0"
-          >
-            <td class="py-2 px-5 font-semibold">
-              <TextLink routeName="career" :params="{ id: match.id }">
-                {{ match.name }}
-              </TextLink>
-            </td>
-            <td class="py-2 px-5 text-neutral-600">
-              {{ printClassName(match.careerClass) }}
-            </td>
-            <td class="py-2 px-5 text-neutral-800">
-              {{ match.levels.join(", ") }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-2 w-full" />
-    </div>
+    <ListTable :title="`Careers with this ${type === 'skill' ? 'skill' : 'talent'}`" :loading="loading">
+      <template #headers>
+        <th class="py-2 px-2 border-b border-neutral-300">Class</th>
+        <th class="py-2 px-2 border-b border-neutral-300">Levels</th>
+      </template>
+      <tr v-if="careerMatches.length === 0">
+        <td colspan="3" class="text-neutral-500 italic px-2 py-2">
+          No careers have this {{ type === "skill" ? "skill" : "talent" }}.
+        </td>
+      </tr>
+      <tr v-for="match in careerMatches" :key="match.id" class="hover:bg-neutral-100">
+        <td class="py-2 px-2 border-b border-neutral-300 font-semibold">
+          <TextLink routeName="career" :params="{ id: match.id }">
+            {{ match.name }}
+          </TextLink>
+        </td>
+        <td class="py-2 px-2 border-b border-neutral-300 text-neutral-600">
+          {{ printClassName(match.careerClass) }}
+        </td>
+        <td class="py-2 px-2 border-b border-neutral-300 text-neutral-800">
+          {{ match.levels.join(", ") }}
+        </td>
+      </tr>
+    </ListTable>
   </div>
 </template>
 

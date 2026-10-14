@@ -18,7 +18,6 @@ import { generateCareerSkills4e, generateSpeciesSkills4e } from "./skills4e.ts";
 import { generateCareerTalents4e } from "./talents4e.ts";
 import { sumAttributes } from "../../../core/attributes.ts";
 import { getSpeciesAttributes4e } from "../../rules/rules4e.ts";
-import { idNumberArrayToRecord } from "../../../../../utils/idNumber.ts";
 import { GenerationProps } from "../shared/generationProps.ts";
 import { defaultSource } from "../../../core/source.ts";
 import { generateCoins4e } from "./wealth4e.ts";
@@ -76,8 +75,7 @@ export function generateCharacter4e(
   );
 
   character.attributeRolls = generateRolls(rollDiceFn);
-  character.equippedItems = idNumberArrayToRecord(classItems.equipped);
-  character.carriedItems = idNumberArrayToRecord(classItems.carried);
+  character.carriedItems = classItems;
 
   const skillGroupMap = resolveEntityGroups(context.skills);
 

@@ -4,7 +4,9 @@ import Header from "../../../components/PageHeader.vue";
 import { printRuneLabel, Rune, runeApi, runeLabelList } from "../../../services/wh/content/rune.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
-import FormInput from "../../../components/FormInput.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
@@ -12,13 +14,11 @@ import MissingEditionVariant from "../../../components/MissingEditionVariant.vue
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
-import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
+import LabelPicker from "../../../components/LabelPicker.vue";
 import { itemTypeList, printItemType } from "../../../services/wh/content/item.ts";
-import DisplayLabels from "../../../components/DisplayLabels.vue";
 
 const props = defineProps<{
   id: string;
@@ -74,74 +74,60 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <DisplayLabels :labelList="wh.labels.map((x) => printRuneLabel(x))" class="mt-1" />
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
+    </div>
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <MultipleCheckboxColumnInput
+      <div class="flex-1 flex flex-col gap-4">
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <LabelPicker
             v-model="wh.applicableTo"
+            title="Applicable to"
             :options="applicableToOptions"
             :disabled="!canEdit"
-            title="Applicable to"
+            sheetRow
           />
-          <MultipleCheckboxColumnInput
-            v-model="wh.labels"
-            :options="labelOptions"
-            :disabled="!canEdit"
-            title="Labels"
-          />
-        </div>
+          <LabelPicker v-model="wh.labels" title="Labels" :options="labelOptions" :disabled="!canEdit" sheetRow />
+        </SheetTable>
       </div>
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
-      </div>
+      <SectionCard title="Description" class="flex-1">
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
+      </SectionCard>
     </div>
 
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
   </template>
   <div v-show="hasVariant" class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="runes"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Rune"
-      :name="wh.name"
-      list="runes"
-      :deleteItem="deleteItem"
-    />
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Rune"
+        :saving="submissionState.status === 'inProgress'"
+        list="runes"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Rune"
+        :name="wh.name"
+        list="runes"
+        :deleteItem="deleteItem"
+        class="flex-1"
+      />
+    </div>
   </div>
 </template>
 

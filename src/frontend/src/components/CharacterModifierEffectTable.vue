@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import { Icon } from "@iconify/vue";
+import ListTable from "./ListTable.vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
@@ -21,38 +23,45 @@ const modalColumns = [
   { name: "selected", displayName: "Select", skipStackedTitle: false },
 ];
 
-const effects: Ref<Record<string, { id: number; name: string; desc: string; selected: boolean }>> = ref({});
 const effectList: Ref<{ id: number; name: string; desc: string; selected: boolean }[]> = ref([]);
 
+// The list is built per edition; ticking an effect only updates its selected flag, so the popup's order (ticked first,
+// set when it opens) does not change while it is open.
 watch(
-  () => props.initEffects,
-  (newVal) => {
-    effects.value = {};
-    for (const effectType of modifierEffectsByEdition[props.edition]) {
-      if (newVal && newVal.has(effectType)) {
-        effects.value[effectType] = {
-          id: effectType,
-          name: printEffectName(effectType),
-          desc: printEffectDesc(effectType),
-          selected: true,
-        };
-      } else {
-        effects.value[effectType] = {
-          id: effectType,
-          name: printEffectName(effectType),
-          desc: printEffectDesc(effectType),
-          selected: false,
-        };
-      }
-    }
-    effectList.value = Object.values(effects.value).sort((a, b) => a.name.localeCompare(b.name));
+  () => props.edition,
+  (edition) => {
+    effectList.value = modifierEffectsByEdition[edition]
+      .map((effectType) => ({
+        id: effectType,
+        name: printEffectName(effectType),
+        desc: printEffectDesc(effectType),
+        selected: props.initEffects.has(effectType),
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   },
   { immediate: true },
 );
 
+watch(
+  () => props.initEffects,
+  (newVal) => {
+    for (const effect of effectList.value) {
+      effect.selected = newVal.has(effect.id);
+    }
+  },
+);
+
+// Lookup by id for the popup's checkboxes; its entries are the list's own objects.
+const effects = computed(() => Object.fromEntries(effectList.value.map((x) => [x.id, x])));
+
 const selectedSources = computed(() => effectList.value.filter((x) => x.selected));
 
-function onModifyClick() {
+function onRemoveClick(id: number) {
+  effects.value[id].selected = false;
+  emit("selected", { id: id, selected: false });
+}
+
+function onEditClick() {
   modal.showModal("modifyEffectsModal");
   searchTerm.value = "";
   effectList.value.sort((a, b) => {
@@ -62,30 +71,27 @@ function onModifyClick() {
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center mb-1">
-      <div class="mr-2">Effects</div>
-      <ActionButton v-if="!disabled" class="btn btn-sm" @click="onModifyClick">Modify</ActionButton>
-    </div>
-    <div class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-5">Name</th>
-            <th class="border-b border-neutral-300 py-2 px-5">Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.name }}</td>
-            <td class="py-2 px-5 border-b border-neutral-300">{{ src.desc }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
+  <div class="flex flex-col">
+    <ListTable :editable="!disabled" title="Effects" :titleColspan="disabled ? 2 : 3" class="grow">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
+      </template>
+      <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-100">
+        <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
+        <td class="py-2 px-2 border-b border-neutral-300">{{ src.desc }}</td>
+        <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+          <button
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+            :aria-label="`Remove ${src.name}`"
+            @click="onRemoveClick(src.id)"
+          >
+            <Icon icon="lucide:x" class="size-5" />
+          </button>
+        </td>
+      </tr>
+    </ListTable>
     <ModalWindow id="modifyEffectsModal">
-      <template #header> Modify sources </template>
+      <template #header> Edit effects </template>
       <div class="">
         <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="effectList" stackBreakpoint="2xl">
           <template #selected="{ id }: { id: number }">

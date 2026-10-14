@@ -32,15 +32,18 @@ import {
   printItemType,
   printMeleeGroup,
   printMeleeReach,
-  printPrice,
   printRangedGroup,
   printWeaponHands,
   rangedGroupList,
   weaponHandsList,
 } from "../../../services/wh/content/item.ts";
 import { computed, ref, watch } from "vue";
-import FormInput from "../../../components/FormInput.vue";
-import SelectInput from "../../../components/SelectInput.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SheetSelect from "../../../components/SheetSelect.vue";
+import SheetGroup from "../../../components/SheetGroup.vue";
+import SheetCell from "../../../components/SheetCell.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
@@ -48,11 +51,10 @@ import MissingEditionVariant from "../../../components/MissingEditionVariant.vue
 import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
 import { useWhList } from "../../../composables/whList.ts";
 import { itemPropertyApi } from "../../../services/wh/content/itemproperty.ts";
 import SelectTable from "../../../components/SelectTable.vue";
-import MultipleCheckboxInput from "../../../components/MultipleCheckboxInput.vue";
+import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
 import { spellApi } from "../../../services/wh/content/spell.ts";
 import { runeApi } from "../../../services/wh/content/rune.ts";
 import SelectIdNumberTable from "../../../components/SelectIdNumberTable.vue";
@@ -178,8 +180,6 @@ watch(
   { immediate: true },
 );
 
-const formattedPrice = computed(() => (Number.isNaN(wh.value.price) ? "—" : printPrice(wh.value.price)));
-
 const validMeleeSbDmgMult = computed(() => wh.value.validateMeleeDmgSbMult());
 const validMeleeDmg = computed(() => wh.value.validateMeleeDmg());
 const validRangedSbDmgMult = computed(() => wh.value.validateRangedDmgSbMult());
@@ -248,344 +248,284 @@ watchWh(
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
-          <SelectInput
-            v-model="wh.availability"
-            :options="availOpts"
-            :disabled="!canEdit"
-            title="Availability"
-            class="min-w-24"
-          />
-          <p class="-mb-3">Price</p>
-          <div class="border border-neutral-300 rounded p-2">
-            <div class="flex flex-col @2xl:flex-row gap-4">
-              <FormInput
-                v-model="priceGold"
-                type="number"
-                title="Gold (GC)"
-                :validationStatus="validPriceGold"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-              <FormInput
-                v-model="priceSilver"
-                type="number"
-                title="Silver (/-)"
-                :validationStatus="validPriceSilver"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-              <FormInput
-                v-model="priceBrass"
-                type="number"
-                title="Brass (d)"
-                :validationStatus="validPriceBrass"
-                :disabled="!canEdit"
-                class="flex-1"
-              />
-            </div>
-            <div class="text-xs text-neutral-500 mt-2">Total: {{ formattedPrice }}</div>
-            <div v-if="!validPrice.valid && validCoins" role="alert" class="text-sm text-danger-600 mt-1">
-              {{ validPrice.message }}
-            </div>
-          </div>
-          <FormInput
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!canEdit" />
+    </div>
+    <!-- Name, type, price and description in one column, the type's own properties and the lists in the other. -->
+    <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
+      <div class="flex-1 flex flex-col gap-4">
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SheetSelect v-model="wh.type" title="Type" :options="typeOpts" :disabled="!canEdit" />
+          <SheetSelect v-model="wh.availability" title="Availability" :options="availOpts" :disabled="!canEdit" />
+          <SheetField
             v-model="wh.enc"
+            type="number"
             title="Encumbrance"
             :validationStatus="validEnc"
             :disabled="!canEdit"
-            type="number"
           />
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
+          <SheetGroup title="Price" :columns="3">
+            <SheetField
+              v-model="priceGold"
+              type="number"
+              title="Gold"
+              :validationStatus="validPriceGold"
+              :disabled="!canEdit"
+            />
+            <SheetField
+              v-model="priceSilver"
+              type="number"
+              title="Silver"
+              :validationStatus="validPriceSilver"
+              :disabled="!canEdit"
+            />
+            <SheetField
+              v-model="priceBrass"
+              type="number"
+              title="Brass"
+              :validationStatus="validPriceBrass"
+              :disabled="!canEdit"
+            />
+            <div
+              v-if="!validPrice.valid && validCoins"
+              role="alert"
+              class="col-span-full px-2 py-1 bg-white text-sm text-error"
+            >
+              {{ validPrice.message }}
+            </div>
+          </SheetGroup>
+        </SheetTable>
+        <SectionCard title="Description" class="grow">
+          <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="md" />
+        </SectionCard>
       </div>
-      <div class="flex-1">
-        <div v-if="wh.type === ItemType.Melee" class="flex flex-col gap-4">
-          <div>
-            <p class="mb-1">Weapon damage</p>
-            <div class="flex">
-              <div class="shrink-0 mr-4 pt-2">SB x</div>
-              <FormInput
+      <div class="flex-1 flex flex-col gap-4">
+        <SheetTable v-if="wh.type !== ItemType.Grimoire">
+          <template v-if="wh.type === ItemType.Melee">
+            <SheetGroup title="Damage">
+              <SheetField
                 v-model="wh.melee.dmgSbMult"
+                type="number"
+                title="Mult"
                 :validationStatus="validMeleeSbDmgMult"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-              <div class="shrink-0 mx-4 pt-2">+</div>
-              <FormInput
+              <SheetField
                 v-model="wh.melee.dmg"
+                type="number"
+                title="Const"
                 :validationStatus="validMeleeDmg"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-            </div>
-          </div>
-          <SelectInput
-            v-model="wh.melee.group"
-            :options="meleeGroupOpts"
-            :disabled="!canEdit"
-            title="Weapon group"
-            class="min-w-24"
-          />
-          <SelectInput
-            v-model="wh.melee.hands"
-            :options="weaponHandsOpts"
-            :disabled="!canEdit"
-            title="One/Two handed"
-            class="min-w-24"
-          />
-          <SelectInput
-            v-model="wh.melee.reach"
-            :options="meleeReachOpts"
-            :disabled="!canEdit"
-            title="Weapon reach"
-            class="min-w-24"
-          />
-        </div>
-        <div v-else-if="wh.type === ItemType.Ranged" class="flex flex-col gap-4">
-          <div>
-            <p class="mb-1">Weapon damage</p>
-            <div class="flex">
-              <div class="shrink-0 mr-4 pt-2">SB x</div>
-              <FormInput
+              <template #note>Damage = SB × Mult + Const.</template>
+            </SheetGroup>
+            <SheetSelect v-model="wh.melee.group" title="Group" :options="meleeGroupOpts" :disabled="!canEdit" />
+            <SheetSelect v-model="wh.melee.hands" title="Hands" :options="weaponHandsOpts" :disabled="!canEdit" />
+            <SheetSelect v-model="wh.melee.reach" title="Reach" :options="meleeReachOpts" :disabled="!canEdit" />
+          </template>
+          <template v-else-if="wh.type === ItemType.Ranged">
+            <SheetGroup title="Damage">
+              <SheetField
                 v-model="wh.ranged.dmgSbMult"
+                type="number"
+                title="Mult"
                 :validationStatus="validRangedSbDmgMult"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-              <div class="shrink-0 mx-4 pt-2">+</div>
-              <FormInput
+              <SheetField
                 v-model="wh.ranged.dmg"
+                type="number"
+                title="Const"
                 :validationStatus="validRangedDmg"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-            </div>
-          </div>
-          <div>
-            <p class="mb-1">Weapon range</p>
-            <div class="flex">
-              <div class="shrink-0 mr-4 pt-2">SB x</div>
-              <FormInput
+              <template #note>Damage = SB × Mult + Const.</template>
+            </SheetGroup>
+            <SheetGroup title="Range">
+              <SheetField
                 v-model="wh.ranged.rngSbMult"
+                type="number"
+                title="Mult"
                 :validationStatus="validRangedSbRngMult"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-              <div class="shrink-0 mx-4 pt-2">+</div>
-              <FormInput
+              <SheetField
                 v-model="wh.ranged.rng"
+                type="number"
+                title="Const"
                 :validationStatus="validRangedRng"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-            </div>
-          </div>
-          <SelectInput
-            v-model="wh.ranged.group"
-            :options="rangedGroupOpts"
-            :disabled="!canEdit"
-            title="Weapon group"
-            class="min-w-24"
-          />
-          <SelectInput
-            v-model="wh.ranged.hands"
-            :options="weaponHandsOpts"
-            :disabled="!canEdit"
-            title="One/Two handed"
-            class="min-w-24"
-          />
-        </div>
-        <div v-else-if="wh.type === ItemType.Ammunition" class="flex flex-col gap-4">
-          <div>
-            <p class="mb-1">Damage modification</p>
-            <div class="flex">
-              <div class="shrink-0 mr-4 pt-2">Weapon +</div>
-              <FormInput
+              <template #note>Range = SB × Mult + Const.</template>
+            </SheetGroup>
+            <SheetSelect v-model="wh.ranged.group" title="Group" :options="rangedGroupOpts" :disabled="!canEdit" />
+            <SheetSelect v-model="wh.ranged.hands" title="Hands" :options="weaponHandsOpts" :disabled="!canEdit" />
+          </template>
+          <template v-else-if="wh.type === ItemType.Ammunition">
+            <SheetGroup title="Damage" :columns="1">
+              <SheetField
                 v-model="wh.ammunition.dmg"
+                type="number"
+                title="Const"
                 :validationStatus="validAmmunitionDmg"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-            </div>
-          </div>
-          <div>
-            <p class="mb-1">Range modification</p>
-            <div class="flex">
-              <div class="shrink-0 mr-4 pt-2">Weapon x</div>
-              <FormInput
+              <template #note>Damage = weapon damage + Const.</template>
+            </SheetGroup>
+            <SheetGroup title="Range">
+              <SheetField
                 v-model="wh.ammunition.rngMult"
+                type="number"
+                title="Mult"
                 :validationStatus="validAmmunitionRngMult"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-              <div class="shrink-0 mx-4 pt-2">+</div>
-              <FormInput
+              <SheetField
                 v-model="wh.ammunition.rng"
+                type="number"
+                title="Const"
                 :validationStatus="validAmmunitionRng"
                 :disabled="!canEdit"
-                type="number"
-                class="min-w-14"
               />
-            </div>
-          </div>
-          <SelectInput
-            v-model="wh.ammunition.group"
-            :options="ammunitionGroupOpts"
-            :disabled="!canEdit"
-            title="Ammunition group"
-            class="min-w-24"
-          />
-        </div>
-        <div v-else-if="wh.type === ItemType.Armour" class="flex flex-col gap-4">
-          <MultipleCheckboxInput
-            v-model="wh.armour.location"
-            title="Armour location"
-            :disabled="!canEdit"
-            :options="ArmourLocationOpts"
-          />
-          <FormInput
-            v-model="wh.armour.points"
-            title="Armour points"
-            :validationStatus="validArmourPoints"
-            type="number"
-            :disabled="!canEdit"
-          />
-          <SelectInput
-            v-model="wh.armour.group"
-            :options="armourGroupOpts"
-            :disabled="!canEdit"
-            title="Armour group"
-            class="min-w-24"
-          />
-        </div>
-        <div v-else-if="wh.type === ItemType.Container" class="flex flex-col gap-4">
-          <FormInput
-            v-model="wh.container.capacity"
-            title="Container capacity"
-            :validationStatus="validContainerCapacity"
-            type="number"
-            :disabled="!canEdit"
-          />
-          <SelectInput
-            v-model="wh.container.carryType"
-            :options="carryTypeOpts"
-            :disabled="!canEdit"
-            title="Can it be worn/carried?"
-            class="min-w-24"
-          />
-        </div>
-        <div v-else-if="wh.type === ItemType.Other" class="flex flex-col gap-4">
-          <SelectInput
+              <template #note>Range = weapon range × Mult + Const.</template>
+            </SheetGroup>
+            <SheetSelect
+              v-model="wh.ammunition.group"
+              title="Group"
+              :options="ammunitionGroupOpts"
+              :disabled="!canEdit"
+            />
+          </template>
+          <template v-else-if="wh.type === ItemType.Armour">
+            <SheetField
+              v-model="wh.armour.points"
+              type="number"
+              title="AP"
+              :validationStatus="validArmourPoints"
+              :disabled="!canEdit"
+            />
+            <SheetSelect v-model="wh.armour.group" title="Group" :options="armourGroupOpts" :disabled="!canEdit" />
+            <SheetCell title="Location">
+              <MultipleCheckboxColumnInput
+                v-model="wh.armour.location"
+                :options="ArmourLocationOpts"
+                :disabled="!canEdit"
+                bare
+                twoColumns
+                class="-mx-2"
+              />
+            </SheetCell>
+          </template>
+          <template v-else-if="wh.type === ItemType.Container">
+            <SheetField
+              v-model="wh.container.capacity"
+              type="number"
+              title="Capacity"
+              :validationStatus="validContainerCapacity"
+              :disabled="!canEdit"
+            />
+            <SheetSelect
+              v-model="wh.container.carryType"
+              title="Carrying"
+              :options="carryTypeOpts"
+              :disabled="!canEdit"
+            />
+          </template>
+          <SheetSelect
+            v-else-if="wh.type === ItemType.Other"
             v-model="wh.other.carryType"
+            title="Carrying"
             :options="carryTypeOpts"
             :disabled="!canEdit"
-            title="Can it be worn/carried?"
-            class="min-w-24"
           />
-        </div>
-        <div v-else-if="wh.type === ItemType.Grimoire" class="flex flex-col gap-4">
-          <SelectTable
-            modalId="grimoire"
+        </SheetTable>
+        <SelectTable
+          v-if="wh.type === ItemType.Grimoire"
+          modalId="grimoire"
+          :disabled="!canEdit"
+          :initSelectedItems="wh.grimoire.spells"
+          :itemList="spellListUtils.whList.value"
+          title="Spells"
+          modalTitle="Edit spells"
+          :loading="spellListUtils.loading.value"
+          routeName="spell"
+          :truncateModalDescription="100"
+          @reload="spellListUtils.loadWhList"
+          @selected="(e) => wh.updateSpells(e.id, e.selected)"
+        />
+        <!-- Qualities, flaws and runes joined under one title band, like the character sheet's groups. -->
+        <div>
+          <div
+            class="px-2 py-1 border border-neutral-400 bg-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
+          >
+            Properties
+          </div>
+          <SelectIdValueTable
             :disabled="!canEdit"
-            :initSelectedItems="wh.grimoire.spells"
-            :itemList="spellListUtils.whList.value"
-            title="Spells"
-            modalTitle="Add/remove spells"
-            :loading="spellListUtils.loading.value"
-            routeName="spell"
+            :selected="Object.entries(wh.properties).map(([id, value]) => ({ id: id, value: value }))"
+            :itemList="propertyList"
+            title="Qualities and Flaws"
+            modalTitle="Edit Qualities and Flaws"
+            :loading="propertyListUtils.loading.value"
+            :validationStatus="wh.validateProperties()"
+            routeName="property"
             :truncateModalDescription="100"
-            class="mt-4"
-            @reload="spellListUtils.loadWhList"
-            @selected="(e) => wh.updateSpells(e.id, e.selected)"
+            class="-mt-px"
+            @reload="propertyListUtils.loadWhList"
+            @remove="(e) => wh.updateProperties(e.id, false)"
+            @selected="(e) => wh.updateProperties(e.id, e.selected)"
+            @updateValue="(e) => wh.updatePropertyValue(e.id, e.value)"
+          />
+          <SelectIdNumberTable
+            :disabled="!canEdit"
+            :initItems="wh.runes"
+            :allItemList="runeList"
+            title="Runes"
+            modalTitle="Edit runes"
+            :loading="runeListUtils.loading.value"
+            routeName="rune"
+            :truncateModalDescription="100"
+            class="-mt-px"
+            :validationStatus="validRunes"
+            @reload="runeListUtils.loadWhList"
+            @updated="(e) => wh.updateRunes(e.id, e.number)"
           />
         </div>
-        <SelectIdValueTable
-          :disabled="!canEdit"
-          :selected="Object.entries(wh.properties).map(([id, value]) => ({ id: id, value: value }))"
-          :itemList="propertyList"
-          title="Qualities and flaws"
-          modalTitle="Modify qualities and flaws"
-          :loading="propertyListUtils.loading.value"
-          :validationStatus="wh.validateProperties()"
-          routeName="property"
-          :truncateModalDescription="100"
-          class="mt-4"
-          @reload="propertyListUtils.loadWhList"
-          @remove="(e) => wh.updateProperties(e.id, false)"
-          @selected="(e) => wh.updateProperties(e.id, e.selected)"
-          @updateValue="(e) => wh.updatePropertyValue(e.id, e.value)"
-        />
-        <SelectIdNumberTable
-          :disabled="!canEdit"
-          :initItems="wh.runes"
-          :allItemList="runeList"
-          title="Runes"
-          modalTitle="Modify runes"
-          :loading="runeListUtils.loading.value"
-          routeName="rune"
-          :truncateModalDescription="100"
-          :validationStatus="validRunes"
-          class="mt-4"
-          @reload="runeListUtils.loadWhList"
-          @updated="(e) => wh.updateRunes(e.id, e.number)"
-        />
       </div>
     </div>
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="my-3 flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
   </template>
   <div v-show="hasVariant" class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="items"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Trapping"
-      :name="wh.name"
-      list="items"
-      :deleteItem="deleteItem"
-    />
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Trapping"
+        :saving="submissionState.status === 'inProgress'"
+        list="items"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Trapping"
+        :name="wh.name"
+        list="items"
+        :deleteItem="deleteItem"
+        class="flex-1"
+      />
+    </div>
   </div>
 </template>
 

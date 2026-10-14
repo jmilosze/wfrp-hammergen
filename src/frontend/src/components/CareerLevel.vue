@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import SelectTable from "./SelectTable.vue";
-import SelectInput from "./SelectInput.vue";
-import MultipleCheckboxInput from "./MultipleCheckboxInput.vue";
-import FormInput from "./FormInput.vue";
+import SheetTable from "./SheetTable.vue";
+import SheetField from "./SheetField.vue";
+import SheetSelect from "./SheetSelect.vue";
+import SheetCheckbox from "./SheetCheckbox.vue";
+import SectionCard from "./SectionCard.vue";
+import LabelPicker from "./LabelPicker.vue";
 import FormTextarea from "./FormTextarea.vue";
 import { AttributeName, attributeNameList, printAttributeName } from "../services/wh/core/attributes.ts";
 import {
@@ -44,18 +47,26 @@ const emit = defineEmits<{
   (e: "updateTalent", value: { id: string; selected: boolean }): void;
 }>();
 
-const attributeOpts = attributeNameList
+// The level's characteristics are labels in the order added; Add offers those not in the list yet.
+// The level's characteristics keep the order they were added in.
+const characteristicOpts = attributeNameList
   .filter((x) => x !== AttributeName.None && x !== AttributeName.Various)
   .map((x) => ({ text: printAttributeName(x), value: x }));
+
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
 const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
 </script>
 <template>
-  <div>
-    <div class="flex items-center gap-2">
-      <input v-model="exists" type="checkbox" class="w-5 h-5 accent-neutral-600" :disabled="!canEdit" />
-      <div class="text-xl">Level {{ level }}</div>
-    </div>
+  <!-- A level of the career: ticking the box in the title band adds the level, unticking clears it. -->
+  <SectionCard :title="`Level ${level}`">
+    <template #hint>
+      <SheetCheckbox
+        :checked="exists"
+        :disabled="!canEdit"
+        :aria-label="`Level ${level} exists`"
+        @change="exists = !exists"
+      />
+    </template>
     <Transition
       enterActiveClass="transition-all duration-150 ease-out"
       enterFromClass="opacity-0"
@@ -64,69 +75,59 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
       leaveFromClass="opacity-100"
       leaveToClass="opacity-0"
     >
-      <div v-if="exists" class="border border-neutral-300 rounded p-2">
-        <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-          <div class="flex-1">
-            <div class="flex flex-col gap-4">
-              <FormInput v-model="name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-              <MultipleCheckboxInput
-                v-model="attributes"
-                title="Attributes"
-                :options="attributeOpts"
-                :disabled="!canEdit"
-              />
-
-              <div class="flex flex-wrap gap-4 mt-2">
-                <SelectInput
-                  v-model="status"
-                  title="Status"
-                  :options="statusTierOpts"
-                  :disabled="!canEdit"
-                  class="min-w-24 flex-1"
-                />
-                <SelectInput
-                  v-model="standing"
-                  title="Standing"
-                  :options="statusStandingOpts"
-                  :disabled="!canEdit"
-                  class="min-w-24 flex-1"
-                />
-              </div>
-              <FormTextarea v-model="items" title="Trappings" :validationStatus="validItems" :disabled="!canEdit" />
-            </div>
+      <div v-if="exists" class="@container p-2">
+        <div class="flex flex-col @3xl:flex-row text-left gap-4">
+          <div class="flex-1 flex flex-col gap-4">
+            <SheetTable>
+              <SheetField v-model="name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+              <SheetSelect v-model="status" title="Status" :options="statusTierOpts" :disabled="!canEdit" />
+              <SheetSelect v-model="standing" title="Standing" :options="statusStandingOpts" :disabled="!canEdit" />
+            </SheetTable>
+            <LabelPicker
+              v-model="attributes"
+              title="Characteristics"
+              :options="characteristicOpts"
+              :disabled="!canEdit"
+              inAddedOrder
+            />
+            <SectionCard title="Trappings">
+              <FormTextarea v-model="items" :validationStatus="validItems" :disabled="!canEdit" bare size="sm" />
+            </SectionCard>
           </div>
-          <div class="flex-1">
-            <div class="flex flex-col gap-4">
-              <SelectTable
-                :modalId="`skill${level}`"
-                :disabled="!canEdit"
-                :initSelectedItems="initialSkills"
-                :itemList="whSkillList"
-                title="Skills"
-                modalTitle="Add/remove skills"
-                :loading="whSkillListLoading"
-                routeName="skill"
-                :truncateModalDescription="100"
-                @reload="emit('reloadWhSkillList')"
-                @selected="(e) => emit('updateSkill', { id: e.id, selected: e.selected })"
-              />
-              <SelectTable
-                :modalId="`talent${level}`"
-                :disabled="!canEdit"
-                :initSelectedItems="initialTalents"
-                :itemList="whTalentList"
-                title="Talents"
-                modalTitle="Add/remove talents"
-                :loading="whTalentListLoading"
-                routeName="talent"
-                :truncateModalDescription="100"
-                @reload="emit('reloadWhTalentList')"
-                @selected="(e) => emit('updateTalent', { id: e.id, selected: e.selected })"
-              />
-            </div>
+          <div class="flex-1 flex flex-col gap-4">
+            <SelectTable
+              :modalId="`skill${level}`"
+              :disabled="!canEdit"
+              :initSelectedItems="initialSkills"
+              :itemList="whSkillList"
+              title="Skills"
+              modalTitle="Edit skills"
+              :loading="whSkillListLoading"
+              routeName="skill"
+              :truncateModalDescription="100"
+              removable
+              disableDescription
+              @reload="emit('reloadWhSkillList')"
+              @selected="(e) => emit('updateSkill', { id: e.id, selected: e.selected })"
+            />
+            <SelectTable
+              :modalId="`talent${level}`"
+              :disabled="!canEdit"
+              :initSelectedItems="initialTalents"
+              :itemList="whTalentList"
+              title="Talents"
+              modalTitle="Edit talents"
+              :loading="whTalentListLoading"
+              routeName="talent"
+              :truncateModalDescription="100"
+              removable
+              disableDescription
+              @reload="emit('reloadWhTalentList')"
+              @selected="(e) => emit('updateTalent', { id: e.id, selected: e.selected })"
+            />
           </div>
         </div>
       </div>
     </Transition>
-  </div>
+  </SectionCard>
 </template>

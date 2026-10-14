@@ -15,14 +15,15 @@ import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import { computed, ref, Ref, watch } from "vue";
-import FormInput from "../../../components/FormInput.vue";
 import CheckboxInput from "../../../components/CheckboxInput.vue";
-import SelectInput from "../../../components/SelectInput.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SheetSelect from "../../../components/SheetSelect.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import { AttributeName, printAttributeName } from "../../../services/wh/core/attributes.ts";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import SourceTable from "../../../components/SourceTable.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
@@ -128,45 +129,38 @@ watchWh(
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
-          <CheckboxInput v-model="wh.isGroup" title="Is group skill" :disabled="!canEdit" />
-          <CheckboxInput v-model="wh.displayZero" title="Display if skill/group not taken?" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <CheckboxInput v-model="wh.isGroup" title="Group skill" :disabled="!canEdit" />
+      <CheckboxInput v-model="wh.displayZero" title="Display if skill/group not taken?" :disabled="!canEdit" />
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
+    </div>
+    <!-- Name, attribute, type and group in one column, the description in the other. -->
+    <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
+      <div class="flex-1 flex flex-col gap-4">
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SheetSelect v-model="wh.attribute" title="Attribute" :options="attOptions" :disabled="!canEdit" />
+          <SheetSelect v-model="wh.type" title="Type" :options="typeOpts" :disabled="!canEdit" />
+        </SheetTable>
+        <SelectTable
+          v-if="!wh.isGroup"
+          :disabled="!canEdit"
+          :initSelectedItems="wh.group"
+          :itemList="groupSkills"
+          title="Belongs to group"
+          removable
+          disableDescription
+          modalTitle="Edit groups"
+          :loading="skillListUtils.loading.value"
+          routeName="skill"
+          :truncateModalDescription="100"
+          @reload="skillListUtils.loadWhList"
+          @selected="(e) => wh.modifyGroup(e.id, e.selected)"
+        />
       </div>
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <SelectInput
-            v-model="wh.attribute"
-            :options="attOptions"
-            :disabled="!canEdit"
-            title="Attribute"
-            class="min-w-24"
-          />
-          <SelectInput v-model="wh.type" :options="typeOpts" :disabled="!canEdit" title="Type" class="min-w-24" />
-          <SelectTable
-            :disabled="!canEdit || wh.isGroup"
-            :initSelectedItems="wh.group"
-            :itemList="groupSkills"
-            title="Belongs to group"
-            modalTitle="Modify groups"
-            :loading="skillListUtils.loading.value"
-            routeName="skill"
-            :truncateModalDescription="100"
-            @reload="skillListUtils.loadWhList"
-            @selected="(e) => wh.modifyGroup(e.id, e.selected)"
-          />
-        </div>
-      </div>
+      <SectionCard title="Description" class="flex-1">
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
+      </SectionCard>
     </div>
     <CareerReferencesTable
       v-if="id !== 'create'"
@@ -175,42 +169,38 @@ watchWh(
       :parentGroupIds="wh.group"
       type="skill"
     />
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="my-3 flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
   </template>
   <div v-show="hasVariant" class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="skills"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Skill"
-      :name="wh.name"
-      list="skills"
-      :deleteItem="deleteItem"
-    />
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Skill"
+        :saving="submissionState.status === 'inProgress'"
+        list="skills"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Skill"
+        :name="wh.name"
+        list="skills"
+        :deleteItem="deleteItem"
+        class="flex-1"
+      />
+    </div>
   </div>
 </template>
 

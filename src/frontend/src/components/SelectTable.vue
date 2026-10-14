@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import { Icon } from "@iconify/vue";
+import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
-import TableWithSearch from "./TableWithSearch.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 import { useModal } from "../composables/modal.ts";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import ListTable from "./ListTable.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
-import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
-import LinkButton from "./LinkButton.vue";
-import ReloadButton from "./ReloadButton.vue";
 
 type ItemWithSelect = {
   id: string;
@@ -29,7 +26,8 @@ const props = defineProps<{
   modalTitle?: string;
   loading?: boolean;
   modalId?: string;
-  clearAllBtn?: boolean;
+  // Each row gets a cross that deselects it.
+  removable?: boolean;
   disableDescription?: boolean;
   truncateModalDescription?: number;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
@@ -39,15 +37,10 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "selected", value: { id: string; selected: boolean }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
 }>();
 
 const itemsWithSelect: Ref<Record<string, ItemWithSelect>> = ref({});
 const itemsWithSelectList: Ref<ItemWithSelect[]> = ref([]);
-const editionFilter = ref<EditionFilter>("both");
-const itemsWithSelectListFiltered = computed(() =>
-  itemsWithSelectList.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
-);
 
 watch(
   [() => props.initSelectedItems, () => props.itemList],
@@ -79,109 +72,75 @@ function updateItemsWithSelect(
 const selectedItems = computed(() => itemsWithSelectList.value.filter((x) => x.selected));
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
-];
 
 const modalId = props.modalId ? props.modalId : "modifyItemsModal";
 
-const resetPaginationCounter = ref(0);
+const openedCounter = ref(0);
 
-function onModifyClick() {
+const showRemove = computed(() => props.removable && !props.disabled);
+// The title cell spans the remove column, which has no header, so the actions sit at the right edge.
+const titleColspan = computed(() => (props.disableDescription ? 1 : 2) + (showRemove.value ? 1 : 0));
+
+function onRemoveClick(id: string) {
+  itemsWithSelect.value[id].selected = false;
+  emit("selected", { id: id, selected: false });
+}
+
+function onEditClick() {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  modal.showModal(modalId);
-  searchTerm.value = "";
   itemsWithSelectList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
   });
+  openedCounter.value += 1;
+  modal.showModal(modalId);
+}
+
+function onToggle(id: string, selected: boolean) {
+  itemsWithSelect.value[id].selected = selected;
+  emit("selected", { id: id, selected: selected });
 }
 </script>
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1">
-      <div v-if="title">{{ title }}</div>
-      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
-        Modify
-      </ActionButton>
-      <ActionButton
-        v-if="!disabled && clearAllBtn"
-        :disabled="props.loading"
-        class="btn btn-danger btn-sm"
-        @click="emit('clearAll')"
-      >
-        Clear all
-      </ActionButton>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="@container bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr class="text-left">
-            <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-            <th v-if="!disableDescription" class="hidden @sm:table-cell border-b border-neutral-300 py-2 px-2">
-              Description
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-200">
-            <td class="py-2 px-2 border-b border-neutral-300">
-              <TextLink :routeName="routeName" :params="{ id: src.id }">
-                {{ src.name }}
-              </TextLink>
-              <Edition4eBadge v-if="fourEIds?.has(src.id)" />
-            </td>
-            <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">
-              {{ src.description }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
-    <ModalWindow :id="modalId">
-      <template #header> {{ modalTitle }} </template>
-      <TableWithSearch
-        v-model="searchTerm"
-        :fields="modalColumns"
-        :items="itemsWithSelectListFiltered"
-        stackBreakpoint="lg"
-        :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
-      >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
-          Create new
-        </LinkButton>
-        <ReloadButton @click="emit('reload')" />
-        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
-
-        <template #name="{ id }: { id: string }">
-          <TextLink :routeName="routeName" :params="{ id: id }">
-            {{ itemsWithSelect[id].name }}
+    <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="titleColspan">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+      </template>
+      <tr v-for="src in selectedItems" :key="src.id" class="bg-white hover:bg-neutral-100">
+        <td class="py-2 px-2 border-b border-neutral-300">
+          <TextLink :routeName="routeName" :params="{ id: src.id }">
+            {{ src.name }}
           </TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(id)" />
-        </template>
-
-        <template #selected="{ id }: { id: string }">
-          <div>
-            <input
-              v-model="itemsWithSelect[id].selected"
-              type="checkbox"
-              class="w-5 h-5 accent-neutral-600 my-1"
-              @input="emit('selected', { id: id, selected: !itemsWithSelect[id].selected })"
-            />
-          </div>
-        </template>
-      </TableWithSearch>
+          <Edition4eBadge v-if="fourEIds?.has(src.id)" />
+        </td>
+        <td v-if="!disableDescription" class="hidden @sm:table-cell py-2 px-2 border-b border-neutral-300">
+          {{ src.description }}
+        </td>
+        <td v-if="showRemove" class="py-2 px-2 border-b border-neutral-300 w-0">
+          <button
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+            :aria-label="`Remove ${src.name}`"
+            @click="onRemoveClick(src.id)"
+          >
+            <Icon icon="lucide:x" class="size-5" />
+          </button>
+        </td>
+      </tr>
+    </ListTable>
+    <ModalWindow :id="modalId" fullHeight>
+      <template #header> {{ modalTitle }} </template>
+      <ChecklistPicker
+        :items="itemsWithSelectList"
+        :routeName="routeName"
+        :opened="openedCounter"
+        :loading="props.loading"
+        :fourEIds="fourEIds"
+        @toggle="(e) => onToggle(e.id, e.selected)"
+        @reload="emit('reload')"
+      />
     </ModalWindow>
   </div>
 </template>

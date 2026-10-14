@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import SectionButton from "./SectionButton.vue";
 import { Icon } from "@iconify/vue";
-import ActionButton from "./ActionButton.vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 
@@ -17,14 +17,14 @@ const modalId = props.modalId ? props.modalId : "hintModal";
 </script>
 
 <template>
-  <ActionButton v-if="buttonText" class="btn btn-secondary btn-sm" @click="modal.showModal(modalId)">
+  <SectionButton v-if="buttonText" icon="lucide:circle-help" variant="neutral" @click="modal.showModal(modalId)">
     {{ buttonText }}
-  </ActionButton>
+  </SectionButton>
   <button
     v-else
     type="button"
     :aria-label="modalHeader ? `Help: ${modalHeader}` : 'Help'"
-    class="text-neutral-500 bg-neutral-200 hover:text-neutral-950 hover:bg-neutral-400 rounded-full cursor-pointer"
+    class="text-brand bg-parchment hover:bg-parchment-dark rounded-full cursor-pointer"
     @click="modal.showModal(modalId)"
   >
     <Icon icon="lucide:circle-help" class="size-6" />
@@ -33,7 +33,9 @@ const modalId = props.modalId ? props.modalId : "hintModal";
   <ModalWindow :id="modalId">
     <template v-if="modalHeader" #header> {{ modalHeader }} </template>
     <template #buttons>
-      <ActionButton class="btn" @click="modal.hideModal()">Close</ActionButton>
+      <div class="flex justify-end">
+        <SectionButton icon="lucide:x" variant="neutral" @click="modal.hideModal()">Close</SectionButton>
+      </div>
     </template>
     <div>
       <slot />

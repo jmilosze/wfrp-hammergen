@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
-import { computed, ref } from "vue";
+import { computed, reactive, ref, watchEffect } from "vue";
 import ModalWindow from "./ModalWindow.vue";
-import TableWithSearch from "./TableWithSearch.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 import { useModal } from "../composables/modal.ts";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import ListTable from "./ListTable.vue";
+import SectionButton from "./SectionButton.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
-import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
-import LinkButton from "./LinkButton.vue";
-import ReloadButton from "./ReloadButton.vue";
 import FormInput from "./FormInput.vue";
 import { IdValue, MAX_VALUE_LENGTH } from "../utils/idValue.ts";
 import { ValidationStatus } from "../utils/validation.ts";
@@ -31,7 +27,6 @@ const props = defineProps<{
   disabled?: boolean;
   modalTitle?: string;
   loading?: boolean;
-  clearAllBtn?: boolean;
   disableDescription?: boolean;
   truncateModalDescription?: number;
   validationStatus: ValidationStatus;
@@ -45,7 +40,6 @@ const emit = defineEmits<{
   (e: "selected", value: { id: string; selected: boolean }): void;
   (e: "updateValue", value: { index: number; id: string; value: string }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
 }>();
 
 const entities = computed(() => new Map(props.itemList.map((x) => [x.id, x])));
@@ -58,167 +52,129 @@ const selectedRows = computed(() =>
     .sort((a, b) => a.entity.name.localeCompare(b.entity.name) || a.index - b.index),
 );
 
-const counts = computed(() => {
-  const counts: Record<string, number> = {};
+// How many times each entity is selected. Kept as one reactive record updated key by key, so a popup row that reads
+// its own count is redrawn only when that count changes.
+const counts = reactive<Record<string, number>>({});
+watchEffect(() => {
+  const fresh: Record<string, number> = {};
   for (const x of props.selected) {
-    counts[x.id] = (counts[x.id] ?? 0) + 1;
+    fresh[x.id] = (fresh[x.id] ?? 0) + 1;
   }
-  return counts;
+  for (const id of Object.keys(counts)) {
+    if (!(id in fresh)) {
+      delete counts[id];
+    }
+  }
+  for (const [id, count] of Object.entries(fresh)) {
+    if (counts[id] !== count) {
+      counts[id] = count;
+    }
+  }
 });
 
 const showValueColumn = computed(() => selectedRows.value.some((x) => x.entity.hasValue));
+
+// The title cell spans every column (none has a header of its own), so the actions sit at the right edge.
+const titleColspan = computed(
+  () => 1 + (showValueColumn.value ? 1 : 0) + (props.disableDescription ? 0 : 1) + (props.disabled ? 0 : 1),
+);
 
 function isRepeatable(id: string): boolean {
   return Boolean(props.allowRepeat && entities.value.get(id)?.hasValue);
 }
 
-// Modal rows are sorted when the modal opens, so that rows do not jump while selecting.
-const modalItems = ref<{ id: string; name: string; description: string }[]>([]);
-const editionFilter = ref<EditionFilter>("both");
-const modalItemsFiltered = computed(() =>
-  modalItems.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
+// The popup's rows, by name; the popup lists the picked ones first.
+const modalItems = computed(() =>
+  props.itemList
+    .map((x) => ({
+      id: x.id,
+      name: x.name,
+      description: truncate(x.description, props.truncateModalDescription),
+      repeatable: isRepeatable(x.id),
+      get selected() {
+        return x.id in counts;
+      },
+      get count() {
+        return counts[x.id];
+      },
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name)),
 );
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
-];
-
 const modalId = window.crypto.randomUUID();
-const resetPaginationCounter = ref(0);
+const openedCounter = ref(0);
 
-function onModifyClick() {
+function onEditClick() {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  searchTerm.value = "";
-  modalItems.value = props.itemList
-    .map((x) => ({ id: x.id, name: x.name, description: truncate(x.description, props.truncateModalDescription) }))
-    .sort((a, b) => {
-      const aSelected = a.id in counts.value;
-      const bSelected = b.id in counts.value;
-      return aSelected === bSelected ? a.name.localeCompare(b.name) : aSelected ? -1 : 1;
-    });
+  openedCounter.value += 1;
   modal.showModal(modalId);
 }
 
-const thClass = ["border-b", "border-neutral-300", "py-2", "px-2"];
 const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
+// A cell holding an input: the input fills the cell, so the cell has no padding of its own.
+const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
 </script>
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1">
-      <div v-if="title">{{ title }}</div>
-      <ActionButton v-if="!disabled" :disabled="props.loading" class="btn btn-sm" @click="onModifyClick">
-        Modify
-      </ActionButton>
-      <ActionButton
-        v-if="!disabled && clearAllBtn"
-        :disabled="props.loading"
-        class="btn btn-danger btn-sm"
-        @click="emit('clearAll')"
-      >
-        Clear all
-      </ActionButton>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="@container bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
-      <table class="w-full">
-        <thead>
-          <tr class="text-left">
-            <th :class="thClass">Name</th>
-            <th v-if="showValueColumn" :class="thClass">Value</th>
-            <th v-if="!disableDescription" class="hidden @2xl:table-cell" :class="thClass">Description</th>
-            <th v-if="!disabled" :class="thClass" />
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in selectedRows" :key="row.index" class="bg-white hover:bg-neutral-200">
-            <td :class="tdClass">
-              <TextLink :routeName="routeName" :params="{ id: row.entity.id }">
-                {{ row.entity.name }}
-              </TextLink>
-              <Edition4eBadge v-if="fourEIds?.has(row.entity.id)" />
-            </td>
-            <td v-if="showValueColumn" :class="tdClass">
-              <template v-if="row.entity.hasValue">
-                <FormInput
-                  v-if="!disabled"
-                  :modelValue="row.value"
-                  :maxlength="MAX_VALUE_LENGTH"
-                  class="min-w-24 max-w-48"
-                  @update:modelValue="
-                    (value: string) => emit('updateValue', { index: row.index, id: row.entity.id, value: value })
-                  "
-                />
-                <span v-else>{{ row.value }}</span>
-              </template>
-            </td>
-            <td v-if="!disableDescription" class="hidden @2xl:table-cell" :class="tdClass">
-              {{ truncate(row.entity.description, truncateModalDescription) }}
-            </td>
-            <td v-if="!disabled" :class="tdClass" class="w-0">
-              <button
-                class="hover:bg-neutral-700 hover:text-primary-300 p-1 rounded"
-                :aria-label="`Remove ${row.entity.name}`"
-                @click="emit('remove', { index: row.index, id: row.entity.id })"
-              >
-                <Icon icon="lucide:x" class="size-5" />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+    <ListTable :editable="!disabled" :title="title" :loading="props.loading" :titleColspan="titleColspan">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+      </template>
+      <tr v-for="row in selectedRows" :key="row.index" class="bg-white hover:bg-neutral-100">
+        <td :class="tdClass">
+          <TextLink :routeName="routeName" :params="{ id: row.entity.id }">
+            {{ row.entity.name }}
+          </TextLink>
+          <Edition4eBadge v-if="fourEIds?.has(row.entity.id)" />
+        </td>
+        <td v-if="showValueColumn" :class="row.entity.hasValue && !disabled ? tdInputClass : tdClass">
+          <template v-if="row.entity.hasValue">
+            <FormInput
+              v-if="!disabled"
+              :modelValue="row.value"
+              :maxlength="MAX_VALUE_LENGTH"
+              bare
+              class="min-w-24"
+              @update:modelValue="
+                (value: string) => emit('updateValue', { index: row.index, id: row.entity.id, value: value })
+              "
+            />
+            <span v-else>{{ row.value }}</span>
+          </template>
+        </td>
+        <td v-if="!disableDescription" class="hidden @2xl:table-cell" :class="tdClass">
+          {{ truncate(row.entity.description, truncateModalDescription) }}
+        </td>
+        <td v-if="!disabled" :class="tdClass" class="w-0">
+          <button
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+            :aria-label="`Remove ${row.entity.name}`"
+            @click="emit('remove', { index: row.index, id: row.entity.id })"
+          >
+            <Icon icon="lucide:x" class="size-5" />
+          </button>
+        </td>
+      </tr>
+    </ListTable>
+    <div class="text-sm text-error mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
-    <ModalWindow :id="modalId">
+    <ModalWindow :id="modalId" fullHeight>
       <template #header> {{ modalTitle }} </template>
-      <TableWithSearch
-        v-model="searchTerm"
-        :fields="modalColumns"
-        :items="modalItemsFiltered"
-        stackBreakpoint="lg"
+      <ChecklistPicker
+        :items="modalItems"
+        :routeName="routeName"
+        :opened="openedCounter"
         :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
-      >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" :routeName="routeName" :params="{ id: 'create' }" :newWindow="true">
-          Create new
-        </LinkButton>
-        <ReloadButton @click="emit('reload')" />
-        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
-
-        <template #name="{ id, name }: { id: string; name: string }">
-          <TextLink :routeName="routeName" :params="{ id: id }">
-            {{ name }}
-          </TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(id)" />
-        </template>
-
-        <template #selected="{ id }: { id: string }">
-          <div v-if="isRepeatable(id)" class="flex items-center gap-2">
-            <ActionButton class="btn btn-sm" @click="emit('add', id)">Add</ActionButton>
-            <span v-if="counts[id]">×{{ counts[id] }}</span>
-          </div>
-          <div v-else>
-            <input
-              :checked="id in counts"
-              type="checkbox"
-              class="w-5 h-5 accent-neutral-600 my-1"
-              @change="emit('selected', { id: id, selected: !(id in counts) })"
-            />
-          </div>
-        </template>
-      </TableWithSearch>
+        :fourEIds="fourEIds"
+        @toggle="(e) => emit('selected', e)"
+        @add="(id) => emit('add', id)"
+        @reload="emit('reload')"
+      />
     </ModalWindow>
   </div>
 </template>

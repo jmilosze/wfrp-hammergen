@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import ActionButton from "./ActionButton.vue";
+import SectionButton from "./SectionButton.vue";
+import { Icon } from "@iconify/vue";
 import ModalWindow from "./ModalWindow.vue";
 import { useModal } from "../composables/modal.ts";
 import { watch } from "vue";
@@ -30,15 +31,21 @@ watch(
 </script>
 
 <template>
-  <ModalWindow id="deleteModal">
-    <template #header> Delete {{ elementToDelete.name }} </template>
-    <template #buttons>
-      <ActionButton class="btn btn-danger" @click="deleteElement()">Delete</ActionButton>
-      <ActionButton class="btn ml-3" @click="modal.hideModal()">Cancel</ActionButton>
-    </template>
-    <div>
-      Are you sure you want to delete <span class="font-semibold">{{ elementToDelete.name }}?</span>
+  <ModalWindow id="deleteModal" size="xs">
+    <template #header>Delete {{ elementToDelete.name }}?</template>
+    <div class="flex items-start gap-3">
+      <Icon icon="lucide:triangle-alert" class="size-6 shrink-0 text-error" />
+      <p>
+        <span class="font-semibold">{{ elementToDelete.name }}</span> and all its data will be deleted. This can't be
+        undone.
+      </p>
     </div>
+    <template #buttons>
+      <div class="flex justify-end gap-2">
+        <SectionButton icon="lucide:x" variant="neutral" @click="modal.hideModal()">Cancel</SectionButton>
+        <SectionButton icon="lucide:trash-2" variant="danger" @click="deleteElement()">Delete</SectionButton>
+      </div>
+    </template>
   </ModalWindow>
 </template>
 

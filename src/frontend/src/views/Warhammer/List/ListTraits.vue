@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { useSourceQuery, useWhList } from "../../../composables/whList.ts";
+import { splitQuery, useSourceQuery, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
 import { Trait, traitApi } from "../../../services/wh/content/trait.ts";
 import { authRequest } from "../../../services/auth.ts";
-import TableWithSearch from "../../../components/TableWithSearch.vue";
+import BrowseList from "../../../components/BrowseList.vue";
 import Header from "../../../components/PageHeader.vue";
-import { source } from "../../../services/wh/core/source.ts";
 import { computed } from "vue";
 import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
-
-import SelectInput from "../../../components/SelectInput.vue";
+import FilterSidebar from "../../../components/FilterSidebar.vue";
+import { FilterSection } from "../../../components/filterSection.ts";
+import SectionLink from "../../../components/SectionLink.vue";
 import { useAuth } from "../../../composables/auth.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
-import LinkButton from "../../../components/LinkButton.vue";
 import { useRouteQuery } from "@vueuse/router";
 import ToolTip from "../../../components/ToolTip.vue";
 
@@ -20,37 +19,46 @@ const { edition } = useEdition();
 const whList = useWhList(traitApi(authRequest), edition);
 await whList.loadWhList();
 
-const searchTerm = useRouteQuery("search", "");
-const sourceTerm = useSourceQuery(edition);
-
 const auth = useAuth();
 
-const columns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "tooltip", displayName: "Visibility", skipStackedTitle: true },
-  { name: "actions", displayName: "Actions", skipStackedTitle: true },
-];
+// The filters, kept in the query string.
+const searchTerm = useRouteQuery("search", "");
+const sourceTerm = splitQuery(useSourceQuery(edition));
 
-const items = computed(() => {
-  return whList.whList.value
-    .filter((wh) => sourceTerm.value === "" || sourceTerm.value in wh.source)
-    .map((x) => formatTraitRow(x))
-    .sort((a, b) => a.name.localeCompare(b.name));
+const filters = computed({
+  get: () => ({ source: sourceTerm.value }),
+  set: (value: Record<string, string[]>) => {
+    sourceTerm.value = value.source ?? [];
+  },
 });
+
+const items = computed(() =>
+  whList.whList.value
+    .filter((wh) => sourceTerm.value.length === 0 || sourceTerm.value.some((x) => x in wh.source))
+    .map((x) => formatTraitRow(x))
+    .sort((a, b) => a.name.localeCompare(b.name)),
+);
 
 function formatTraitRow(trait: Trait) {
   return {
-    name: trait.name,
-    source: Object.keys(trait.source)
-      .map((x) => source[x])
-      .join(", "),
-    description: trait.description,
     id: trait.id,
+    name: trait.name,
+    meta: "",
+    description: trait.description,
     ownerId: trait.ownerId,
     visibility: trait.visibility,
   };
 }
+
+// Sources are offered when some trait has them; the only filter, so it starts open.
+const sections = computed<FilterSection[]>(() => [
+  {
+    key: "source",
+    title: "Source",
+    collapsed: false,
+    options: whList.filteredSourceOptions.value.filter((x) => x.value !== ""),
+  },
+]);
 </script>
 
 <template>
@@ -62,28 +70,31 @@ function formatTraitRow(trait: Trait) {
   >
     {{ whList.apiError.value }}
   </AlertBlock>
-  <Header title="Creature traits" />
-  <SelectInput v-model="sourceTerm" :options="whList.filteredSourceOptions.value" class="mb-2 mx-1" />
-  <TableWithSearch
-    v-model="searchTerm"
-    :fields="columns"
-    :items="items"
-    stackBreakpoint="4xl"
-    rowRouteName="trait"
-    class="mx-1"
-  >
-    <LinkButton v-if="auth.loggedIn.value" class="mr-2 mb-2 shrink-0 btn" routeName="trait" :params="{ id: 'create' }">
-      Create new
-    </LinkButton>
+  <Header title="Creature Traits" />
+  <div class="flex flex-col @3xl/page:flex-row gap-4">
+    <FilterSidebar v-model="filters" :sections="sections">
+      <template v-if="auth.loggedIn.value" #actions>
+        <SectionLink icon="lucide:plus" variant="dark" routeName="trait" :params="{ id: 'create' }">
+          Create new
+        </SectionLink>
+      </template>
+    </FilterSidebar>
+    <BrowseList v-model="searchTerm" :items="items" routeName="trait" class="flex-1 min-w-0">
+      <!-- Beside the search, except on very small screens, where it is beside the Filters button. -->
+      <span v-if="auth.loggedIn.value" class="hidden @md/page:flex">
+        <SectionLink icon="lucide:plus" variant="dark" routeName="trait" :params="{ id: 'create' }">
+          Create new
+        </SectionLink>
+      </span>
 
-    <template #actions="{ id }: { id: string }">
-      <ActionButtonsNonCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
-    </template>
-
-    <template #tooltip="{ ownerId, visibility }: { ownerId: string; visibility?: number }">
-      <ToolTip :ownerId="ownerId" :visibility="visibility" />
-    </template>
-  </TableWithSearch>
+      <template #badge="{ ownerId, visibility }: { ownerId: string; visibility: number }">
+        <ToolTip :ownerId="ownerId" :visibility="visibility" iconOnly />
+      </template>
+      <template #end="{ id }: { id: string }">
+        <ActionButtonsNonCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
+      </template>
+    </BrowseList>
+  </div>
 </template>
 
 <style scoped></style>

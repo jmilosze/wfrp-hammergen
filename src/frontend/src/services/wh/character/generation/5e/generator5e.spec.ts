@@ -40,8 +40,9 @@ describe("generateCharacter5e", () => {
       expect(character.talents).toHaveProperty("rand1");
       expect(character.talents).toHaveProperty("rand2");
       expect(Object.keys(character.talents).filter((x) => x.startsWith("t1")).length).toBe(1);
-      expect(character.equippedItems).toHaveProperty("clothing");
-      expect(Object.keys(character.equippedItems).some((x) => x === "hood" || x === "mask")).toBe(true);
+      expect(character.equippedItems).toEqual({});
+      expect(character.carriedItems).toHaveProperty("clothing");
+      expect(Object.keys(character.carriedItems).some((x) => x === "hood" || x === "mask")).toBe(true);
       expect(character.carriedItems.match).toBeGreaterThanOrEqual(1);
     }
   });

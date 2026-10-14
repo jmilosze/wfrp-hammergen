@@ -5,6 +5,7 @@ import TablePagination from "./TablePagination.vue";
 import { refDebounced } from "@vueuse/core";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 import { RouterLink } from "vue-router";
+import { Icon } from "@iconify/vue";
 
 export type StackBreakpoint = "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 
@@ -123,17 +124,25 @@ async function scrollToTop(): Promise<void> {
 
 <template>
   <div ref="tableRoot" class="@container">
-    <div class="flex flex-wrap">
-      <slot />
-      <input
-        v-model="searchTerm"
-        type="text"
-        placeholder="Type to Search"
-        class="border border-neutral-300 rounded h-10 px-2 grow focus:border-transparent focus:outline-neutral-700 focus:outline-2 w-32"
-      />
+    <!-- The search field in the style of a sheet cell, with the page's buttons (the slot) beside it. -->
+    <div class="flex flex-wrap items-stretch gap-2">
+      <label
+        class="flex flex-[999_1_0%] min-w-60 border border-neutral-400 bg-white focus-within:outline-2 focus-within:-outline-offset-2 outline-neutral-700"
+      >
+        <span class="flex items-center gap-1 px-2 border-r border-neutral-300 font-semibold">
+          <Icon icon="lucide:search" class="size-4" />
+          <!-- Only the magnifying glass on small screens; the word stays for screen readers. -->
+          <span class="sr-only @md:not-sr-only">Search</span>
+        </span>
+        <input v-model="searchTerm" type="text" class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-white" />
+      </label>
+      <div v-if="$slots.default" class="contents">
+        <slot />
+      </div>
     </div>
 
-    <div v-if="props.loading" class="flex justify-center">
+    <!-- Only before there are rows: on a reload the rows stay in place and the reload button shows the progress. -->
+    <div v-if="props.loading && searchedItems.length === 0" class="flex justify-center">
       <SpinnerAnimation class="w-14 m-2" />
     </div>
     <div v-if="searchedItems.length > 0">
@@ -145,11 +154,17 @@ async function scrollToTop(): Promise<void> {
         class="mt-3"
         @update:modelValue="scrollToTop"
       />
-      <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+      <div
+        class="mt-3 bg-white rounded-lg border border-neutral-300 overflow-hidden min-w-fit [&_tbody>tr:last-child>td]:border-b-0"
+      >
         <table class="w-full" :class="[desktopTableClass, props.rowRouteName ? 'table-clickable' : '']">
           <thead>
-            <tr class="text-left">
-              <th v-for="field in fields" :key="field.name" class="border-b border-neutral-300 py-2 px-5">
+            <tr class="text-left bg-neutral-100">
+              <th
+                v-for="field in fields"
+                :key="field.name"
+                class="border-b border-neutral-300 py-1.5 px-3 text-xs font-semibold uppercase tracking-wider text-neutral-600"
+              >
                 {{ field.displayName }}
               </th>
             </tr>
@@ -158,7 +173,7 @@ async function scrollToTop(): Promise<void> {
             <tr
               v-for="item in itemsOnPage"
               :key="item.id"
-              class="bg-white hover:bg-neutral-200"
+              class="bg-white hover:bg-neutral-100"
               :class="[props.rowRouteName ? 'cursor-pointer table-row-clickable' : '']"
             >
               <td
@@ -168,14 +183,14 @@ async function scrollToTop(): Promise<void> {
                 :class="[
                   field.name === 'name' ? 'wrap-break-word' : '',
                   field.name === 'description' ? 'wrap-anywhere' : '',
-                  props.rowRouteName ? 'table-cell-link-container' : 'py-2 px-5',
+                  props.rowRouteName && field.name !== 'actions' ? 'table-cell-link-container' : 'py-2 px-3',
                 ]"
               >
                 <RouterLink
                   v-if="props.rowRouteName && field.name !== 'actions'"
                   :to="{ name: props.rowRouteName, params: { id: item.id } }"
                   :tabindex="fieldIndex === 0 ? undefined : -1"
-                  class="py-2 px-5 flex items-center w-full h-full text-inherit no-underline hover:text-inherit"
+                  class="py-2 px-3 flex items-center w-full h-full text-inherit no-underline hover:text-inherit"
                 >
                   <slot :name="field.name" v-bind="item">{{ String(item[field.name]) }}</slot>
                 </RouterLink>
@@ -198,14 +213,14 @@ async function scrollToTop(): Promise<void> {
         <table class="w-full" :class="mobileTableClass">
           <thead>
             <tr class="text-left">
-              <th class="border-b border-neutral-300 py-2 px-5" />
+              <th class="border-b border-neutral-300 py-1" />
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="item in itemsOnPage"
               :key="item.id"
-              class="bg-white hover:bg-neutral-200"
+              class="bg-white hover:bg-neutral-100"
               :class="[props.rowRouteName ? 'cursor-pointer' : '']"
             >
               <td class="text-sm">
@@ -214,7 +229,7 @@ async function scrollToTop(): Promise<void> {
                     v-if="props.rowRouteName && field.name !== 'actions'"
                     :to="{ name: props.rowRouteName, params: { id: item.id } }"
                     :tabindex="fieldIndex === 0 ? undefined : -1"
-                    class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2 text-inherit no-underline hover:text-inherit"
+                    class="py-2 px-3 border-b border-neutral-300 flex items-center gap-2 text-inherit no-underline hover:text-inherit"
                     :class="[
                       field.name === 'name' ? 'wrap-break-word' : '',
                       field.name === 'description' ? 'wrap-anywhere' : '',
@@ -225,7 +240,7 @@ async function scrollToTop(): Promise<void> {
                   </RouterLink>
                   <div
                     v-else
-                    class="py-2 px-5 border-b border-neutral-300 flex items-center gap-2"
+                    class="py-2 px-3 border-b border-neutral-300 flex items-center gap-2"
                     :class="[
                       field.name === 'name' ? 'wrap-break-word' : '',
                       field.name === 'description' ? 'wrap-anywhere' : '',
@@ -245,12 +260,11 @@ async function scrollToTop(): Promise<void> {
                     </div>
                   </div>
                 </template>
-                <div class="border-b-4 border-neutral-400" />
+                <div class="border-b-2 border-neutral-300" />
               </td>
             </tr>
           </tbody>
         </table>
-        <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
       </div>
       <TablePagination
         v-if="searchedItems.length > rowsPerPage"

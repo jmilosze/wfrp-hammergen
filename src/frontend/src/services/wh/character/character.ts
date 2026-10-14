@@ -14,7 +14,6 @@ import {
 import { Visibility, WhEntity } from "../core/entity.ts";
 import { sourceIsValid } from "../core/source.ts";
 import { CharacterModifiers, ModifierEffect } from "../core/characterModifiers.ts";
-import { clearObject } from "../../../utils/object.ts";
 import { AxiosInstance } from "axios";
 import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
 import { ValidationStatus } from "../../../utils/validation.ts";
@@ -355,17 +354,12 @@ export class Character extends WhEntity {
     return sumAttributes(sumAttributes(this.getBaseAttributes(), this.attributeAdvances), this.getModifierAttributes());
   }
 
-  getHardyRanks(): number {
+  // getEffectRanks counts an effect over talents (per rank taken), mutations and traits.
+  getEffectRanks(effect: ModifierEffect): number {
     return (
-      Object.values(this.modifiers.talents).reduce(
-        (a, v) => a + v.number * (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
-        0,
-      ) +
-      Object.values(this.modifiers.mutations).reduce(
-        (a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0),
-        0,
-      ) +
-      Object.values(this.modifiers.traits).reduce((a, v) => a + (v.value.effects.has(ModifierEffect.Hardy) ? 1 : 0), 0)
+      Object.values(this.modifiers.talents).reduce((a, v) => a + v.number * (v.value.effects.has(effect) ? 1 : 0), 0) +
+      Object.values(this.modifiers.mutations).reduce((a, v) => a + (v.value.effects.has(effect) ? 1 : 0), 0) +
+      Object.values(this.modifiers.traits).reduce((a, v) => a + (v.value.effects.has(effect) ? 1 : 0), 0)
     );
   }
 
@@ -391,7 +385,17 @@ export class Character extends WhEntity {
       attributeTotal.T,
       attributeTotal.WP,
       attributeTotal.S,
-      this.getHardyRanks(),
+      this.getEffectRanks(ModifierEffect.Hardy),
+    );
+  }
+
+  getMaxEncumbrance(): number {
+    const attributeTotal = this.getTotalAttributes();
+    return rulesFor(this.edition).getMaxEncumbrance(
+      attributeTotal.S,
+      attributeTotal.T,
+      this.getEffectRanks(ModifierEffect.StrongBack),
+      this.getEffectRanks(ModifierEffect.Sturdy),
     );
   }
 
@@ -421,24 +425,8 @@ export class Character extends WhEntity {
     updateSet(this.spells, id, selected);
   }
 
-  clearSpells(replace = true): void {
-    if (replace) {
-      this.spells = new Set<string>();
-    } else {
-      this.spells.clear();
-    }
-  }
-
   updatePrayers(id: string, selected: boolean): void {
     updateSet(this.prayers, id, selected);
-  }
-
-  clearPrayers(replace = true): void {
-    if (replace) {
-      this.prayers = new Set<string>();
-    } else {
-      this.prayers.clear();
-    }
   }
 
   hasTrait(id: string): boolean {
@@ -480,11 +468,6 @@ export class Character extends WhEntity {
     this.traits[index].value = value;
   }
 
-  clearTraits(): void {
-    this.traits = [];
-    this.modifiers.traits = {};
-  }
-
   updateMutations(id: string, selected: boolean, mutations: Mutation[]): void {
     updateSet(this.mutations, id, selected);
     if (!selected) {
@@ -499,25 +482,8 @@ export class Character extends WhEntity {
     }
   }
 
-  clearMutations(replace = true): void {
-    if (replace) {
-      this.mutations = new Set<string>();
-    } else {
-      this.mutations.clear();
-    }
-    this.modifiers.mutations = {};
-  }
-
   updateSkills(id: string, number: number): void {
     updateIdNumberRecord(this.skills, { id: id, number: number });
-  }
-
-  clearSkills(replace = true): void {
-    if (replace) {
-      this.skills = {} as Record<string, number>;
-    } else {
-      clearObject(this.skills);
-    }
   }
 
   updateTalents(id: string, number: number, talents: Talent[]): void {
@@ -534,15 +500,6 @@ export class Character extends WhEntity {
     }
   }
 
-  clearTalents(replace: boolean): void {
-    if (replace) {
-      this.talents = {} as Record<string, number>;
-    } else {
-      clearObject(this.talents);
-    }
-    this.modifiers.talents = {};
-  }
-
   updateItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {
     switch (location) {
       case "equipped":
@@ -556,18 +513,6 @@ export class Character extends WhEntity {
         return;
       default:
         return;
-    }
-  }
-
-  clearItems(replace: boolean): void {
-    if (replace) {
-      this.equippedItems = {} as Record<string, number>;
-      this.carriedItems = {} as Record<string, number>;
-      this.storedItems = {} as Record<string, number>;
-    } else {
-      clearObject(this.equippedItems);
-      clearObject(this.carriedItems);
-      clearObject(this.storedItems);
     }
   }
 

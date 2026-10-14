@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import SectionButton from "../../components/SectionButton.vue";
 import Header from "../../components/PageHeader.vue";
 import AfterSubmit from "../../components/AfterSubmit.vue";
 import { computed, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { authRequest } from "../../services/auth.ts";
-import ActionButton from "../../components/ActionButton.vue";
 import FormInput from "../../components/FormInput.vue";
 import { User, UserApi } from "../../services/user.ts";
 import { setValidationStatus } from "../../utils/validation.ts";
 import { UnauthorizedError } from "../../composables/auth.ts";
 import AlertBlock from "../../components/AlertBlock.vue";
+import AccountCard from "../../components/AccountCard.vue";
+import { Icon } from "@iconify/vue";
 
 const apiError = ref("");
 const showApiError = ref(true);
@@ -35,6 +37,12 @@ try {
   originalUser.value = user.value.copy();
 } catch {
   apiError.value = "Error. Could not pull data from server.";
+}
+
+// An email split after its "@", where it may wrap.
+function emailParts(email: string): [string, string] {
+  const at = email.indexOf("@") + 1;
+  return [email.slice(0, at), email.slice(at)];
 }
 
 function removeUsername(username: string) {
@@ -93,75 +101,85 @@ async function submitForm() {
   </AlertBlock>
   <Header title="Linked users">
     <p>
-      In this page, you can add "linked users". You need to know their username (the email they used to register). When
-      you add a user, you can see all their shared characters and compendium items (skills, talents, etc.) in read-only
-      mode. This means you can, for example, equip a trapping made by someone else. After adding all users, click apply
-      changes to save the new user list.
+      Add the users whose shared content you want to see, by their username (the email they registered with). You then
+      see all their shared characters and compendium entries (skills, talents and so on) read-only, so you can, for
+      example, equip a trapping someone else made. Apply the changes once you have added everyone.
     </p>
     <p class="mt-3">
-      If you want to share your characters or compendium items, all you need to do is mark them as shared (checkbox in
-      the edit form) and provide your username to whoever you want to share it with. They will need to add your username
-      here and will be able to see all shared content in read-only mode.
-    </p>
-    <p class="text-xl mt-3">Important note about sharing</p>
-    <p class="mt-3">
-      When you share a custom compendium item (for example a trapping), make sure that you also share all other custom
-      compendium items it includes (for example a custom quality of that trapping). If you do not, other users will be
-      able to see the shared trapping but it will not have your custom quality.
+      To share your own characters or compendium entries, mark them as shared in their editor and give your username to
+      whoever you want to share with. Once they add you here, they see all your shared content read-only.
     </p>
   </Header>
-  <div class="pt-2 overflow-x-auto select-none">
-    <div class="mt-3 bg-neutral-50 rounded-xl border border-neutral-200 min-w-fit">
-      <table class="table-auto w-full">
-        <thead>
-          <tr>
-            <th class="border-b border-neutral-200 p-2">Linked users</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="sharedAccount in user.sharedAccounts" :key="sharedAccount">
-            <td
-              class="py-2 px-5 hover:bg-neutral-200 border-b border-neutral-200 bg-white flex flex-col items-stretch md:justify-between flex-wrap md:flex-row md:gap-2"
-            >
-              <span class="flex-auto text-center md:text-start">{{ sharedAccount }}</span>
-              <ActionButton class="mt-2 md:mt-0 btn btn-sm btn-danger" @click="removeUsername(sharedAccount)">
-                Remove
-              </ActionButton>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
+  <div class="my-4 p-4 border-l-4 border-brand bg-parchment-light rounded">
+    <p class="font-semibold">Share what your content uses</p>
+    <p class="mt-1">
+      When you share a custom compendium entry (for example a trapping), share the custom entries it uses as well (for
+      example a custom quality of that trapping). Otherwise others see the trapping without your quality.
+    </p>
   </div>
-  <div class="pt-2 md:w-96">
+  <AccountCard title="Your linked users" icon="lucide:users" class="max-w-2xl">
     <AfterSubmit
       :visible="showApplyChangesAfterSubmit"
       :submissionState="applyChangesSubmissionState"
-      class="mt-2"
       @close="showApplyChangesAfterSubmit = false"
     />
     <AfterSubmit
       :visible="showAddUserAfterSubmit"
       :submissionState="addUserSubmissionState"
-      class="mt-2"
       @close="showAddUserAfterSubmit = false"
     />
+    <ul class="list-none m-0 p-0 bg-white border border-neutral-300 rounded-lg">
+      <li
+        v-for="sharedAccount in user.sharedAccounts"
+        :key="sharedAccount"
+        class="flex items-center gap-3 px-3 py-2 border-b border-neutral-200 last:border-b-0 hover:bg-neutral-100"
+      >
+        <Icon icon="lucide:user" class="hidden sm:block size-4 shrink-0 text-neutral-500" />
+        <!-- A long email wraps after the "@" rather than anywhere; only a part too long for a line breaks inside. -->
+        <span class="flex-1 min-w-0 wrap-break-word">
+          {{ emailParts(sharedAccount)[0] }}<wbr />{{ emailParts(sharedAccount)[1] }}
+        </span>
+        <button
+          type="button"
+          class="rounded border border-neutral-400 bg-white p-1.5 text-neutral-800 hover:bg-neutral-200 cursor-pointer"
+          :title="`Remove ${sharedAccount}`"
+          :aria-label="`Remove ${sharedAccount}`"
+          @click="removeUsername(sharedAccount)"
+        >
+          <Icon icon="lucide:x" class="size-4" />
+        </button>
+      </li>
+      <li v-if="user.sharedAccounts.length === 0" class="px-3 py-2 text-neutral-500">No linked users yet.</li>
+    </ul>
     <FormInput
       v-model="newSharedAccount"
-      title="Add new user (email)"
+      title="Add a user (their email)"
       :validationStatus="validNewSharedAccount"
-      class="mt-3"
       @input="newSharedAccount = ($event.target as HTMLInputElement).value.trim()"
     >
-      <ActionButton class="ml-2 btn" :spinner="addUserSubmissionState.status === 'inProgress'" @click="addUsername">
+      <SectionButton
+        icon="lucide:plus"
+        variant="light"
+        iconOnlyWhenNarrow
+        aria-label="Add user"
+        class="ml-2 h-full"
+        :busy="addUserSubmissionState.status === 'inProgress'"
+        @click="addUsername"
+      >
         Add
-      </ActionButton>
+      </SectionButton>
     </FormInput>
-    <ActionButton class="mt-3 btn" :spinner="applyChangesSubmissionState.status === 'inProgress'" @click="submitForm">
+    <SectionButton
+      icon="lucide:check"
+      variant="light"
+      size="lg"
+      class="self-start"
+      :busy="applyChangesSubmissionState.status === 'inProgress'"
+      @click="submitForm"
+    >
       Apply changes
-    </ActionButton>
-  </div>
+    </SectionButton>
+  </AccountCard>
 </template>
 
 <style scoped></style>

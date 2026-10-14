@@ -4,6 +4,9 @@ import { Icon } from "@iconify/vue";
 const props = defineProps<{
   id: string;
   size?: "lg" | "md" | "sm" | "xs";
+  // fullHeight: the window keeps its full height whatever its content, so it doesn't move when the content shrinks,
+  // e.g. while searching a list.
+  fullHeight?: boolean;
 }>();
 
 const modal = useModal();
@@ -19,11 +22,12 @@ if (props.size === "md") {
 </script>
 
 <template>
-  <Teleport v-if="id === modal.modalId.value" to="#modal">
+  <!-- Only the open popup is rendered: a closed one would otherwise be redrawn on every change of what it shows. -->
+  <Teleport v-if="modal.show.value && id === modal.modalId.value" to="#modal">
     <div class="w-full flex justify-center">
       <div
         class="bg-white rounded-lg shadow border mx-5 my-5 border-neutral-500 flex flex-col max-h-[95svh] w-full"
-        :class="[modalSize]"
+        :class="[modalSize, { 'h-[95svh]': fullHeight }]"
         @click.stop
       >
         <div class="p-3 flex justify-between">
@@ -36,7 +40,7 @@ if (props.size === "md") {
           </button>
         </div>
         <div class="border-b border-neutral-200 w-full" />
-        <div class="p-3 overflow-auto">
+        <div class="p-3 overflow-auto grow">
           <slot />
         </div>
         <div class="border-b border-neutral-200 w-full" />

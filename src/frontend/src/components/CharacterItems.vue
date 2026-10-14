@@ -1,33 +1,29 @@
 <script setup lang="ts">
-import { computed, ref, Ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
-import ActionButton from "./ActionButton.vue";
-import TableWithSearch from "./TableWithSearch.vue";
-import FormInput from "./FormInput.vue";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import SectionButton from "./SectionButton.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
+import { Icon } from "@iconify/vue";
+import SectionCard from "./SectionCard.vue";
 import { Item, printItemType } from "../services/wh/content/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
-import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
-import ReloadButton from "./ReloadButton.vue";
-import LinkButton from "./LinkButton.vue";
 
 const DESC_CHARS = 100;
 
-type ItemWithNumber = {
+type Location = "equipped" | "carried" | "stored";
+
+// What the trappings show of an item; built once per item list.
+type ItemInfo = {
   id: string;
   name: string;
   description: string;
+  itemType: string;
   canBeEquipped: boolean;
   canBeCarried: boolean;
-  itemType: string;
-  equipped: number;
-  carried: number;
-  stored: number;
 };
 
 const props = defineProps<{
@@ -49,296 +45,248 @@ const emit = defineEmits<{
   (e: "carriedUpdated", value: { id: string; number: number }): void;
   (e: "storedUpdated", value: { id: string; number: number }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
   (e: "addClassItems"): void;
 }>();
 
-function anySelected(itemsWithNumber: ItemWithNumber): boolean {
-  return itemsWithNumber.equipped !== 0 || itemsWithNumber.carried !== 0 || itemsWithNumber.stored !== 0;
+// The sections read the character's records (equipped, carried and stored: id to quantity) directly. The parent changes
+// them in place, which updates the sections; nothing here copies the item list on an edit.
+const records = computed<Record<Location, Record<string, number>>>(() => ({
+  equipped: props.initEquipped,
+  carried: props.initCarried,
+  stored: props.initStored,
+}));
+
+const itemInfo = computed(
+  () =>
+    new Map<string, ItemInfo>(
+      props.itemList.map((item) => [
+        item.id,
+        {
+          id: item.id,
+          name: item.name,
+          description: truncate(item.description, DESC_CHARS),
+          itemType: printItemType(item.type),
+          canBeEquipped: item.canBeEquipped(),
+          canBeCarried: item.canBeCarried(),
+        },
+      ]),
+    ),
+);
+
+// The trappings of a location, by name; entries of unknown items are skipped.
+function sectionItems(location: Location) {
+  return Object.entries(records.value[location])
+    .flatMap(([id, number]) => {
+      const info = itemInfo.value.get(id);
+      return info ? [{ ...info, number: number }] : [];
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
-
-const itemsWithNumber: Ref<Record<string, ItemWithNumber>> = ref({});
-const itemsWithNumberList: Ref<ItemWithNumber[]> = ref([]);
-const editionFilter = ref<EditionFilter>("both");
-const itemsWithNumberListFiltered = computed(() =>
-  itemsWithNumberList.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
-);
-
-function updateItemsWithNumber(
-  selectedEquipped: Record<string, number>,
-  selectedCarried: Record<string, number>,
-  selectedStored: Record<string, number>,
-  itemList: Item[],
-) {
-  itemsWithNumber.value = {};
-  for (const item of itemList) {
-    itemsWithNumber.value[item.id] = {
-      id: item.id,
-      name: item.name,
-      description: truncate(item.description, DESC_CHARS),
-      equipped: 0,
-      carried: 0,
-      stored: 0,
-      itemType: printItemType(item.type),
-      canBeEquipped: item.canBeEquipped(),
-      canBeCarried: item.canBeCarried(),
-    };
-    if (item.id in selectedEquipped) {
-      itemsWithNumber.value[item.id].equipped = selectedEquipped[item.id];
-    }
-    if (item.id in selectedCarried) {
-      itemsWithNumber.value[item.id].carried = selectedCarried[item.id];
-    }
-    if (item.id in selectedStored) {
-      itemsWithNumber.value[item.id].stored = selectedStored[item.id];
-    }
-  }
-  itemsWithNumberList.value = Object.values(itemsWithNumber.value).sort((a, b) => {
-    return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
-  });
-}
-
-watch(
-  () => props.initEquipped,
-  (newVal) => {
-    updateItemsWithNumber(newVal, props.initCarried, props.initStored, props.itemList);
-  },
-  { immediate: true },
-);
-
-watch(
-  () => props.initCarried,
-  (newVal) => {
-    updateItemsWithNumber(props.initEquipped, newVal, props.initStored, props.itemList);
-  },
-  { immediate: true },
-);
-
-watch(
-  () => props.initStored,
-  (newVal) => {
-    updateItemsWithNumber(props.initEquipped, props.initCarried, newVal, props.itemList);
-  },
-  { immediate: true },
-);
-
-watch(
-  () => props.itemList,
-  (newVal) => {
-    updateItemsWithNumber(props.initEquipped, props.initCarried, props.initStored, newVal);
-  },
-  { immediate: true },
-);
-
-const selectedItems = computed(() => itemsWithNumberList.value.filter((x) => anySelected(x)));
-const selectedEquipped = computed(() => selectedItems.value.filter((x) => x.equipped !== 0));
-const selectedStored = computed(() => selectedItems.value.filter((x) => x.stored !== 0));
-const selectedCarried = computed(() => selectedItems.value.filter((x) => x.carried !== 0));
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "equipped", displayName: "Equipped", skipStackedTitle: false },
-  { name: "carried", displayName: "Carried", skipStackedTitle: false },
-  { name: "stored", displayName: "Stored", skipStackedTitle: false },
-];
 
-const resetPaginationCounter = ref(0);
+// Trappings are added straight to any of the three lists, each with its own popup. Moves go through Carried: Equip and
+// Unequip between Carried and Equipped, Store and Carry between Carried and Stored/Assets. Each move shifts one
+// trapping.
 
-function onModifyClick() {
+const PICKER_TITLES: Record<Location, string> = {
+  equipped: "Equipped trappings",
+  carried: "Carried trappings",
+  stored: "Stored trappings and assets",
+};
+
+const pickerLocation = ref<Location>("carried");
+const openedCounter = ref(0);
+
+function onAddClick(location: Location) {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  modal.showModal("modifyItemsModal");
-  searchTerm.value = "";
-  itemsWithNumberList.value.sort((a, b) => {
-    return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
-  });
+  pickerLocation.value = location;
+  openedCounter.value += 1;
+  modal.showModal("addItemsModal");
 }
+
+// The popup's rows are made when it opens (and when the item list changes); each reads its quantity from the record as
+// it is shown, so typing a quantity doesn't rebuild the rows.
+const pickerItems = computed(() => {
+  const location = pickerLocation.value;
+  const record = records.value[location];
+  return [...itemInfo.value.values()]
+    .filter(
+      (x) =>
+        location === "stored" ||
+        (location === "carried" && x.canBeCarried) ||
+        (location === "equipped" && x.canBeEquipped),
+    )
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((x) => ({
+      id: x.id,
+      name: x.name,
+      description: x.description,
+      note: x.itemType,
+      get number() {
+        return record[x.id] ?? 0;
+      },
+      get selected() {
+        return (record[x.id] ?? 0) !== 0;
+      },
+    }));
+});
+
+function setNumber(id: string, location: Location, number: number) {
+  if (location === "equipped") {
+    emit("equippedUpdated", { id: id, number: number });
+  } else if (location === "carried") {
+    emit("carriedUpdated", { id: id, number: number });
+  } else {
+    emit("storedUpdated", { id: id, number: number });
+  }
+}
+
+function move(id: string, from: Location, to: Location) {
+  setNumber(id, from, (records.value[from][id] ?? 0) - 1);
+  setNumber(id, to, (records.value[to][id] ?? 0) + 1);
+}
+
+// An emptied quantity gives NaN, which validation then reports.
+function onQuantityInput(id: string, location: Location, event: Event) {
+  if (!(event.target instanceof HTMLInputElement)) {
+    return;
+  }
+  setNumber(id, location, event.target.value === "" ? Number.NaN : Number(event.target.value));
+}
+
+const sections = computed(() => [
+  { location: "equipped" as const, title: "Equipped", items: sectionItems("equipped") },
+  { location: "carried" as const, title: "Carried", items: sectionItems("carried") },
+  { location: "stored" as const, title: "Stored/Assets", items: sectionItems("stored") },
+]);
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center gap-2 mb-1 flex-wrap">
-      <div>Trappings</div>
-      <div class="flex gap-2 flex-wrap">
-        <ActionButton v-if="!disabled" :disabled="props.loading" class="flex-1 btn btn-sm" @click="onModifyClick">
-          <span class="flex-1">Modify</span>
-        </ActionButton>
-        <ActionButton
-          v-if="!disabled"
-          :disabled="props.loading"
-          class="whitespace-nowrap flex-1 btn btn-sm"
-          @click="emit('addClassItems')"
+  <div class="@container">
+    <SectionCard title="Trappings" :loading="props.loading">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:plus" variant="neutral" :disabled="props.loading" @click="emit('addClassItems')">
+          Add class trappings
+        </SectionButton>
+      </template>
+      <template v-for="section in sections" :key="section.location">
+        <div
+          class="flex flex-wrap items-center justify-between gap-2 px-2 py-1 bg-neutral-100 border-b border-neutral-300 font-semibold"
         >
-          <span class="flex-1">Add class items</span>
-        </ActionButton>
-        <ActionButton
-          v-if="!disabled"
-          :disabled="props.loading"
-          class="whitespace-nowrap flex-1 btn btn-danger btn-sm"
-          @click="emit('clearAll')"
+          {{ section.title }}
+          <SectionButton
+            v-if="!disabled"
+            icon="lucide:plus"
+            :disabled="props.loading"
+            @click="onAddClick(section.location)"
+          >
+            Add
+          </SectionButton>
+        </div>
+        <div v-if="section.items.length === 0" class="px-2 py-2 border-b border-neutral-300 text-neutral-500">None</div>
+        <div
+          v-for="item in section.items"
+          :key="item.id"
+          class="flex flex-wrap items-center gap-x-2 gap-y-1 px-2 py-1 min-h-10 border-b border-neutral-300 bg-white hover:bg-neutral-100"
         >
-          <span class="flex-1">Clear all</span>
-        </ActionButton>
-      </div>
-    </div>
-    <div class="border border-neutral-300 rounded p-2">
-      <div v-if="props.loading" class="flex justify-center">
-        <SpinnerAnimation class="w-14 m-2" />
-      </div>
-      <div v-else class="flex flex-col md:flex-row gap-4">
-        <div class="flex-1">
-          <div class="mb-1">Equipped</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
-            <table class="w-full">
-              <thead>
-                <tr class="text-left">
-                  <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-                  <th class="border-b border-neutral-300 py-2 px-2 w-px whitespace-nowrap">Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="src in selectedEquipped" :key="src.id" class="bg-white hover:bg-neutral-200">
-                  <td class="py-2 px-2 border-b border-neutral-300">
-                    <TextLink routeName="item" :params="{ id: src.id }">
-                      {{ src.name }}
-                    </TextLink>
-                    <Edition4eBadge v-if="fourEIds?.has(src.id)" />
-                  </td>
-                  <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.equipped }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-          </div>
+          <span class="flex-1 min-w-20">
+            <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>
+            <Edition4eBadge v-if="fourEIds?.has(item.id)" />
+          </span>
+          <!-- The move buttons sit just before the quantity; quantity and cross end every row, so they line up. -->
+          <span v-if="!disabled" class="flex items-center gap-2">
+            <SectionButton
+              v-if="section.location === 'equipped'"
+              icon="lucide:arrow-down"
+              variant="neutral"
+              iconOnlyWhenNarrow
+              :disabled="!(item.number >= 1)"
+              @click="move(item.id, 'equipped', 'carried')"
+            >
+              Unequip
+            </SectionButton>
+            <template v-if="section.location === 'carried'">
+              <SectionButton
+                icon="lucide:arrow-up"
+                variant="neutral"
+                iconOnlyWhenNarrow
+                :disabled="!item.canBeEquipped || !(item.number >= 1)"
+                :title="item.canBeEquipped ? undefined : 'This trapping can\'t be equipped'"
+                @click="move(item.id, 'carried', 'equipped')"
+              >
+                Equip
+              </SectionButton>
+              <SectionButton
+                icon="lucide:arrow-down"
+                variant="neutral"
+                iconOnlyWhenNarrow
+                :disabled="!(item.number >= 1)"
+                @click="move(item.id, 'carried', 'stored')"
+              >
+                Store
+              </SectionButton>
+            </template>
+            <SectionButton
+              v-if="section.location === 'stored'"
+              icon="lucide:arrow-up"
+              variant="neutral"
+              iconOnlyWhenNarrow
+              :disabled="!item.canBeCarried || !(item.number >= 1)"
+              :title="item.canBeCarried ? undefined : 'This trapping can\'t be carried'"
+              @click="move(item.id, 'stored', 'carried')"
+            >
+              Carry
+            </SectionButton>
+          </span>
+          <span v-if="disabled" class="w-14 text-right pr-2">
+            {{ item.number }}
+          </span>
+          <input
+            v-else
+            :value="item.number"
+            type="number"
+            :aria-label="`Quantity of ${item.name}`"
+            class="w-14 min-h-8 px-2 border border-neutral-400 rounded-sm bg-editable outline-neutral-700 focus:outline-2"
+            @input="onQuantityInput(item.id, section.location, $event)"
+          />
+          <button
+            v-if="!disabled"
+            type="button"
+            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+            :aria-label="`Remove ${item.name} from ${section.title}`"
+            @click="setNumber(item.id, section.location, 0)"
+          >
+            <Icon icon="lucide:x" class="size-5" />
+          </button>
         </div>
-        <div class="flex-1">
-          <div class="mb-1">Carried</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
-            <table class="w-full">
-              <thead>
-                <tr class="text-left">
-                  <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-                  <th class="border-b border-neutral-300 py-2 px-2 w-px whitespace-nowrap">Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="src in selectedCarried" :key="src.id" class="bg-white hover:bg-neutral-200">
-                  <td class="py-2 px-2 border-b border-neutral-300">
-                    <TextLink routeName="item" :params="{ id: src.id }">
-                      {{ src.name }}
-                    </TextLink>
-                    <Edition4eBadge v-if="fourEIds?.has(src.id)" />
-                  </td>
-                  <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.carried }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-          </div>
-        </div>
-        <div class="flex-1">
-          <div class="mb-1">Stored</div>
-          <div class="bg-neutral-50 rounded-xl border border-neutral-300">
-            <table class="w-full">
-              <thead>
-                <tr class="text-left">
-                  <th class="border-b border-neutral-300 py-2 px-2">Name</th>
-                  <th class="border-b border-neutral-300 py-2 px-2 w-px whitespace-nowrap">Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="src in selectedStored" :key="src.id" class="bg-white hover:bg-neutral-200">
-                  <td class="py-2 px-2 border-b border-neutral-300">
-                    <TextLink routeName="item" :params="{ id: src.id }">
-                      {{ src.name }}
-                    </TextLink>
-                    <Edition4eBadge v-if="fourEIds?.has(src.id)" />
-                  </td>
-                  <td class="py-2 px-2 border-b border-neutral-300 w-px whitespace-nowrap">{{ src.stored }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[equippedValidationStatus.valid ? 'hidden' : '']">
+      </template>
+    </SectionCard>
+    <div class="text-sm text-error mt-1" :class="[equippedValidationStatus.valid ? 'hidden' : '']">
       {{ equippedValidationStatus.message }}
     </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[carriedValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-error mt-1" :class="[carriedValidationStatus.valid ? 'hidden' : '']">
       {{ carriedValidationStatus.message }}
     </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
+    <div class="text-sm text-error mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
       {{ storedValidationStatus.message }}
     </div>
-    <ModalWindow id="modifyItemsModal" size="lg">
-      <template #header> Modify trappings </template>
-      <TableWithSearch
-        v-model="searchTerm"
-        :fields="modalColumns"
-        :items="itemsWithNumberListFiltered"
-        stackBreakpoint="3xl"
+    <ModalWindow id="addItemsModal" size="lg" fullHeight>
+      <template #header>
+        {{ PICKER_TITLES[pickerLocation] }}
+      </template>
+      <ChecklistPicker
+        :items="pickerItems"
+        routeName="item"
+        :opened="openedCounter"
         :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
-      >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" routeName="item" :params="{ id: 'create' }" :newWindow="true">
-          Create new
-        </LinkButton>
-        <ReloadButton @click="emit('reload')" />
-        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
-
-        <template #name="{ id }: { id: string }">
-          <TextLink routeName="item" :params="{ id: id }">{{ itemsWithNumber[id].name }}</TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(id)" />
-        </template>
-
-        <template #equipped="{ id }: { id: string }">
-          <FormInput
-            v-if="itemsWithNumber[id].canBeEquipped"
-            v-model="itemsWithNumber[id].equipped"
-            type="number"
-            class="min-w-16 w-full"
-            @update:modelValue="emit('equippedUpdated', { id: id, number: itemsWithNumber[id].equipped })"
-          />
-          <div v-else>N/A</div>
-        </template>
-
-        <template #carried="{ id }: { id: string }">
-          <FormInput
-            v-if="itemsWithNumber[id].canBeCarried"
-            v-model="itemsWithNumber[id].carried"
-            type="number"
-            class="min-w-16 w-full"
-            @update:modelValue="emit('carriedUpdated', { id: id, number: itemsWithNumber[id].carried })"
-          />
-          <div v-else>N/A</div>
-        </template>
-
-        <template #stored="{ id }: { id: string }">
-          <FormInput
-            v-model="itemsWithNumber[id].stored"
-            type="number"
-            class="min-w-16 w-full"
-            @update:modelValue="emit('storedUpdated', { id: id, number: itemsWithNumber[id].stored })"
-          />
-        </template>
-
-        <template #description="{ id }: { id: string }">
-          <div class="min-w-40">
-            <div class="mb-1">
-              <span class="font-semibold mr-1">Type</span>
-              {{ itemsWithNumber[id].itemType }}
-            </div>
-            {{ itemsWithNumber[id].description }}
-          </div>
-        </template>
-      </TableWithSearch>
+        :fourEIds="fourEIds"
+        numberLabel="Qty"
+        @setNumber="(e) => setNumber(e.id, pickerLocation, e.number)"
+        @reload="emit('reload')"
+      />
     </ModalWindow>
   </div>
 </template>

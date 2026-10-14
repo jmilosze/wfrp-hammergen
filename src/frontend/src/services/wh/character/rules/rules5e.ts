@@ -83,9 +83,18 @@ export function getWounds5e(size: number, T: number, WP: number, S: number, hard
   return base + TB * hardyRanks;
 }
 
+// The limit is SB + TB. Sturdy counts SB twice; Strong Back adds 1, or 3 when taken twice.
+export function getMaxEncumbrance5e(S: number, T: number, strongBackRanks: number, sturdyRanks: number): number {
+  const SB = Math.floor(S / 10);
+  const TB = Math.floor(T / 10);
+  const strongBack = strongBackRanks >= 2 ? 3 : strongBackRanks;
+  return (sturdyRanks > 0 ? 2 * SB : SB) + TB + strongBack;
+}
+
 export const rules5e: CharacterRules = {
   getSpeciesAttributes: getSpeciesAttributes5e,
   getMovement: getMovement5e,
   getSize: getSize5e,
   getWounds: getWounds5e,
+  getMaxEncumbrance: getMaxEncumbrance5e,
 };

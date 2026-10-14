@@ -7,7 +7,7 @@ Backlog of known bugs, improvements and feature ideas. It persists between work 
 - When an issue is done, delete its entry (git history keeps it). When it is partly done, update the description.
 - Out-of-scope problems found while working on something else go here, not into the code as TODO comments.
 
-Next free ID: **HG-25**
+Next free ID: **HG-28**
 
 ## Features
 
@@ -46,10 +46,10 @@ Feature · 2026-10-07
 
 The 5e sheet has Ambitions and Appearance; Hammergen uses the description and notes for them for now. Add proper fields if users ask for them.
 
-### HG-8 Maximum Encumbrance on the sheet
-Feature · 2026-10-07
+### HG-27 Current Wounds on the character
+Feature · 2026-10-14
 
-Neither edition shows the maximum encumbrance. 5e modifier effects Strong Back (+1, +3 when taken twice) and Sturdy (SB counted twice) already exist for its calculation.
+The character only has its maximum Wounds, calculated from the characteristics, size and Hardy. Add the current Wounds (what is left after damage, counting down to 0) to the character model, editable in the editor and shown on the sheet next to the maximum, as the paper sheet's Current Wounds box. Decide how it behaves when the maximum changes (e.g. capped at the new maximum).
 
 ### HG-9 More rules automation (XP accounting, validation)
 Feature · 2026-10-07
@@ -69,6 +69,11 @@ Move away from tag-based validation (`go-playground/validator`) to explicit per-
 Backend + Frontend · 2026-10-01
 
 Talents, traits and mutations share one `modifiers` block (size, movement, characteristics, effects). Everything that doesn't fit the linear "per take" numbers is a hard-coded effect (Hardy, Strong Back, Sturdy) with its own calculation, and the effect enum and per-edition lists are duplicated in Go and TypeScript. Non-linear effects (Strong Back) and effects Hammergen doesn't model (Luck/Fortune, Fear) show the limits.
+
+### HG-25 4e Strong Back and Sturdy for the Encumbrance limit
+Modifiers · 2026-10-11
+
+The character editor's Max Encumbrance is SB + TB. For 5e it also applies the Strong Back and Sturdy effects, but 4e has no such effects (`modifierEffectsByEdition` only lists Hardy), so 4e characters with these talents get too low a limit. 4e rules: Strong Back adds its rank, Sturdy adds 2 × its rank. Needs the effects enabled for 4e (frontend and Go lists), the public 4e talents flagged (a data write: local, staging, production) and `getMaxEncumbrance4e` to use them.
 
 ## Data
 
@@ -110,6 +115,11 @@ Frontend · 2026-09-30
 Frontend · 2026-09-30
 
 Check whether the maintenance page reloads the app when maintenance ends. Tabs still running the old frontend break after a frontend/backend shape change.
+
+### HG-26 Equipped grimoires are ignored
+Frontend · 2026-10-11
+
+An equipped item of type Grimoire is neither listed on the View character sheet (equipped armour/weapons/other only take their own types) nor counted in Encumbrance (`encumbrance.ts`). Carried grimoires are listed and counted. Decide how equipped grimoires show and count.
 
 ## Tooling and deployment
 

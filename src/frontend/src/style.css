@@ -1,56 +1,44 @@
 @import "tailwindcss";
+@import "@fontsource-variable/alegreya";
 
 @font-face {
   font-family: "hammergen";
   src: url("/CaslonAntique-Bold.ttf");
 }
 
-@layer components {
-  .btn {
-    @apply rounded active:outline-2 outline-neutral-400 select-none font-medium px-3 py-2 bg-neutral-600 hover:bg-neutral-800 text-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap;
+/* Printing. Backgrounds are kept: the sheet's cell lines, title bands and editable cells are drawn with them. A page
+   marked with data-print-desktop (the character editor and view) is laid out at desktop width and scaled down to the
+   paper, so the printout looks like the screen. With the page padding dropped in print (App.vue), 0.6 of an A4 or
+   Letter page is wide enough for the widest layout of the sheets (72rem). */
+@media print {
+  html {
+    print-color-adjust: exact;
   }
 
-  .btn-primary {
-    @apply bg-neutral-600 hover:bg-neutral-800 text-neutral-100;
+  /* Page breaks: boxes (SheetTable, SectionCard, ListTable…) avoid breaking inside and a box's title stays with its
+     content; a box taller than a page still breaks, between rows. */
+  tr {
+    break-inside: avoid;
   }
 
-  .btn-secondary {
-    @apply bg-primary-300 hover:bg-primary-400 text-neutral-700;
-  }
-
-  .btn-danger {
-    @apply bg-danger-600 hover:bg-danger-800 text-neutral-100;
-  }
-
-  .btn-sm {
-    @apply p-2 text-sm;
+  body:has([data-print-desktop]) {
+    zoom: 0.6;
   }
 }
 
 @theme {
   --font-hammergen: "Hammergen", serif;
+  /* sheet: the content of the editors' form boxes (SheetTable, SectionCard, ListTable); their buttons keep font-sans. */
+  --font-sheet: "Alegreya Variable", serif;
 
-  /* Colours. Only these exist: Tailwind's built-in palettes are switched off, so classes such as bg-primary-300 do not
-     work. Each role is a full 50-950 scale; to restyle a role, replace its values (Tailwind's palettes are in
-     node_modules/tailwindcss/theme.css). */
+  /* Colours. Only these exist: Tailwind's built-in palettes are switched off, so classes such as bg-red-500 do not
+     work. Greys are a scale (neutral-50…950); every other colour is named by what it is for, so changing e.g. the
+     link colour is one line here. */
   --color-*: initial;
   --color-white: #fff;
   --color-black: #000;
 
-  /* primary: accents: sidebar, dropdown, highlights, secondary buttons. Tailwind amber. */
-  --color-primary-50: oklch(98.7% 0.022 95.277);
-  --color-primary-100: oklch(96.2% 0.059 95.617);
-  --color-primary-200: oklch(92.4% 0.12 95.746);
-  --color-primary-300: oklch(87.9% 0.169 91.605);
-  --color-primary-400: oklch(82.8% 0.189 84.429);
-  --color-primary-500: oklch(76.9% 0.188 70.08);
-  --color-primary-600: oklch(66.6% 0.179 58.318);
-  --color-primary-700: oklch(55.5% 0.163 48.998);
-  --color-primary-800: oklch(47.3% 0.137 46.201);
-  --color-primary-900: oklch(41.4% 0.112 45.904);
-  --color-primary-950: oklch(27.9% 0.077 45.635);
-
-  /* neutral: greys: text, borders, dark bars, buttons. Tailwind neutral. */
+  /* neutral: greys for text, borders, surfaces and lines. Tailwind neutral. */
   --color-neutral-50: oklch(98.5% 0 none);
   --color-neutral-100: oklch(97% 0 none);
   --color-neutral-200: oklch(92.2% 0 none);
@@ -63,55 +51,56 @@
   --color-neutral-900: oklch(20.5% 0 none);
   --color-neutral-950: oklch(14.5% 0 none);
 
-  /* danger: errors, delete buttons, announcement bar. Tailwind red. */
-  --color-danger-50: oklch(97.1% 0.013 17.38);
-  --color-danger-100: oklch(93.6% 0.032 17.717);
-  --color-danger-200: oklch(88.5% 0.062 18.334);
-  --color-danger-300: oklch(80.8% 0.114 19.571);
-  --color-danger-400: oklch(70.4% 0.191 22.216);
-  --color-danger-500: oklch(63.7% 0.237 25.331);
-  --color-danger-600: oklch(57.7% 0.245 27.325);
-  --color-danger-700: oklch(50.5% 0.213 27.518);
-  --color-danger-800: oklch(44.4% 0.177 26.899);
-  --color-danger-900: oklch(39.6% 0.141 25.723);
-  --color-danger-950: oklch(25.8% 0.092 26.042);
+  /* brand: oxblood, the top bar, footer, dark buttons and Filters header, and the accents on light pages: section
+     headings, callout borders, the edition badge text. brand-dark: its borders and hovers. brand-rule: thin oxblood
+     lines on light backgrounds (heading underlines). */
+  --color-brand: #4a1c1c;
+  --color-brand-dark: #2e1010;
+  --color-brand-rule: #c4a29a;
 
-  /* success: success alerts, "Shared" badge. Tailwind green. */
-  --color-success-50: oklch(98.2% 0.018 155.826);
-  --color-success-100: oklch(96.2% 0.044 156.743);
-  --color-success-200: oklch(92.5% 0.084 155.995);
-  --color-success-300: oklch(87.1% 0.15 154.449);
-  --color-success-400: oklch(79.2% 0.209 151.711);
-  --color-success-500: oklch(72.3% 0.219 149.579);
-  --color-success-600: oklch(62.7% 0.194 149.214);
-  --color-success-700: oklch(52.7% 0.154 150.069);
-  --color-success-800: oklch(44.8% 0.119 151.328);
-  --color-success-900: oklch(39.3% 0.095 152.535);
-  --color-success-950: oklch(26.6% 0.065 152.934);
+  /* parchment: text on brand (the top bar, dark buttons), and light accent surfaces: callouts, the edition badge,
+     help icons, the announcement bar. parchment-light: hovers on brand and callout backgrounds. parchment-dark: hovers
+     and borders on parchment. */
+  --color-parchment: #f1e6cc;
+  --color-parchment-light: #fbf6ea;
+  --color-parchment-dark: #e2d3ad;
 
-  /* info: info alerts, "Public" badge. Tailwind blue. */
-  --color-info-50: oklch(97% 0.014 254.604);
-  --color-info-100: oklch(93.2% 0.032 255.585);
-  --color-info-200: oklch(88.2% 0.059 254.128);
-  --color-info-300: oklch(80.9% 0.105 251.813);
-  --color-info-400: oklch(70.7% 0.165 254.624);
-  --color-info-500: oklch(62.3% 0.214 259.815);
-  --color-info-600: oklch(54.6% 0.245 262.881);
-  --color-info-700: oklch(48.8% 0.243 264.376);
-  --color-info-800: oklch(42.4% 0.199 265.638);
-  --color-info-900: oklch(37.9% 0.146 265.522);
-  --color-info-950: oklch(28.2% 0.091 267.935);
+  /* link: links (names of entries, TextLink). */
+  --color-link: #4a1c1c;
 
-  /* linked: "Shared from a linked account" badge. Tailwind purple. */
-  --color-linked-50: oklch(97.7% 0.014 308.299);
-  --color-linked-100: oklch(94.6% 0.033 307.174);
-  --color-linked-200: oklch(90.2% 0.063 306.703);
-  --color-linked-300: oklch(82.7% 0.119 306.383);
-  --color-linked-400: oklch(71.4% 0.203 305.504);
-  --color-linked-500: oklch(62.7% 0.265 303.9);
-  --color-linked-600: oklch(55.8% 0.288 302.321);
-  --color-linked-700: oklch(49.6% 0.265 301.924);
-  --color-linked-800: oklch(43.8% 0.218 303.724);
-  --color-linked-900: oklch(38.1% 0.176 304.987);
-  --color-linked-950: oklch(29.1% 0.149 302.717);
+  /* editable: the faint yellow of cells, fields and checkboxes that can be edited. */
+  --color-editable: oklch(98.7% 0.022 95.277);
+
+  /* error: validation and error messages. success: "Saved" and other success messages. */
+  --color-error: oklch(57.7% 0.245 27.325);
+  --color-success: oklch(52.7% 0.154 150.069);
+
+  /* danger: deleting: the Delete button (text, border, hover) and the delete account card and warning icons. */
+  --color-danger: oklch(50.5% 0.213 27.518);
+  --color-danger-border: oklch(70.4% 0.191 22.216);
+  --color-danger-hover: oklch(97.1% 0.013 17.38);
+
+  /* Alert boxes (AlertBlock): background, border, text and the close button's hover. */
+  --color-alert-error-bg: #f5e3dc;
+  --color-alert-error-border: #c48474;
+  --color-alert-error-text: #7a2a1e;
+  --color-alert-error-hover: #ebcfc5;
+  --color-alert-success-bg: #e7eedc;
+  --color-alert-success-border: #93a97c;
+  --color-alert-success-text: #3b5428;
+  --color-alert-success-hover: #d6e2c6;
+
+  /* Visibility of entries (visibilityKind.ts): the badge (background, border, text) and the icon. "Mine" uses greys. */
+  --color-public-bg: oklch(93.2% 0.032 255.585);
+  --color-public-border: oklch(80.9% 0.105 251.813);
+  --color-public-text: oklch(42.4% 0.199 265.638);
+  --color-public-icon: oklch(62.3% 0.214 259.815);
+  --color-shared-bg: oklch(96.2% 0.044 156.743);
+  --color-shared-border: oklch(87.1% 0.15 154.449);
+  --color-shared-text: oklch(44.8% 0.119 151.328);
+  --color-shared-icon: oklch(62.7% 0.194 149.214);
+  --color-shared-with-me-bg: oklch(94.6% 0.033 307.174);
+  --color-shared-with-me-border: oklch(82.7% 0.119 306.383);
+  --color-shared-with-me-text: oklch(43.8% 0.218 303.724);
+  --color-shared-with-me-icon: oklch(62.7% 0.265 303.9);
 }

@@ -1,21 +1,17 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
 import { printSkillType, Skill } from "../services/wh/content/skill.ts";
 import { computed, ref, Ref, watch } from "vue";
 import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/core/attributes.ts";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
-import ActionButton from "./ActionButton.vue";
-import TableWithSearch from "./TableWithSearch.vue";
-import FormInput from "./FormInput.vue";
-import SpinnerAnimation from "./SpinnerAnimation.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
+import SectionButton from "./SectionButton.vue";
+import SectionCard from "./SectionCard.vue";
 import { ValidationStatus } from "../utils/validation.ts";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
-import EditionFilterSelect from "./EditionFilterSelect.vue";
-import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
-import ReloadButton from "./ReloadButton.vue";
-import LinkButton from "./LinkButton.vue";
 
 const DESC_CHARS = 100;
 
@@ -44,7 +40,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "updated", value: { id: string; number: number }): void;
   (e: "reload"): void;
-  (e: "clearAll"): void;
   (e: "addSpeciesSkills"): void;
 }>();
 
@@ -54,10 +49,6 @@ function isNonzero(skillWithNumber: SkillWithNumber): boolean {
 
 const skillsWithNumber: Ref<Record<string, SkillWithNumber>> = ref({});
 const skillsWithNumberList: Ref<SkillWithNumber[]> = ref([]);
-const editionFilter = ref<EditionFilter>("both");
-const skillsWithNumberListFiltered = computed(() =>
-  skillsWithNumberList.value.filter((x) => matchesEditionFilter(x.id, props.fourEIds, editionFilter.value)),
-);
 
 function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillList: Skill[], attributes: Attributes) {
   skillsWithNumber.value = {};
@@ -109,69 +100,67 @@ watch(
 const selectedSkills = computed(() => skillsWithNumberList.value.filter((x) => isNonzero(x)));
 
 const modal = useModal();
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "description", displayName: "Description", skipStackedTitle: true },
-  { name: "number", displayName: "Rank", skipStackedTitle: false },
-];
+const openedCounter = ref(0);
 
-const resetPaginationCounter = ref(0);
+function removeSkill(id: string) {
+  skillsWithNumber.value[id].number = 0;
+  emit("updated", { id: id, number: 0 });
+}
 
-function onModifyClick() {
+function onEditClick() {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  modal.showModal("modifySkillsModal");
-  searchTerm.value = "";
   skillsWithNumberList.value.sort((a, b) => {
     return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
   });
+  openedCounter.value += 1;
+  modal.showModal("modifySkillsModal");
+}
+
+// Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
+const modalItems = computed(() =>
+  skillsWithNumberList.value.map((x) => ({
+    id: x.id,
+    name: x.name,
+    description: truncate(x.description, DESC_CHARS),
+    note: `${x.type} · ${x.attributeName}`,
+    get selected() {
+      return isNonzero(x);
+    },
+    get number() {
+      return x.number;
+    },
+  })),
+);
+
+function setNumber(id: string, number: number) {
+  skillsWithNumber.value[id].number = number;
+  emit("updated", { id: id, number: number });
 }
 </script>
 
 <template>
   <div>
-    <div class="flex items-center gap-2 mb-1 flex-wrap">
-      <div>Skills</div>
-      <div class="flex gap-2 flex-wrap">
-        <ActionButton v-if="!disabled" :disabled="props.loading" class="flex-1 btn btn-sm" @click="onModifyClick">
-          <span class="flex-1">Modify</span>
-        </ActionButton>
-        <ActionButton
-          v-if="!disabled"
-          :disabled="props.loading"
-          class="whitespace-nowrap flex-1 btn btn-sm"
-          @click="emit('addSpeciesSkills')"
-        >
-          <span class="flex-1">Add species skills</span>
-        </ActionButton>
-        <ActionButton
-          v-if="!disabled"
-          :disabled="props.loading"
-          class="whitespace-nowrap flex-1 btn btn-danger btn-sm"
-          @click="emit('clearAll')"
-        >
-          <span class="flex-1">Clear all</span>
-        </ActionButton>
-      </div>
-    </div>
-    <div v-if="props.loading" class="flex justify-center">
-      <SpinnerAnimation class="w-14 m-2" />
-    </div>
-    <div v-else class="bg-neutral-50 rounded-xl border border-neutral-300 min-w-fit">
+    <SectionCard title="Skills" :loading="props.loading">
+      <template v-if="!disabled" #actions>
+        <SectionButton icon="lucide:pencil" :disabled="props.loading" @click="onEditClick">Edit</SectionButton>
+        <SectionButton icon="lucide:plus" variant="neutral" :disabled="props.loading" @click="emit('addSpeciesSkills')">
+          Add species skills
+        </SectionButton>
+      </template>
       <table class="w-full">
         <thead>
-          <tr class="text-left">
+          <tr class="text-left" :class="{ 'bg-editable': !disabled }">
             <th class="border-b border-neutral-300 py-2 px-2">Name</th>
             <th class="border-b border-neutral-300 py-2 px-2">Att</th>
             <th class="border-b border-neutral-300 py-2 px-2">Adv</th>
             <th class="border-b border-neutral-300 py-2 px-2">Skill</th>
+            <th v-if="!disabled" class="border-b border-neutral-300 py-2 px-2 w-0" />
           </tr>
         </thead>
         <tbody>
-          <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-200">
+          <tr v-for="src in selectedSkills" :key="src.id" class="bg-white hover:bg-neutral-100">
             <td class="py-2 px-2 border-b border-neutral-300">
               <TextLink routeName="skill" :params="{ id: src.id }">
                 {{ src.name }}
@@ -181,55 +170,35 @@ function onModifyClick() {
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
+            <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
+              <button
+                class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
+                :aria-label="`Remove ${src.name}`"
+                @click="removeSkill(src.id)"
+              >
+                <Icon icon="lucide:x" class="size-5" />
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
-      <div class="bg-neutral-50 rounded-b-xl h-5 w-full" />
-    </div>
-    <div class="text-sm text-danger-600 mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
+    </SectionCard>
+    <div class="text-sm text-error mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
-    <ModalWindow id="modifySkillsModal">
-      <template #header> Modify skills </template>
-      <TableWithSearch
-        v-model="searchTerm"
-        :fields="modalColumns"
-        :items="skillsWithNumberListFiltered"
-        stackBreakpoint="lg"
+    <ModalWindow id="modifySkillsModal" fullHeight>
+      <template #header> Edit skills </template>
+      <ChecklistPicker
+        :items="modalItems"
+        routeName="skill"
+        :opened="openedCounter"
         :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
-      >
-        <LinkButton class="mr-2 mb-2 shrink-0 btn" routeName="skill" :params="{ id: 'create' }" :newWindow="true">
-          Create new
-        </LinkButton>
-        <ReloadButton @click="emit('reload')" />
-        <EditionFilterSelect v-if="fourEIds" v-model="editionFilter" />
-
-        <template #name="{ id }: { id: string }">
-          <TextLink routeName="skill" :params="{ id: id }">{{ skillsWithNumber[id].name }}</TextLink>
-          <Edition4eBadge v-if="fourEIds?.has(id)" />
-        </template>
-
-        <template #number="{ id }: { id: string }">
-          <FormInput
-            v-model="skillsWithNumber[id].number"
-            type="number"
-            :step="step"
-            class="min-w-16 w-full"
-            @update:modelValue="emit('updated', { id: id, number: skillsWithNumber[id].number })"
-          />
-        </template>
-
-        <template #description="{ id }: { id: string }">
-          <div>
-            {{ truncate(skillsWithNumber[id].description, DESC_CHARS) }}
-            <div class="mb-1"><span class="font-semibold mr-1">Type</span> {{ skillsWithNumber[id].type }}</div>
-            <div class="mb-1">
-              <span class="font-semibold mr-1">Attribute</span> {{ skillsWithNumber[id].attributeName }}
-            </div>
-          </div>
-        </template>
-      </TableWithSearch>
+        :fourEIds="fourEIds"
+        numberLabel="Adv"
+        :numberStep="step"
+        @setNumber="(e) => setNumber(e.id, e.number)"
+        @reload="emit('reload')"
+      />
     </ModalWindow>
   </div>
 </template>

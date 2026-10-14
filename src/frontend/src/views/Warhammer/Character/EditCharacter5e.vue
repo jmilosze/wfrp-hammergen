@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import TextLink from "../../../components/TextLink.vue";
 import { Edition } from "../../../services/wh/core/edition.ts";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
@@ -9,13 +10,9 @@ import { Character, characterApi } from "../../../services/wh/character/characte
 import { computed, ref, watch } from "vue";
 import EditControls from "../../../components/EditControls.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
-import FormInput from "../../../components/FormInput.vue";
-import LinkButton from "../../../components/LinkButton.vue";
 import { printSize } from "../../../services/wh/character/size.ts";
 import { printSpeciesWithRegion, SpeciesWithRegion } from "../../../services/wh/core/species.ts";
 import { SPECIES_5E } from "../../../services/wh/character/rules/rules5e.ts";
-import SelectInput from "../../../components/SelectInput.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import {
   Career,
@@ -42,10 +39,18 @@ import { itemApi } from "../../../services/wh/content/item.ts";
 import CharacterItems from "../../../components/CharacterItems.vue";
 import { traitApi } from "../../../services/wh/content/trait.ts";
 import ModalWindow from "../../../components/ModalWindow.vue";
-import ActionButton from "../../../components/ActionButton.vue";
 import Ignored4eModifiersWarning from "../../../components/Ignored4eModifiersWarning.vue";
 import { useModal } from "../../../composables/modal.ts";
 import HintModal from "../../../components/HintModal.vue";
+import CharacterStartPanel from "../../../components/CharacterStartPanel.vue";
+import SectionCard from "../../../components/SectionCard.vue";
+import SectionButton from "../../../components/SectionButton.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SheetSelect from "../../../components/SheetSelect.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetCheckbox from "../../../components/SheetCheckbox.vue";
+import SheetCell from "../../../components/SheetCell.vue";
+import { encumbranceItems, getEncumbrance } from "../../../services/wh/character/encumbrance.ts";
 import EditionBadge from "../../../components/EditionBadge.vue";
 import { useGenerationProps5e } from "../../../composables/generationProps.ts";
 import { generateCharacter5e } from "../../../services/wh/character/generation/5e/generator5e.ts";
@@ -156,6 +161,16 @@ watch(
 );
 
 const isGenerationDisabled = computed(() => generationDataLoading.value || careerOpts.value.length === 0);
+// What the generator is set to, shown in the start strip after generating.
+const generationSummary = computed(() =>
+  [
+    speciesOpts.find((x) => x.value === selectedGenSpecies.value)?.text,
+    careerOpts.value.find((x) => x.value === selectedGenCareer.value)?.text,
+    `Level ${selectedGenLevel.value}`,
+  ]
+    .filter((x) => x !== undefined)
+    .join(" · "),
+);
 
 function rollCharacter() {
   if (isGenerationDisabled.value) {
@@ -190,6 +205,13 @@ function formGenerateStatusStanding() {
 
 const movement = computed(() => wh.value.getMovement());
 const wounds = computed(() => wh.value.getWounds());
+const encumbrance = computed(() =>
+  getEncumbrance(
+    encumbranceItems(wh.value.equippedItems, itemLists.withAllowed.value),
+    encumbranceItems(wh.value.carriedItems, itemLists.withAllowed.value),
+  ),
+);
+const maxEncumbrance = computed(() => wh.value.getMaxEncumbrance());
 const size = computed(() => printSize(wh.value.getSize()));
 
 watch(
@@ -303,68 +325,48 @@ const modifierAttributes = computed(() => {
     </AlertBlock>
   </div>
   <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
-  <div v-if="id !== 'create'" class="border border-neutral-700 rounded p-2 my-4">
-    <div class="text-xl">View character</div>
-    <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
-    <div class="flex">
-      <LinkButton routeName="viewCharacter" :params="{ id: id }" class="btn btn-sm"> View character </LinkButton>
-    </div>
-  </div>
-  <div v-if="canEdit && id === 'create'" class="border border-neutral-700 rounded p-2 my-4">
-    <div class="text-xl">Generate character</div>
-    <div class="mb-4">Fill out character sheet automatically by randomly generating character (level 1-4).</div>
-    <div class="flex flex-col @2xl:flex-row gap-4">
-      <SelectInput
-        v-model="selectedGenSpecies"
-        title="Species"
-        :options="speciesOpts"
-        :disabled="!canEdit"
-        class="min-w-24 flex-1"
-      />
-      <SelectInput
-        v-model="selectedGenLevel"
-        title="Level"
-        :options="levelOpts"
-        :disabled="!canEdit"
-        class="min-w-24 flex-1"
-      />
-      <SelectInput
-        v-model="selectedGenCareer"
-        title="Career"
-        :options="careerOpts"
-        :disabled="!canEdit"
-        class="min-w-24 flex-1"
-      />
-    </div>
-    <div class="flex flex-wrap mt-4 gap-4">
-      <HintModal buttonText="More details" modalHeader="Character generation" modalId="charGenerationHint">
-        <p class="my-1">
-          A level 1 character is generated following the character creation chapter of the 5e rulebook, using 5e content
-          only. Species and career are chosen, not rolled, so the bonuses for keeping a rolled species or career are not
-          given.
-        </p>
-        <p class="my-1">
-          Characteristics are rolled and kept in order: the 6 extra points are spread at random over the 3
-          characteristics of the first career level and added to the rolls.
-        </p>
-        <p class="my-1">
-          The career box lists the 5e careers open to the selected species, including your custom 5e careers.
-        </p>
-        <p class="my-1">
-          Class trappings are added to the character sheet but career specific trappings are not and have to be added
-          manually afterward.
-        </p>
-        <p class="my-1">
-          Higher level characters are generated by creating a level 1 character and moving it up a level at a time. At
-          each level, the character takes 1 career talent and a +5 advance in each characteristic it can advance, and
-          the rest of the Career Advancement Tracker (10 ticks for level 2, 12 more for level 3, 14 more for level 4) is
-          filled with career skill advances. XP is spent as in the rulebook, plus 100 XP for each new level.
-        </p>
-        <p class="my-1">Generating will override all current entries on the character sheet.</p>
-      </HintModal>
-      <ActionButton class="btn btn-sm" :disabled="isGenerationDisabled" @click="rollCharacter"> Generate </ActionButton>
-    </div>
-  </div>
+  <p v-if="id !== 'create'" class="mt-2">
+    <TextLink routeName="viewCharacter" :params="{ id: id }" sameWindow>View character</TextLink>
+  </p>
+  <CharacterStartPanel
+    v-if="canEdit && id === 'create'"
+    :generateDisabled="isGenerationDisabled"
+    :generationSummary="generationSummary"
+    @generate="rollCharacter"
+  >
+    <template #fields>
+      <SheetTable :columns="3">
+        <SheetSelect v-model="selectedGenSpecies" title="Species" :options="speciesOpts" />
+        <SheetSelect v-model="selectedGenCareer" title="Career" :options="careerOpts" />
+        <SheetSelect v-model="selectedGenLevel" title="Level" :options="levelOpts" />
+      </SheetTable>
+    </template>
+    <template #hint>
+      <p class="my-1">
+        A level 1 character is generated following the character creation chapter of the 5e rulebook, using 5e content
+        only. Species and career are chosen, not rolled, so the bonuses for keeping a rolled species or career are not
+        given.
+      </p>
+      <p class="my-1">
+        Characteristics are rolled and kept in order: the 6 extra points are spread at random over the 3 characteristics
+        of the first career level and added to the rolls.
+      </p>
+      <p class="my-1">
+        The career box lists the 5e careers open to the selected species, including your custom 5e careers.
+      </p>
+      <p class="my-1">
+        Class trappings are added to the character sheet but career specific trappings are not and have to be added
+        manually afterward.
+      </p>
+      <p class="my-1">
+        Higher level characters are generated by creating a level 1 character and moving it up a level at a time. At
+        each level, the character takes 1 career talent and a +5 advance in each characteristic it can advance, and the
+        rest of the Career Advancement Tracker (10 ticks for level 2, 12 more for level 3, 14 more for level 4) is
+        filled with career skill advances. XP is spent as in the rulebook, plus 100 XP for each new level.
+      </p>
+      <p class="my-1">Generating will override all current entries on the character sheet.</p>
+    </template>
+  </CharacterStartPanel>
   <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
     <div class="flex items-center gap-2">
       Edition
@@ -372,9 +374,7 @@ const modifierAttributes = computed(() => {
     </div>
     <div class="flex items-center gap-2">
       <label class="flex items-center gap-2">
-        <input
-          type="checkbox"
-          class="w-5 h-5 accent-neutral-600"
+        <SheetCheckbox
           :checked="wh.allow4e"
           :disabled="!canEdit || wh.allow4e"
           @click.prevent="modal.showModal('allow4eModal')"
@@ -398,8 +398,8 @@ const modifierAttributes = computed(() => {
     <template #header> Allow 4e content </template>
     <template #buttons>
       <div class="flex gap-2">
-        <ActionButton class="btn" @click="confirmAllow4e">Allow 4e content</ActionButton>
-        <ActionButton class="btn btn-secondary" @click="modal.hideModal()">Cancel</ActionButton>
+        <SectionButton icon="lucide:check" variant="light" @click="confirmAllow4e">Allow 4e content</SectionButton>
+        <SectionButton icon="lucide:x" variant="neutral" @click="modal.hideModal()">Cancel</SectionButton>
       </div>
     </template>
     <div>
@@ -410,194 +410,114 @@ const modifierAttributes = computed(() => {
   <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit">
-          <ActionButton v-if="canEdit" class="ml-2 h-full btn btn-sm" @click="populateName(wh)">
-            Generate
-          </ActionButton>
-        </FormInput>
-        <p class="-mb-3">Species</p>
-        <div class="border border-neutral-300 rounded p-2">
-          <SelectInput
-            v-model="wh.species"
-            title="Species"
-            :options="speciesOpts"
-            :disabled="!canEdit"
-            class="min-w-24 flex-1"
-          />
-        </div>
-        <div class="flex flex-wrap items-center gap-2 -mb-3">
-          <p class="">Fate and fortune</p>
-          <ActionButton v-if="canEdit" class="btn btn-sm" @click="populateFateFortune5e(wh)">Generate</ActionButton>
-        </div>
-        <div class="border border-neutral-300 rounded p-2">
-          <div class="flex flex-col @2xl:flex-row gap-4">
-            <FormInput
+        <div>
+          <SheetTable>
+            <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+            <template v-if="canEdit" #actions>
+              <SectionButton icon="lucide:dices" iconOnlyWhenNarrow @click="populateName(wh)"> Generate </SectionButton>
+            </template>
+          </SheetTable>
+          <SheetTable class="-mt-px">
+            <SheetSelect v-model="wh.species" title="Species" :options="speciesOpts" :disabled="!canEdit" />
+          </SheetTable>
+          <SheetTable :columns="2" class="-mt-px">
+            <SheetField
               v-model="wh.fate"
               type="number"
               title="Fate"
               :validationStatus="validFate"
               :disabled="!canEdit"
             />
-            <FormInput
+            <SheetField
               v-model="wh.fortune"
               type="number"
               title="Fortune"
               :validationStatus="validFortune"
               :disabled="!canEdit"
             />
-          </div>
+            <template v-if="canEdit" #actions>
+              <SectionButton icon="lucide:dices" iconOnlyWhenNarrow @click="populateFateFortune5e(wh)">
+                Generate
+              </SectionButton>
+            </template>
+          </SheetTable>
+          <SheetTable :columns="3" class="-mt-px">
+            <SheetCell title="Movement">{{ movement }}</SheetCell>
+            <SheetCell title="Size">{{ size }}</SheetCell>
+            <SheetCell title="Wounds">{{ wounds }}</SheetCell>
+          </SheetTable>
         </div>
-        <div class="flex flex-wrap items-center gap-2 -mb-3">
-          <p class="">Status and standing</p>
-          <ActionButton
-            v-if="canEdit"
-            :disabled="careerLists.loading.value"
-            class="btn btn-sm"
-            @click="formGenerateStatusStanding"
-          >
-            Generate
-          </ActionButton>
-        </div>
-        <div class="border border-neutral-300 rounded p-2">
-          <div class="flex flex-col @2xl:flex-row gap-4">
-            <SelectInput
-              v-model="wh.status"
-              title="Status"
-              :options="statusTierOpts"
-              :disabled="!canEdit"
-              class="min-w-24 flex-1"
-            />
-            <SelectInput
-              v-model="wh.standing"
-              title="Standing"
-              :options="statusStandingOpts"
-              :disabled="!canEdit"
-              class="min-w-24 flex-1"
-            />
-          </div>
-        </div>
-        <p class="-mb-3">Wealth</p>
-        <div class="border border-neutral-300 rounded p-2">
-          <div class="flex flex-col @2xl:flex-row gap-4">
-            <FormInput
-              v-model="wh.brass"
-              type="number"
-              title="Brass"
-              :validationStatus="validBrass"
-              :disabled="!canEdit"
-            />
-            <FormInput
-              v-model="wh.silver"
-              type="number"
-              title="Silver"
-              :validationStatus="validSilver"
-              :disabled="!canEdit"
-            />
-            <FormInput
-              v-model="wh.gold"
-              type="number"
-              title="Gold"
-              :validationStatus="validGold"
-              :disabled="!canEdit"
-            />
-          </div>
-        </div>
-        <p class="-mb-3">Sin and corruption</p>
-        <div class="border border-neutral-300 rounded p-2">
-          <div class="flex flex-col @2xl:flex-row gap-4">
-            <FormInput v-model="wh.sin" type="number" title="Sin" :validationStatus="validSin" :disabled="!canEdit" />
-            <FormInput
-              v-model="wh.corruption"
-              type="number"
-              title="Corruption"
-              :validationStatus="validCorruption"
-              :disabled="!canEdit"
-            />
-          </div>
-        </div>
-        <p class="-mb-3">Experience</p>
-        <div class="border border-neutral-300 rounded p-2">
-          <div class="flex flex-col @2xl:flex-row gap-4">
-            <FormInput
-              v-model="wh.currentExp"
-              type="number"
-              title="Unspent"
-              :validationStatus="validCurrentExp"
-              :disabled="!canEdit"
-            />
-            <FormInput
-              v-model="wh.spentExp"
-              type="number"
-              title="Spent"
-              :validationStatus="validSpentExp"
-              :disabled="!canEdit"
-            />
-            <div>
-              <p class="mb-3">Total</p>
-              <div class="ml-2">{{ wh.currentExp + wh.spentExp }}</div>
-            </div>
-          </div>
-        </div>
+        <SheetTable title="Experience" :columns="3">
+          <SheetField
+            v-model="wh.currentExp"
+            type="number"
+            title="Unspent"
+            :validationStatus="validCurrentExp"
+            :disabled="!canEdit"
+          />
+          <SheetField
+            v-model="wh.spentExp"
+            type="number"
+            title="Spent"
+            :validationStatus="validSpentExp"
+            :disabled="!canEdit"
+          />
+          <SheetCell title="Total">{{ wh.currentExp + wh.spentExp }}</SheetCell>
+        </SheetTable>
       </div>
     </div>
     <div class="flex-1">
       <div class="flex flex-col gap-4">
-        <CharacterCareer
-          :disabled="!canEdit"
-          :initSelectedCurrentCareer="wh.career"
-          :initSelectedPastCareers="wh.careerPath"
-          :careerList="careerLists.withAllowed.value"
-          :fourEIds="careerLists.fourEIds.value"
-          title="Career"
-          modalTitle="Modify career"
-          :loading="careerLists.loading.value"
-          @reload="careerLists.reload"
-          @currentSelected="(event) => wh.updateCurrentCareer(event.id, event.number, event.selected)"
-          @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
-        />
-        <FormInput
-          v-model="wh.careerTicks"
-          type="number"
-          title="Career Advancement Tracker"
-          :validationStatus="validCareerTicks"
-          :disabled="!canEdit"
-        />
-        <p class="text-sm -mt-3">
-          Ticks in the current career (0–36). Level 2 is reached at 10 ticks, level 3 at 22 and level 4 at 36.
-        </p>
-        <FormTextarea
-          v-model="wh.description"
-          title="Description"
-          :validationStatus="validDesc"
-          :disabled="!canEdit"
-          class="mt-2 @3xl:mt-0"
-        >
-          <ActionButton v-if="canEdit" class="mb-1 btn btn-sm" @click="populateDescription(wh)">
-            Generate
-          </ActionButton>
-        </FormTextarea>
-        <FormTextarea v-model="wh.notes" title="Notes" :validationStatus="validNotes" :disabled="!canEdit" />
-        <Ignored4eModifiersWarning :names="ignored4eModifiers" />
-        <p class="-mb-3">Calculated</p>
-        <div class="border border-neutral-300 rounded p-2">
-          <div class="flex flex-col @2xl:flex-row gap-4">
-            <div class="flex-1">
-              <p class="mb-3">Movement</p>
-              <div class="ml-1">{{ movement }}</div>
-            </div>
-            <div class="flex-1">
-              <p class="mb-3">Size</p>
-              <div>{{ size }}</div>
-            </div>
-            <div class="flex-1">
-              <p class="mb-3">Wounds</p>
-              <div class="ml-1">{{ wounds }}</div>
-            </div>
-          </div>
+        <div>
+          <SheetTable title="Career" :columns="2">
+            <SheetSelect v-model="wh.status" title="Status" :options="statusTierOpts" :disabled="!canEdit" />
+            <SheetSelect v-model="wh.standing" title="Standing" :options="statusStandingOpts" :disabled="!canEdit" />
+            <template v-if="canEdit" #actions>
+              <SectionButton
+                icon="lucide:dices"
+                iconOnlyWhenNarrow
+                :disabled="careerLists.loading.value"
+                @click="formGenerateStatusStanding"
+              >
+                Generate
+              </SectionButton>
+            </template>
+          </SheetTable>
+          <SheetTable class="-mt-px">
+            <SheetField
+              v-model="wh.careerTicks"
+              type="number"
+              title="Advancement"
+              :validationStatus="validCareerTicks"
+              :disabled="!canEdit"
+            />
+            <p class="px-2 py-1 bg-white font-sans text-xs text-neutral-600">
+              Ticks in the current career (0–36). Level 2 is reached at 10 ticks, level 3 at 22 and level 4 at 36.
+            </p>
+          </SheetTable>
+          <CharacterCareer
+            class="-mt-px"
+            :disabled="!canEdit"
+            :initSelectedCurrentCareer="wh.career"
+            :initSelectedPastCareers="wh.careerPath"
+            :careerList="careerLists.withAllowed.value"
+            :fourEIds="careerLists.fourEIds.value"
+            :loading="careerLists.loading.value"
+            @reload="careerLists.reload"
+            @currentSelected="(event) => wh.updateCurrentCareer(event.id, event.number, event.selected)"
+            @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
+          />
         </div>
+        <Ignored4eModifiersWarning :names="ignored4eModifiers" />
       </div>
     </div>
   </div>
+  <SectionCard title="Description" class="my-4">
+    <template v-if="canEdit" #actions>
+      <SectionButton icon="lucide:dices" variant="neutral" @click="populateDescription(wh)">Generate</SectionButton>
+    </template>
+    <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare />
+  </SectionCard>
   <Ignored4eModifiersWarning :names="ignored4eModifiers" class="mb-2" />
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
@@ -622,7 +542,6 @@ const modifierAttributes = computed(() => {
       :step="ADVANCE_STEP"
       class="flex-1"
       @reload="skillLists.reload"
-      @clearAll="wh.clearSkills(true)"
       @updated="(event) => wh.updateSkills(event.id, event.number)"
       @addSpeciesSkills="
         populateSpeciesSkills5e(wh, skillLists.list5e.whList.value, generationPropsUtils.generationProps.value)
@@ -638,7 +557,6 @@ const modifierAttributes = computed(() => {
       :validationStatus="validTalents"
       class="flex-1"
       @reload="talentLists.reload"
-      @clearAll="wh.clearTalents(true)"
       @updated="(event) => wh.updateTalents(event.id, event.number, talentLists.list5e.whList.value)"
       @addSpeciesTalents="
         populateSpeciesTalents(wh, talentLists.list5e.whList.value, generationPropsUtils.generationProps.value)
@@ -646,6 +564,34 @@ const modifierAttributes = computed(() => {
     />
   </div>
 
+  <div class="flex flex-wrap gap-4 my-4">
+    <SheetTable title="Wealth" :columns="3" class="grow basis-80">
+      <SheetField v-model="wh.gold" type="number" title="Gold" :validationStatus="validGold" :disabled="!canEdit" />
+      <SheetField
+        v-model="wh.silver"
+        type="number"
+        title="Silver"
+        :validationStatus="validSilver"
+        :disabled="!canEdit"
+      />
+      <SheetField v-model="wh.brass" type="number" title="Brass" :validationStatus="validBrass" :disabled="!canEdit" />
+    </SheetTable>
+    <SheetTable title="Encumbrance" :columns="3" class="grow basis-80">
+      <SheetCell title="Weapons">{{ encumbrance.weapons }}</SheetCell>
+      <SheetCell title="Armour">{{ encumbrance.armour }}</SheetCell>
+      <SheetCell title="Other">{{ encumbrance.otherEquipped }}</SheetCell>
+      <SheetCell title="Carried">{{ encumbrance.carried }}</SheetCell>
+      <SheetCell title="Total">
+        <span
+          :class="{ 'text-error font-semibold': encumbrance.total > maxEncumbrance }"
+          :title="encumbrance.total > maxEncumbrance ? 'Over the Encumbrance limit' : undefined"
+        >
+          {{ encumbrance.total }}
+        </span>
+      </SheetCell>
+      <SheetCell title="Max">{{ maxEncumbrance }}</SheetCell>
+    </SheetTable>
+  </div>
   <CharacterItems
     :disabled="!canEdit"
     :initEquipped="wh.equippedItems"
@@ -659,7 +605,6 @@ const modifierAttributes = computed(() => {
     :storedValidationStatus="validStored"
     class="flex-1"
     @reload="itemLists.reload"
-    @clearAll="wh.clearItems(true)"
     @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
     @carriedUpdated="(event) => wh.updateItems(event.id, event.number, 'carried')"
     @storedUpdated="(event) => wh.updateItems(event.id, event.number, 'stored')"
@@ -667,112 +612,129 @@ const modifierAttributes = computed(() => {
   />
 
   <div class="flex justify-between text-left gap-4 my-4 flex-wrap">
-    <SelectTable
-      :disabled="!canEdit"
-      :initSelectedItems="wh.spells"
-      :itemList="spellLists.withAllowed.value"
-      :fourEIds="spellLists.fourEIds.value"
-      title="Spells"
-      modalTitle="Modify spells"
-      modalId="characterSpells"
-      :loading="spellLists.loading.value"
-      :clearAllBtn="true"
-      :disableDescription="true"
-      routeName="spell"
-      :truncateModalDescription="100"
-      class="flex-1 min-w-52"
-      @reload="spellLists.reload"
-      @selected="(e) => wh.updateSpells(e.id, e.selected)"
-      @clearAll="wh.clearSpells(true)"
-    />
-    <SelectTable
-      :disabled="!canEdit"
-      :initSelectedItems="wh.prayers"
-      :itemList="prayerLists.withAllowed.value"
-      :fourEIds="prayerLists.fourEIds.value"
-      title="Prayers"
-      modalTitle="Modify prayers"
-      modalId="characterPrayers"
-      :loading="prayerLists.loading.value"
-      :clearAllBtn="true"
-      :disableDescription="true"
-      routeName="prayer"
-      :truncateModalDescription="100"
-      class="flex-1 min-w-52"
-      @reload="prayerLists.reload"
-      @selected="(e) => wh.updatePrayers(e.id, e.selected)"
-      @clearAll="wh.clearPrayers(true)"
-    />
+    <div class="grow basis-80">
+      <SheetTable title="Magic and Faith">
+        <SheetField
+          v-model="wh.sin"
+          type="number"
+          title="Sin Points"
+          :validationStatus="validSin"
+          :disabled="!canEdit"
+        />
+      </SheetTable>
+      <SelectTable
+        :disabled="!canEdit"
+        :initSelectedItems="wh.prayers"
+        :itemList="prayerLists.withAllowed.value"
+        :fourEIds="prayerLists.fourEIds.value"
+        title="Prayers"
+        modalTitle="Edit prayers"
+        modalId="characterPrayers"
+        :loading="prayerLists.loading.value"
+        removable
+        :disableDescription="true"
+        routeName="prayer"
+        :truncateModalDescription="100"
+        class="-mt-px"
+        @reload="prayerLists.reload"
+        @selected="(e) => wh.updatePrayers(e.id, e.selected)"
+      />
+      <SelectTable
+        :disabled="!canEdit"
+        :initSelectedItems="wh.spells"
+        :itemList="spellLists.withAllowed.value"
+        :fourEIds="spellLists.fourEIds.value"
+        title="Spells"
+        modalTitle="Edit spells"
+        modalId="characterSpells"
+        :loading="spellLists.loading.value"
+        removable
+        :disableDescription="true"
+        routeName="spell"
+        :truncateModalDescription="100"
+        class="-mt-px"
+        @reload="spellLists.reload"
+        @selected="(e) => wh.updateSpells(e.id, e.selected)"
+      />
+    </div>
+    <div class="grow basis-80">
+      <SheetTable title="Traits and Corruption">
+        <SheetField
+          v-model="wh.corruption"
+          type="number"
+          title="Corruption Points"
+          :validationStatus="validCorruption"
+          :disabled="!canEdit"
+        />
+      </SheetTable>
+      <SelectTable
+        :disabled="!canEdit"
+        :initSelectedItems="wh.mutations"
+        :itemList="mutationLists.withAllowed.value"
+        :fourEIds="mutationLists.fourEIds.value"
+        title="Mutations"
+        modalTitle="Edit mutations"
+        modalId="characterMutations"
+        :loading="mutationLists.loading.value"
+        removable
+        :disableDescription="true"
+        routeName="mutation"
+        :truncateModalDescription="100"
+        class="-mt-px"
+        @reload="mutationLists.reload"
+        @selected="(e) => wh.updateMutations(e.id, e.selected, mutationLists.list5e.whList.value)"
+      />
+      <SelectIdValueTable
+        :disabled="!canEdit"
+        :selected="wh.traits"
+        :itemList="traitLists.withAllowed.value"
+        :fourEIds="traitLists.fourEIds.value"
+        title="Creature Traits"
+        modalTitle="Edit traits"
+        :loading="traitLists.loading.value"
+        :disableDescription="true"
+        :allowRepeat="true"
+        :validationStatus="wh.validateTraits()"
+        routeName="trait"
+        :truncateModalDescription="100"
+        class="-mt-px"
+        @reload="traitLists.reload"
+        @add="(id) => wh.addTrait(id, traitLists.list5e.whList.value)"
+        @remove="(e) => wh.removeTrait(e.index)"
+        @selected="(e) => wh.updateTraits(e.id, e.selected, traitLists.list5e.whList.value)"
+        @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
+      />
+    </div>
   </div>
 
-  <div class="flex justify-between text-left gap-4 my-4 flex-wrap">
-    <SelectTable
-      :disabled="!canEdit"
-      :initSelectedItems="wh.mutations"
-      :itemList="mutationLists.withAllowed.value"
-      :fourEIds="mutationLists.fourEIds.value"
-      title="Mutations"
-      modalTitle="Modify mutations"
-      modalId="characterMutations"
-      :loading="mutationLists.loading.value"
-      :clearAllBtn="true"
-      :disableDescription="true"
-      routeName="mutation"
-      :truncateModalDescription="100"
-      class="flex-1 min-w-56"
-      @reload="mutationLists.reload"
-      @selected="(e) => wh.updateMutations(e.id, e.selected, mutationLists.list5e.whList.value)"
-      @clearAll="wh.clearMutations(true)"
-    />
-    <SelectIdValueTable
-      :disabled="!canEdit"
-      :selected="wh.traits"
-      :itemList="traitLists.withAllowed.value"
-      :fourEIds="traitLists.fourEIds.value"
-      title="Creature traits"
-      modalTitle="Modify traits"
-      :loading="traitLists.loading.value"
-      :clearAllBtn="true"
-      :disableDescription="true"
-      :allowRepeat="true"
-      :validationStatus="wh.validateTraits()"
-      routeName="trait"
-      :truncateModalDescription="100"
-      class="flex-1 min-w-56"
-      @reload="traitLists.reload"
-      @add="(id) => wh.addTrait(id, traitLists.list5e.whList.value)"
-      @remove="(e) => wh.removeTrait(e.index)"
-      @selected="(e) => wh.updateTraits(e.id, e.selected, traitLists.list5e.whList.value)"
-      @updateValue="(e) => wh.updateTraitValue(e.index, e.value)"
-      @clearAll="wh.clearTraits()"
-    />
-  </div>
+  <SectionCard title="Notes" class="my-4">
+    <FormTextarea v-model="wh.notes" :validationStatus="validNotes" :disabled="!canEdit" bare />
+  </SectionCard>
 
   <div class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="characters"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Character"
-      :name="wh.name"
-      list="characters"
-      :deleteItem="deleteItem"
-    />
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Character"
+        :saving="submissionState.status === 'inProgress'"
+        list="characters"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Character"
+        :name="wh.name"
+        list="characters"
+        :deleteItem="deleteItem"
+        class="flex-1"
+      />
+    </div>
   </div>
 </template>
 

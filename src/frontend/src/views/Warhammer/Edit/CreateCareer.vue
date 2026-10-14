@@ -15,16 +15,17 @@ import { Visibility } from "../../../services/wh/core/entity.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
 import { authRequest } from "../../../services/auth.ts";
 import { computed } from "vue";
-import FormInput from "../../../components/FormInput.vue";
-import MultipleCheckboxColumnInput from "../../../components/MultipleCheckboxColumnInput.vue";
-import SelectInput from "../../../components/SelectInput.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SheetSelect from "../../../components/SheetSelect.vue";
+import SectionCard from "../../../components/SectionCard.vue";
+import LabelPicker from "../../../components/LabelPicker.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
 import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
 import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
 import DeleteBlock from "../../../components/DeleteBlock.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
 import SourceTable from "../../../components/SourceTable.vue";
 import { useWhList } from "../../../composables/whList.ts";
 import { skillApi } from "../../../services/wh/content/skill.ts";
@@ -161,36 +162,21 @@ watchWh(
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Career" :disabled="!canEdit" />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-          <MultipleCheckboxColumnInput
-            v-model="wh.species"
-            title="Species"
-            :options="speciesOpts"
-            :disabled="!canEdit"
-          />
-        </div>
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Career" :disabled="!canEdit" />
+    </div>
+    <!-- Name, class and species in one column, the description in the other. -->
+    <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
+      <div class="flex-1 flex flex-col gap-4">
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <SheetSelect v-model="wh.careerClass" title="Class" :options="classOpts" :disabled="!canEdit" />
+        </SheetTable>
+        <LabelPicker v-model="wh.species" title="Species" :options="speciesOpts" :disabled="!canEdit" />
       </div>
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <SelectInput
-            v-model="wh.careerClass"
-            :options="classOpts"
-            :disabled="!canEdit"
-            title="Class"
-            class="min-w-24"
-          />
-          <FormTextarea
-            v-model="wh.description"
-            title="Description"
-            :validationStatus="validDesc"
-            :disabled="!canEdit"
-          />
-        </div>
-      </div>
+      <SectionCard title="Description" class="flex-1">
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
+      </SectionCard>
     </div>
     <div class="flex flex-col gap-4">
       <CareerLevel
@@ -304,42 +290,38 @@ watchWh(
         @updateTalent="(e) => wh.updateLevelTalents(5, e.id, e.selected)"
       />
     </div>
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="my-3 flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
   </template>
   <div v-show="hasVariant" class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="careers"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Career"
-      :name="wh.name"
-      list="careers"
-      :deleteItem="deleteItem"
-    />
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Career"
+        :saving="submissionState.status === 'inProgress'"
+        list="careers"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Career"
+        :name="wh.name"
+        list="careers"
+        :deleteItem="deleteItem"
+        class="flex-1"
+      />
+    </div>
   </div>
 </template>
 

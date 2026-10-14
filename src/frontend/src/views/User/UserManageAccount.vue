@@ -21,12 +21,14 @@ const currentView = useRouteQuery("view", viewNames[0].value);
   </div>
   <div v-if="currentView === viewNames[0].value">
     <Header title="Manage your account">
-      Change your email, password, or delete the account. To make any changes in this section, you will need to confirm
-      your <span class="font-bold">current</span> password.
+      Change your email or password, or delete the account. Every change asks for your
+      <span class="font-semibold">current</span> password.
     </Header>
-    <Username />
-    <Password />
-    <Delete />
+    <div class="grid gap-6 mt-4 md:grid-cols-2">
+      <Username />
+      <Password />
+      <Delete class="md:col-span-2" />
+    </div>
   </div>
   <div v-else-if="currentView === 'linked'">
     <UserLinkedUsers />

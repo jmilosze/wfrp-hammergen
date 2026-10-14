@@ -8,9 +8,11 @@ import { computed } from "vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import CheckboxInput from "../../../components/CheckboxInput.vue";
-import FormInput from "../../../components/FormInput.vue";
+import HintModal from "../../../components/HintModal.vue";
+import SheetTable from "../../../components/SheetTable.vue";
+import SheetField from "../../../components/SheetField.vue";
+import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import AfterSubmit from "../../../components/AfterSubmit.vue";
 import CharacterModifiersBlock from "../../../components/CharacterModifiersBlock.vue";
 import EditControls from "../../../components/EditControls.vue";
 import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
@@ -71,65 +73,60 @@ const validDesc = computed(() => wh.value.validateDescription());
     @add="addVariant"
   />
   <template v-if="hasVariant">
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="flex-1">
-        <div class="flex flex-col gap-4">
-          <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!canEdit" />
-          <CheckboxInput
-            v-model="wh.hasValue"
-            title="Takes a value? E.g. Ward (8) or Hatred (Elves)"
-            :disabled="!canEdit"
-          />
-          <FormInput v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
-        </div>
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+      <div class="flex items-center gap-2">
+        <CheckboxInput v-model="wh.hasValue" title="Takes a value?" :disabled="!canEdit" />
+        <HintModal modalHeader="Takes a value" modalId="traitValueHint">
+          <p class="my-1">
+            Some creature traits come with a value written in brackets after the name, such as a number in Ward (8) or a
+            target in Hatred (Elves).
+          </p>
+          <p class="my-1">
+            Tick this for such a trait. When it is added to a character, the character editor then asks for its value.
+          </p>
+        </HintModal>
       </div>
-      <FormTextarea
-        v-model="wh.description"
-        title="Description"
-        :validationStatus="validDesc"
-        :disabled="!canEdit"
+      <PublicPropertyBox v-model="wh.visibility" propertyName="Creature trait" :disabled="!canEdit" />
+    </div>
+    <SheetTable class="my-4">
+      <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+    </SheetTable>
+    <SectionCard title="Description" class="my-4">
+      <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare />
+    </SectionCard>
+    <CharacterModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit" class="my-4" />
+    <SourceTable
+      :edition="edition"
+      :disabled="!canEdit"
+      :initSources="initSources"
+      class="my-4"
+      @selected="(e) => wh.updateSource(e)"
+    />
+  </template>
+  <div v-show="hasVariant" class="mt-4">
+    <div class="flex flex-col md:flex-row gap-4">
+      <EditControls
+        :submissionState="submissionState"
+        :showSubmissionStatus="showSubmissionStatus"
+        propertyName="Creature trait"
+        :saving="submissionState.status === 'inProgress'"
+        list="traits"
+        :allowAddAnother="id === 'create'"
+        :confirmExit="hasChanged"
+        :submitForm="submitForm"
+        :resetForm="resetForm"
+        :readOnly="!canEdit"
+        class="flex-1"
+      />
+      <DeleteBlock
+        v-if="id !== 'create' && canEdit"
+        propertyName="Creature trait"
+        :name="wh.name"
+        list="traits"
+        :deleteItem="deleteItem"
         class="flex-1"
       />
     </div>
-    <div class="my-4">
-      <CharacterModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit" />
-    </div>
-    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
-      <div class="my-3 flex-1">
-        <SourceTable
-          :edition="edition"
-          :disabled="!canEdit"
-          :initSources="initSources"
-          @selected="(e) => wh.updateSource(e)"
-        />
-      </div>
-    </div>
-  </template>
-  <div v-show="hasVariant" class="mt-4">
-    <AfterSubmit
-      :visible="showSubmissionStatus"
-      :submissionState="submissionState"
-      class="w-fit my-2"
-      @close="showSubmissionStatus = false"
-    />
-
-    <EditControls
-      :saving="submissionState.status === 'inProgress'"
-      list="traits"
-      :allowAddAnother="id === 'create'"
-      :confirmExit="hasChanged"
-      :submitForm="submitForm"
-      :resetForm="resetForm"
-      :readOnly="!canEdit"
-    />
-
-    <DeleteBlock
-      v-if="id !== 'create' && canEdit"
-      propertyName="Creature trait"
-      :name="wh.name"
-      list="traits"
-      :deleteItem="deleteItem"
-    />
   </div>
 </template>
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import SectionLink from "../../components/SectionLink.vue";
 // Landing page for visitors who are not logged in: what Hammergen is and where to start.
 import { Icon } from "@iconify/vue";
 import TextLink from "../../components/TextLink.vue";
-import LinkButton from "../../components/LinkButton.vue";
 import HomeNotes from "./HomeNotes.vue";
 
 const FEATURES = [
@@ -41,12 +41,13 @@ const FEATURES = [
     <p class="mt-4 max-w-2xl text-lg text-neutral-600">
       Create characters and look up rules content for the 4th and 5th Edition of WFRP.
     </p>
-    <!-- The compendium button spans both columns; smaller text on phones keeps the first two side by side. The
-    LinkButton's inner row is centred. -->
-    <div class="mt-8 grid grid-cols-2 w-full max-w-md gap-3 text-base sm:text-lg *:*:justify-center">
-      <LinkButton routeName="register" class="btn btn-primary px-2">Create account</LinkButton>
-      <LinkButton routeName="login" class="btn btn-primary px-2">Log in</LinkButton>
-      <LinkButton routeName="careers" class="col-span-2 btn btn-secondary">Browse the compendium</LinkButton>
+    <!-- The compendium button spans both columns. -->
+    <div class="mt-8 grid grid-cols-2 w-full max-w-md gap-3">
+      <SectionLink icon="lucide:user-plus" routeName="register" variant="dark" size="lg">Create account</SectionLink>
+      <SectionLink icon="lucide:log-in" routeName="login" variant="dark" size="lg">Log in</SectionLink>
+      <SectionLink icon="lucide:book-open" routeName="careers" variant="dark" size="lg" class="col-span-2">
+        Browse the compendium
+      </SectionLink>
     </div>
   </section>
 
@@ -54,9 +55,9 @@ const FEATURES = [
     <div
       v-for="feature in FEATURES"
       :key="feature.title"
-      class="flex flex-col p-6 bg-neutral-50 border border-neutral-200 rounded-lg"
+      class="flex flex-col p-6 bg-parchment-light border border-parchment-dark rounded-lg"
     >
-      <Icon :icon="feature.icon" class="size-10 text-primary-600" />
+      <Icon :icon="feature.icon" class="size-10 text-brand" />
       <h2 class="mt-3 text-xl font-semibold">{{ feature.title }}</h2>
       <p class="mt-2 flex-auto text-neutral-700">{{ feature.text }}</p>
       <TextLink :routeName="feature.routeName" :query="feature.query" sameWindow class="mt-4">
