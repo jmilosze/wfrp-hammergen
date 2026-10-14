@@ -17,7 +17,7 @@ const COLUMNS_CLASS: Record<Columns, string> = {
 </script>
 
 <template>
-  <div class="@container flex flex-col">
+  <div class="@container flex flex-col font-sheet lining-nums [&_button]:font-sans">
     <div class="flex flex-col grow gap-px border border-neutral-400 bg-neutral-300">
       <div
         v-if="title"

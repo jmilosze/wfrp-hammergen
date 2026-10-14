@@ -58,7 +58,7 @@ const recentCharacters = computed(() =>
       <div
         v-for="character in recentCharacters"
         :key="character.id"
-        class="flex flex-col p-4 bg-neutral-50 border border-neutral-200 rounded-lg"
+        class="flex flex-col p-4 bg-parchment-light border border-parchment-dark rounded-lg"
       >
         <RouterLink
           :to="{ name: 'viewCharacter', params: { id: character.id } }"
@@ -93,7 +93,7 @@ const recentCharacters = computed(() =>
       <div
         v-for="section in COMPENDIUM_SECTIONS"
         :key="section.title"
-        class="p-4 bg-neutral-50 border border-neutral-200 rounded-lg"
+        class="p-4 bg-parchment-light border border-parchment-dark rounded-lg"
       >
         <div class="mb-2 pb-1 border-b border-brand-rule text-[0.7rem] font-bold uppercase tracking-widest text-brand">
           {{ section.title }}

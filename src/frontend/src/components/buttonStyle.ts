@@ -4,9 +4,10 @@
 // - neutral (the default): light grey, for every ordinary action, and the only kind in the editors and account pages
 //   besides danger;
 // - danger: red outline, for deleting.
-// lg is for the few big calls to action (e.g. the front page and the log in form).
+// lg is for the few big calls to action (e.g. the front page and the log in form); responsive is md on phones and lg
+// from sm up.
 export type ButtonVariant = "dark" | "neutral" | "danger";
-export type ButtonSize = "md" | "lg";
+export type ButtonSize = "md" | "lg" | "responsive";
 
 export const BUTTON_VARIANT_CLASS: Record<ButtonVariant, string> = {
   dark: "bg-brand border-brand-dark text-parchment transition-colors duration-150 hover:bg-brand-dark",
@@ -17,11 +18,13 @@ export const BUTTON_VARIANT_CLASS: Record<ButtonVariant, string> = {
 export const BUTTON_SIZE_CLASS: Record<ButtonSize, string> = {
   md: "gap-1 px-2 py-1 text-sm",
   lg: "gap-2 px-4 py-2 text-base",
+  responsive: "gap-1 px-2 py-1 text-sm sm:gap-2 sm:px-4 sm:py-2 sm:text-base",
 };
 
 export const BUTTON_ICON_SIZE_CLASS: Record<ButtonSize, string> = {
   md: "size-4",
   lg: "size-5",
+  responsive: "size-4 sm:size-5",
 };
 
 export const BUTTON_BASE_CLASS =

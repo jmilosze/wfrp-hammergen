@@ -256,6 +256,8 @@ export interface CharacterFull {
   encArmor: number;
   encOther: number;
   encCarried: number;
+  encTotal: number;
+  encMax: number;
 }
 
 export function apiResponseToCharacterFull(
@@ -312,13 +314,11 @@ export function apiResponseToCharacterFull(
   const rules = rulesFor(e);
   const size = rules.getSize(sizeModifier);
 
-  const hardyRanks =
-    modMutations.reduce((a, v) => a + (variantFor(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0), 0) +
-    modTraits.reduce((a, v) => a + (variantFor(v, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0), 0) +
-    modTalents.reduce(
-      (a, v) => a + v.number * (variantFor(v.wh, e).modifiers.effects.includes(ModifierEffect.Hardy) ? 1 : 0),
-      0,
-    );
+  // effectRanks counts an effect over talents (per rank taken), mutations and traits.
+  const effectRanks = (effect: ModifierEffect) =>
+    modMutations.reduce((a, v) => a + (variantFor(v, e).modifiers.effects.includes(effect) ? 1 : 0), 0) +
+    modTraits.reduce((a, v) => a + (variantFor(v, e).modifiers.effects.includes(effect) ? 1 : 0), 0) +
+    modTalents.reduce((a, v) => a + v.number * (variantFor(v.wh, e).modifiers.effects.includes(effect) ? 1 : 0), 0);
 
   const [basicSkills, advancedSkills] = getSkills(e, fullCharacterApi.object.skills, attributes);
   const languageSkills = getLanguageSkills(e, fullCharacterApi.object.skills, attributes);
@@ -381,7 +381,7 @@ export function apiResponseToCharacterFull(
     movement: rules.getMovement(fullCharacterApi.object.species, movementModifier),
     walk: 2 * rules.getMovement(fullCharacterApi.object.species, movementModifier),
     run: 4 * rules.getMovement(fullCharacterApi.object.species, movementModifier),
-    wounds: rules.getWounds(size, attributes.T, attributes.WP, attributes.S, hardyRanks),
+    wounds: rules.getWounds(size, attributes.T, attributes.WP, attributes.S, effectRanks(ModifierEffect.Hardy)),
 
     talents: fullCharacterApi.object.talents.map((x) => ({
       id: x.wh.id,
@@ -407,6 +407,13 @@ export function apiResponseToCharacterFull(
     encArmor: encumbrance.armour,
     encOther: encumbrance.otherEquipped,
     encCarried: encumbrance.carried,
+    encTotal: encumbrance.total,
+    encMax: rules.getMaxEncumbrance(
+      attributes.S,
+      attributes.T,
+      effectRanks(ModifierEffect.StrongBack),
+      effectRanks(ModifierEffect.Sturdy),
+    ),
   };
 }
 

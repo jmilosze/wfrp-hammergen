@@ -23,7 +23,7 @@ function onChange(event: Event) {
     value=""
     :aria-label="ariaLabel"
     :disabled="options.length === 0"
-    class="w-22 rounded border px-2 py-1 text-sm font-medium bg-white border-neutral-400 text-neutral-800 hover:bg-neutral-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+    class="w-22 rounded border px-2 py-1 font-sans text-sm font-medium bg-white border-neutral-400 text-neutral-800 hover:bg-neutral-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
     @change="onChange"
   >
     <option value="" disabled hidden>+ Add</option>

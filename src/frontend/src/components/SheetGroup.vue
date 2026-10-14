@@ -19,7 +19,7 @@ const COLUMNS_CLASS: Record<Columns, string> = {
     </div>
     <div :class="COLUMNS_CLASS[columns]" class="grid flex-1 min-w-0 gap-px bg-neutral-300">
       <slot />
-      <p v-if="$slots.note" class="col-span-full px-2 py-1 bg-white text-xs text-neutral-600">
+      <p v-if="$slots.note" class="col-span-full px-2 py-1 bg-white font-sans text-xs text-neutral-600">
         <slot name="note" />
       </p>
     </div>

@@ -23,6 +23,9 @@ try {
 
 <template>
   <AlertBlock v-if="apiError" alertType="red" :centered="true" @close="apiError = ''">{{ apiError }}</AlertBlock>
-  <ViewCharacter5e v-else-if="character?.edition === '5e'" :character="character" />
-  <ViewCharacter4e v-else-if="character?.edition === '4e'" :character="character" />
+  <!-- data-print-desktop: printed at desktop layout, scaled to the paper (see style.css). -->
+  <div v-else-if="character" data-print-desktop>
+    <ViewCharacter5e v-if="character.edition === '5e'" :character="character" />
+    <ViewCharacter4e v-else :character="character" />
+  </div>
 </template>

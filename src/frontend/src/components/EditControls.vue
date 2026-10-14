@@ -130,6 +130,7 @@ onBeforeUnmount(() => {
       <div v-if="!readOnly" ref="saveGroup" class="relative flex">
         <SectionButton
           icon="lucide:save"
+          variant="dark"
           :busy="saving"
           :class="{ 'rounded-r-none': allowAddAnother }"
           @click="onSave(false)"
@@ -143,7 +144,7 @@ onBeforeUnmount(() => {
             aria-haspopup="menu"
             :aria-expanded="menuOpen"
             :disabled="saving"
-            class="px-1 rounded-r border border-l-0 border-neutral-400 bg-white text-neutral-800 hover:bg-neutral-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-1 rounded-r border border-l-parchment/40 border-brand-dark bg-brand text-parchment transition-colors duration-150 hover:bg-brand-dark cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             @click="menuOpen = !menuOpen"
           >
             <Icon icon="lucide:chevron-down" class="size-4" />

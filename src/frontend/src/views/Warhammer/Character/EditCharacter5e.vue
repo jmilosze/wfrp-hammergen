@@ -324,16 +324,13 @@ const modifierAttributes = computed(() => {
       {{ generationPropsUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
-  <div v-if="id !== 'create'" class="border border-neutral-700 rounded p-2 my-4">
-    <div class="text-xl">View character</div>
-    <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
-    <div class="flex">
-      <SectionLink icon="lucide:eye" routeName="viewCharacter" :params="{ id: id }" variant="neutral">
+  <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name">
+    <template v-if="id !== 'create'" #nextToHeader>
+      <SectionLink icon="lucide:eye" routeName="viewCharacter" :params="{ id: id }" size="responsive">
         View character
       </SectionLink>
-    </div>
-  </div>
+    </template>
+  </Header>
   <CharacterStartPanel
     v-if="canEdit && id === 'create'"
     :generateDisabled="isGenerationDisabled"
@@ -497,7 +494,7 @@ const modifierAttributes = computed(() => {
               :validationStatus="validCareerTicks"
               :disabled="!canEdit"
             />
-            <p class="px-2 py-1 bg-white text-xs text-neutral-600">
+            <p class="px-2 py-1 bg-white font-sans text-xs text-neutral-600">
               Ticks in the current career (0–36). Level 2 is reached at 10 ticks, level 3 at 22 and level 4 at 36.
             </p>
           </SheetTable>

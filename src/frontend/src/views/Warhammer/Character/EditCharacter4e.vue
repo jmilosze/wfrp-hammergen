@@ -387,16 +387,13 @@ const modifierAttributes = computed(() => {
       {{ generationPropsUtils.apiError.value }}
     </AlertBlock>
   </div>
-  <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
-  <div v-if="id !== 'create'" class="border border-neutral-700 rounded p-2 my-4">
-    <div class="text-xl">View character</div>
-    <div class="mb-4">View the character sheet formatted for gameplay, printing, or exporting.</div>
-    <div class="flex">
-      <SectionLink icon="lucide:eye" routeName="viewCharacter" :params="{ id: id }" variant="neutral">
+  <Header :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name">
+    <template v-if="id !== 'create'" #nextToHeader>
+      <SectionLink icon="lucide:eye" routeName="viewCharacter" :params="{ id: id }" size="responsive">
         View character
       </SectionLink>
-    </div>
-  </div>
+    </template>
+  </Header>
   <CharacterStartPanel
     v-if="canEdit && id === 'create'"
     :generateDisabled="isGenerationDisabled"

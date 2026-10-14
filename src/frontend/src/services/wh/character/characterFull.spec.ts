@@ -1297,6 +1297,8 @@ const characterFull = {
   encArmor: 3,
   encOther: 0,
   encCarried: 3,
+  encTotal: 11,
+  encMax: 7,
 } as CharacterFull;
 
 test("apiResponseToCharacterFull returns expected item", () => {

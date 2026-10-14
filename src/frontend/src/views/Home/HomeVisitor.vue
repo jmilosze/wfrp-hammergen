@@ -55,7 +55,7 @@ const FEATURES = [
     <div
       v-for="feature in FEATURES"
       :key="feature.title"
-      class="flex flex-col p-6 bg-neutral-50 border border-neutral-200 rounded-lg"
+      class="flex flex-col p-6 bg-parchment-light border border-parchment-dark rounded-lg"
     >
       <Icon :icon="feature.icon" class="size-10 text-brand" />
       <h2 class="mt-3 text-xl font-semibold">{{ feature.title }}</h2>

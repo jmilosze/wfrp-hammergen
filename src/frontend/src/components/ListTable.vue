@@ -17,7 +17,9 @@ withDefaults(
 </script>
 
 <template>
-  <div class="@container bg-white border border-neutral-400 min-w-fit [&_tbody>tr:last-child>td]:border-b-0">
+  <div
+    class="@container bg-white border border-neutral-400 min-w-fit font-sheet lining-nums [&_button]:font-sans [&_tbody>tr:last-child>td]:border-b-0"
+  >
     <table class="w-full">
       <thead>
         <tr class="text-left" :class="{ 'bg-editable': editable }">

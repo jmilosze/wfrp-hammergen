@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource-variable/alegreya";
 
 @font-face {
   font-family: "hammergen";
@@ -6,7 +7,7 @@
 }
 
 /* Printing. Backgrounds are kept: the sheet's cell lines, title bands and editable cells are drawn with them. A page
-   marked with data-print-desktop (the character editor) is laid out at desktop width and scaled down to the paper, so
+   marked with data-print-desktop (the character editor and view) is laid out at desktop width and scaled down to the paper, so
    the printout looks like the screen. */
 @media print {
   html {
@@ -20,6 +21,8 @@
 
 @theme {
   --font-hammergen: "Hammergen", serif;
+  /* sheet: the content of the editors' form boxes (SheetTable, SectionCard, ListTable); their buttons keep font-sans. */
+  --font-sheet: "Alegreya Variable", serif;
 
   /* Colours. Only these exist: Tailwind's built-in palettes are switched off, so classes such as bg-red-500 do not
      work. Greys are a scale (neutral-50…950); every other colour is named by what it is for, so changing e.g. the
