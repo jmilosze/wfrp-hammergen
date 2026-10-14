@@ -3,12 +3,13 @@ import SheetCell from "./SheetCell.vue";
 import SheetTable from "./SheetTable.vue";
 import { CharacterFull } from "../services/wh/character/characterFull.ts";
 
-// The character view's Wealth beside Encumbrance, as in the editor; the total is marked when over the limit.
+// The character view's Wealth and Encumbrance boxes; the total is marked when over the limit. The wrapper is display:
+// contents, so the two boxes are laid out by the page (side by side in its grid or flex row).
 defineProps<{ character: CharacterFull }>();
 </script>
 
 <template>
-  <div class="flex flex-wrap text-left gap-4">
+  <div class="contents text-left">
     <SheetTable title="Wealth" :columns="3" class="grow basis-80">
       <SheetCell title="Gold">{{ character.gold }}</SheetCell>
       <SheetCell title="Silver">{{ character.silver }}</SheetCell>

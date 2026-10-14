@@ -59,7 +59,7 @@ onMounted(async () => {
     <NavBar v-if="!printing" class="print:hidden" @openMenu="showSideBar = true" />
     <!-- Content -->
     <!-- The page container is named, so parts of a page in containers of their own can still follow the page width. -->
-    <main class="@container/page flex-auto mx-auto p-8 max-w-7xl w-full">
+    <main class="@container/page flex-auto mx-auto p-8 print:p-0 max-w-7xl w-full">
       <RouterView v-slot="{ Component }" :key="route.path">
         <template v-if="Component">
           <Suspense>

@@ -89,7 +89,9 @@ function onGenerate() {
     </div>
     <template #buttons>
       <div class="flex justify-end">
-        <SectionButton icon="lucide:dices" :disabled="generateDisabled" @click="onGenerate">Generate</SectionButton>
+        <SectionButton icon="lucide:dices" variant="light" :disabled="generateDisabled" @click="onGenerate">
+          Generate
+        </SectionButton>
       </div>
     </template>
   </ModalWindow>

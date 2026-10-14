@@ -398,7 +398,7 @@ const modifierAttributes = computed(() => {
     <template #header> Allow 4e content </template>
     <template #buttons>
       <div class="flex gap-2">
-        <SectionButton icon="lucide:check" @click="confirmAllow4e">Allow 4e content</SectionButton>
+        <SectionButton icon="lucide:check" variant="light" @click="confirmAllow4e">Allow 4e content</SectionButton>
         <SectionButton icon="lucide:x" variant="neutral" @click="modal.hideModal()">Cancel</SectionButton>
       </div>
     </template>

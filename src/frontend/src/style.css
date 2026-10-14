@@ -7,8 +7,9 @@
 }
 
 /* Printing. Backgrounds are kept: the sheet's cell lines, title bands and editable cells are drawn with them. A page
-   marked with data-print-desktop (the character editor and view) is laid out at desktop width and scaled down to the paper, so
-   the printout looks like the screen. */
+   marked with data-print-desktop (the character editor and view) is laid out at desktop width and scaled down to the
+   paper, so the printout looks like the screen. With the page padding dropped in print (App.vue), 0.6 of an A4 or
+   Letter page is wide enough for the widest layout of the sheets (72rem). */
 @media print {
   html {
     print-color-adjust: exact;
@@ -74,14 +75,14 @@
   --color-danger-hover: oklch(97.1% 0.013 17.38);
 
   /* Alert boxes (AlertBlock): background, border, text and the close button's hover. */
-  --color-alert-error-bg: oklch(88.5% 0.062 18.334);
-  --color-alert-error-border: oklch(63.7% 0.237 25.331);
-  --color-alert-error-text: oklch(44.4% 0.177 26.899);
-  --color-alert-error-hover: oklch(80.8% 0.114 19.571);
-  --color-alert-success-bg: oklch(92.5% 0.084 155.995);
-  --color-alert-success-border: oklch(72.3% 0.219 149.579);
-  --color-alert-success-text: oklch(44.8% 0.119 151.328);
-  --color-alert-success-hover: oklch(87.1% 0.15 154.449);
+  --color-alert-error-bg: #f5e3dc;
+  --color-alert-error-border: #c48474;
+  --color-alert-error-text: #7a2a1e;
+  --color-alert-error-hover: #ebcfc5;
+  --color-alert-success-bg: #e7eedc;
+  --color-alert-success-border: #93a97c;
+  --color-alert-success-text: #3b5428;
+  --color-alert-success-hover: #d6e2c6;
 
   /* Visibility of entries (visibilityKind.ts): the badge (background, border, text) and the icon. "Mine" uses greys. */
   --color-public-bg: oklch(93.2% 0.032 255.585);
