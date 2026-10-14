@@ -15,6 +15,12 @@
     print-color-adjust: exact;
   }
 
+  /* Page breaks: boxes (SheetTable, SectionCard, ListTable…) avoid breaking inside and a box's title stays with its
+     content; a box taller than a page still breaks, between rows. */
+  tr {
+    break-inside: avoid;
+  }
+
   body:has([data-print-desktop]) {
     zoom: 0.6;
   }

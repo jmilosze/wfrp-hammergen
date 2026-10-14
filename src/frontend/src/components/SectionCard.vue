@@ -11,9 +11,11 @@ defineProps<{
 
 <template>
   <div
-    class="flex flex-col bg-white border border-neutral-400 min-w-fit font-sheet lining-nums [&_button]:font-sans [&_tbody>tr:last-child>td]:border-b-0"
+    class="flex flex-col bg-white border border-neutral-400 min-w-fit print:break-inside-avoid font-sheet lining-nums [&_button]:font-sans [&_tbody>tr:last-child>td]:border-b-0"
   >
-    <div class="flex flex-wrap items-center justify-between gap-2 px-2 py-1 border-b border-neutral-300 bg-neutral-200">
+    <div
+      class="flex flex-wrap items-center justify-between gap-2 px-2 py-1 border-b border-neutral-300 bg-neutral-200 print:break-after-avoid"
+    >
       <div class="flex items-center gap-2">
         <span class="text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none">{{ title }}</span>
         <slot name="hint" />

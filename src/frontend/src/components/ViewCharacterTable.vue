@@ -47,10 +47,13 @@ const tdClass = "py-2 px-2 border-b border-neutral-300";
 <template>
   <div
     v-if="items.length"
-    class="@container font-sheet lining-nums"
+    class="@container font-sheet lining-nums print:break-inside-avoid"
     :class="title ? 'bg-white border border-neutral-400' : 'not-last:border-b border-neutral-300'"
   >
-    <div v-if="subtitle" class="px-2 py-1 bg-neutral-100 border-b border-neutral-300 font-semibold">
+    <div
+      v-if="subtitle"
+      class="px-2 py-1 bg-neutral-100 border-b border-neutral-300 font-semibold print:break-after-avoid"
+    >
       {{ subtitle }}
     </div>
     <div v-for="(layout, l) in layouts" :key="l" :class="layout.class">

@@ -18,7 +18,7 @@ withDefaults(
 
 <template>
   <div
-    class="@container bg-white border border-neutral-400 min-w-fit font-sheet lining-nums [&_button]:font-sans [&_tbody>tr:last-child>td]:border-b-0"
+    class="@container bg-white border border-neutral-400 min-w-fit print:break-inside-avoid font-sheet lining-nums [&_button]:font-sans [&_tbody>tr:last-child>td]:border-b-0"
   >
     <table class="w-full">
       <thead>
