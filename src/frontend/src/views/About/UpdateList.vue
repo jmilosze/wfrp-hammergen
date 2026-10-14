@@ -8,6 +8,28 @@ import UpdateEntry from "./UpdateEntry.vue";
   <Header title="Updates" />
   <section>
     <h2 class="mt-6 mb-2 text-2xl font-semibold">2026</h2>
+    <UpdateEntry date="15 Oct 2026">
+      <p>
+        Hammergen has a refreshed look. Editors are laid out like a paper character sheet, with clearer section boxes
+        and a book-style font, and buttons, colours and the account pages have been tidied up across the site.
+      </p>
+      <p>
+        Content lists have a new filter panel: combine several filters (for example class, species and source), keep
+        them in the page address to share or bookmark, and see at a glance which entries are public, yours or shared.
+        Lists page through results at the top and bottom, and the "Sample characters" setting is remembered.
+      </p>
+      <p>
+        The character editor has a Quick start strip for generating a character, faster pickers for skills, talents,
+        trappings and other content, and trappings grouped as Equipped, Carried and Stored/Assets with buttons to move
+        them between groups. The sheet now shows the maximum Encumbrance and warns when it is exceeded.
+      </p>
+      <p>
+        The character view has been redesigned to follow the layout of the paper character sheet, with empty sections
+        left out. Printing is improved: characters print at full desktop layout scaled to the page, and sections are
+        kept together instead of being split between pages. Maximum Encumbrance is also included in the spreadsheet
+        download.
+      </p>
+    </UpdateEntry>
     <UpdateEntry date="9 Oct 2026">
       <p>
         Added Warhammer Fantasy Roleplay 5th Edition. The 4e | 5e switch in the navigation bar chooses which edition you
