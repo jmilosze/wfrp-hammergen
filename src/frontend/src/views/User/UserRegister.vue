@@ -109,10 +109,10 @@ async function submitForm() {
       </template>
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormInput
-        v-model="user.email"
+        :modelValue="user.email"
         title="Email"
         :validationStatus="validEmail"
-        @input="user.email = ($event.target as HTMLInputElement).value.trim()"
+        @update:modelValue="(value: string) => (user.email = value.trim())"
       />
       <FormInput v-model="user.newPassword" type="password" title="Password" :validationStatus="validPassword" />
       <FormInput

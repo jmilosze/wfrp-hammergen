@@ -152,10 +152,10 @@ async function submitForm() {
       <li v-if="user.sharedAccounts.length === 0" class="px-3 py-2 text-neutral-500">No linked users yet.</li>
     </ul>
     <FormInput
-      v-model="newSharedAccount"
+      :modelValue="newSharedAccount"
       title="Add a user (their email)"
       :validationStatus="validNewSharedAccount"
-      @input="newSharedAccount = ($event.target as HTMLInputElement).value.trim()"
+      @update:modelValue="(value: string) => (newSharedAccount = value.trim())"
     >
       <AppButton
         icon="lucide:plus"

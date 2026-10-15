@@ -34,11 +34,8 @@ if (!props.noColour) {
     reach into an inline-flex box, so the row underlines itself. -->
     <span v-else class="inline-flex items-baseline gap-1 group-hover:underline">
       <slot />
-      <Icon
-        icon="lucide:external-link"
-        class="shrink-0 size-[0.9em] relative top-[0.1em]"
-        aria-label="opens in a new tab"
-      />
+      <Icon icon="lucide:external-link" class="shrink-0 size-[0.9em] relative top-[0.1em]" />
+      <span class="sr-only">(opens in a new tab)</span>
     </span>
   </a>
   <p v-else :class="linkClass"><slot /></p>

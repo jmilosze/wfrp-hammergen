@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AnchorHTMLAttributes } from "vue";
 import type { RouteName } from "@/router.ts";
 import { Icon } from "@iconify/vue";
 import {
@@ -11,15 +12,18 @@ import {
 } from "./buttonStyle.ts";
 
 // A link that looks like a AppButton, e.g. Create new.
+// Other attributes and listeners go to the link.
 withDefaults(
-  defineProps<{
-    icon: string;
-    routeName: RouteName;
-    params?: Record<string, string>;
-    newWindow?: boolean;
-    variant?: ButtonVariant;
-    size?: ButtonSize;
-  }>(),
+  defineProps<
+    {
+      icon: string;
+      routeName: RouteName;
+      params?: Record<string, string>;
+      newWindow?: boolean;
+      variant?: ButtonVariant;
+      size?: ButtonSize;
+    } & /* @vue-ignore */ AnchorHTMLAttributes
+  >(),
   { params: () => ({}), variant: "neutral", size: "md" },
 );
 </script>

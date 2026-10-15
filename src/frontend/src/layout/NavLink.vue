@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from "vue";
 import type { RouteName } from "@/router.ts";
 import { Icon } from "@iconify/vue";
 
 // A navigation entry: an internal route, an external link (new tab, marked with an icon) or, with neither, a button.
 // The parent styles it through class, which falls through to the element. An optional icon goes before the text.
-defineProps<{
-  routeName?: RouteName;
-  href?: string;
-  icon?: string;
-}>();
+// Other attributes and listeners (@click…) go to the link or button.
+defineProps<
+  {
+    routeName?: RouteName;
+    href?: string;
+    icon?: string;
+  } & /* @vue-ignore */ HTMLAttributes
+>();
 </script>
 
 <template>
@@ -24,11 +28,8 @@ defineProps<{
     <span class="inline-flex items-baseline gap-1.5">
       <Icon v-if="icon" :icon="icon" class="shrink-0 size-[1em] relative top-[0.15em]" />
       <slot />
-      <Icon
-        icon="lucide:external-link"
-        class="shrink-0 size-[1em] relative top-[0.15em]"
-        aria-label="opens in a new tab"
-      />
+      <Icon icon="lucide:external-link" class="shrink-0 size-[1em] relative top-[0.15em]" />
+      <span class="sr-only">(opens in a new tab)</span>
     </span>
   </a>
   <button v-else>

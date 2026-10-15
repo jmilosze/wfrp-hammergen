@@ -58,11 +58,11 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="8 Sep 2026">
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-temple-of-spite" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-temple-of-spite">
           The Temple of Spite
         </TextLink>
         and
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sylvania-setting-guide" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sylvania-setting-guide">
           Sylvania: The Cursed County
         </TextLink>
       </p>
@@ -74,7 +74,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="3 May 2025">
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-lords-of-stone-and-steel" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-lords-of-stone-and-steel">
           Lords of Stone and Steel
         </TextLink>
       </p>
@@ -83,7 +83,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="17 Apr 2025">
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-high-elf-player-s-guide" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-high-elf-player-s-guide">
           High Elf Player's Guide
         </TextLink>
       </p>
@@ -100,7 +100,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="30 Dec 2024">
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-deft-steps-light-fingers" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-deft-steps-light-fingers">
           Deft Steps Light Fingers
         </TextLink>
       </p>
@@ -109,7 +109,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="22 Nov 2024">
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-dwarf-player-s-guide" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-dwarf-player-s-guide">
           Dwarf Player's Guide
         </TextLink>
       </p>
@@ -126,7 +126,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="9 Jun 2024">
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-tribes-and-tribulations" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-tribes-and-tribulations">
           Tribes and Tribulations
         </TextLink>
       </p>
@@ -146,7 +146,7 @@ import UpdateEntry from "./UpdateEntry.vue";
       <p>Added hardy effect to talents and mutations.</p>
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-reikland-miscellanea" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-reikland-miscellanea">
           Reikland Miscellanea
         </TextLink>
       </p>
@@ -161,27 +161,21 @@ import UpdateEntry from "./UpdateEntry.vue";
       <p>Added contents of:</p>
       <ul class="list-disc ml-6 mt-1">
         <li>
-          <TextLink href="https://cubicle7games.com/warhammer-fantasy-starter-set" target="_blank">
-            Starter Set
-          </TextLink>
+          <TextLink href="https://cubicle7games.com/warhammer-fantasy-starter-set"> Starter Set </TextLink>
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/ubersreik-adventures" target="_blank">
-            Ubersreik Adventures
-          </TextLink>
+          <TextLink href="https://cubicle7games.com/ubersreik-adventures"> Ubersreik Adventures </TextLink>
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/ubersreik-adventures-ii" target="_blank">
-            Ubersreik Adventures 2
-          </TextLink>
+          <TextLink href="https://cubicle7games.com/ubersreik-adventures-ii"> Ubersreik Adventures 2 </TextLink>
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/wfrp-altdorf-crown-of-the-empire" target="_blank">
+          <TextLink href="https://cubicle7games.com/wfrp-altdorf-crown-of-the-empire">
             Altdorf - Crown of the Empire
           </TextLink>
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/wfrp-the-imperial-zoo" target="_blank">The Imperial Zoo</TextLink>
+          <TextLink href="https://cubicle7games.com/wfrp-the-imperial-zoo">The Imperial Zoo</TextLink>
         </li>
       </ul>
     </UpdateEntry>
@@ -191,44 +185,32 @@ import UpdateEntry from "./UpdateEntry.vue";
       <p>Added all skills, talents, items, spells, etc. from all remaining Enemy Within Campaign books:</p>
       <ul class="list-disc ml-6 mt-1">
         <li>
-          <TextLink
-            href="https://cubicle7games.com/enemy-within-campaign-volume-3-power-behind-the-throne"
-            target="_blank"
-          >
+          <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-3-power-behind-the-throne">
             Power Behind the Throne
           </TextLink>
         </li>
         <li>
-          <TextLink
-            href="https://cubicle7games.com/enemy-within-campaign-volume-3-power-behind-the-throne-companion"
-            target="_blank"
-          >
+          <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-3-power-behind-the-throne-companion">
             Power Behind the Throne Companion
           </TextLink>
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-4-the-horned-rat" target="_blank">
+          <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-4-the-horned-rat">
             The Horned Rat
           </TextLink>
         </li>
         <li>
-          <TextLink
-            href="https://cubicle7games.com/enemy-within-campaign-volume-4-the-horned-rat-companion"
-            target="_blank"
-          >
+          <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-4-the-horned-rat-companion">
             The Horned Rat Companion
           </TextLink>
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-5-the-empire-in-ruins" target="_blank">
+          <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-5-the-empire-in-ruins">
             Empire in Ruins
           </TextLink>
         </li>
         <li>
-          <TextLink
-            href="https://cubicle7games.com/enemy-within-campaign-volume-5-the-empire-in-ruins-companion"
-            target="_blank"
-          >
+          <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-5-the-empire-in-ruins-companion">
             Empire in Ruins Companion
           </TextLink>
         </li>
@@ -242,14 +224,11 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="3 Sep 2023">
       <p>
         Added talents, spells, Warrior of Tzeentch career, herbs and other items from
-        <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-2-death-on-the-reik" target="_blank">
+        <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-2-death-on-the-reik">
           Death on the Reik
         </TextLink>
         and
-        <TextLink
-          href="https://cubicle7games.com/enemy-within-campaign-volume-2-death-on-the-reik-companion"
-          target="_blank"
-        >
+        <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-2-death-on-the-reik-companion">
           Death on the Reik Companion
         </TextLink>
       </p>
@@ -257,14 +236,11 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="28 Aug 2023">
       <p>
         Added mutations, talents, spells, and Cult Magus of Tzeentch career from
-        <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-1-enemy-in-shadows" target="_blank">
+        <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-1-enemy-in-shadows">
           Enemy in Shadows
         </TextLink>
         and
-        <TextLink
-          href="https://cubicle7games.com/enemy-within-campaign-volume-1-enemy-in-shadows-companion"
-          target="_blank"
-        >
+        <TextLink href="https://cubicle7games.com/enemy-within-campaign-volume-1-enemy-in-shadows-companion">
           Enemy in Shadows Companion
         </TextLink>
       </p>
@@ -272,13 +248,13 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="21 Aug 2023">
       <p>
         Added careers and weapons from
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-lustria" target="_blank">Lustria</TextLink>
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-lustria">Lustria</TextLink>
       </p>
     </UpdateEntry>
     <UpdateEntry date="14 May 2023">
       <p>
         Added generation rules for halfling clans from
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire">
           Archives of the Empire: Volume I
         </TextLink>
       </p>
@@ -287,35 +263,30 @@ import UpdateEntry from "./UpdateEntry.vue";
       <p>Added generation rules (Talents, Skills, and names) from the following books:</p>
       <ul class="list-disc ml-6 mt-1">
         <li>
-          <TextLink
-            href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3"
-            target="_blank"
-          >
+          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3">
             Archives of the Empire: Volume III
           </TextLink>
           Human (Altdorf South Bank), Human (Altdorf Eastend), Human (Altdorf Hexxerbezrik), Human (Altdorf Docklands),
           Dwarf (Atldorf)
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/wfrp-middenheim-city-of-the-white-wolf" target="_blank">
+          <TextLink href="https://cubicle7games.com/wfrp-middenheim-city-of-the-white-wolf">
             Middenheim City of the White Wolf,
           </TextLink>
           Human (Middenheim), Human (Middenland), Human (Nordland)
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/wfrp-salzenmund-city-of-salt-and-silver" target="_blank">
+          <TextLink href="https://cubicle7games.com/wfrp-salzenmund-city-of-salt-and-silver">
             Salzenmund, City of Salt and Silver,
           </TextLink>
           Human (Salzenmund), Dwarf (Cragforge Clan), Dwarf (Grumsson Clan)
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sea-of-claws" target="_blank">
-            Sea of Claws.
-          </TextLink>
+          <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sea-of-claws"> Sea of Claws. </TextLink>
           Human (Nors Bjornling), Human (Norse Sarl), Human (Norse Skaeling), Dwarf (Norse)
         </li>
         <li>
-          <TextLink href="https://cubicle7games.com/wfrp-up-in-arms" target="_blank">Up in Arms</TextLink>
+          <TextLink href="https://cubicle7games.com/wfrp-up-in-arms">Up in Arms</TextLink>
           Human (Tilea)
         </li>
       </ul>
@@ -323,17 +294,15 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="24 Apr 2023">
       <p>
         Added careers from
-        <TextLink href="https://cubicle7games.com/wfrp-middenheim-city-of-the-white-wolf" target="_blank">
+        <TextLink href="https://cubicle7games.com/wfrp-middenheim-city-of-the-white-wolf">
           Middenheim City of the White Wolf,
         </TextLink>
 
-        <TextLink href="https://cubicle7games.com/wfrp-salzenmund-city-of-salt-and-silver" target="_blank">
+        <TextLink href="https://cubicle7games.com/wfrp-salzenmund-city-of-salt-and-silver">
           Salzenmund, City of Salt and Silver,
         </TextLink>
         and
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sea-of-claws" target="_blank">
-          Sea of Claws.
-        </TextLink>
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-sea-of-claws"> Sea of Claws. </TextLink>
       </p>
       <p>
         Because of extra complexity from adding multiple careers and random career tables, we have temporarily disabled
@@ -356,7 +325,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="5 Mar 2023">
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire-3">
           Archives of the Empire: Volume III
         </TextLink>
       </p>
@@ -371,7 +340,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="22 Feb 2023">
       <p>
         Added contents of
-        <TextLink href="https://cubicle7games.com/wfrp-archives-of-the-empire-ii" target="_blank">
+        <TextLink href="https://cubicle7games.com/wfrp-archives-of-the-empire-ii">
           Archives of the Empire: Volume II
         </TextLink>
       </p>
@@ -386,7 +355,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="12 Feb 2023">
       <p>
         Added contents from
-        <TextLink href="https://cubicle7games.com/the-winds-of-magic-wahammer-fantasy-roleplay" target="_blank">
+        <TextLink href="https://cubicle7games.com/the-winds-of-magic-wahammer-fantasy-roleplay">
           Winds of Magic
         </TextLink>
       </p>
@@ -401,7 +370,7 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="10 Jan 2023">
       <p>
         Added contents from
-        <TextLink href="https://cubicle7games.com/wfrp-up-in-arms" target="_blank">Up in Arms</TextLink>
+        <TextLink href="https://cubicle7games.com/wfrp-up-in-arms">Up in Arms</TextLink>
         . This includes all new Items, Qualities/Flaws, Careers, new and updated Skills and Talents, and Miracles of
         Myrmidia. Things from Up in Arms that are currently not implemented in Hammergen: generation of Tilean
         characters and Siege Weapons (Catapults, Ballistas).
@@ -438,11 +407,9 @@ import UpdateEntry from "./UpdateEntry.vue";
     <UpdateEntry date="15 Nov 2022">
       <p>
         Hammergen now includes Gnomes from
-        <TextLink href="https://cubicle7games.com/rough-nights-hard-days" target="_blank">
-          Rough Nights & Hard Days
-        </TextLink>
+        <TextLink href="https://cubicle7games.com/rough-nights-hard-days"> Rough Nights & Hard Days </TextLink>
         and new careers and items from
-        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire" target="_blank">
+        <TextLink href="https://cubicle7games.com/warhammer-fantasy-roleplay-archives-of-the-empire">
           Archives of the Empire: Volume I
         </TextLink>
         . We will be adding more resources soon.

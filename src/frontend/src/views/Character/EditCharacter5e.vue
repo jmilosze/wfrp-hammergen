@@ -112,7 +112,7 @@ const speciesOpts = SPECIES_5E.map((x) => ({ text: printSpeciesWithRegion(x), va
 const statusTierOpts = statusTierList.map((x) => ({ text: printStatusTier(x), value: x }));
 const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusStanding(x), value: x }));
 
-const levelOpts = [
+const levelOpts: { text: string; value: 1 | 2 | 3 | 4 }[] = [
   { text: "Level 1", value: 1 },
   { text: "Level 2", value: 2 },
   { text: "Level 3", value: 3 },

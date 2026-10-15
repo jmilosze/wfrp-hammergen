@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ButtonHTMLAttributes } from "vue";
 import { computed } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import { Icon } from "@iconify/vue";
@@ -10,14 +11,17 @@ import { BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS } from "./buttonStyle.ts";
 type IconButtonVariant = "ghost" | "light";
 type IconButtonSize = "sm" | "md" | "lg";
 
+// Other attributes and listeners (@click…) go to the <button> (or the link).
 const props = withDefaults(
-  defineProps<{
-    icon: string;
-    label: string;
-    to?: RouteLocationRaw;
-    variant?: IconButtonVariant;
-    size?: IconButtonSize;
-  }>(),
+  defineProps<
+    {
+      icon: string;
+      label: string;
+      to?: RouteLocationRaw;
+      variant?: IconButtonVariant;
+      size?: IconButtonSize;
+    } & /* @vue-ignore */ ButtonHTMLAttributes
+  >(),
   { to: undefined, variant: "ghost", size: "md" },
 );
 

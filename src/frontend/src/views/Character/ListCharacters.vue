@@ -22,7 +22,7 @@ const auth = useAuth();
 const SAMPLE = "true";
 const showSample = useLocalStorage("characters.showSample", !auth.loggedIn.value);
 
-const filters = computed({
+const filters = computed<Record<string, string[]>>({
   get: () => ({ show: showSample.value ? [SAMPLE] : [] }),
   set: (value: Record<string, string[]>) => {
     showSample.value = (value.show ?? []).includes(SAMPLE);

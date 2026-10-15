@@ -31,7 +31,7 @@ const filters = defineModel<Record<string, string[]>>("filters", { required: tru
 // A page's list never changes, so its Copy is taken once.
 const { copyWh } = props.list;
 
-const searchTerm = useRouteQuery("search", "");
+const searchTerm = useRouteQuery<string>("search", "");
 const sortedItems = computed(() => [...props.items].sort((a, b) => a.name.localeCompare(b.name)));
 const auth = useAuth();
 </script>

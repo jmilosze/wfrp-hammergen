@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ButtonHTMLAttributes } from "vue";
 import { Icon } from "@iconify/vue";
 import {
   BUTTON_BASE_CLASS,
@@ -12,14 +13,17 @@ import {
 // The app's button: bordered, with an icon (see buttonStyle.ts).
 // iconOnlyWhenNarrow: inside a narrow @container, show only the icon; the label stays for screen readers.
 // busy: the icon becomes a spinner and the button is disabled, e.g. while saving.
+// Other attributes and listeners (disabled, @click…) go to the <button>.
 withDefaults(
-  defineProps<{
-    icon: string;
-    variant?: ButtonVariant;
-    size?: ButtonSize;
-    iconOnlyWhenNarrow?: boolean;
-    busy?: boolean;
-  }>(),
+  defineProps<
+    {
+      icon: string;
+      variant?: ButtonVariant;
+      size?: ButtonSize;
+      iconOnlyWhenNarrow?: boolean;
+      busy?: boolean;
+    } & /* @vue-ignore */ ButtonHTMLAttributes
+  >(),
   { variant: "neutral", size: "md" },
 );
 </script>

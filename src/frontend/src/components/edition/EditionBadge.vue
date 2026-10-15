@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from "vue";
 import { Edition, printEditionName } from "@/services/wh/core/edition.ts";
 
 // large: for a page header rather than inline next to an item name.
-defineProps<{ edition: Edition; large?: boolean }>();
+// Other attributes (e.g. a title replacing the edition name) go to the badge.
+defineProps<{ edition: Edition; large?: boolean } & /* @vue-ignore */ HTMLAttributes>();
 </script>
 
 <template>

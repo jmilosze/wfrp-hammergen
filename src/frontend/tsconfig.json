@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.ts"],
-  "vueCompilerOptions": { "checkUnknownComponents": true, "checkUnknownDirectives": true }
+  "vueCompilerOptions": { "strictTemplates": true }
 }

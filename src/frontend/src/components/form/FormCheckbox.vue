@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { InputHTMLAttributes } from "vue";
 import { Icon } from "@iconify/vue";
 
 // A checkbox drawn like an editable sheet cell: faint yellow inside, dark when ticked, greyed out when disabled.
@@ -6,7 +7,8 @@ import { Icon } from "@iconify/vue";
 // plain: white inside, for checkboxes that don't edit anything (e.g. list filters).
 defineOptions({ inheritAttrs: false });
 
-defineProps<{ plain?: boolean }>();
+// The input's attributes and listeners (checked, disabled, @change…) are declared for type checking only.
+defineProps<{ plain?: boolean } & /* @vue-ignore */ InputHTMLAttributes>();
 </script>
 
 <template>
