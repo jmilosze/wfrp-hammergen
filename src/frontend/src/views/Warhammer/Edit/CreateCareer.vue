@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Header from "../../../components/PageHeader.vue";
-import AlertBlock from "../../../components/AlertBlock.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
 import {
   Career,
@@ -13,6 +11,7 @@ import {
 import { printSpeciesName, careerSpeciesByEdition } from "../../../services/wh/core/species.ts";
 import { Visibility } from "../../../services/wh/core/entity.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
+import ContentEditorPage from "../../../components/ContentEditorPage.vue";
 import { authRequest } from "../../../services/auth.ts";
 import { computed } from "vue";
 import SheetTable from "../../../components/SheetTable.vue";
@@ -21,12 +20,6 @@ import SheetSelect from "../../../components/SheetSelect.vue";
 import SectionCard from "../../../components/SectionCard.vue";
 import LabelPicker from "../../../components/LabelPicker.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
-import EditControls from "../../../components/EditControls.vue";
-import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
-import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
-import DeleteBlock from "../../../components/DeleteBlock.vue";
-import SourceTable from "../../../components/SourceTable.vue";
 import { useWhList } from "../../../composables/whList.ts";
 import { skillApi } from "../../../services/wh/content/skill.ts";
 import { talentApi } from "../../../services/wh/content/talent.ts";
@@ -43,24 +36,8 @@ const newCareer = new Career({
   source: defaultSource(),
 });
 
-const {
-  wh,
-  edition,
-  hasVariant,
-  addVariant,
-  watchWh,
-  canEdit,
-  initSources,
-  apiError,
-  showApiError,
-  loadWh,
-  submitForm,
-  deleteItem,
-  hasChanged,
-  submissionState,
-  resetForm,
-  showSubmissionStatus,
-} = useWhEdit(newCareer, careerApi(authRequest));
+const editor = useWhEdit(newCareer, careerApi(authRequest));
+const { wh, edition, watchWh, canEdit } = editor;
 
 const skillListUtils = useWhList(skillApi(authRequest), edition);
 skillListUtils.loadWhList();
@@ -68,7 +45,7 @@ skillListUtils.loadWhList();
 const talentListUtils = useWhList(talentApi(authRequest), edition);
 talentListUtils.loadWhList();
 
-await loadWh(props.id);
+await editor.loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -131,40 +108,13 @@ watchWh(
 </script>
 
 <template>
-  <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-
-    <AlertBlock
-      v-if="skillListUtils.apiError.value && skillListUtils.showApiError.value"
-      alertType="red"
-      @close="skillListUtils.showApiError.value = false"
-    >
-      {{ skillListUtils.apiError.value }}
-    </AlertBlock>
-
-    <AlertBlock
-      v-if="talentListUtils.apiError.value && talentListUtils.showApiError.value"
-      alertType="red"
-      @close="talentListUtils.showApiError.value = false"
-    >
-      {{ talentListUtils.apiError.value }}
-    </AlertBlock>
-  </div>
-  <EditorEditionSelector v-model="edition" />
-  <Header :title="id === 'create' ? 'Create career' : canEdit ? 'Edit career' : wh.name" />
-  <MissingEditionVariant
-    v-if="!hasVariant"
-    :edition="edition"
-    :canEdit="canEdit"
+  <ContentEditorPage
+    :id="id"
+    :edit="editor"
     propertyName="Career"
-    @add="addVariant"
-  />
-  <template v-if="hasVariant">
-    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Career" :disabled="!canEdit" />
-    </div>
+    list="careers"
+    :lists="[skillListUtils, talentListUtils]"
+  >
     <!-- Name, class and species in one column, the description in the other. -->
     <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
       <div class="flex-1 flex flex-col gap-4">
@@ -290,39 +240,7 @@ watchWh(
         @updateTalent="(e) => wh.updateLevelTalents(5, e.id, e.selected)"
       />
     </div>
-    <SourceTable
-      :edition="edition"
-      :disabled="!canEdit"
-      :initSources="initSources"
-      class="my-4"
-      @selected="(e) => wh.updateSource(e)"
-    />
-  </template>
-  <div v-show="hasVariant" class="mt-4">
-    <div class="flex flex-col md:flex-row gap-4">
-      <EditControls
-        :submissionState="submissionState"
-        :showSubmissionStatus="showSubmissionStatus"
-        propertyName="Career"
-        :saving="submissionState.status === 'inProgress'"
-        list="careers"
-        :allowAddAnother="id === 'create'"
-        :confirmExit="hasChanged"
-        :submitForm="submitForm"
-        :resetForm="resetForm"
-        :readOnly="!canEdit"
-        class="flex-1"
-      />
-      <DeleteBlock
-        v-if="id !== 'create' && canEdit"
-        propertyName="Career"
-        :name="wh.name"
-        list="careers"
-        :deleteItem="deleteItem"
-        class="flex-1"
-      />
-    </div>
-  </div>
+  </ContentEditorPage>
 </template>
 
 <style scoped></style>

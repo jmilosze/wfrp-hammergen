@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/core/entity.ts";
-import AlertBlock from "../../../components/AlertBlock.vue";
-import Header from "../../../components/PageHeader.vue";
 import {
   getSkillAttributeNameList,
   getSkillTypeList,
@@ -12,6 +10,7 @@ import {
 } from "../../../services/wh/content/skill.ts";
 import { defaultSource } from "../../../services/wh/core/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
+import ContentEditorPage from "../../../components/ContentEditorPage.vue";
 import { authRequest } from "../../../services/auth.ts";
 import { useWhList } from "../../../composables/whList.ts";
 import { computed, ref, Ref, watch } from "vue";
@@ -22,12 +21,6 @@ import SheetSelect from "../../../components/SheetSelect.vue";
 import SectionCard from "../../../components/SectionCard.vue";
 import { AttributeName, printAttributeName } from "../../../services/wh/core/attributes.ts";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
-import SourceTable from "../../../components/SourceTable.vue";
-import EditControls from "../../../components/EditControls.vue";
-import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
-import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
-import DeleteBlock from "../../../components/DeleteBlock.vue";
 import SelectTable from "../../../components/SelectTable.vue";
 import CareerReferencesTable from "../../../components/CareerReferencesTable.vue";
 
@@ -42,24 +35,8 @@ const newSkill = new Skill({
   source: defaultSource(),
 });
 
-const {
-  wh,
-  edition,
-  hasVariant,
-  addVariant,
-  watchWh,
-  canEdit,
-  initSources,
-  apiError,
-  showApiError,
-  loadWh,
-  submitForm,
-  deleteItem,
-  hasChanged,
-  submissionState,
-  resetForm,
-  showSubmissionStatus,
-} = useWhEdit(newSkill, skillApi(authRequest));
+const editor = useWhEdit(newSkill, skillApi(authRequest));
+const { wh, edition, watchWh, canEdit } = editor;
 
 const skillListUtils = useWhList(skillApi(authRequest), edition);
 const groupSkills: Ref<Skill[]> = ref([]);
@@ -74,7 +51,7 @@ watch(
   { immediate: true, deep: true },
 );
 
-await loadWh(props.id);
+await editor.loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -106,34 +83,11 @@ watchWh(
 </script>
 
 <template>
-  <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-
-    <AlertBlock
-      v-if="skillListUtils.apiError.value && skillListUtils.showApiError.value"
-      alertType="red"
-      @close="skillListUtils.showApiError.value = false"
-    >
-      {{ skillListUtils.apiError.value }}
-    </AlertBlock>
-  </div>
-  <EditorEditionSelector v-model="edition" />
-  <Header :title="id === 'create' ? 'Create skill' : canEdit ? 'Edit skill' : wh.name" />
-  <MissingEditionVariant
-    v-if="!hasVariant"
-    :edition="edition"
-    :canEdit="canEdit"
-    propertyName="Skill"
-    @add="addVariant"
-  />
-  <template v-if="hasVariant">
-    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
+  <ContentEditorPage :id="id" :edit="editor" propertyName="Skill" list="skills" :lists="[skillListUtils]">
+    <template #toolbar>
       <CheckboxInput v-model="wh.isGroup" title="Group skill" :disabled="!canEdit" />
       <CheckboxInput v-model="wh.displayZero" title="Display if skill/group not taken?" :disabled="!canEdit" />
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Skill" :disabled="!canEdit" />
-    </div>
+    </template>
     <!-- Name, attribute, type and group in one column, the description in the other. -->
     <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
       <div class="flex-1 flex flex-col gap-4">
@@ -169,39 +123,7 @@ watchWh(
       :parentGroupIds="wh.group"
       type="skill"
     />
-    <SourceTable
-      :edition="edition"
-      :disabled="!canEdit"
-      :initSources="initSources"
-      class="my-4"
-      @selected="(e) => wh.updateSource(e)"
-    />
-  </template>
-  <div v-show="hasVariant" class="mt-4">
-    <div class="flex flex-col md:flex-row gap-4">
-      <EditControls
-        :submissionState="submissionState"
-        :showSubmissionStatus="showSubmissionStatus"
-        propertyName="Skill"
-        :saving="submissionState.status === 'inProgress'"
-        list="skills"
-        :allowAddAnother="id === 'create'"
-        :confirmExit="hasChanged"
-        :submitForm="submitForm"
-        :resetForm="resetForm"
-        :readOnly="!canEdit"
-        class="flex-1"
-      />
-      <DeleteBlock
-        v-if="id !== 'create' && canEdit"
-        propertyName="Skill"
-        :name="wh.name"
-        list="skills"
-        :deleteItem="deleteItem"
-        class="flex-1"
-      />
-    </div>
-  </div>
+  </ContentEditorPage>
 </template>
 
 <style scoped></style>

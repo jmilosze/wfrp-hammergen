@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/core/entity.ts";
-import Header from "../../../components/PageHeader.vue";
 import { Spell, spellApi } from "../../../services/wh/content/spell.ts";
 import { computed } from "vue";
 import { authRequest } from "../../../services/auth.ts";
@@ -8,14 +7,8 @@ import SheetTable from "../../../components/SheetTable.vue";
 import SheetField from "../../../components/SheetField.vue";
 import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import EditControls from "../../../components/EditControls.vue";
-import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
-import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
-import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
-import AlertBlock from "../../../components/AlertBlock.vue";
-import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
-import SourceTable from "../../../components/SourceTable.vue";
+import ContentEditorPage from "../../../components/ContentEditorPage.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
 import SpellClassification from "../../../components/SpellClassification.vue";
 
@@ -30,25 +23,10 @@ const newSpell = new Spell({
   source: defaultSource(),
 });
 
-const {
-  wh,
-  edition,
-  hasVariant,
-  addVariant,
-  canEdit,
-  initSources,
-  apiError,
-  showApiError,
-  loadWh,
-  submitForm,
-  deleteItem,
-  hasChanged,
-  submissionState,
-  resetForm,
-  showSubmissionStatus,
-} = useWhEdit(newSpell, spellApi(authRequest));
+const editor = useWhEdit(newSpell, spellApi(authRequest));
+const { wh, canEdit } = editor;
 
-await loadWh(props.id);
+await editor.loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -59,24 +37,7 @@ const validCn = computed(() => wh.value.validateCn());
 </script>
 
 <template>
-  <div class="flex justify-center">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-  </div>
-  <EditorEditionSelector v-model="edition" />
-  <Header :title="id === 'create' ? 'Create spell' : canEdit ? 'Edit spell' : wh.name" />
-  <MissingEditionVariant
-    v-if="!hasVariant"
-    :edition="edition"
-    :canEdit="canEdit"
-    propertyName="Spell"
-    @add="addVariant"
-  />
-  <template v-if="hasVariant">
-    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Spell" :disabled="!canEdit" />
-    </div>
+  <ContentEditorPage :id="id" :edit="editor" propertyName="Spell" list="spells">
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <SheetTable class="flex-1 self-start w-full">
         <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
@@ -91,38 +52,5 @@ const validCn = computed(() => wh.value.validateCn());
     </div>
 
     <SpellClassification v-model="wh.classification" :disabled="!canEdit" class="my-4" />
-
-    <SourceTable
-      :edition="edition"
-      :disabled="!canEdit"
-      :initSources="initSources"
-      class="my-4"
-      @selected="(e) => wh.updateSource(e)"
-    />
-  </template>
-  <div v-show="hasVariant" class="mt-4">
-    <div class="flex flex-col md:flex-row gap-4">
-      <EditControls
-        :submissionState="submissionState"
-        :showSubmissionStatus="showSubmissionStatus"
-        propertyName="Spell"
-        :saving="submissionState.status === 'inProgress'"
-        list="spells"
-        :allowAddAnother="id === 'create'"
-        :confirmExit="hasChanged"
-        :submitForm="submitForm"
-        :resetForm="resetForm"
-        :readOnly="!canEdit"
-        class="flex-1"
-      />
-      <DeleteBlock
-        v-if="id !== 'create' && canEdit"
-        propertyName="Spell"
-        :name="wh.name"
-        list="spells"
-        :deleteItem="deleteItem"
-        class="flex-1"
-      />
-    </div>
-  </div>
+  </ContentEditorPage>
 </template>

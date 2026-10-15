@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Visibility } from "../../../services/wh/core/entity.ts";
-import Header from "../../../components/PageHeader.vue";
 import { printRuneLabel, Rune, runeApi, runeLabelList } from "../../../services/wh/content/rune.ts";
 import { computed, ref } from "vue";
 import { authRequest } from "../../../services/auth.ts";
@@ -8,14 +7,8 @@ import SheetTable from "../../../components/SheetTable.vue";
 import SheetField from "../../../components/SheetField.vue";
 import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import EditControls from "../../../components/EditControls.vue";
-import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
-import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
-import DeleteBlock from "../../../components/DeleteBlock.vue";
 import { useWhEdit } from "../../../composables/whEdit.ts";
-import AlertBlock from "../../../components/AlertBlock.vue";
-import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
-import SourceTable from "../../../components/SourceTable.vue";
+import ContentEditorPage from "../../../components/ContentEditorPage.vue";
 import { defaultSource } from "../../../services/wh/core/source.ts";
 import LabelPicker from "../../../components/LabelPicker.vue";
 import { itemTypeList, printItemType } from "../../../services/wh/content/item.ts";
@@ -31,25 +24,10 @@ const newRune = new Rune({
   source: defaultSource(),
 });
 
-const {
-  wh,
-  edition,
-  hasVariant,
-  addVariant,
-  canEdit,
-  initSources,
-  apiError,
-  showApiError,
-  loadWh,
-  submitForm,
-  deleteItem,
-  hasChanged,
-  submissionState,
-  resetForm,
-  showSubmissionStatus,
-} = useWhEdit(newRune, runeApi(authRequest));
+const editor = useWhEdit(newRune, runeApi(authRequest));
+const { wh, canEdit } = editor;
 
-await loadWh(props.id);
+await editor.loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -59,24 +37,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
 </script>
 
 <template>
-  <div class="flex justify-center">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-  </div>
-  <EditorEditionSelector v-model="edition" />
-  <Header :title="id === 'create' ? 'Create rune' : canEdit ? 'Edit rune' : wh.name" />
-  <MissingEditionVariant
-    v-if="!hasVariant"
-    :edition="edition"
-    :canEdit="canEdit"
-    propertyName="Rune"
-    @add="addVariant"
-  />
-  <template v-if="hasVariant">
-    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Rune" :disabled="!canEdit" />
-    </div>
+  <ContentEditorPage :id="id" :edit="editor" propertyName="Rune" list="runes">
     <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
       <div class="flex-1 flex flex-col gap-4">
         <SheetTable>
@@ -95,40 +56,7 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
         <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
       </SectionCard>
     </div>
-
-    <SourceTable
-      :edition="edition"
-      :disabled="!canEdit"
-      :initSources="initSources"
-      class="my-4"
-      @selected="(e) => wh.updateSource(e)"
-    />
-  </template>
-  <div v-show="hasVariant" class="mt-4">
-    <div class="flex flex-col md:flex-row gap-4">
-      <EditControls
-        :submissionState="submissionState"
-        :showSubmissionStatus="showSubmissionStatus"
-        propertyName="Rune"
-        :saving="submissionState.status === 'inProgress'"
-        list="runes"
-        :allowAddAnother="id === 'create'"
-        :confirmExit="hasChanged"
-        :submitForm="submitForm"
-        :resetForm="resetForm"
-        :readOnly="!canEdit"
-        class="flex-1"
-      />
-      <DeleteBlock
-        v-if="id !== 'create' && canEdit"
-        propertyName="Rune"
-        :name="wh.name"
-        list="runes"
-        :deleteItem="deleteItem"
-        class="flex-1"
-      />
-    </div>
-  </div>
+  </ContentEditorPage>
 </template>
 
 <style scoped></style>

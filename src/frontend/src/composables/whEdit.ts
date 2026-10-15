@@ -194,3 +194,6 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
     watchWh,
   };
 }
+
+// WhEdit is a content editor's state, as useWhEdit returns it.
+export type WhEdit<T extends WhProperty> = ReturnType<typeof useWhEdit<T>>;

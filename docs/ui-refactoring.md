@@ -125,12 +125,14 @@ and the Source section) and `useFilterModel` (the filters joined for the sidebar
 `BrowseRow` has `ownerId` and `visibility`, so the slot types are no longer written inline. `CopyButton.vue` is gone.
 The 11 list pages went from 1,384 to 819 lines.
 
-### R2 One content editor shell (M)
+### R2 One content editor shell (M) — done 2026-10-15
 
-A `ContentEditorPage.vue` taking the `useWhEdit` result, the property name and the list route, with a slot for the
-fields. It renders the API alert, edition switch, header, missing-variant notice, `VisibilityField`, `SourceTable`
-and the Save/Delete row. The editors keep only their fields and validation. `EditorEditionSelector.vue` is folded
-in.
+`ContentEditorPage.vue` takes the editor's state (`useWhEdit`'s result, typed `WhEdit<T>` in `composables/whEdit.ts`),
+the route id, the property name and the list route. It renders the load errors (also of the other lists an editor
+loads, passed as `lists`), the edition switch, the title, the missing-variant notice, the toolbar slot with the
+visibility, the fields (default slot), the sources, and Save and Delete. The editors keep only their fields, toolbar
+items and validation. `EditorEditionSelector.vue` is gone. The 10 editors went from 2,102 to 1,350 lines (code without
+comments and blank lines: 189 added, 825 removed).
 
 ### R3 Share the character editor's common parts (L)
 

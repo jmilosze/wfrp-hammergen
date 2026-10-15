@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import SheetTitle from "../../../components/SheetTitle.vue";
-import AlertBlock from "../../../components/AlertBlock.vue";
-import Header from "../../../components/PageHeader.vue";
 import { validFloatFn, validIntegerFn } from "../../../services/wh/core/validators.ts";
 import { Visibility } from "../../../services/wh/core/entity.ts";
 import { defaultSource } from "../../../services/wh/core/source.ts";
 import { useWhEdit } from "../../../composables/whEdit.ts";
+import ContentEditorPage from "../../../components/ContentEditorPage.vue";
 import { ValidationStatus } from "../../../utils/validation.ts";
 import { authRequest } from "../../../services/auth.ts";
 import {
@@ -46,12 +45,6 @@ import SheetGroup from "../../../components/SheetGroup.vue";
 import SheetCell from "../../../components/SheetCell.vue";
 import SectionCard from "../../../components/SectionCard.vue";
 import FormTextarea from "../../../components/FormTextarea.vue";
-import EditControls from "../../../components/EditControls.vue";
-import EditorEditionSelector from "../../../components/EditorEditionSelector.vue";
-import MissingEditionVariant from "../../../components/MissingEditionVariant.vue";
-import DeleteBlock from "../../../components/DeleteBlock.vue";
-import SourceTable from "../../../components/SourceTable.vue";
-import PublicPropertyBox from "../../../components/PublicPropertyBox.vue";
 import { useWhList } from "../../../composables/whList.ts";
 import { itemPropertyApi } from "../../../services/wh/content/itemproperty.ts";
 import SelectTable from "../../../components/SelectTable.vue";
@@ -72,24 +65,8 @@ const newItem = new Item({
   source: defaultSource(),
 });
 
-const {
-  wh,
-  edition,
-  hasVariant,
-  addVariant,
-  watchWh,
-  canEdit,
-  initSources,
-  apiError,
-  showApiError,
-  loadWh,
-  submitForm,
-  deleteItem,
-  hasChanged,
-  submissionState,
-  resetForm,
-  showSubmissionStatus,
-} = useWhEdit(newItem, itemApi(authRequest));
+const editor = useWhEdit(newItem, itemApi(authRequest));
+const { wh, edition, watchWh, canEdit } = editor;
 
 const propertyListUtils = useWhList(itemPropertyApi(authRequest), edition);
 propertyListUtils.loadWhList();
@@ -108,7 +85,7 @@ const runeList = computed(() => {
   return runeListUtils.whList.value.filter((x) => x.applicableTo.includes(wh.value.type));
 });
 
-await loadWh(props.id);
+await editor.loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
 const validDesc = computed(() => wh.value.validateDescription());
@@ -218,40 +195,13 @@ watchWh(
 </script>
 
 <template>
-  <div class="flex items-center flex-col gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-
-    <AlertBlock
-      v-if="propertyListUtils.apiError.value && propertyListUtils.showApiError.value"
-      alertType="red"
-      @close="propertyListUtils.showApiError.value = false"
-    >
-      {{ propertyListUtils.apiError.value }}
-    </AlertBlock>
-
-    <AlertBlock
-      v-if="spellListUtils.apiError.value && spellListUtils.showApiError.value"
-      alertType="red"
-      @close="spellListUtils.showApiError.value = false"
-    >
-      {{ spellListUtils.apiError.value }}
-    </AlertBlock>
-  </div>
-  <EditorEditionSelector v-model="edition" />
-  <Header :title="id === 'create' ? 'Create trapping' : canEdit ? 'Edit trapping' : wh.name" />
-  <MissingEditionVariant
-    v-if="!hasVariant"
-    :edition="edition"
-    :canEdit="canEdit"
+  <ContentEditorPage
+    :id="id"
+    :edit="editor"
     propertyName="Trapping"
-    @add="addVariant"
-  />
-  <template v-if="hasVariant">
-    <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
-      <PublicPropertyBox v-model="wh.visibility" propertyName="Trapping" :disabled="!canEdit" />
-    </div>
+    list="items"
+    :lists="[propertyListUtils, spellListUtils]"
+  >
     <!-- Name, type, price and description in one column, the type's own properties and the lists in the other. -->
     <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
       <div class="flex-1 flex flex-col gap-4">
@@ -490,39 +440,7 @@ watchWh(
         </div>
       </div>
     </div>
-    <SourceTable
-      :edition="edition"
-      :disabled="!canEdit"
-      :initSources="initSources"
-      class="my-4"
-      @selected="(e) => wh.updateSource(e)"
-    />
-  </template>
-  <div v-show="hasVariant" class="mt-4">
-    <div class="flex flex-col md:flex-row gap-4">
-      <EditControls
-        :submissionState="submissionState"
-        :showSubmissionStatus="showSubmissionStatus"
-        propertyName="Trapping"
-        :saving="submissionState.status === 'inProgress'"
-        list="items"
-        :allowAddAnother="id === 'create'"
-        :confirmExit="hasChanged"
-        :submitForm="submitForm"
-        :resetForm="resetForm"
-        :readOnly="!canEdit"
-        class="flex-1"
-      />
-      <DeleteBlock
-        v-if="id !== 'create' && canEdit"
-        propertyName="Trapping"
-        :name="wh.name"
-        list="items"
-        :deleteItem="deleteItem"
-        class="flex-1"
-      />
-    </div>
-  </div>
+  </ContentEditorPage>
 </template>
 
 <style scoped></style>
