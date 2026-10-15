@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import SheetTitle from "../sheet/SheetTitle.vue";
-import router from "../../router.ts";
-import { returnToPreviousPage } from "../../utils/history.ts";
-import { onBeforeRouteLeave } from "vue-router";
+import type { RouteName } from "@/router.ts";
+import SheetTitle from "@/components/sheet/SheetTitle.vue";
+import { returnToPreviousPage } from "@/utils/history.ts";
+import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { onBeforeUnmount, ref, watch } from "vue";
-import AppButton from "../ui/AppButton.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 import { Icon } from "@iconify/vue";
-import { SubmissionState } from "../../utils/submission.ts";
+import { SubmissionState } from "@/utils/submission.ts";
+
+const router = useRouter();
 
 // submissionState / showSubmissionStatus: the result of the last save, shown as a short line in the table.
 const props = defineProps<{
@@ -17,7 +19,7 @@ const props = defineProps<{
   confirmExit: boolean;
   allowAddAnother?: boolean;
   saving: boolean;
-  list: string;
+  list: RouteName;
   submitForm: () => Promise<boolean>;
   resetForm: () => void;
 }>();
@@ -167,5 +169,3 @@ onBeforeUnmount(() => {
     </div>
   </div>
 </template>
-
-<style scoped></style>

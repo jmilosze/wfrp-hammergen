@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useCharacterList } from "../../composables/characterList.ts";
-import { Character, characterApi } from "../../services/wh/character/character.ts";
-import { authRequest } from "../../services/auth.ts";
+import { useCharacterList } from "@/composables/characterList.ts";
+import { Character, characterApi } from "@/services/wh/character/character.ts";
+import { authRequest } from "@/services/auth.ts";
 import { computed, watch } from "vue";
-import { Visibility } from "../../services/wh/core/entity.ts";
-import { useEdition } from "../../composables/edition.ts";
-import { useAuth } from "../../composables/auth.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { useEdition } from "@/composables/edition.ts";
+import { useAuth } from "@/composables/auth.ts";
 import { useLocalStorage } from "@vueuse/core";
-import ContentListPage from "../../components/content/list/ContentListPage.vue";
-import CharacterRowActions from "../../components/character/CharacterRowActions.vue";
-import { FilterSection } from "../../components/content/list/filterSection.ts";
+import ContentListPage from "@/components/content/list/ContentListPage.vue";
+import CharacterRowActions from "@/components/character/CharacterRowActions.vue";
+import { FilterSection } from "@/components/content/list/filterSection.ts";
 
 const { edition } = useEdition();
 const whList = useCharacterList(characterApi(authRequest), edition);

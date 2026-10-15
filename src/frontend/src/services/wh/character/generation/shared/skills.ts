@@ -1,6 +1,6 @@
 // Career skills shared by both editions: concrete picks for group skills in a career.
-import { PerGenerationLevel } from "../../../content/career.ts";
-import { SelectRandomFn } from "../../../../../utils/random.ts";
+import { PerGenerationLevel } from "@/services/wh/content/career.ts";
+import { SelectRandomFn } from "@/utils/random.ts";
 import { EntityGroupMap, GroupPicker } from "./groups.ts";
 
 function chooseSkillsForLevel(careerSkills: string[], groupPicker: GroupPicker, allSelectedSkills: string[]): string[] {

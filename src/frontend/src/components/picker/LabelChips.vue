@@ -1,4 +1,6 @@
 <script setup lang="ts" generic="T">
+import IconButton from "@/components/ui/IconButton.vue";
+
 // Labels in one row (e.g. a career level's characteristics or a spell's labels). Removable labels have the faint yellow
 // of editable fields and a cross; read-only ones are white.
 defineProps<{ labels: { text: string; value: T }[]; removable?: boolean }>();
@@ -27,5 +29,3 @@ const emit = defineEmits<{
     </li>
   </ul>
 </template>
-
-<style scoped></style>

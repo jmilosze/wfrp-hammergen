@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import type { RouteName } from "@/router.ts";
+import type { LocationQueryRaw, RouteParamsRaw } from "vue-router";
 import { Icon } from "@iconify/vue";
 
 // A web link opens in a new tab and is marked with an icon; mailto links get no icon.
 const props = defineProps<{
-  routeName?: string;
-  params?: any;
-  query?: any;
+  routeName?: RouteName;
+  params?: RouteParamsRaw;
+  query?: LocationQueryRaw;
   href?: string;
   sameWindow?: boolean;
   noColour?: boolean;
@@ -41,5 +43,3 @@ if (!props.noColour) {
   </a>
   <p v-else :class="linkClass"><slot /></p>
 </template>
-
-<style scoped></style>

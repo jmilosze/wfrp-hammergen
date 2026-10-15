@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import ViewCharacterHeader from "../../components/character/sheet/ViewCharacterHeader.vue";
-import ViewCharacterIdentity from "../../components/character/sheet/ViewCharacterIdentity.vue";
-import ViewCharacterCareer from "../../components/character/sheet/ViewCharacterCareer.vue";
-import ViewCharacterAttributes from "../../components/character/sheet/ViewCharacterAttributes.vue";
-import ViewCharacterSkills from "../../components/character/sheet/ViewCharacterSkills.vue";
-import ViewCharacterTable from "../../components/character/sheet/ViewCharacterTable.vue";
-import ViewCharacterList from "../../components/character/sheet/ViewCharacterList.vue";
-import ViewCharacterSecondPage from "../../components/character/sheet/ViewCharacterSecondPage.vue";
-import SheetTable from "../../components/sheet/SheetTable.vue";
-import SheetCell from "../../components/sheet/SheetCell.vue";
-import SheetCard from "../../components/sheet/SheetCard.vue";
-import TextLink from "../../components/ui/TextLink.vue";
-import CareerAdvancementTracker from "../../components/character/sheet/CareerAdvancementTracker.vue";
-import Ignored4eModifiersWarning from "../../components/character/Ignored4eModifiersWarning.vue";
-import { CharacterFull } from "../../services/wh/character/characterFull.ts";
-import { characterFullToCsv5e } from "../../services/wh/character/csv/csv5e.ts";
-import { sumAttributes } from "../../services/wh/core/attributes.ts";
+import ViewCharacterHeader from "@/components/character/sheet/ViewCharacterHeader.vue";
+import ViewCharacterIdentity from "@/components/character/sheet/ViewCharacterIdentity.vue";
+import ViewCharacterCareer from "@/components/character/sheet/ViewCharacterCareer.vue";
+import ViewCharacterAttributes from "@/components/character/sheet/ViewCharacterAttributes.vue";
+import ViewCharacterSkills from "@/components/character/sheet/ViewCharacterSkills.vue";
+import ViewCharacterTable from "@/components/character/sheet/ViewCharacterTable.vue";
+import ViewCharacterList from "@/components/character/sheet/ViewCharacterList.vue";
+import ViewCharacterSecondPage from "@/components/character/sheet/ViewCharacterSecondPage.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import TextLink from "@/components/ui/TextLink.vue";
+import CareerAdvancementTracker from "@/components/character/sheet/CareerAdvancementTracker.vue";
+import Ignored4eModifiersWarning from "@/components/character/Ignored4eModifiersWarning.vue";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
+import { characterFullToCsv5e } from "@/services/wh/character/csv/csv5e.ts";
+import { sumAttributes } from "@/services/wh/core/attributes.ts";
 
 // The 5e character sheet, read-only, laid out like the paper sheet. First page: name and experience, career with the
 // advancement tracker, characteristics with fate and wounds, movement and languages, skills, talents. Then the
@@ -90,5 +90,3 @@ const LANGUAGE_FIELDS = [
   </SheetCard>
   <ViewCharacterSecondPage :character="character" />
 </template>
-
-<style scoped></style>

@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import type { RouteName } from "@/router.ts";
+import { isNew } from "@/services/wh/core/entity.ts";
 import EditControls from "./EditControls.vue";
 import DeleteBlock from "./DeleteBlock.vue";
-import { SubmissionState } from "../../utils/submission.ts";
+import { SubmissionState } from "@/utils/submission.ts";
 
 // The end of an editor page: Save (with Back) and, for an existing entry the user can edit, Delete. id: the route's id
-// ("create" for a new entry). list: the list page's route, where Save and Delete return to.
+// (NEW_ID for a new entry). list: the list page's route, where Save and Delete return to.
 defineProps<{
   id: string;
   propertyName: string;
   name: string;
-  list: string;
+  list: RouteName;
   canEdit: boolean;
   hasChanged: boolean;
   submissionState: SubmissionState;
@@ -29,7 +31,7 @@ defineProps<{
         :propertyName="propertyName"
         :saving="submissionState.status === 'inProgress'"
         :list="list"
-        :allowAddAnother="id === 'create'"
+        :allowAddAnother="isNew(id)"
         :confirmExit="hasChanged"
         :submitForm="submitForm"
         :resetForm="resetForm"
@@ -37,7 +39,7 @@ defineProps<{
         class="flex-1"
       />
       <DeleteBlock
-        v-if="id !== 'create' && canEdit"
+        v-if="!isNew(id) && canEdit"
         :propertyName="propertyName"
         :name="name"
         :list="list"

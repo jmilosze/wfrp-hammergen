@@ -108,5 +108,3 @@ function onToggle(event: Event) {
     {{ text }}
   </div>
 </template>
-
-<style scoped></style>

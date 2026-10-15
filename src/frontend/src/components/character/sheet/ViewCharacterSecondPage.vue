@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import SheetCard from "../../sheet/SheetCard.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
 import ViewCharacterWealth from "./ViewCharacterWealth.vue";
 import ViewCharacterCorruption from "./ViewCharacterCorruption.vue";
 import ViewCharacterTrappings from "./ViewCharacterTrappings.vue";
 import ViewCharacterMagic from "./ViewCharacterMagic.vue";
-import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 
 // The second page of the paper character sheet: wealth, encumbrance and corruption side by side, the trappings, magic
 // and faith, and the notes.
@@ -31,5 +31,3 @@ const hasCorruption =
     </SheetCard>
   </div>
 </template>
-
-<style scoped></style>

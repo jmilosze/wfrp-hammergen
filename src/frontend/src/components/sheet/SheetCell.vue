@@ -18,5 +18,3 @@ defineProps<{ title: string; editable?: boolean }>();
     </div>
   </div>
 </template>
-
-<style scoped></style>

@@ -1,9 +1,9 @@
 import { Skill, SkillApiData, apiResponseToModel, modelToApi, SkillType } from "./skill.ts";
 import { describe, expect, test } from "vitest";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
-import { testIsEqualCommonProperties } from "../../../testing.ts";
-import { AttributeName } from "../core/attributes.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { testIsEqualCommonProperties } from "@/testing.ts";
+import { AttributeName } from "@/services/wh/core/attributes.ts";
 
 const skillApiData: SkillApiData = {
   name: "skill",

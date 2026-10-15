@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import SheetTitle from "../../../components/sheet/SheetTitle.vue";
-import { validFloatFn, validIntegerFn } from "../../../services/wh/core/validators.ts";
-import { Visibility } from "../../../services/wh/core/entity.ts";
-import { defaultSource } from "../../../services/wh/core/source.ts";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { ValidationStatus } from "../../../utils/validation.ts";
-import { authRequest } from "../../../services/auth.ts";
+import SheetTitle from "@/components/sheet/SheetTitle.vue";
+import { validFloatFn, validIntegerFn } from "@/services/wh/core/validators.ts";
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { ValidationStatus } from "@/utils/validation.ts";
+import { authRequest } from "@/services/auth.ts";
 import {
   ammoGroupList,
   armourGroupsByEdition,
@@ -36,23 +36,23 @@ import {
   printWeaponHands,
   rangedGroupList,
   weaponHandsList,
-} from "../../../services/wh/content/item.ts";
+} from "@/services/wh/content/item.ts";
 import { computed, ref, watch } from "vue";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetSelect from "../../../components/sheet/SheetSelect.vue";
-import SheetGroup from "../../../components/sheet/SheetGroup.vue";
-import SheetCell from "../../../components/sheet/SheetCell.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import { useWhList } from "../../../composables/whList.ts";
-import { itemPropertyApi } from "../../../services/wh/content/itemproperty.ts";
-import SelectTable from "../../../components/picker/SelectTable.vue";
-import CheckboxGroup from "../../../components/form/CheckboxGroup.vue";
-import { spellApi } from "../../../services/wh/content/spell.ts";
-import { runeApi } from "../../../services/wh/content/rune.ts";
-import SelectIdNumberTable from "../../../components/picker/SelectIdNumberTable.vue";
-import SelectIdValueTable from "../../../components/picker/SelectIdValueTable.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import SheetGroup from "@/components/sheet/SheetGroup.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { useWhList } from "@/composables/whList.ts";
+import { itemPropertyApi } from "@/services/wh/content/itemproperty.ts";
+import SelectTable from "@/components/picker/SelectTable.vue";
+import CheckboxGroup from "@/components/form/CheckboxGroup.vue";
+import { spellApi } from "@/services/wh/content/spell.ts";
+import { runeApi } from "@/services/wh/content/rune.ts";
+import SelectIdNumberTable from "@/components/picker/SelectIdNumberTable.vue";
+import SelectIdValueTable from "@/components/picker/SelectIdValueTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -60,7 +60,7 @@ const props = defineProps<{
 
 const newItem = new Item({
   name: "New item",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -442,5 +442,3 @@ watchWh(
     </div>
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

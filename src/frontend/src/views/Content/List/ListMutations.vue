@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useFilterModel, useListQuery, useSourceFilter, useWhList } from "../../../composables/whList.ts";
-import { useEdition } from "../../../composables/edition.ts";
-import { Mutation, mutationApi, mutationTypeList, printMutationType } from "../../../services/wh/content/mutation.ts";
-import { authRequest } from "../../../services/auth.ts";
-import ContentListPage from "../../../components/content/list/ContentListPage.vue";
-import { FilterSection } from "../../../components/content/list/filterSection.ts";
+import { useFilterModel, useListQuery, useSourceFilter, useWhList } from "@/composables/whList.ts";
+import { useEdition } from "@/composables/edition.ts";
+import { Mutation, mutationApi, mutationTypeList, printMutationType } from "@/services/wh/content/mutation.ts";
+import { authRequest } from "@/services/auth.ts";
+import ContentListPage from "@/components/content/list/ContentListPage.vue";
+import { FilterSection } from "@/components/content/list/filterSection.ts";
 
 const { edition } = useEdition();
 const whList = useWhList(mutationApi(authRequest), edition);

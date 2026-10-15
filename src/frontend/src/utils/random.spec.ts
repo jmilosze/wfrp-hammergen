@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { rollDice, rollInTable, selectRandom, selectWeighted } from "./random.ts";
-import { getRollDiceTest } from "../testing.ts";
+import { getRollDiceTest } from "@/testing.ts";
 
 describe("random utilities", () => {
   describe("selectRandom", () => {

@@ -23,5 +23,3 @@ defineProps<{ plain?: boolean }>();
     />
   </span>
 </template>
-
-<style scoped></style>

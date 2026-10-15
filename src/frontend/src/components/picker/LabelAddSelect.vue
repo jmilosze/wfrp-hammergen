@@ -30,5 +30,3 @@ function onChange(event: Event) {
     <option v-for="(option, i) in options" :key="option.text" :value="i">{{ option.text }}</option>
   </select>
 </template>
-
-<style scoped></style>

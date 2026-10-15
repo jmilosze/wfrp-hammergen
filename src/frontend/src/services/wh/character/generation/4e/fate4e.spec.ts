@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { SpeciesWithRegion } from "../../../core/species.ts";
-import { Character } from "../../character.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
+import { Character } from "@/services/wh/character/character.ts";
 import { generateFateAndResilience, populateFateAndResilience } from "./fate4e.ts";
 
 describe("fate4e", () => {

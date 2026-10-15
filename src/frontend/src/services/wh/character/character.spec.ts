@@ -1,15 +1,15 @@
 import { apiResponseToModel, Character, CharacterApiData, modelToApi } from "./character.ts";
-import { printSpeciesWithRegion, SpeciesWithRegion } from "../core/species.ts";
+import { printSpeciesWithRegion, SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { Size } from "./size.ts";
 import { getSpeciesAttributes4e } from "./rules/rules4e.ts";
-import { StatusTier } from "../content/career.ts";
-import { CharacterApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
+import { StatusTier } from "@/services/wh/content/career.ts";
+import { CharacterApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
 import { describe, expect, test } from "vitest";
-import { testIsEqualCommonProperties } from "../../../testing.ts";
-import { IdNumber } from "../../../utils/idNumber.ts";
-import { CharacterModifiers } from "../core/characterModifiers.ts";
-import { Trait } from "../content/trait.ts";
+import { testIsEqualCommonProperties } from "@/testing.ts";
+import { IdNumber } from "@/utils/idNumber.ts";
+import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
+import { Trait } from "@/services/wh/content/trait.ts";
 
 const characterApiData: CharacterApiData = {
   edition: "4e",

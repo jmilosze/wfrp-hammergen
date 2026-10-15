@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import IconButton from "../../ui/IconButton.vue";
-import SheetCard from "../../sheet/SheetCard.vue";
-import AppButton from "../../ui/AppButton.vue";
+import IconButton from "@/components/ui/IconButton.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 import { computed, ref } from "vue";
-import { source, sourcesByEdition, validateSourceRecord } from "../../../services/wh/core/source.ts";
-import { Edition } from "../../../services/wh/core/edition.ts";
-import ModalWindow from "../../ui/ModalWindow.vue";
-import ChecklistPicker from "../../picker/ChecklistPicker.vue";
+import { source, sourcesByEdition, validateSourceRecord } from "@/services/wh/core/source.ts";
+import { Edition } from "@/services/wh/core/edition.ts";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
+import ChecklistPicker from "@/components/picker/ChecklistPicker.vue";
 
 // The entry's sources (source id to page notes), read directly (the parent changes them on the emitted events).
 const props = defineProps<{ sources: Record<string, string>; edition: Edition; disabled?: boolean }>();
@@ -111,5 +111,3 @@ function setNotes(id: string, notes: string) {
     </ModalWindow>
   </div>
 </template>
-
-<style scoped></style>

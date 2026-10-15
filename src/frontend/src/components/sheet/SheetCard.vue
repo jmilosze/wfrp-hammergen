@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SpinnerAnimation from "../ui/SpinnerAnimation.vue";
+import SpinnerAnimation from "@/components/ui/SpinnerAnimation.vue";
 
 // A titled box in the style of the paper character sheet (see SheetTable): a grey title band with optional hint and
 // actions, then the content. The last row of any table inside drops its bottom border, which the box draws.
@@ -30,5 +30,3 @@ defineProps<{
     <slot v-else />
   </div>
 </template>
-
-<style scoped></style>

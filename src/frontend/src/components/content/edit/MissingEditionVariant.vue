@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import AppButton from "../../ui/AppButton.vue";
-import router from "../../../router.ts";
-import { Edition } from "../../../services/wh/core/edition.ts";
+import { useRouter } from "vue-router";
+import AppButton from "@/components/ui/AppButton.vue";
+import { Edition } from "@/services/wh/core/edition.ts";
+
+const router = useRouter();
 
 defineProps<{
   edition: Edition;
@@ -24,5 +26,3 @@ const emit = defineEmits<{
     </div>
   </div>
 </template>
-
-<style scoped></style>

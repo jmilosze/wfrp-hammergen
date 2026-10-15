@@ -1,21 +1,21 @@
 import { computed, MaybeRefOrGetter, Ref, ref, toValue, watch } from "vue";
 import { useAuth } from "./auth.ts";
 import { LoadState, useWhList } from "./whList.ts";
-import { ApiHeaders, ContentApi, WhApi } from "../services/wh/core/api.ts";
-import { Edition } from "../services/wh/core/edition.ts";
-import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
-import { SubmissionState } from "../utils/submission.ts";
-import { authRequest } from "../services/auth.ts";
-import { Character } from "../services/wh/character/character.ts";
-import { Career, careerApi } from "../services/wh/content/career.ts";
-import { itemApi } from "../services/wh/content/item.ts";
-import { mutationApi } from "../services/wh/content/mutation.ts";
-import { prayerApi } from "../services/wh/content/prayer.ts";
-import { skillApi } from "../services/wh/content/skill.ts";
-import { spellApi } from "../services/wh/content/spell.ts";
-import { talentApi } from "../services/wh/content/talent.ts";
-import { traitApi } from "../services/wh/content/trait.ts";
-import { SpeciesWithRegion } from "../services/wh/core/species.ts";
+import { ApiHeaders, ContentApi, WhApi } from "@/services/wh/core/api.ts";
+import { Edition } from "@/services/wh/core/edition.ts";
+import { Visibility, WhProperty, isNew } from "@/services/wh/core/entity.ts";
+import { SubmissionState } from "@/utils/submission.ts";
+import { authRequest } from "@/services/auth.ts";
+import { Character } from "@/services/wh/character/character.ts";
+import { Career, careerApi } from "@/services/wh/content/career.ts";
+import { itemApi } from "@/services/wh/content/item.ts";
+import { mutationApi } from "@/services/wh/content/mutation.ts";
+import { prayerApi } from "@/services/wh/content/prayer.ts";
+import { skillApi } from "@/services/wh/content/skill.ts";
+import { spellApi } from "@/services/wh/content/spell.ts";
+import { talentApi } from "@/services/wh/content/talent.ts";
+import { traitApi } from "@/services/wh/content/trait.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 
 // useCharacterEdit edits a single-edition entity (a character of the given edition): the loaded one, or a new one
 // started from whInstance when nothing is loaded.
@@ -27,7 +27,7 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
 ) {
   const auth = useAuth();
 
-  if (auth.isAdmin.value && whInstance.id === "create") {
+  if (auth.isAdmin.value && isNew(whInstance.id)) {
     whInstance.visibility = Visibility.Public;
   }
 
@@ -39,7 +39,7 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
 
   const hasChanged = computed(() => !wh.value.isEqualTo(whOriginal.value));
 
-  const canEdit = computed(() => wh.value.id === "create" || auth.canEdit(wh.value.ownerId));
+  const canEdit = computed(() => isNew(wh.value.id) || auth.canEdit(wh.value.ownerId));
 
   async function submitForm(): Promise<boolean> {
     submissionState.value.setInProgress();
@@ -52,7 +52,7 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
     showSubmissionStatus.value = true;
 
     try {
-      if (wh.value.id === "create") {
+      if (isNew(wh.value.id)) {
         await elementApi.createElement(wh.value);
         submissionState.value.setSuccess(`${wh.value.name} created successfully.`);
         return true;
@@ -68,7 +68,7 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
   }
 
   async function deleteItem(): Promise<boolean> {
-    if (wh.value.id === "create") {
+    if (isNew(wh.value.id)) {
       return false;
     }
 

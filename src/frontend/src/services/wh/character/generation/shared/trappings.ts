@@ -1,9 +1,9 @@
 // Class trappings from the generation data (choices like "A,B" and quantities like "1d10").
-import { Career } from "../../../content/career.ts";
+import { Career } from "@/services/wh/content/career.ts";
 import { GenerationProps } from "./generationProps.ts";
-import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
-import { fillUpIdNumberRecord } from "../../../../../utils/idNumber.ts";
-import { Character } from "../../character.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "@/utils/random.ts";
+import { fillUpIdNumberRecord } from "@/utils/idNumber.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 // generateClassItems returns the class trappings as one list: they all start carried, and players equip them themselves.
 // The generation data still names some as equipped; a trapping named in both lists gets the sum of the quantities.

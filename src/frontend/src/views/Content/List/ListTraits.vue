@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useFilterModel, useSourceFilter, useWhList } from "../../../composables/whList.ts";
-import { useEdition } from "../../../composables/edition.ts";
-import { Trait, traitApi } from "../../../services/wh/content/trait.ts";
-import { authRequest } from "../../../services/auth.ts";
-import ContentListPage from "../../../components/content/list/ContentListPage.vue";
+import { useFilterModel, useSourceFilter, useWhList } from "@/composables/whList.ts";
+import { useEdition } from "@/composables/edition.ts";
+import { Trait, traitApi } from "@/services/wh/content/trait.ts";
+import { authRequest } from "@/services/auth.ts";
+import ContentListPage from "@/components/content/list/ContentListPage.vue";
 
 const { edition } = useEdition();
 const whList = useWhList(traitApi(authRequest), edition);

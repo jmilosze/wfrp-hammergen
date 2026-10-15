@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { isNew } from "@/services/wh/core/entity.ts";
 import { ref, watch } from "vue";
-import { authRequest } from "../../../services/auth.ts";
+import { authRequest } from "@/services/auth.ts";
 import {
   CareerMatch,
   findCareerMatches,
   getCareersForSkill,
   getCareersForTalent,
   printClassName,
-} from "../../../services/wh/content/career.ts";
-import { Edition } from "../../../services/wh/core/edition.ts";
-import SheetList from "../../sheet/SheetList.vue";
-import AlertBlock from "../../ui/AlertBlock.vue";
-import TextLink from "../../ui/TextLink.vue";
+} from "@/services/wh/content/career.ts";
+import { Edition } from "@/services/wh/core/edition.ts";
+import SheetList from "@/components/sheet/SheetList.vue";
+import AlertBlock from "@/components/ui/AlertBlock.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 
 const props = defineProps<{
   entityId: string;
@@ -25,7 +26,7 @@ const apiError = ref("");
 const careerMatches = ref<CareerMatch[]>([]);
 
 async function loadCareers() {
-  if (!props.entityId || props.entityId === "create") {
+  if (!props.entityId || isNew(props.entityId)) {
     careerMatches.value = [];
     return;
   }
@@ -68,7 +69,7 @@ watch(
 </script>
 
 <template>
-  <div v-if="entityId && entityId !== 'create'" class="my-4 text-left">
+  <div v-if="entityId && !isNew(entityId)" class="my-4 text-left">
     <AlertBlock v-if="apiError" alertType="red" @close="apiError = ''">
       {{ apiError }}
     </AlertBlock>
@@ -99,5 +100,3 @@ watch(
     </SheetList>
   </div>
 </template>
-
-<style scoped></style>

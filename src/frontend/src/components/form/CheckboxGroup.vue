@@ -1,8 +1,7 @@
 <script setup lang="ts" generic="T = string | number">
 import FormCheckbox from "./FormCheckbox.vue";
 
-const props = defineProps<{
-  modelValue: T[];
+defineProps<{
   title?: string;
   disabled?: boolean;
   options: { text: string; value: T }[];
@@ -13,19 +12,16 @@ const props = defineProps<{
   twoColumns?: boolean;
 }>();
 
-const emit = defineEmits<{
-  (e: "update:modelValue", modelValue: T[]): void;
-}>();
+const selected = defineModel<T[]>({ required: true });
 
 function isSelected(value: T): boolean {
-  return props.modelValue.includes(value);
+  return selected.value.includes(value);
 }
 
 function toggle(optionValue: T) {
-  const newValue = isSelected(optionValue)
-    ? props.modelValue.filter((value) => value !== optionValue)
-    : [...props.modelValue, optionValue];
-  emit("update:modelValue", newValue);
+  selected.value = isSelected(optionValue)
+    ? selected.value.filter((value) => value !== optionValue)
+    : [...selected.value, optionValue];
 }
 </script>
 
@@ -57,5 +53,3 @@ function toggle(optionValue: T) {
     </div>
   </fieldset>
 </template>
-
-<style scoped></style>

@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/core/entity.ts";
-import { defaultSource } from "../../../services/wh/core/source.ts";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { authRequest } from "../../../services/auth.ts";
-import { Mutation, mutationApi, mutationTypeList, printMutationType } from "../../../services/wh/content/mutation.ts";
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { authRequest } from "@/services/auth.ts";
+import { Mutation, mutationApi, mutationTypeList, printMutationType } from "@/services/wh/content/mutation.ts";
 import { computed, ref } from "vue";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetSelect from "../../../components/sheet/SheetSelect.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import ModifiersBlock from "../../../components/content/edit/ModifiersBlock.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import ModifiersBlock from "@/components/content/edit/ModifiersBlock.vue";
 
 const props = defineProps<{
   id: string;
@@ -19,7 +19,7 @@ const props = defineProps<{
 
 const newMutation = new Mutation({
   name: "New mutation",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -47,5 +47,3 @@ const typeOptions = ref(mutationTypeList.map((x) => ({ text: printMutationType(x
     <ModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit" class="my-4" />
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

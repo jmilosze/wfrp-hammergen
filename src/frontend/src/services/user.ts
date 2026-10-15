@@ -1,7 +1,7 @@
-import { ValidationStatus, setValidationStatus } from "../utils/validation.ts";
+import { ValidationStatus, setValidationStatus } from "@/utils/validation.ts";
 import { AxiosInstance, AxiosRequestConfig } from "axios";
-import { cloneEntity } from "../utils/clone.ts";
-import { isEqualEntity } from "../utils/equal.ts";
+import { cloneEntity } from "@/utils/clone.ts";
+import { isEqualEntity } from "@/utils/equal.ts";
 
 declare module "axios" {
   export interface AxiosRequestConfig {

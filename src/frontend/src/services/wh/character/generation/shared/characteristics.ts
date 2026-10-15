@@ -1,7 +1,7 @@
 // Characteristic rolls (2d10), the same in both editions.
-import { Attributes, zeroAttributes } from "../../../core/attributes.ts";
-import { RollDiceFn } from "../../../../../utils/random.ts";
-import { isKey } from "../../../../../utils/object.ts";
+import { Attributes, zeroAttributes } from "@/services/wh/core/attributes.ts";
+import { RollDiceFn } from "@/utils/random.ts";
+import { isKey } from "@/utils/object.ts";
 
 // 2d10 for each characteristic (both editions).
 export function generateRolls(rollDiceFn: RollDiceFn): Attributes {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppButton from "../ui/AppButton.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 import { Icon } from "@iconify/vue";
-import ModalWindow from "../ui/ModalWindow.vue";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
 
 // Asks to confirm deleting name; Delete emits deleteConfirmed and closes.
 defineProps<{

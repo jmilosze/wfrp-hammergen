@@ -43,5 +43,3 @@ function markSeen() {
     </div>
   </div>
 </template>
-
-<style scoped></style>

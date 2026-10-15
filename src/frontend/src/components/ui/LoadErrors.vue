@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AlertBlock from "./AlertBlock.vue";
-import { LoadState } from "../../composables/whList.ts";
+import { LoadState } from "@/composables/whList.ts";
 
 // The load errors of a page's lists (or other loaded data), one closable alert each, centred above the page.
 defineProps<{ states: LoadState[] }>();

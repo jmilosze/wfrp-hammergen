@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Icon } from "@iconify/vue";
-import AppButton from "../../ui/AppButton.vue";
-import ModalWindow from "../../ui/ModalWindow.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
 
 // The ways to start a new character, as a slim strip above the character sheet: Generate opens a popup with the
 // generator (its fields and explanation come from the editor), Guided is not there yet, and filling in the sheet needs
@@ -89,5 +89,3 @@ function onGenerate() {
     </template>
   </ModalWindow>
 </template>
-
-<style scoped></style>

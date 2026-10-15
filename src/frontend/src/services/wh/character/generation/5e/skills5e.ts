@@ -1,10 +1,10 @@
 // 5e skills at creation: fluent languages, species skills and career skill advances.
-import { Character } from "../../character.ts";
-import { Skill } from "../../../content/skill.ts";
-import { GenerationProps5e } from "../shared/generationProps.ts";
-import { selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
-import { fillUpIdNumberRecord } from "../../../../../utils/idNumber.ts";
-import { EntityGroupMap, GroupPicker, resolveEntityGroups } from "../shared/groups.ts";
+import { Character } from "@/services/wh/character/character.ts";
+import { Skill } from "@/services/wh/content/skill.ts";
+import { GenerationProps5e } from "@/services/wh/character/generation/shared/generationProps.ts";
+import { selectRandom, SelectRandomFn } from "@/utils/random.ts";
+import { fillUpIdNumberRecord } from "@/utils/idNumber.ts";
+import { EntityGroupMap, GroupPicker, resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
 import { ADVANCE_POINTS_5E } from "./experience5e.ts";
 
 // Fluent languages: six Advances (+30) each.

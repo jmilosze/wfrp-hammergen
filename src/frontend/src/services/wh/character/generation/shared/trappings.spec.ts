@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
 import { generateClassItems, populateClassItems } from "./trappings.ts";
-import { Career } from "../../../content/career.ts";
-import { SpeciesWithRegion } from "../../../core/species.ts";
+import { Career } from "@/services/wh/content/career.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { GenerationProps } from "./generationProps.ts";
-import { Character } from "../../character.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 describe("generateClassItems", () => {
   const dummyGenProps: GenerationProps = {

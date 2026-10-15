@@ -27,5 +27,3 @@ defineProps<{ title: string; icon: string; danger?: boolean; headingLevel?: 1 | 
     </div>
   </section>
 </template>
-
-<style scoped></style>

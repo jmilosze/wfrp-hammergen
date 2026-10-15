@@ -1,9 +1,9 @@
-import { sumValues, testCareer } from "../fixtures.ts";
+import { sumValues, testCareer } from "@/services/wh/character/generation/fixtures.ts";
 import { genProps5e, testSkills5e, testTalents5e } from "./fixtures5e.ts";
 import { describe, expect, test } from "vitest";
-import { zeroAttributes } from "../../../core/attributes.ts";
-import { StatusTier } from "../../../content/career.ts";
-import { SpeciesWithRegion } from "../../../core/species.ts";
+import { zeroAttributes } from "@/services/wh/core/attributes.ts";
+import { StatusTier } from "@/services/wh/content/career.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { generateCharacter5e } from "./generator5e.ts";
 
 describe("generateCharacter5e", () => {

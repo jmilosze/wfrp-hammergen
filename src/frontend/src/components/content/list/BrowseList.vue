@@ -1,16 +1,17 @@
 <script setup lang="ts" generic="T extends BrowseRow">
+import type { RouteName } from "@/router.ts";
 import { computed, nextTick, ref, watch } from "vue";
 import { refDebounced } from "@vueuse/core";
 import { RouterLink } from "vue-router";
 import { Icon } from "@iconify/vue";
-import TablePagination from "../../ui/TablePagination.vue";
+import TablePagination from "@/components/ui/TablePagination.vue";
 import { BrowseRow } from "./browseRow.ts";
 
 // A browse page's list as an index: each row has the name (a link to the entry) with a short meta line after it (e.g.
 // the type) and the badge slot (e.g. the visibility icon) after it, the description under it, and the end slot (e.g.
 // Copy) at the row's end. The whole row opens the entry. A search field (the default slot holds buttons beside it)
 // and pages of 50 rows.
-const props = defineProps<{ items: T[]; routeName: string }>();
+const props = defineProps<{ items: T[]; routeName: RouteName }>();
 
 const searchTerm = defineModel<string>({ required: true });
 
@@ -105,5 +106,3 @@ async function onBottomPageChange() {
     />
   </div>
 </template>
-
-<style scoped></style>

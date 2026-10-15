@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import SheetCell from "../../sheet/SheetCell.vue";
-import SheetTable from "../../sheet/SheetTable.vue";
-import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 
 // The top of the character view, as on the paper sheet: name, species, size and description, with Experience beside.
 defineProps<{ character: CharacterFull }>();
@@ -29,5 +29,3 @@ defineProps<{ character: CharacterFull }>();
     </SheetTable>
   </div>
 </template>
-
-<style scoped></style>

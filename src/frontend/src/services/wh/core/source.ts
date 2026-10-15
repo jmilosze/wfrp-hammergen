@@ -1,4 +1,4 @@
-import { ValidationStatus } from "../../../utils/validation.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
 import { Edition } from "./edition.ts";
 import { validVeryShortDescFn } from "./validators.ts";
 

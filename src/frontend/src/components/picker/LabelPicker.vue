@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T">
 import { computed } from "vue";
-import SheetCard from "../sheet/SheetCard.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
 import LabelChips from "./LabelChips.vue";
 import LabelAddSelect from "./LabelAddSelect.vue";
 
@@ -58,5 +58,3 @@ const unused = computed(() => props.options.filter((x) => !selected.value.includ
     />
   </SheetCard>
 </template>
-
-<style scoped></style>

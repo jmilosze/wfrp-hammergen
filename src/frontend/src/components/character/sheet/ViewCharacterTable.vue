@@ -88,5 +88,3 @@ const tdClass = "py-2 px-2 border-b border-neutral-300";
     </div>
   </div>
 </template>
-
-<style scoped></style>

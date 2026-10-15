@@ -6,21 +6,9 @@ import { BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS } from "./buttonStyle.ts";
 const props = defineProps<{
   rowsPerPage: number;
   totalRows: number;
-  modelValue: number;
 }>();
 
-const emit = defineEmits<{
-  (e: "update:modelValue", modelValue: number): void;
-}>();
-
-const startRow = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit("update:modelValue", value);
-  },
-});
+const startRow = defineModel<number>({ required: true });
 
 function moveToNextPage(direction: -1 | 1): void {
   let newStartRow = startRow.value + direction * props.rowsPerPage;
@@ -100,5 +88,3 @@ function moveToLastPage(direction: -1 | 1): void {
     </button>
   </div>
 </template>
-
-<style scoped></style>

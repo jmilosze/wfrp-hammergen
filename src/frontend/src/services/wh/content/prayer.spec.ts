@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 import { Prayer, PrayerApiData, apiResponseToModel, modelToApi } from "./prayer.ts";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
-import { testIsEqualCommonProperties } from "../../../testing.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { testIsEqualCommonProperties } from "@/testing.ts";
 
 const prayerApiData: PrayerApiData = {
   name: "prayer",

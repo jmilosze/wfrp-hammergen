@@ -1,7 +1,7 @@
 // 5e character rules: species characteristics (pp. 26–35), movement (p. 40), size (five steps, p. 360) and
 // wounds by size (p. 361).
-import { Attributes, copyAttributes, zeroAttributes } from "../../core/attributes.ts";
-import { DEFAULT_SIZE, Size } from "../size.ts";
+import { Attributes, copyAttributes, zeroAttributes } from "@/services/wh/core/attributes.ts";
+import { DEFAULT_SIZE, Size } from "@/services/wh/character/size.ts";
 import {
   DWARF_LIST,
   HALFLING_LIST,
@@ -9,7 +9,7 @@ import {
   HUMAN_LIST,
   SpeciesWithRegion,
   WOOD_ELF_LIST,
-} from "../../core/species.ts";
+} from "@/services/wh/core/species.ts";
 import type { CharacterRules } from "./rules.ts";
 
 // The five 5e species (no Gnome, Ogre or regional variants); a 5e Human uses the Human (Reikland) code.

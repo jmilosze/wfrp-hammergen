@@ -1,11 +1,11 @@
-import { copySource, Source, sourceIsValid } from "../core/source.ts";
-import { defineContentApi, ApiResponse } from "../core/api.ts";
-import { Edition, variant } from "../core/edition.ts";
-import { validLongDescFn, validShortDescFn } from "../core/validators.ts";
-import { Visibility, WhEntity } from "../core/entity.ts";
-import { AttributeName, attributeNameList } from "../core/attributes.ts";
-import { ValidationStatus } from "../../../utils/validation.ts";
-import { updateSet } from "../../../utils/set.ts";
+import { copySource, Source, sourceIsValid } from "@/services/wh/core/source.ts";
+import { defineContentApi, ApiResponse } from "@/services/wh/core/api.ts";
+import { Edition, variant } from "@/services/wh/core/edition.ts";
+import { validLongDescFn, validShortDescFn } from "@/services/wh/core/validators.ts";
+import { Visibility, WhEntity } from "@/services/wh/core/entity.ts";
+import { AttributeName, attributeNameList } from "@/services/wh/core/attributes.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
+import { updateSet } from "@/utils/set.ts";
 
 export const enum SkillType {
   Basic = 0,

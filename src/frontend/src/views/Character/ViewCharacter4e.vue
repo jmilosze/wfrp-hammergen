@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import ViewCharacterHeader from "../../components/character/sheet/ViewCharacterHeader.vue";
-import ViewCharacterIdentity from "../../components/character/sheet/ViewCharacterIdentity.vue";
-import ViewCharacterCareer from "../../components/character/sheet/ViewCharacterCareer.vue";
-import ViewCharacterAttributes from "../../components/character/sheet/ViewCharacterAttributes.vue";
-import ViewCharacterSkills from "../../components/character/sheet/ViewCharacterSkills.vue";
-import ViewCharacterTable from "../../components/character/sheet/ViewCharacterTable.vue";
-import ViewCharacterList from "../../components/character/sheet/ViewCharacterList.vue";
-import ViewCharacterSecondPage from "../../components/character/sheet/ViewCharacterSecondPage.vue";
-import SheetTable from "../../components/sheet/SheetTable.vue";
-import SheetCell from "../../components/sheet/SheetCell.vue";
-import SheetCard from "../../components/sheet/SheetCard.vue";
-import { CharacterFull } from "../../services/wh/character/characterFull.ts";
-import { characterFullToCsv4e } from "../../services/wh/character/csv/csv4e.ts";
-import { sumAttributes } from "../../services/wh/core/attributes.ts";
+import ViewCharacterHeader from "@/components/character/sheet/ViewCharacterHeader.vue";
+import ViewCharacterIdentity from "@/components/character/sheet/ViewCharacterIdentity.vue";
+import ViewCharacterCareer from "@/components/character/sheet/ViewCharacterCareer.vue";
+import ViewCharacterAttributes from "@/components/character/sheet/ViewCharacterAttributes.vue";
+import ViewCharacterSkills from "@/components/character/sheet/ViewCharacterSkills.vue";
+import ViewCharacterTable from "@/components/character/sheet/ViewCharacterTable.vue";
+import ViewCharacterList from "@/components/character/sheet/ViewCharacterList.vue";
+import ViewCharacterSecondPage from "@/components/character/sheet/ViewCharacterSecondPage.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
+import { characterFullToCsv4e } from "@/services/wh/character/csv/csv4e.ts";
+import { sumAttributes } from "@/services/wh/core/attributes.ts";
 
 // The 4e character sheet, read-only, laid out like the paper sheet. First page: name and experience, career,
 // characteristics with fate and resilience, movement and wounds, skills, talents. Then the second page
@@ -77,5 +77,3 @@ const MOVEMENT_FIELDS = [
   </SheetCard>
   <ViewCharacterSecondPage :character="character" />
 </template>
-
-<style scoped></style>

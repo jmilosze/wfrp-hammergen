@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import PageHeader from "../../components/ui/PageHeader.vue";
-import TextLink from "../../components/ui/TextLink.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import HammergenFaq from "./HammergenFaq.vue";
 import UpdateList from "./UpdateList.vue";
-import ToggleSwitch from "../../components/ui/ToggleSwitch.vue";
+import ToggleSwitch from "@/components/ui/ToggleSwitch.vue";
 import { useRouteQuery } from "@vueuse/router";
 
 const viewNames = [
@@ -102,5 +102,3 @@ const SOURCE_BOOKS = [
     <UpdateList />
   </div>
 </template>
-
-<style scoped></style>

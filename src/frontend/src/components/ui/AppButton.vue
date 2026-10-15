@@ -39,5 +39,3 @@ withDefaults(
     <span :class="{ 'sr-only @lg:not-sr-only @lg:whitespace-nowrap': iconOnlyWhenNarrow }"><slot /></span>
   </button>
 </template>
-
-<style scoped></style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ValidationStatus } from "../../utils/validation.ts";
-import { computed, useId } from "vue";
+import { ValidationStatus } from "@/utils/validation.ts";
+import { useId } from "vue";
 
 // beside: next to a column it should match (two-column editor layout from @3xl): starts small and stretches with the
 // box; full height when the columns stack.
@@ -12,32 +12,20 @@ const heightClasses: Record<BoxHeight, string> = {
   beside: "h-36 @3xl:h-18",
 };
 
-const props = defineProps<{
+defineProps<{
   title?: string;
   disabled?: boolean;
   validationStatus: ValidationStatus;
-  modelValue: string;
   size?: BoxHeight;
   // bare: no border or rounded corners of its own, to fill a box (e.g. SheetCard) edge to edge; styled like an
   // editable sheet cell (faint yellow, white when disabled).
   bare?: boolean;
 }>();
 
-const emit = defineEmits<{
-  (e: "update:modelValue", modelValue: string): void;
-}>();
-
 const textareaId = useId();
 const errorId = useId();
 
-const value = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit("update:modelValue", value);
-  },
-});
+const value = defineModel<string>({ required: true });
 </script>
 
 <template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import SheetCard from "../../sheet/SheetCard.vue";
-import SheetCell from "../../sheet/SheetCell.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
 import ViewCharacterList from "./ViewCharacterList.vue";
-import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 
 // The character view's Corruption and Mutation box: Corruption Points, then the mutations and creature traits as
 // compact lists of names. The page leaves it out when there are no points and no entries.
@@ -24,5 +24,3 @@ const bandClass = "px-2 py-1 bg-neutral-100 border-y border-neutral-300 font-sem
     </template>
   </SheetCard>
 </template>
-
-<style scoped></style>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defaultSource } from "../../../services/wh/core/source.ts";
+import { defaultSource } from "@/services/wh/core/source.ts";
 import {
   Career,
   careerApi,
@@ -7,23 +7,23 @@ import {
   copyCareerLevel,
   printClassName,
   zeroCareerLevel,
-} from "../../../services/wh/content/career.ts";
-import { printSpeciesName, careerSpeciesByEdition } from "../../../services/wh/core/species.ts";
-import { Visibility } from "../../../services/wh/core/entity.ts";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { authRequest } from "../../../services/auth.ts";
+} from "@/services/wh/content/career.ts";
+import { printSpeciesName, careerSpeciesByEdition } from "@/services/wh/core/species.ts";
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { authRequest } from "@/services/auth.ts";
 import { computed } from "vue";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetSelect from "../../../components/sheet/SheetSelect.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import LabelPicker from "../../../components/picker/LabelPicker.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import { useWhList } from "../../../composables/whList.ts";
-import { skillApi } from "../../../services/wh/content/skill.ts";
-import { talentApi } from "../../../services/wh/content/talent.ts";
-import CareerLevel from "../../../components/content/edit/CareerLevel.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import LabelPicker from "@/components/picker/LabelPicker.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { useWhList } from "@/composables/whList.ts";
+import { skillApi } from "@/services/wh/content/skill.ts";
+import { talentApi } from "@/services/wh/content/talent.ts";
+import CareerLevel from "@/components/content/edit/CareerLevel.vue";
 
 const props = defineProps<{
   id: string;
@@ -31,7 +31,7 @@ const props = defineProps<{
 
 const newCareer = new Career({
   name: "New career",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -242,5 +242,3 @@ watchWh(
     </div>
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

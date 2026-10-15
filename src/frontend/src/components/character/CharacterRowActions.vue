@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import IconButton from "../ui/IconButton.vue";
-import { useAuth } from "../../composables/auth.ts";
+import IconButton from "@/components/ui/IconButton.vue";
+import { useAuth } from "@/composables/auth.ts";
 
 // A character list row's View (the character sheet) and, for logged in users, Copy.
 defineProps<{

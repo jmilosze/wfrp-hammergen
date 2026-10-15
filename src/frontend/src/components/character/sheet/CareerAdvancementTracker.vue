@@ -36,5 +36,3 @@ const segments = computed(() => {
     </template>
   </div>
 </template>
-
-<style scoped></style>

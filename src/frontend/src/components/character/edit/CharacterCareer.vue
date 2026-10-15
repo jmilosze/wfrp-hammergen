@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import AppButton from "../../ui/AppButton.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 import { computed, ref } from "vue";
-import ModalWindow from "../../ui/ModalWindow.vue";
-import ChecklistPicker from "../../picker/ChecklistPicker.vue";
-import SheetTable from "../../sheet/SheetTable.vue";
-import SheetCell from "../../sheet/SheetCell.vue";
-import SpinnerAnimation from "../../ui/SpinnerAnimation.vue";
-import { Career, printClassName } from "../../../services/wh/content/career.ts";
-import { IdNumber } from "../../../utils/idNumber.ts";
-import TextLink from "../../ui/TextLink.vue";
-import Edition4eBadge from "../../edition/Edition4eBadge.vue";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
+import ChecklistPicker from "@/components/picker/ChecklistPicker.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import SpinnerAnimation from "@/components/ui/SpinnerAnimation.vue";
+import { Career, printClassName } from "@/services/wh/content/career.ts";
+import { IdNumber } from "@/utils/idNumber.ts";
+import TextLink from "@/components/ui/TextLink.vue";
+import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
 
 // A career level that can be picked; id is the career's id and the level.
 type CareerLevelRow = {
@@ -159,5 +159,3 @@ function onChoose(id: string, key: string) {
     </ModalWindow>
   </div>
 </template>
-
-<style scoped></style>

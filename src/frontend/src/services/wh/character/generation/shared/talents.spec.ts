@@ -8,14 +8,14 @@ import {
   populateSpeciesTalents,
 } from "./talents.ts";
 import { EntityGroupMap } from "./groups.ts";
-import { rollDice, selectRandom } from "../../../../../utils/random.ts";
-import { getRollDiceTest, getSelectRandomTest } from "../../../../../testing.ts";
-import { Talent } from "../../../content/talent.ts";
-import { CharacterModifiers } from "../../../core/characterModifiers.ts";
-import { AttributeName } from "../../../core/attributes.ts";
-import { SpeciesWithRegion } from "../../../core/species.ts";
+import { rollDice, selectRandom } from "@/utils/random.ts";
+import { getRollDiceTest, getSelectRandomTest } from "@/testing.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
+import { AttributeName } from "@/services/wh/core/attributes.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { GenerationProps } from "./generationProps.ts";
-import { Character } from "../../character.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 describe("generateSpeciesTalents returns expected talents", () => {
   test("non-group non-random single talents", () => {

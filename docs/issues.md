@@ -7,7 +7,7 @@ Backlog of known bugs, improvements and feature ideas. It persists between work 
 - When an issue is done, delete its entry (git history keeps it). When it is partly done, update the description.
 - Out-of-scope problems found while working on something else go here, not into the code as TODO comments.
 
-Next free ID: **HG-34**
+Next free ID: **HG-35**
 
 ## Features
 
@@ -124,7 +124,7 @@ An equipped item of type Grimoire is neither listed on the View character sheet 
 ### HG-28 "Shared by me" icon has no colour
 Frontend · 2026-10-15
 
-`components/visibilityKind.ts` uses `text-shared-by-me-icon` (and `shared-by-me-*` badge classes), but `style.css` defines the colours as `--color-shared-*`. Tailwind's palettes are off, so the class produces nothing and the list rows' "Shared by me" icon takes the text colour. Rename one side to match.
+`components/content/list/visibilityKind.ts` uses `text-shared-by-me-icon`, but `style.css` defines the colour as `--color-shared-icon`. Tailwind's palettes are off, so the class produces nothing and the list rows' "Shared by me" icon takes the text colour. Rename one side to match.
 
 ### HG-30 Content list misses an edition switch during loading
 Frontend · 2026-10-15
@@ -135,6 +135,11 @@ Frontend · 2026-10-15
 Frontend · 2026-10-15
 
 In `EditCharacter4e.vue` the generator help repeats "Generating will override all current entries…" twice and has the typo "sills" (skills).
+
+### HG-34 Integer validation message
+Frontend · 2026-10-15
+
+`validIntegerFn` in `services/wh/core/validators.ts` says "This field an integer between … and …" (a verb is missing), shown under every whole-number field (XP, wealth, Sin, Corruption…).
 
 ### HG-32 Cache content lists for the session
 Frontend · 2026-10-15

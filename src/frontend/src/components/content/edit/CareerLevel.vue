@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import SelectTable from "../../picker/SelectTable.vue";
-import SheetTable from "../../sheet/SheetTable.vue";
-import SheetField from "../../sheet/SheetField.vue";
-import SheetSelect from "../../sheet/SheetSelect.vue";
-import FormCheckbox from "../../form/FormCheckbox.vue";
-import SheetCard from "../../sheet/SheetCard.vue";
-import LabelPicker from "../../picker/LabelPicker.vue";
-import FormTextarea from "../../form/FormTextarea.vue";
-import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/core/attributes.ts";
+import SelectTable from "@/components/picker/SelectTable.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import FormCheckbox from "@/components/form/FormCheckbox.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import LabelPicker from "@/components/picker/LabelPicker.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { AttributeName, attributeNameList, printAttributeName } from "@/services/wh/core/attributes.ts";
 import {
   printStatusStanding,
   printStatusTier,
@@ -15,10 +15,10 @@ import {
   statusStandingList,
   StatusTier,
   statusTierList,
-} from "../../../services/wh/content/career.ts";
-import type { Skill } from "../../../services/wh/content/skill.ts";
-import { Talent } from "../../../services/wh/content/talent.ts";
-import { ValidationStatus } from "../../../utils/validation.ts";
+} from "@/services/wh/content/career.ts";
+import type { Skill } from "@/services/wh/content/skill.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
 
 const name = defineModel<string>("name", { required: true });
 const attributes = defineModel<AttributeName[]>("attributes", { required: true });

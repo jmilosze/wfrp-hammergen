@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import IconButton from "../../ui/IconButton.vue";
-import { printSkillType, Skill } from "../../../services/wh/content/skill.ts";
+import IconButton from "@/components/ui/IconButton.vue";
+import { printSkillType, Skill } from "@/services/wh/content/skill.ts";
 import { computed, ref } from "vue";
-import { Attributes, getAttributeValue, printAttributeName } from "../../../services/wh/core/attributes.ts";
-import ModalWindow from "../../ui/ModalWindow.vue";
-import ChecklistPicker from "../../picker/ChecklistPicker.vue";
-import AppButton from "../../ui/AppButton.vue";
-import SheetCard from "../../sheet/SheetCard.vue";
-import { ValidationStatus } from "../../../utils/validation.ts";
-import { truncate } from "../../../utils/string.ts";
-import TextLink from "../../ui/TextLink.vue";
-import Edition4eBadge from "../../edition/Edition4eBadge.vue";
+import { Attributes, getAttributeValue, printAttributeName } from "@/services/wh/core/attributes.ts";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
+import ChecklistPicker from "@/components/picker/ChecklistPicker.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import { ValidationStatus } from "@/utils/validation.ts";
+import { truncate } from "@/utils/string.ts";
+import TextLink from "@/components/ui/TextLink.vue";
+import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
 
 const DESC_CHARS = 100;
 
@@ -139,5 +139,3 @@ const modalItems = computed(() =>
     </ModalWindow>
   </div>
 </template>
-
-<style scoped></style>

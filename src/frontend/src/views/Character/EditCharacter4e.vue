@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import TextLink from "../../components/ui/TextLink.vue";
-import { Edition } from "../../services/wh/core/edition.ts";
-import PageHeader from "../../components/ui/PageHeader.vue";
-import { defaultSource } from "../../services/wh/core/source.ts";
-import { useCharacterContent, useCharacterEdit, useGenerationCareers } from "../../composables/characterEdit.ts";
-import { authRequest } from "../../services/auth.ts";
-import { Character, characterApi } from "../../services/wh/character/character.ts";
+import { isNew, NEW_ID } from "@/services/wh/core/entity.ts";
+import TextLink from "@/components/ui/TextLink.vue";
+import { Edition } from "@/services/wh/core/edition.ts";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import { useCharacterContent, useCharacterEdit, useGenerationCareers } from "@/composables/characterEdit.ts";
+import { authRequest } from "@/services/auth.ts";
+import { Character, characterApi } from "@/services/wh/character/character.ts";
 import { computed, ref, watch } from "vue";
-import LoadErrors from "../../components/ui/LoadErrors.vue";
-import EditorFooter from "../../components/editor/EditorFooter.vue";
-import { printSize } from "../../services/wh/character/size.ts";
+import LoadErrors from "@/components/ui/LoadErrors.vue";
+import EditorFooter from "@/components/editor/EditorFooter.vue";
+import { printSize } from "@/services/wh/character/size.ts";
 import {
   getDefaultSpeciesWithRegion,
   getSpeciesFromSpeciesWithRegion,
@@ -19,40 +20,40 @@ import {
   printSpeciesName,
   speciesList,
   speciesWithRegionToSpecies,
-} from "../../services/wh/core/species.ts";
-import FormTextarea from "../../components/form/FormTextarea.vue";
-import { generateCharacter4e } from "../../services/wh/character/generation/4e/generator4e.ts";
-import { populateClassItems } from "../../services/wh/character/generation/shared/trappings.ts";
-import { populateDescription } from "../../services/wh/character/generation/shared/description.ts";
-import { populateName } from "../../services/wh/character/generation/shared/name.ts";
-import { populateSpeciesTalents } from "../../services/wh/character/generation/shared/talents.ts";
-import { populateStatusAndStanding } from "../../services/wh/character/generation/shared/status.ts";
-import { populateFateAndResilience } from "../../services/wh/character/generation/4e/fate4e.ts";
-import { populateSpeciesSkills4e } from "../../services/wh/character/generation/4e/skills4e.ts";
+} from "@/services/wh/core/species.ts";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { generateCharacter4e } from "@/services/wh/character/generation/4e/generator4e.ts";
+import { populateClassItems } from "@/services/wh/character/generation/shared/trappings.ts";
+import { populateDescription } from "@/services/wh/character/generation/shared/description.ts";
+import { populateName } from "@/services/wh/character/generation/shared/name.ts";
+import { populateSpeciesTalents } from "@/services/wh/character/generation/shared/talents.ts";
+import { populateStatusAndStanding } from "@/services/wh/character/generation/shared/status.ts";
+import { populateFateAndResilience } from "@/services/wh/character/generation/4e/fate4e.ts";
+import { populateSpeciesSkills4e } from "@/services/wh/character/generation/4e/skills4e.ts";
 import {
   printStatusStanding,
   printStatusTier,
   statusStandingList,
   statusTierList,
-} from "../../services/wh/content/career.ts";
-import CharacterCareer from "../../components/character/edit/CharacterCareer.vue";
-import CharacterAttributes from "../../components/character/edit/CharacterAttributes.vue";
-import VisibilityField from "../../components/editor/VisibilityField.vue";
-import CharacterStartPanel from "../../components/character/edit/CharacterStartPanel.vue";
-import SheetCard from "../../components/sheet/SheetCard.vue";
-import AppButton from "../../components/ui/AppButton.vue";
-import SheetField from "../../components/sheet/SheetField.vue";
-import SheetSelect from "../../components/sheet/SheetSelect.vue";
-import SheetTable from "../../components/sheet/SheetTable.vue";
-import SheetCell from "../../components/sheet/SheetCell.vue";
-import EditionBadge from "../../components/edition/EditionBadge.vue";
-import { useGenerationProps } from "../../composables/generationProps.ts";
-import CharacterSkills from "../../components/character/edit/CharacterSkills.vue";
-import CharacterTalents from "../../components/character/edit/CharacterTalents.vue";
-import CharacterItems from "../../components/character/edit/CharacterItems.vue";
-import CharacterExperience from "../../components/character/edit/CharacterExperience.vue";
-import CharacterWealthEncumbrance from "../../components/character/edit/CharacterWealthEncumbrance.vue";
-import CharacterMagicCorruption from "../../components/character/edit/CharacterMagicCorruption.vue";
+} from "@/services/wh/content/career.ts";
+import CharacterCareer from "@/components/character/edit/CharacterCareer.vue";
+import CharacterAttributes from "@/components/character/edit/CharacterAttributes.vue";
+import VisibilityField from "@/components/editor/VisibilityField.vue";
+import CharacterStartPanel from "@/components/character/edit/CharacterStartPanel.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import EditionBadge from "@/components/edition/EditionBadge.vue";
+import { useGenerationProps } from "@/composables/generationProps.ts";
+import CharacterSkills from "@/components/character/edit/CharacterSkills.vue";
+import CharacterTalents from "@/components/character/edit/CharacterTalents.vue";
+import CharacterItems from "@/components/character/edit/CharacterItems.vue";
+import CharacterExperience from "@/components/character/edit/CharacterExperience.vue";
+import CharacterWealthEncumbrance from "@/components/character/edit/CharacterWealthEncumbrance.vue";
+import CharacterMagicCorruption from "@/components/character/edit/CharacterMagicCorruption.vue";
 
 const props = defineProps<{
   id: string;
@@ -66,7 +67,7 @@ const newCharacter = new Character({
   edition: EDITION,
   name: "New character",
   species: SpeciesWithRegion.HumanReikland,
-  id: "create",
+  id: NEW_ID,
   source: defaultSource(),
 });
 
@@ -80,6 +81,14 @@ generationPropsUtils.loadGenerationProps();
 const referenceDataLoading = computed(() => content.loading.value || generationPropsUtils.loading.value);
 
 const validName = computed(() => wh.value.validateName());
+const validCurrentExp = computed(() => wh.value.validateCurrentExp());
+const validSpentExp = computed(() => wh.value.validateSpentExp());
+const validGold = computed(() => wh.value.validateGold());
+const validSilver = computed(() => wh.value.validateSilver());
+const validBrass = computed(() => wh.value.validateBrass());
+const validSin = computed(() => wh.value.validateSin());
+const validCorruption = computed(() => wh.value.validateCorruption());
+const validTraits = computed(() => wh.value.validateTraits());
 const validDesc = computed(() => wh.value.validateDescription());
 const validNotes = computed(() => wh.value.validateNotes());
 const validFate = computed(() => wh.value.validateFate());
@@ -113,6 +122,7 @@ const levelOpts = [
 const movement = computed(() => wh.value.getMovement());
 const wounds = computed(() => wh.value.getWounds());
 const size = computed(() => printSize(wh.value.getSize()));
+const maxEncumbrance = computed(() => wh.value.getMaxEncumbrance());
 
 function formGenerateStatusStanding() {
   if (content.careers.loading.value) {
@@ -203,12 +213,12 @@ const modifierAttributes = computed(() => {
 
 <template>
   <LoadErrors :states="[...content.loadStates, generationPropsUtils]" />
-  <PageHeader :title="id === 'create' ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
-  <p v-if="id !== 'create'" class="mt-2">
+  <PageHeader :title="isNew(id) ? 'Create character' : canEdit ? 'Edit character' : wh.name" />
+  <p v-if="!isNew(id)" class="mt-2">
     <TextLink routeName="viewCharacter" :params="{ id: id }" sameWindow>View character</TextLink>
   </p>
   <CharacterStartPanel
-    v-if="canEdit && id === 'create'"
+    v-if="canEdit && isNew(id)"
     :generateDisabled="isGenerationDisabled"
     :generationSummary="generationSummary"
     @generate="rollCharacter"
@@ -349,7 +359,13 @@ const modifierAttributes = computed(() => {
             @pastSelected="(event) => wh.updatePastCareer(event.id, event.number, event.selected)"
           />
         </div>
-        <CharacterExperience v-model="wh" :disabled="!canEdit" />
+        <CharacterExperience
+          v-model:currentExp="wh.currentExp"
+          v-model:spentExp="wh.spentExp"
+          :currentExpValidation="validCurrentExp"
+          :spentExpValidation="validSpentExp"
+          :disabled="!canEdit"
+        />
       </div>
     </div>
   </div>
@@ -400,7 +416,19 @@ const modifierAttributes = computed(() => {
     />
   </div>
 
-  <CharacterWealthEncumbrance v-model="wh" :itemList="content.items.withAllowed.value" :disabled="!canEdit" />
+  <CharacterWealthEncumbrance
+    v-model:gold="wh.gold"
+    v-model:silver="wh.silver"
+    v-model:brass="wh.brass"
+    :goldValidation="validGold"
+    :silverValidation="validSilver"
+    :brassValidation="validBrass"
+    :equipped="wh.equippedItems"
+    :carried="wh.carriedItems"
+    :itemList="content.items.withAllowed.value"
+    :maxEncumbrance="maxEncumbrance"
+    :disabled="!canEdit"
+  />
   <CharacterItems
     :disabled="!canEdit"
     :equipped="wh.equippedItems"
@@ -421,7 +449,26 @@ const modifierAttributes = computed(() => {
     "
   />
 
-  <CharacterMagicCorruption v-model="wh" :content="content" :disabled="!canEdit" />
+  <CharacterMagicCorruption
+    v-model:sin="wh.sin"
+    v-model:corruption="wh.corruption"
+    :prayers="wh.prayers"
+    :spells="wh.spells"
+    :mutations="wh.mutations"
+    :traits="wh.traits"
+    :sinValidation="validSin"
+    :corruptionValidation="validCorruption"
+    :traitsValidation="validTraits"
+    :content="content"
+    :disabled="!canEdit"
+    @prayerSelected="(e) => wh.updatePrayers(e.id, e.selected)"
+    @spellSelected="(e) => wh.updateSpells(e.id, e.selected)"
+    @mutationSelected="(e) => wh.updateMutations(e.id, e.selected, content.mutations.own.whList.value)"
+    @traitAdded="(id) => wh.addTrait(id, content.traits.own.whList.value)"
+    @traitRemoved="(e) => wh.removeTrait(e.index)"
+    @traitSelected="(e) => wh.updateTraits(e.id, e.selected, content.traits.own.whList.value)"
+    @traitValueUpdated="(e) => wh.updateTraitValue(e.index, e.value)"
+  />
 
   <SheetCard title="Notes" class="my-4">
     <FormTextarea v-model="wh.notes" :validationStatus="validNotes" :disabled="!canEdit" bare />
@@ -441,5 +488,3 @@ const modifierAttributes = computed(() => {
     :deleteItem="deleteItem"
   />
 </template>
-
-<style scoped></style>

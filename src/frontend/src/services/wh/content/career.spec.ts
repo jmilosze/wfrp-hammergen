@@ -16,12 +16,12 @@ import {
   StatusTier,
   zeroCareerLevel,
 } from "./career.ts";
-import { Species } from "../core/species.ts";
-import { AttributeName } from "../core/attributes.ts";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
+import { Species } from "@/services/wh/core/species.ts";
+import { AttributeName } from "@/services/wh/core/attributes.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
 import { describe, expect, test, vi } from "vitest";
-import { testIsEqualCommonProperties } from "../../../testing.ts";
+import { testIsEqualCommonProperties } from "@/testing.ts";
 
 const careerApiData: CareerApiData = {
   name: "career",

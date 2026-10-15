@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import IconButton from "../ui/IconButton.vue";
+import type { RouteName } from "@/router.ts";
+import IconButton from "@/components/ui/IconButton.vue";
 import { computed, reactive, ref, watchEffect } from "vue";
-import ModalWindow from "../ui/ModalWindow.vue";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
-import SheetList from "../sheet/SheetList.vue";
-import AppButton from "../ui/AppButton.vue";
-import { truncate } from "../../utils/string.ts";
-import TextLink from "../ui/TextLink.vue";
-import Edition4eBadge from "../edition/Edition4eBadge.vue";
-import FormInput from "../form/FormInput.vue";
-import { IdValue, MAX_VALUE_LENGTH } from "../../utils/idValue.ts";
-import { ValidationStatus } from "../../utils/validation.ts";
+import SheetList from "@/components/sheet/SheetList.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import { truncate } from "@/utils/string.ts";
+import TextLink from "@/components/ui/TextLink.vue";
+import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
+import FormInput from "@/components/form/FormInput.vue";
+import { IdValue, MAX_VALUE_LENGTH } from "@/utils/idValue.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
 
 // Selects entities together with a value (e.g. Ward 8, Hatred Elves). The modal only picks entities;
 // values are edited in the table of selected entities.
@@ -20,7 +21,7 @@ const props = defineProps<{
   title: string;
   itemList: Entity[];
   selected: IdValue[];
-  routeName: string;
+  routeName: RouteName;
   // Entities that take a value can be added more than once (each with its own value).
   allowRepeat?: boolean;
   disabled?: boolean;
@@ -171,5 +172,3 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
     </ModalWindow>
   </div>
 </template>
-
-<style scoped></style>

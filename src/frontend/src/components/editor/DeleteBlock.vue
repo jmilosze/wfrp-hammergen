@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import SheetTitle from "../sheet/SheetTitle.vue";
+import { useRouter } from "vue-router";
+import type { RouteName } from "@/router.ts";
+import SheetTitle from "@/components/sheet/SheetTitle.vue";
 import { ref } from "vue";
 import DeleteModal from "./DeleteModal.vue";
-import AppButton from "../ui/AppButton.vue";
-import router from "../../router.ts";
-import { returnToPreviousPage } from "../../utils/history.ts";
+import AppButton from "@/components/ui/AppButton.vue";
+import { returnToPreviousPage } from "@/utils/history.ts";
+
+const router = useRouter();
 
 const props = defineProps<{
   propertyName: string;
   name: string;
-  list: string;
+  list: RouteName;
   deleteItem: () => Promise<boolean>;
 }>();
 
@@ -43,5 +46,3 @@ async function onConfirmDelete() {
     <DeleteModal v-model:open="confirmOpen" :name="name" @deleteConfirmed="onConfirmDelete" />
   </div>
 </template>
-
-<style scoped></style>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import SheetCell from "../../sheet/SheetCell.vue";
-import SheetTable from "../../sheet/SheetTable.vue";
-import TextLink from "../../ui/TextLink.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import ViewCharacterTable from "./ViewCharacterTable.vue";
-import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 
 // The character view's Magic and Faith: Sin Points, prayers, spells and the spells in carried or stored grimoires.
 // Left out when there are no points and no entries.
@@ -62,5 +62,3 @@ const PRAYER_FIELDS = [
     </ViewCharacterTable>
   </div>
 </template>
-
-<style scoped></style>

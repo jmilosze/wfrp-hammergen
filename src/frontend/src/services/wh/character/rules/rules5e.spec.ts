@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { getMaxEncumbrance5e, getMovement5e, getSize5e, getSpeciesAttributes5e, getWounds5e } from "./rules5e.ts";
-import { Size } from "../size.ts";
-import { SpeciesWithRegion } from "../../core/species.ts";
+import { Size } from "@/services/wh/character/size.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 
 describe("getSpeciesAttributes5e", () => {
   test.each([

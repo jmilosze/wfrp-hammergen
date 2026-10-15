@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/core/entity.ts";
-import { printRuneLabel, Rune, runeApi, runeLabelList } from "../../../services/wh/content/rune.ts";
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
+import { printRuneLabel, Rune, runeApi, runeLabelList } from "@/services/wh/content/rune.ts";
 import { computed, ref } from "vue";
-import { authRequest } from "../../../services/auth.ts";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { defaultSource } from "../../../services/wh/core/source.ts";
-import LabelPicker from "../../../components/picker/LabelPicker.vue";
-import { itemTypeList, printItemType } from "../../../services/wh/content/item.ts";
+import { authRequest } from "@/services/auth.ts";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import LabelPicker from "@/components/picker/LabelPicker.vue";
+import { itemTypeList, printItemType } from "@/services/wh/content/item.ts";
 
 const props = defineProps<{
   id: string;
@@ -19,7 +19,7 @@ const props = defineProps<{
 
 const newRune = new Rune({
   name: "New rune",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -58,5 +58,3 @@ const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), va
     </div>
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

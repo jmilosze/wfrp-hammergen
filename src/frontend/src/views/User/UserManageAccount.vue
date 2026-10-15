@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import PageHeader from "../../components/ui/PageHeader.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
 import Username from "./ManageUsername.vue";
 import Password from "./ManagePassword.vue";
 import Delete from "./ManageDelete.vue";
 import UserLinkedUsers from "./UserLinkedUsers.vue";
-import ToggleSwitch from "../../components/ui/ToggleSwitch.vue";
+import ToggleSwitch from "@/components/ui/ToggleSwitch.vue";
 import { useRouteQuery } from "@vueuse/router";
 
 const viewNames = [
@@ -34,5 +34,3 @@ const currentView = useRouteQuery("view", viewNames[0].value);
     <UserLinkedUsers />
   </div>
 </template>
-
-<style scoped></style>

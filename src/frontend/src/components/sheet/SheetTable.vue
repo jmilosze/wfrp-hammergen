@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SheetTitle from "./SheetTitle.vue";
+
 // A table of labelled cells in the style of the paper character sheet. Cells (SheetField, SheetSelect) sit in a
 // grid that drops to one column when narrow; the 1px gaps show the background and draw the cell borders.
 // Editable cells (SheetField, SheetSelect) have a faint yellow fill; read-only and calculated cells are white.
@@ -7,6 +8,7 @@ import SheetTitle from "./SheetTitle.vue";
 // An optional title is a small header row above the cells; actions fill a cell on the right.
 // Columns "short" and "short-6": short read-only cells (values of a few characters, e.g. Wealth) in three columns from a
 // narrower width; "short-6" makes a single row of six cells once there is room (e.g. Encumbrance).
+
 type Columns = 1 | 2 | 3 | "short" | "short-6";
 
 withDefaults(defineProps<{ title?: string; columns?: Columns }>(), { title: "", columns: 1 });
@@ -36,5 +38,3 @@ const COLUMNS_CLASS: Record<Columns, string> = {
     </div>
   </div>
 </template>
-
-<style scoped></style>

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { canEdit, resetAuthState, setupAuthInterceptor, UnauthorizedError, useAuth } from "./auth.ts";
-import { authRequest } from "../services/auth.ts";
+import { authRequest } from "@/services/auth.ts";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { createApp } from "vue";

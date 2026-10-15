@@ -39,11 +39,13 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
 - `utils/`: generic helpers (random, clone, equality, currency…).
 - `services/auth.ts`, `services/user.ts`: login and account.
 - `layout/navigation.ts`: the navigation links (Characters, the Compendium content types grouped in sections), shared by the top bar (`NavBar.vue`, large screens) and the slide-in sidebar (`SideBar.vue`, small screens).
-- `style.css`: the Tailwind theme. Colours are role scales (`primary`, `neutral`, `danger`, `success`, `info`, `linked`, each 50-950) plus `white`/`black`; Tailwind's built-in palettes are switched off, so only these colours exist. Restyle a role by changing its values there.
+- `style.css`: the Tailwind theme. Tailwind's built-in palettes are switched off, so only the colours defined there exist (e.g. `bg-red-500` does nothing). Greys are one scale, `neutral-50`…`950`, plus `white`/`black`; every other colour is named by what it is for: `brand` (oxblood: top bar, dark buttons, accents; `brand-dark`, `brand-rule`), `parchment` (text on brand and light accent surfaces; `-light`, `-dark`), `link`, `editable` (the faint yellow of editable cells), `error`, `success`, `danger` (deleting; `-border`, `-hover`), `alert-error-*` and `alert-success-*` (`AlertBlock`), and the visibility icon colours `public-icon`, `shared-icon`, `shared-with-me-icon`. The comments in the file say where each is used; change a colour there to restyle everything that uses it.
 - `layout/announcement.ts`: the text of the announcement bar above the navigation (`AnnouncementBar.vue`), linking to the Updates tab of About (`views/About/UpdateList.vue`). A visitor who opens Updates from the bar or dismisses it doesn't see it again until the text changes; `null` turns the bar off.
 
 ### Code organisation rules
 
+- Imports from outside the importing file's folder use the `@/` alias (`@/components/ui/AppButton.vue`); same-folder imports use `./`.
+- Route names are typed (`RouteName` in `router.ts`); the id of an entry not saved yet is `NEW_ID` (`isNew(id)`), never the `"create"` literal.
 - One file per topic, named with a noun for the topic (`skills.ts`, `trappings.ts`, `groups.ts`). No verb file names (`generateX.ts`), no `utils`/`common`/`helpers` grab-bags, and not one file per function. Size alone never decides whether something gets its own file; small helpers go into the topic that uses them.
 - A topic file holds everything about the topic: types, helpers, the generator step and the editor's Generate/Add action.
 - Large data tables live in their own files (e.g. `generation/shared/data/names.ts`).

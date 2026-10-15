@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/core/entity.ts";
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
 import {
   ItemProperty,
   itemPropertyApi,
   itemPropertyTypeList,
   printItemPropertyType,
-} from "../../../services/wh/content/itemproperty.ts";
+} from "@/services/wh/content/itemproperty.ts";
 import { computed, ref } from "vue";
-import { authRequest } from "../../../services/auth.ts";
-import LabelledCheckbox from "../../../components/form/LabelledCheckbox.vue";
-import HelpButton from "../../../components/ui/HelpButton.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { defaultSource } from "../../../services/wh/core/source.ts";
-import LabelPicker from "../../../components/picker/LabelPicker.vue";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetSelect from "../../../components/sheet/SheetSelect.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import { itemTypeList, printItemType } from "../../../services/wh/content/item.ts";
+import { authRequest } from "@/services/auth.ts";
+import LabelledCheckbox from "@/components/form/LabelledCheckbox.vue";
+import HelpButton from "@/components/ui/HelpButton.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import LabelPicker from "@/components/picker/LabelPicker.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import { itemTypeList, printItemType } from "@/services/wh/content/item.ts";
 
 const props = defineProps<{
   id: string;
@@ -27,7 +27,7 @@ const props = defineProps<{
 
 const newItemProperty = new ItemProperty({
   name: "New quality",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -81,5 +81,3 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     </div>
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

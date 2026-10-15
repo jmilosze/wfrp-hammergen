@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { characterApi } from "../../services/wh/character/character.ts";
-import { CharacterFull } from "../../services/wh/character/characterFull.ts";
-import { authRequest } from "../../services/auth.ts";
-import AlertBlock from "../../components/ui/AlertBlock.vue";
+import { characterApi } from "@/services/wh/character/character.ts";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
+import { authRequest } from "@/services/auth.ts";
+import AlertBlock from "@/components/ui/AlertBlock.vue";
 import ViewCharacter4e from "./ViewCharacter4e.vue";
 import ViewCharacter5e from "./ViewCharacter5e.vue";
 

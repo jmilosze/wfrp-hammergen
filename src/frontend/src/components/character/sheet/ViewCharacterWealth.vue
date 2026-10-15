@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import SheetCell from "../../sheet/SheetCell.vue";
-import SheetTable from "../../sheet/SheetTable.vue";
-import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 
 // The character view's Wealth and Encumbrance boxes; the total is marked when over the limit. The wrapper is display:
 // contents, so the two boxes are laid out by the page (side by side in its grid or flex row).
@@ -32,5 +32,3 @@ defineProps<{ character: CharacterFull }>();
     </SheetTable>
   </div>
 </template>
-
-<style scoped></style>

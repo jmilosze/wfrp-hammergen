@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { Icon } from "@iconify/vue";
-import FormCheckbox from "../../form/FormCheckbox.vue";
+import FormCheckbox from "@/components/form/FormCheckbox.vue";
 import { FilterSection } from "./filterSection.ts";
 
 // The filters of a browse list, as a column of collapsible sections of checkboxes. In a section an item matches any
@@ -140,5 +140,3 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
     </aside>
   </div>
 </template>
-
-<style scoped></style>

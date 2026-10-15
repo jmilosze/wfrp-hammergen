@@ -1,8 +1,8 @@
-import { ids } from "../fixtures.ts";
-import { SpeciesWithRegion } from "../../../core/species.ts";
-import { Skill } from "../../../content/skill.ts";
-import { Talent } from "../../../content/talent.ts";
-import { GenerationProps5e } from "../shared/generationProps.ts";
+import { ids } from "@/services/wh/character/generation/fixtures.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
+import { Skill } from "@/services/wh/content/skill.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { GenerationProps5e } from "@/services/wh/character/generation/shared/generationProps.ts";
 
 export const testSkills5e = [
   ...ids("s", 1, 22),

@@ -25,5 +25,3 @@ const COLUMNS_CLASS: Record<Columns, string> = {
     </div>
   </div>
 </template>
-
-<style scoped></style>

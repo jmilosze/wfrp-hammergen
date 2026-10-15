@@ -3,9 +3,9 @@ import { ref, useTemplateRef } from "vue";
 import { onClickOutside, onKeyStroke } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import NavLink from "./NavLink.vue";
-import EditionSwitch from "../components/edition/EditionSwitch.vue";
-import { useAuth } from "../composables/auth.ts";
-import { useEdition } from "../composables/edition.ts";
+import EditionSwitch from "@/components/edition/EditionSwitch.vue";
+import { useAuth } from "@/composables/auth.ts";
+import { useEdition } from "@/composables/edition.ts";
 import { COMPENDIUM_SECTIONS } from "./navigation.ts";
 
 // The links (main bar and the secondary bar under it) are shown on large screens; smaller screens get the menu
@@ -117,5 +117,3 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
     </nav>
   </header>
 </template>
-
-<style scoped></style>

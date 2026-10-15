@@ -5,6 +5,10 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
+  // "@/" is src/, for imports outside the importing file's folder.
+  resolve: {
+    alias: { "@": "/src" },
+  },
   build: {
     rollupOptions: {
       output: {

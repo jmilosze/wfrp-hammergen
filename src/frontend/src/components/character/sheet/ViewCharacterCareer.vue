@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import SheetCell from "../../sheet/SheetCell.vue";
-import SheetTable from "../../sheet/SheetTable.vue";
-import TextLink from "../../ui/TextLink.vue";
-import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import TextLink from "@/components/ui/TextLink.vue";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 
 // The character view's Career box: class, current career, status and past careers. The slot adds full-width rows
 // (e.g. the 5e Career Advancement Tracker).
@@ -29,5 +29,3 @@ defineProps<{ character: CharacterFull }>();
     <slot />
   </SheetTable>
 </template>
-
-<style scoped></style>

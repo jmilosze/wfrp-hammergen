@@ -1,21 +1,39 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { Character } from "../../../services/wh/character/character.ts";
-import { CharacterContent } from "../../../composables/characterEdit.ts";
-import SheetTable from "../../sheet/SheetTable.vue";
-import SheetField from "../../sheet/SheetField.vue";
-import SelectTable from "../../picker/SelectTable.vue";
-import SelectIdValueTable from "../../picker/SelectIdValueTable.vue";
+import { CharacterContent } from "@/composables/characterEdit.ts";
+import { IdValue } from "@/utils/idValue.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SelectTable from "@/components/picker/SelectTable.vue";
+import SelectIdValueTable from "@/components/picker/SelectIdValueTable.vue";
 
 // The character editor's Magic and Faith (Sin Points, prayers, spells) and Traits and Corruption (Corruption Points,
-// mutations, creature traits), side by side once there is room. Mutation and trait modifiers come from the content of
-// the character's own edition only.
-const character = defineModel<Character>({ required: true });
+// mutations, creature traits), side by side once there is room. The picked prayers, spells, mutations and traits are
+// read directly; changes to them are emitted for the editor to apply.
+const sin = defineModel<number>("sin", { required: true });
+const corruption = defineModel<number>("corruption", { required: true });
 
-defineProps<{ content: CharacterContent; disabled: boolean }>();
+defineProps<{
+  prayers: Set<string>;
+  spells: Set<string>;
+  mutations: Set<string>;
+  traits: IdValue[];
+  sinValidation: ValidationStatus;
+  corruptionValidation: ValidationStatus;
+  traitsValidation: ValidationStatus;
+  content: CharacterContent;
+  disabled: boolean;
+}>();
 
-const validSin = computed(() => character.value.validateSin());
-const validCorruption = computed(() => character.value.validateCorruption());
+const emit = defineEmits<{
+  (e: "prayerSelected", value: { id: string; selected: boolean }): void;
+  (e: "spellSelected", value: { id: string; selected: boolean }): void;
+  (e: "mutationSelected", value: { id: string; selected: boolean }): void;
+  (e: "traitAdded", id: string): void;
+  (e: "traitRemoved", value: { index: number; id: string }): void;
+  (e: "traitSelected", value: { id: string; selected: boolean }): void;
+  (e: "traitValueUpdated", value: { index: number; id: string; value: string }): void;
+}>();
 </script>
 
 <template>
@@ -23,16 +41,16 @@ const validCorruption = computed(() => character.value.validateCorruption());
     <div class="grow basis-80">
       <SheetTable title="Magic and Faith">
         <SheetField
-          v-model="character.sin"
+          v-model="sin"
           type="number"
           title="Sin Points"
-          :validationStatus="validSin"
+          :validationStatus="sinValidation"
           :disabled="disabled"
         />
       </SheetTable>
       <SelectTable
         :disabled="disabled"
-        :selected="character.prayers"
+        :selected="prayers"
         :itemList="content.prayers.withAllowed.value"
         :fourEIds="content.prayers.fourEIds.value"
         title="Prayers"
@@ -44,11 +62,11 @@ const validCorruption = computed(() => character.value.validateCorruption());
         :truncateModalDescription="100"
         class="-mt-px"
         @reload="content.prayers.reload"
-        @selected="(e) => character.updatePrayers(e.id, e.selected)"
+        @selected="(e) => emit('prayerSelected', e)"
       />
       <SelectTable
         :disabled="disabled"
-        :selected="character.spells"
+        :selected="spells"
         :itemList="content.spells.withAllowed.value"
         :fourEIds="content.spells.fourEIds.value"
         title="Spells"
@@ -60,22 +78,22 @@ const validCorruption = computed(() => character.value.validateCorruption());
         :truncateModalDescription="100"
         class="-mt-px"
         @reload="content.spells.reload"
-        @selected="(e) => character.updateSpells(e.id, e.selected)"
+        @selected="(e) => emit('spellSelected', e)"
       />
     </div>
     <div class="grow basis-80">
       <SheetTable title="Traits and Corruption">
         <SheetField
-          v-model="character.corruption"
+          v-model="corruption"
           type="number"
           title="Corruption Points"
-          :validationStatus="validCorruption"
+          :validationStatus="corruptionValidation"
           :disabled="disabled"
         />
       </SheetTable>
       <SelectTable
         :disabled="disabled"
-        :selected="character.mutations"
+        :selected="mutations"
         :itemList="content.mutations.withAllowed.value"
         :fourEIds="content.mutations.fourEIds.value"
         title="Mutations"
@@ -87,11 +105,11 @@ const validCorruption = computed(() => character.value.validateCorruption());
         :truncateModalDescription="100"
         class="-mt-px"
         @reload="content.mutations.reload"
-        @selected="(e) => character.updateMutations(e.id, e.selected, content.mutations.own.whList.value)"
+        @selected="(e) => emit('mutationSelected', e)"
       />
       <SelectIdValueTable
         :disabled="disabled"
-        :selected="character.traits"
+        :selected="traits"
         :itemList="content.traits.withAllowed.value"
         :fourEIds="content.traits.fourEIds.value"
         title="Creature Traits"
@@ -99,15 +117,15 @@ const validCorruption = computed(() => character.value.validateCorruption());
         :loading="content.traits.loading.value"
         :disableDescription="true"
         :allowRepeat="true"
-        :validationStatus="character.validateTraits()"
+        :validationStatus="traitsValidation"
         routeName="trait"
         :truncateModalDescription="100"
         class="-mt-px"
         @reload="content.traits.reload"
-        @add="(id) => character.addTrait(id, content.traits.own.whList.value)"
-        @remove="(e) => character.removeTrait(e.index)"
-        @selected="(e) => character.updateTraits(e.id, e.selected, content.traits.own.whList.value)"
-        @updateValue="(e) => character.updateTraitValue(e.index, e.value)"
+        @add="(id) => emit('traitAdded', id)"
+        @remove="(e) => emit('traitRemoved', e)"
+        @selected="(e) => emit('traitSelected', e)"
+        @updateValue="(e) => emit('traitValueUpdated', e)"
       />
     </div>
   </div>

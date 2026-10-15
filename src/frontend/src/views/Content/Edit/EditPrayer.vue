@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/core/entity.ts";
-import { Prayer, prayerApi } from "../../../services/wh/content/prayer.ts";
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
+import { Prayer, prayerApi } from "@/services/wh/content/prayer.ts";
 import { computed } from "vue";
-import { authRequest } from "../../../services/auth.ts";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { defaultSource } from "../../../services/wh/core/source.ts";
+import { authRequest } from "@/services/auth.ts";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { defaultSource } from "@/services/wh/core/source.ts";
 
 const props = defineProps<{
   id: string;
@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const newPrayer = new Prayer({
   name: "New prayer",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -49,5 +49,3 @@ const validDuration = computed(() => wh.value.validateDuration());
     </div>
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RouteName } from "@/router.ts";
 import { Icon } from "@iconify/vue";
 import {
   BUTTON_BASE_CLASS,
@@ -13,7 +14,7 @@ import {
 withDefaults(
   defineProps<{
     icon: string;
-    routeName: string;
+    routeName: RouteName;
     params?: Record<string, string>;
     newWindow?: boolean;
     variant?: ButtonVariant;
@@ -33,5 +34,3 @@ withDefaults(
     <slot />
   </RouterLink>
 </template>
-
-<style scoped></style>

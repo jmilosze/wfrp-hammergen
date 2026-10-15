@@ -1,7 +1,13 @@
 import { printSize } from "./size.ts";
-import { printSpeciesWithRegion, SpeciesWithRegion } from "../core/species.ts";
+import { printSpeciesWithRegion, SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { rulesFor } from "./rules/rules.ts";
-import { CareerApiData, printClassName, printStatusTier, StatusStanding, StatusTier } from "../content/career.ts";
+import {
+  CareerApiData,
+  printClassName,
+  printStatusTier,
+  StatusStanding,
+  StatusTier,
+} from "@/services/wh/content/career.ts";
 import {
   Attributes,
   getAttributeValue,
@@ -9,12 +15,12 @@ import {
   printAttributeName,
   sumAttributes,
   zeroAttributes,
-} from "../core/attributes.ts";
-import { ApiResponse, CharacterApiResponse } from "../core/api.ts";
-import { contentEdition, Edition, variant, variantFor, with4eMark } from "../core/edition.ts";
-import { Visibility } from "../core/entity.ts";
-import { SkillApiData } from "../content/skill.ts";
-import { TalentApiData } from "../content/talent.ts";
+} from "@/services/wh/core/attributes.ts";
+import { ApiResponse, CharacterApiResponse } from "@/services/wh/core/api.ts";
+import { contentEdition, Edition, variant, variantFor, with4eMark } from "@/services/wh/core/edition.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { SkillApiData } from "@/services/wh/content/skill.ts";
+import { TalentApiData } from "@/services/wh/content/talent.ts";
 import {
   AmmoType,
   ArmourType,
@@ -32,16 +38,16 @@ import {
   printMeleeReach,
   printRangedGroup,
   RangedType,
-} from "../content/item.ts";
-import { SpellApiData } from "../content/spell.ts";
-import { PrayerApiData } from "../content/prayer.ts";
-import { MutationApiData, printMutationType } from "../content/mutation.ts";
-import { Source } from "../core/source.ts";
-import { ItemPropertyApiData } from "../content/itemproperty.ts";
-import { CharacterModifiersData, hasModifiers, ModifierEffect } from "../core/characterModifiers.ts";
-import { TraitApiData } from "../content/trait.ts";
-import { RuneApiData } from "../content/rune.ts";
-import { printWithValue } from "../../../utils/idValue.ts";
+} from "@/services/wh/content/item.ts";
+import { SpellApiData } from "@/services/wh/content/spell.ts";
+import { PrayerApiData } from "@/services/wh/content/prayer.ts";
+import { MutationApiData, printMutationType } from "@/services/wh/content/mutation.ts";
+import { Source } from "@/services/wh/core/source.ts";
+import { ItemPropertyApiData } from "@/services/wh/content/itemproperty.ts";
+import { CharacterModifiersData, hasModifiers, ModifierEffect } from "@/services/wh/core/characterModifiers.ts";
+import { TraitApiData } from "@/services/wh/content/trait.ts";
+import { RuneApiData } from "@/services/wh/content/rune.ts";
+import { printWithValue } from "@/utils/idValue.ts";
 import { getEncumbrance } from "./encumbrance.ts";
 
 export interface ItemFullApiData {

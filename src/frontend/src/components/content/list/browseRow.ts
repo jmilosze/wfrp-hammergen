@@ -1,4 +1,4 @@
-import { Visibility } from "../../../services/wh/core/entity.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
 
 // A row of a BrowseList. meta: a short line after the name (e.g. the type); empty when there is none. ownerId and
 // visibility give the visibility icon after it.

@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import IconButton from "../../ui/IconButton.vue";
-import SheetList from "../../sheet/SheetList.vue";
-import AppButton from "../../ui/AppButton.vue";
+import IconButton from "@/components/ui/IconButton.vue";
+import SheetList from "@/components/sheet/SheetList.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 import { computed, ref } from "vue";
-import ModalWindow from "../../ui/ModalWindow.vue";
-import ChecklistPicker from "../../picker/ChecklistPicker.vue";
-import {
-  modifierEffectsByEdition,
-  printEffectDesc,
-  printEffectName,
-} from "../../../services/wh/core/characterModifiers.ts";
-import { Edition } from "../../../services/wh/core/edition.ts";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
+import ChecklistPicker from "@/components/picker/ChecklistPicker.vue";
+import { modifierEffectsByEdition, printEffectDesc, printEffectName } from "@/services/wh/core/characterModifiers.ts";
+import { Edition } from "@/services/wh/core/edition.ts";
 
 // Picks the modifier effects of the edition (e.g. Hardy); effects is the picked ones, read directly (the parent changes
 // it on the emitted events).

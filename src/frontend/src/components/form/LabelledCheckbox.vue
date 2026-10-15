@@ -21,5 +21,3 @@ defineProps<{
     {{ title }}
   </label>
 </template>
-
-<style scoped></style>

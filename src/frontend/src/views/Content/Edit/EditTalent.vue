@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/core/entity.ts";
-import { defaultSource } from "../../../services/wh/core/source.ts";
-import { Talent, talentApi } from "../../../services/wh/content/talent.ts";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { authRequest } from "../../../services/auth.ts";
+import { Visibility, isNew, NEW_ID } from "@/services/wh/core/entity.ts";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import { Talent, talentApi } from "@/services/wh/content/talent.ts";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { authRequest } from "@/services/auth.ts";
 import { computed, Ref, ref, watch } from "vue";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetSelect from "../../../components/sheet/SheetSelect.vue";
-import SheetGroup from "../../../components/sheet/SheetGroup.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import LabelledCheckbox from "../../../components/form/LabelledCheckbox.vue";
-import ModifiersBlock from "../../../components/content/edit/ModifiersBlock.vue";
-import { AttributeName, attributeNameList, printAttributeName } from "../../../services/wh/core/attributes.ts";
-import { CharacterModifiers } from "../../../services/wh/core/characterModifiers.ts";
-import SelectTable from "../../../components/picker/SelectTable.vue";
-import { useWhList } from "../../../composables/whList.ts";
-import CareerReferencesTable from "../../../components/content/edit/CareerReferencesTable.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import SheetGroup from "@/components/sheet/SheetGroup.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import LabelledCheckbox from "@/components/form/LabelledCheckbox.vue";
+import ModifiersBlock from "@/components/content/edit/ModifiersBlock.vue";
+import { AttributeName, attributeNameList, printAttributeName } from "@/services/wh/core/attributes.ts";
+import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
+import SelectTable from "@/components/picker/SelectTable.vue";
+import { useWhList } from "@/composables/whList.ts";
+import CareerReferencesTable from "@/components/content/edit/CareerReferencesTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -26,7 +26,7 @@ const props = defineProps<{
 
 const newTalent = new Talent({
   name: "New talent",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -142,7 +142,7 @@ watchWh(
     </div>
     <ModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit || wh.isGroup" class="my-4" />
     <CareerReferencesTable
-      v-if="id !== 'create'"
+      v-if="!isNew(id)"
       :edition="edition"
       :entityId="wh.id"
       :parentGroupIds="wh.group"
@@ -150,5 +150,3 @@ watchWh(
     />
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

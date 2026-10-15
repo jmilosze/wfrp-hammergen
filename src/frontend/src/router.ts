@@ -1,7 +1,9 @@
+import { NEW_ID } from "@/services/wh/core/entity.ts";
 import {
   createMemoryHistory,
   createRouter,
   createWebHistory,
+  type RouteRecordRaw,
   type RouterHistory,
   type RouteLocationNormalized,
 } from "vue-router";
@@ -16,9 +18,11 @@ declare module "vue-router" {
 import HomePage from "./views/HomePage.vue";
 
 export function isCreationRoute(to: RouteLocationNormalized): boolean {
-  return to.params.id === "create";
+  return to.params.id === NEW_ID;
 }
 
+// The app's routes. RouteName is the union of their names, so a link to a route that doesn't exist fails the type
+// check.
 const routes = [
   {
     path: "/",
@@ -187,7 +191,9 @@ const routes = [
     component: () => import("./views/Content/Edit/EditTrait.vue"),
     props: true,
   },
-];
+] as const satisfies readonly RouteRecordRaw[];
+
+export type RouteName = (typeof routes)[number]["name"];
 
 export function createHammergenRouter(
   history: RouterHistory = typeof window !== "undefined" ? createWebHistory() : createMemoryHistory(),

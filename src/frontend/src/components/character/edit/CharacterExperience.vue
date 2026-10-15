@@ -1,35 +1,36 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { Character } from "../../../services/wh/character/character.ts";
-import SheetTable from "../../sheet/SheetTable.vue";
-import SheetField from "../../sheet/SheetField.vue";
-import SheetCell from "../../sheet/SheetCell.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import { ValidationStatus } from "@/utils/validation.ts";
 
 // The character editor's Experience: unspent and spent XP, typed in, and their total.
-const character = defineModel<Character>({ required: true });
+const currentExp = defineModel<number>("currentExp", { required: true });
+const spentExp = defineModel<number>("spentExp", { required: true });
 
-defineProps<{ disabled: boolean }>();
-
-const validCurrentExp = computed(() => character.value.validateCurrentExp());
-const validSpentExp = computed(() => character.value.validateSpentExp());
+defineProps<{
+  currentExpValidation: ValidationStatus;
+  spentExpValidation: ValidationStatus;
+  disabled: boolean;
+}>();
 </script>
 
 <template>
   <SheetTable title="Experience" :columns="3">
     <SheetField
-      v-model="character.currentExp"
+      v-model="currentExp"
       type="number"
       title="Unspent"
-      :validationStatus="validCurrentExp"
+      :validationStatus="currentExpValidation"
       :disabled="disabled"
     />
     <SheetField
-      v-model="character.spentExp"
+      v-model="spentExp"
       type="number"
       title="Spent"
-      :validationStatus="validSpentExp"
+      :validationStatus="spentExpValidation"
       :disabled="disabled"
     />
-    <SheetCell title="Total">{{ character.currentExp + character.spentExp }}</SheetCell>
+    <SheetCell title="Total">{{ currentExp + spentExp }}</SheetCell>
   </SheetTable>
 </template>

@@ -1,9 +1,9 @@
 import { Mutation, MutationApiData, MutationType, apiResponseToModel, modelToApi } from "./mutation.ts";
-import { CharacterModifiers } from "../core/characterModifiers.ts";
+import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
 import { describe, expect, test } from "vitest";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
-import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "../../../testing.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "@/testing.ts";
 
 const mutationApiData: MutationApiData = {
   name: "mutation",

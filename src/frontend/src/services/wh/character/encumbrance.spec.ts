@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { encumbranceItems, getEncumbrance } from "./encumbrance.ts";
-import { ItemType } from "../content/item.ts";
+import { ItemType } from "@/services/wh/content/item.ts";
 
 describe("getEncumbrance", () => {
   test("sums each group and the total", () => {

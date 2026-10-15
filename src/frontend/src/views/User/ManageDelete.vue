@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import AppButton from "../../components/ui/AppButton.vue";
-import AccountCard from "../../components/account/AccountCard.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import AccountCard from "@/components/account/AccountCard.vue";
 import { computed, ref } from "vue";
-import { User, UserApi } from "../../services/user.ts";
-import { SubmissionState } from "../../utils/submission.ts";
-import { authRequest } from "../../services/auth.ts";
-import AfterSubmit from "../../components/account/AfterSubmit.vue";
-import FormInput from "../../components/form/FormInput.vue";
-import { setValidationStatus } from "../../utils/validation.ts";
-import { useAuth } from "../../composables/auth.ts";
+import { User, UserApi } from "@/services/user.ts";
+import { SubmissionState } from "@/utils/submission.ts";
+import { authRequest } from "@/services/auth.ts";
+import AfterSubmit from "@/components/account/AfterSubmit.vue";
+import FormInput from "@/components/form/FormInput.vue";
+import { setValidationStatus } from "@/utils/validation.ts";
+import { useAuth } from "@/composables/auth.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -77,5 +77,3 @@ async function submitForm() {
     </AppButton>
   </AccountCard>
 </template>
-
-<style scoped></style>

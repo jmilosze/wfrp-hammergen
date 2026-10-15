@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { RouteName } from "@/router.ts";
 import { Icon } from "@iconify/vue";
 
 // A navigation entry: an internal route, an external link (new tab, marked with an icon) or, with neither, a button.
 // The parent styles it through class, which falls through to the element. An optional icon goes before the text.
 defineProps<{
-  routeName?: string;
+  routeName?: RouteName;
   href?: string;
   icon?: string;
 }>();
@@ -37,5 +38,3 @@ defineProps<{
     </span>
   </button>
 </template>
-
-<style scoped></style>

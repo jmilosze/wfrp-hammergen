@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SheetCard from "../../sheet/SheetCard.vue";
-import { Attributes } from "../../../services/wh/core/attributes.ts";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import { Attributes } from "@/services/wh/core/attributes.ts";
 
 // The character view's attributes, read-only: a column per attribute and the given rows (e.g. Initial, Advances,
 // Current); the last row is the total, in bold. One row of ten columns when wide; two tables of five when narrow.
@@ -38,5 +38,3 @@ const tdClass = "px-2 py-2 border-b border-neutral-300";
     </div>
   </SheetCard>
 </template>
-
-<style scoped></style>

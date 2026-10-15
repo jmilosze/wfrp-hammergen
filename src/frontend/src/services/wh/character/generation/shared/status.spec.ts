@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { generateStatusAndStanding, populateStatusAndStanding } from "./status.ts";
-import { Career, StatusTier } from "../../../content/career.ts";
-import { Character } from "../../character.ts";
+import { Career, StatusTier } from "@/services/wh/content/career.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 describe("status", () => {
   test("generateStatusAndStanding returns level status and standing", () => {

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { generateDescription, populateDescription } from "./description.ts";
-import { SpeciesWithRegion } from "../../../core/species.ts";
-import { Character } from "../../character.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 describe("generateDescription generates valid descriptions for all species", () => {
   const speciesList: SpeciesWithRegion[] = [

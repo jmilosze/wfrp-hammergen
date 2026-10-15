@@ -95,17 +95,8 @@ html:has(dialog[open]) {
   --color-alert-success-text: #3b5428;
   --color-alert-success-hover: #d6e2c6;
 
-  /* Visibility of entries (visibilityKind.ts): the badge (background, border, text) and the icon. "Mine" uses greys. */
-  --color-public-bg: oklch(93.2% 0.032 255.585);
-  --color-public-border: oklch(80.9% 0.105 251.813);
-  --color-public-text: oklch(42.4% 0.199 265.638);
+  /* Visibility of entries (visibilityKind.ts): the icon. "Mine" uses greys. */
   --color-public-icon: oklch(62.3% 0.214 259.815);
-  --color-shared-bg: oklch(96.2% 0.044 156.743);
-  --color-shared-border: oklch(87.1% 0.15 154.449);
-  --color-shared-text: oklch(44.8% 0.119 151.328);
   --color-shared-icon: oklch(62.7% 0.194 149.214);
-  --color-shared-with-me-bg: oklch(94.6% 0.033 307.174);
-  --color-shared-with-me-border: oklch(82.7% 0.119 306.383);
-  --color-shared-with-me-text: oklch(43.8% 0.218 303.724);
   --color-shared-with-me-icon: oklch(62.7% 0.265 303.9);
 }

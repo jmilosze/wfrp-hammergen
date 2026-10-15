@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 import { GroupPicker, resolveEntityGroups } from "./groups.ts";
-import { getSelectRandomTest } from "../../../../../testing.ts";
-import { Skill } from "../../../content/skill.ts";
-import { Talent } from "../../../content/talent.ts";
+import { getSelectRandomTest } from "@/testing.ts";
+import { Skill } from "@/services/wh/content/skill.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
 
 describe("resolveEntityGroups", () => {
   test("indexes skills by group", () => {

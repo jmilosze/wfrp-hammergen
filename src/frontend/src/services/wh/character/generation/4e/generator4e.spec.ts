@@ -1,8 +1,8 @@
-import { ids, sumValues, testCareer } from "../fixtures.ts";
+import { ids, sumValues, testCareer } from "@/services/wh/character/generation/fixtures.ts";
 import { genProps4e, testSkills4e, testTalents4e } from "./fixtures4e.ts";
 import { describe, expect, test } from "vitest";
-import { StatusTier } from "../../../content/career.ts";
-import { SpeciesWithRegion } from "../../../core/species.ts";
+import { StatusTier } from "@/services/wh/content/career.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { generateCharacter4e } from "./generator4e.ts";
 
 describe("generateCharacter4e", () => {

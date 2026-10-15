@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useFilterModel, useListQuery, useSourceFilter, useWhList } from "../../../composables/whList.ts";
-import { useEdition } from "../../../composables/edition.ts";
-import { Skill, skillApi, skillTypeList, printSkillType } from "../../../services/wh/content/skill.ts";
-import { attributeNameList, printAttributeName } from "../../../services/wh/core/attributes.ts";
-import { authRequest } from "../../../services/auth.ts";
-import ContentListPage from "../../../components/content/list/ContentListPage.vue";
+import { useFilterModel, useListQuery, useSourceFilter, useWhList } from "@/composables/whList.ts";
+import { useEdition } from "@/composables/edition.ts";
+import { Skill, skillApi, skillTypeList, printSkillType } from "@/services/wh/content/skill.ts";
+import { attributeNameList, printAttributeName } from "@/services/wh/core/attributes.ts";
+import { authRequest } from "@/services/auth.ts";
+import ContentListPage from "@/components/content/list/ContentListPage.vue";
 import { computed } from "vue";
-import { FilterSection } from "../../../components/content/list/filterSection.ts";
+import { FilterSection } from "@/components/content/list/filterSection.ts";
 
 const { edition } = useEdition();
 const whList = useWhList(skillApi(authRequest), edition);

@@ -14,5 +14,3 @@ defineProps<{
     <p><slot /></p>
   </div>
 </template>
-
-<style scoped></style>

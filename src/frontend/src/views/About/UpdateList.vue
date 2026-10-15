@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import PageHeader from "../../components/ui/PageHeader.vue";
-import TextLink from "../../components/ui/TextLink.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import UpdateEntry from "./UpdateEntry.vue";
 </script>
 
@@ -450,5 +450,3 @@ import UpdateEntry from "./UpdateEntry.vue";
     </UpdateEntry>
   </section>
 </template>
-
-<style scoped></style>

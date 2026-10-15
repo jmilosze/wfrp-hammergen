@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import IconButton from "../../ui/IconButton.vue";
+import IconButton from "@/components/ui/IconButton.vue";
 import { computed, ref } from "vue";
-import ModalWindow from "../../ui/ModalWindow.vue";
-import AppButton from "../../ui/AppButton.vue";
-import ChecklistPicker from "../../picker/ChecklistPicker.vue";
-import SheetCard from "../../sheet/SheetCard.vue";
-import { Item, printItemType } from "../../../services/wh/content/item.ts";
-import { ValidationStatus } from "../../../utils/validation.ts";
-import { truncate } from "../../../utils/string.ts";
-import TextLink from "../../ui/TextLink.vue";
-import Edition4eBadge from "../../edition/Edition4eBadge.vue";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import ChecklistPicker from "@/components/picker/ChecklistPicker.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import { Item, printItemType } from "@/services/wh/content/item.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
+import { truncate } from "@/utils/string.ts";
+import TextLink from "@/components/ui/TextLink.vue";
+import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
 
 const DESC_CHARS = 100;
 
@@ -283,5 +283,3 @@ const sections = computed(() => [
     </ModalWindow>
   </div>
 </template>
-
-<style scoped></style>

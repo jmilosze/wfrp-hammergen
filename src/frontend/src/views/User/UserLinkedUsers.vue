@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import AppButton from "../../components/ui/AppButton.vue";
-import PageHeader from "../../components/ui/PageHeader.vue";
-import AfterSubmit from "../../components/account/AfterSubmit.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import AfterSubmit from "@/components/account/AfterSubmit.vue";
 import { computed, ref } from "vue";
-import { SubmissionState } from "../../utils/submission.ts";
-import { authRequest } from "../../services/auth.ts";
-import FormInput from "../../components/form/FormInput.vue";
-import { User, UserApi } from "../../services/user.ts";
-import { setValidationStatus } from "../../utils/validation.ts";
-import { UnauthorizedError } from "../../composables/auth.ts";
-import AlertBlock from "../../components/ui/AlertBlock.vue";
-import AccountCard from "../../components/account/AccountCard.vue";
+import { SubmissionState } from "@/utils/submission.ts";
+import { authRequest } from "@/services/auth.ts";
+import FormInput from "@/components/form/FormInput.vue";
+import { User, UserApi } from "@/services/user.ts";
+import { setValidationStatus } from "@/utils/validation.ts";
+import { UnauthorizedError } from "@/composables/auth.ts";
+import AlertBlock from "@/components/ui/AlertBlock.vue";
+import AccountCard from "@/components/account/AccountCard.vue";
 import { Icon } from "@iconify/vue";
 
 const apiError = ref("");
@@ -181,5 +181,3 @@ async function submitForm() {
     </AppButton>
   </AccountCard>
 </template>
-
-<style scoped></style>

@@ -11,9 +11,9 @@ import {
   SpellLabel,
   SpellType,
 } from "./spell.ts";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
-import { testIsEqualCommonProperties } from "../../../testing.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { testIsEqualCommonProperties } from "@/testing.ts";
 
 const spellApiData: SpellApiData = {
   name: "spell",

@@ -1,6 +1,6 @@
 // 4e character rules: species characteristics, movement, size and wounds.
-import { Attributes, copyAttributes, zeroAttributes } from "../../core/attributes.ts";
-import { DEFAULT_SIZE, Size } from "../size.ts";
+import { Attributes, copyAttributes, zeroAttributes } from "@/services/wh/core/attributes.ts";
+import { DEFAULT_SIZE, Size } from "@/services/wh/character/size.ts";
 import {
   DWARF_LIST,
   GNOME_LIST,
@@ -10,7 +10,7 @@ import {
   OGRE_LIST,
   SpeciesWithRegion,
   WOOD_ELF_LIST,
-} from "../../core/species.ts";
+} from "@/services/wh/core/species.ts";
 import type { CharacterRules } from "./rules.ts";
 
 export const speciesAttributes4e = {

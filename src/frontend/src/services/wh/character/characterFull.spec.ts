@@ -1,7 +1,7 @@
-import { SpeciesWithRegion } from "../core/species.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
-import { CareerClass, StatusTier } from "../content/career.ts";
-import { AttributeName } from "../core/attributes.ts";
+import { CareerClass, StatusTier } from "@/services/wh/content/career.ts";
+import { AttributeName } from "@/services/wh/core/attributes.ts";
 import {
   AmmoGroup,
   ArmourGroup,
@@ -13,12 +13,12 @@ import {
   MeleeReach,
   RangedGroup,
   WeaponHands,
-} from "../content/item.ts";
-import { ItemPropertyType } from "../content/itemproperty.ts";
+} from "@/services/wh/content/item.ts";
+import { ItemPropertyType } from "@/services/wh/content/itemproperty.ts";
 import { expect, test } from "vitest";
-import { CharacterApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
-import { SpellLabel, SpellType } from "../content/spell.ts";
+import { CharacterApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { SpellLabel, SpellType } from "@/services/wh/content/spell.ts";
 
 const characterFullApiData: CharacterFullApiData = {
   edition: "4e",

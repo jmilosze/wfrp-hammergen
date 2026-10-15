@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { isNew } from "@/services/wh/core/entity.ts";
 import { computed, ref } from "vue";
-import { useEdition } from "../../composables/edition.ts";
-import { Character, characterApi } from "../../services/wh/character/character.ts";
-import { authRequest } from "../../services/auth.ts";
-import AlertBlock from "../../components/ui/AlertBlock.vue";
+import { useEdition } from "@/composables/edition.ts";
+import { Character, characterApi } from "@/services/wh/character/character.ts";
+import { authRequest } from "@/services/auth.ts";
+import AlertBlock from "@/components/ui/AlertBlock.vue";
 import EditCharacter4e from "./EditCharacter4e.vue";
 import EditCharacter5e from "./EditCharacter5e.vue";
 
@@ -17,7 +18,7 @@ const { edition: selectedEdition } = useEdition();
 const character = ref<Character>();
 const apiError = ref("");
 
-if (props.id !== "create") {
+if (!isNew(props.id)) {
   try {
     character.value = await characterApi(authRequest).getElement(props.id);
   } catch {
@@ -25,7 +26,7 @@ if (props.id !== "create") {
   }
 }
 
-const edition = computed(() => (props.id === "create" ? selectedEdition.value : character.value?.edition));
+const edition = computed(() => (isNew(props.id) ? selectedEdition.value : character.value?.edition));
 </script>
 
 <template>

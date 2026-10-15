@@ -10,5 +10,3 @@ defineProps<{
     Modifiers of 4e content are not taken into account: {{ names.join(", ") }}.
   </div>
 </template>
-
-<style scoped></style>

@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import { nextTick, ref } from "vue";
-import { Edition } from "../services/wh/core/edition.ts";
-import { Prayer } from "../services/wh/content/prayer.ts";
+import { Edition } from "@/services/wh/core/edition.ts";
+import { Prayer } from "@/services/wh/content/prayer.ts";
 
 // The "source" query string, standing in for the router.
 const sourceQuery = ref("");

@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import type { RouteName } from "@/router.ts";
+import { NEW_ID } from "@/services/wh/core/entity.ts";
 import { computed, ref } from "vue";
 import { refDebounced } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { EditionFilter, matchesEditionFilter } from "../../services/wh/core/edition.ts";
+import { EditionFilter, matchesEditionFilter } from "@/services/wh/core/edition.ts";
 import ChecklistRow from "./ChecklistRow.vue";
-import SheetTitle from "../sheet/SheetTitle.vue";
+import SheetTitle from "@/components/sheet/SheetTitle.vue";
 import { ChecklistItem } from "./checklistItem.ts";
-import AppButton from "../ui/AppButton.vue";
-import ButtonLink from "../ui/ButtonLink.vue";
-import SpinnerAnimation from "../ui/SpinnerAnimation.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import ButtonLink from "@/components/ui/ButtonLink.vue";
+import SpinnerAnimation from "@/components/ui/SpinnerAnimation.vue";
 
 // The content of a picker popup, in the style of the character sheet: a search row, then the items as a checklist, each
 // row a checkbox with the name and description. The items picked when the popup opened (it is created afresh on each
@@ -17,7 +19,7 @@ import SpinnerAnimation from "../ui/SpinnerAnimation.vue";
 const props = defineProps<{
   items: ChecklistItem[];
   // The items' page: names link to it and Create new and Reload are offered. Without it (e.g. sources) names are text.
-  routeName?: string;
+  routeName?: RouteName;
   loading?: boolean;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
@@ -104,7 +106,7 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
             icon="lucide:plus"
             variant="neutral"
             :routeName="routeName"
-            :params="{ id: 'create' }"
+            :params="{ id: NEW_ID }"
             newWindow
           >
             Create new
@@ -149,5 +151,3 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
     </div>
   </div>
 </template>
-
-<style scoped></style>

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/core/entity.ts";
-import { Spell, spellApi } from "../../../services/wh/content/spell.ts";
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
+import { Spell, spellApi } from "@/services/wh/content/spell.ts";
 import { computed } from "vue";
-import { authRequest } from "../../../services/auth.ts";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { defaultSource } from "../../../services/wh/core/source.ts";
-import SpellClassification from "../../../components/content/edit/SpellClassification.vue";
+import { authRequest } from "@/services/auth.ts";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import SpellClassification from "@/components/content/edit/SpellClassification.vue";
 
 const props = defineProps<{
   id: string;
@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const newSpell = new Spell({
   name: "New spell",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/core/entity.ts";
+import { Visibility, isNew, NEW_ID } from "@/services/wh/core/entity.ts";
 import {
   getSkillAttributeNameList,
   getSkillTypeList,
@@ -7,22 +7,22 @@ import {
   Skill,
   skillApi,
   SkillType,
-} from "../../../services/wh/content/skill.ts";
-import { defaultSource } from "../../../services/wh/core/source.ts";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { authRequest } from "../../../services/auth.ts";
-import { useWhList } from "../../../composables/whList.ts";
+} from "@/services/wh/content/skill.ts";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { authRequest } from "@/services/auth.ts";
+import { useWhList } from "@/composables/whList.ts";
 import { computed, ref, Ref, watch } from "vue";
-import LabelledCheckbox from "../../../components/form/LabelledCheckbox.vue";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetSelect from "../../../components/sheet/SheetSelect.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import { AttributeName, printAttributeName } from "../../../services/wh/core/attributes.ts";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import SelectTable from "../../../components/picker/SelectTable.vue";
-import CareerReferencesTable from "../../../components/content/edit/CareerReferencesTable.vue";
+import LabelledCheckbox from "@/components/form/LabelledCheckbox.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import { AttributeName, printAttributeName } from "@/services/wh/core/attributes.ts";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import SelectTable from "@/components/picker/SelectTable.vue";
+import CareerReferencesTable from "@/components/content/edit/CareerReferencesTable.vue";
 
 const props = defineProps<{
   id: string;
@@ -30,7 +30,7 @@ const props = defineProps<{
 
 const newSkill = new Skill({
   name: "New skill",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -117,7 +117,7 @@ watchWh(
       </SheetCard>
     </div>
     <CareerReferencesTable
-      v-if="id !== 'create'"
+      v-if="!isNew(id)"
       :edition="edition"
       :entityId="wh.id"
       :parentGroupIds="wh.group"
@@ -125,5 +125,3 @@ watchWh(
     />
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

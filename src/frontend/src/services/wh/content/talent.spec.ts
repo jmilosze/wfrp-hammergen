@@ -1,10 +1,10 @@
 import { Talent, TalentApiData, apiResponseToModel, modelToApi } from "./talent.ts";
 import { describe, expect, test } from "vitest";
-import { CharacterModifiers } from "../core/characterModifiers.ts";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
-import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "../../../testing.ts";
-import { AttributeName as Att } from "../core/attributes.ts";
+import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "@/testing.ts";
+import { AttributeName as Att } from "@/services/wh/core/attributes.ts";
 
 const talentGroupApiData: TalentApiData = {
   name: "talent1",

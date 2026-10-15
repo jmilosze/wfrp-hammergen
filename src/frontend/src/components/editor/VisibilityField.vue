@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import FormCheckbox from "../form/FormCheckbox.vue";
+import FormCheckbox from "@/components/form/FormCheckbox.vue";
 import { computed } from "vue";
-import HelpButton from "../ui/HelpButton.vue";
-import TextLink from "../ui/TextLink.vue";
-import { Visibility } from "../../services/wh/core/entity.ts";
-import { useAuth } from "../../composables/auth";
+import HelpButton from "@/components/ui/HelpButton.vue";
+import TextLink from "@/components/ui/TextLink.vue";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { useAuth } from "@/composables/auth";
 
 const visibility = defineModel<Visibility>({ default: Visibility.Private });
 
@@ -85,5 +85,3 @@ function onCheckboxChange(event: Event) {
     </div>
   </div>
 </template>
-
-<style scoped></style>

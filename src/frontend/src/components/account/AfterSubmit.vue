@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AlertBlock from "../ui/AlertBlock.vue";
-import { SubmissionState } from "../../utils/submission.ts";
+import AlertBlock from "@/components/ui/AlertBlock.vue";
+import { SubmissionState } from "@/utils/submission.ts";
 
 defineProps<{
   submissionState: SubmissionState;
@@ -33,5 +33,3 @@ const emit = defineEmits<{
     </AlertBlock>
   </div>
 </template>
-
-<style scoped></style>

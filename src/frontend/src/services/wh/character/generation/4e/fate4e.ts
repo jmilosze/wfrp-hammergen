@@ -8,9 +8,9 @@ import {
   OGRE_LIST,
   SpeciesWithRegion,
   WOOD_ELF_LIST,
-} from "../../../core/species.ts";
-import { rollDice, RollDiceFn } from "../../../../../utils/random.ts";
-import { Character } from "../../character.ts";
+} from "@/services/wh/core/species.ts";
+import { rollDice, RollDiceFn } from "@/utils/random.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 export interface SpeciesFateResilience {
   fate: number;

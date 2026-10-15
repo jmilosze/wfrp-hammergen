@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { Visibility } from "../../../services/wh/core/entity.ts";
-import { defaultSource } from "../../../services/wh/core/source.ts";
-import { Trait, traitApi } from "../../../services/wh/content/trait.ts";
-import { useWhEdit } from "../../../composables/whEdit.ts";
-import ContentEditorPage from "../../../components/content/edit/ContentEditorPage.vue";
-import { authRequest } from "../../../services/auth.ts";
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import { Trait, traitApi } from "@/services/wh/content/trait.ts";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { authRequest } from "@/services/auth.ts";
 import { computed } from "vue";
-import LabelledCheckbox from "../../../components/form/LabelledCheckbox.vue";
-import HelpButton from "../../../components/ui/HelpButton.vue";
-import SheetTable from "../../../components/sheet/SheetTable.vue";
-import SheetField from "../../../components/sheet/SheetField.vue";
-import SheetCard from "../../../components/sheet/SheetCard.vue";
-import FormTextarea from "../../../components/form/FormTextarea.vue";
-import ModifiersBlock from "../../../components/content/edit/ModifiersBlock.vue";
+import LabelledCheckbox from "@/components/form/LabelledCheckbox.vue";
+import HelpButton from "@/components/ui/HelpButton.vue";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import ModifiersBlock from "@/components/content/edit/ModifiersBlock.vue";
 
 const props = defineProps<{
   id: string;
@@ -20,7 +20,7 @@ const props = defineProps<{
 
 const newTrait = new Trait({
   name: "New trait",
-  id: "create",
+  id: NEW_ID,
   visibility: Visibility.Shared,
   source: defaultSource(),
 });
@@ -59,5 +59,3 @@ const validDesc = computed(() => wh.value.validateDescription());
     <ModifiersBlock v-model="wh.modifiers" :edition="edition" :disabled="!canEdit" class="my-4" />
   </ContentEditorPage>
 </template>
-
-<style scoped></style>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import IconButton from "../../ui/IconButton.vue";
-import { Edition } from "../../../services/wh/core/edition.ts";
-import HelpButton from "../../ui/HelpButton.vue";
-import SheetCard from "../../sheet/SheetCard.vue";
+import IconButton from "@/components/ui/IconButton.vue";
+import { Edition } from "@/services/wh/core/edition.ts";
+import HelpButton from "@/components/ui/HelpButton.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
 import { computed, ref } from "vue";
 import {
   AttributeName,
@@ -10,29 +10,26 @@ import {
   getAttributeValue,
   printAttributeName,
   setAttributeValue,
-} from "../../../services/wh/core/attributes.ts";
-import SheetTable from "../../sheet/SheetTable.vue";
-import SheetSelect from "../../sheet/SheetSelect.vue";
-import { CharacterModifiers } from "../../../services/wh/core/characterModifiers.ts";
-import FormInput from "../../form/FormInput.vue";
+} from "@/services/wh/core/attributes.ts";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
+import FormInput from "@/components/form/FormInput.vue";
 import ModifierEffectTable from "./ModifierEffectTable.vue";
-import SheetList from "../../sheet/SheetList.vue";
-import AppButton from "../../ui/AppButton.vue";
+import SheetList from "@/components/sheet/SheetList.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 
 const props = defineProps<{
   disabled?: boolean;
-  modelValue: CharacterModifiers;
   edition: Edition;
 }>();
 
-const emit = defineEmits<{
-  (e: "update:modelValue", modifiers: CharacterModifiers): void;
-}>();
+const modifiers = defineModel<CharacterModifiers>({ required: true });
 
 function updateAttributes(attribute: AttributeName, newValue: number) {
-  const newModifiers = props.modelValue.copy();
+  const newModifiers = modifiers.value.copy();
   setAttributeValue(attribute, newValue, newModifiers.attributes);
-  emit("update:modelValue", newModifiers);
+  modifiers.value = newModifiers;
 }
 
 // Characteristic modifiers are edited as a list of the characteristics a modifier changes (usually one or two), not as
@@ -43,13 +40,13 @@ const addedCharacteristics = ref(new Set<AttributeName>());
 const rowOrder = ref<AttributeName[]>([]);
 
 function isListed(name: AttributeName): boolean {
-  return getAttributeValue(name, props.modelValue.attributes) !== 0 || addedCharacteristics.value.has(name);
+  return getAttributeValue(name, modifiers.value.attributes) !== 0 || addedCharacteristics.value.has(name);
 }
 
 const characteristicRows = computed(() => {
   const ordered = rowOrder.value.filter((x) => isListed(x));
   const rest = CHARACTERISTICS.filter((x) => isListed(x) && !ordered.includes(x));
-  return [...ordered, ...rest].map((x) => ({ name: x, value: getAttributeValue(x, props.modelValue.attributes) }));
+  return [...ordered, ...rest].map((x) => ({ name: x, value: getAttributeValue(x, modifiers.value.attributes) }));
 });
 
 const unusedCharacteristics = computed(() =>
@@ -78,13 +75,13 @@ function removeCharacteristic(name: AttributeName) {
 
 // changeCharacteristic moves a row's value to another characteristic; the row keeps its place.
 function changeCharacteristic(from: AttributeName, to: AttributeName) {
-  const newModifiers = props.modelValue.copy();
+  const newModifiers = modifiers.value.copy();
   const value = getAttributeValue(from, newModifiers.attributes);
   setAttributeValue(from, 0, newModifiers.attributes);
   setAttributeValue(to, value, newModifiers.attributes);
   rowOrder.value = characteristicRows.value.map((row) => (row.name === from ? to : row.name));
   addedCharacteristics.value = new Set([...[...addedCharacteristics.value].filter((x) => x !== from), to]);
-  emit("update:modelValue", newModifiers);
+  modifiers.value = newModifiers;
 }
 
 function onCharacteristicChange(from: AttributeName, event: Event) {
@@ -99,21 +96,21 @@ function onCharacteristicChange(from: AttributeName, event: Event) {
 }
 
 function updateSize(newSize: number) {
-  const newModifiers = props.modelValue.copy();
+  const newModifiers = modifiers.value.copy();
   newModifiers.size = newSize;
-  emit("update:modelValue", newModifiers);
+  modifiers.value = newModifiers;
 }
 
 function updateMovement(newMovement: number) {
-  const newModifiers = props.modelValue.copy();
+  const newModifiers = modifiers.value.copy();
   newModifiers.movement = newMovement;
-  emit("update:modelValue", newModifiers);
+  modifiers.value = newModifiers;
 }
 
 function updateEffects(id: number, selected: boolean) {
-  const newModifiers = props.modelValue.copy();
+  const newModifiers = modifiers.value.copy();
   newModifiers.updateEffects(id, selected);
-  emit("update:modelValue", newModifiers);
+  modifiers.value = newModifiers;
 }
 
 const sizeOptions = [
@@ -136,7 +133,7 @@ const movementOptions = [
 ];
 
 const validAtts = computed(() => {
-  return props.modelValue.validateAttributes();
+  return modifiers.value.validateAttributes();
 });
 </script>
 
@@ -198,7 +195,7 @@ const validAtts = computed(() => {
         </tr>
       </SheetList>
       <ModifierEffectTable
-        :effects="modelValue.effects"
+        :effects="modifiers.effects"
         :edition="edition"
         :disabled="props.disabled ? props.disabled : false"
         class="flex-1 -mt-px @2xl:mt-0 @2xl:-ml-px"
@@ -207,14 +204,14 @@ const validAtts = computed(() => {
     </div>
     <SheetTable :columns="2" class="-mt-px">
       <SheetSelect
-        :modelValue="modelValue.size"
+        :modelValue="modifiers.size"
         :options="sizeOptions"
         title="Size"
         :disabled="props.disabled ? props.disabled : false"
         @update:modelValue="(event) => updateSize(event)"
       />
       <SheetSelect
-        :modelValue="modelValue.movement"
+        :modelValue="modifiers.movement"
         :options="movementOptions"
         title="Movement"
         :disabled="props.disabled ? props.disabled : false"
@@ -226,5 +223,3 @@ const validAtts = computed(() => {
     </p>
   </div>
 </template>
-
-<style scoped></style>

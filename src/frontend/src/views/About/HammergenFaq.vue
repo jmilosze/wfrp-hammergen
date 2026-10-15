@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import PageHeader from "../../components/ui/PageHeader.vue";
-import TextLink from "../../components/ui/TextLink.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 </script>
 
 <template>
@@ -82,5 +82,3 @@ import TextLink from "../../components/ui/TextLink.vue";
     </details>
   </div>
 </template>
-
-<style scoped></style>

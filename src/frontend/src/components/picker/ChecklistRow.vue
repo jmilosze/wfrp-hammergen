@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import FormCheckbox from "../form/FormCheckbox.vue";
-import AppButton from "../ui/AppButton.vue";
-import TextLink from "../ui/TextLink.vue";
-import Edition4eBadge from "../edition/Edition4eBadge.vue";
+import type { RouteName } from "@/router.ts";
+import FormCheckbox from "@/components/form/FormCheckbox.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import TextLink from "@/components/ui/TextLink.vue";
+import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
 import { ChecklistItem } from "./checklistItem.ts";
 
 // A row of a ChecklistPicker. Rows are components of their own, so a change to one item (e.g. a typed quantity) redraws
 // only its row, not the whole list.
 defineProps<{
   item: ChecklistItem;
-  routeName?: string;
+  routeName?: RouteName;
   fourEIds?: Set<string>;
   numberLabel?: string;
   numberStep?: number;
@@ -120,5 +121,3 @@ function onTextInput(id: string, event: Event) {
     </span>
   </component>
 </template>
-
-<style scoped></style>

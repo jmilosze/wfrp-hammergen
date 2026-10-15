@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Edition, printEditionName } from "../../services/wh/core/edition.ts";
+import { Edition, printEditionName } from "@/services/wh/core/edition.ts";
 
 // large: for a page header rather than inline next to an item name.
 defineProps<{ edition: Edition; large?: boolean }>();
@@ -14,5 +14,3 @@ defineProps<{ edition: Edition; large?: boolean }>();
     {{ edition }}
   </span>
 </template>
-
-<style scoped></style>

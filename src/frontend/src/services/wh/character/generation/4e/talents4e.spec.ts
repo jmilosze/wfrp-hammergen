@@ -1,11 +1,11 @@
-import { copyCareerLevel, Career, zeroCareerLevel } from "../../../content/career.ts";
+import { copyCareerLevel, Career, zeroCareerLevel } from "@/services/wh/content/career.ts";
 import { describe, expect, test } from "vitest";
 import { CareerTalentsContext, generateCareerTalents4e } from "./talents4e.ts";
-import { resolveEntityGroups } from "../shared/groups.ts";
-import { Talent } from "../../../content/talent.ts";
-import { CharacterModifiers } from "../../../core/characterModifiers.ts";
-import { AttributeName } from "../../../core/attributes.ts";
-import { getSelectRandomTest } from "../../../../../testing.ts";
+import { resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
+import { AttributeName } from "@/services/wh/core/attributes.ts";
+import { getSelectRandomTest } from "@/testing.ts";
 
 describe("generateCareerTalents4e generates expected talents and advances", () => {
   const group0 = new Talent({ id: "g0", isGroup: true });

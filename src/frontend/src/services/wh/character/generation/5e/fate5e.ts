@@ -1,5 +1,5 @@
 // 5e Fate and Fortune of each species.
-import { Character } from "../../character.ts";
+import { Character } from "@/services/wh/character/character.ts";
 import {
   DWARF_LIST,
   HALFLING_LIST,
@@ -7,7 +7,7 @@ import {
   HUMAN_LIST,
   SpeciesWithRegion,
   WOOD_ELF_LIST,
-} from "../../../core/species.ts";
+} from "@/services/wh/core/species.ts";
 
 export interface FateFortune5e {
   fate: number;

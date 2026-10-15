@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { AttributeName, Attributes, setAttributeValue, sumAttributes } from "../../../services/wh/core/attributes.ts";
-import FormInput from "../../form/FormInput.vue";
+import { AttributeName, Attributes, setAttributeValue, sumAttributes } from "@/services/wh/core/attributes.ts";
+import FormInput from "@/components/form/FormInput.vue";
 import { computed } from "vue";
-import { ValidationStatus } from "../../../utils/validation.ts";
-import SheetCard from "../../sheet/SheetCard.vue";
-import AppButton from "../../ui/AppButton.vue";
-import { generateRolls } from "../../../services/wh/character/generation/shared/characteristics.ts";
-import { rollDice } from "../../../utils/random.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import { generateRolls } from "@/services/wh/character/generation/shared/characteristics.ts";
+import { rollDice } from "@/utils/random.ts";
 
 const props = defineProps<{
   title: string;
@@ -737,5 +737,3 @@ function newRolls() {
     </div>
   </SheetCard>
 </template>
-
-<style scoped></style>

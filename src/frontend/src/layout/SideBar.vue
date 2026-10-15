@@ -2,9 +2,9 @@
 import { useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import NavLink from "./NavLink.vue";
-import EditionSwitch from "../components/edition/EditionSwitch.vue";
-import { useAuth } from "../composables/auth.ts";
-import { useEdition } from "../composables/edition.ts";
+import EditionSwitch from "@/components/edition/EditionSwitch.vue";
+import { useAuth } from "@/composables/auth.ts";
+import { useEdition } from "@/composables/edition.ts";
 import { COMPENDIUM_SECTIONS } from "./navigation.ts";
 
 const LOCAL_STORAGE_KEY_COMPENDIUM_OPEN = "sidebarCompendiumOpen";

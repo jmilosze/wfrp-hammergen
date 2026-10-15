@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import ButtonLink from "../../components/ui/ButtonLink.vue";
 // Landing page for visitors who are not logged in: what Hammergen is and where to start.
 import { Icon } from "@iconify/vue";
-import TextLink from "../../components/ui/TextLink.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import HomeNotes from "./HomeNotes.vue";
+import type { RouteName } from "@/router.ts";
+import ButtonLink from "@/components/ui/ButtonLink.vue";
 
-const FEATURES = [
+const FEATURES: {
+  icon: string;
+  title: string;
+  text: string;
+  routeName: RouteName;
+  query?: Record<string, string>;
+  linkText: string;
+}[] = [
   {
     icon: "lucide:dices",
     title: "Generate characters",
@@ -68,5 +76,3 @@ const FEATURES = [
 
   <HomeNotes />
 </template>
-
-<style scoped></style>

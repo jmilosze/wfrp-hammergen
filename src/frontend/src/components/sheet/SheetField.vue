@@ -1,10 +1,9 @@
 <script setup lang="ts" generic="T = string | number">
-import { computed, useId } from "vue";
-import { ValidationStatus } from "../../utils/validation.ts";
+import { useId } from "vue";
+import { ValidationStatus } from "@/utils/validation.ts";
 
 // A labelled input cell of a SheetTable.
 const props = defineProps<{
-  modelValue: T;
   title: string;
   type?: "text" | "number";
   disabled?: boolean;
@@ -12,24 +11,13 @@ const props = defineProps<{
   maxlength?: number;
 }>();
 
-const emit = defineEmits<{
-  (e: "update:modelValue", modelValue: T): void;
-}>();
-
 const inputId = useId();
 const errorId = useId();
 
-const value = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    if (props.type === "number" && typeof value !== "number") {
-      emit("update:modelValue", Number.NaN as T);
-      return;
-    }
-    emit("update:modelValue", value);
-  },
+// A number input that isn't a number (e.g. emptied) gives NaN, which validation then reports.
+const value = defineModel<T>({
+  required: true,
+  set: (value) => (props.type === "number" && typeof value !== "number" ? (Number.NaN as T) : value),
 });
 </script>
 
@@ -65,5 +53,3 @@ const value = computed({
     </div>
   </div>
 </template>
-
-<style scoped></style>

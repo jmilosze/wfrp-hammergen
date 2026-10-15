@@ -4,7 +4,7 @@ import {
   GenerationProps5e,
   getGenerationProps,
   getGenerationProps5e,
-} from "../services/wh/character/generation/shared/generationProps.ts";
+} from "@/services/wh/character/generation/shared/generationProps.ts";
 import { AxiosInstance } from "axios";
 
 function useLoadedGenerationProps<T>(initial: T, load: () => Promise<T>) {

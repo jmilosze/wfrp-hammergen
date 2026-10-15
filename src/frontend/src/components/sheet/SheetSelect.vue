@@ -36,5 +36,3 @@ const selectId = useId();
     </select>
   </div>
 </template>
-
-<style scoped></style>

@@ -6,7 +6,7 @@ import {
   loginUser,
   logoutUser,
   setUserInfo,
-} from "../services/auth.ts";
+} from "@/services/auth.ts";
 import { isAxiosError } from "axios";
 import { ref } from "vue";
 import { type Router, useRouter } from "vue-router";

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import SheetCard from "../../sheet/SheetCard.vue";
-import TextLink from "../../ui/TextLink.vue";
+import type { RouteName } from "@/router.ts";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import ViewCharacterTable from "./ViewCharacterTable.vue";
-import { CharacterFull, CharacterFullItem } from "../../../services/wh/character/characterFull.ts";
+import { CharacterFull, CharacterFullItem } from "@/services/wh/character/characterFull.ts";
 
 // The character view's trappings in the editor's sections, each a box of its own as on the paper sheet: Equipped
 // weapons, armour and other, and Carried as tables; Stored/Assets as a comma separated list. Empty sections are left
@@ -47,10 +48,12 @@ const sections = [
 
 const stored = props.character.stored;
 
-function properties(item: CharacterFullItem) {
+type PropertyLink = { id: string; name: string; routeName: RouteName };
+
+function properties(item: CharacterFullItem): PropertyLink[] {
   return [
-    ...item.qualitiesFlaws.map((x) => ({ id: x.id, name: x.name, routeName: "property" })),
-    ...item.runes.map((x) => ({ id: x.id, name: `${x.name} x${x.number}`, routeName: "rune" })),
+    ...item.qualitiesFlaws.map((x): PropertyLink => ({ id: x.id, name: x.name, routeName: "property" })),
+    ...item.runes.map((x): PropertyLink => ({ id: x.id, name: `${x.name} x${x.number}`, routeName: "rune" })),
   ];
 }
 </script>
@@ -83,5 +86,3 @@ function properties(item: CharacterFullItem) {
     </SheetCard>
   </div>
 </template>
-
-<style scoped></style>

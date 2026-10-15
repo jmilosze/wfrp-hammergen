@@ -3,12 +3,12 @@ import { computed, ref, useTemplateRef } from "vue";
 import { Icon } from "@iconify/vue";
 import { onClickOutside, onKeyStroke } from "@vueuse/core";
 import { saveAs } from "file-saver";
-import PageHeader from "../../ui/PageHeader.vue";
-import TextLink from "../../ui/TextLink.vue";
-import { BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS } from "../../ui/buttonStyle.ts";
-import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
-import { usePrint } from "../../../composables/print.ts";
-import { useAuth } from "../../../composables/auth.ts";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import TextLink from "@/components/ui/TextLink.vue";
+import { BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS } from "@/components/ui/buttonStyle.ts";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
+import { usePrint } from "@/composables/print.ts";
+import { useAuth } from "@/composables/auth.ts";
 
 // The character view's title with Print and Download (CSV or JSON) as icon buttons at the end of the title row, and
 // an Edit character link below it, mirroring the editor's View character link. toCsv: the edition's CSV export.
@@ -77,5 +77,3 @@ const menuItemClass = "block w-full px-3 py-2 text-left text-sm hover:bg-neutral
     <TextLink routeName="character" :params="{ id: character.id }" sameWindow>Edit character</TextLink>
   </p>
 </template>
-
-<style scoped></style>

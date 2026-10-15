@@ -10,27 +10,25 @@ import {
   SpellLabel,
   SpellType,
   spellTypeList,
-} from "../../../services/wh/content/spell.ts";
-import SheetTable from "../../sheet/SheetTable.vue";
-import SheetSelect from "../../sheet/SheetSelect.vue";
-import SheetCell from "../../sheet/SheetCell.vue";
-import LabelChips from "../../picker/LabelChips.vue";
-import LabelAddSelect from "../../picker/LabelAddSelect.vue";
+} from "@/services/wh/content/spell.ts";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetSelect from "@/components/sheet/SheetSelect.vue";
+import SheetCell from "@/components/sheet/SheetCell.vue";
+import LabelChips from "@/components/picker/LabelChips.vue";
+import LabelAddSelect from "@/components/picker/LabelAddSelect.vue";
 import { computed } from "vue";
 
-const props = defineProps<{ modelValue: SpellClassification; disabled?: boolean; stacked?: boolean }>();
+defineProps<{ disabled?: boolean; stacked?: boolean }>();
 
-const emit = defineEmits<{
-  (e: "update:modelValue", value: SpellClassification): void;
-}>();
+const classification = defineModel<SpellClassification>({ required: true });
 
 const typeOptions = spellTypeList.map((x) => ({ text: printSpellType(x), value: x }));
 
 function updateType(newType: SpellType) {
-  if (newType === props.modelValue.type) {
+  if (newType === classification.value.type) {
     return;
   }
-  emit("update:modelValue", { type: newType, labels: new Set<SpellLabel>() });
+  classification.value = { type: newType, labels: new Set<SpellLabel>() };
 }
 
 function toLabel(label: SpellLabel) {
@@ -39,15 +37,15 @@ function toLabel(label: SpellLabel) {
 
 // Labels are shown simplified: a full group of lores is one label (e.g. Any Colour Lore), removed as a whole.
 const shownLabels = computed(() =>
-  [...getSimplifiedLabels(props.modelValue.type, props.modelValue.labels)]
+  [...getSimplifiedLabels(classification.value.type, classification.value.labels)]
     .map(toLabel)
     .sort((a, b) => a.text.localeCompare(b.text)),
 );
 
 // Add offers the lore groups the type allows that are not complete yet, then the single labels not selected yet.
 const addOptions = computed(() => {
-  const allowed = getAllowedLabels(props.modelValue.type);
-  const selected = props.modelValue.labels;
+  const allowed = getAllowedLabels(classification.value.type);
+  const selected = classification.value.labels;
   const groups = [...loreGroups]
     .filter(([, lores]) => [...lores].every((x) => allowed.includes(x)) && [...lores].some((x) => !selected.has(x)))
     .map(([group]) => toLabel(group));
@@ -59,14 +57,14 @@ const addOptions = computed(() => {
 });
 
 function addLabel(label: SpellLabel) {
-  const labels = new Set([...props.modelValue.labels, ...expandLabel(label)]);
-  emit("update:modelValue", { type: props.modelValue.type, labels: labels });
+  const labels = new Set([...classification.value.labels, ...expandLabel(label)]);
+  classification.value = { type: classification.value.type, labels: labels };
 }
 
 function removeLabel(label: SpellLabel) {
   const removed = expandLabel(label);
-  const labels = new Set([...props.modelValue.labels].filter((x) => !removed.has(x)));
-  emit("update:modelValue", { type: props.modelValue.type, labels: labels });
+  const labels = new Set([...classification.value.labels].filter((x) => !removed.has(x)));
+  classification.value = { type: classification.value.type, labels: labels };
 }
 </script>
 
@@ -74,9 +72,9 @@ function removeLabel(label: SpellLabel) {
   <div>
     <SheetTable title="Classification">
       <SheetSelect
-        :modelValue="props.modelValue.type"
+        :modelValue="classification.type"
         :options="typeOptions"
-        :disabled="props.disabled"
+        :disabled="disabled"
         title="Type"
         @update:modelValue="updateType($event)"
       />
@@ -91,5 +89,3 @@ function removeLabel(label: SpellLabel) {
     </SheetTable>
   </div>
 </template>
-
-<style scoped></style>

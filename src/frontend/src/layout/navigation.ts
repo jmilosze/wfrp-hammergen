@@ -1,7 +1,8 @@
+import type { RouteName } from "@/router.ts";
 // A compendium content type and its list page.
 export interface CompendiumLink {
   text: string;
-  listRoute: string;
+  listRoute: RouteName;
 }
 
 // Compendium content types grouped under a sub-heading.

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import AppButton from "../components/ui/AppButton.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 
 function reload() {
   window.location.reload();

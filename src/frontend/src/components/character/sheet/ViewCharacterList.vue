@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import TextLink from "../../ui/TextLink.vue";
+import type { RouteName } from "@/router.ts";
+import TextLink from "@/components/ui/TextLink.vue";
 
 // A compact read-only list of names for the character view (e.g. talents or mutations), in as many columns as fit.
 // An entry taken more than once shows the count, e.g. "Sturdy x2".
-defineProps<{ items: { id: string; name: string; rank?: number }[]; routeName: string }>();
+defineProps<{ items: { id: string; name: string; rank?: number }[]; routeName: RouteName }>();
 </script>
 
 <template>
@@ -16,5 +17,3 @@ defineProps<{ items: { id: string; name: string; rank?: number }[]; routeName: s
     </ul>
   </div>
 </template>
-
-<style scoped></style>

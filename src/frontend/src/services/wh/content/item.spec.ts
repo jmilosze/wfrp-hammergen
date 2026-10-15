@@ -23,10 +23,10 @@ import {
   meleeGroupsByEdition,
   armourGroupsByEdition,
 } from "./item.ts";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
 import { describe, expect, test } from "vitest";
-import { testIsEqualCommonProperties } from "../../../testing.ts";
+import { testIsEqualCommonProperties } from "@/testing.ts";
 
 const itemApiData: ItemApiData = {
   name: "item",

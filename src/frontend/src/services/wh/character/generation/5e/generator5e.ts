@@ -1,21 +1,22 @@
+import { NEW_ID } from "@/services/wh/core/entity.ts";
 // 5e character generator (rules pp. 22–44, 191, 196).
 // Species and career are chosen; characteristics are always "kept in order".
-import { Character } from "../../character.ts";
-import { SpeciesWithRegion } from "../../../core/species.ts";
-import { Career, GenerationLevel, getCareerAttributesByLevel } from "../../../content/career.ts";
-import { Skill } from "../../../content/skill.ts";
-import { Talent } from "../../../content/talent.ts";
-import { GenerationProps5e } from "../shared/generationProps.ts";
-import { defaultSource } from "../../../core/source.ts";
-import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
-import { sumAttributes } from "../../../core/attributes.ts";
-import { getSpeciesAttributes5e } from "../../rules/rules5e.ts";
-import { generateSpeciesTalents } from "../shared/talents.ts";
-import { resolveEntityGroups } from "../shared/groups.ts";
-import { generateClassItems } from "../shared/trappings.ts";
-import { generateStatusAndStanding } from "../shared/status.ts";
-import { generateName } from "../shared/name.ts";
-import { generateDescription } from "../shared/description.ts";
+import { Character } from "@/services/wh/character/character.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
+import { Career, GenerationLevel, getCareerAttributesByLevel } from "@/services/wh/content/career.ts";
+import { Skill } from "@/services/wh/content/skill.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { GenerationProps5e } from "@/services/wh/character/generation/shared/generationProps.ts";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "@/utils/random.ts";
+import { sumAttributes } from "@/services/wh/core/attributes.ts";
+import { getSpeciesAttributes5e } from "@/services/wh/character/rules/rules5e.ts";
+import { generateSpeciesTalents } from "@/services/wh/character/generation/shared/talents.ts";
+import { resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
+import { generateClassItems } from "@/services/wh/character/generation/shared/trappings.ts";
+import { generateStatusAndStanding } from "@/services/wh/character/generation/shared/status.ts";
+import { generateName } from "@/services/wh/character/generation/shared/name.ts";
+import { generateDescription } from "@/services/wh/character/generation/shared/description.ts";
 import { generateRolls5e } from "./characteristics5e.ts";
 import { getFateFortune5e } from "./fate5e.ts";
 import { generateCoins5e } from "./wealth5e.ts";
@@ -45,7 +46,7 @@ export function generateCharacter5e(
   const { species, career, level, generationProps } = context;
 
   const character = new Character({
-    id: "create",
+    id: NEW_ID,
     edition: "5e",
     source: defaultSource(),
   });

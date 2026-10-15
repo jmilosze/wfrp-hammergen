@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import IconButton from "../ui/IconButton.vue";
-import AppButton from "../ui/AppButton.vue";
+import type { RouteName } from "@/router.ts";
+import IconButton from "@/components/ui/IconButton.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 import { computed, ref } from "vue";
-import ModalWindow from "../ui/ModalWindow.vue";
+import ModalWindow from "@/components/ui/ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
-import SheetList from "../sheet/SheetList.vue";
-import { truncate } from "../../utils/string.ts";
-import TextLink from "../ui/TextLink.vue";
-import Edition4eBadge from "../edition/Edition4eBadge.vue";
+import SheetList from "@/components/sheet/SheetList.vue";
+import { truncate } from "@/utils/string.ts";
+import TextLink from "@/components/ui/TextLink.vue";
+import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
 
 type Entity = { name: string; id: string; description: string };
 
@@ -16,7 +17,7 @@ const props = defineProps<{
   title: string;
   itemList: Entity[];
   selected: Set<string>;
-  routeName: string;
+  routeName: RouteName;
   disabled?: boolean;
   modalTitle?: string;
   loading?: boolean;
@@ -107,5 +108,3 @@ function onEditClick() {
     </ModalWindow>
   </div>
 </template>
-
-<style scoped></style>

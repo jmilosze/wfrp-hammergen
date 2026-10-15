@@ -1,25 +1,26 @@
 <script setup lang="ts" generic="T extends WhProperty">
-import { WhProperty } from "../../../services/wh/core/entity.ts";
-import { WhEdit } from "../../../composables/whEdit.ts";
-import LoadErrors from "../../ui/LoadErrors.vue";
-import { LoadState } from "../../../composables/whList.ts";
-import EditionSwitch from "../../edition/EditionSwitch.vue";
-import PageHeader from "../../ui/PageHeader.vue";
+import type { RouteName } from "@/router.ts";
+import { WhProperty, isNew } from "@/services/wh/core/entity.ts";
+import { WhEdit } from "@/composables/whEdit.ts";
+import LoadErrors from "@/components/ui/LoadErrors.vue";
+import { LoadState } from "@/composables/whList.ts";
+import EditionSwitch from "@/components/edition/EditionSwitch.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
 import MissingEditionVariant from "./MissingEditionVariant.vue";
-import VisibilityField from "../../editor/VisibilityField.vue";
+import VisibilityField from "@/components/editor/VisibilityField.vue";
 import SourceTable from "./SourceTable.vue";
-import EditorFooter from "../../editor/EditorFooter.vue";
+import EditorFooter from "@/components/editor/EditorFooter.vue";
 
 // A content editor page (career, skill, spell…) around the editor's own fields (the slot): the load errors, the
 // edition switch, the title, the notice when the edition has no variant, then the variant: the toolbar slot (e.g.
-// "Group skill") with the visibility, the fields, the sources, and Save and Delete. id: the route's id ("create" for a
+// "Group skill") with the visibility, the fields, the sources, and Save and Delete. id: the route's id (NEW_ID for a
 // new entry). propertyName: what is edited, e.g. "Quality/flaw". list: the list page's route, where Save and Delete
 // return to. lists: other content the editor loads (e.g. the skills a career offers), whose load errors are shown too.
 const props = defineProps<{
   edit: WhEdit<T>;
   id: string;
   propertyName: string;
-  list: string;
+  list: RouteName;
   lists?: LoadState[];
 }>();
 
@@ -48,11 +49,7 @@ const loadStates: LoadState[] = [props.edit, ...(props.lists ?? [])];
   </div>
   <PageHeader
     :title="
-      id === 'create'
-        ? `Create ${propertyName.toLowerCase()}`
-        : canEdit
-          ? `Edit ${propertyName.toLowerCase()}`
-          : wh.name
+      isNew(id) ? `Create ${propertyName.toLowerCase()}` : canEdit ? `Edit ${propertyName.toLowerCase()}` : wh.name
     "
   />
   <MissingEditionVariant

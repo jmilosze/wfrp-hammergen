@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SpinnerAnimation from "../ui/SpinnerAnimation.vue";
+import SpinnerAnimation from "@/components/ui/SpinnerAnimation.vue";
 
 // A list table in the style of the paper character sheet: one grey header row whose first cell holds the title and
 // the actions, followed by the other column headers (headers slot, as th elements) and the rows (default slot).
@@ -43,5 +43,3 @@ withDefaults(
     </div>
   </div>
 </template>
-
-<style scoped></style>

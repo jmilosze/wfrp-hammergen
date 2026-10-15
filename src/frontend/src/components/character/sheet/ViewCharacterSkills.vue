@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import SheetCard from "../../sheet/SheetCard.vue";
-import TextLink from "../../ui/TextLink.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import ViewCharacterTable from "./ViewCharacterTable.vue";
-import { CharacterFull } from "../../../services/wh/character/characterFull.ts";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 
 // The character view's Skills in the paper sheet's three columns: the basic skills over the first two, the advanced
 // skills in the third. withoutLanguages: language skills are left out (the 5e sheet lists them under Languages).
@@ -42,5 +42,3 @@ const FIELDS = [
     </div>
   </SheetCard>
 </template>
-
-<style scoped></style>

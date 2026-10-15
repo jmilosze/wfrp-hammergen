@@ -6,13 +6,13 @@ import {
   getCareerSkillsByLevel,
   getCareerTalentsByLevel,
   PerGenerationLevel,
-} from "../../../content/career.ts";
-import { Talent } from "../../../content/talent.ts";
-import { selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
-import { Attributes, getAttributeValue, setAttributeValue, zeroAttributes } from "../../../core/attributes.ts";
-import { calculateMaxTalentRanks, resolveAvailableTalents } from "../shared/talents.ts";
-import { EntityGroupMap } from "../shared/groups.ts";
-import { chooseConcreteCareerSkills } from "../shared/skills.ts";
+} from "@/services/wh/content/career.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { selectRandom, SelectRandomFn } from "@/utils/random.ts";
+import { Attributes, getAttributeValue, setAttributeValue, zeroAttributes } from "@/services/wh/core/attributes.ts";
+import { calculateMaxTalentRanks, resolveAvailableTalents } from "@/services/wh/character/generation/shared/talents.ts";
+import { EntityGroupMap } from "@/services/wh/character/generation/shared/groups.ts";
+import { chooseConcreteCareerSkills } from "@/services/wh/character/generation/shared/skills.ts";
 import {
   ADVANCE_POINTS_5E,
   CAREER_LEVEL_COST_5E,

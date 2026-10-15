@@ -6,5 +6,3 @@ import EditionBadge from "./EditionBadge.vue";
 <template>
   <EditionBadge edition="4e" class="ml-1" title="4e content: talent, trait and mutation modifiers are not applied" />
 </template>
-
-<style scoped></style>
