@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Small print at the bottom of the landing pages.
-import TextLink from "../../components/TextLink.vue";
+import TextLink from "../../components/ui/TextLink.vue";
 </script>
 
 <template>

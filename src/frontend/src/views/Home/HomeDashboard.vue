@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import SectionLink from "../../components/SectionLink.vue";
+import ButtonLink from "../../components/ui/ButtonLink.vue";
 // Landing page for logged-in users: their most recently edited characters of the current edition and the compendium.
 import { computed, watch } from "vue";
 import { formatTimeAgo } from "@vueuse/core";
 import { RouterLink } from "vue-router";
-import AlertBlock from "../../components/AlertBlock.vue";
-import TextLink from "../../components/TextLink.vue";
+import AlertBlock from "../../components/ui/AlertBlock.vue";
+import TextLink from "../../components/ui/TextLink.vue";
 import HomeNotes from "./HomeNotes.vue";
 import { useAuth } from "../../composables/auth.ts";
 import { useCharacterList } from "../../composables/characterList.ts";
 import { useEdition } from "../../composables/edition.ts";
 import { characterApi } from "../../services/wh/character/character.ts";
 import { authRequest } from "../../services/auth.ts";
-import { COMPENDIUM_SECTIONS } from "../../navigation.ts";
+import { COMPENDIUM_SECTIONS } from "../../layout/navigation.ts";
 
 const RECENT_CHARACTERS = 6;
 
@@ -45,10 +45,10 @@ const recentCharacters = computed(() =>
   <section class="flex flex-col gap-x-6 gap-y-3 pt-2 pb-8">
     <h1 class="font-hammergen text-4xl md:text-5xl">Welcome back</h1>
     <div class="flex flex-wrap gap-3">
-      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="dark" size="lg">
+      <ButtonLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="dark" size="lg">
         New character
-      </SectionLink>
-      <SectionLink icon="lucide:users" routeName="characters" variant="dark" size="lg">All characters</SectionLink>
+      </ButtonLink>
+      <ButtonLink icon="lucide:users" routeName="characters" variant="dark" size="lg">All characters</ButtonLink>
     </div>
   </section>
 
@@ -81,9 +81,9 @@ const recentCharacters = computed(() =>
       class="flex flex-col items-center gap-3 p-8 border-2 border-dashed border-neutral-300 rounded-lg text-center"
     >
       <p class="text-neutral-700">You have no {{ edition }} characters yet.</p>
-      <SectionLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="dark" size="lg">
+      <ButtonLink icon="lucide:plus" routeName="character" :params="{ id: 'create' }" variant="dark" size="lg">
         Create your first character
-      </SectionLink>
+      </ButtonLink>
     </div>
   </section>
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Header from "../../components/PageHeader.vue";
-import TextLink from "../../components/TextLink.vue";
+import PageHeader from "../../components/ui/PageHeader.vue";
+import TextLink from "../../components/ui/TextLink.vue";
 </script>
 
 <template>
-  <Header title="Frequently asked questions" />
+  <PageHeader title="Frequently asked questions" />
   <div class="divide-y divide-neutral-200">
     <details class="py-3">
       <summary class="cursor-pointer text-lg font-semibold">Do I need an account?</summary>

@@ -6,7 +6,7 @@ import { computed, MaybeRefOrGetter, Ref, ref, toValue, watch, WritableComputedR
 import { source } from "../services/wh/core/source.ts";
 import { useAuth } from "./auth.ts";
 import { useRouteQuery } from "@vueuse/router";
-import { FilterSection } from "../components/filterSection.ts";
+import { FilterSection } from "../components/content/list/filterSection.ts";
 
 // splitQuery views a comma-separated query string value as a list, e.g. the ticked options of a list filter.
 function splitQuery(term: Ref<string>): WritableComputedRef<string[]> {

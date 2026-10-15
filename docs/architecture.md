@@ -28,8 +28,9 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
 
 ## Frontend (`src/frontend/src`)
 
-- `views/`: pages. `views/Warhammer/List` (content lists), `Edit` (content editors), `Character` (character list, editors and sheets per edition: `EditCharacter4e/5e.vue`, `ViewCharacter4e/5e.vue`, chosen from the character's own edition, a new character uses the selected edition).
-- `components/`: shared components (pickers, tables, modals, the 4e badge…).
+- `views/`: route pages only. `Content/List` (content lists), `Content/Edit` (content editors, `EditCareer.vue`…), `Character` (character list, editors and sheets per edition: `EditCharacter4e/5e.vue`, `ViewCharacter4e/5e.vue`, chosen from the character's own edition, a new character uses the selected edition), `Home`, `About`, `User`.
+- `components/`: the parts of the pages, in folders. Shared kinds, used by several features: `ui/` (generic: buttons, links, alerts, `ModalWindow`, `HelpButton`, `PageHeader`…), `form/` (inputs and checkboxes), `sheet/` (the paper character sheet look: `SheetTable`, `SheetCard`, `SheetList`…), `picker/` (choosing content: `ChecklistPicker`, `SelectTable`…), `edition/` (edition badges and switch), `editor/` (Save/Delete and visibility, shared by content and character editors). One folder per feature for the parts of its pages: `content/list/` (`ContentListPage`, filters), `content/edit/` (`ContentEditorPage`, sources, modifiers, career levels…), `character/` (`edit/` for the editor's sections, `sheet/` for the character view), `account/`. A component used by one feature lives in that feature's folder.
+- `layout/`: the app shell around the pages: `NavBar.vue`, `SideBar.vue`, `AnnouncementBar.vue` and their data (below).
 - `composables/`: Vue state helpers (auth, lists, editing, edition, 4e content lists…).
 - `services/wh/`: Warhammer domain code, by area:
   - `core/`: what content and characters share: `api.ts` (API types and `createWhApi`/`defineContentApi`), `entity.ts` (base entity, visibility), `edition.ts` (edition types, variant helpers, 4e/5e filter), `validators.ts`, `species.ts`, `attributes.ts`, `characterModifiers.ts`, `source.ts`.
@@ -37,9 +38,9 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
   - `character/`: `character.ts` (editable model), `characterFull.ts` (sheet model), `size.ts`, `rules/` (`rules4e.ts`, `rules5e.ts`, `rules.ts` picks by edition), `csv/` (CSV export per edition), `generation/` (`shared/`, `4e/`, `5e/` generator code and the generation data API).
 - `utils/`: generic helpers (random, clone, equality, currency…).
 - `services/auth.ts`, `services/user.ts`: login and account.
-- `navigation.ts`: the navigation links (Characters, the Compendium content types grouped in sections), shared by the top bar (`NavBar.vue`, large screens) and the slide-in sidebar (`SideBar.vue`, small screens).
+- `layout/navigation.ts`: the navigation links (Characters, the Compendium content types grouped in sections), shared by the top bar (`NavBar.vue`, large screens) and the slide-in sidebar (`SideBar.vue`, small screens).
 - `style.css`: the Tailwind theme. Colours are role scales (`primary`, `neutral`, `danger`, `success`, `info`, `linked`, each 50-950) plus `white`/`black`; Tailwind's built-in palettes are switched off, so only these colours exist. Restyle a role by changing its values there.
-- `announcement.ts`: the text of the announcement bar above the navigation (`AnnouncementBar.vue`), linking to the Updates tab of About (`views/About/UpdateList.vue`). A visitor who opens Updates from the bar or dismisses it doesn't see it again until the text changes; `null` turns the bar off.
+- `layout/announcement.ts`: the text of the announcement bar above the navigation (`AnnouncementBar.vue`), linking to the Updates tab of About (`views/About/UpdateList.vue`). A visitor who opens Updates from the bar or dismisses it doesn't see it again until the text changes; `null` turns the bar off.
 
 ### Code organisation rules
 

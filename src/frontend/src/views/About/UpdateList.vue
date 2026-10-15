@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Header from "../../components/PageHeader.vue";
-import TextLink from "../../components/TextLink.vue";
+import PageHeader from "../../components/ui/PageHeader.vue";
+import TextLink from "../../components/ui/TextLink.vue";
 import UpdateEntry from "./UpdateEntry.vue";
 </script>
 
 <template>
-  <Header title="Updates" />
+  <PageHeader title="Updates" />
   <section>
     <h2 class="mt-6 mb-2 text-2xl font-semibold">2026</h2>
     <UpdateEntry date="15 Oct 2026">

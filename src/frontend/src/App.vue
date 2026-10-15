@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import AnnouncementBar from "./components/AnnouncementBar.vue";
-import { ANNOUNCEMENT } from "./announcement.ts";
-import NavBar from "./components/NavBar.vue";
-import SideBar from "./components/SideBar.vue";
-import SpinnerAnimation from "./components/SpinnerAnimation.vue";
+import AnnouncementBar from "./layout/AnnouncementBar.vue";
+import { ANNOUNCEMENT } from "./layout/announcement.ts";
+import NavBar from "./layout/NavBar.vue";
+import SideBar from "./layout/SideBar.vue";
+import SpinnerAnimation from "./components/ui/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
 import { useMediaQuery, useScrollLock } from "@vueuse/core";

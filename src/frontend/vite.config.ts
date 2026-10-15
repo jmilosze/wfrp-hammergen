@@ -14,13 +14,10 @@ export default defineConfig({
               return "vendor-vue";
             }
           }
-          if (id.includes("/src/views/Warhammer/List/")) {
+          if (id.includes("/src/views/Content/List/")) {
             return "view-wh-lists";
           }
-          if (id.includes("/src/views/Warhammer/Edit/")) {
-            if (id.includes("CreateCharacter")) {
-              return "view-character-create";
-            }
+          if (id.includes("/src/views/Content/Edit/")) {
             return "view-wh-edits";
           }
           if (id.includes("/src/views/User/")) {

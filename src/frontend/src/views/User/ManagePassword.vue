@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import SectionButton from "../../components/SectionButton.vue";
-import AccountCard from "../../components/AccountCard.vue";
+import AppButton from "../../components/ui/AppButton.vue";
+import AccountCard from "../../components/account/AccountCard.vue";
 import { User, UserApi } from "../../services/user.ts";
-import AfterSubmit from "../../components/AfterSubmit.vue";
-import FormInput from "../../components/FormInput.vue";
+import AfterSubmit from "../../components/account/AfterSubmit.vue";
+import FormInput from "../../components/form/FormInput.vue";
 import { computed, ref } from "vue";
 import { SubmissionState } from "../../utils/submission.ts";
 import { authRequest } from "../../services/auth.ts";
@@ -85,7 +85,7 @@ async function submitForm() {
       title="Current password"
       :validationStatus="validCurrentPassword"
     />
-    <SectionButton
+    <AppButton
       icon="lucide:save"
       variant="light"
       class="self-start"
@@ -94,7 +94,7 @@ async function submitForm() {
       @click="submitForm"
     >
       Update password
-    </SectionButton>
+    </AppButton>
   </AccountCard>
 </template>
 

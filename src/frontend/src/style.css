@@ -15,7 +15,7 @@
     print-color-adjust: exact;
   }
 
-  /* Page breaks: boxes (SheetTable, SectionCard, ListTable…) avoid breaking inside and a box's title stays with its
+  /* Page breaks: boxes (SheetTable, SheetCard, SheetList…) avoid breaking inside and a box's title stays with its
      content; a box taller than a page still breaks, between rows. */
   tr {
     break-inside: avoid;
@@ -33,7 +33,7 @@ html:has(dialog[open]) {
 
 @theme {
   --font-hammergen: "Hammergen", serif;
-  /* sheet: the content of the editors' form boxes (SheetTable, SectionCard, ListTable); their buttons keep font-sans. */
+  /* sheet: the content of the editors' form boxes (SheetTable, SheetCard, SheetList); their buttons keep font-sans. */
   --font-sheet: "Alegreya Variable", serif;
 
   /* Colours. Only these exist: Tailwind's built-in palettes are switched off, so classes such as bg-red-500 do not
