@@ -5,7 +5,6 @@ import { ApiHeaders, ContentApi, WhApi } from "../services/wh/core/api.ts";
 import { Edition } from "../services/wh/core/edition.ts";
 import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
 import { SubmissionState } from "../utils/submission.ts";
-import { copySource } from "../services/wh/core/source.ts";
 import { authRequest } from "../services/auth.ts";
 import { Character } from "../services/wh/character/character.ts";
 import { Career, careerApi } from "../services/wh/content/career.ts";
@@ -34,7 +33,6 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
 
   const wh = ref((loaded ?? whInstance).copy());
   const whOriginal = ref(wh.value.copy());
-  const initSources = ref(copySource(wh.value.source));
 
   const submissionState = ref(new SubmissionState());
   const showSubmissionStatus = ref(false);
@@ -89,14 +87,12 @@ export function useCharacterEdit<T extends WhProperty, TResponse extends ApiHead
   function resetForm() {
     wh.value = whInstance.copy() as T;
     whOriginal.value = whInstance.copy() as T;
-    initSources.value = copySource(wh.value.source);
   }
 
   return {
     wh,
     canEdit,
     whOriginal,
-    initSources,
     submitForm,
     deleteItem,
     hasChanged,

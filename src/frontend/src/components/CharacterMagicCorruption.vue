@@ -32,7 +32,7 @@ const validCorruption = computed(() => character.value.validateCorruption());
       </SheetTable>
       <SelectTable
         :disabled="disabled"
-        :initSelectedItems="character.prayers"
+        :selected="character.prayers"
         :itemList="content.prayers.withAllowed.value"
         :fourEIds="content.prayers.fourEIds.value"
         title="Prayers"
@@ -48,7 +48,7 @@ const validCorruption = computed(() => character.value.validateCorruption());
       />
       <SelectTable
         :disabled="disabled"
-        :initSelectedItems="character.spells"
+        :selected="character.spells"
         :itemList="content.spells.withAllowed.value"
         :fourEIds="content.spells.fourEIds.value"
         title="Spells"
@@ -75,7 +75,7 @@ const validCorruption = computed(() => character.value.validateCorruption());
       </SheetTable>
       <SelectTable
         :disabled="disabled"
-        :initSelectedItems="character.mutations"
+        :selected="character.mutations"
         :itemList="content.mutations.withAllowed.value"
         :fourEIds="content.mutations.fourEIds.value"
         title="Mutations"

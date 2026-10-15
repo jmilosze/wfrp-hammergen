@@ -5,7 +5,6 @@ import { ContentApi } from "../services/wh/core/api.ts";
 import { Edition, EDITIONS, Variants } from "../services/wh/core/edition.ts";
 import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
 import { SubmissionState } from "../utils/submission.ts";
-import { copySource } from "../services/wh/core/source.ts";
 
 function copyVariants<T extends WhProperty>(variants: Variants<T>): Variants<T> {
   const copies: Variants<T> = {};
@@ -34,7 +33,6 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
   const variants = shallowRef<Variants<T>>({ [edition.value]: start });
   const variantsOriginal = shallowRef<Variants<T>>(copyVariants(variants.value));
   const wh = ref(start);
-  const initSources = ref(copySource(wh.value.source));
 
   const apiError = ref("");
   const showApiError = ref(true);
@@ -46,7 +44,6 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
 
   function show(variant: T) {
     wh.value = variant;
-    initSources.value = copySource(variant.source);
   }
 
   // Switching edition shows that variant; a missing one keeps the previous model (for the header) until added.
@@ -181,7 +178,6 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
     hasVariant,
     addVariant,
     canEdit,
-    initSources,
     apiError,
     showApiError,
     loadWh,

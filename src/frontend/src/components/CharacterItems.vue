@@ -28,9 +28,10 @@ type ItemInfo = {
 const props = defineProps<{
   disabled?: boolean;
   itemList: Item[];
-  initEquipped: Record<string, number>;
-  initCarried: Record<string, number>;
-  initStored: Record<string, number>;
+  // The character's trappings: id to quantity, read directly (the parent changes them on the emitted events).
+  equipped: Record<string, number>;
+  carried: Record<string, number>;
+  stored: Record<string, number>;
   equippedValidationStatus: ValidationStatus;
   storedValidationStatus: ValidationStatus;
   carriedValidationStatus: ValidationStatus;
@@ -50,9 +51,9 @@ const emit = defineEmits<{
 // The sections read the character's records (equipped, carried and stored: id to quantity) directly. The parent changes
 // them in place, which updates the sections; nothing here copies the item list on an edit.
 const records = computed<Record<Location, Record<string, number>>>(() => ({
-  equipped: props.initEquipped,
-  carried: props.initCarried,
-  stored: props.initStored,
+  equipped: props.equipped,
+  carried: props.carried,
+  stored: props.stored,
 }));
 
 const itemInfo = computed(

@@ -198,7 +198,7 @@ const validAtts = computed(() => {
         </tr>
       </ListTable>
       <CharacterModifierEffectTable
-        :initEffects="modelValue.effects"
+        :effects="modelValue.effects"
         :edition="edition"
         :disabled="props.disabled ? props.disabled : false"
         class="flex-1 -mt-px @2xl:mt-0 @2xl:-ml-px"

@@ -30,7 +30,6 @@ const {
   hasVariant,
   addVariant,
   canEdit,
-  initSources,
   submitForm,
   deleteItem,
   hasChanged,
@@ -70,9 +69,10 @@ const loadStates: LoadState[] = [props.edit, ...(props.lists ?? [])];
     </div>
     <slot />
     <SourceTable
+      :key="edition"
       :edition="edition"
       :disabled="!canEdit"
-      :initSources="initSources"
+      :sources="wh.source"
       class="my-4"
       @selected="(e) => wh.updateSource(e)"
     />

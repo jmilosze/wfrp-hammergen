@@ -2,13 +2,14 @@
 import IconButton from "./IconButton.vue";
 import SectionCard from "./SectionCard.vue";
 import SectionButton from "./SectionButton.vue";
-import { computed, ref, Ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/core/source.ts";
 import { Edition } from "../services/wh/core/edition.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
 
-const props = defineProps<{ initSources: Record<string, string>; edition: Edition; disabled?: boolean }>();
+// The entry's sources (source id to page notes), read directly (the parent changes them on the emitted events).
+const props = defineProps<{ sources: Record<string, string>; edition: Edition; disabled?: boolean }>();
 
 const emit = defineEmits<{
   (e: "selected", value: { id: string; notes: string; selected: boolean }): void;
@@ -16,80 +17,58 @@ const emit = defineEmits<{
 
 const modalOpen = ref(false);
 
-const sources: Ref<Record<string, { id: string; name: string; notes: string; selected: boolean }>> = ref({});
-const sourcesList: Ref<{ id: string; name: string; notes: string; selected: boolean }[]> = ref([]);
+// The notes of sources unticked here, so ticking one again brings its notes back.
+const keptNotes = ref<Record<string, string>>({});
 
-watch(
-  () => props.initSources,
-  (newVal) => {
-    sources.value = {};
-    for (const allSourceName of sourcesByEdition[props.edition]) {
-      const allSourceDispName = source[allSourceName];
-      if (newVal && allSourceName in newVal) {
-        sources.value[allSourceName] = {
-          id: allSourceName,
-          name: allSourceDispName,
-          notes: newVal[allSourceName],
-          selected: true,
-        };
-      } else {
-        sources.value[allSourceName] = { id: allSourceName, name: allSourceDispName, notes: "", selected: false };
-      }
-    }
-    sourcesList.value = Object.values(sources.value).sort((a, b) => a.name.localeCompare(b.name));
-  },
-  { immediate: true },
+// The edition's sources, by name.
+const sourceRows = computed(() =>
+  sourcesByEdition[props.edition]
+    .map((id) => ({ id: id, name: source[id] }))
+    .sort((a, b) => a.name.localeCompare(b.name)),
 );
 
-const selectedSources = computed(() => sourcesList.value.filter((x) => x.selected));
-const selectedSourcesValid = computed(() => {
-  for (const src of selectedSources.value) {
-    if (!validateSourceRecord(src.notes).valid) {
-      return false;
-    }
-  }
-  return true;
-});
+const selectedSources = computed(() =>
+  sourceRows.value.filter((x) => x.id in props.sources).map((x) => ({ ...x, notes: props.sources[x.id] })),
+);
+const selectedSourcesValid = computed(() => selectedSources.value.every((x) => validateSourceRecord(x.notes).valid));
 
-function onRemoveClick(id: string) {
-  sources.value[id].selected = false;
-  emit("selected", { id: id, notes: sources.value[id].notes, selected: false });
-}
-
-function onEditClick() {
-  sourcesList.value.sort((a, b) => {
-    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
-  });
-  modalOpen.value = true;
+function notesOf(id: string): string {
+  return props.sources[id] ?? keptNotes.value[id] ?? "";
 }
 
 // Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
 const modalItems = computed(() =>
-  sourcesList.value.map((x) => ({
+  sourceRows.value.map((x) => ({
     id: x.id,
     name: x.name,
     description: "",
     get selected() {
-      return x.selected;
+      return x.id in props.sources;
     },
     get text() {
-      return x.notes;
+      return notesOf(x.id);
     },
     get textError() {
-      const valid = validateSourceRecord(x.notes);
+      const valid = validateSourceRecord(notesOf(x.id));
       return valid.valid ? undefined : valid.message;
     },
   })),
 );
 
 function setSelected(id: string, selected: boolean) {
-  sources.value[id].selected = selected;
-  emit("selected", { id: id, notes: sources.value[id].notes, selected: selected });
+  const notes = notesOf(id);
+  if (!selected) {
+    keptNotes.value[id] = notes;
+  }
+  emit("selected", { id: id, notes: notes, selected: selected });
 }
 
 function setNotes(id: string, notes: string) {
-  sources.value[id].notes = notes;
-  emit("selected", { id: id, notes: notes, selected: sources.value[id].selected });
+  const selected = id in props.sources;
+  if (!selected) {
+    keptNotes.value[id] = notes;
+  }
+  emit("selected", { id: id, notes: notes, selected: selected });
 }
 </script>
 
@@ -97,7 +76,7 @@ function setNotes(id: string, notes: string) {
   <div>
     <SectionCard title="Sources">
       <template v-if="!disabled" #actions>
-        <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
+        <SectionButton icon="lucide:pencil" @click="modalOpen = true">Edit</SectionButton>
       </template>
       <table class="w-full">
         <thead>
@@ -112,7 +91,7 @@ function setNotes(id: string, notes: string) {
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.notes }}</td>
             <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
-              <IconButton icon="lucide:x" :label="`Remove ${src.name}`" @click="onRemoveClick(src.id)" />
+              <IconButton icon="lucide:x" :label="`Remove ${src.name}`" @click="setSelected(src.id, false)" />
             </td>
           </tr>
         </tbody>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import IconButton from "./IconButton.vue";
 import { printSkillType, Skill } from "../services/wh/content/skill.ts";
-import { computed, ref, Ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/core/attributes.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
@@ -14,20 +14,11 @@ import Edition4eBadge from "./Edition4eBadge.vue";
 
 const DESC_CHARS = 100;
 
-type SkillWithNumber = {
-  id: string;
-  name: string;
-  description: string;
-  attributeName: string;
-  attributeValue: number;
-  type: string;
-  number: number;
-};
-
 const props = defineProps<{
   disabled?: boolean;
   skillList: Skill[];
-  initSkills: Record<string, number>;
+  // The character's skills: id to advances, read directly (the parent changes them on the emitted events).
+  skills: Record<string, number>;
   loading?: boolean;
   attributes: Attributes;
   validationStatus: ValidationStatus;
@@ -42,99 +33,51 @@ const emit = defineEmits<{
   (e: "addSpeciesSkills"): void;
 }>();
 
-function isNonzero(skillWithNumber: SkillWithNumber): boolean {
-  return skillWithNumber.number !== 0;
+function advancesOf(id: string): number {
+  return props.skills[id] ?? 0;
 }
 
-const skillsWithNumber: Ref<Record<string, SkillWithNumber>> = ref({});
-const skillsWithNumberList: Ref<SkillWithNumber[]> = ref([]);
-
-function updateSkillsWithNumber(selectedSkills: Record<string, number>, skillList: Skill[], attributes: Attributes) {
-  skillsWithNumber.value = {};
-  for (const skill of skillList) {
-    if (!skill.isGroup) {
-      skillsWithNumber.value[skill.id] = {
-        id: skill.id,
-        name: skill.name,
-        description: skill.description,
-        attributeName: printAttributeName(skill.attribute),
-        attributeValue: getAttributeValue(skill.attribute, attributes),
-        type: printSkillType(skill.type),
-        number: 0,
-      };
-      if (skill.id in selectedSkills) {
-        skillsWithNumber.value[skill.id].number = selectedSkills[skill.id];
-      }
-    }
-  }
-  skillsWithNumberList.value = Object.values(skillsWithNumber.value).sort((a, b) => {
-    return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
-  });
-}
-
-watch(
-  () => props.initSkills,
-  (newVal) => {
-    updateSkillsWithNumber(newVal, props.skillList, props.attributes);
-  },
-  { immediate: true },
+// The skills that can be taken (not groups), by name.
+const takeableSkills = computed(() =>
+  props.skillList.filter((x) => !x.isGroup).sort((a, b) => a.name.localeCompare(b.name)),
 );
 
-watch(
-  () => props.skillList,
-  (newVal) => {
-    updateSkillsWithNumber(props.initSkills, newVal, props.attributes);
-  },
-  { immediate: true },
+const selectedSkills = computed(() =>
+  takeableSkills.value
+    .filter((x) => advancesOf(x.id) !== 0)
+    .map((x) => ({
+      id: x.id,
+      name: x.name,
+      attributeName: printAttributeName(x.attribute),
+      number: advancesOf(x.id),
+      value: getAttributeValue(x.attribute, props.attributes) + advancesOf(x.id),
+    })),
 );
-
-watch(
-  () => props.attributes,
-  (newVal) => {
-    updateSkillsWithNumber(props.initSkills, props.skillList, newVal);
-  },
-  { immediate: true },
-);
-
-const selectedSkills = computed(() => skillsWithNumberList.value.filter((x) => isNonzero(x)));
 
 const modalOpen = ref(false);
-
-function removeSkill(id: string) {
-  skillsWithNumber.value[id].number = 0;
-  emit("updated", { id: id, number: 0 });
-}
 
 function onEditClick() {
   if (props.loading) {
     return;
   }
-  skillsWithNumberList.value.sort((a, b) => {
-    return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
-  });
   modalOpen.value = true;
 }
 
 // Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
 const modalItems = computed(() =>
-  skillsWithNumberList.value.map((x) => ({
+  takeableSkills.value.map((x) => ({
     id: x.id,
     name: x.name,
     description: truncate(x.description, DESC_CHARS),
-    note: `${x.type} · ${x.attributeName}`,
+    note: `${printSkillType(x.type)} · ${printAttributeName(x.attribute)}`,
     get selected() {
-      return isNonzero(x);
+      return advancesOf(x.id) !== 0;
     },
     get number() {
-      return x.number;
+      return advancesOf(x.id);
     },
   })),
 );
-
-function setNumber(id: string, number: number) {
-  skillsWithNumber.value[id].number = number;
-  emit("updated", { id: id, number: number });
-}
 </script>
 
 <template>
@@ -166,9 +109,13 @@ function setNumber(id: string, number: number) {
             </td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeName }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
-            <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
+            <td class="py-2 px-2 border-b border-neutral-300">{{ src.value }}</td>
             <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
-              <IconButton icon="lucide:x" :label="`Remove ${src.name}`" @click="removeSkill(src.id)" />
+              <IconButton
+                icon="lucide:x"
+                :label="`Remove ${src.name}`"
+                @click="emit('updated', { id: src.id, number: 0 })"
+              />
             </td>
           </tr>
         </tbody>
@@ -186,7 +133,7 @@ function setNumber(id: string, number: number) {
         :fourEIds="fourEIds"
         numberLabel="Adv"
         :numberStep="step"
-        @setNumber="(e) => setNumber(e.id, e.number)"
+        @setNumber="(e) => emit('updated', e)"
         @reload="emit('reload')"
       />
     </ModalWindow>

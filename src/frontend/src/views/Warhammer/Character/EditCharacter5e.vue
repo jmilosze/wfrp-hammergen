@@ -348,8 +348,8 @@ const modifierAttributes = computed(() => {
           <CharacterCareer
             class="-mt-px"
             :disabled="!canEdit"
-            :initSelectedCurrentCareer="wh.career"
-            :initSelectedPastCareers="wh.careerPath"
+            :currentCareer="wh.career"
+            :pastCareers="wh.careerPath"
             :careerList="content.careers.withAllowed.value"
             :fourEIds="content.careers.fourEIds.value"
             :loading="content.careers.loading.value"
@@ -383,7 +383,7 @@ const modifierAttributes = computed(() => {
   <div class="flex flex-col @2xl:flex-row justify-between text-left gap-4 my-4">
     <CharacterSkills
       :disabled="!canEdit"
-      :initSkills="wh.skills"
+      :skills="wh.skills"
       :skillList="content.skills.withAllowed.value"
       :fourEIds="content.skills.fourEIds.value"
       :loading="content.skills.loading.value || generationPropsUtils.loading.value"
@@ -399,7 +399,7 @@ const modifierAttributes = computed(() => {
     />
     <CharacterTalents
       :disabled="!canEdit"
-      :initTalents="wh.talents"
+      :talents="wh.talents"
       :talentList="content.talents.withAllowed.value"
       :fourEIds="content.talents.fourEIds.value"
       :loading="content.talents.loading.value || generationPropsUtils.loading.value"
@@ -417,9 +417,9 @@ const modifierAttributes = computed(() => {
   <CharacterWealthEncumbrance v-model="wh" :itemList="content.items.withAllowed.value" :disabled="!canEdit" />
   <CharacterItems
     :disabled="!canEdit"
-    :initEquipped="wh.equippedItems"
-    :initCarried="wh.carriedItems"
-    :initStored="wh.storedItems"
+    :equipped="wh.equippedItems"
+    :carried="wh.carriedItems"
+    :stored="wh.storedItems"
     :itemList="content.items.withAllowed.value"
     :fourEIds="content.items.fourEIds.value"
     :loading="content.items.loading.value || content.careers.loading.value || generationPropsUtils.loading.value"

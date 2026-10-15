@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import IconButton from "./IconButton.vue";
 import { Talent } from "../services/wh/content/talent.ts";
-import { computed, ref, Ref, watch } from "vue";
-import { Attributes, printAttributeName } from "../services/wh/core/attributes.ts";
-import { isEqualEntity } from "../utils/equal.ts";
+import { computed, ref } from "vue";
+import { Attributes } from "../services/wh/core/attributes.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
 import SectionButton from "./SectionButton.vue";
@@ -15,21 +14,11 @@ import Edition4eBadge from "./Edition4eBadge.vue";
 
 const DESC_CHARS = 100;
 
-type TalentWithNumber = {
-  id: string;
-  name: string;
-  description: string;
-  maxRank: number;
-  maxRankFormula: string;
-  attributeName: string;
-  number: number;
-  fullTalentPos: number;
-};
-
 const props = defineProps<{
   disabled?: boolean;
   talentList: Talent[];
-  initTalents: Record<string, number>;
+  // The character's talents: id to rank, read directly (the parent changes them on the emitted events).
+  talents: Record<string, number>;
   loading?: boolean;
   attributes: Attributes;
   validationStatus: ValidationStatus;
@@ -43,117 +32,52 @@ const emit = defineEmits<{
   (e: "addSpeciesTalents"): void;
 }>();
 
-function isNonzero(talentWithNumber: TalentWithNumber): boolean {
-  return talentWithNumber.number !== 0;
+function rankOf(id: string): number {
+  return props.talents[id] ?? 0;
 }
 
-const talentsWithNumber: Ref<Record<string, TalentWithNumber>> = ref({});
-const talentsWithNumberList: Ref<TalentWithNumber[]> = ref([]);
-
-function updateTalentsWithNumber(
-  selectedTalents: Record<string, number>,
-  talentList: Talent[],
-  attributes: Attributes,
-) {
-  talentsWithNumber.value = {};
-  for (let i = 0; i < talentList.length; i++) {
-    const talent = talentList[i];
-    if (!talent.isGroup) {
-      talentsWithNumber.value[talent.id] = {
-        id: talent.id,
-        name: talent.name,
-        description: talent.description,
-        maxRank: talent.getMaxRank(attributes),
-        maxRankFormula: talent.getMaxRankDisplay(),
-        attributeName: printAttributeName(talent.attribute),
-        number: 0,
-        fullTalentPos: i,
-      };
-      if (talent.id in selectedTalents) {
-        talentsWithNumber.value[talent.id].number = selectedTalents[talent.id];
-      }
-    }
-  }
-  talentsWithNumberList.value = Object.values(talentsWithNumber.value).sort((a, b) => {
-    return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
-  });
-}
-
-function updateAttributes(attributes: Attributes) {
-  for (const talent of talentsWithNumberList.value) {
-    const newMaxRank = props.talentList[talent.fullTalentPos].getMaxRank(attributes);
-    talent.maxRank = newMaxRank;
-    talentsWithNumber.value[talent.id].maxRank = newMaxRank;
-  }
-}
-
-watch(
-  () => props.initTalents,
-  (newVal) => {
-    updateTalentsWithNumber(newVal, props.talentList, props.attributes);
-  },
-  { immediate: true },
+// The talents that can be taken (not groups), by name.
+const takeableTalents = computed(() =>
+  props.talentList.filter((x) => !x.isGroup).sort((a, b) => a.name.localeCompare(b.name)),
 );
 
-watch(
-  () => props.talentList,
-  (newVal) => {
-    updateTalentsWithNumber(props.initTalents, newVal, props.attributes);
-  },
-  { immediate: true },
+const selectedTalents = computed(() =>
+  takeableTalents.value
+    .filter((x) => rankOf(x.id) !== 0)
+    .map((x) => ({ id: x.id, name: x.name, number: rankOf(x.id) })),
 );
-
-watch(
-  () => props.attributes,
-  (newVal, oldVal) => {
-    if (oldVal === undefined || !isEqualEntity(newVal, oldVal)) {
-      updateAttributes(newVal);
-    }
-  },
-  { immediate: true },
-);
-
-const selectedTalents = computed(() => talentsWithNumberList.value.filter((x) => isNonzero(x)));
 
 const modalOpen = ref(false);
-
-function removeTalent(id: string) {
-  talentsWithNumber.value[id].number = 0;
-  emit("updated", { id: id, number: 0 });
-}
 
 function onEditClick() {
   if (props.loading) {
     return;
   }
-  talentsWithNumberList.value.sort((a, b) => {
-    return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
-  });
   modalOpen.value = true;
 }
 
-// Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
+// Popup rows are made once per list; each reads its live values through getters (the max rank follows the
+// characteristics), so a change redraws only its own row.
 const modalItems = computed(() =>
-  talentsWithNumberList.value.map((x) => ({
-    id: x.id,
-    name: x.name,
-    description: truncate(x.description, DESC_CHARS),
-    get selected() {
-      return isNonzero(x);
-    },
-    get number() {
-      return x.number;
-    },
-    get note() {
-      return `Max rank ${x.maxRank}` + (x.maxRankFormula.includes("Bonus") ? ` (${x.maxRankFormula})` : "");
-    },
-  })),
+  takeableTalents.value.map((x) => {
+    const maxRankFormula = x.getMaxRankDisplay();
+    return {
+      id: x.id,
+      name: x.name,
+      description: truncate(x.description, DESC_CHARS),
+      get selected() {
+        return rankOf(x.id) !== 0;
+      },
+      get number() {
+        return rankOf(x.id);
+      },
+      get note() {
+        const maxRank = x.getMaxRank(props.attributes);
+        return `Max rank ${maxRank}` + (maxRankFormula.includes("Bonus") ? ` (${maxRankFormula})` : "");
+      },
+    };
+  }),
 );
-
-function setNumber(id: string, number: number) {
-  talentsWithNumber.value[id].number = number;
-  emit("updated", { id: id, number: number });
-}
 </script>
 
 <template>
@@ -187,7 +111,11 @@ function setNumber(id: string, number: number) {
               <Edition4eBadge v-if="fourEIds?.has(src.id)" />
             </td>
             <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
-              <IconButton icon="lucide:x" :label="`Remove ${src.name}`" @click="removeTalent(src.id)" />
+              <IconButton
+                icon="lucide:x"
+                :label="`Remove ${src.name}`"
+                @click="emit('updated', { id: src.id, number: 0 })"
+              />
             </td>
           </tr>
         </tbody>
@@ -204,7 +132,7 @@ function setNumber(id: string, number: number) {
         :loading="props.loading"
         :fourEIds="fourEIds"
         numberLabel="Rank"
-        @setNumber="(e) => setNumber(e.id, e.number)"
+        @setNumber="(e) => emit('updated', e)"
         @reload="emit('reload')"
       />
     </ModalWindow>

@@ -2,105 +2,68 @@
 import IconButton from "./IconButton.vue";
 import ListTable from "./ListTable.vue";
 import SectionButton from "./SectionButton.vue";
-import { computed, ref, Ref, watch } from "vue";
+import { computed, ref } from "vue";
 import ModalWindow from "./ModalWindow.vue";
-import TableWithSearch from "./TableWithSearch.vue";
+import ChecklistPicker from "./ChecklistPicker.vue";
 import { modifierEffectsByEdition, printEffectDesc, printEffectName } from "../services/wh/core/characterModifiers.ts";
 import { Edition } from "../services/wh/core/edition.ts";
 
-const props = defineProps<{ initEffects: Set<number>; edition: Edition; disabled?: boolean }>();
+// Picks the modifier effects of the edition (e.g. Hardy); effects is the picked ones, read directly (the parent changes
+// it on the emitted events).
+const props = defineProps<{ effects: Set<number>; edition: Edition; disabled?: boolean }>();
 
 const emit = defineEmits<{
   (e: "selected", value: { id: number; selected: boolean }): void;
 }>();
 
 const modalOpen = ref(false);
-const searchTerm = ref("");
-const modalColumns = [
-  { name: "name", displayName: "Name", skipStackedTitle: false },
-  { name: "desc", displayName: "Description", skipStackedTitle: false },
-  { name: "selected", displayName: "Select", skipStackedTitle: false },
-];
 
-const effectList: Ref<{ id: number; name: string; desc: string; selected: boolean }[]> = ref([]);
-
-// The list is built per edition; ticking an effect only updates its selected flag, so the popup's order (ticked first,
-// set when it opens) does not change while it is open.
-watch(
-  () => props.edition,
-  (edition) => {
-    effectList.value = modifierEffectsByEdition[edition]
-      .map((effectType) => ({
-        id: effectType,
-        name: printEffectName(effectType),
-        desc: printEffectDesc(effectType),
-        selected: props.initEffects.has(effectType),
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  },
-  { immediate: true },
+// The edition's effects, by name.
+const effectList = computed(() =>
+  modifierEffectsByEdition[props.edition]
+    .map((effectType) => ({ id: effectType, name: printEffectName(effectType), desc: printEffectDesc(effectType) }))
+    .sort((a, b) => a.name.localeCompare(b.name)),
 );
 
-watch(
-  () => props.initEffects,
-  (newVal) => {
-    for (const effect of effectList.value) {
-      effect.selected = newVal.has(effect.id);
-    }
-  },
+const selectedEffects = computed(() => effectList.value.filter((x) => props.effects.has(x.id)));
+
+// Popup rows are made once per edition; each reads whether it is picked through a getter.
+const modalItems = computed(() =>
+  effectList.value.map((x) => ({
+    id: x.id.toString(),
+    name: x.name,
+    description: x.desc,
+    get selected() {
+      return props.effects.has(x.id);
+    },
+  })),
 );
-
-// Lookup by id for the popup's checkboxes; its entries are the list's own objects.
-const effects = computed(() => Object.fromEntries(effectList.value.map((x) => [x.id, x])));
-
-const selectedSources = computed(() => effectList.value.filter((x) => x.selected));
-
-function onRemoveClick(id: number) {
-  effects.value[id].selected = false;
-  emit("selected", { id: id, selected: false });
-}
-
-function onEditClick() {
-  modalOpen.value = true;
-  searchTerm.value = "";
-  effectList.value.sort((a, b) => {
-    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
-  });
-}
 </script>
 
 <template>
   <div class="flex flex-col">
     <ListTable :editable="!disabled" title="Effects" :titleColspan="disabled ? 2 : 3" class="grow">
       <template v-if="!disabled" #actions>
-        <SectionButton icon="lucide:pencil" @click="onEditClick">Edit</SectionButton>
+        <SectionButton icon="lucide:pencil" @click="modalOpen = true">Edit</SectionButton>
       </template>
-      <tr v-for="src in selectedSources" :key="src.id" class="bg-white hover:bg-neutral-100">
+      <tr v-for="src in selectedEffects" :key="src.id" class="bg-white hover:bg-neutral-100">
         <td class="py-2 px-2 border-b border-neutral-300">{{ src.name }}</td>
         <td class="py-2 px-2 border-b border-neutral-300">{{ src.desc }}</td>
         <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
-          <IconButton icon="lucide:x" :label="`Remove ${src.name}`" @click="onRemoveClick(src.id)" />
+          <IconButton
+            icon="lucide:x"
+            :label="`Remove ${src.name}`"
+            @click="emit('selected', { id: src.id, selected: false })"
+          />
         </td>
       </tr>
     </ListTable>
     <ModalWindow v-model:open="modalOpen">
       <template #header> Edit effects </template>
-      <div class="">
-        <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="effectList" stackBreakpoint="2xl">
-          <template #selected="{ id }: { id: number }">
-            <div>
-              <input
-                v-model="effects[id].selected"
-                type="checkbox"
-                class="w-5 h-5 accent-neutral-600"
-                @input="emit('selected', { id: id, selected: !effects[id].selected })"
-              />
-            </div>
-          </template>
-        </TableWithSearch>
-      </div>
+      <ChecklistPicker
+        :items="modalItems"
+        @toggle="(e) => emit('selected', { id: Number(e.id), selected: e.selected })"
+      />
     </ModalWindow>
   </div>
 </template>
-
-<style scoped></style>

@@ -123,7 +123,7 @@ watchWh(
         <SelectTable
           v-if="!wh.isGroup"
           :disabled="!canEdit"
-          :initSelectedItems="wh.group"
+          :selected="wh.group"
           :itemList="groupTalents"
           title="Belongs to group"
           removable

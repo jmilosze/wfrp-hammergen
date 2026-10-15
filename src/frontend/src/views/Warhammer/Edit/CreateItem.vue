@@ -394,7 +394,7 @@ watchWh(
         <SelectTable
           v-if="wh.type === ItemType.Grimoire"
           :disabled="!canEdit"
-          :initSelectedItems="wh.grimoire.spells"
+          :selected="wh.grimoire.spells"
           :itemList="spellListUtils.whList.value"
           title="Spells"
           modalTitle="Edit spells"
@@ -425,8 +425,8 @@ watchWh(
           />
           <SelectIdNumberTable
             :disabled="!canEdit"
-            :initItems="wh.runes"
-            :allItemList="runeList"
+            :selected="wh.runes"
+            :itemList="runeList"
             title="Runes"
             modalTitle="Edit runes"
             :loading="runeListUtils.loading.value"

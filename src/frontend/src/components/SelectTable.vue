@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import IconButton from "./IconButton.vue";
 import SectionButton from "./SectionButton.vue";
-import { computed, ref, Ref, watch } from "vue";
+import { computed, ref } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
 import ListTable from "./ListTable.vue";
@@ -9,17 +9,13 @@ import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
 
-type ItemWithSelect = {
-  id: string;
-  name: string;
-  description: string;
-  selected: boolean;
-};
+type Entity = { name: string; id: string; description: string };
 
+// Picks entries of itemList; selected is the picked ids, read directly (the parent changes it on the emitted events).
 const props = defineProps<{
   title: string;
-  itemList: { name: string; id: string; description: string }[];
-  initSelectedItems: Set<string>;
+  itemList: Entity[];
+  selected: Set<string>;
   routeName: string;
   disabled?: boolean;
   modalTitle?: string;
@@ -37,37 +33,27 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
-const itemsWithSelect: Ref<Record<string, ItemWithSelect>> = ref({});
-const itemsWithSelectList: Ref<ItemWithSelect[]> = ref([]);
+const byName = (a: Entity, b: Entity) => a.name.localeCompare(b.name);
 
-watch(
-  [() => props.initSelectedItems, () => props.itemList],
-  ([selectedItems, itemList]) => {
-    updateItemsWithSelect(selectedItems, itemList);
-  },
-  { immediate: true },
+const selectedItems = computed(() =>
+  props.itemList
+    .filter((x) => props.selected.has(x.id))
+    .sort(byName)
+    .map((x) => ({ id: x.id, name: x.name, description: truncate(x.description, props.truncateModalDescription) })),
 );
 
-function updateItemsWithSelect(
-  selectedItems: Set<string>,
-  itemList: { name: string; id: string; description: string }[],
-) {
-  const newItemsWithSelect: Record<string, ItemWithSelect> = {};
-  for (const item of itemList) {
-    newItemsWithSelect[item.id] = {
-      id: item.id,
-      name: item.name,
-      description: truncate(item.description, props.truncateModalDescription),
-      selected: Boolean(selectedItems && selectedItems.has(item.id)),
-    };
-  }
-  itemsWithSelect.value = newItemsWithSelect;
-  itemsWithSelectList.value = Object.values(newItemsWithSelect).sort((a, b) => {
-    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
-  });
-}
-
-const selectedItems = computed(() => itemsWithSelectList.value.filter((x) => x.selected));
+// Popup rows are made once per list; each reads whether it is picked through a getter, so ticking redraws only its own
+// row.
+const modalItems = computed(() =>
+  [...props.itemList].sort(byName).map((x) => ({
+    id: x.id,
+    name: x.name,
+    description: truncate(x.description, props.truncateModalDescription),
+    get selected() {
+      return props.selected.has(x.id);
+    },
+  })),
+);
 
 const modalOpen = ref(false);
 
@@ -75,24 +61,11 @@ const showRemove = computed(() => props.removable && !props.disabled);
 // The title cell spans the remove column, which has no header, so the actions sit at the right edge.
 const titleColspan = computed(() => (props.disableDescription ? 1 : 2) + (showRemove.value ? 1 : 0));
 
-function onRemoveClick(id: string) {
-  itemsWithSelect.value[id].selected = false;
-  emit("selected", { id: id, selected: false });
-}
-
 function onEditClick() {
   if (props.loading) {
     return;
   }
-  itemsWithSelectList.value.sort((a, b) => {
-    return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
-  });
   modalOpen.value = true;
-}
-
-function onToggle(id: string, selected: boolean) {
-  itemsWithSelect.value[id].selected = selected;
-  emit("selected", { id: id, selected: selected });
 }
 </script>
 
@@ -113,18 +86,22 @@ function onToggle(id: string, selected: boolean) {
           {{ src.description }}
         </td>
         <td v-if="showRemove" class="py-2 px-2 border-b border-neutral-300 w-0">
-          <IconButton icon="lucide:x" :label="`Remove ${src.name}`" @click="onRemoveClick(src.id)" />
+          <IconButton
+            icon="lucide:x"
+            :label="`Remove ${src.name}`"
+            @click="emit('selected', { id: src.id, selected: false })"
+          />
         </td>
       </tr>
     </ListTable>
     <ModalWindow v-model:open="modalOpen" fullHeight>
       <template #header> {{ modalTitle }} </template>
       <ChecklistPicker
-        :items="itemsWithSelectList"
+        :items="modalItems"
         :routeName="routeName"
         :loading="props.loading"
         :fourEIds="fourEIds"
-        @toggle="(e) => onToggle(e.id, e.selected)"
+        @toggle="(e) => emit('selected', e)"
         @reload="emit('reload')"
       />
     </ModalWindow>

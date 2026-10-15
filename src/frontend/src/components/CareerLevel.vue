@@ -30,8 +30,8 @@ const exists = defineModel<boolean>("exists", { required: true });
 defineProps<{
   level: string;
   canEdit: boolean;
-  initialSkills: Set<string>;
-  initialTalents: Set<string>;
+  skills: Set<string>;
+  talents: Set<string>;
   whSkillList: Skill[];
   whSkillListLoading: boolean;
   whTalentList: Talent[];
@@ -97,7 +97,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           <div class="flex-1 flex flex-col gap-4">
             <SelectTable
               :disabled="!canEdit"
-              :initSelectedItems="initialSkills"
+              :selected="skills"
               :itemList="whSkillList"
               title="Skills"
               modalTitle="Edit skills"
@@ -111,7 +111,7 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
             />
             <SelectTable
               :disabled="!canEdit"
-              :initSelectedItems="initialTalents"
+              :selected="talents"
               :itemList="whTalentList"
               title="Talents"
               modalTitle="Edit talents"

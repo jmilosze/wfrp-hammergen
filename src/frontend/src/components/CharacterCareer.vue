@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SectionButton from "./SectionButton.vue";
-import { computed, ref, Ref, watch } from "vue";
+import { computed, ref } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
 import SheetTable from "./SheetTable.vue";
@@ -11,27 +11,22 @@ import { IdNumber } from "../utils/idNumber.ts";
 import TextLink from "./TextLink.vue";
 import Edition4eBadge from "./Edition4eBadge.vue";
 
-type CareerWithSelect = {
+// A career level that can be picked; id is the career's id and the level.
+type CareerLevelRow = {
   id: string;
   careerId: string;
   name: string;
-  description: string;
   careerClass: string;
   level: number;
   levelName: string;
-  current: boolean;
-  past: boolean;
 };
-
-function anySelected(careerWithSelect: CareerWithSelect): boolean {
-  return careerWithSelect.current || careerWithSelect.past;
-}
 
 const props = defineProps<{
   disabled?: boolean;
   careerList: Career[];
-  initSelectedCurrentCareer: IdNumber | undefined;
-  initSelectedPastCareers: IdNumber[];
+  // The character's current and past careers, read directly (the parent changes them on the emitted events).
+  currentCareer: IdNumber | undefined;
+  pastCareers: IdNumber[];
   loading?: boolean;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
@@ -43,92 +38,34 @@ const emit = defineEmits<{
   (e: "reload"): void;
 }>();
 
-const careersWithSelect: Ref<Record<string, CareerWithSelect>> = ref({});
-const careersWithSelectList: Ref<CareerWithSelect[]> = ref([]);
-let currentId = "";
-
-// A new current career only updates the ticks, so rows don't move while the modal is open (selected careers go to
-// the top when it is opened again).
-watch(
-  () => props.initSelectedCurrentCareer,
-  (newVal) => {
-    markCurrentCareer(newVal);
-  },
-);
-
-watch(
-  () => props.initSelectedPastCareers,
-  (newVal) => {
-    updateCareersWithSelect(props.initSelectedCurrentCareer, newVal, props.careerList);
-  },
-  { immediate: true },
-);
-
-watch(
-  () => props.careerList,
-  (newVal) => {
-    updateCareersWithSelect(props.initSelectedCurrentCareer, props.initSelectedPastCareers, newVal);
-  },
-  { immediate: true },
-);
-
-function markCurrentCareer(selectedCurrentCareer: IdNumber | undefined) {
-  currentId = "";
-  for (const careerWithSelect of Object.values(careersWithSelect.value)) {
-    careerWithSelect.current =
-      selectedCurrentCareer !== undefined &&
-      careerWithSelect.careerId === selectedCurrentCareer.id &&
-      careerWithSelect.level === selectedCurrentCareer.number;
-    if (careerWithSelect.current) {
-      currentId = careerWithSelect.id;
-    }
-  }
-}
-
-function updateCareersWithSelect(
-  selectedCurrentCareer: IdNumber | undefined,
-  selectedPastCareers: IdNumber[],
-  careerList: Career[],
-) {
-  careersWithSelect.value = {};
-  currentId = "";
-  for (const career of careerList) {
-    for (const i of [1, 2, 3, 4, 5]) {
-      const lvl = career.getLevel(i as 1 | 2 | 3 | 4 | 5);
-      if (lvl.exists) {
-        careersWithSelect.value[career.id + "_" + i] = {
-          id: career.id + "_" + i,
+// Every level of every career, by career name then level.
+const levelRows = computed(() =>
+  [...props.careerList]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .flatMap((career) =>
+      ([1, 2, 3, 4, 5] as const)
+        .filter((i) => career.getLevel(i).exists)
+        .map((i) => ({
+          id: `${career.id}_${i}`,
           careerId: career.id,
           name: career.name,
-          description: career.description,
           careerClass: printClassName(career.careerClass),
           level: i,
-          levelName: lvl.name,
-          current: false,
-          past: false,
-        };
+          levelName: career.getLevel(i).name,
+        })),
+    ),
+);
 
-        if (selectedCurrentCareer && selectedCurrentCareer.id === career.id && selectedCurrentCareer.number === i) {
-          currentId = career.id + "_" + i;
-          careersWithSelect.value[career.id + "_" + i].current = true;
-        }
-        if (selectedPastCareers) {
-          for (const pastCareer of selectedPastCareers) {
-            if (pastCareer.id === career.id && pastCareer.number === i) {
-              careersWithSelect.value[career.id + "_" + i].past = true;
-            }
-          }
-        }
-      }
-    }
-  }
-  careersWithSelectList.value = Object.values(careersWithSelect.value).sort((a, b) => {
-    return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
-  });
+function isCurrent(row: CareerLevelRow): boolean {
+  return props.currentCareer?.id === row.careerId && props.currentCareer.number === row.level;
 }
 
-const selectedPastCareers = computed(() => careersWithSelectList.value.filter((x) => x.past));
-const selectedCurrentCareer = computed(() => careersWithSelectList.value.find((x) => x.current));
+function isPast(row: CareerLevelRow): boolean {
+  return props.pastCareers.some((x) => x.id === row.careerId && x.number === row.level);
+}
+
+const selectedCurrentCareer = computed(() => levelRows.value.find((x) => isCurrent(x)));
+const selectedPastCareers = computed(() => levelRows.value.filter((x) => isPast(x)));
 
 const modalOpen = ref(false);
 
@@ -136,73 +73,42 @@ function onEditClick() {
   if (props.loading) {
     return;
   }
-  careersWithSelectList.value.sort((a, b) => {
-    return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
-  });
   modalOpen.value = true;
 }
 
 // One row per career level, with Current and Past ticks; a level can't be both.
 // Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
 const modalItems = computed(() =>
-  careersWithSelectList.value.map((x) => ({
+  levelRows.value.map((x) => ({
     id: x.id,
     linkId: x.careerId,
     name: x.name,
     description: "",
     note: `Level ${x.level}: ${x.levelName} · ${x.careerClass}`,
     get selected() {
-      return anySelected(x);
+      return isCurrent(x) || isPast(x);
     },
     get choices() {
       return [
-        { key: "current", label: "Current", checked: x.current, disabled: x.past },
-        { key: "past", label: "Past", checked: x.past, disabled: x.current },
+        { key: "current", label: "Current", checked: isCurrent(x), disabled: isPast(x) },
+        { key: "past", label: "Past", checked: isPast(x), disabled: isCurrent(x) },
       ];
     },
   })),
 );
 
+// Ticking Current replaces the current career; unticking it leaves none.
 function onChoose(id: string, key: string) {
-  if (key === "current") {
-    selectNewCurrent(id);
-  } else {
-    emitPastSelected(id);
-    careersWithSelect.value[id].past = !careersWithSelect.value[id].past;
-  }
-}
-
-function selectNewCurrent(id: string) {
-  if (id === currentId) {
-    careersWithSelect.value[currentId].current = false;
-    emitCurrentSelected(currentId);
-    currentId = "";
+  const row = levelRows.value.find((x) => x.id === id);
+  if (row === undefined) {
     return;
   }
-
-  if (currentId in careersWithSelect.value) {
-    careersWithSelect.value[currentId].current = false;
-    emitCurrentSelected(currentId);
+  const value = { id: row.careerId, number: row.level };
+  if (key === "current") {
+    emit("currentSelected", { ...value, selected: !isCurrent(row) });
+  } else {
+    emit("pastSelected", { ...value, selected: !isPast(row) });
   }
-  currentId = id;
-  careersWithSelect.value[currentId].current = true;
-  emitCurrentSelected(currentId);
-}
-
-function emitCurrentSelected(id: string) {
-  emit("currentSelected", {
-    id: careersWithSelect.value[id].careerId,
-    number: careersWithSelect.value[id].level,
-    selected: careersWithSelect.value[id].current,
-  });
-}
-
-function emitPastSelected(id: string) {
-  emit("pastSelected", {
-    id: careersWithSelect.value[id].careerId,
-    number: careersWithSelect.value[id].level,
-    selected: !careersWithSelect.value[id].past,
-  });
 }
 </script>
 
