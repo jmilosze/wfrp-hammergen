@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { StatusTier } from "../../../content/career.ts";
+import { StatusTier } from "@/services/wh/content/career.ts";
 import { generateCoins5e } from "./wealth5e.ts";
 
 describe("wealth5e", () => {

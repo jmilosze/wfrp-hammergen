@@ -1,7 +1,7 @@
 // Talents shared by both editions: species and Random Talents, career talent picks and maximum ranks.
-import { rollDice, RollDiceFn, selectRandom, SelectRandomFn, selectWeighted } from "../../../../../utils/random.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn, selectWeighted } from "@/utils/random.ts";
 import { EntityGroupMap, GroupPicker, resolveEntityGroups } from "./groups.ts";
-import { Talent } from "../../../content/talent.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
 import { GenerationProps } from "./generationProps.ts";
 import {
   Attributes,
@@ -9,9 +9,9 @@ import {
   multiplyAttributes,
   sumAttributes,
   zeroAttributes,
-} from "../../../core/attributes.ts";
-import { fillUpIdNumberRecord } from "../../../../../utils/idNumber.ts";
-import { Character } from "../../character.ts";
+} from "@/services/wh/core/attributes.ts";
+import { fillUpIdNumberRecord } from "@/utils/idNumber.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 const RANDOM_TALENTS_ROLL = 100;
 

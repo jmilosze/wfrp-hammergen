@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import SectionLink from "../../components/SectionLink.vue";
 // Landing page for visitors who are not logged in: what Hammergen is and where to start.
 import { Icon } from "@iconify/vue";
-import TextLink from "../../components/TextLink.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import HomeNotes from "./HomeNotes.vue";
+import type { RouteName } from "@/router.ts";
+import ButtonLink from "@/components/ui/ButtonLink.vue";
 
-const FEATURES = [
+const FEATURES: {
+  icon: string;
+  title: string;
+  text: string;
+  routeName: RouteName;
+  query?: Record<string, string>;
+  linkText: string;
+}[] = [
   {
     icon: "lucide:dices",
     title: "Generate characters",
@@ -43,11 +51,11 @@ const FEATURES = [
     </p>
     <!-- The compendium button spans both columns. -->
     <div class="mt-8 grid grid-cols-2 w-full max-w-md gap-3">
-      <SectionLink icon="lucide:user-plus" routeName="register" variant="dark" size="lg">Create account</SectionLink>
-      <SectionLink icon="lucide:log-in" routeName="login" variant="dark" size="lg">Log in</SectionLink>
-      <SectionLink icon="lucide:book-open" routeName="careers" variant="dark" size="lg" class="col-span-2">
+      <ButtonLink icon="lucide:user-plus" routeName="register" variant="dark" size="lg">Create account</ButtonLink>
+      <ButtonLink icon="lucide:log-in" routeName="login" variant="dark" size="lg">Log in</ButtonLink>
+      <ButtonLink icon="lucide:book-open" routeName="careers" variant="dark" size="lg" class="col-span-2">
         Browse the compendium
-      </SectionLink>
+      </ButtonLink>
     </div>
   </section>
 
@@ -68,5 +76,3 @@ const FEATURES = [
 
   <HomeNotes />
 </template>
-
-<style scoped></style>

@@ -1,13 +1,13 @@
 // 4e skills: species skills (3 × +3, 3 × +5) and career skill advances by level.
-import { selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
-import { EntityGroupMap, GroupPicker, resolveEntityGroups } from "../shared/groups.ts";
-import { Career, GenerationLevel, getCareerSkillsByLevel } from "../../../content/career.ts";
+import { selectRandom, SelectRandomFn } from "@/utils/random.ts";
+import { EntityGroupMap, GroupPicker, resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
+import { Career, GenerationLevel, getCareerSkillsByLevel } from "@/services/wh/content/career.ts";
 import { skillCost4e } from "./experience4e.ts";
-import { chooseConcreteCareerSkills } from "../shared/skills.ts";
-import { Character } from "../../character.ts";
-import { Skill } from "../../../content/skill.ts";
-import { GenerationProps } from "../shared/generationProps.ts";
-import { fillUpIdNumberRecord } from "../../../../../utils/idNumber.ts";
+import { chooseConcreteCareerSkills } from "@/services/wh/character/generation/shared/skills.ts";
+import { Character } from "@/services/wh/character/character.ts";
+import { Skill } from "@/services/wh/content/skill.ts";
+import { GenerationProps } from "@/services/wh/character/generation/shared/generationProps.ts";
+import { fillUpIdNumberRecord } from "@/utils/idNumber.ts";
 
 const SPECIES_ADVANCE_PACKAGES = [
   { count: 3, advances: 3 },

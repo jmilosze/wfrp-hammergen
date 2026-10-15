@@ -1,5 +1,5 @@
 // 5e career talents.
-import { SelectRandomFn } from "../../../../../utils/random.ts";
+import { SelectRandomFn } from "@/utils/random.ts";
 
 // Takes one rank of a random talent that is below its maximum rank; returns false when there is none.
 export function takeCareerTalent5e(

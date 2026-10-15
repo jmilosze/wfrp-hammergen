@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Header from "../../components/PageHeader.vue";
-import TextLink from "../../components/TextLink.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import HammergenFaq from "./HammergenFaq.vue";
 import UpdateList from "./UpdateList.vue";
-import ToggleSwitch from "../../components/ToggleSwitch.vue";
+import ToggleSwitch from "@/components/ui/ToggleSwitch.vue";
 import { useRouteQuery } from "@vueuse/router";
 
 const viewNames = [
@@ -55,7 +55,7 @@ const SOURCE_BOOKS = [
     <ToggleSwitch v-model="currentView" :options="viewNames" label="About view" />
   </div>
   <div v-if="currentView === viewNames[0].value">
-    <Header title="About Hammergen" />
+    <PageHeader title="About Hammergen" />
     <div class="text-2xl font-semibold mt-5">The author</div>
     <p>
       Hi there! Hammergen is a non-commercial hobby project run by an overworked middle-aged man. If you have any
@@ -102,5 +102,3 @@ const SOURCE_BOOKS = [
     <UpdateList />
   </div>
 </template>
-
-<style scoped></style>

@@ -1,16 +1,16 @@
 // 4e career talents and characteristic advances by career level.
-import { Talent } from "../../../content/talent.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
 import {
   Career,
   GenerationLevel,
   getCareerAttributesByLevel,
   getCareerTalentsByLevel,
-} from "../../../content/career.ts";
-import { Attributes, zeroAttributes } from "../../../core/attributes.ts";
-import { selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
+} from "@/services/wh/content/career.ts";
+import { Attributes, zeroAttributes } from "@/services/wh/core/attributes.ts";
+import { selectRandom, SelectRandomFn } from "@/utils/random.ts";
 import { fillUpAdv, generateAdv } from "./characteristics4e.ts";
-import { EntityGroupMap } from "../shared/groups.ts";
-import { calculateMaxTalentRanks, resolveAvailableTalents } from "../shared/talents.ts";
+import { EntityGroupMap } from "@/services/wh/character/generation/shared/groups.ts";
+import { calculateMaxTalentRanks, resolveAvailableTalents } from "@/services/wh/character/generation/shared/talents.ts";
 
 // Number of free attribute advances received at character creation (Level 1)
 const STARTING_ATTRIBUTE_ADVANCES = 5;

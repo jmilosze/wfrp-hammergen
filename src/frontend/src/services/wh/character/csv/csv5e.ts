@@ -1,5 +1,5 @@
 // CSV export of a 5e character (the 4e export is in csv4e.ts).
-import { CharacterFull } from "../characterFull.ts";
+import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 import { csvStr } from "./csv.ts";
 
 export function characterFullToCsv5e(characterFull: CharacterFull): string {

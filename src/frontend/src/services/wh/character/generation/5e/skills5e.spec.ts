@@ -1,9 +1,9 @@
-import { ids, selectFirst } from "../fixtures.ts";
+import { ids, selectFirst } from "@/services/wh/character/generation/fixtures.ts";
 import { genProps5e, testSkills5e } from "./fixtures5e.ts";
 import { describe, expect, test } from "vitest";
-import { SpeciesWithRegion } from "../../../core/species.ts";
-import { Character } from "../../character.ts";
-import { resolveEntityGroups } from "../shared/groups.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
+import { Character } from "@/services/wh/character/character.ts";
+import { resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
 import { allocateCreationCareerAdvances5e, generateSpeciesSkills5e, populateSpeciesSkills5e } from "./skills5e.ts";
 
 describe("skills5e", () => {

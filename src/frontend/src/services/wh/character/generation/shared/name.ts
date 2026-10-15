@@ -1,5 +1,5 @@
 // Random names by species (lists in data/names.ts).
-import { selectRandom } from "../../../../../utils/random.ts";
+import { selectRandom } from "@/utils/random.ts";
 import {
   DWARF_LIST,
   GNOME_LIST,
@@ -9,7 +9,7 @@ import {
   OGRE_LIST,
   SpeciesWithRegion,
   WOOD_ELF_LIST,
-} from "../../../core/species.ts";
+} from "@/services/wh/core/species.ts";
 import {
   DWARF_ELEMENT_1,
   DWARF_ELEMENT_FEMALE,
@@ -44,7 +44,7 @@ import {
   WOOD_ELF_ENDINGS,
   WOOD_ELF_SURNAMES,
 } from "./data/names.ts";
-import { Character } from "../../character.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 export const enum Sex {
   Male = 0,

@@ -1,19 +1,19 @@
-import { copySource, Source, sourceIsValid } from "../core/source.ts";
-import { defineContentApi, ApiResponse } from "../core/api.ts";
-import { Edition, variant } from "../core/edition.ts";
+import { copySource, Source, sourceIsValid } from "@/services/wh/core/source.ts";
+import { defineContentApi, ApiResponse } from "@/services/wh/core/api.ts";
+import { Edition, variant } from "@/services/wh/core/edition.ts";
 import {
   validateIdNumber,
   validFloatFn,
   validIntegerFn,
   validLongDescFn,
   validShortDescFn,
-} from "../core/validators.ts";
-import { Visibility, WhEntity } from "../core/entity.ts";
-import { ValidationStatus } from "../../../utils/validation.ts";
-import { updateSet } from "../../../utils/set.ts";
-import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../../utils/idNumber.ts";
-import { isEqualEntity } from "../../../utils/equal.ts";
-import { IdValue, validateValues } from "../../../utils/idValue.ts";
+} from "@/services/wh/core/validators.ts";
+import { Visibility, WhEntity } from "@/services/wh/core/entity.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
+import { updateSet } from "@/utils/set.ts";
+import { IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "@/utils/idNumber.ts";
+import { isEqualEntity } from "@/utils/equal.ts";
+import { IdValue, validateValues } from "@/utils/idValue.ts";
 export {
   BRASS_PER_GOLD,
   BRASS_PER_SILVER,
@@ -22,7 +22,7 @@ export {
   coinsToBrass,
   printPrice,
   type Coins,
-} from "../../../utils/currency.ts";
+} from "@/utils/currency.ts";
 
 export const enum ItemType {
   Melee = 0,

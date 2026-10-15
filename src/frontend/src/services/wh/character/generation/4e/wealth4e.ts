@@ -1,6 +1,6 @@
 // 4e starting wealth by status.
-import { StatusStanding, StatusTier } from "../../../content/career.ts";
-import { RollDiceFn } from "../../../../../utils/random.ts";
+import { StatusStanding, StatusTier } from "@/services/wh/content/career.ts";
+import { RollDiceFn } from "@/utils/random.ts";
 
 export function generateCoins4e(
   status: StatusTier,

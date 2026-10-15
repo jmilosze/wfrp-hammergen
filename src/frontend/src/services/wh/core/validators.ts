@@ -1,6 +1,6 @@
-import { setValidationStatus, ValidationStatus } from "../../../utils/validation.ts";
+import { setValidationStatus, ValidationStatus } from "@/utils/validation.ts";
 import { Attributes } from "./attributes.ts";
-import { isKey } from "../../../utils/object.ts";
+import { isKey } from "@/utils/object.ts";
 
 export const VERY_SHORT_DESC_REGEX: RegExp = /^[^<>]{0,25}$/;
 

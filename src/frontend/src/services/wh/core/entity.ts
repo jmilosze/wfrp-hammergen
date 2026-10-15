@@ -1,8 +1,15 @@
 import { Source, sourceForEdition, updateSource } from "./source.ts";
-import { ValidationStatus } from "../../../utils/validation.ts";
-import { cloneEntity } from "../../../utils/clone.ts";
-import { isEqualEntity } from "../../../utils/equal.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
+import { cloneEntity } from "@/utils/clone.ts";
+import { isEqualEntity } from "@/utils/equal.ts";
 import { Edition } from "./edition.ts";
+
+// NEW_ID is the id of an entry that is not saved yet; its editor's route uses it too (e.g. /skill/create).
+export const NEW_ID = "create";
+
+export function isNew(id: string): boolean {
+  return id === NEW_ID;
+}
 
 export enum Visibility {
   Private = 0,

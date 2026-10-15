@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { getUserInfo, isUserAdmin, logoutUser } from "./auth.ts";
 
 describe("Auth admin detection", () => {
@@ -8,7 +8,7 @@ describe("Auth admin detection", () => {
     for (const key of Object.keys(storage)) {
       delete storage[key];
     }
-    (globalThis as any).localStorage = {
+    vi.stubGlobal("localStorage", {
       getItem: (key: string) => storage[key] ?? null,
       setItem: (key: string, val: string) => {
         storage[key] = val;
@@ -21,7 +21,7 @@ describe("Auth admin detection", () => {
           delete storage[key];
         }
       },
-    };
+    });
   });
 
   afterEach(() => {

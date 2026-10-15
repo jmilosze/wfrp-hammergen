@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import SectionButton from "../../components/SectionButton.vue";
-import Header from "../../components/PageHeader.vue";
-import AfterSubmit from "../../components/AfterSubmit.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import AfterSubmit from "@/components/account/AfterSubmit.vue";
 import { computed, ref } from "vue";
-import { SubmissionState } from "../../utils/submission.ts";
-import { authRequest } from "../../services/auth.ts";
-import FormInput from "../../components/FormInput.vue";
-import { User, UserApi } from "../../services/user.ts";
-import { setValidationStatus } from "../../utils/validation.ts";
-import { UnauthorizedError } from "../../composables/auth.ts";
-import AlertBlock from "../../components/AlertBlock.vue";
-import AccountCard from "../../components/AccountCard.vue";
+import { SubmissionState } from "@/utils/submission.ts";
+import { authRequest } from "@/services/auth.ts";
+import FormInput from "@/components/form/FormInput.vue";
+import { User, UserApi } from "@/services/user.ts";
+import { setValidationStatus } from "@/utils/validation.ts";
+import { UnauthorizedError } from "@/composables/auth.ts";
+import AlertBlock from "@/components/ui/AlertBlock.vue";
+import AccountCard from "@/components/account/AccountCard.vue";
 import { Icon } from "@iconify/vue";
 
 const apiError = ref("");
@@ -99,7 +99,7 @@ async function submitForm() {
   <AlertBlock v-if="apiError && showApiError" alertType="red" :centered="true" @close="showApiError = false">
     {{ apiError }}
   </AlertBlock>
-  <Header title="Linked users">
+  <PageHeader title="Linked users">
     <p>
       Add the users whose shared content you want to see, by their username (the email they registered with). You then
       see all their shared characters and compendium entries (skills, talents and so on) read-only, so you can, for
@@ -109,7 +109,7 @@ async function submitForm() {
       To share your own characters or compendium entries, mark them as shared in their editor and give your username to
       whoever you want to share with. Once they add you here, they see all your shared content read-only.
     </p>
-  </Header>
+  </PageHeader>
   <div class="my-4 p-4 border-l-4 border-brand bg-parchment-light rounded">
     <p class="font-semibold">Share what your content uses</p>
     <p class="mt-1">
@@ -152,12 +152,12 @@ async function submitForm() {
       <li v-if="user.sharedAccounts.length === 0" class="px-3 py-2 text-neutral-500">No linked users yet.</li>
     </ul>
     <FormInput
-      v-model="newSharedAccount"
+      :modelValue="newSharedAccount"
       title="Add a user (their email)"
       :validationStatus="validNewSharedAccount"
-      @input="newSharedAccount = ($event.target as HTMLInputElement).value.trim()"
+      @update:modelValue="(value: string) => (newSharedAccount = value.trim())"
     >
-      <SectionButton
+      <AppButton
         icon="lucide:plus"
         variant="light"
         iconOnlyWhenNarrow
@@ -167,9 +167,9 @@ async function submitForm() {
         @click="addUsername"
       >
         Add
-      </SectionButton>
+      </AppButton>
     </FormInput>
-    <SectionButton
+    <AppButton
       icon="lucide:check"
       variant="light"
       size="lg"
@@ -178,8 +178,6 @@ async function submitForm() {
       @click="submitForm"
     >
       Apply changes
-    </SectionButton>
+    </AppButton>
   </AccountCard>
 </template>
-
-<style scoped></style>

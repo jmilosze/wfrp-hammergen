@@ -1,6 +1,6 @@
 // 5e starting wealth by status.
-import { StatusStanding, StatusTier } from "../../../content/career.ts";
-import { RollDiceFn } from "../../../../../utils/random.ts";
+import { StatusStanding, StatusTier } from "@/services/wh/content/career.ts";
+import { RollDiceFn } from "@/utils/random.ts";
 
 // Starting wealth by status (p. 39): Brass 20 d + 2d10 per Standing, Silver 10/– + 1d10 per Standing,
 // Gold 2 GC + 1 per Standing.

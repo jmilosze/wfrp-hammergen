@@ -1,7 +1,7 @@
-import { copyCareerLevel, Career, zeroCareerLevel } from "../../../content/career.ts";
+import { copyCareerLevel, Career, zeroCareerLevel } from "@/services/wh/content/career.ts";
 import { genProps4e, testSkills4e } from "./fixtures4e.ts";
 import { describe, expect, test } from "vitest";
-import { Skill } from "../../../content/skill.ts";
+import { Skill } from "@/services/wh/content/skill.ts";
 import {
   generateSpeciesSkills4e,
   CareerSkillsContext,
@@ -9,12 +9,12 @@ import {
   purchaseSingleAdvance,
   populateSpeciesSkills4e,
 } from "./skills4e.ts";
-import { resolveEntityGroups } from "../shared/groups.ts";
-import { selectRandom } from "../../../../../utils/random.ts";
-import { getSelectRandomTest } from "../../../../../testing.ts";
+import { resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
+import { selectRandom } from "@/utils/random.ts";
+import { getSelectRandomTest } from "@/testing.ts";
 import { skillCost4e } from "./experience4e.ts";
-import { SpeciesWithRegion } from "../../../core/species.ts";
-import { Character } from "../../character.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 describe("generateSpeciesSkills4e", () => {
   const dummySkills: Skill[] = [

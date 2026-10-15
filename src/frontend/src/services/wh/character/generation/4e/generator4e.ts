@@ -1,25 +1,26 @@
+import { NEW_ID } from "@/services/wh/core/entity.ts";
 // 4e character generator: species and career are chosen; level 1 creation follows the 4e rulebook, higher
 // levels buy the advances needed to move up each career level.
-import { SpeciesWithRegion } from "../../../core/species.ts";
-import { Career, GenerationLevel } from "../../../content/career.ts";
-import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "../../../../../utils/random.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
+import { Career, GenerationLevel } from "@/services/wh/content/career.ts";
+import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "@/utils/random.ts";
 import { generateFateAndResilience } from "./fate4e.ts";
-import { Talent } from "../../../content/talent.ts";
-import { Skill } from "../../../content/skill.ts";
-import { Character } from "../../character.ts";
-import { generateName } from "../shared/name.ts";
-import { generateDescription } from "../shared/description.ts";
-import { generateRolls } from "../shared/characteristics.ts";
-import { generateClassItems } from "../shared/trappings.ts";
-import { generateStatusAndStanding } from "../shared/status.ts";
-import { generateSpeciesTalents } from "../shared/talents.ts";
-import { resolveEntityGroups } from "../shared/groups.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { Skill } from "@/services/wh/content/skill.ts";
+import { Character } from "@/services/wh/character/character.ts";
+import { generateName } from "@/services/wh/character/generation/shared/name.ts";
+import { generateDescription } from "@/services/wh/character/generation/shared/description.ts";
+import { generateRolls } from "@/services/wh/character/generation/shared/characteristics.ts";
+import { generateClassItems } from "@/services/wh/character/generation/shared/trappings.ts";
+import { generateStatusAndStanding } from "@/services/wh/character/generation/shared/status.ts";
+import { generateSpeciesTalents } from "@/services/wh/character/generation/shared/talents.ts";
+import { resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
 import { generateCareerSkills4e, generateSpeciesSkills4e } from "./skills4e.ts";
 import { generateCareerTalents4e } from "./talents4e.ts";
-import { sumAttributes } from "../../../core/attributes.ts";
-import { getSpeciesAttributes4e } from "../../rules/rules4e.ts";
-import { GenerationProps } from "../shared/generationProps.ts";
-import { defaultSource } from "../../../core/source.ts";
+import { sumAttributes } from "@/services/wh/core/attributes.ts";
+import { getSpeciesAttributes4e } from "@/services/wh/character/rules/rules4e.ts";
+import { GenerationProps } from "@/services/wh/character/generation/shared/generationProps.ts";
+import { defaultSource } from "@/services/wh/core/source.ts";
 import { generateCoins4e } from "./wealth4e.ts";
 
 export interface CharacterGeneration4eContext {
@@ -44,7 +45,7 @@ export function generateCharacter4e(
   const selectRandomFn = randomFns.selectRandomFn ?? selectRandom;
 
   const character = new Character({
-    id: "create",
+    id: NEW_ID,
     edition: "4e",
     source: defaultSource(),
   });

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import SectionButton from "../../components/SectionButton.vue";
-import AccountCard from "../../components/AccountCard.vue";
-import FormInput from "../../components/FormInput.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import AccountCard from "@/components/account/AccountCard.vue";
+import FormInput from "@/components/form/FormInput.vue";
 import { computed, ref } from "vue";
-import TextLink from "../../components/TextLink.vue";
-import { User } from "../../services/user.ts";
-import { SubmissionState } from "../../utils/submission.ts";
-import AfterSubmit from "../../components/AfterSubmit.vue";
-import { setValidationStatus } from "../../utils/validation.ts";
-import { useAuth } from "../../composables/auth.ts";
+import TextLink from "@/components/ui/TextLink.vue";
+import { User } from "@/services/user.ts";
+import { SubmissionState } from "@/utils/submission.ts";
+import AfterSubmit from "@/components/account/AfterSubmit.vue";
+import { setValidationStatus } from "@/utils/validation.ts";
+import { useAuth } from "@/composables/auth.ts";
 import { useRoute } from "vue-router";
 
 const user = ref(new User());
@@ -74,7 +74,7 @@ async function submitForm() {
         title="Password"
         :validationStatus="validCurrentPassword"
       />
-      <SectionButton
+      <AppButton
         icon="lucide:log-in"
         variant="light"
         size="lg"
@@ -83,7 +83,7 @@ async function submitForm() {
         @click="submitForm"
       >
         Log in
-      </SectionButton>
+      </AppButton>
       <template #footer>
         <TextLink routeName="forgotpassword" :sameWindow="true">Forgot your password?</TextLink>
         <p>
@@ -100,5 +100,3 @@ async function submitForm() {
     </AccountCard>
   </div>
 </template>
-
-<style scoped></style>

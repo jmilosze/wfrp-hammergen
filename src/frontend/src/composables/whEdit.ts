@@ -1,11 +1,10 @@
 import { computed, ref, shallowRef, watch, WatchOptions } from "vue";
 import { useAuth } from "./auth.ts";
 import { useEdition } from "./edition.ts";
-import { ContentApi } from "../services/wh/core/api.ts";
-import { Edition, EDITIONS, Variants } from "../services/wh/core/edition.ts";
-import { Visibility, WhProperty } from "../services/wh/core/entity.ts";
-import { SubmissionState } from "../utils/submission.ts";
-import { copySource } from "../services/wh/core/source.ts";
+import { ContentApi } from "@/services/wh/core/api.ts";
+import { Edition, EDITIONS, Variants } from "@/services/wh/core/edition.ts";
+import { Visibility, WhProperty, isNew } from "@/services/wh/core/entity.ts";
+import { SubmissionState } from "@/utils/submission.ts";
 
 function copyVariants<T extends WhProperty>(variants: Variants<T>): Variants<T> {
   const copies: Variants<T> = {};
@@ -24,7 +23,7 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
   const auth = useAuth();
   const { edition: globalEdition } = useEdition();
 
-  if (auth.isAdmin.value && whInstance.id === "create") {
+  if (auth.isAdmin.value && isNew(whInstance.id)) {
     whInstance.visibility = Visibility.Public;
   }
 
@@ -34,7 +33,6 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
   const variants = shallowRef<Variants<T>>({ [edition.value]: start });
   const variantsOriginal = shallowRef<Variants<T>>(copyVariants(variants.value));
   const wh = ref(start);
-  const initSources = ref(copySource(wh.value.source));
 
   const apiError = ref("");
   const showApiError = ref(true);
@@ -46,7 +44,6 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
 
   function show(variant: T) {
     wh.value = variant;
-    initSources.value = copySource(variant.source);
   }
 
   // Switching edition shows that variant; a missing one keeps the previous model (for the header) until added.
@@ -69,7 +66,7 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
   }
 
   async function loadWh(id: string): Promise<void> {
-    if (id === "create") {
+    if (isNew(id)) {
       return;
     }
 
@@ -102,7 +99,7 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
     return false;
   });
 
-  const canEdit = computed(() => wh.value.id === "create" || auth.canEdit(wh.value.ownerId));
+  const canEdit = computed(() => isNew(wh.value.id) || auth.canEdit(wh.value.ownerId));
 
   async function submitForm(): Promise<boolean> {
     submissionState.value.setInProgress();
@@ -121,7 +118,7 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
     showSubmissionStatus.value = true;
 
     try {
-      if (wh.value.id === "create") {
+      if (isNew(wh.value.id)) {
         await elementApi.createDocument(wh.value.visibility, variants.value);
         submissionState.value.setSuccess(`${wh.value.name} created successfully.`);
       } else {
@@ -138,7 +135,7 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
 
   // deleteItem deletes the whole document, all variants.
   async function deleteItem(): Promise<boolean> {
-    if (wh.value.id === "create") {
+    if (isNew(wh.value.id)) {
       return false;
     }
 
@@ -181,7 +178,6 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
     hasVariant,
     addVariant,
     canEdit,
-    initSources,
     apiError,
     showApiError,
     loadWh,
@@ -194,3 +190,6 @@ export function useWhEdit<T extends WhProperty>(whInstance: T, elementApi: Conte
     watchWh,
   };
 }
+
+// WhEdit is a content editor's state, as useWhEdit returns it.
+export type WhEdit<T extends WhProperty> = ReturnType<typeof useWhEdit<T>>;

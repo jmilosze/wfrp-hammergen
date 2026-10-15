@@ -1,5 +1,5 @@
-import { isKey } from "../../../utils/object.ts";
-import { setValidationStatus, ValidationStatus } from "../../../utils/validation.ts";
+import { isKey } from "@/utils/object.ts";
+import { setValidationStatus, ValidationStatus } from "@/utils/validation.ts";
 
 export interface Attributes {
   WS: number;

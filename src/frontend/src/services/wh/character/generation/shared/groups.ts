@@ -1,5 +1,5 @@
 // Group skills and talents: indexing members by group and picking concrete members.
-import { SelectRandomFn } from "../../../../../utils/random.ts";
+import { SelectRandomFn } from "@/utils/random.ts";
 
 export type EntityGroupMap = Record<string, string[]>;
 

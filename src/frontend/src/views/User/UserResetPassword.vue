@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import SectionButton from "../../components/SectionButton.vue";
-import AccountCard from "../../components/AccountCard.vue";
+import { useRouter } from "vue-router";
+import AppButton from "@/components/ui/AppButton.vue";
+import AccountCard from "@/components/account/AccountCard.vue";
 import { computed, ref } from "vue";
-import FormInput from "../../components/FormInput.vue";
-import router from "../../router.ts";
-import { anonRequest } from "../../services/auth.ts";
-import { User, UserApi } from "../../services/user.ts";
-import { SubmissionState } from "../../utils/submission.ts";
-import AfterSubmit from "../../components/AfterSubmit.vue";
-import { setValidationStatus } from "../../utils/validation.ts";
+import FormInput from "@/components/form/FormInput.vue";
+import { anonRequest } from "@/services/auth.ts";
+import { User, UserApi } from "@/services/user.ts";
+import { SubmissionState } from "@/utils/submission.ts";
+import AfterSubmit from "@/components/account/AfterSubmit.vue";
+import { setValidationStatus } from "@/utils/validation.ts";
+
+const router = useRouter();
 
 const props = withDefaults(
   defineProps<{
@@ -87,7 +89,7 @@ async function submitForm() {
         title="Confirm new password"
         :validationStatus="passwordMatch"
       />
-      <SectionButton
+      <AppButton
         icon="lucide:save"
         variant="light"
         size="lg"
@@ -96,9 +98,7 @@ async function submitForm() {
         @click="submitForm"
       >
         Save new password
-      </SectionButton>
+      </AppButton>
     </AccountCard>
   </div>
 </template>
-
-<style scoped></style>

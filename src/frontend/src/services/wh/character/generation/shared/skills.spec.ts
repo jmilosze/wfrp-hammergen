@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { chooseConcreteCareerSkills } from "./skills.ts";
-import { PerGenerationLevel } from "../../../content/career.ts";
-import { getSelectRandomTest } from "../../../../../testing.ts";
+import { PerGenerationLevel } from "@/services/wh/content/career.ts";
+import { getSelectRandomTest } from "@/testing.ts";
 
 describe("chooseConcreteCareerSkills", () => {
   test("replaces grouped skill placeholders with concrete choices without duplication across career levels", () => {

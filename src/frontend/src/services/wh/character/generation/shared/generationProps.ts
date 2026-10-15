@@ -1,6 +1,6 @@
 // Generation data (species skills/talents, Random Talents, class trappings) served by the API per edition.
 import { RandomTalents } from "./talents.ts";
-import { AxiosInstance, AxiosResponse } from "axios";
+import { AxiosInstance } from "axios";
 
 export interface GenerationProps {
   classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];
@@ -16,11 +16,13 @@ export interface GenerationProps5e extends GenerationProps {
 }
 
 export async function getGenerationProps(axiosInstance: AxiosInstance): Promise<GenerationProps> {
-  const serverResp = await axiosInstance.get("/api/wh/generation");
-  return (serverResp as AxiosResponse<{ data: GenerationProps }, any>).data.data;
+  const { data } = await axiosInstance.get<{ data: GenerationProps }>("/api/wh/generation");
+  return data.data;
 }
 
 export async function getGenerationProps5e(axiosInstance: AxiosInstance): Promise<GenerationProps5e> {
-  const serverResp = await axiosInstance.get("/api/wh/generation", { params: { edition: "5e" } });
-  return (serverResp as AxiosResponse<{ data: GenerationProps5e }, any>).data.data;
+  const { data } = await axiosInstance.get<{ data: GenerationProps5e }>("/api/wh/generation", {
+    params: { edition: "5e" },
+  });
+  return data.data;
 }

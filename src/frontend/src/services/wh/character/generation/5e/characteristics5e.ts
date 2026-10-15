@@ -1,7 +1,7 @@
 // 5e characteristics at creation: rolls plus six points over the level 1 career characteristics.
-import { RollDiceFn, SelectRandomFn } from "../../../../../utils/random.ts";
-import { AttributeName, Attributes, getAttributeValue, setAttributeValue } from "../../../core/attributes.ts";
-import { generateRolls } from "../shared/characteristics.ts";
+import { RollDiceFn, SelectRandomFn } from "@/utils/random.ts";
+import { AttributeName, Attributes, getAttributeValue, setAttributeValue } from "@/services/wh/core/attributes.ts";
+import { generateRolls } from "@/services/wh/character/generation/shared/characteristics.ts";
 
 // Kept in order: up to six points over the three level 1 career characteristics (p. 38).
 const CREATION_CHARACTERISTIC_POINTS = 6;

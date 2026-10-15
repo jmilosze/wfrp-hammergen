@@ -6,8 +6,8 @@ import {
   copyAttributes,
   getAttributeValue,
   setAttributeValue,
-} from "../../../core/attributes.ts";
-import { SelectRandomFn } from "../../../../../utils/random.ts";
+} from "@/services/wh/core/attributes.ts";
+import { SelectRandomFn } from "@/utils/random.ts";
 
 const MAX_FILL_UP_TO = 1000;
 

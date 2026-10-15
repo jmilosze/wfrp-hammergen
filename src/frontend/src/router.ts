@@ -1,7 +1,9 @@
+import { NEW_ID } from "@/services/wh/core/entity.ts";
 import {
   createMemoryHistory,
   createRouter,
   createWebHistory,
+  type RouteRecordRaw,
   type RouterHistory,
   type RouteLocationNormalized,
 } from "vue-router";
@@ -16,9 +18,11 @@ declare module "vue-router" {
 import HomePage from "./views/HomePage.vue";
 
 export function isCreationRoute(to: RouteLocationNormalized): boolean {
-  return to.params.id === "create";
+  return to.params.id === NEW_ID;
 }
 
+// The app's routes. RouteName is the union of their names, so a link to a route that doesn't exist fails the type
+// check.
 const routes = [
   {
     path: "/",
@@ -63,131 +67,133 @@ const routes = [
   {
     path: "/prayers",
     name: "prayers",
-    component: () => import("./views/Warhammer/List/ListPrayers.vue"),
+    component: () => import("./views/Content/List/ListPrayers.vue"),
   },
   {
     path: "/prayer/:id",
     name: "prayer",
-    component: () => import("./views/Warhammer/Edit/CreatePrayer.vue"),
+    component: () => import("./views/Content/Edit/EditPrayer.vue"),
     props: true,
   },
   {
     path: "/spells",
     name: "spells",
-    component: () => import("./views/Warhammer/List/ListSpells.vue"),
+    component: () => import("./views/Content/List/ListSpells.vue"),
   },
   {
     path: "/spell/:id",
     name: "spell",
-    component: () => import("./views/Warhammer/Edit/CreateSpell.vue"),
+    component: () => import("./views/Content/Edit/EditSpell.vue"),
     props: true,
   },
   {
     path: "/talents",
     name: "talents",
-    component: () => import("./views/Warhammer/List/ListTalents.vue"),
+    component: () => import("./views/Content/List/ListTalents.vue"),
   },
   {
     path: "/talent/:id",
     name: "talent",
-    component: () => import("./views/Warhammer/Edit/CreateTalent.vue"),
+    component: () => import("./views/Content/Edit/EditTalent.vue"),
     props: true,
   },
   {
     path: "/mutations",
     name: "mutations",
-    component: () => import("./views/Warhammer/List/ListMutations.vue"),
+    component: () => import("./views/Content/List/ListMutations.vue"),
   },
   {
     path: "/mutation/:id",
     name: "mutation",
-    component: () => import("./views/Warhammer/Edit/CreateMutation.vue"),
+    component: () => import("./views/Content/Edit/EditMutation.vue"),
     props: true,
   },
   {
     path: "/properties",
     name: "properties",
-    component: () => import("./views/Warhammer/List/ListProperties.vue"),
+    component: () => import("./views/Content/List/ListProperties.vue"),
   },
   {
     path: "/property/:id",
     name: "property",
-    component: () => import("./views/Warhammer/Edit/CreateProperty.vue"),
+    component: () => import("./views/Content/Edit/EditProperty.vue"),
     props: true,
   },
   {
     path: "/runes",
     name: "runes",
-    component: () => import("./views/Warhammer/List/ListRunes.vue"),
+    component: () => import("./views/Content/List/ListRunes.vue"),
   },
   {
     path: "/rune/:id",
     name: "rune",
-    component: () => import("./views/Warhammer/Edit/CreateRune.vue"),
+    component: () => import("./views/Content/Edit/EditRune.vue"),
     props: true,
   },
   {
     path: "/skills",
     name: "skills",
-    component: () => import("./views/Warhammer/List/ListSkills.vue"),
+    component: () => import("./views/Content/List/ListSkills.vue"),
   },
   {
     path: "/skill/:id",
     name: "skill",
-    component: () => import("./views/Warhammer/Edit/CreateSkill.vue"),
+    component: () => import("./views/Content/Edit/EditSkill.vue"),
     props: true,
   },
   {
     path: "/careers",
     name: "careers",
-    component: () => import("./views/Warhammer/List/ListCareers.vue"),
+    component: () => import("./views/Content/List/ListCareers.vue"),
   },
   {
     path: "/career/:id",
     name: "career",
-    component: () => import("./views/Warhammer/Edit/CreateCareer.vue"),
+    component: () => import("./views/Content/Edit/EditCareer.vue"),
     props: true,
   },
   {
     path: "/items",
     name: "items",
-    component: () => import("./views/Warhammer/List/ListItems.vue"),
+    component: () => import("./views/Content/List/ListItems.vue"),
   },
   {
     path: "/item/:id",
     name: "item",
-    component: () => import("./views/Warhammer/Edit/CreateItem.vue"),
+    component: () => import("./views/Content/Edit/EditItem.vue"),
     props: true,
   },
   {
     path: "/characters",
     name: "characters",
-    component: () => import("./views/Warhammer/List/ListCharacters.vue"),
+    component: () => import("./views/Character/ListCharacters.vue"),
   },
   {
     path: "/character/:id",
     name: "character",
-    component: () => import("./views/Warhammer/Character/EditCharacter.vue"),
+    component: () => import("./views/Character/EditCharacter.vue"),
     props: true,
   },
   {
     path: "/view/character/:id",
     name: "viewCharacter",
-    component: () => import("./views/Warhammer/Character/ViewCharacter.vue"),
+    component: () => import("./views/Character/ViewCharacter.vue"),
     props: true,
   },
   {
     path: "/traits",
     name: "traits",
-    component: () => import("./views/Warhammer/List/ListTraits.vue"),
+    component: () => import("./views/Content/List/ListTraits.vue"),
   },
   {
     path: "/trait/:id",
     name: "trait",
-    component: () => import("./views/Warhammer/Edit/CreateTrait.vue"),
+    component: () => import("./views/Content/Edit/EditTrait.vue"),
     props: true,
   },
-];
+] as const satisfies readonly RouteRecordRaw[];
+
+export type RouteName = (typeof routes)[number]["name"];
 
 export function createHammergenRouter(
   history: RouterHistory = typeof window !== "undefined" ? createWebHistory() : createMemoryHistory(),

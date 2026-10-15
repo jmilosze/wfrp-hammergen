@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import SectionButton from "../../components/SectionButton.vue";
-import AccountCard from "../../components/AccountCard.vue";
-import TextLink from "../../components/TextLink.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import AccountCard from "@/components/account/AccountCard.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
-import FormInput from "../../components/FormInput.vue";
-import { anonRequest } from "../../services/auth.ts";
-import { User, UserApi } from "../../services/user.ts";
-import { SubmissionState } from "../../utils/submission.ts";
-import AfterSubmit from "../../components/AfterSubmit.vue";
-import { setValidationStatus } from "../../utils/validation.ts";
+import FormInput from "@/components/form/FormInput.vue";
+import { anonRequest } from "@/services/auth.ts";
+import { User, UserApi } from "@/services/user.ts";
+import { SubmissionState } from "@/utils/submission.ts";
+import AfterSubmit from "@/components/account/AfterSubmit.vue";
+import { setValidationStatus } from "@/utils/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -83,7 +83,7 @@ async function submitForm() {
       </template>
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormInput v-model="user.email" title="Email" :validationStatus="validEmail" />
-      <SectionButton
+      <AppButton
         icon="lucide:send"
         variant="light"
         size="lg"
@@ -92,7 +92,7 @@ async function submitForm() {
         @click="submitForm"
       >
         Send reset link
-      </SectionButton>
+      </AppButton>
       <div class="p-3 border-l-4 border-brand bg-parchment-light rounded text-sm">
         <p class="font-semibold">No email at all?</p>
         <p class="mt-1">
@@ -107,5 +107,3 @@ async function submitForm() {
     </AccountCard>
   </div>
 </template>
-
-<style scoped></style>

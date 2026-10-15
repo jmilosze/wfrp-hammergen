@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { nextTick, ref } from "vue";
 import { useWhEdit } from "./whEdit.ts";
 import { useEdition } from "./edition.ts";
-import { ContentApi } from "../services/wh/core/api.ts";
-import { Variants } from "../services/wh/core/edition.ts";
-import { Visibility } from "../services/wh/core/entity.ts";
-import { Talent } from "../services/wh/content/talent.ts";
-import { AttributeName } from "../services/wh/core/attributes.ts";
+import { ContentApi } from "@/services/wh/core/api.ts";
+import { Variants } from "@/services/wh/core/edition.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { AttributeName } from "@/services/wh/core/attributes.ts";
 
 vi.hoisted(() => {
   const store = new Map<string, string>();

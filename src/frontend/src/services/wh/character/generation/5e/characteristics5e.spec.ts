@@ -1,6 +1,6 @@
-import { selectFirst } from "../fixtures.ts";
+import { selectFirst } from "@/services/wh/character/generation/fixtures.ts";
 import { describe, expect, test } from "vitest";
-import { AttributeName } from "../../../core/attributes.ts";
+import { AttributeName } from "@/services/wh/core/attributes.ts";
 import { generateRolls5e } from "./characteristics5e.ts";
 
 describe("characteristics5e", () => {

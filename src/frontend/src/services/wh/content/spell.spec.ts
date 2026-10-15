@@ -11,9 +11,9 @@ import {
   SpellLabel,
   SpellType,
 } from "./spell.ts";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
-import { testIsEqualCommonProperties } from "../../../testing.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { testIsEqualTo } from "@/testing.ts";
 
 const spellApiData: SpellApiData = {
   name: "spell",
@@ -58,61 +58,7 @@ test("modelToApi returns expected api spell data", () => {
   expect(modelToApi(spell)).toMatchObject(spellApiData);
 });
 
-testIsEqualCommonProperties("spell", spell);
-
-test("isEqualTo returns true when other spell has the same labels", () => {
-  const otherSpell = spell.copy();
-  otherSpell.classification.labels = new Set([SpellLabel.SpellLabelStealth, SpellLabel.SpellLabelRuin]);
-  expect(spell.isEqualTo(otherSpell)).toBe(true);
-});
-
-describe("isEqualTo returns false", () => {
-  test("when other spell has spell type");
-  {
-    const otherSpell = spell.copy();
-    otherSpell.classification.type = SpellType.SpellTypeArcane;
-    expect(spell.isEqualTo(otherSpell)).toBe(false);
-  }
-
-  test("when other spell has labels that are a subset");
-  {
-    const otherSpell = spell.copy();
-    otherSpell.classification.labels = new Set([SpellLabel.SpellLabelStealth]);
-    expect(spell.isEqualTo(otherSpell)).toBe(false);
-  }
-
-  test("when other spell has equal number of different labels");
-  {
-    const otherSpell = spell.copy();
-    otherSpell.classification.labels = new Set([SpellLabel.SpellLabelBigWaaagh, SpellLabel.SpellLabelNecromancy]);
-    expect(spell.isEqualTo(otherSpell)).toBe(false);
-  }
-
-  test("when other spell has different value of cn");
-  {
-    const otherSpell = spell.copy();
-    otherSpell.cn = 3;
-    expect(spell.isEqualTo(otherSpell)).toBe(false);
-  }
-
-  test("when other spell has different value of range", () => {
-    const otherSpell = spell.copy();
-    otherSpell.range = "otherRange";
-    expect(spell.isEqualTo(otherSpell)).toBe(false);
-  });
-
-  test("when other spell has different value of target", () => {
-    const otherSpell = spell.copy();
-    otherSpell.target = "otherTarget";
-    expect(spell.isEqualTo(otherSpell)).toBe(false);
-  });
-
-  test("when other spell has different value of duration", () => {
-    const otherSpell = spell.copy();
-    otherSpell.duration = "otherDuration";
-    expect(spell.isEqualTo(otherSpell)).toBe(false);
-  });
-});
+testIsEqualTo("spell", spell);
 
 describe("Dark Magic lore", () => {
   test("printSpellLabel prints Lore of Dark Magic", () => {

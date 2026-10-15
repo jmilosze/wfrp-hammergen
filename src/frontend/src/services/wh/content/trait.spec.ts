@@ -1,9 +1,9 @@
 import { Trait, TraitApiData, apiResponseToModel, modelToApi } from "./trait.ts";
 import { expect, test } from "vitest";
-import { CharacterModifiers } from "../core/characterModifiers.ts";
-import { ApiResponse } from "../core/api.ts";
-import { Visibility } from "../core/entity.ts";
-import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "../../../testing.ts";
+import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
+import { ApiResponse } from "@/services/wh/core/api.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { testIsEqualTo } from "@/testing.ts";
 
 const traitGroupApiData: TraitApiData = {
   name: "trait1",
@@ -62,12 +62,4 @@ test("modelToApi returns expected api trait data", () => {
   expect(modelToApi(traitGroup)).toMatchObject(traitGroupApiData);
 });
 
-testIsEqualCommonProperties("trait", traitIndividual);
-
-testIsEqualCharacterModifiers("trait", traitIndividual);
-
-test("isEqualTo returns false when other trait has different value of hasValue", () => {
-  const otherTrait = traitIndividual.copy();
-  otherTrait.hasValue = true;
-  expect(traitIndividual.isEqualTo(otherTrait)).toBe(false);
-});
+testIsEqualTo("trait", traitIndividual);

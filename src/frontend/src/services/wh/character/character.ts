@@ -1,29 +1,35 @@
-import { SpeciesWithRegion } from "../core/species.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { rulesFor } from "./rules/rules.ts";
-import { StatusStanding, StatusTier } from "../content/career.ts";
-import { Attributes, copyAttributes, multiplyAttributes, sumAttributes, zeroAttributes } from "../core/attributes.ts";
-import { CharacterApiResponse, WhApi, createWhApi, ServerEnvelope } from "../core/api.ts";
-import { Edition } from "../core/edition.ts";
+import { StatusStanding, StatusTier } from "@/services/wh/content/career.ts";
+import {
+  Attributes,
+  copyAttributes,
+  multiplyAttributes,
+  sumAttributes,
+  zeroAttributes,
+} from "@/services/wh/core/attributes.ts";
+import { CharacterApiResponse, WhApi, createWhApi, ServerEnvelope } from "@/services/wh/core/api.ts";
+import { Edition } from "@/services/wh/core/edition.ts";
 import {
   validateIdNumber,
   validAttributesFn,
   validIntegerFn,
   validLongDescFn,
   validShortDescFn,
-} from "../core/validators.ts";
-import { Visibility, WhEntity } from "../core/entity.ts";
-import { sourceIsValid } from "../core/source.ts";
-import { CharacterModifiers, ModifierEffect } from "../core/characterModifiers.ts";
+} from "@/services/wh/core/validators.ts";
+import { Visibility, WhEntity } from "@/services/wh/core/entity.ts";
+import { sourceIsValid } from "@/services/wh/core/source.ts";
+import { CharacterModifiers, ModifierEffect } from "@/services/wh/core/characterModifiers.ts";
 import { AxiosInstance } from "axios";
 import { apiResponseToCharacterFull, CharacterFull, CharacterFullApiData } from "./characterFull.ts";
-import { ValidationStatus } from "../../../utils/validation.ts";
-import { updateSet } from "../../../utils/set.ts";
-import { IdValue, validateValues } from "../../../utils/idValue.ts";
-import { copyIdNumberArray, IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "../../../utils/idNumber.ts";
-import { isEqualEntity } from "../../../utils/equal.ts";
-import { Talent } from "../content/talent.ts";
-import { Mutation } from "../content/mutation.ts";
-import { Trait } from "../content/trait.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
+import { updateSet } from "@/utils/set.ts";
+import { IdValue, validateValues } from "@/utils/idValue.ts";
+import { copyIdNumberArray, IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "@/utils/idNumber.ts";
+import { isEqualEntity } from "@/utils/equal.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { Mutation } from "@/services/wh/content/mutation.ts";
+import { Trait } from "@/services/wh/content/trait.ts";
 
 const API_BASE_PATH = "/api/wh/character";
 

@@ -1,0 +1,60 @@
+<script setup lang="ts">
+import { Visibility, NEW_ID } from "@/services/wh/core/entity.ts";
+import { printRuneLabel, Rune, runeApi, runeLabelList } from "@/services/wh/content/rune.ts";
+import { computed, ref } from "vue";
+import { authRequest } from "@/services/auth.ts";
+import SheetTable from "@/components/sheet/SheetTable.vue";
+import SheetField from "@/components/sheet/SheetField.vue";
+import SheetCard from "@/components/sheet/SheetCard.vue";
+import FormTextarea from "@/components/form/FormTextarea.vue";
+import { useWhEdit } from "@/composables/whEdit.ts";
+import ContentEditorPage from "@/components/content/edit/ContentEditorPage.vue";
+import { defaultSource } from "@/services/wh/core/source.ts";
+import LabelPicker from "@/components/picker/LabelPicker.vue";
+import { itemTypeList, printItemType } from "@/services/wh/content/item.ts";
+
+const props = defineProps<{
+  id: string;
+}>();
+
+const newRune = new Rune({
+  name: "New rune",
+  id: NEW_ID,
+  visibility: Visibility.Shared,
+  source: defaultSource(),
+});
+
+const editor = useWhEdit(newRune, runeApi(authRequest));
+const { wh, canEdit } = editor;
+
+await editor.loadWh(props.id);
+
+const validName = computed(() => wh.value.validateName());
+const validDesc = computed(() => wh.value.validateDescription());
+
+const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x), value: x })));
+const labelOptions = ref(runeLabelList.map((x) => ({ text: printRuneLabel(x), value: x })));
+</script>
+
+<template>
+  <ContentEditorPage :id="id" :edit="editor" propertyName="Rune" list="runes">
+    <div class="flex flex-col @3xl:flex-row justify-between text-left gap-4 my-4">
+      <div class="flex-1 flex flex-col gap-4">
+        <SheetTable>
+          <SheetField v-model="wh.name" title="Name" :validationStatus="validName" :disabled="!canEdit" />
+          <LabelPicker
+            v-model="wh.applicableTo"
+            title="Applicable to"
+            :options="applicableToOptions"
+            :disabled="!canEdit"
+            sheetRow
+          />
+          <LabelPicker v-model="wh.labels" title="Labels" :options="labelOptions" :disabled="!canEdit" sheetRow />
+        </SheetTable>
+      </div>
+      <SheetCard title="Description" class="flex-1">
+        <FormTextarea v-model="wh.description" :validationStatus="validDesc" :disabled="!canEdit" bare size="beside" />
+      </SheetCard>
+    </div>
+  </ContentEditorPage>
+</template>

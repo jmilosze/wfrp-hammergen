@@ -21,5 +21,3 @@ defineProps<{ date: string }>();
     </div>
   </div>
 </template>
-
-<style scoped></style>

@@ -1,6 +1,6 @@
 // Status and standing of a career level.
-import { Career, isLevel, StatusStanding, StatusTier } from "../../../content/career.ts";
-import { Character } from "../../character.ts";
+import { Career, isLevel, StatusStanding, StatusTier } from "@/services/wh/content/career.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 export function generateStatusAndStanding(
   career: Career,

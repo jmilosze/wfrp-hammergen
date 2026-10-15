@@ -1,18 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { Source } from "./services/wh/core/source.ts";
-import { CharacterModifiers } from "./services/wh/core/characterModifiers.ts";
-import { Visibility } from "./services/wh/core/entity.ts";
+import { DOMWrapper, RouterLinkStub, VueWrapper } from "@vue/test-utils";
 import { RollDiceFn, SelectRandomFn } from "./utils/random.ts";
-
-export interface WhPropertyExtended {
-  id: string;
-  name: string;
-  description: string;
-  visibility: Visibility;
-  source: Source;
-  isEqualTo(otherWhProperty: WhPropertyExtended): boolean;
-  copy(): WhPropertyExtended;
-}
 
 /**
  * Creates a deterministic mock for `rollDice` that returns roll values from a predetermined sequence.
@@ -50,104 +38,112 @@ export function getSelectRandomTest(...selections: number[]): SelectRandomFn {
   };
 }
 
-export const testIsEqualCommonProperties = (name: string, whProperty: WhPropertyExtended) => {
-  describe("isEqualTo returns true (common properties)", () => {
-    test(`when ${name} are the same`, () => {
-      const whProperty1 = whProperty.copy();
-      const whProperty2 = whProperty.copy();
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(true);
-    });
-  });
+type Path = string[];
 
-  describe("isEqualTo returns false (common properties)", () => {
-    test(`when other ${name} has different value of id`, () => {
-      const whProperty1 = whProperty.copy();
-      const whProperty2 = whProperty.copy();
-      whProperty1.id = "id";
-      whProperty2.id = "otherId";
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
-    });
-
-    test(`when other ${name} has different value of name`, () => {
-      const whProperty1 = whProperty.copy();
-      const whProperty2 = whProperty.copy();
-      whProperty1.name = "name";
-      whProperty2.name = "otherName";
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
-    });
-
-    test(`when other ${name} has different value of description`, () => {
-      const whProperty1 = whProperty.copy();
-      const whProperty2 = whProperty.copy();
-      whProperty1.description = "description";
-      whProperty2.description = "otherDescription";
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
-    });
-
-    test(`when other ${name} has different value of visibility`, () => {
-      const whProperty1 = whProperty.copy();
-      const whProperty2 = whProperty.copy();
-      whProperty1.visibility = Visibility.Public;
-      whProperty2.visibility = Visibility.Private;
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
-    });
-
-    test.each<{ diff: string; source: Source }>([
-      { diff: "fewer sources", source: { 1: "page 2" } },
-      { diff: "more sources", source: { 1: "page 2", 3: "page 5-10", 0: "zxc" } },
-      { diff: "different source values", source: { 1: "zxc", 3: "asd" } },
-      { diff: "different source keys", source: { 2: "page 2", 3: "page 5-10" } },
-    ])(`when other ${name} has $diff`, (t) => {
-      const whProperty1 = whProperty.copy();
-      const whProperty2 = whProperty.copy();
-      whProperty1.source = { 1: "page 2", 3: "page 5-10" };
-      whProperty2.source = t.source;
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
-    });
-  });
-};
-
-interface WhPropertyWithModifiers extends WhPropertyExtended {
-  modifiers: CharacterModifiers;
+// valuePaths lists the paths to every value in a model's data, nested objects included: a value is a primitive, an
+// array, a set or an empty object (e.g. an empty record), which a test changes as a whole.
+function valuePaths(value: unknown, path: Path = []): Path[] {
+  if (value === null || typeof value !== "object" || Array.isArray(value) || value instanceof Set) {
+    return [path];
+  }
+  const keys = Object.keys(value);
+  if (keys.length === 0) {
+    return [path];
+  }
+  return keys.flatMap((key) => valuePaths(Reflect.get(value, key), [...path, key]));
 }
 
-export const testIsEqualCharacterModifiers = (name: string, whProperty: WhPropertyWithModifiers) => {
-  describe("isEqualTo returns false (character modifiers)", () => {
-    test.each([
-      { field: "WS", value: 10 },
-      { field: "BS", value: 10 },
-      { field: "S", value: 10 },
-      { field: "T", value: 10 },
-      { field: "I", value: 10 },
-      { field: "Ag", value: 10 },
-      { field: "Dex", value: 10 },
-      { field: "Int", value: 10 },
-      { field: "WP", value: 10 },
-      { field: "Fel", value: 10 },
-    ])(`when other ${name} has different value of modifier $field`, (t) => {
-      const whProperty1 = whProperty.copy() as WhPropertyWithModifiers;
-      const whProperty2 = whProperty.copy() as WhPropertyWithModifiers;
-      whProperty1.modifiers.attributes = { WS: 1, BS: 2, S: 3, T: 4, I: 5, Ag: 6, Dex: 7, Int: 8, WP: 9, Fel: 0 };
-      whProperty2.modifiers.attributes[t.field as keyof typeof whProperty2.modifiers.attributes] = t.value;
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
+// changed returns a different value of the same kind.
+function changed(value: unknown): unknown {
+  if (typeof value === "string") {
+    return value + "x";
+  }
+  if (typeof value === "number") {
+    return value + 1;
+  }
+  if (typeof value === "boolean") {
+    return !value;
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0 ? value.slice(1) : ["changed"];
+  }
+  if (value instanceof Set) {
+    return new Set([...value, "changed"]);
+  }
+  if (value === undefined) {
+    return "changed";
+  }
+  return { ...Object(value), changed: 1 };
+}
+
+function setAt(target: object, path: Path, value: unknown) {
+  const parent = path.slice(0, -1).reduce<object>((x, key) => Reflect.get(x, key), target);
+  Reflect.set(parent, path[path.length - 1], value);
+}
+
+function getAt(target: object, path: Path): unknown {
+  return path.reduce<unknown>(
+    (x, key) => (x === null || typeof x !== "object" ? undefined : Reflect.get(x, key)),
+    target,
+  );
+}
+
+// testIsEqualTo tests a model's isEqualTo through its own data: a copy is equal, and a copy with any one value changed
+// (found by walking the model, so a new field is covered without a new test) is not. ignored: paths whose changes
+// don't count (e.g. "modifiers"), and everything under them. unordered: array paths whose order doesn't count. The
+// model should have every value filled in (e.g. two or more elements in an unordered array).
+export function testIsEqualTo<T extends object & { copy(): T; isEqualTo(other: unknown): boolean }>(
+  name: string,
+  model: T,
+  { ignored = [], unordered = [] }: { ignored?: string[]; unordered?: string[] } = {},
+) {
+  const isIgnored = (path: Path) => ignored.some((x) => path.join(".") === x || path.join(".").startsWith(x + "."));
+
+  describe(`${name} isEqualTo`, () => {
+    test("is true for a copy", () => {
+      expect(model.isEqualTo(model.copy())).toBe(true);
     });
 
-    test(`when other ${name}  has different value of modifier size`);
-    {
-      const whProperty1 = whProperty.copy() as WhPropertyWithModifiers;
-      const whProperty2 = whProperty.copy() as WhPropertyWithModifiers;
-      whProperty1.modifiers.size = 1;
-      whProperty2.modifiers.size = 2;
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
-    }
+    test("is false when any one value differs, except the ignored ones", () => {
+      const wrong = valuePaths(model).filter((path) => {
+        const other = model.copy();
+        setAt(other, path, changed(getAt(other, path)));
+        return model.isEqualTo(other) !== isIgnored(path);
+      });
+      expect(wrong.map((x) => x.join("."))).toEqual([]);
+    });
 
-    test(`when other ${name}  has different value of modifier movement`);
-    {
-      const whProperty1 = whProperty.copy() as WhPropertyWithModifiers;
-      const whProperty2 = whProperty.copy() as WhPropertyWithModifiers;
-      whProperty1.modifiers.movement = 1;
-      whProperty2.modifiers.movement = 2;
-      expect(whProperty1.isEqualTo(whProperty2)).toBe(false);
+    if (unordered.length > 0) {
+      test(`is true when the order of ${unordered.join(", ")} differs`, () => {
+        for (const key of unordered) {
+          const other = model.copy();
+          const path = key.split(".");
+          const array = getAt(other, path);
+          expect(Array.isArray(array) && array.length > 1).toBe(true);
+          setAt(other, path, Array.isArray(array) ? [...array].reverse() : array);
+          expect(model.isEqualTo(other)).toBe(true);
+        }
+      });
     }
   });
-};
+}
+
+// componentStubs is what component tests mount with: router links are plain links that keep their target (to). Icons
+// are mocked in each component spec, as Iconify would fetch them over the network:
+// vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
+export const componentStubs = { RouterLink: RouterLinkStub };
+
+// Component tests find elements the way a user does, by what they read or a screen reader announces, not by styling.
+// buttonNames lists the buttons by their text, or their aria-label when they show only an icon.
+export function buttonNames(wrapper: VueWrapper | DOMWrapper<Element>): string[] {
+  return wrapper.findAll("button").map((x) => x.text() || (x.attributes("aria-label") ?? ""));
+}
+
+// findButton finds the button with that text or aria-label.
+export function findButton(wrapper: VueWrapper | DOMWrapper<Element>, name: string): DOMWrapper<HTMLButtonElement> {
+  const button = wrapper.findAll("button").find((x) => x.text() === name || x.attributes("aria-label") === name);
+  if (button === undefined) {
+    throw new Error(`No button "${name}" in: ${buttonNames(wrapper).join(", ")}`);
+  }
+  return button;
+}

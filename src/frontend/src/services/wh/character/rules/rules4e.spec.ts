@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { getMaxEncumbrance4e, getSpeciesAttributes4e, getWounds4e } from "./rules4e.ts";
-import { SpeciesWithRegion } from "../../core/species.ts";
-import { Size } from "../size.ts";
+import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
+import { Size } from "@/services/wh/character/size.ts";
 
 describe("getRacialAttributes returns correct value", () => {
   test.each([

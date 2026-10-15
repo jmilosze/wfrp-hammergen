@@ -1,9 +1,9 @@
 import { Attributes, copyAttributes, validAttributesFn, zeroAttributes } from "./attributes.ts";
-import { ValidationStatus } from "../../../utils/validation.ts";
+import { ValidationStatus } from "@/utils/validation.ts";
 import { Edition } from "./edition.ts";
 import { validIntegerFn } from "./validators.ts";
-import { cloneEntity } from "../../../utils/clone.ts";
-import { isEqualEntity } from "../../../utils/equal.ts";
+import { cloneEntity } from "@/utils/clone.ts";
+import { isEqualEntity } from "@/utils/equal.ts";
 
 export const enum ModifierEffect {
   Hardy = 0,

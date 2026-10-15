@@ -1,9 +1,9 @@
-import { defineContentApi, ApiResponse } from "../core/api.ts";
-import { copySource, Source, sourceIsValid } from "../core/source.ts";
-import { Edition, variant } from "../core/edition.ts";
-import { validLongDescFn, validShortDescFn } from "../core/validators.ts";
-import { Visibility, WhEntity } from "../core/entity.ts";
-import { setValidationStatus, ValidationStatus } from "../../../utils/validation.ts";
+import { defineContentApi, ApiResponse } from "@/services/wh/core/api.ts";
+import { copySource, Source, sourceIsValid } from "@/services/wh/core/source.ts";
+import { Edition, variant } from "@/services/wh/core/edition.ts";
+import { validLongDescFn, validShortDescFn } from "@/services/wh/core/validators.ts";
+import { Visibility, WhEntity } from "@/services/wh/core/entity.ts";
+import { setValidationStatus, ValidationStatus } from "@/utils/validation.ts";
 
 const CASTING_NUMBER_RE = /^([1-9][0-9]|[0-9])$/;
 const API_BASE_PATH = "/api/wh/spell";

@@ -1,5 +1,5 @@
 // Encumbrance of a character's equipped and carried trappings; the same rules in both editions.
-import { ItemType } from "../content/item.ts";
+import { ItemType } from "@/services/wh/content/item.ts";
 
 export interface EncumbranceItem {
   type: ItemType;

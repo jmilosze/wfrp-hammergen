@@ -7,7 +7,7 @@ Backlog of known bugs, improvements and feature ideas. It persists between work 
 - When an issue is done, delete its entry (git history keeps it). When it is partly done, update the description.
 - Out-of-scope problems found while working on something else go here, not into the code as TODO comments.
 
-Next free ID: **HG-28**
+Next free ID: **HG-36**
 
 ## Features
 
@@ -94,7 +94,7 @@ Unkeyed `bson.E` struct literals in `internal/dependencies/mongodb/user.go`.
 ### HG-15 One standard picker (select table)
 Frontend · 2026-10-03
 
-The pickers used to choose content (trappings, skills, talents, traits, qualities and flaws…) come in many variants that don't look good together: `SelectTable` (checkbox), `SelectIdNumberTable` (number in the modal), `SelectIdValueTable` (value in the page table, "Add" for repeatable entries), plus the character editor's `CharacterSkills`, `CharacterTalents`, `CharacterItems` and `CharacterCareer`. Goal: one convenient, better-looking pattern. Purely UX.
+The pickers used to choose content (trappings, skills, talents, traits, qualities and flaws…) come in many variants that don't look good together: `SelectTable` (checkbox), `SelectIdNumberTable` (number in the modal), `SelectIdValueTable` (value in the page table, "Add" for repeatable entries), plus the character editor's `CharacterSkills`, `CharacterTalents`, `CharacterItems` and `CharacterCareer`. Goal: one convenient, better-looking pattern. Purely UX. The popups are already one component (`ChecklistPicker`, R5 of `docs/ui-refactoring.md`); what differs is the tables on the page.
 
 ### HG-16 Group skills and talents inside other groups
 Frontend + Data · 2026-10-05
@@ -121,7 +121,30 @@ Frontend · 2026-10-11
 
 An equipped item of type Grimoire is neither listed on the View character sheet (equipped armour/weapons/other only take their own types) nor counted in Encumbrance (`encumbrance.ts`). Carried grimoires are listed and counted. Decide how equipped grimoires show and count.
 
-## Tooling and deployment
+### HG-28 "Shared by me" icon has no colour
+Frontend · 2026-10-15
+
+`components/content/list/visibilityKind.ts` uses `text-shared-by-me-icon`, but `style.css` defines the colour as `--color-shared-icon`. Tailwind's palettes are off, so the class produces nothing and the list rows' "Shared by me" icon takes the text colour. Rename one side to match.
+
+### HG-30 Content list misses an edition switch during loading
+Frontend · 2026-10-15
+
+`useWhList.loadWhList` (`composables/whList.ts`) returns at once while a load is running, so switching edition while a list loads keeps the old edition's list. A failed load also leaves `apiError` set after a later successful load.
+
+### HG-31 4e generator help text
+Frontend · 2026-10-15
+
+In `EditCharacter4e.vue` the generator help repeats "Generating will override all current entries…" twice and has the typo "sills" (skills).
+
+### HG-34 Integer validation message
+Frontend · 2026-10-15
+
+`validIntegerFn` in `services/wh/core/validators.ts` says "This field an integer between … and …" (a verb is missing), shown under every whole-number field (XP, wealth, Sin, Corruption…).
+
+### HG-32 Cache content lists for the session
+Frontend · 2026-10-15
+
+Every visit to a list page, and every opening of an editor, fetches the content lists again (the 5e character editor up to 16 lists plus generation data). Idea: a shared store per content type and edition that `useWhList` reads through, with one request shared by simultaneous callers. Drop a type (both editions) on save, copy and delete, and everything on login/logout (lists depend on the user). Changes from other tabs or linked accounts then show only after a reload; a stale-while-revalidate variant keeps data fresh but saves no requests. Cached entries are shared mutable models, so pages must not change them (`copyWh` pushes into the list today). Measure first (load time and size of the trappings list, opening a 5e character with 4e content) and decide whether it is worth it.
 
 ### HG-21 `deploy.py` turns maintenance off
 Tooling · 2026-09-30
@@ -144,3 +167,8 @@ Compose warns about the obsolete `version` attribute; remove it.
 Tests · 2026-09-30
 
 `src/api-go/test/integration` only covers qualities/flaws; add other content types and characters. Note: these tests run against the `wfrp-mongodb` container on :8081, which writes to the local `hammergenGo` database.
+
+### HG-35 Decide on end-to-end tests (Playwright)
+Tests · 2026-10-15
+
+Decide whether to add a few Playwright smoke tests against the local stack: log in, create/save/delete content, generate/save/view a character, the print view. They would replace the manual browser checks done after UI changes and are the only tests that cover real dialogs, CSS and the real API. Costs: the API and MongoDB (with test data and a test account) must run during the tests, the tests are slower and flakier than unit and component tests, and CI would need the same setup. Component tests (Vitest, happy-dom) already cover component logic.

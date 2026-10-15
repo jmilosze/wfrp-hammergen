@@ -1,5 +1,5 @@
-import { copyCareerLevel, Career, StatusTier, zeroCareerLevel } from "../../content/career.ts";
-import { AttributeName } from "../../core/attributes.ts";
+import { copyCareerLevel, Career, StatusTier, zeroCareerLevel } from "@/services/wh/content/career.ts";
+import { AttributeName } from "@/services/wh/core/attributes.ts";
 
 // Test fixtures shared by the 4e and 5e generation tests.
 

@@ -1,7 +1,7 @@
-import { selectFirst, sumValues, testCareer } from "../fixtures.ts";
+import { selectFirst, sumValues, testCareer } from "@/services/wh/character/generation/fixtures.ts";
 import { testTalents5e } from "./fixtures5e.ts";
 import { describe, expect, test } from "vitest";
-import { zeroAttributes } from "../../../core/attributes.ts";
+import { zeroAttributes } from "@/services/wh/core/attributes.ts";
 import { CAREER_TICKS_5E, generateCareerAdvances5e } from "./advancement5e.ts";
 
 describe("generateCareerAdvances5e", () => {

@@ -1,10 +1,10 @@
-import { Edition } from "../services/wh/core/edition.ts";
-import { SHORT_DESC_LENGTH } from "../services/wh/core/validators.ts";
-import { Visibility } from "../services/wh/core/entity.ts";
-import { WhApi, CharacterApiResponse } from "../services/wh/core/api.ts";
+import { Edition } from "@/services/wh/core/edition.ts";
+import { SHORT_DESC_LENGTH } from "@/services/wh/core/validators.ts";
+import { Visibility } from "@/services/wh/core/entity.ts";
+import { WhApi, CharacterApiResponse } from "@/services/wh/core/api.ts";
 import { Ref, ref } from "vue";
 import { useAuth } from "./auth.ts";
-import { Character, CharacterApiData } from "../services/wh/character/character.ts";
+import { Character, CharacterApiData } from "@/services/wh/character/character.ts";
 
 // useCharacterList lists the user's characters of one edition (characters are single-edition).
 export function useCharacterList(

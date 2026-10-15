@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { Talent } from "../content/talent.ts";
-import { Trait } from "../content/trait.ts";
-import { Career } from "../content/career.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
+import { Trait } from "@/services/wh/content/trait.ts";
+import { Career } from "@/services/wh/content/career.ts";
 import { Species } from "./species.ts";
-import { ArmourGroup, Item, ItemType, MeleeGroup } from "../content/item.ts";
-import { Skill } from "../content/skill.ts";
+import { ArmourGroup, Item, ItemType, MeleeGroup } from "@/services/wh/content/item.ts";
+import { Skill } from "@/services/wh/content/skill.ts";
 import { AttributeName } from "./attributes.ts";
 import { CharacterModifiers, ModifierEffect } from "./characterModifiers.ts";
 

@@ -1,5 +1,5 @@
 // Random descriptions (age, height, eyes, hair) by species (tables in data/descriptions.ts).
-import { rollDice, rollInTable } from "../../../../../utils/random.ts";
+import { rollDice, rollInTable } from "@/utils/random.ts";
 import {
   DWARF_LIST,
   GNOME_LIST,
@@ -9,7 +9,7 @@ import {
   OGRE_LIST,
   SpeciesWithRegion,
   WOOD_ELF_LIST,
-} from "../../../core/species.ts";
+} from "@/services/wh/core/species.ts";
 import {
   DWARF_EYE_ROLLS,
   DWARF_HAIR_ROLLS,
@@ -27,7 +27,7 @@ import {
   WOOD_ELF_EYE_ROLLS,
   WOOD_ELF_HAIR_ROLLS,
 } from "./data/descriptions.ts";
-import { Character } from "../../character.ts";
+import { Character } from "@/services/wh/character/character.ts";
 
 function generateAge(species: SpeciesWithRegion): number {
   if (HUMAN_LIST.includes(species)) {

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import SectionButton from "../../components/SectionButton.vue";
-import AccountCard from "../../components/AccountCard.vue";
-import TextLink from "../../components/TextLink.vue";
+import AppButton from "@/components/ui/AppButton.vue";
+import AccountCard from "@/components/account/AccountCard.vue";
+import TextLink from "@/components/ui/TextLink.vue";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import FormInput from "../../components/FormInput.vue";
-import { anonRequest } from "../../services/auth";
+import FormInput from "@/components/form/FormInput.vue";
+import { anonRequest } from "@/services/auth";
 import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
-import AfterSubmit from "../../components/AfterSubmit.vue";
-import { SubmissionState } from "../../utils/submission.ts";
-import { User, UserApi } from "../../services/user.ts";
-import { setValidationStatus } from "../../utils/validation.ts";
+import AfterSubmit from "@/components/account/AfterSubmit.vue";
+import { SubmissionState } from "@/utils/submission.ts";
+import { User, UserApi } from "@/services/user.ts";
+import { setValidationStatus } from "@/utils/validation.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
@@ -109,10 +109,10 @@ async function submitForm() {
       </template>
       <AfterSubmit :visible="showAfterSubmit" :submissionState="submissionState" @close="showAfterSubmit = false" />
       <FormInput
-        v-model="user.email"
+        :modelValue="user.email"
         title="Email"
         :validationStatus="validEmail"
-        @input="user.email = ($event.target as HTMLInputElement).value.trim()"
+        @update:modelValue="(value: string) => (user.email = value.trim())"
       />
       <FormInput v-model="user.newPassword" type="password" title="Password" :validationStatus="validPassword" />
       <FormInput
@@ -121,7 +121,7 @@ async function submitForm() {
         title="Confirm password"
         :validationStatus="passwordMatch"
       />
-      <SectionButton
+      <AppButton
         icon="lucide:user-plus"
         variant="light"
         size="lg"
@@ -130,12 +130,10 @@ async function submitForm() {
         @click="submitForm"
       >
         Create account
-      </SectionButton>
+      </AppButton>
       <template #footer>
         <p>Already have an account? <TextLink routeName="login" :sameWindow="true">Log in</TextLink></p>
       </template>
     </AccountCard>
   </div>
 </template>
-
-<style scoped></style>
