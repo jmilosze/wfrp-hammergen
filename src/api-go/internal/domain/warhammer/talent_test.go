@@ -18,7 +18,7 @@ func TestTalentValidateEdition(t *testing.T) {
 		"5e with max rank 0":             {Edition5e, Talent{MaxRank: 0}, true},
 		"4e with tests":                  {Edition4e, Talent{Tests: "Charm"}, false},
 		"5e with tests":                  {Edition5e, Talent{MaxRank: 1, Tests: "Charm"}, true},
-		"4e with Strong Back effect":     {Edition4e, Talent{Modifiers: Modifiers{Effects: []EffectType{EffectTypeStrongBack}}}, true},
+		"4e with Strong Back effect":     {Edition4e, Talent{Modifiers: Modifiers{Effects: []EffectType{EffectTypeStrongBack}}}, false},
 		"5e with Strong Back effect":     {Edition5e, Talent{MaxRank: 2, Modifiers: Modifiers{Effects: []EffectType{EffectTypeStrongBack}}}, false},
 	} {
 		t.Run(name, func(t *testing.T) {

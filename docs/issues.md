@@ -73,7 +73,7 @@ Talents, traits and mutations share one `modifiers` block (size, movement, chara
 ### HG-25 4e Strong Back and Sturdy for the Encumbrance limit
 Modifiers · 2026-10-11
 
-The character editor's Max Encumbrance is SB + TB. For 5e it also applies the Strong Back and Sturdy effects, but 4e has no such effects (`modifierEffectsByEdition` only lists Hardy), so 4e characters with these talents get too low a limit. 4e rules: Strong Back adds its rank, Sturdy adds 2 × its rank. Needs the effects enabled for 4e (frontend and Go lists), the public 4e talents flagged (a data write: local, staging, production) and `getMaxEncumbrance4e` to use them.
+Code done (effects allowed in 4e, `getMaxEncumbrance4e` uses them). Left: after deploying the frontend and API, run `db/scripts/fix_4e_strong_back_sturdy.py` (adds the effects to the public 4e talents) on local, staging, then production. Users' own copies of these talents are not changed; their owners can add the effect.
 
 ## Data
 

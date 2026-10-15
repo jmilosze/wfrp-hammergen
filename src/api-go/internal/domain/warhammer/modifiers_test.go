@@ -10,8 +10,8 @@ func TestModifiersValidateEdition(t *testing.T) {
 	}{
 		"4e no effects":     {Edition4e, []EffectType{}, false},
 		"4e hardy":          {Edition4e, []EffectType{EffectTypeHardy}, false},
-		"4e strong back":    {Edition4e, []EffectType{EffectTypeStrongBack}, true},
-		"4e sturdy":         {Edition4e, []EffectType{EffectTypeHardy, EffectTypeSturdy}, true},
+		"4e all effects":    {Edition4e, []EffectType{EffectTypeHardy, EffectTypeStrongBack, EffectTypeSturdy}, false},
+		"4e unknown effect": {Edition4e, []EffectType{3}, true},
 		"5e all effects":    {Edition5e, []EffectType{EffectTypeHardy, EffectTypeStrongBack, EffectTypeSturdy}, false},
 		"5e unknown effect": {Edition5e, []EffectType{3}, true},
 	} {

@@ -21,7 +21,11 @@ const modalOpen = ref(false);
 // The edition's effects, by name.
 const effectList = computed(() =>
   modifierEffectsByEdition[props.edition]
-    .map((effectType) => ({ id: effectType, name: printEffectName(effectType), desc: printEffectDesc(effectType) }))
+    .map((effectType) => ({
+      id: effectType,
+      name: printEffectName(effectType),
+      desc: printEffectDesc(effectType, props.edition),
+    }))
     .sort((a, b) => a.name.localeCompare(b.name)),
 );
 

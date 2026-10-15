@@ -23,7 +23,7 @@ func effectTypeValues() string {
 
 // effectTypesByEdition lists the effects used by each edition's rules.
 var effectTypesByEdition = map[Edition][]EffectType{
-	Edition4e: {EffectTypeHardy},
+	Edition4e: {EffectTypeHardy, EffectTypeStrongBack, EffectTypeSturdy},
 	Edition5e: {EffectTypeHardy, EffectTypeStrongBack, EffectTypeSturdy},
 }
 

@@ -13,7 +13,7 @@ export const enum ModifierEffect {
 
 // Effects used by each edition's rules.
 export const modifierEffectsByEdition: Record<Edition, ModifierEffect[]> = {
-  "4e": [ModifierEffect.Hardy],
+  "4e": [ModifierEffect.Hardy, ModifierEffect.StrongBack, ModifierEffect.Sturdy],
   "5e": [ModifierEffect.Hardy, ModifierEffect.StrongBack, ModifierEffect.Sturdy],
 };
 
@@ -35,14 +35,18 @@ export function printEffectName(effect: ModifierEffect): string {
   }
 }
 
-export function printEffectDesc(effect: ModifierEffect): string {
+export function printEffectDesc(effect: ModifierEffect, edition: Edition): string {
   switch (effect) {
     case ModifierEffect.Hardy:
       return "Increases Wounds by Toughness Bonus.";
     case ModifierEffect.StrongBack:
-      return "Increases the Encumbrance limit by 1, or by 3 when taken twice.";
+      return edition === "4e"
+        ? "Increases the Encumbrance limit by 1 per rank."
+        : "Increases the Encumbrance limit by 1, or by 3 when taken twice.";
     case ModifierEffect.Sturdy:
-      return "Counts Strength Bonus twice for the Encumbrance limit.";
+      return edition === "4e"
+        ? "Increases the Encumbrance limit by 2 per rank."
+        : "Counts Strength Bonus twice for the Encumbrance limit.";
     default:
       return "";
   }

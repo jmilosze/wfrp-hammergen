@@ -41,11 +41,10 @@ describe("forEdition", () => {
     expect([...variant.modifiers.effects]).toEqual([ModifierEffect.Hardy]);
   });
 
-  test("4e drops 5e-only effects", () => {
-    const trait = new Trait({
-      modifiers: new CharacterModifiers({ effects: [ModifierEffect.Hardy, ModifierEffect.Sturdy] }),
-    });
-    expect([...trait.forEdition("4e").modifiers.effects]).toEqual([ModifierEffect.Hardy]);
+  test("4e keeps Strong Back and Sturdy", () => {
+    const effects = [ModifierEffect.Hardy, ModifierEffect.StrongBack, ModifierEffect.Sturdy];
+    const trait = new Trait({ modifiers: new CharacterModifiers({ effects }) });
+    expect([...trait.forEdition("4e").modifiers.effects]).toEqual(effects);
   });
 
   test("5e career keeps only 5e species", () => {

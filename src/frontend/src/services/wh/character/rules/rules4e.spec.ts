@@ -63,6 +63,13 @@ describe("getWounds4e returns correct value", () => {
   });
 });
 
-test("getMaxEncumbrance4e is SB + TB", () => {
-  expect(getMaxEncumbrance4e(34, 41)).toBe(7);
+describe("getMaxEncumbrance4e", () => {
+  test.each([
+    { name: "SB + TB", S: 34, T: 41, strongBack: 0, sturdy: 0, expected: 7 },
+    { name: "Strong Back adds 1 per rank", S: 34, T: 41, strongBack: 2, sturdy: 0, expected: 9 },
+    { name: "Sturdy adds 2 per rank", S: 34, T: 41, strongBack: 0, sturdy: 2, expected: 11 },
+    { name: "both", S: 34, T: 41, strongBack: 1, sturdy: 1, expected: 10 },
+  ])("$name", ({ S, T, strongBack, sturdy, expected }) => {
+    expect(getMaxEncumbrance4e(S, T, strongBack, sturdy)).toBe(expected);
+  });
 });

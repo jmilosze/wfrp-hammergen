@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { CharacterModifiers, ModifierEffect, modifierEffectsByEdition, printEffectName } from "./characterModifiers.ts";
+import {
+  CharacterModifiers,
+  ModifierEffect,
+  modifierEffectsByEdition,
+  printEffectDesc,
+  printEffectName,
+} from "./characterModifiers.ts";
 
 describe("isNonZero returns expected result", () => {
   test("when all characterModifiers are 0", () => {
@@ -21,21 +27,18 @@ describe("isNonZero returns expected result", () => {
 });
 
 describe("modifier effects by edition", () => {
-  test("4e offers only Hardy", () => {
-    expect(modifierEffectsByEdition["4e"]).toEqual([ModifierEffect.Hardy]);
-  });
-
-  test("5e adds Strong Back and Sturdy", () => {
-    expect(modifierEffectsByEdition["5e"]).toEqual([
+  test.each(["4e", "5e"] as const)("%s offers Hardy, Strong Back and Sturdy", (edition) => {
+    expect(modifierEffectsByEdition[edition]).toEqual([
       ModifierEffect.Hardy,
       ModifierEffect.StrongBack,
       ModifierEffect.Sturdy,
     ]);
   });
 
-  test("every effect has a name", () => {
-    for (const effect of modifierEffectsByEdition["5e"]) {
+  test.each(["4e", "5e"] as const)("every %s effect has a name and description", (edition) => {
+    for (const effect of modifierEffectsByEdition[edition]) {
       expect(printEffectName(effect)).not.toBe("");
+      expect(printEffectDesc(effect, edition)).not.toBe("");
     }
   });
 });

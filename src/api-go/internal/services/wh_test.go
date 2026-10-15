@@ -517,7 +517,7 @@ func TestCreateTalentValidatesMaxRankPerEdition(t *testing.T) {
 	}
 }
 
-func TestCreateTraitAndMutationValidateEffectsPerEdition(t *testing.T) {
+func TestCreateTraitAndMutationAcceptEffectsInBothEditions(t *testing.T) {
 	s := newTestWhService(t, &fakeWhDb{})
 	trait := *mock_data.NewMockTraits()[0].Object.(*wh.Trait)
 	trait.Modifiers.Effects = []wh.EffectType{wh.EffectTypeSturdy}
@@ -526,13 +526,11 @@ func TestCreateTraitAndMutationValidateEffectsPerEdition(t *testing.T) {
 
 	for typ, obj := range map[wh.WhType]wh.WhObject{wh.WhTypeTrait: &trait, wh.WhTypeMutation: &mutation} {
 		t.Run(string(typ), func(t *testing.T) {
-			_, err := s.Create(context.Background(), typ, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition5e: obj}}, &auth.Claims{Id: "user1"})
-			if err != nil {
-				t.Errorf("5e: expected no error, got %v", err)
-			}
-			_, err = s.Create(context.Background(), typ, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition4e: obj}}, &auth.Claims{Id: "user1"})
-			if !errors.Is(err, domain.ErrInvalidArguments) || !strings.Contains(err.Error(), "not available in 4e") {
-				t.Errorf("4e: expected effect error, got %v", err)
+			for _, edition := range []wh.Edition{wh.Edition4e, wh.Edition5e} {
+				_, err := s.Create(context.Background(), typ, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{edition: obj}}, &auth.Claims{Id: "user1"})
+				if err != nil {
+					t.Errorf("%s: expected no error, got %v", edition, err)
+				}
 			}
 		})
 	}
