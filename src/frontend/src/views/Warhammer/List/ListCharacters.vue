@@ -5,7 +5,7 @@ import { authRequest } from "../../../services/auth.ts";
 import BrowseList from "../../../components/BrowseList.vue";
 import Header from "../../../components/PageHeader.vue";
 import { computed, watch } from "vue";
-import ActionButtonsCharacter from "../../../components/ActionButtonsCharacter.vue";
+import CharacterRowActions from "../../../components/CharacterRowActions.vue";
 import FilterSidebar from "../../../components/FilterSidebar.vue";
 import { FilterSection } from "../../../components/filterSection.ts";
 import SectionLink from "../../../components/SectionLink.vue";
@@ -89,7 +89,7 @@ function formatCharacterRow(character: Character) {
         <ToolTip :ownerId="ownerId" :visibility="visibility" iconOnly />
       </template>
       <template #end="{ id }: { id: string }">
-        <ActionButtonsCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
+        <CharacterRowActions :id="id" @copy="whList.copyWh(id)" />
       </template>
     </BrowseList>
   </div>

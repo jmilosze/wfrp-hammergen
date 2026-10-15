@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import IconButton from "./IconButton.vue";
 import { computed, ref } from "vue";
 import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import SectionButton from "./SectionButton.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
-import { Icon } from "@iconify/vue";
 import SectionCard from "./SectionCard.vue";
 import { Item, printItemType } from "../services/wh/content/item.ts";
 import { ValidationStatus } from "../utils/validation.ts";
@@ -252,15 +252,12 @@ const sections = computed(() => [
             class="w-14 min-h-8 px-2 border border-neutral-400 rounded-sm bg-editable outline-neutral-700 focus:outline-2"
             @input="onQuantityInput(item.id, section.location, $event)"
           />
-          <button
+          <IconButton
             v-if="!disabled"
-            type="button"
-            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
-            :aria-label="`Remove ${item.name} from ${section.title}`"
+            icon="lucide:x"
+            :label="`Remove ${item.name} from ${section.title}`"
             @click="setNumber(item.id, section.location, 0)"
-          >
-            <Icon icon="lucide:x" class="size-5" />
-          </button>
+          />
         </div>
       </template>
     </SectionCard>

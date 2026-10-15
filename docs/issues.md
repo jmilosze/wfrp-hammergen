@@ -7,7 +7,7 @@ Backlog of known bugs, improvements and feature ideas. It persists between work 
 - When an issue is done, delete its entry (git history keeps it). When it is partly done, update the description.
 - Out-of-scope problems found while working on something else go here, not into the code as TODO comments.
 
-Next free ID: **HG-28**
+Next free ID: **HG-34**
 
 ## Features
 
@@ -120,6 +120,36 @@ Check whether the maintenance page reloads the app when maintenance ends. Tabs s
 Frontend · 2026-10-11
 
 An equipped item of type Grimoire is neither listed on the View character sheet (equipped armour/weapons/other only take their own types) nor counted in Encumbrance (`encumbrance.ts`). Carried grimoires are listed and counted. Decide how equipped grimoires show and count.
+
+### HG-28 "Shared by me" icon has no colour
+Frontend · 2026-10-15
+
+`components/visibilityKind.ts` uses `text-shared-by-me-icon` (and `shared-by-me-*` badge classes), but `style.css` defines the colours as `--color-shared-*`. Tailwind's palettes are off, so the class produces nothing and the list rows' "Shared by me" icon takes the text colour. Rename one side to match.
+
+### HG-29 Character editors hide some load errors
+Frontend · 2026-10-15
+
+The 4e editor shows an alert when the career, spell, prayer, mutation, skill, talent or generation data fails to load, but not traits or trappings. The 5e editor has the same gap and also never shows errors of the 4e lists loaded for "Allow 4e content". See R3 in `docs/ui-refactoring.md`.
+
+### HG-30 Content list misses an edition switch during loading
+Frontend · 2026-10-15
+
+`useWhList.loadWhList` (`composables/whList.ts`) returns at once while a load is running, so switching edition while a list loads keeps the old edition's list. A failed load also leaves `apiError` set after a later successful load.
+
+### HG-31 4e generator help text
+Frontend · 2026-10-15
+
+In `EditCharacter4e.vue` the generator help repeats "Generating will override all current entries…" twice and has the typo "sills" (skills).
+
+### HG-32 Cache content lists for the session
+Frontend · 2026-10-15
+
+Every visit to a list page, and every opening of an editor, fetches the content lists again (the 5e character editor up to 16 lists plus generation data). Idea: a shared store per content type and edition that `useWhList` reads through, with one request shared by simultaneous callers. Drop a type (both editions) on save, copy and delete, and everything on login/logout (lists depend on the user). Changes from other tabs or linked accounts then show only after a reload; a stale-while-revalidate variant keeps data fresh but saves no requests. Cached entries are shared mutable models, so pages must not change them (`copyWh` pushes into the list today). Measure first (load time and size of the trappings list, opening a 5e character with 4e content) and decide whether it is worth it.
+
+### HG-33 Component tests
+Frontend · 2026-10-15
+
+No `.vue` component is tested. Add `@vue/test-utils` and `happy-dom` (or `jsdom`) as dev dependencies and test behaviour through the rendered DOM, not props, in `<Component>.spec.ts` next to the component: `FilterSidebar` (tick, clear, active count, headings), `BrowseList` (search over name/meta/description, page reset, paging), `EditControls` (leave confirmation, Save and add another), `ChecklistPicker`, `TablePagination`. Best written before R1, R2 and R4 of `docs/ui-refactoring.md`, as their safety net.
 
 ## Tooling and deployment
 

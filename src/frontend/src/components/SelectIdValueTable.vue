@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import IconButton from "./IconButton.vue";
 import { computed, reactive, ref, watchEffect } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
@@ -11,7 +12,6 @@ import Edition4eBadge from "./Edition4eBadge.vue";
 import FormInput from "./FormInput.vue";
 import { IdValue, MAX_VALUE_LENGTH } from "../utils/idValue.ts";
 import { ValidationStatus } from "../utils/validation.ts";
-import { Icon } from "@iconify/vue";
 
 // Selects entities together with a value (e.g. Ward 8, Hatred Elves). The modal only picks entities;
 // values are edited in the table of selected entities.
@@ -150,13 +150,11 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
           {{ truncate(row.entity.description, truncateModalDescription) }}
         </td>
         <td v-if="!disabled" :class="tdClass" class="w-0">
-          <button
-            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
-            :aria-label="`Remove ${row.entity.name}`"
+          <IconButton
+            icon="lucide:x"
+            :label="`Remove ${row.entity.name}`"
             @click="emit('remove', { index: row.index, id: row.entity.id })"
-          >
-            <Icon icon="lucide:x" class="size-5" />
-          </button>
+          />
         </td>
       </tr>
     </ListTable>

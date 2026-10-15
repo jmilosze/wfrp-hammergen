@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SheetTitle from "../../../components/SheetTitle.vue";
 import AlertBlock from "../../../components/AlertBlock.vue";
 import Header from "../../../components/PageHeader.vue";
 import { validFloatFn, validIntegerFn } from "../../../services/wh/core/validators.ts";
@@ -456,11 +457,7 @@ watchWh(
         />
         <!-- Qualities, flaws and runes joined under one title band, like the character sheet's groups. -->
         <div>
-          <div
-            class="px-2 py-1 border border-neutral-400 bg-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
-          >
-            Properties
-          </div>
+          <SheetTitle class="border border-neutral-400">Properties</SheetTitle>
           <SelectIdValueTable
             :disabled="!canEdit"
             :selected="Object.entries(wh.properties).map(([id, value]) => ({ id: id, value: value }))"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useModal } from "../composables/modal.ts";
-import { Icon } from "@iconify/vue";
+import IconButton from "./IconButton.vue";
 const props = defineProps<{
   id: string;
   size?: "lg" | "md" | "sm" | "xs";
@@ -32,12 +32,7 @@ if (props.size === "md") {
       >
         <div class="p-3 flex justify-between">
           <div class="text-xl font-semibold text-neutral-900"><slot name="header" /></div>
-          <button
-            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded text-sm p-1"
-            @click="modal.hideModal()"
-          >
-            <Icon icon="lucide:x" class="size-6" />
-          </button>
+          <IconButton icon="lucide:x" size="lg" label="Close" @click="modal.hideModal()" />
         </div>
         <div class="border-b border-neutral-200 w-full" />
         <div class="p-3 overflow-auto grow">

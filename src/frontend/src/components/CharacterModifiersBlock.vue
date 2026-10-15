@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import IconButton from "./IconButton.vue";
 import { Edition } from "../services/wh/core/edition.ts";
 import HintModal from "./HintModal.vue";
 import SectionCard from "./SectionCard.vue";
@@ -17,7 +18,6 @@ import FormInput from "./FormInput.vue";
 import CharacterModifierEffectTable from "./CharacterModifierEffectTable.vue";
 import ListTable from "./ListTable.vue";
 import SectionButton from "./SectionButton.vue";
-import { Icon } from "@iconify/vue";
 
 const props = defineProps<{
   disabled?: boolean;
@@ -188,14 +188,12 @@ const validAtts = computed(() => {
             />
           </td>
           <td v-if="!disabled" class="w-0 px-1 border-b border-neutral-300">
-            <button
-              type="button"
-              class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
-              :aria-label="`Remove ${printAttributeName(row.name)}`"
+            <IconButton
+              icon="lucide:x"
+              size="lg"
+              :label="`Remove ${printAttributeName(row.name)}`"
               @click="removeCharacteristic(row.name)"
-            >
-              <Icon icon="lucide:x" class="size-6" />
-            </button>
+            />
           </td>
         </tr>
       </ListTable>

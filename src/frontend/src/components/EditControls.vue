@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SheetTitle from "./SheetTitle.vue";
 import router from "../router.ts";
 import { returnToPreviousPage } from "../utils/history.ts";
 import { onBeforeRouteLeave } from "vue-router";
@@ -108,11 +109,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="flex flex-col border border-neutral-400 bg-white text-left">
-    <div
-      class="px-2 py-1 border-b border-neutral-300 bg-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
-    >
+    <SheetTitle class="border-b border-neutral-300">
       {{ readOnly ? propertyName : `Save ${propertyName.toLowerCase()}` }}
-    </div>
+    </SheetTitle>
     <div class="flex flex-wrap grow items-center justify-end gap-2 px-2 py-1.5">
       <p
         v-if="showSubmissionStatus && submissionState.message !== '' && !statusExpired"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
+import IconButton from "./IconButton.vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
@@ -120,13 +120,7 @@ function onToggle(id: string, selected: boolean) {
           {{ src.description }}
         </td>
         <td v-if="showRemove" class="py-2 px-2 border-b border-neutral-300 w-0">
-          <button
-            class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
-            :aria-label="`Remove ${src.name}`"
-            @click="onRemoveClick(src.id)"
-          >
-            <Icon icon="lucide:x" class="size-5" />
-          </button>
+          <IconButton icon="lucide:x" :label="`Remove ${src.name}`" @click="onRemoveClick(src.id)" />
         </td>
       </tr>
     </ListTable>

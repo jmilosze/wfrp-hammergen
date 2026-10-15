@@ -4,6 +4,7 @@ import { refDebounced } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
 import ChecklistRow from "./ChecklistRow.vue";
+import SheetTitle from "./SheetTitle.vue";
 import { ChecklistItem } from "./checklistItem.ts";
 import SectionButton from "./SectionButton.vue";
 import SectionLink from "./SectionLink.vue";
@@ -138,11 +139,7 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
     <!-- Rows off screen skip layout and painting (content-visibility), sized at a typical row until first shown. -->
     <div v-else class="border border-neutral-400">
       <template v-for="band in bands" :key="band.title">
-        <div
-          class="px-2 py-1 bg-neutral-200 border-b border-neutral-300 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
-        >
-          {{ band.title }}
-        </div>
+        <SheetTitle class="border-b border-neutral-300">{{ band.title }}</SheetTitle>
         <ChecklistRow
           v-for="item in band.items"
           :key="item.id"

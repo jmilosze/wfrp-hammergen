@@ -7,7 +7,7 @@ import { authRequest } from "../../../services/auth.ts";
 import BrowseList from "../../../components/BrowseList.vue";
 import Header from "../../../components/PageHeader.vue";
 import { computed } from "vue";
-import ActionButtonsNonCharacter from "../../../components/ActionButtonsNonCharacter.vue";
+import CopyButton from "../../../components/CopyButton.vue";
 import FilterSidebar from "../../../components/FilterSidebar.vue";
 import { FilterSection } from "../../../components/filterSection.ts";
 import SectionLink from "../../../components/SectionLink.vue";
@@ -131,7 +131,7 @@ const sections = computed<FilterSection[]>(() => {
         <ToolTip :ownerId="ownerId" :visibility="visibility" iconOnly />
       </template>
       <template #end="{ id }: { id: string }">
-        <ActionButtonsNonCharacter :id="id" @copy="(copiedId) => whList.copyWh(copiedId)" />
+        <CopyButton class="my-1" @copy="whList.copyWh(id)" />
       </template>
     </BrowseList>
   </div>

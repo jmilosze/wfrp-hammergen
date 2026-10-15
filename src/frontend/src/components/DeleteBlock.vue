@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SheetTitle from "./SheetTitle.vue";
 import { nextTick, ref } from "vue";
 import DeleteModal from "./DeleteModal.vue";
 import SectionButton from "./SectionButton.vue";
@@ -38,11 +39,7 @@ async function onConfirmDelete() {
 
 <template>
   <div class="flex flex-col border border-neutral-400 bg-white text-left">
-    <div
-      class="px-2 py-1 border-b border-neutral-300 bg-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
-    >
-      Delete {{ propertyName.toLowerCase() }}
-    </div>
+    <SheetTitle class="border-b border-neutral-300">Delete {{ propertyName.toLowerCase() }}</SheetTitle>
     <div class="flex grow items-center justify-between gap-2 px-2 py-1.5">
       <p class="flex-1 min-w-0 text-sm">
         The {{ propertyName.toLowerCase() }} and all its data will be deleted. It will be impossible to recover.

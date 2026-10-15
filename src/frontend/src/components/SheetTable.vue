@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SheetTitle from "./SheetTitle.vue";
 // A table of labelled cells in the style of the paper character sheet. Cells (SheetField, SheetSelect) sit in a
 // grid that drops to one column when narrow; the 1px gaps show the background and draw the cell borders.
 // Editable cells (SheetField, SheetSelect) have a faint yellow fill; read-only and calculated cells are white.
@@ -23,12 +24,7 @@ const COLUMNS_CLASS: Record<Columns, string> = {
 <template>
   <div class="@container flex flex-col font-sheet lining-nums [&_button]:font-sans print:break-inside-avoid">
     <div class="flex flex-col grow gap-px border border-neutral-400 bg-neutral-300">
-      <div
-        v-if="title"
-        class="px-2 py-1 bg-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600 select-none"
-      >
-        {{ title }}
-      </div>
+      <SheetTitle v-if="title">{{ title }}</SheetTitle>
       <div class="flex grow gap-px">
         <div :class="COLUMNS_CLASS[columns]" class="grid flex-1 min-w-0 gap-px">
           <slot />

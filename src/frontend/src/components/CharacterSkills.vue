@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
+import IconButton from "./IconButton.vue";
 import { printSkillType, Skill } from "../services/wh/content/skill.ts";
 import { computed, ref, Ref, watch } from "vue";
 import { Attributes, getAttributeValue, printAttributeName } from "../services/wh/core/attributes.ts";
@@ -171,13 +171,7 @@ function setNumber(id: string, number: number) {
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.number }}</td>
             <td class="py-2 px-2 border-b border-neutral-300">{{ src.attributeValue + src.number }}</td>
             <td v-if="!disabled" class="py-2 px-2 border-b border-neutral-300 w-0">
-              <button
-                class="text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 rounded p-1"
-                :aria-label="`Remove ${src.name}`"
-                @click="removeSkill(src.id)"
-              >
-                <Icon icon="lucide:x" class="size-5" />
-              </button>
+              <IconButton icon="lucide:x" :label="`Remove ${src.name}`" @click="removeSkill(src.id)" />
             </td>
           </tr>
         </tbody>
