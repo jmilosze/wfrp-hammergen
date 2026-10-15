@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { RouterLinkStub } from "@vue/test-utils";
 import { Source } from "./services/wh/core/source.ts";
 import { CharacterModifiers } from "./services/wh/core/characterModifiers.ts";
 import { Visibility } from "./services/wh/core/entity.ts";
@@ -151,3 +152,8 @@ export const testIsEqualCharacterModifiers = (name: string, whProperty: WhProper
     }
   });
 };
+
+// componentStubs is what component tests mount with: router links are plain links that keep their target (to). Icons
+// are mocked in each component spec, as Iconify would fetch them over the network:
+// vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
+export const componentStubs = { RouterLink: RouterLinkStub };

@@ -51,6 +51,7 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
 - Large data tables live in their own files (e.g. `generation/shared/data/names.ts`).
 - Edition-specific code lives in `4e/` / `5e/` folders (or files) with the edition in the file name (`skills4e.ts`, `rules5e.ts`); shared code has no suffix.
 - Tests: one `<module>.spec.ts` next to the module it tests. Test only exported functions that other code uses; helpers used by a single tested function are tested through it and not exported. Shared test helpers sit next to the specs (`fixtures*.ts`) or in `src/testing.ts`. ESLint forbids app code from importing specs, fixtures, `testing.ts` or `vitest`.
+- Component tests (`<Component>.spec.ts` next to the `.vue` file) start with `// @vitest-environment happy-dom`, mount with `@vue/test-utils` and `componentStubs` (`src/testing.ts`), and mock `@iconify/vue` (Iconify would fetch icons over the network). They test what the user sees and does (rendered rows, clicks, typing, emitted events), not internals. `vue-tsc` also reports component tags used without an import (`checkUnknownComponents` in `tsconfig.json`).
 
 ## Editions (4e and 5e)
 

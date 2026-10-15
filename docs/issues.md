@@ -146,13 +146,6 @@ Frontend · 2026-10-15
 
 Every visit to a list page, and every opening of an editor, fetches the content lists again (the 5e character editor up to 16 lists plus generation data). Idea: a shared store per content type and edition that `useWhList` reads through, with one request shared by simultaneous callers. Drop a type (both editions) on save, copy and delete, and everything on login/logout (lists depend on the user). Changes from other tabs or linked accounts then show only after a reload; a stale-while-revalidate variant keeps data fresh but saves no requests. Cached entries are shared mutable models, so pages must not change them (`copyWh` pushes into the list today). Measure first (load time and size of the trappings list, opening a 5e character with 4e content) and decide whether it is worth it.
 
-### HG-33 Component tests
-Frontend · 2026-10-15
-
-No `.vue` component is tested. Add `@vue/test-utils` and `happy-dom` (or `jsdom`) as dev dependencies and test behaviour through the rendered DOM, not props, in `<Component>.spec.ts` next to the component: `FilterSidebar` (tick, clear, active count, headings), `BrowseList` (search over name/meta/description, page reset, paging), `EditControls` (leave confirmation, Save and add another), `ChecklistPicker`, `TablePagination`. Best written before R1, R2 and R4 of `docs/ui-refactoring.md`, as their safety net.
-
-## Tooling and deployment
-
 ### HG-21 `deploy.py` turns maintenance off
 Tooling · 2026-09-30
 
