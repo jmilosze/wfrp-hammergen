@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { splitQuery, useListQuery, useSourceQuery, useWhList } from "../../../composables/whList.ts";
+import { useFilterModel, useListQuery, useSourceFilter, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
 import {
   getAllowedLabels,
@@ -12,48 +12,29 @@ import {
   spellTypeList,
 } from "../../../services/wh/content/spell.ts";
 import { authRequest } from "../../../services/auth.ts";
-import BrowseList from "../../../components/BrowseList.vue";
-import Header from "../../../components/PageHeader.vue";
+import ContentListPage from "../../../components/ContentListPage.vue";
 import { computed, watch } from "vue";
-import CopyButton from "../../../components/CopyButton.vue";
-import FilterSidebar from "../../../components/FilterSidebar.vue";
 import { FilterSection } from "../../../components/filterSection.ts";
-import SectionLink from "../../../components/SectionLink.vue";
-import { useAuth } from "../../../composables/auth.ts";
-import AlertBlock from "../../../components/AlertBlock.vue";
-import { useRouteQuery } from "@vueuse/router";
-import ToolTip from "../../../components/ToolTip.vue";
 
 const { edition } = useEdition();
 const whList = useWhList(spellApi(authRequest), edition);
 await whList.loadWhList();
 
-const auth = useAuth();
-
 // The filters, kept in the query string.
-const searchTerm = useRouteQuery("search", "");
-const sourceTerm = splitQuery(useSourceQuery(edition));
+const source = useSourceFilter(whList.whList, edition, true);
 // A label is "type:label" ("type:no" for spells of the type without labels), as labels depend on the type.
 const typeTerm = useListQuery("type");
 const labelTerm = useListQuery("label");
 
-const filters = computed({
-  get: () => ({ type: typeTerm.value, label: labelTerm.value, source: sourceTerm.value }),
-  set: (value: Record<string, string[]>) => {
-    typeTerm.value = value.type ?? [];
-    labelTerm.value = value.label ?? [];
-    sourceTerm.value = value.source ?? [];
-  },
-});
+const filters = useFilterModel({ type: typeTerm, label: labelTerm, source: source.term });
 
 // In a section an entry matches any ticked value; the sections combine. Labels only narrow down their own type.
 const items = computed(() =>
   whList.whList.value
-    .filter((wh) => sourceTerm.value.length === 0 || sourceTerm.value.some((x) => x in wh.source))
+    .filter((wh) => source.matches(wh))
     .filter((wh) => typeTerm.value.length === 0 || typeTerm.value.includes(wh.classification.type.toString()))
     .filter((wh) => matchesLabels(wh))
-    .map((x) => formatSpellRow(x))
-    .sort((a, b) => a.name.localeCompare(b.name)),
+    .map((x) => formatSpellRow(x)),
 );
 
 function matchesLabels(spell: Spell): boolean {
@@ -101,12 +82,7 @@ const sections = computed<FilterSection[]>(() => {
         { text: "No label", value: `${type}:no`, heading: printSpellType(type) },
       ]),
     },
-    {
-      key: "source",
-      title: "Source",
-      collapsed: true,
-      options: whList.filteredSourceOptions.value.filter((x) => x.value !== ""),
-    },
+    source.section.value,
   ];
 });
 
@@ -120,39 +96,12 @@ watch(typeTerm, (types) => {
 </script>
 
 <template>
-  <AlertBlock
-    v-if="whList.apiError.value && whList.showApiError.value"
-    alertType="red"
-    :centered="true"
-    @close="whList.showApiError.value = false"
-  >
-    {{ whList.apiError.value }}
-  </AlertBlock>
-  <Header title="Spells" />
-  <div class="flex flex-col @3xl/page:flex-row gap-4">
-    <FilterSidebar v-model="filters" :sections="sections">
-      <template v-if="auth.loggedIn.value" #actions>
-        <SectionLink icon="lucide:plus" variant="dark" routeName="spell" :params="{ id: 'create' }">
-          Create new
-        </SectionLink>
-      </template>
-    </FilterSidebar>
-    <BrowseList v-model="searchTerm" :items="items" routeName="spell" class="flex-1 min-w-0">
-      <!-- Beside the search, except on very small screens, where it is beside the Filters button. -->
-      <span v-if="auth.loggedIn.value" class="hidden @md/page:flex">
-        <SectionLink icon="lucide:plus" variant="dark" routeName="spell" :params="{ id: 'create' }">
-          Create new
-        </SectionLink>
-      </span>
-
-      <template #badge="{ ownerId, visibility }: { ownerId: string; visibility: number }">
-        <ToolTip :ownerId="ownerId" :visibility="visibility" iconOnly />
-      </template>
-      <template #end="{ id }: { id: string }">
-        <CopyButton class="my-1" @copy="whList.copyWh(id)" />
-      </template>
-    </BrowseList>
-  </div>
+  <ContentListPage
+    v-model:filters="filters"
+    title="Spells"
+    routeName="spell"
+    :items="items"
+    :sections="sections"
+    :list="whList"
+  />
 </template>
-
-<style scoped></style>

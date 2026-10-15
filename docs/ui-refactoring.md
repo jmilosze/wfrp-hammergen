@@ -73,8 +73,7 @@ src/
       VisibilityField.vue      (PublicPropertyBox)
     content/
       list/                    ContentListPage.vue (new), BrowseList.vue, browseRow.ts, FilterSidebar.vue,
-                               filterSection.ts, VisibilityIcon.vue (ToolTip), visibilityKind.ts,
-                               CopyButton.vue (ActionButtonsNonCharacter)
+                               filterSection.ts, VisibilityIcon.vue (ToolTip), visibilityKind.ts
       edit/                    ContentEditorPage.vue (new), MissingEditionVariant.vue, SourceTable.vue,
                                ModifiersBlock.vue (CharacterModifiersBlock), ModifierEffectTable.vue
                                (CharacterModifierEffectTable), CareerLevel.vue, CareerReferencesTable.vue,
@@ -115,14 +114,16 @@ Notes:
 Each one stands alone and can be done, checked and committed on its own. Sizes are rough: S under an hour, M a few
 hours, L a day or more.
 
-### R1 One list page component (M)
+### R1 One list page component (M) — done 2026-10-15
 
-A `ContentListPage.vue` that renders the alert, header, filter sidebar, Create new links (both places), the
-`BrowseList` with the visibility icon and the Copy button. Each `List*.vue` keeps only what is its own: the API, the
-row meta line and its extra filters. The source filter (`splitQuery(useSourceQuery(edition))`, the `filters`
-computed, the Source section) moves into a helper in `composables/whList.ts`. `BrowseRow` gets `ownerId` and
-`visibility`, so the slot types stop being written inline. The `"Any source"` option, added by `whList.ts` and then
-filtered out by every list page, goes. `ListCharacters.vue` uses the same component with its own row actions.
+`ContentListPage.vue` renders a list page: the load error, the title, the `FilterSidebar` with Create new, and the
+`BrowseList` (search in the query string, rows sorted by name) with the visibility icon and Copy on each row; its
+`actions` slot replaces Copy (the characters list puts `CharacterRowActions` there). Each `List*.vue` keeps only its
+API, its row meta line and its filters. In `composables/whList.ts`, `useSourceFilter` (the ticked sources, `matches`
+and the Source section) and `useFilterModel` (the filters joined for the sidebar) replace the per-page source code,
+`useSourceQuery`, `filteredSourceOptions` with its unused "Any source" option, and the unused `sourceValues`.
+`BrowseRow` has `ownerId` and `visibility`, so the slot types are no longer written inline. `CopyButton.vue` is gone.
+The 11 list pages went from 1,384 to 819 lines.
 
 ### R2 One content editor shell (M)
 

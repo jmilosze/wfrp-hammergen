@@ -6,27 +6,10 @@ import { computed, MaybeRefOrGetter, Ref, ref, toValue, watch, WritableComputedR
 import { source } from "../services/wh/core/source.ts";
 import { useAuth } from "./auth.ts";
 import { useRouteQuery } from "@vueuse/router";
-
-const sourceOptions: { text: string; value: string }[] = [{ text: "Any source", value: "" }];
-for (const [key, value] of Object.entries(source)) {
-  sourceOptions.push({ text: value, value: key });
-}
-
-// useSourceQuery is the list's source filter, kept in the "source" query string. It is cleared when the edition
-// changes, as the editions share no sources: a filter from the other edition would leave the list empty.
-export function useSourceQuery(edition: MaybeRefOrGetter<Edition>): Ref<string> {
-  const sourceTerm = useRouteQuery("source", "");
-  watch(
-    () => toValue(edition),
-    () => {
-      sourceTerm.value = "";
-    },
-  );
-  return sourceTerm;
-}
+import { FilterSection } from "../components/filterSection.ts";
 
 // splitQuery views a comma-separated query string value as a list, e.g. the ticked options of a list filter.
-export function splitQuery(term: Ref<string>): WritableComputedRef<string[]> {
+function splitQuery(term: Ref<string>): WritableComputedRef<string[]> {
   return computed({
     get: () => (term.value === "" ? [] : term.value.split(",")),
     set: (values) => {
@@ -38,6 +21,56 @@ export function splitQuery(term: Ref<string>): WritableComputedRef<string[]> {
 // useListQuery is a multi-value list filter kept in the named query string value.
 export function useListQuery(name: string): WritableComputedRef<string[]> {
   return splitQuery(useRouteQuery(name, ""));
+}
+
+// useFilterModel joins a list page's filters into the value of its FilterSidebar: each key is a section's key.
+export function useFilterModel(terms: Record<string, Ref<string[]>>): WritableComputedRef<Record<string, string[]>> {
+  return computed({
+    get: () => Object.fromEntries(Object.entries(terms).map(([key, term]) => [key, term.value])),
+    set: (value) => {
+      for (const [key, term] of Object.entries(terms)) {
+        term.value = value[key] ?? [];
+      }
+    },
+  });
+}
+
+// useSourceFilter is a list's Source filter: the ticked sources, kept in the "source" query string; matches, whether
+// an entry has one of them; and the filter section, offering the sources some entry has (Custom first). The ticked
+// sources are cleared when the edition changes, as the editions share no sources: a filter from the other edition
+// would leave the list empty. collapsed: the section starts folded (it is not the list's only filter).
+export function useSourceFilter<T extends WhProperty>(
+  whList: Ref<T[]>,
+  edition: MaybeRefOrGetter<Edition>,
+  collapsed: boolean,
+) {
+  const sourceQuery = useRouteQuery("source", "");
+  watch(
+    () => toValue(edition),
+    () => {
+      sourceQuery.value = "";
+    },
+  );
+  const term = splitQuery(sourceQuery);
+
+  function matches(wh: T): boolean {
+    return term.value.length === 0 || term.value.some((x) => x in wh.source);
+  }
+
+  const section = computed<FilterSection>(() => {
+    const sourcesInData = new Set(whList.value.flatMap((wh) => Object.keys(wh.source)));
+    const options = Object.entries(source)
+      .filter(([key]) => sourcesInData.has(key))
+      .map(([key, text]) => ({ text, value: key }))
+      .sort((a, b) => {
+        if (a.text === "Custom") return -1;
+        if (b.text === "Custom") return 1;
+        return a.text.localeCompare(b.text);
+      });
+    return { key: "source", title: "Source", collapsed, options };
+  });
+
+  return { term, matches, section };
 }
 
 // useWhList loads one edition of a content type and reloads when the edition changes.
@@ -100,26 +133,6 @@ export function useWhList<T extends WhProperty>(elementApi: ContentApi<T>, editi
     }
   }
 
-  const filteredSourceOptions = computed(() => {
-    const sourcesInData: Set<string> = new Set();
-    for (const wh of whList.value) {
-      for (const source of Object.keys(wh.source)) {
-        sourcesInData.add(source);
-      }
-    }
-    return sourceOptions
-      .filter((x) => sourcesInData.has(x.value) || x.value === "")
-      .sort((a, b) => {
-        if (a.text === "Any source") return -1;
-        if (b.text === "Any source") return 1;
-        if (a.text === "Custom") return -1;
-        if (b.text === "Custom") return 1;
-        return a.text.localeCompare(b.text);
-      });
-  });
-
-  const sourceValues = sourceOptions.map((x) => x.value);
-
   watch(
     () => toValue(edition),
     () => loadWhList(),
@@ -132,7 +145,5 @@ export function useWhList<T extends WhProperty>(elementApi: ContentApi<T>, editi
     loadWhList,
     loading,
     copyWh,
-    filteredSourceOptions,
-    sourceValues,
   };
 }

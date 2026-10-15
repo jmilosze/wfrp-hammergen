@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { splitQuery, useListQuery, useSourceQuery, useWhList } from "../../../composables/whList.ts";
+import { useFilterModel, useListQuery, useSourceFilter, useWhList } from "../../../composables/whList.ts";
 import { useEdition } from "../../../composables/edition.ts";
 import {
   Item,
@@ -17,48 +17,28 @@ import {
   printArmourGroup,
 } from "../../../services/wh/content/item.ts";
 import { authRequest } from "../../../services/auth.ts";
-import BrowseList from "../../../components/BrowseList.vue";
-import Header from "../../../components/PageHeader.vue";
+import ContentListPage from "../../../components/ContentListPage.vue";
 import { computed, watch } from "vue";
-import CopyButton from "../../../components/CopyButton.vue";
-
-import FilterSidebar from "../../../components/FilterSidebar.vue";
 import { FilterSection } from "../../../components/filterSection.ts";
-import SectionLink from "../../../components/SectionLink.vue";
-import { useAuth } from "../../../composables/auth.ts";
-import AlertBlock from "../../../components/AlertBlock.vue";
-import { useRouteQuery } from "@vueuse/router";
-import ToolTip from "../../../components/ToolTip.vue";
 
 const { edition } = useEdition();
 const whList = useWhList(itemApi(authRequest), edition);
 await whList.loadWhList();
 
-const searchTerm = useRouteQuery("search", "");
 // The filters, kept in the query string. A group is "type:group", as groups are numbered per type.
-const sourceTerm = splitQuery(useSourceQuery(edition));
+const source = useSourceFilter(whList.whList, edition, true);
 const typeTerm = useListQuery("type");
 const groupTerm = useListQuery("group");
 
-const filters = computed({
-  get: () => ({ type: typeTerm.value, group: groupTerm.value, source: sourceTerm.value }),
-  set: (value: Record<string, string[]>) => {
-    typeTerm.value = value.type ?? [];
-    groupTerm.value = value.group ?? [];
-    sourceTerm.value = value.source ?? [];
-  },
-});
-
-const auth = useAuth();
+const filters = useFilterModel({ type: typeTerm, group: groupTerm, source: source.term });
 
 // In a section an item matches any ticked value; the sections combine. Groups only narrow down their own type.
 const items = computed(() => {
   return whList.whList.value
-    .filter((wh) => sourceTerm.value.length === 0 || sourceTerm.value.some((x) => x in wh.source))
+    .filter((wh) => source.matches(wh))
     .filter((wh) => typeTerm.value.length === 0 || typeTerm.value.includes(wh.type.toString()))
     .filter((wh) => matchesGroups(wh))
-    .map((x) => formatItemRow(x))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .map((x) => formatItemRow(x));
 });
 
 function itemGroup(wh: Item): number | undefined {
@@ -123,12 +103,7 @@ const sections = computed<FilterSection[]>(() => {
         groupOptions(type).map((x) => ({ text: x.text, value: `${type}:${x.value}`, heading: printItemType(type) })),
       ),
     },
-    {
-      key: "source",
-      title: "Source",
-      collapsed: true,
-      options: whList.filteredSourceOptions.value.filter((x) => x.value !== ""),
-    },
+    source.section.value,
   ];
 });
 
@@ -142,39 +117,12 @@ watch(typeTerm, (types) => {
 </script>
 
 <template>
-  <AlertBlock
-    v-if="whList.apiError.value && whList.showApiError.value"
-    alertType="red"
-    :centered="true"
-    @close="whList.showApiError.value = false"
-  >
-    {{ whList.apiError.value }}
-  </AlertBlock>
-  <Header title="Trappings" />
-  <div class="flex flex-col @3xl/page:flex-row gap-4">
-    <FilterSidebar v-model="filters" :sections="sections">
-      <template v-if="auth.loggedIn.value" #actions>
-        <SectionLink icon="lucide:plus" variant="dark" routeName="item" :params="{ id: 'create' }">
-          Create new
-        </SectionLink>
-      </template>
-    </FilterSidebar>
-    <BrowseList v-model="searchTerm" :items="items" routeName="item" class="flex-1 min-w-0">
-      <!-- Beside the search, except on very small screens, where it is beside the Filters button. -->
-      <span v-if="auth.loggedIn.value" class="hidden @md/page:flex">
-        <SectionLink icon="lucide:plus" variant="dark" routeName="item" :params="{ id: 'create' }">
-          Create new
-        </SectionLink>
-      </span>
-
-      <template #badge="{ ownerId, visibility }: { ownerId: string; visibility: number }">
-        <ToolTip :ownerId="ownerId" :visibility="visibility" iconOnly />
-      </template>
-      <template #end="{ id }: { id: string }">
-        <CopyButton class="my-1" @copy="whList.copyWh(id)" />
-      </template>
-    </BrowseList>
-  </div>
+  <ContentListPage
+    v-model:filters="filters"
+    title="Trappings"
+    routeName="item"
+    :items="items"
+    :sections="sections"
+    :list="whList"
+  />
 </template>
-
-<style scoped></style>

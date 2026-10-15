@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import IconButton from "./IconButton.vue";
-import CopyButton from "./CopyButton.vue";
+import { useAuth } from "../composables/auth.ts";
 
-// A character list row's View (the character sheet) and Copy.
+// A character list row's View (the character sheet) and, for logged in users, Copy.
 defineProps<{
   id: string;
 }>();
@@ -10,6 +10,8 @@ defineProps<{
 const emit = defineEmits<{
   (e: "copy"): void;
 }>();
+
+const auth = useAuth();
 </script>
 
 <template>
@@ -21,6 +23,13 @@ const emit = defineEmits<{
       variant="light"
       size="sm"
     />
-    <CopyButton @copy="emit('copy')" />
+    <IconButton
+      v-if="auth.loggedIn.value"
+      icon="lucide:copy"
+      label="Copy"
+      variant="light"
+      size="sm"
+      @click="emit('copy')"
+    />
   </div>
 </template>
