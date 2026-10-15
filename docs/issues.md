@@ -70,11 +70,6 @@ Backend + Frontend · 2026-10-01
 
 Talents, traits and mutations share one `modifiers` block (size, movement, characteristics, effects). Everything that doesn't fit the linear "per take" numbers is a hard-coded effect (Hardy, Strong Back, Sturdy) with its own calculation, and the effect enum and per-edition lists are duplicated in Go and TypeScript. Non-linear effects (Strong Back) and effects Hammergen doesn't model (Luck/Fortune, Fear) show the limits.
 
-### HG-25 4e Strong Back and Sturdy for the Encumbrance limit
-Modifiers · 2026-10-11
-
-Code done (effects allowed in 4e, `getMaxEncumbrance4e` uses them). Left: after deploying the frontend and API, run `db/scripts/fix_4e_strong_back_sturdy.py` (adds the effects to the public 4e talents) on local, staging, then production. Users' own copies of these talents are not changed; their owners can add the effect.
-
 ## Data
 
 ### HG-12 4e Bless group contains Invoke talents
@@ -115,11 +110,6 @@ Frontend · 2026-09-30
 Frontend · 2026-09-30
 
 Check whether the maintenance page reloads the app when maintenance ends. Tabs still running the old frontend break after a frontend/backend shape change.
-
-### HG-26 Equipped grimoires are ignored
-Frontend · 2026-10-11
-
-An equipped item of type Grimoire is neither listed on the View character sheet (equipped armour/weapons/other only take their own types) nor counted in Encumbrance (`encumbrance.ts`). Carried grimoires are listed and counted. Decide how equipped grimoires show and count.
 
 ### HG-28 "Shared by me" icon has no colour
 Frontend · 2026-10-15

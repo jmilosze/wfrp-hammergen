@@ -222,6 +222,19 @@ describe("item groups by edition", () => {
   });
 });
 
+describe("canBeEquipped", () => {
+  test.each([
+    { type: ItemType.Melee, expected: true },
+    { type: ItemType.Armour, expected: true },
+    { type: ItemType.Grimoire, expected: false },
+  ])("type $type is equippable: $expected", ({ type, expected }) => {
+    const typed = item.copy();
+    typed.type = type;
+    expect(typed.canBeEquipped()).toBe(expected);
+    expect(typed.canBeCarried()).toBe(true);
+  });
+});
+
 describe("Item properties", () => {
   test("updateProperties keeps the value of a property that is already selected", () => {
     const otherItem = item.copy();

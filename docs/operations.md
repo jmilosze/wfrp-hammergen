@@ -40,6 +40,7 @@ Every script that writes follows the same pattern:
 Main scripts:
 - `import_5e.py --type <trait|mutation|property|prayer|spell|talent|skill|item|career> [--update]`: imports 5e content from `db/data/5e/<type>s-5e.json`. Entries with `id4e` add a 5e variant to that public 4e document; entries without it create 5e-only documents. `--update` replaces variants that differ from the data file.
 - `fix_4e_strong_back_sturdy.py`: adds the Strong Back and Sturdy effects to the public 4e talents (HG-25). Run once per database after deploying the code that allows these effects in 4e.
+- `fix_equipped_grimoires.py`: moves equipped grimoires to carried trappings (HG-26: grimoires can't be equipped). Run once per database after deploying the frontend that stops equipping them; on 2026-10-15 no character in any database had one equipped.
 - `backfill_modified_on.py`: sets `modifiedon` on documents written before the API started setting it, from the creation time in their id. Run once per database after deploying the API that sets `modifiedon`.
 
 The data files in `db/data/` are gitignored and exist only locally; keep them, they are the source for re-imports.

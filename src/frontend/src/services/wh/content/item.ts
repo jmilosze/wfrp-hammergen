@@ -722,10 +722,9 @@ export class Item extends WhEntity {
     updateSet(this.grimoire.spells, id, selected);
   }
 
+  // Grimoires are carried, not equipped: the sheet and Encumbrance count them only as carried.
   canBeEquipped(): boolean {
-    if (
-      [ItemType.Melee, ItemType.Ranged, ItemType.Ammunition, ItemType.Armour, ItemType.Grimoire].includes(this.type)
-    ) {
+    if ([ItemType.Melee, ItemType.Ranged, ItemType.Ammunition, ItemType.Armour].includes(this.type)) {
       return true;
     }
 
