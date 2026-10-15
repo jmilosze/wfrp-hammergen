@@ -1,23 +1,20 @@
 <script setup lang="ts" generic="T extends WhProperty">
-import { Ref } from "vue";
 import { WhProperty } from "../services/wh/core/entity.ts";
 import { WhEdit } from "../composables/whEdit.ts";
-import AlertBlock from "./AlertBlock.vue";
+import LoadErrors from "./LoadErrors.vue";
+import { LoadState } from "../composables/whList.ts";
 import EditionSwitch from "./EditionSwitch.vue";
 import PageHeader from "./PageHeader.vue";
 import MissingEditionVariant from "./MissingEditionVariant.vue";
 import PublicPropertyBox from "./PublicPropertyBox.vue";
 import SourceTable from "./SourceTable.vue";
-import EditControls from "./EditControls.vue";
-import DeleteBlock from "./DeleteBlock.vue";
+import EditorFooter from "./EditorFooter.vue";
 
 // A content editor page (career, skill, spell…) around the editor's own fields (the slot): the load errors, the
 // edition switch, the title, the notice when the edition has no variant, then the variant: the toolbar slot (e.g.
 // "Group skill") with the visibility, the fields, the sources, and Save and Delete. id: the route's id ("create" for a
 // new entry). propertyName: what is edited, e.g. "Quality/flaw". list: the list page's route, where Save and Delete
 // return to. lists: other content the editor loads (e.g. the skills a career offers), whose load errors are shown too.
-type LoadState = { apiError: Ref<string>; showApiError: Ref<boolean> };
-
 const props = defineProps<{
   edit: WhEdit<T>;
   id: string;
@@ -34,8 +31,6 @@ const {
   addVariant,
   canEdit,
   initSources,
-  apiError,
-  showApiError,
   submitForm,
   deleteItem,
   hasChanged,
@@ -43,23 +38,12 @@ const {
   resetForm,
   showSubmissionStatus,
 } = props.edit;
-
-function hideError(state: LoadState) {
-  state.showApiError.value = false;
-}
+// The editor's own load error first, then the other lists'.
+const loadStates: LoadState[] = [props.edit, ...(props.lists ?? [])];
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-4">
-    <AlertBlock v-if="apiError && showApiError" alertType="red" @close="showApiError = false">
-      {{ apiError }}
-    </AlertBlock>
-    <template v-for="(state, i) in lists" :key="i">
-      <AlertBlock v-if="state.apiError.value && state.showApiError.value" alertType="red" @close="hideError(state)">
-        {{ state.apiError.value }}
-      </AlertBlock>
-    </template>
-  </div>
+  <LoadErrors :states="loadStates" />
   <div class="flex justify-center my-2">
     <EditionSwitch v-model="edition" longNames />
   </div>
@@ -93,29 +77,18 @@ function hideError(state: LoadState) {
       @selected="(e) => wh.updateSource(e)"
     />
   </template>
-  <div v-show="hasVariant" class="mt-4">
-    <div class="flex flex-col md:flex-row gap-4">
-      <EditControls
-        :submissionState="submissionState"
-        :showSubmissionStatus="showSubmissionStatus"
-        :propertyName="propertyName"
-        :saving="submissionState.status === 'inProgress'"
-        :list="list"
-        :allowAddAnother="id === 'create'"
-        :confirmExit="hasChanged"
-        :submitForm="submitForm"
-        :resetForm="resetForm"
-        :readOnly="!canEdit"
-        class="flex-1"
-      />
-      <DeleteBlock
-        v-if="id !== 'create' && canEdit"
-        :propertyName="propertyName"
-        :name="wh.name"
-        :list="list"
-        :deleteItem="deleteItem"
-        class="flex-1"
-      />
-    </div>
-  </div>
+  <EditorFooter
+    v-show="hasVariant"
+    :id="id"
+    :propertyName="propertyName"
+    :name="wh.name"
+    :list="list"
+    :canEdit="canEdit"
+    :hasChanged="hasChanged"
+    :submissionState="submissionState"
+    :showSubmissionStatus="showSubmissionStatus"
+    :submitForm="submitForm"
+    :resetForm="resetForm"
+    :deleteItem="deleteItem"
+  />
 </template>

@@ -73,6 +73,9 @@ export function useSourceFilter<T extends WhProperty>(
   return { term, matches, section };
 }
 
+// LoadState is the load error of a list (or other loaded data): the message, and whether it is still shown.
+export type LoadState = { apiError: Ref<string>; showApiError: Ref<boolean> };
+
 // useWhList loads one edition of a content type and reloads when the edition changes.
 export function useWhList<T extends WhProperty>(elementApi: ContentApi<T>, edition: MaybeRefOrGetter<Edition>) {
   const auth = useAuth();

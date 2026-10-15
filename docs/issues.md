@@ -126,11 +126,6 @@ Frontend · 2026-10-15
 
 `components/visibilityKind.ts` uses `text-shared-by-me-icon` (and `shared-by-me-*` badge classes), but `style.css` defines the colours as `--color-shared-*`. Tailwind's palettes are off, so the class produces nothing and the list rows' "Shared by me" icon takes the text colour. Rename one side to match.
 
-### HG-29 Character editors hide some load errors
-Frontend · 2026-10-15
-
-The 4e editor shows an alert when the career, spell, prayer, mutation, skill, talent or generation data fails to load, but not traits or trappings. The 5e editor has the same gap and also never shows errors of the 4e lists loaded for "Allow 4e content". See R3 in `docs/ui-refactoring.md`.
-
 ### HG-30 Content list misses an edition switch during loading
 Frontend · 2026-10-15
 

@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends BrowseRow">
-import { computed, Ref } from "vue";
+import { computed } from "vue";
 import { useRouteQuery } from "@vueuse/router";
-import AlertBlock from "./AlertBlock.vue";
+import LoadErrors from "./LoadErrors.vue";
 import PageHeader from "./PageHeader.vue";
 import FilterSidebar from "./FilterSidebar.vue";
 import BrowseList from "./BrowseList.vue";
@@ -11,6 +11,7 @@ import IconButton from "./IconButton.vue";
 import { BrowseRow } from "./browseRow.ts";
 import { FilterSection } from "./filterSection.ts";
 import { useAuth } from "../composables/auth.ts";
+import { LoadState } from "../composables/whList.ts";
 
 // A list page of a content type (or characters): the load error, the title, the filters with Create new, and the
 // searchable list, by name, whose rows show the visibility icon and, at their end, the actions slot (Copy by default). The search
@@ -20,13 +21,13 @@ const props = defineProps<{
   routeName: string;
   items: T[];
   sections: FilterSection[];
-  list: { apiError: Ref<string>; showApiError: Ref<boolean>; copyWh: (id: string) => Promise<void> };
+  list: LoadState & { copyWh: (id: string) => Promise<void> };
 }>();
 
 const filters = defineModel<Record<string, string[]>>("filters", { required: true });
 
-// A page's list never changes, so its state is taken apart once.
-const { apiError, showApiError, copyWh } = props.list;
+// A page's list never changes, so its Copy is taken once.
+const { copyWh } = props.list;
 
 const searchTerm = useRouteQuery("search", "");
 const sortedItems = computed(() => [...props.items].sort((a, b) => a.name.localeCompare(b.name)));
@@ -34,9 +35,7 @@ const auth = useAuth();
 </script>
 
 <template>
-  <AlertBlock v-if="apiError && showApiError" alertType="red" :centered="true" @close="showApiError = false">
-    {{ apiError }}
-  </AlertBlock>
+  <LoadErrors :states="[list]" />
   <PageHeader :title="title" />
   <div class="flex flex-col @3xl/page:flex-row gap-4">
     <FilterSidebar v-model="filters" :sections="sections">
