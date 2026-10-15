@@ -9,7 +9,8 @@ import { useEdition } from "@/composables/edition.ts";
 import { Prayer } from "@/services/wh/content/prayer.ts";
 import { ContentApi } from "@/services/wh/core/api.ts";
 import { NEW_ID, Visibility } from "@/services/wh/core/entity.ts";
-import { componentStubs } from "@/testing.ts";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import { buttonNames, componentStubs, findButton } from "@/testing.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 
@@ -59,17 +60,14 @@ async function mountPage(id: string, otherList = { apiError: ref(""), showApiErr
 }
 
 function buttons(wrapper: Awaited<ReturnType<typeof mountPage>>): string[] {
-  return wrapper
-    .findAll("button")
-    .map((x) => x.text())
-    .filter((x) => x !== "");
+  return buttonNames(wrapper);
 }
 
 describe("ContentEditorPage", () => {
   test("a new entry: Create title, its fields and toolbar, Save without Delete", async () => {
     const wrapper = await mountPage(NEW_ID);
 
-    expect(wrapper.find(".text-3xl").text()).toBe("Create prayer");
+    expect(wrapper.findComponent(PageHeader).text()).toBe("Create prayer");
     expect(wrapper.find(".fields").exists() && wrapper.find(".tool").exists()).toBe(true);
     expect(wrapper.text()).toContain("Save prayer");
     expect(buttons(wrapper)).toContain("Save");
@@ -79,7 +77,7 @@ describe("ContentEditorPage", () => {
   test("a stored entry the user can edit: Edit title and Delete", async () => {
     const wrapper = await mountPage("p1");
 
-    expect(wrapper.find(".text-3xl").text()).toBe("Edit prayer");
+    expect(wrapper.findComponent(PageHeader).text()).toBe("Edit prayer");
     expect(buttons(wrapper)).toContain("Delete");
   });
 
@@ -87,7 +85,7 @@ describe("ContentEditorPage", () => {
     canEdit.value = false;
     const wrapper = await mountPage("p1");
 
-    expect(wrapper.find(".text-3xl").text()).toBe("Blessing of Courage");
+    expect(wrapper.findComponent(PageHeader).text()).toBe("Blessing of Courage");
     expect(buttons(wrapper)).not.toContain("Save");
     expect(buttons(wrapper)).not.toContain("Delete");
     expect(buttons(wrapper)).toContain("Back");
@@ -96,17 +94,11 @@ describe("ContentEditorPage", () => {
   test("an edition without a variant: the notice, then the fields once it is added", async () => {
     const wrapper = await mountPage("p1");
 
-    await wrapper
-      .findAll("button")
-      .find((x) => x.text() === "5th Edition")
-      ?.trigger("click");
+    await findButton(wrapper, "5th Edition").trigger("click");
     expect(wrapper.text()).toContain("This prayer has no 5e version.");
     expect(wrapper.find(".fields").exists()).toBe(false);
 
-    await wrapper
-      .findAll("button")
-      .find((x) => x.text() === "Add 5e version")
-      ?.trigger("click");
+    await findButton(wrapper, "Add 5e version").trigger("click");
     expect(wrapper.text()).not.toContain("has no 5e version");
     expect(wrapper.find(".fields").exists()).toBe(true);
   });

@@ -53,9 +53,10 @@ describe("FilterSidebar", () => {
   test("shows the sections with options, the collapsed ones folded, with headings", () => {
     const wrapper = mountSidebar({});
 
-    expect(wrapper.findAll("section > button").map((x) => x.text())).toEqual(["Type", "Group", "Source"]);
+    expect(wrapper.findAll("button[aria-expanded]").map((x) => x.text())).toEqual(["Type", "Group", "Source"]);
     expect(wrapper.findAll("label").map((x) => x.text())).toEqual(["Melee", "Ranged", "Basic", "Bow"]);
-    expect(wrapper.findAll(".uppercase").map((x) => x.text())).toEqual(["Melee", "Ranged"]);
+    // Each option with the heading shown above it, in the order shown.
+    expect(wrapper.findAll("li").map((x) => x.text())).toEqual(["Melee", "Ranged", "Melee Basic", "Ranged Bow"]);
   });
 
   test("ticks and unticks options in their section", async () => {
@@ -84,7 +85,7 @@ describe("FilterSidebar", () => {
     const wrapper = mountSidebar({});
 
     await wrapper
-      .findAll("section > button")
+      .findAll("button[aria-expanded]")
       .find((x) => x.text() === "Source")
       ?.trigger("click");
 

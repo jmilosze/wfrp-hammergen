@@ -1,9 +1,9 @@
 import { Mutation, MutationApiData, MutationType, apiResponseToModel, modelToApi } from "./mutation.ts";
 import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
-import { describe, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { ApiResponse } from "@/services/wh/core/api.ts";
 import { Visibility } from "@/services/wh/core/entity.ts";
-import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "@/testing.ts";
+import { testIsEqualTo } from "@/testing.ts";
 
 const mutationApiData: MutationApiData = {
   name: "mutation",
@@ -48,15 +48,4 @@ test("modelToApi returns expected api mutation data", () => {
   expect(modelToApi(mutation)).toMatchObject(mutationApiData);
 });
 
-testIsEqualCommonProperties("mutation", mutation);
-
-testIsEqualCharacterModifiers("mutation", mutation);
-
-describe("isEqualTo returns false", () => {
-  test("when other mutation has different value of type");
-  {
-    const otherMutation = mutation.copy();
-    otherMutation.type = 1;
-    expect(mutation.isEqualTo(otherMutation)).toBe(false);
-  }
-});
+testIsEqualTo("mutation", mutation);

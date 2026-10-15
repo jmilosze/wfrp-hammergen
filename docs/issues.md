@@ -7,7 +7,7 @@ Backlog of known bugs, improvements and feature ideas. It persists between work 
 - When an issue is done, delete its entry (git history keeps it). When it is partly done, update the description.
 - Out-of-scope problems found while working on something else go here, not into the code as TODO comments.
 
-Next free ID: **HG-35**
+Next free ID: **HG-36**
 
 ## Features
 
@@ -167,3 +167,8 @@ Compose warns about the obsolete `version` attribute; remove it.
 Tests · 2026-09-30
 
 `src/api-go/test/integration` only covers qualities/flaws; add other content types and characters. Note: these tests run against the `wfrp-mongodb` container on :8081, which writes to the local `hammergenGo` database.
+
+### HG-35 Decide on end-to-end tests (Playwright)
+Tests · 2026-10-15
+
+Decide whether to add a few Playwright smoke tests against the local stack: log in, create/save/delete content, generate/save/view a character, the print view. They would replace the manual browser checks done after UI changes and are the only tests that cover real dialogs, CSS and the real API. Costs: the API and MongoDB (with test data and a test account) must run during the tests, the tests are slower and flakier than unit and component tests, and CI would need the same setup. Component tests (Vitest, happy-dom) already cover component logic.

@@ -5,7 +5,8 @@ import { h, ref } from "vue";
 import ContentListPage from "./ContentListPage.vue";
 import { BrowseRow } from "./browseRow.ts";
 import { NEW_ID, Visibility } from "@/services/wh/core/entity.ts";
-import { componentStubs } from "@/testing.ts";
+import PageHeader from "@/components/ui/PageHeader.vue";
+import { componentStubs, findButton } from "@/testing.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 
@@ -45,7 +46,7 @@ describe("ContentListPage", () => {
   test("shows the title and the rows by name", () => {
     const { wrapper } = mountPage();
 
-    expect(wrapper.find(".text-3xl").text()).toBe("Talents");
+    expect(wrapper.findComponent(PageHeader).text()).toBe("Talents");
     expect(wrapper.findAll("li a").map((x) => x.text())).toEqual(["Alpha", "Beta"]);
   });
 
@@ -70,7 +71,7 @@ describe("ContentListPage", () => {
     const { wrapper, list } = mountPage("Error. Could not pull data from server.");
 
     expect(wrapper.text()).toContain("Could not pull data");
-    await wrapper.find("button[aria-label='Close']").trigger("click");
+    await findButton(wrapper, "Close").trigger("click");
 
     expect(list.showApiError.value).toBe(false);
     expect(wrapper.text()).not.toContain("Could not pull data");

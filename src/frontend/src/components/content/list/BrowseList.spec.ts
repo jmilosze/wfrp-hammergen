@@ -4,7 +4,7 @@ import { enableAutoUnmount, mount } from "@vue/test-utils";
 import BrowseList from "./BrowseList.vue";
 import { BrowseRow } from "./browseRow.ts";
 import { Visibility } from "@/services/wh/core/entity.ts";
-import { componentStubs } from "@/testing.ts";
+import { componentStubs, findButton } from "@/testing.ts";
 import type { RouteName } from "@/router.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
@@ -67,7 +67,7 @@ describe("BrowseList", () => {
 
     expect(names(wrapper)).toHaveLength(50);
     expect(range(wrapper)).toBe("1–50 of 120");
-    await wrapper.find("button[aria-label='Last page']").trigger("click");
+    await findButton(wrapper, "Last page").trigger("click");
     expect(names(wrapper)).toHaveLength(20);
     expect(names(wrapper)[0]).toBe("Entry 100");
 
@@ -78,7 +78,7 @@ describe("BrowseList", () => {
     vi.useFakeTimers();
     const wrapper = mountList(Array.from({ length: 120 }, (_, i) => row(i)));
 
-    await wrapper.find("button[aria-label='Next page']").trigger("click");
+    await findButton(wrapper, "Next page").trigger("click");
     expect(range(wrapper)).toBe("51–100 of 120");
     await wrapper.find("input").setValue("Entry");
     await vi.advanceTimersByTimeAsync(300);

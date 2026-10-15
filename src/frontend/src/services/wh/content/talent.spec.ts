@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import { CharacterModifiers } from "@/services/wh/core/characterModifiers.ts";
 import { ApiResponse } from "@/services/wh/core/api.ts";
 import { Visibility } from "@/services/wh/core/entity.ts";
-import { testIsEqualCharacterModifiers, testIsEqualCommonProperties } from "@/testing.ts";
+import { testIsEqualTo } from "@/testing.ts";
 import { AttributeName as Att } from "@/services/wh/core/attributes.ts";
 
 const talentGroupApiData: TalentApiData = {
@@ -79,67 +79,10 @@ test("modelToApi returns expected api talent data", () => {
   expect(modelToApi(talentGroup)).toMatchObject(talentGroupApiData);
 });
 
-testIsEqualCommonProperties("talent", talentIndividual);
-
-testIsEqualCharacterModifiers("talent", talentIndividual);
-
-describe("isEqualTo returns true", () => {
-  test("when comparing group talents and other talent has different value of tests, maxRank, attribute, and modifiers", () => {
-    const otherTalentGroup = talentGroup.copy();
-    otherTalentGroup.tests = "otherTest";
-    otherTalentGroup.maxRank = 5;
-    otherTalentGroup.attribute = Att.Int;
-    otherTalentGroup.modifiers = new CharacterModifiers({
-      size: 2,
-      movement: -1,
-      attributes: { WS: 1, BS: 0, S: 10, T: 0, I: 0, Ag: 0, Dex: 2, Int: 3, WP: 0, Fel: 5 },
-    });
-    expect(talentGroup.isEqualTo(otherTalentGroup)).toBe(true);
-  });
-});
-
-describe("isEqualTo returns false", () => {
-  test("when other talent has different value of isGroup", () => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.isGroup = true;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
-
-  test("when other talent is individual and has different value of tests", () => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.tests = "otherTest";
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
-
-  test("when other talent is individual and has different value of maxRank", () => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.maxRank = 5;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
-
-  test("when other talent is individual and has different value of attribute", () => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.attribute = Att.Dex;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
-
-  test("when other talent is individual and has different value of attribute2", () => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.attribute2 = Att.Dex;
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
-
-  test("when talent is individual and other talent has group field that is a subset", () => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.group = new Set(["a"]);
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
-
-  test("when talent is individual and other talent has group field of the same length but different values", () => {
-    const otherTalentIndividual = talentIndividual.copy();
-    otherTalentIndividual.group = new Set(["c", "d"]);
-    expect(talentIndividual.isEqualTo(otherTalentIndividual)).toBe(false);
-  });
+testIsEqualTo("talent", talentIndividual);
+// A group talent compares only what a group has: not tests, max rank, characteristics, groups or modifiers.
+testIsEqualTo("group talent", talentGroup, {
+  ignored: ["tests", "maxRank", "attribute", "attribute2", "group", "modifiers"],
 });
 
 describe("validateMaxRank", () => {

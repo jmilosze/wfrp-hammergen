@@ -4,7 +4,8 @@ import { mount } from "@vue/test-utils";
 import ChecklistPicker from "./ChecklistPicker.vue";
 import { ChecklistItem } from "./checklistItem.ts";
 import ChecklistRow from "./ChecklistRow.vue";
-import { componentStubs } from "@/testing.ts";
+import SheetTitle from "@/components/sheet/SheetTitle.vue";
+import { componentStubs, findButton } from "@/testing.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 
@@ -17,7 +18,7 @@ function mountPicker(props: InstanceType<typeof ChecklistPicker>["$props"]) {
 }
 
 function bandTitles(wrapper: ReturnType<typeof mountPicker>): string[] {
-  return wrapper.findAll(".uppercase").map((x) => x.text());
+  return wrapper.findAllComponents(SheetTitle).map((x) => x.text());
 }
 
 function rowNames(wrapper: ReturnType<typeof mountPicker>): string[] {
@@ -61,7 +62,7 @@ describe("ChecklistPicker", () => {
     });
 
     await wrapper.find("input[type=number]").setValue("10");
-    await wrapper.find("button[aria-label='Add Beta']").trigger("click");
+    await findButton(wrapper, "Add Beta").trigger("click");
 
     expect(wrapper.emitted("setNumber")).toEqual([[{ id: "a", number: 10 }]]);
     expect(wrapper.emitted("add")).toEqual([["b"]]);

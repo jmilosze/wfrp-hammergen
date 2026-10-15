@@ -5,7 +5,7 @@ import CharacterSkills from "./CharacterSkills.vue";
 import ChecklistPicker from "@/components/picker/ChecklistPicker.vue";
 import { Skill } from "@/services/wh/content/skill.ts";
 import { AttributeName, Attributes } from "@/services/wh/core/attributes.ts";
-import { componentStubs } from "@/testing.ts";
+import { componentStubs, findButton } from "@/testing.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 
@@ -57,7 +57,7 @@ describe("CharacterSkills", () => {
   test("asks to set a removed skill to 0", async () => {
     const wrapper = mountSkills({ dodge: 5 });
 
-    await wrapper.find("button[aria-label='Remove Dodge']").trigger("click");
+    await findButton(wrapper, "Remove Dodge").trigger("click");
 
     expect(wrapper.emitted("updated")).toEqual([[{ id: "dodge", number: 0 }]]);
   });

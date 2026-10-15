@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { Prayer, PrayerApiData, apiResponseToModel, modelToApi } from "./prayer.ts";
 import { ApiResponse } from "@/services/wh/core/api.ts";
 import { Visibility } from "@/services/wh/core/entity.ts";
-import { testIsEqualCommonProperties } from "@/testing.ts";
+import { testIsEqualTo } from "@/testing.ts";
 
 const prayerApiData: PrayerApiData = {
   name: "prayer",
@@ -40,24 +40,4 @@ test("modelToApi returns expected api prayer data", () => {
   expect(modelToApi(prayer)).toMatchObject(prayerApiData);
 });
 
-testIsEqualCommonProperties("prayer", prayer);
-
-describe("isEqualTo returns false", () => {
-  test("when other prayer has different value of range", () => {
-    const otherPrayer = prayer.copy();
-    otherPrayer.range = "otherRange";
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  });
-
-  test("when other prayer has different value of target", () => {
-    const otherPrayer = prayer.copy();
-    otherPrayer.target = "otherTarget";
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  });
-
-  test("when other prayer has different value of duration", () => {
-    const otherPrayer = prayer.copy();
-    otherPrayer.duration = "otherDuration";
-    expect(prayer.isEqualTo(otherPrayer)).toBe(false);
-  });
-});
+testIsEqualTo("prayer", prayer);

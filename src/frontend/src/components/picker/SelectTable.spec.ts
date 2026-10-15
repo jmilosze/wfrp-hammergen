@@ -3,7 +3,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import SelectTable from "./SelectTable.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
-import { componentStubs } from "@/testing.ts";
+import { componentStubs, findButton } from "@/testing.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 
@@ -45,7 +45,7 @@ describe("SelectTable", () => {
   test("asks to deselect a removed entry, leaving the change to the parent", async () => {
     const wrapper = mountTable(new Set(["c", "a"]));
 
-    await wrapper.find("button[aria-label='Remove Anger']").trigger("click");
+    await findButton(wrapper, "Remove Anger").trigger("click");
 
     expect(wrapper.emitted("selected")).toEqual([[{ id: "a", selected: false }]]);
     expect(tableNames(wrapper)).toEqual(["Anger", "Charm"]);
