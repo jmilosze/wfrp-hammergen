@@ -4,7 +4,6 @@ import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
-import { useModal } from "../composables/modal.ts";
 import ListTable from "./ListTable.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
@@ -25,7 +24,6 @@ const props = defineProps<{
   disabled?: boolean;
   modalTitle?: string;
   loading?: boolean;
-  modalId?: string;
   // Each row gets a cross that deselects it.
   removable?: boolean;
   disableDescription?: boolean;
@@ -71,11 +69,7 @@ function updateItemsWithSelect(
 
 const selectedItems = computed(() => itemsWithSelectList.value.filter((x) => x.selected));
 
-const modal = useModal();
-
-const modalId = props.modalId ? props.modalId : "modifyItemsModal";
-
-const openedCounter = ref(0);
+const modalOpen = ref(false);
 
 const showRemove = computed(() => props.removable && !props.disabled);
 // The title cell spans the remove column, which has no header, so the actions sit at the right edge.
@@ -93,8 +87,7 @@ function onEditClick() {
   itemsWithSelectList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
   });
-  openedCounter.value += 1;
-  modal.showModal(modalId);
+  modalOpen.value = true;
 }
 
 function onToggle(id: string, selected: boolean) {
@@ -124,12 +117,11 @@ function onToggle(id: string, selected: boolean) {
         </td>
       </tr>
     </ListTable>
-    <ModalWindow :id="modalId" fullHeight>
+    <ModalWindow v-model:open="modalOpen" fullHeight>
       <template #header> {{ modalTitle }} </template>
       <ChecklistPicker
         :items="itemsWithSelectList"
         :routeName="routeName"
-        :opened="openedCounter"
         :loading="props.loading"
         :fourEIds="fourEIds"
         @toggle="(e) => onToggle(e.id, e.selected)"

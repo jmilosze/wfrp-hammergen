@@ -4,7 +4,6 @@ import ListTable from "./ListTable.vue";
 import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
-import { useModal } from "../composables/modal.ts";
 import TableWithSearch from "./TableWithSearch.vue";
 import { modifierEffectsByEdition, printEffectDesc, printEffectName } from "../services/wh/core/characterModifiers.ts";
 import { Edition } from "../services/wh/core/edition.ts";
@@ -15,7 +14,7 @@ const emit = defineEmits<{
   (e: "selected", value: { id: number; selected: boolean }): void;
 }>();
 
-const modal = useModal();
+const modalOpen = ref(false);
 const searchTerm = ref("");
 const modalColumns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
@@ -62,7 +61,7 @@ function onRemoveClick(id: number) {
 }
 
 function onEditClick() {
-  modal.showModal("modifyEffectsModal");
+  modalOpen.value = true;
   searchTerm.value = "";
   effectList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
@@ -84,7 +83,7 @@ function onEditClick() {
         </td>
       </tr>
     </ListTable>
-    <ModalWindow id="modifyEffectsModal">
+    <ModalWindow v-model:open="modalOpen">
       <template #header> Edit effects </template>
       <div class="">
         <TableWithSearch v-model="searchTerm" :fields="modalColumns" :items="effectList" stackBreakpoint="2xl">

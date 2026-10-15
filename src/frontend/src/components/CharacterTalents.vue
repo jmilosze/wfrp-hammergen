@@ -4,7 +4,6 @@ import { Talent } from "../services/wh/content/talent.ts";
 import { computed, ref, Ref, watch } from "vue";
 import { Attributes, printAttributeName } from "../services/wh/core/attributes.ts";
 import { isEqualEntity } from "../utils/equal.ts";
-import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
 import SectionButton from "./SectionButton.vue";
@@ -116,8 +115,7 @@ watch(
 
 const selectedTalents = computed(() => talentsWithNumberList.value.filter((x) => isNonzero(x)));
 
-const modal = useModal();
-const openedCounter = ref(0);
+const modalOpen = ref(false);
 
 function removeTalent(id: string) {
   talentsWithNumber.value[id].number = 0;
@@ -131,8 +129,7 @@ function onEditClick() {
   talentsWithNumberList.value.sort((a, b) => {
     return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
   });
-  openedCounter.value += 1;
-  modal.showModal("modifyTalentsModal");
+  modalOpen.value = true;
 }
 
 // Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
@@ -199,12 +196,11 @@ function setNumber(id: string, number: number) {
     <div class="text-sm text-error mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
-    <ModalWindow id="modifyTalentsModal" fullHeight>
+    <ModalWindow v-model:open="modalOpen" fullHeight>
       <template #header> Edit talents </template>
       <ChecklistPicker
         :items="modalItems"
         routeName="talent"
-        :opened="openedCounter"
         :loading="props.loading"
         :fourEIds="fourEIds"
         numberLabel="Rank"

@@ -40,7 +40,6 @@ import CharacterItems from "../../../components/CharacterItems.vue";
 import { traitApi } from "../../../services/wh/content/trait.ts";
 import ModalWindow from "../../../components/ModalWindow.vue";
 import Ignored4eModifiersWarning from "../../../components/Ignored4eModifiersWarning.vue";
-import { useModal } from "../../../composables/modal.ts";
 import HintModal from "../../../components/HintModal.vue";
 import CharacterStartPanel from "../../../components/CharacterStartPanel.vue";
 import SectionCard from "../../../components/SectionCard.vue";
@@ -238,12 +237,12 @@ watch(
   { immediate: true },
 );
 
-const modal = useModal();
+const allow4eOpen = ref(false);
 
 // Turning on 4e content is one-way: it asks for confirmation and cannot be undone once saved.
 function confirmAllow4e() {
   wh.value.allow4e = true;
-  modal.hideModal();
+  allow4eOpen.value = false;
 }
 
 // 4e talents, traits and mutations whose modifiers are not applied.
@@ -374,14 +373,10 @@ const modifierAttributes = computed(() => {
     </div>
     <div class="flex items-center gap-2">
       <label class="flex items-center gap-2">
-        <SheetCheckbox
-          :checked="wh.allow4e"
-          :disabled="!canEdit || wh.allow4e"
-          @click.prevent="modal.showModal('allow4eModal')"
-        />
+        <SheetCheckbox :checked="wh.allow4e" :disabled="!canEdit || wh.allow4e" @click.prevent="allow4eOpen = true" />
         Allow 4e content
       </label>
-      <HintModal modalHeader="Allow 4e content" modalId="allow4eHint">
+      <HintModal modalHeader="Allow 4e content">
         <p class="my-1">
           The character can use 4e content that has no 5e version. Such content is marked 4e in the pickers and on the
           character sheet.
@@ -394,12 +389,12 @@ const modifierAttributes = computed(() => {
     </div>
     <PublicPropertyBox v-model="wh.visibility" propertyName="Character" :disabled="!canEdit" />
   </div>
-  <ModalWindow id="allow4eModal">
+  <ModalWindow v-model:open="allow4eOpen">
     <template #header> Allow 4e content </template>
     <template #buttons>
       <div class="flex gap-2">
         <SectionButton icon="lucide:check" variant="light" @click="confirmAllow4e">Allow 4e content</SectionButton>
-        <SectionButton icon="lucide:x" variant="neutral" @click="modal.hideModal()">Cancel</SectionButton>
+        <SectionButton icon="lucide:x" variant="neutral" @click="allow4eOpen = false">Cancel</SectionButton>
       </div>
     </template>
     <div>
@@ -629,7 +624,6 @@ const modifierAttributes = computed(() => {
         :fourEIds="prayerLists.fourEIds.value"
         title="Prayers"
         modalTitle="Edit prayers"
-        modalId="characterPrayers"
         :loading="prayerLists.loading.value"
         removable
         :disableDescription="true"
@@ -646,7 +640,6 @@ const modifierAttributes = computed(() => {
         :fourEIds="spellLists.fourEIds.value"
         title="Spells"
         modalTitle="Edit spells"
-        modalId="characterSpells"
         :loading="spellLists.loading.value"
         removable
         :disableDescription="true"
@@ -674,7 +667,6 @@ const modifierAttributes = computed(() => {
         :fourEIds="mutationLists.fourEIds.value"
         title="Mutations"
         modalTitle="Edit mutations"
-        modalId="characterMutations"
         :loading="mutationLists.loading.value"
         removable
         :disableDescription="true"

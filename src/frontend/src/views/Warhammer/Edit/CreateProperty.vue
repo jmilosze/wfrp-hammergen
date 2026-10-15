@@ -85,7 +85,7 @@ const applicableToOptions = ref(itemTypeList.map((x) => ({ text: printItemType(x
     <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
       <div class="flex items-center gap-2">
         <CheckboxInput v-model="wh.hasValue" title="Takes a value?" :disabled="!canEdit" />
-        <HintModal modalHeader="Takes a value" modalId="propertyValueHint">
+        <HintModal modalHeader="Takes a value">
           <p class="my-1">
             Some qualities and flaws come with a value written in brackets after the name, such as a number in Blast
             (3).

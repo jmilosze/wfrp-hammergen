@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 import SectionButton from "./SectionButton.vue";
 import ModalWindow from "./ModalWindow.vue";
-import { useModal } from "../composables/modal.ts";
 
 // The ways to start a new character, as a slim strip above the character sheet: Generate opens a popup with the
 // generator (its fields and explanation come from the editor), Guided is not there yet, and filling in the sheet needs
@@ -15,14 +14,14 @@ const emit = defineEmits<{
   (e: "generate"): void;
 }>();
 
-const modal = useModal();
+const modalOpen = ref(false);
 const dismissed = ref(false);
 // What was last generated; empty before the first generation. Options changed later in the popup don't change it.
 const generatedSummary = ref("");
 
 function onGenerate() {
   emit("generate");
-  modal.hideModal();
+  modalOpen.value = false;
   generatedSummary.value = props.generationSummary;
 }
 </script>
@@ -43,11 +42,7 @@ function onGenerate() {
         <SectionButton icon="lucide:dices" :disabled="generateDisabled" @click="onGenerate">
           Generate again
         </SectionButton>
-        <SectionButton
-          icon="lucide:sliders-horizontal"
-          variant="neutral"
-          @click="modal.showModal('generateCharacterModal')"
-        >
+        <SectionButton icon="lucide:sliders-horizontal" variant="neutral" @click="modalOpen = true">
           Change options…
         </SectionButton>
       </div>
@@ -61,7 +56,7 @@ function onGenerate() {
         </div>
       </div>
       <div class="flex flex-wrap gap-2">
-        <SectionButton icon="lucide:dices" @click="modal.showModal('generateCharacterModal')">Generate…</SectionButton>
+        <SectionButton icon="lucide:dices" @click="modalOpen = true">Generate…</SectionButton>
         <SectionButton icon="lucide:route" variant="neutral" disabled title="Guided creation isn't available yet">
           Guided (soon)
         </SectionButton>
@@ -77,7 +72,7 @@ function onGenerate() {
       <Icon icon="lucide:x" class="size-5" />
     </button>
   </div>
-  <ModalWindow id="generateCharacterModal" size="md">
+  <ModalWindow v-model:open="modalOpen" size="md">
     <template #header>Generate character</template>
     <div class="@container flex flex-col gap-3">
       <p>Roll a complete character of level 1 to 4. Generating replaces everything on the sheet.</p>

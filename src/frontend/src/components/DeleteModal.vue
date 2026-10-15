@@ -2,51 +2,38 @@
 import SectionButton from "./SectionButton.vue";
 import { Icon } from "@iconify/vue";
 import ModalWindow from "./ModalWindow.vue";
-import { useModal } from "../composables/modal.ts";
-import { watch } from "vue";
 
-const props = defineProps<{
-  elementToDelete: { id: string; name: string };
+// Asks to confirm deleting name; Delete emits deleteConfirmed and closes.
+defineProps<{
+  name: string;
 }>();
+
+const open = defineModel<boolean>("open", { required: true });
 
 const emit = defineEmits<{
   (e: "deleteConfirmed"): void;
 }>();
 
-const modal = useModal();
 function deleteElement() {
   emit("deleteConfirmed");
-  modal.hideModal();
+  open.value = false;
 }
-
-watch(
-  () => props.elementToDelete,
-  (newValue) => {
-    if (newValue.id !== "") {
-      modal.showModal("deleteModal");
-    }
-  },
-  { deep: true },
-);
 </script>
 
 <template>
-  <ModalWindow id="deleteModal" size="xs">
-    <template #header>Delete {{ elementToDelete.name }}?</template>
+  <ModalWindow v-model:open="open" size="xs">
+    <template #header>Delete {{ name }}?</template>
     <div class="flex items-start gap-3">
       <Icon icon="lucide:triangle-alert" class="size-6 shrink-0 text-error" />
       <p>
-        <span class="font-semibold">{{ elementToDelete.name }}</span> and all its data will be deleted. This can't be
-        undone.
+        <span class="font-semibold">{{ name }}</span> and all its data will be deleted. This can't be undone.
       </p>
     </div>
     <template #buttons>
       <div class="flex justify-end gap-2">
-        <SectionButton icon="lucide:x" variant="neutral" @click="modal.hideModal()">Cancel</SectionButton>
+        <SectionButton icon="lucide:x" variant="neutral" @click="open = false">Cancel</SectionButton>
         <SectionButton icon="lucide:trash-2" variant="danger" @click="deleteElement()">Delete</SectionButton>
       </div>
     </template>
   </ModalWindow>
 </template>
-
-<style scoped></style>

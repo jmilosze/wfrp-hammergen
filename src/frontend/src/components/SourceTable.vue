@@ -6,7 +6,6 @@ import { computed, ref, Ref, watch } from "vue";
 import { source, sourcesByEdition, validateSourceRecord } from "../services/wh/core/source.ts";
 import { Edition } from "../services/wh/core/edition.ts";
 import ModalWindow from "./ModalWindow.vue";
-import { useModal } from "../composables/modal.ts";
 import ChecklistPicker from "./ChecklistPicker.vue";
 
 const props = defineProps<{ initSources: Record<string, string>; edition: Edition; disabled?: boolean }>();
@@ -15,8 +14,7 @@ const emit = defineEmits<{
   (e: "selected", value: { id: string; notes: string; selected: boolean }): void;
 }>();
 
-const modal = useModal();
-const openedCounter = ref(0);
+const modalOpen = ref(false);
 
 const sources: Ref<Record<string, { id: string; name: string; notes: string; selected: boolean }>> = ref({});
 const sourcesList: Ref<{ id: string; name: string; notes: string; selected: boolean }[]> = ref([]);
@@ -62,8 +60,7 @@ function onEditClick() {
   sourcesList.value.sort((a, b) => {
     return a.selected === b.selected ? a.name.localeCompare(b.name) : a.selected ? -1 : 1;
   });
-  openedCounter.value += 1;
-  modal.showModal("modifySourceModal");
+  modalOpen.value = true;
 }
 
 // Popup rows are made once per list; each reads its live values through getters, so a change redraws only its own row.
@@ -124,11 +121,10 @@ function setNotes(id: string, notes: string) {
     <p class="text-sm text-error mt-1" :class="[selectedSourcesValid ? 'hidden' : '']">
       Some of the sources are invalid.
     </p>
-    <ModalWindow id="modifySourceModal" fullHeight>
+    <ModalWindow v-model:open="modalOpen" fullHeight>
       <template #header> Edit sources </template>
       <ChecklistPicker
         :items="modalItems"
-        :opened="openedCounter"
         textLabel="Notes"
         @toggle="(e) => setSelected(e.id, e.selected)"
         @setText="(e) => setNotes(e.id, e.text)"

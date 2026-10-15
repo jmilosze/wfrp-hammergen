@@ -5,7 +5,6 @@ import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import TableWithSearch from "./TableWithSearch.vue";
-import { useModal } from "../composables/modal.ts";
 import ListTable from "./ListTable.vue";
 import { truncate } from "../utils/string.ts";
 import TextLink from "./TextLink.vue";
@@ -72,7 +71,6 @@ function updateItemsWithNumber(
 
 const nonzeroItems = computed(() => itemsWithNumberList.value.filter((x) => isNonzero(x)));
 
-const modal = useModal();
 const searchTerm = ref("");
 const modalColumns = [
   { name: "name", displayName: "Name", skipStackedTitle: false },
@@ -80,8 +78,7 @@ const modalColumns = [
   { name: "number", displayName: "Number", skipStackedTitle: false },
 ];
 
-const modalId = window.crypto.randomUUID();
-const resetPaginationCounter = ref(0);
+const modalOpen = ref(false);
 
 function onRemoveClick(id: string) {
   itemsWithNumber.value[id].number = 0;
@@ -92,8 +89,7 @@ function onEditClick() {
   if (props.loading) {
     return;
   }
-  resetPaginationCounter.value += 1;
-  modal.showModal(modalId);
+  modalOpen.value = true;
   searchTerm.value = "";
   itemsWithNumberList.value.sort((a, b) => {
     return isNonzero(a) === isNonzero(b) ? a.name.localeCompare(b.name) : isNonzero(a) ? -1 : 1;
@@ -123,7 +119,7 @@ function onEditClick() {
     <div class="text-sm text-error mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
-    <ModalWindow :id="modalId">
+    <ModalWindow v-model:open="modalOpen">
       <template #header> {{ modalTitle }} </template>
       <TableWithSearch
         v-model="searchTerm"
@@ -131,7 +127,6 @@ function onEditClick() {
         :items="itemsWithNumberList"
         stackBreakpoint="lg"
         :loading="props.loading"
-        :resetPagination="resetPaginationCounter"
       >
         <SectionLink icon="lucide:plus" variant="neutral" :routeName="routeName" :params="{ id: 'create' }" newWindow>
           Create new

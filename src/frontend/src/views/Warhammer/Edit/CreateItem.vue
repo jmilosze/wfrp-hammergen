@@ -443,7 +443,6 @@ watchWh(
         </SheetTable>
         <SelectTable
           v-if="wh.type === ItemType.Grimoire"
-          modalId="grimoire"
           :disabled="!canEdit"
           :initSelectedItems="wh.grimoire.spells"
           :itemList="spellListUtils.whList.value"

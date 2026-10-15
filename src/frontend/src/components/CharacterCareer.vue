@@ -3,7 +3,6 @@ import SectionButton from "./SectionButton.vue";
 import { computed, ref, Ref, watch } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
-import { useModal } from "../composables/modal.ts";
 import SheetTable from "./SheetTable.vue";
 import SheetCell from "./SheetCell.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
@@ -131,8 +130,7 @@ function updateCareersWithSelect(
 const selectedPastCareers = computed(() => careersWithSelectList.value.filter((x) => x.past));
 const selectedCurrentCareer = computed(() => careersWithSelectList.value.find((x) => x.current));
 
-const modal = useModal();
-const openedCounter = ref(0);
+const modalOpen = ref(false);
 
 function onEditClick() {
   if (props.loading) {
@@ -141,8 +139,7 @@ function onEditClick() {
   careersWithSelectList.value.sort((a, b) => {
     return anySelected(a) === anySelected(b) ? a.name.localeCompare(b.name) : anySelected(a) ? -1 : 1;
   });
-  openedCounter.value += 1;
-  modal.showModal("modifyCareersModal");
+  modalOpen.value = true;
 }
 
 // One row per career level, with Current and Past ticks; a level can't be both.
@@ -243,12 +240,11 @@ function emitPastSelected(id: string) {
         </SectionButton>
       </template>
     </SheetTable>
-    <ModalWindow id="modifyCareersModal" size="md" fullHeight>
+    <ModalWindow v-model:open="modalOpen" size="md" fullHeight>
       <template #header> Edit career </template>
       <ChecklistPicker
         :items="modalItems"
         routeName="career"
-        :opened="openedCounter"
         :loading="props.loading"
         :fourEIds="fourEIds"
         @choose="(e) => onChoose(e.id, e.key)"

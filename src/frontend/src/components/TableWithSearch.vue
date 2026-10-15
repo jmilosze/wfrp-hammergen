@@ -19,7 +19,6 @@ const props = defineProps<{
   stackBreakpoint?: StackBreakpoint;
   modelValue: string;
   loading?: boolean;
-  resetPagination?: number;
   rowRouteName?: string;
 }>();
 
@@ -77,13 +76,6 @@ const searchedItems = computed(() => {
 watch(searchTermDebounced, () => {
   startRow.value = 0;
 });
-
-watch(
-  () => props.resetPagination,
-  () => {
-    startRow.value = 0;
-  },
-);
 
 const rowsPerPage: number = props.perPage ? props.perPage : DEFAULT_PER_PAGE;
 const startRow: Ref<number> = ref(0);

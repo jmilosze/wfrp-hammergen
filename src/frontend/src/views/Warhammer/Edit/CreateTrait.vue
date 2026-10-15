@@ -76,7 +76,7 @@ const validDesc = computed(() => wh.value.validateDescription());
     <div class="flex flex-wrap items-center gap-x-8 gap-y-2 my-4">
       <div class="flex items-center gap-2">
         <CheckboxInput v-model="wh.hasValue" title="Takes a value?" :disabled="!canEdit" />
-        <HintModal modalHeader="Takes a value" modalId="traitValueHint">
+        <HintModal modalHeader="Takes a value">
           <p class="my-1">
             Some creature traits come with a value written in brackets after the name, such as a number in Ward (8) or a
             target in Hatred (Elves).

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import IconButton from "./IconButton.vue";
 import { computed, ref } from "vue";
-import { useModal } from "../composables/modal.ts";
 import ModalWindow from "./ModalWindow.vue";
 import SectionButton from "./SectionButton.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
@@ -83,8 +82,6 @@ function sectionItems(location: Location) {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-const modal = useModal();
-
 // Trappings are added straight to any of the three lists, each with its own popup. Moves go through Carried: Equip and
 // Unequip between Carried and Equipped, Store and Carry between Carried and Stored/Assets. Each move shifts one
 // trapping.
@@ -96,15 +93,14 @@ const PICKER_TITLES: Record<Location, string> = {
 };
 
 const pickerLocation = ref<Location>("carried");
-const openedCounter = ref(0);
+const modalOpen = ref(false);
 
 function onAddClick(location: Location) {
   if (props.loading) {
     return;
   }
   pickerLocation.value = location;
-  openedCounter.value += 1;
-  modal.showModal("addItemsModal");
+  modalOpen.value = true;
 }
 
 // The popup's rows are made when it opens (and when the item list changes); each reads its quantity from the record as
@@ -270,14 +266,13 @@ const sections = computed(() => [
     <div class="text-sm text-error mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
       {{ storedValidationStatus.message }}
     </div>
-    <ModalWindow id="addItemsModal" size="lg" fullHeight>
+    <ModalWindow v-model:open="modalOpen" size="lg" fullHeight>
       <template #header>
         {{ PICKER_TITLES[pickerLocation] }}
       </template>
       <ChecklistPicker
         :items="pickerItems"
         routeName="item"
-        :opened="openedCounter"
         :loading="props.loading"
         :fourEIds="fourEIds"
         numberLabel="Qty"

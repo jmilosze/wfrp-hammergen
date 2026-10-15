@@ -663,7 +663,6 @@ const modifierAttributes = computed(() => {
         :itemList="prayerListUtils.whList.value"
         title="Prayers"
         modalTitle="Edit prayers"
-        modalId="characterPrayers"
         :loading="prayerListUtils.loading.value"
         removable
         :disableDescription="true"
@@ -679,7 +678,6 @@ const modifierAttributes = computed(() => {
         :itemList="spellListUtils.whList.value"
         title="Spells"
         modalTitle="Edit spells"
-        modalId="characterSpells"
         :loading="spellListUtils.loading.value"
         removable
         :disableDescription="true"
@@ -706,7 +704,6 @@ const modifierAttributes = computed(() => {
         :itemList="mutationListUtils.whList.value"
         title="Mutations"
         modalTitle="Edit mutations"
-        modalId="characterMutations"
         :loading="mutationListUtils.loading.value"
         removable
         :disableDescription="true"

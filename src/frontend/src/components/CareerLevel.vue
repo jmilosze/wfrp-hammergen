@@ -96,7 +96,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
           </div>
           <div class="flex-1 flex flex-col gap-4">
             <SelectTable
-              :modalId="`skill${level}`"
               :disabled="!canEdit"
               :initSelectedItems="initialSkills"
               :itemList="whSkillList"
@@ -111,7 +110,6 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
               @selected="(e) => emit('updateSkill', { id: e.id, selected: e.selected })"
             />
             <SelectTable
-              :modalId="`talent${level}`"
               :disabled="!canEdit"
               :initSelectedItems="initialTalents"
               :itemList="whTalentList"

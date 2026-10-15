@@ -26,6 +26,11 @@
   }
 }
 
+/* While a popup (ModalWindow, a modal <dialog>) is open, the page behind it doesn't scroll. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
 @theme {
   --font-hammergen: "Hammergen", serif;
   /* sheet: the content of the editors' form boxes (SheetTable, SectionCard, ListTable); their buttons keep font-sans. */

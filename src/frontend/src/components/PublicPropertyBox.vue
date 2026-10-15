@@ -76,7 +76,7 @@ function onCheckboxChange(event: Event) {
         />
         Shared?
       </label>
-      <HintModal modalHeader="Sharing" modalId="sharedHelpModal">
+      <HintModal modalHeader="Sharing">
         A character or compendium item (skill, talent, etc.) marked as <span class="font-semibold">shared</span> can be
         seen in read-only mode by anyone you give your username to. Sharing is explained in the
         <TextLink routeName="manage" :query="{ view: 'linked' }">Manage account/Linked users</TextLink> section

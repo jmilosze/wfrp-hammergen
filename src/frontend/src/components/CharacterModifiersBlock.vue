@@ -144,7 +144,7 @@ const validAtts = computed(() => {
   <div class="@container">
     <SectionCard title="Character modifiers">
       <template #hint>
-        <HintModal modalHeader="Character modifiers" modalId="modifiersHelpModal">
+        <HintModal modalHeader="Character modifiers">
           <div>
             Talent modifiers are automatically added to character sheet in both edit and view modes. For example, if you
             add a talent that modifies the Size, it will automatically affect the number of Wounds. Sum of all Attribute

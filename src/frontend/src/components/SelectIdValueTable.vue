@@ -3,7 +3,6 @@ import IconButton from "./IconButton.vue";
 import { computed, reactive, ref, watchEffect } from "vue";
 import ModalWindow from "./ModalWindow.vue";
 import ChecklistPicker from "./ChecklistPicker.vue";
-import { useModal } from "../composables/modal.ts";
 import ListTable from "./ListTable.vue";
 import SectionButton from "./SectionButton.vue";
 import { truncate } from "../utils/string.ts";
@@ -101,16 +100,13 @@ const modalItems = computed(() =>
     .sort((a, b) => a.name.localeCompare(b.name)),
 );
 
-const modal = useModal();
-const modalId = window.crypto.randomUUID();
-const openedCounter = ref(0);
+const modalOpen = ref(false);
 
 function onEditClick() {
   if (props.loading) {
     return;
   }
-  openedCounter.value += 1;
-  modal.showModal(modalId);
+  modalOpen.value = true;
 }
 
 const tdClass = ["py-2", "px-2", "border-b", "border-neutral-300"];
@@ -161,12 +157,11 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
     <div class="text-sm text-error mt-1" :class="[validationStatus.valid ? 'hidden' : '']">
       {{ validationStatus.message }}
     </div>
-    <ModalWindow :id="modalId" fullHeight>
+    <ModalWindow v-model:open="modalOpen" fullHeight>
       <template #header> {{ modalTitle }} </template>
       <ChecklistPicker
         :items="modalItems"
         :routeName="routeName"
-        :opened="openedCounter"
         :loading="props.loading"
         :fourEIds="fourEIds"
         @toggle="(e) => emit('selected', e)"

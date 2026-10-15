@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { refDebounced } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import { EditionFilter, matchesEditionFilter } from "../services/wh/core/edition.ts";
@@ -11,14 +11,13 @@ import SectionLink from "./SectionLink.vue";
 import SpinnerAnimation from "./SpinnerAnimation.vue";
 
 // The content of a picker popup, in the style of the character sheet: a search row, then the items as a checklist, each
-// row a checkbox with the name and description. The items picked when the popup opened (opened changes) are listed
-// first under "Selected", the rest under "Available"; ticking a row doesn't move it, so rows don't jump. A repeatable
-// item's row has Add at its end and is not ticked by clicking it.
+// row a checkbox with the name and description. The items picked when the popup opened (it is created afresh on each
+// opening) are listed first under "Selected", the rest under "Available"; ticking a row doesn't move it, so rows don't
+// jump. A repeatable item's row has Add at its end and is not ticked by clicking it.
 const props = defineProps<{
   items: ChecklistItem[];
   // The items' page: names link to it and Create new and Reload are offered. Without it (e.g. sources) names are text.
   routeName?: string;
-  opened: number;
   loading?: boolean;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
@@ -43,16 +42,7 @@ const SEARCH_DEBOUNCE_MS = 250;
 const searchTerm = ref("");
 const searchTermDebounced = refDebounced(searchTerm, SEARCH_DEBOUNCE_MS);
 const editionFilter = ref<EditionFilter>("both");
-const pinned = ref(new Set<string>());
-
-watch(
-  () => props.opened,
-  () => {
-    searchTerm.value = "";
-    pinned.value = new Set(props.items.filter((x) => x.selected).map((x) => x.id));
-  },
-  { immediate: true },
-);
+const pinned = new Set(props.items.filter((x) => x.selected).map((x) => x.id));
 
 const shownItems = computed(() => {
   const query = searchTermDebounced.value.toLowerCase();
@@ -65,8 +55,8 @@ const shownItems = computed(() => {
 
 const bands = computed(() =>
   [
-    { title: "Selected", items: shownItems.value.filter((x) => pinned.value.has(x.id)) },
-    { title: "Available", items: shownItems.value.filter((x) => !pinned.value.has(x.id)) },
+    { title: "Selected", items: shownItems.value.filter((x) => pinned.has(x.id)) },
+    { title: "Available", items: shownItems.value.filter((x) => !pinned.has(x.id)) },
   ].filter((band) => band.items.length > 0),
 );
 

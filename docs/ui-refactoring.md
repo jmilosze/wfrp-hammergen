@@ -143,15 +143,18 @@ Without touching 4e behaviour:
   (from R2).
 - The two near-identical career-options watchers (species and career list) in the 4e editor become one.
 
-### R4 Modals on the native `<dialog>` (M)
+### R4 Modals on the native `<dialog>` (M) — done 2026-10-15
 
-`ModalWindow.vue` on `<dialog>` with `showModal()`: each modal owns its open state (`v-model:open` or an exposed
-`open()`), so the global `useModal` store, the string ids, the `#modal` teleport target and the shade in `App.vue`
-go. The browser then gives Escape to close, focus moved into the dialog and back, the rest of the page made inert,
-and the top layer (no z-index juggling). A dialog's content stays mounted only while it is open, as now. The pickers'
-`opened` and `resetPagination` counters are already redundant for that reason (the content is mounted afresh on
-every open) and go; `DeleteModal`'s deep watcher and `nextTick` reset go with the string ids. Scroll lock
-stays on `useScrollLock`.
+`ModalWindow.vue` is a `<dialog>` opened with `showModal()` and controlled by `v-model:open`, teleported to the end of
+the body so the page's styles around it don't apply. Each modal owns its open state; `composables/modal.ts`, the
+string ids (`modalId` props, `crypto.randomUUID()`), the `#modal` element and the shade in `App.vue` are gone, and so
+are `DeleteModal`'s deep watcher and `nextTick` reset, `HintModal`'s ids and the pickers' `opened` and
+`resetPagination` counters (the content is mounted afresh on every opening). A click on the shade, Escape, the ✕ and
+the buttons close it; focus moves into it and back to the button that opened it; the page behind is out of reach.
+The page's scroll lock is one CSS rule in `style.css` (`html:has(dialog[open])`).
+
+Visible changes: Escape closes a popup, keyboard focus behaves as above, and a popup now closes at once instead of
+fading out (the fade-in stays).
 
 ### R5 Pickers (part of HG-15) (M–L)
 

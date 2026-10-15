@@ -8,7 +8,6 @@ import SpinnerAnimation from "./components/SpinnerAnimation.vue";
 import { UserApi } from "./services/user.ts";
 import { authRequest } from "./services/auth.ts";
 import { useMediaQuery, useScrollLock } from "@vueuse/core";
-import { useModal } from "./composables/modal.ts";
 import { useRoute } from "vue-router";
 import { usePrint } from "./composables/print.ts";
 import { useAuth } from "./composables/auth.ts";
@@ -20,7 +19,6 @@ const userApi = new UserApi(authRequest);
 
 const isLg = useMediaQuery("(min-width: 1024px)");
 const auth = useAuth();
-const modal = useModal();
 const route = useRoute();
 const { printing } = usePrint();
 const { maintenance } = useMaintenance();
@@ -34,7 +32,7 @@ watch(isLg, (isDesktop) => {
 });
 
 watch(
-  () => showSideBar.value || modal.show.value || maintenance.value,
+  () => showSideBar.value || maintenance.value,
   (shouldLock) => {
     isScrollLocked.value = shouldLock;
   },
@@ -84,33 +82,4 @@ onMounted(async () => {
     </footer>
   </div>
   <SideBar v-if="!printing" v-model="showSideBar" />
-  <!-- Modal with shade -->
-  <Transition name="fade">
-    <div
-      v-show="modal.show.value"
-      class="fixed top-0 w-full h-full z-40 bg-neutral-500 opacity-70"
-      @click="modal.hideModal()"
-    />
-  </Transition>
-  <Transition name="fade">
-    <div v-show="modal.show.value" class="fixed top-0 w-full h-full z-50">
-      <div
-        id="modal"
-        class="relative overflow-auto h-full flex items-center justify-center"
-        @click="modal.hideModal()"
-      />
-    </div>
-  </Transition>
 </template>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 150ms ease-in-out;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
