@@ -1,0 +1,23 @@
+name: hammergen-test
+services:
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+  wfrp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      HAMMERGEN_SERVICES_EMAIL: "mockemail"
+      HAMMERGEN_SERVICES_CAPTCHA: "mockcaptcha"
+      HAMMERGEN_USERSERVICE_CREATE_MOCKS: "true"
+      HAMMERGEN_WHSERVICE_CREATE_MOCKS: "true"
+      HAMMERGEN_MONGODB_CREATE_USER_INDEXES: "true"
+      HAMMERGEN_MONGODB_URI: "mongodb://admin:admin@mongodb:27017/"
+    ports:
+      - 8083:8080
+    depends_on:
+      - mongodb

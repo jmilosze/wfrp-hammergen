@@ -25,7 +25,10 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', '%VITE_ANALYTICS_ID%');
+      // The password reset link carries a secret token in the path; never send it.
+      gtag('config', '%VITE_ANALYTICS_ID%', {
+        page_location: window.location.href.replace(/\/resetpassword\/[^/?#]+/, '/resetpassword'),
+      });
     </script>
 
     <div id="app"></div>

@@ -4,21 +4,6 @@ Everything users don't see directly: backend internals, code quality, tests, too
 
 ## Bugs
 
-### HG-21 `deploy.py` turns maintenance off
-Tooling · 2026-09-30
-
-`deployment/gcp/deploy.py` uses `--set-env-vars`, which replaces all Cloud Run env vars and so drops `HAMMERGEN_MAINTENANCE_ENABLED`. Use `--update-env-vars` or add the flag to the config.
-
-### HG-22 `make dev-restart` / `make test` delete local data
-Tooling · 2026-09-30
-
-They run `docker compose down -v`, which deletes the local MongoDB volume (and the `hammergenGo` dev data).
-
-### HG-46 Password reset token sent to Google Analytics
-Frontend · 2026-10-16
-
-The reset link from the e-mail opens `/resetpassword/:token` with a full page load, and the gtag config in `index.html` sends the full URL as the page view, so the reset token ends up in Google Analytics. Strip it from what is sent (fixed by HG-45 if page views are sent with the route path template; otherwise exclude that page).
-
 ## Improvements
 
 ### HG-2 Usage metrics per edition (4e vs 5e)
@@ -46,25 +31,10 @@ Backend · 2026-09-30
 
 Unkeyed `bson.E` struct literals in `internal/dependencies/mongodb/user.go`.
 
-### HG-17 Two `validAttributesFn`
-Frontend · 2026-10-09
-
-`services/wh/core/validators.ts` (field name in the message, used by characters) and `services/wh/core/attributes.ts` (used by modifiers) do the same check with different signatures and messages; keep one.
-
-### HG-19 Test fixtures cast with `as …ApiData`
-Frontend · 2026-09-30
-
-`content/skill.spec.ts` and `content/career.spec.ts` cast fixtures, which hides type errors (e.g. a stale `visibility` field went unnoticed).
-
-### HG-23 Obsolete `version` in `docker-compose.yaml`
-Tooling · 2026-09-30
-
-Compose warns about the obsolete `version` attribute; remove it.
-
 ### HG-24 HTTP integration tests only cover properties
 Tests · 2026-09-30
 
-`src/api-go/test/integration` only covers qualities/flaws; add other content types and characters. Note: these tests run against the `wfrp-mongodb` container on :8081, which writes to the local `hammergenGo` database.
+`src/api-go/test/integration` only covers qualities/flaws; add other content types and characters. Note: `make test` runs them against their own throwaway stack on :8083.
 
 ### HG-45 Page breakdown in Google Analytics
 Frontend · 2026-10-16
@@ -81,7 +51,7 @@ Backend + Frontend · 2026-10-16
 
 Review authentication and account handling end to end and file what is found as separate issues. Today: `POST api/token` returns an HMAC-signed JWT (`dependencies/golangjwt/jwt.go`) carrying the user id, admin flag and shared account ids; passwords are bcrypt hashes (`services/user.go`); reCAPTCHA guards registration and the reset e-mail; the reset link carries a reset JWT (rejected as an access token by `RequireJwt`); the frontend keeps the token and the decoded claims in `localStorage` (`services/auth.ts`). Points to check, among others:
 - Token lifetime and no refresh: access tokens last 7 days (`HAMMERGEN_JWT_ACCESS_EXPIRY`) and are not refreshed, so even an active user logs in again weekly. When a request gets a 401, `SessionLoginDialog` asks for the password and sends the request again, so unsaved edits survive; logging out from it goes to the login page as before. Claims (admin, linked accounts) stay stale until expiry; logout only clears the browser, the token stays valid. Opening the app with an expired token shows either the dialog or the login page, depending on whether the page's own requests or the session check in `App.vue` (which logs out silently) get their 401 first.
-- Reset tokens can be used again until they expire, also after the password was changed (HG-46: they also leak to Google Analytics).
+- Reset tokens can be used again until they expire, also after the password was changed.
 - Token in `localStorage` (readable by any script on the page) vs an httpOnly cookie.
 - Brute-force and enumeration: the API has no rate limit (check whether anything in front of Cloud Run has one), so `api/token` can be tried freely; `api/user/exists/:userName` and the reset endpoint reveal whether a user exists.
 - Password rules, bcrypt cost, HMAC secret strength and rotation.

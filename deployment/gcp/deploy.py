@@ -91,7 +91,7 @@ def deploy_to_cloud_run(env, deploy_config):
 
     command = (
         f"gcloud run deploy {service_name} --region={region} --project={project} --image={image}:{env} "
-        f"--allow-unauthenticated --concurrency={concurrency} --set-env-vars={env_vars}"
+        f"--allow-unauthenticated --concurrency={concurrency} --update-env-vars={env_vars}"
     )
 
     run_and_output(command)

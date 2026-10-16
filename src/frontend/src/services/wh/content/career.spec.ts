@@ -3,8 +3,6 @@ import {
   Career,
   CareerApiData,
   CareerClass,
-  CareerLevel,
-  CareerLevelApiData,
   copyCareerLevel,
   findCareerMatches,
   getCareerAttributesByLevel,
@@ -38,7 +36,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill11", "skill12"],
     talents: ["talent11", "talent12"],
     items: "items1",
-  } as CareerLevelApiData,
+  },
   level2: {
     exists: true,
     name: "l2",
@@ -48,7 +46,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill21", "skill22"],
     talents: ["talent21", "talent22"],
     items: "items2",
-  } as CareerLevelApiData,
+  },
   level3: {
     exists: true,
     name: "l3",
@@ -58,7 +56,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill31", "skill32"],
     talents: ["talent31", "talent32"],
     items: "items3",
-  } as CareerLevelApiData,
+  },
   level4: {
     exists: true,
     name: "l4",
@@ -68,7 +66,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill41", "skill42"],
     talents: ["talent41", "talent42"],
     items: "items4",
-  } as CareerLevelApiData,
+  },
   level5: {
     exists: true,
     name: "l5",
@@ -78,7 +76,7 @@ const careerApiData: CareerApiData = {
     skills: ["skill51", "skill52"],
     talents: ["talent51", "talent52"],
     items: "items5",
-  } as CareerLevelApiData,
+  },
 };
 
 const careerApiResponse: ApiResponse<CareerApiData> = {
@@ -105,7 +103,7 @@ const career = new Career({
     skills: new Set(["skill11", "skill12"]),
     talents: new Set(["talent11", "talent12"]),
     items: "items1",
-  } as CareerLevel,
+  },
   level2: {
     exists: true,
     name: "l2",
@@ -115,7 +113,7 @@ const career = new Career({
     skills: new Set(["skill21", "skill22"]),
     talents: new Set(["talent21", "talent22"]),
     items: "items2",
-  } as CareerLevel,
+  },
   level3: {
     exists: true,
     name: "l3",
@@ -125,7 +123,7 @@ const career = new Career({
     skills: new Set(["skill31", "skill32"]),
     talents: new Set(["talent31", "talent32"]),
     items: "items3",
-  } as CareerLevel,
+  },
   level4: {
     exists: true,
     name: "l4",
@@ -135,7 +133,7 @@ const career = new Career({
     skills: new Set(["skill41", "skill42"]),
     talents: new Set(["talent41", "talent42"]),
     items: "items4",
-  } as CareerLevel,
+  },
   level5: {
     exists: true,
     name: "l5",
@@ -145,7 +143,7 @@ const career = new Career({
     skills: new Set(["skill51", "skill52"]),
     talents: new Set(["talent51", "talent52"]),
     items: "items5",
-  } as CareerLevel,
+  },
 });
 
 test("apiResponseToModel returns expected career", () => {

@@ -14,7 +14,7 @@ const skillApiData: SkillApiData = {
   isGroup: true,
   group: ["a", "b"],
   source: { 1: "page 2", 3: "page 5-10" },
-} as SkillApiData;
+};
 
 const skillApiResponse: ApiResponse<SkillApiData> = {
   id: "id",

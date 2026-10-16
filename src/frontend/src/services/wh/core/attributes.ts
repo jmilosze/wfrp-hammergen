@@ -1,5 +1,4 @@
 import { isKey } from "@/utils/object.ts";
-import { setValidationStatus, ValidationStatus } from "@/utils/validation.ts";
 
 export interface Attributes {
   WS: number;
@@ -174,23 +173,4 @@ export function copyAttributes(attributes: Attributes): Attributes {
   }
 
   return copy;
-}
-
-export function validAttributesFn(attributes: Attributes, min: number, max: number): ValidationStatus {
-  let isValid = true;
-  for (const key of Object.keys(attributes)) {
-    if (isKey(attributes, key)) {
-      if (attributes[key] > max || attributes[key] < min || !Number.isInteger(attributes[key])) {
-        isValid = false;
-        break;
-      }
-    } else {
-      isValid = false;
-      break;
-    }
-  }
-  return setValidationStatus(
-    isValid,
-    `Invalid value of one or more attributes. Attributes have to be integers between ${min} and ${max}.`,
-  );
 }

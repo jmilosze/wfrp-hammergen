@@ -10,7 +10,8 @@ How to run, test, change data and deploy. See `README.md` for the basic setup.
   - API on `:8082`: from `src/api-go`, run `HAMMERGEN_SERVER_PORT=8082 HAMMERGEN_SERVICES_EMAIL=mockemail HAMMERGEN_SERVICES_CAPTCHA=mockcaptcha go run ./cmd/wfrp`. `go run` leaves a child process: stop it by the port's pid.
   - Frontend on `:5174` against that API: the `frontend-walkthrough` configuration in `.claude/launch.json` (`VITE_ROOT_API=http://127.0.0.1:8082`).
   - With mock captcha, registration accepts the captcha value `success`; test accounts can be created on the local API. Use `@example.test` addresses and keep passwords out of chat.
-- **Integration-test container:** `wfrp-mongodb` on `:8081` (from `src/docker-compose.yaml`, `make dev-up`). It writes to the same local `hammergenGo` database.
+- **Dev API container:** `wfrp-mongodb` on `:8081` (from `src/docker-compose.yaml`, `make dev-up`); it uses the local MongoDB above. `make dev-down`/`dev-restart` keep the data.
+- **Integration-test stack:** `make test` runs its own throwaway project (`src/docker-compose.test.yaml`: own MongoDB, API on `:8083`) and deletes it first, so the dev data is untouched.
 
 ## Tests and checks
 
@@ -21,7 +22,7 @@ Frontend (`src/frontend`):
 - `npx prettier --write <files>`: format only the files you changed (many older files are not formatted yet, HG-18)
 
 Backend (`src/api-go`):
-- `go test ./internal/...`: unit tests. Don't run `go test ./...`: it also runs `test/integration` against the `:8081` container, which writes junk users into local `hammergenGo`. Run integration tests only when asked.
+- `go test ./internal/...`: unit tests. Don't run `go test ./...`: it also runs `test/integration` against `:8081` by default (it writes junk users into local `hammergenGo`). Use `make test` (own stack on `:8083`) and run integration tests only when asked.
 - `gofmt -l internal test`, `go vet ./internal/...` (known warnings: HG-13)
 
 CI (`.github/workflows/lint.yml`) runs the frontend lint and tests on pull requests.

@@ -1,7 +1,7 @@
-import { Attributes, copyAttributes, validAttributesFn, zeroAttributes } from "./attributes.ts";
+import { Attributes, copyAttributes, zeroAttributes } from "./attributes.ts";
 import { ValidationStatus } from "@/utils/validation.ts";
 import { Edition } from "./edition.ts";
-import { validIntegerFn } from "./validators.ts";
+import { validAttributesFn, validIntegerFn } from "./validators.ts";
 import { cloneEntity } from "@/utils/clone.ts";
 import { isEqualEntity } from "@/utils/equal.ts";
 
@@ -109,7 +109,7 @@ export class CharacterModifiers {
   }
 
   validateAttributes(): ValidationStatus {
-    return validAttributesFn(this.attributes, -99, 99);
+    return validAttributesFn("Modifier", this.attributes, -99, 99);
   }
 
   validateSize(): ValidationStatus {
