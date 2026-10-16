@@ -23,7 +23,7 @@ Frontend (`src/frontend`):
 
 Backend (`src/api-go`):
 - `go test ./internal/...`: unit tests. Don't run `go test ./...`: it also runs `test/integration` against `:8081` by default (it writes junk users into local `hammergenGo`). Use `make test` (own stack on `:8083`) and run integration tests only when asked.
-- `gofmt -l internal test`, `go vet ./internal/...` (known warnings: HG-13)
+- `gofmt -l internal test`, `go vet ./internal/...`
 
 CI (`.github/workflows/lint.yml`) runs the frontend lint and tests on pull requests.
 

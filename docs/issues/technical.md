@@ -26,10 +26,6 @@ Backend + Frontend · 2026-10-01
 
 Talents, traits and mutations share one `modifiers` block (size, movement, characteristics, effects). Everything that doesn't fit the linear "per take" numbers is a hard-coded effect (Hardy, Strong Back, Sturdy) with its own calculation, and the effect enum and per-edition lists are duplicated in Go and TypeScript. Non-linear effects (Strong Back) and effects Hammergen doesn't model (Luck/Fortune, Fear) show the limits.
 
-### HG-13 `go vet` warnings
-Backend · 2026-09-30
-
-Unkeyed `bson.E` struct literals in `internal/dependencies/mongodb/user.go`.
 
 ### HG-24 HTTP integration tests only cover properties
 Tests · 2026-09-30

@@ -52,9 +52,9 @@ func (s *UserDbService) Retrieve(ctx context.Context, fieldName string, fieldVal
 		if err != nil {
 			return nil, fmt.Errorf("failed to calculate object id of %s: %w", fieldValue, err)
 		}
-		query = bson.D{{"_id", id}}
+		query = bson.D{{Key: "_id", Value: id}}
 	} else {
-		query = bson.D{{"username", fieldValue}}
+		query = bson.D{{Key: "username", Value: fieldValue}}
 	}
 
 	var userMongo userDocWrite
@@ -92,7 +92,7 @@ func getLinkedUsersByIds(ctx context.Context, col *mongo.Collection, ids []bson.
 	if len(ids) == 0 {
 		return []*userDocWrite{}, nil
 	}
-	return findUsers(ctx, col, bson.D{{"_id", bson.D{{"$in", ids}}}})
+	return findUsers(ctx, col, bson.D{{Key: "_id", Value: bson.D{{Key: "$in", Value: ids}}}})
 }
 
 func findUsers(ctx context.Context, coll *mongo.Collection, query bson.D) ([]*userDocWrite, error) {
@@ -142,7 +142,7 @@ func getLinkedUsers(ctx context.Context, col *mongo.Collection, sharedAccounts [
 	if len(sharedAccounts) == 0 {
 		return []*userDocWrite{}, nil
 	}
-	return findUsers(ctx, col, bson.D{{"username", bson.D{{"$in", sharedAccounts}}}})
+	return findUsers(ctx, col, bson.D{{Key: "username", Value: bson.D{{Key: "$in", Value: sharedAccounts}}}})
 }
 
 func newMongoFromUser(u *user.User, linkedUsers []*userDocWrite) (*userDocWrite, error) {
@@ -226,7 +226,7 @@ func (s *UserDbService) Update(ctx context.Context, user *user.User) (*user.User
 		return nil, fmt.Errorf("failed to create mongo-user from user: %w", err)
 	}
 
-	result, err := s.Collection.UpdateOne(ctx, bson.D{{"_id", userMongo.Id}}, bson.D{{"$set", userMongo}})
+	result, err := s.Collection.UpdateOne(ctx, bson.D{{Key: "_id", Value: userMongo.Id}}, bson.D{{Key: "$set", Value: userMongo}})
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, fmt.Errorf("user already exists: %w", domain.ErrConflict)
@@ -247,7 +247,7 @@ func (s *UserDbService) Delete(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to calculate object id of %s: %w", id, err)
 	}
 
-	_, err = s.Collection.DeleteOne(ctx, bson.D{{"_id", idObject}})
+	_, err = s.Collection.DeleteOne(ctx, bson.D{{Key: "_id", Value: idObject}})
 	if err != nil {
 		return fmt.Errorf("failed to delete user: %w", err)
 	}
