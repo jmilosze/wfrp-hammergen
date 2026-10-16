@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { canEdit, resetAuthState, setupAuthInterceptor, UnauthorizedError, useAuth } from "./auth.ts";
-import { authRequest } from "@/services/auth.ts";
+import { canEdit, resetAuthState, setupAuthInterceptor, UnauthorizedError, useAuth, useRelogin } from "./auth.ts";
+import { anonRequest, authRequest } from "@/services/auth.ts";
+import { flushPromises } from "@vue/test-utils";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { createApp } from "vue";
@@ -54,11 +55,13 @@ describe("canEdit permission check", () => {
 describe("Auth interceptor and state reset", () => {
   let interceptorId: number;
   let originalAdapter: typeof authRequest.defaults.adapter;
+  let originalAnonAdapter: typeof anonRequest.defaults.adapter;
 
   beforeEach(async () => {
     stubLocalStorage();
 
     originalAdapter = authRequest.defaults.adapter;
+    originalAnonAdapter = anonRequest.defaults.adapter;
   });
 
   afterEach(() => {
@@ -66,8 +69,14 @@ describe("Auth interceptor and state reset", () => {
       authRequest.interceptors.response.eject(interceptorId);
     }
     authRequest.defaults.adapter = originalAdapter;
+    anonRequest.defaults.adapter = originalAnonAdapter;
     resetAuthState();
   });
+
+  function unauthorized(config: InternalAxiosRequestConfig): AxiosError {
+    const response: AxiosResponse = { status: 401, statusText: "Unauthorized", headers: {}, config, data: {} };
+    return new AxiosError("Unauthorized", AxiosError.ERR_BAD_RESPONSE, config, null, response);
+  }
 
   function createTestApp() {
     const router = createRouter({
@@ -104,7 +113,7 @@ describe("Auth interceptor and state reset", () => {
     expect(auth.isAdmin.value).toBe(false);
   });
 
-  test("401 response resets auth state, redirects to login, and rejects with UnauthorizedError", async () => {
+  test("401 response of a logged-in user waits for the login dialog; logging out redirects to login", async () => {
     localStorage.setItem("accessToken", "token123");
     localStorage.setItem("username", "testuser");
 
@@ -113,23 +122,65 @@ describe("Auth interceptor and state reset", () => {
     interceptorId = setupAuthInterceptor(router);
 
     authRequest.defaults.adapter = async (config: InternalAxiosRequestConfig) => {
-      const response: AxiosResponse = {
-        status: 401,
-        statusText: "Unauthorized",
-        headers: {},
-        config,
-        data: { message: "Session expired" },
-      };
-      throw new AxiosError("Unauthorized", AxiosError.ERR_BAD_RESPONSE, config, null, response);
+      throw unauthorized(config);
     };
 
     const auth = app.runWithContext(() => useAuth());
-    await expect(authRequest.get("/api/protected")).rejects.toThrow(UnauthorizedError);
+    const relogin = useRelogin();
+    const request = authRequest.get("/api/protected");
+    await flushPromises();
 
+    expect(relogin.username.value).toBe("testuser");
+    expect(auth.loggedIn.value).toBe(true);
+    expect(router.currentRoute.value.name).toBe("characters");
+
+    relogin.cancel();
+    await expect(request).rejects.toThrow(UnauthorizedError);
+
+    expect(relogin.username.value).toBeNull();
     expect(auth.loggedIn.value).toBe(false);
     expect(localStorage.getItem("accessToken")).toBeNull();
     expect(router.currentRoute.value.name).toBe("login");
     expect(router.currentRoute.value.query.redirect).toBe("/characters");
+  });
+
+  test("401 responses are sent again with the new token after logging in through the dialog", async () => {
+    localStorage.setItem("accessToken", "token123");
+    localStorage.setItem("username", "testuser");
+
+    const { router } = createTestApp();
+    await router.push({ name: "characters" });
+    interceptorId = setupAuthInterceptor(router);
+
+    const newToken = `header.${btoa(JSON.stringify({ sub: "id123", adm: false }))}.signature`;
+    anonRequest.defaults.adapter = async (config: InternalAxiosRequestConfig) => ({
+      status: 200,
+      statusText: "OK",
+      headers: {},
+      config,
+      data: { accessToken: newToken },
+    });
+    authRequest.defaults.adapter = async (config: InternalAxiosRequestConfig) => {
+      if (config.headers.Authorization !== `Bearer ${newToken}`) {
+        throw unauthorized(config);
+      }
+      return { status: 200, statusText: "OK", headers: {}, config, data: { url: config.url } };
+    };
+
+    const relogin = useRelogin();
+    const first = authRequest.get("/api/first");
+    const second = authRequest.get("/api/second");
+    await flushPromises();
+
+    expect(relogin.username.value).toBe("testuser");
+    await relogin.login("testuser", "password");
+
+    expect((await first).data.url).toBe("/api/first");
+    expect((await second).data.url).toBe("/api/second");
+    expect(relogin.username.value).toBeNull();
+    expect(localStorage.getItem("accessToken")).toBe(newToken);
+    expect(localStorage.getItem("userId")).toBe("id123");
+    expect(router.currentRoute.value.name).toBe("characters");
   });
 
   test("401 response with skipAuthRedirect does not redirect to login", async () => {

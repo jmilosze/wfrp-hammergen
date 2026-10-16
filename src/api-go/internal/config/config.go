@@ -51,7 +51,7 @@ type WhService struct {
 }
 
 type Jwt struct {
-	AccessExpiry time.Duration `default:"24h" split_words:"true"`
+	AccessExpiry time.Duration `default:"168h" split_words:"true"`
 	ResetExpiry  time.Duration `default:"48h" split_words:"true"`
 	HmacSecret   string        `default:"some secret" split_words:"true"`
 }

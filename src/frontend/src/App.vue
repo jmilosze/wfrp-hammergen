@@ -13,6 +13,7 @@ import { usePrint } from "./composables/print.ts";
 import { useAuth } from "./composables/auth.ts";
 import { useMaintenance } from "./composables/maintenance.ts";
 import MaintenancePage from "./views/MaintenancePage.vue";
+import SessionLoginDialog from "./components/account/SessionLoginDialog.vue";
 
 const showSideBar = ref(false);
 const userApi = new UserApi(authRequest);
@@ -82,4 +83,5 @@ onMounted(async () => {
     </footer>
   </div>
   <SideBar v-if="!printing" v-model="showSideBar" />
+  <SessionLoginDialog />
 </template>

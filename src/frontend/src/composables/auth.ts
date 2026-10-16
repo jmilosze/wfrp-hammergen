@@ -39,6 +39,40 @@ export function getSafeRedirectTarget(redirect: unknown): string | null {
   return null;
 }
 
+// The login dialog for an expired session (SessionLoginDialog): open while reloginUsername is set. Requests that got a
+// 401 wait for it and are sent again after the login, so a page keeps what was typed into it (e.g. unsaved edits).
+const reloginUsername = ref<string | null>(null);
+let reloginWaiting: ((loggedIn: boolean) => void)[] = [];
+
+function waitForRelogin(username: string): Promise<boolean> {
+  reloginUsername.value = username;
+  return new Promise((resolve) => reloginWaiting.push(resolve));
+}
+
+function finishRelogin(loggedIn: boolean): void {
+  reloginUsername.value = null;
+  const waiting = reloginWaiting;
+  reloginWaiting = [];
+  for (const resolve of waiting) {
+    resolve(loggedIn);
+  }
+}
+
+export function useRelogin() {
+  async function login(username: string, password: string): Promise<void> {
+    await loginUser(username, password);
+    loggedIn.value = true;
+    isAdmin.value = isUserAdmin();
+    finishRelogin(true);
+  }
+
+  function cancel(): void {
+    finishRelogin(false);
+  }
+
+  return { username: reloginUsername, login, cancel };
+}
+
 export function setupAuthInterceptor(router: Router): number {
   let redirecting = false;
 
@@ -46,6 +80,14 @@ export function setupAuthInterceptor(router: Router): number {
     (response) => response,
     async (error) => {
       if (isAxiosError(error) && error.response?.status === 401) {
+        // skipAuthRedirect: the request only checks the session, so an expired one is dropped without asking.
+        const username = getUserInfo().username;
+        if (error.config && error.config.skipAuthRedirect !== true && username !== "") {
+          if (await waitForRelogin(username)) {
+            return authRequest.request(error.config);
+          }
+        }
+
         resetAuthState();
 
         const skipRedirect = error.config?.skipAuthRedirect === true;

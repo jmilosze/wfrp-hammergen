@@ -14,6 +14,11 @@ Tooling · 2026-09-30
 
 They run `docker compose down -v`, which deletes the local MongoDB volume (and the `hammergenGo` dev data).
 
+### HG-46 Password reset token sent to Google Analytics
+Frontend · 2026-10-16
+
+The reset link from the e-mail opens `/resetpassword/:token` with a full page load, and the gtag config in `index.html` sends the full URL as the page view, so the reset token ends up in Google Analytics. Strip it from what is sent (fixed by HG-45 if page views are sent with the route path template; otherwise exclude that page).
+
 ## Improvements
 
 ### HG-2 Usage metrics per edition (4e vs 5e)
@@ -60,6 +65,27 @@ Compose warns about the obsolete `version` attribute; remove it.
 Tests · 2026-09-30
 
 `src/api-go/test/integration` only covers qualities/flaws; add other content types and characters. Note: these tests run against the `wfrp-mongodb` container on :8081, which writes to the local `hammergenGo` database.
+
+### HG-45 Page breakdown in Google Analytics
+Frontend · 2026-10-16
+
+Google Analytics (gtag in `index.html`, `VITE_ANALYTICS_ID`) only runs its default config, so per-page reports are poor: every page has the title "Hammergen", and URLs carry ids (`/character/<id>`, `/career/<id>`) and list filter queries, so one page splits into thousands of rows. Goal: see how often each page is used (e.g. characters list, character editor, career view, generator). Send page views from the router (`router.afterEach` in `router.ts`) with the route name as title and the path template (`/character/:id`) as location, with `send_page_view: false` and the history page views of Enhanced Measurement turned off so nothing is counted twice; optionally the edition as a parameter (custom dimension set up in GA by the owner). Optional events for actions without their own page (generate, print, CSV export). No ids or personal data in what is sent. Complements HG-2 (API-side usage metrics).
+
+### HG-47 Count character CSV/JSON downloads
+Frontend · 2026-10-16
+
+Character downloads (`download` in `components/character/sheet/ViewCharacterHeader.vue`) are built in the browser and saved with `saveAs`, so they never reach the API and Google Analytics' automatic `file_download` (link clicks to files only) doesn't see them. Send a GA event from `download`, e.g. `character_download` with the format (`csv`/`json`) and the edition, and the same for Print. GA is enough for usage trends; it undercounts users with ad blockers. Only if exact numbers are needed, add a small API event endpoint instead (the open point in HG-2). Do it together with HG-45 (one place that sends GA events).
+
+### HG-48 Review the authentication system
+Backend + Frontend · 2026-10-16
+
+Review authentication and account handling end to end and file what is found as separate issues. Today: `POST api/token` returns an HMAC-signed JWT (`dependencies/golangjwt/jwt.go`) carrying the user id, admin flag and shared account ids; passwords are bcrypt hashes (`services/user.go`); reCAPTCHA guards registration and the reset e-mail; the reset link carries a reset JWT (rejected as an access token by `RequireJwt`); the frontend keeps the token and the decoded claims in `localStorage` (`services/auth.ts`). Points to check, among others:
+- Token lifetime and no refresh: access tokens last 7 days (`HAMMERGEN_JWT_ACCESS_EXPIRY`) and are not refreshed, so even an active user logs in again weekly. When a request gets a 401, `SessionLoginDialog` asks for the password and sends the request again, so unsaved edits survive; logging out from it goes to the login page as before. Claims (admin, linked accounts) stay stale until expiry; logout only clears the browser, the token stays valid. Opening the app with an expired token shows either the dialog or the login page, depending on whether the page's own requests or the session check in `App.vue` (which logs out silently) get their 401 first.
+- Reset tokens can be used again until they expire, also after the password was changed (HG-46: they also leak to Google Analytics).
+- Token in `localStorage` (readable by any script on the page) vs an httpOnly cookie.
+- Brute-force and enumeration: the API has no rate limit (check whether anything in front of Cloud Run has one), so `api/token` can be tried freely; `api/user/exists/:userName` and the reset endpoint reveal whether a user exists.
+- Password rules, bcrypt cost, HMAC secret strength and rotation.
+- Authorisation of the user endpoints (`dependencies/gin/user.go`): who may read, update, change claims of or delete which user.
 
 ## Ideas
 
