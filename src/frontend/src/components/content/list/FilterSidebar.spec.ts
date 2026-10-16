@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
 import FilterSidebar from "./FilterSidebar.vue";
-import { FilterSection } from "./filterSection.ts";
+import { FilterSection } from "@/components/filter/filterSection.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 

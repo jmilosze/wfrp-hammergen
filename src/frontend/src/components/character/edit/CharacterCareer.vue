@@ -10,6 +10,8 @@ import { Career, printClassName } from "@/services/wh/content/career.ts";
 import { IdNumber } from "@/utils/idNumber.ts";
 import TextLink from "@/components/ui/TextLink.vue";
 import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
+import { idFilter } from "@/components/filter/contentFilter.ts";
+import { careerFilters } from "@/components/filter/careerFilters.ts";
 
 // A career level that can be picked; id is the career's id and the level.
 type CareerLevelRow = {
@@ -63,6 +65,9 @@ function isCurrent(row: CareerLevelRow): boolean {
 function isPast(row: CareerLevelRow): boolean {
   return props.pastCareers.some((x) => x.id === row.careerId && x.number === row.level);
 }
+
+// The popup filters careers by species.
+const filter = computed(() => idFilter({ species: careerFilters.species }, props.careerList));
 
 const selectedCurrentCareer = computed(() => levelRows.value.find((x) => isCurrent(x)));
 const selectedPastCareers = computed(() => levelRows.value.filter((x) => isPast(x)));
@@ -153,6 +158,7 @@ function onChoose(id: string, key: string) {
         routeName="career"
         :loading="props.loading"
         :fourEIds="fourEIds"
+        :filter="filter"
         @choose="(e) => onChoose(e.id, e.key)"
         @reload="emit('reload')"
       />

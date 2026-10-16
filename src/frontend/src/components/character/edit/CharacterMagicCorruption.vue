@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { CharacterContent } from "@/composables/characterEdit.ts";
 import { IdValue } from "@/utils/idValue.ts";
 import { ValidationStatus } from "@/utils/validation.ts";
@@ -6,6 +7,9 @@ import SheetTable from "@/components/sheet/SheetTable.vue";
 import SheetField from "@/components/sheet/SheetField.vue";
 import SelectTable from "@/components/picker/SelectTable.vue";
 import SelectIdValueTable from "@/components/picker/SelectIdValueTable.vue";
+import { idFilter } from "@/components/filter/contentFilter.ts";
+import { spellFilters } from "@/components/filter/spellFilters.ts";
+import { mutationFilters } from "@/components/filter/mutationFilters.ts";
 
 // The character editor's Magic and Faith (Sin Points, prayers, spells) and Traits and Corruption (Corruption Points,
 // mutations, creature traits), side by side once there is room. The picked prayers, spells, mutations and traits are
@@ -13,7 +17,7 @@ import SelectIdValueTable from "@/components/picker/SelectIdValueTable.vue";
 const sin = defineModel<number>("sin", { required: true });
 const corruption = defineModel<number>("corruption", { required: true });
 
-defineProps<{
+const props = defineProps<{
   prayers: Set<string>;
   spells: Set<string>;
   mutations: Set<string>;
@@ -34,6 +38,23 @@ const emit = defineEmits<{
   (e: "traitSelected", value: { id: string; selected: boolean }): void;
   (e: "traitValueUpdated", value: { index: number; id: string; value: string }): void;
 }>();
+
+// Spells show their Casting Number before the description, e.g. "CN 3 · Target gains…".
+const spellItems = computed(() =>
+  props.content.spells.withAllowed.value.map((x) => ({
+    id: x.id,
+    name: x.name,
+    description: `CN ${x.cn} · ${x.description}`,
+  })),
+);
+
+// The popups filter spells by type and label, mutations by type.
+const spellsFilter = computed(() =>
+  idFilter({ type: spellFilters.type, label: spellFilters.label }, props.content.spells.withAllowed.value),
+);
+const mutationsFilter = computed(() =>
+  idFilter({ type: mutationFilters.type }, props.content.mutations.withAllowed.value),
+);
 </script>
 
 <template>
@@ -67,8 +88,9 @@ const emit = defineEmits<{
       <SelectTable
         :disabled="disabled"
         :selected="spells"
-        :itemList="content.spells.withAllowed.value"
+        :itemList="spellItems"
         :fourEIds="content.spells.fourEIds.value"
+        :filter="spellsFilter"
         title="Spells"
         modalTitle="Edit spells"
         :loading="content.spells.loading.value"
@@ -96,6 +118,7 @@ const emit = defineEmits<{
         :selected="mutations"
         :itemList="content.mutations.withAllowed.value"
         :fourEIds="content.mutations.fourEIds.value"
+        :filter="mutationsFilter"
         title="Mutations"
         modalTitle="Edit mutations"
         :loading="content.mutations.loading.value"

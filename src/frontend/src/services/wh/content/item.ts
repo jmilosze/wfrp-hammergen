@@ -77,6 +77,19 @@ export const enum MeleeGroup {
   Engineering,
 }
 
+// The melee groups of both editions, each edition's in its own order.
+export const meleeGroupList = [
+  MeleeGroup.Basic,
+  MeleeGroup.Cavalry,
+  MeleeGroup.Fencing,
+  MeleeGroup.Brawling,
+  MeleeGroup.Flail,
+  MeleeGroup.Parry,
+  MeleeGroup.Polearm,
+  MeleeGroup.TwoHanded,
+  MeleeGroup.Engineering,
+];
+
 // Melee groups of each edition; 5e has no Parry or Engineering group.
 export const meleeGroupsByEdition: Record<Edition, MeleeGroup[]> = {
   "4e": [
@@ -223,6 +236,19 @@ export const enum ArmourGroup {
   Leather,
   Shield,
 }
+
+// The armour groups of both editions, each edition's in its own order.
+export const armourGroupList = [
+  ArmourGroup.SoftLeather,
+  ArmourGroup.BoiledLeather,
+  ArmourGroup.Leather,
+  ArmourGroup.Mail,
+  ArmourGroup.Plate,
+  ArmourGroup.SoftKit,
+  ArmourGroup.Brigandine,
+  ArmourGroup.Shield,
+  ArmourGroup.Other,
+];
 
 // Armour groups of each edition; in 5e shields are armour.
 export const armourGroupsByEdition: Record<Edition, ArmourGroup[]> = {

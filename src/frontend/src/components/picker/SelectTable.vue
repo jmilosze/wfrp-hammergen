@@ -9,6 +9,7 @@ import SheetList from "@/components/sheet/SheetList.vue";
 import { truncate } from "@/utils/string.ts";
 import TextLink from "@/components/ui/TextLink.vue";
 import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
+import { IdFilter } from "@/components/filter/contentFilter.ts";
 
 type Entity = { name: string; id: string; description: string };
 
@@ -27,6 +28,8 @@ const props = defineProps<{
   truncateModalDescription?: number;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
+  // The content type's filters, offered in the popup.
+  filter?: IdFilter;
 }>();
 
 const emit = defineEmits<{
@@ -102,6 +105,7 @@ function onEditClick() {
         :routeName="routeName"
         :loading="props.loading"
         :fourEIds="fourEIds"
+        :filter="filter"
         @toggle="(e) => emit('selected', e)"
         @reload="emit('reload')"
       />

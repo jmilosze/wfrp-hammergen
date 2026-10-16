@@ -6,6 +6,7 @@ import { ChecklistItem } from "./checklistItem.ts";
 import ChecklistRow from "./ChecklistRow.vue";
 import SheetTitle from "@/components/sheet/SheetTitle.vue";
 import { componentStubs, findButton } from "@/testing.ts";
+import { IdFilter } from "@/components/filter/contentFilter.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 
@@ -78,5 +79,36 @@ describe("ChecklistPicker", () => {
     await wrapper.find("select").setValue("4e");
 
     expect(rowNames(wrapper)).toEqual(["Beta"]);
+  });
+
+  test("narrows the rows with the filters of the Filters panel", async () => {
+    // Rows by their first letter, a and b offered.
+    const filter: IdFilter = {
+      sections: () => [
+        {
+          key: "letter",
+          title: "Letter",
+          options: [
+            { text: "A", value: "a" },
+            { text: "B", value: "b" },
+          ],
+        },
+      ],
+      matches: (id, ticked) => (ticked.letter ?? []).length === 0 || (ticked.letter ?? []).includes(id[0]),
+    };
+    const wrapper = mountPicker({ items: [item("a1", "Alpha"), item("b1", "Beta")], filter });
+
+    await findButton(wrapper, "Filters").trigger("click");
+    await wrapper
+      .findAll("label")
+      .filter((x) => x.text() === "B")[0]
+      .find("input")
+      .setValue(true);
+
+    expect(rowNames(wrapper)).toEqual(["Beta"]);
+    expect(findButton(wrapper, "Filters (1)").attributes("aria-expanded")).toBe("true");
+
+    await findButton(wrapper, "Clear").trigger("click");
+    expect(rowNames(wrapper)).toEqual(["Alpha", "Beta"]);
   });
 });

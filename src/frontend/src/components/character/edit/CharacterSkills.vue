@@ -11,6 +11,8 @@ import { ValidationStatus } from "@/utils/validation.ts";
 import { truncate } from "@/utils/string.ts";
 import TextLink from "@/components/ui/TextLink.vue";
 import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
+import { idFilter } from "@/components/filter/contentFilter.ts";
+import { skillFilters } from "@/components/filter/skillFilters.ts";
 
 const DESC_CHARS = 100;
 
@@ -41,6 +43,9 @@ function advancesOf(id: string): number {
 const takeableSkills = computed(() =>
   props.skillList.filter((x) => !x.isGroup).sort((a, b) => a.name.localeCompare(b.name)),
 );
+
+// The popup filters skills by type.
+const filter = computed(() => idFilter({ type: skillFilters.type }, takeableSkills.value));
 
 const selectedSkills = computed(() =>
   takeableSkills.value
@@ -131,6 +136,7 @@ const modalItems = computed(() =>
         routeName="skill"
         :loading="props.loading"
         :fourEIds="fourEIds"
+        :filter="filter"
         numberLabel="Adv"
         :numberStep="step"
         @setNumber="(e) => emit('updated', e)"
