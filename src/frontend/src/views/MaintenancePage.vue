@@ -1,10 +1,30 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
+import { useIntervalFn } from "@vueuse/core";
 import AppButton from "@/components/ui/AppButton.vue";
+import { checkMaintenance, useMaintenance } from "@/composables/maintenance.ts";
+import { anonRequest } from "@/services/auth.ts";
+
+const STATUS_POLL_MS = 15000;
+
+const { maintenance } = useMaintenance();
 
 function reload() {
   window.location.reload();
 }
+
+// Reload when maintenance ends, so the tab picks up the frontend that was deployed meanwhile.
+useIntervalFn(async () => {
+  try {
+    await checkMaintenance(anonRequest);
+  } catch {
+    // the server can be unreachable while it restarts; keep waiting
+    return;
+  }
+  if (!maintenance.value) {
+    reload();
+  }
+}, STATUS_POLL_MS);
 </script>
 
 <template>

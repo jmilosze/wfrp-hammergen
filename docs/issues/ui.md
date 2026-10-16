@@ -7,22 +7,7 @@ How the app looks and feels: layout, components, texts and interaction. Rules an
 ### HG-20 Open tabs after an API change
 Frontend · 2026-09-30
 
-Check whether the maintenance page reloads the app when maintenance ends. Tabs still running the old frontend break after a frontend/backend shape change.
-
-### HG-28 "Shared by me" icon has no colour
-Frontend · 2026-10-15
-
-`components/content/list/visibilityKind.ts` uses `text-shared-by-me-icon`, but `style.css` defines the colour as `--color-shared-icon`. Tailwind's palettes are off, so the class produces nothing and the list rows' "Shared by me" icon takes the text colour. Rename one side to match.
-
-### HG-31 4e generator help text
-Frontend · 2026-10-15
-
-In `EditCharacter4e.vue` the generator help repeats "Generating will override all current entries…" twice and has the typo "sills" (skills).
-
-### HG-34 Integer validation message
-Frontend · 2026-10-15
-
-`validIntegerFn` in `services/wh/core/validators.ts` says "This field an integer between … and …" (a verb is missing), shown under every whole-number field (XP, wealth, Sin, Corruption…).
+The maintenance page now polls `/api/status` and reloads the tab when maintenance ends. Still open: tabs that never saw a maintenance 503 keep running the old frontend after a frontend/backend shape change (would need a version check, e.g. comparing a build id from the API with the one in the bundle).
 
 ## Features
 

@@ -24,7 +24,7 @@ export const VISIBILITY_KINDS: Record<
     icon: "material-symbols:backup",
     label: "Shared by me",
     description: "yours, shared with linked accounts",
-    iconClass: "text-shared-by-me-icon",
+    iconClass: "text-shared-icon",
   },
   sharedWithMe: {
     icon: "material-symbols:cloud-download",

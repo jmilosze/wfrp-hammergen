@@ -37,7 +37,7 @@ export function validIntegerFn(value: number, min: number, max: number): Validat
     isValid = false;
   }
 
-  return setValidationStatus(isValid, `This field an integer between ${min} and ${max}.`);
+  return setValidationStatus(isValid, `This field must be an integer between ${min} and ${max}.`);
 }
 
 export function validFloatFn(value: number, min: number, max: number): ValidationStatus {
@@ -45,7 +45,7 @@ export function validFloatFn(value: number, min: number, max: number): Validatio
   if (value >= min && value <= max) {
     isValid = true;
   }
-  return setValidationStatus(isValid, `This field a number between ${min} and ${max}.`);
+  return setValidationStatus(isValid, `This field must be a number between ${min} and ${max}.`);
 }
 
 export function validAttributesFn(
