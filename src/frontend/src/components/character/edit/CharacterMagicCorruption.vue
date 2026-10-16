@@ -39,6 +39,15 @@ const emit = defineEmits<{
   (e: "traitValueUpdated", value: { index: number; id: string; value: string }): void;
 }>();
 
+// Spells show their Casting Number before the description, e.g. "CN 3 · Target gains…".
+const spellItems = computed(() =>
+  props.content.spells.withAllowed.value.map((x) => ({
+    id: x.id,
+    name: x.name,
+    description: `CN ${x.cn} · ${x.description}`,
+  })),
+);
+
 // The popups filter spells by type and label, mutations by type.
 const spellsFilter = computed(() =>
   idFilter({ type: spellFilters.type, label: spellFilters.label }, props.content.spells.withAllowed.value),
@@ -79,7 +88,7 @@ const mutationsFilter = computed(() =>
       <SelectTable
         :disabled="disabled"
         :selected="spells"
-        :itemList="content.spells.withAllowed.value"
+        :itemList="spellItems"
         :fourEIds="content.spells.fourEIds.value"
         :filter="spellsFilter"
         title="Spells"
