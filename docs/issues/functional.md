@@ -49,11 +49,11 @@ Frontend + Backend + Data · 2026-10-16
 ### HG-40 Career trappings as a list of trappings
 Frontend + Backend + Data · 2026-10-16
 
-Career level trappings are a free-text field (`CareerLevel.Items`, `items` in `content/career.ts`), so the generator can only add class trappings (`generateClassItems`, from the generation data), never the career's own. Make each level's trappings a list of trapping ids with quantities, edited with a picker, shown on the career page and added by the generator (both editions). Big data part: go through all public careers, list their trappings per level, create the missing ones in the trapping list (descriptions rephrased, not copied from the books) and fill in the new field with a migration script. Decide:
-- How to store choices ("A or B") and rolled quantities ("1d10"): probably the same format as the class trappings in `generationProps`.
-- What to do with entries that are not real trappings (e.g. money, a licence, "a pet" or other vague items): leave them out, or keep a short free-text note next to the list.
-- Which levels the generator adds: the current level only, or all levels up to it.
-- What happens to users' own careers: migrate the text to the note, or drop it.
+Career level trappings are a free-text field (`CareerLevel.Items`, `items` in `content/career.ts`), so the generator can only add class trappings (`generateClassItems`, from the generation data), never the career's own. Make each level's trappings a list of trapping ids with quantities, edited with a picker, shown on the career page and added by the generator (both editions). Big data part: go through all public careers, list their trappings per level, create the missing ones in the trapping list (descriptions rephrased, not copied from the books) and fill in the new field with a migration script.
+
+Decided: no "group" trappings; choices ("A or B") and rolled quantities ("1d10") are stored in the list itself. Only public careers are converted, and their free text is removed; the first step converts the 64 public 5e career variants only, and 4e variants keep their text for now. Users' own careers keep their free text, still shown and editable; new careers have no free-text field.
+
+Tracking folder (scope, decisions, work plan, data analysis, per-career mappings, new trappings): `docs/hg-40/`.
 
 ### HG-43 Guided character creation for 4e
 Frontend · 2026-10-16

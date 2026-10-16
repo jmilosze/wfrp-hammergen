@@ -10,6 +10,8 @@ import { ValidationStatus } from "@/utils/validation.ts";
 import { truncate } from "@/utils/string.ts";
 import TextLink from "@/components/ui/TextLink.vue";
 import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
+import { idFilter } from "@/components/filter/contentFilter.ts";
+import { itemFilters } from "@/components/filter/itemFilters.ts";
 
 const DESC_CHARS = 100;
 
@@ -72,6 +74,9 @@ const itemInfo = computed(
       ]),
     ),
 );
+
+// The popup filters trappings by type and group.
+const filter = computed(() => idFilter({ type: itemFilters.type, group: itemFilters.group }, props.itemList));
 
 // The trappings of a location, by name; entries of unknown items are skipped.
 function sectionItems(location: Location) {
@@ -276,6 +281,7 @@ const sections = computed(() => [
         routeName="item"
         :loading="props.loading"
         :fourEIds="fourEIds"
+        :filter="filter"
         numberLabel="Qty"
         @setNumber="(e) => setNumber(e.id, pickerLocation, e.number)"
         @reload="emit('reload')"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouteName } from "@/router.ts";
 import { NEW_ID } from "@/services/wh/core/entity.ts";
-import { computed, ref } from "vue";
+import { computed, nextTick, ref, useTemplateRef } from "vue";
 import { refDebounced } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import { EditionFilter, matchesEditionFilter } from "@/services/wh/core/edition.ts";
@@ -11,11 +11,14 @@ import { ChecklistItem } from "./checklistItem.ts";
 import AppButton from "@/components/ui/AppButton.vue";
 import ButtonLink from "@/components/ui/ButtonLink.vue";
 import SpinnerAnimation from "@/components/ui/SpinnerAnimation.vue";
+import FilterSections from "@/components/filter/FilterSections.vue";
+import { IdFilter, untickUnoffered } from "@/components/filter/contentFilter.ts";
 
 // The content of a picker popup, in the style of the character sheet: a search row, then the items as a checklist, each
 // row a checkbox with the name and description. The items picked when the popup opened (it is created afresh on each
 // opening) are listed first under "Selected", the rest under "Available"; ticking a row doesn't move it, so rows don't
-// jump. A repeatable item's row has Add at its end and is not ticked by clicking it.
+// jump. A repeatable item's row has Add at its end and is not ticked by clicking it. With a filter, a Filters button
+// opens a panel of the content type's filters (as on its list page) under the search row.
 const props = defineProps<{
   items: ChecklistItem[];
   // The items' page: names link to it and Create new and Reload are offered. Without it (e.g. sources) names are text.
@@ -28,6 +31,8 @@ const props = defineProps<{
   numberStep?: number;
   // The label of the text input of text items.
   textLabel?: string;
+  // The content type's filters over the items' entries (looked up by linkId, else id).
+  filter?: IdFilter;
 }>();
 
 const emit = defineEmits<{
@@ -46,11 +51,28 @@ const searchTermDebounced = refDebounced(searchTerm, SEARCH_DEBOUNCE_MS);
 const editionFilter = ref<EditionFilter>("both");
 const pinned = new Set(props.items.filter((x) => x.selected).map((x) => x.id));
 
+const ticked = ref<Record<string, string[]>>({});
+const filterOpen = ref(false);
+const root = useTemplateRef("root");
+const filterSections = computed(() => props.filter?.sections(ticked.value) ?? []);
+untickUnoffered(ticked, filterSections);
+// The panel is at the top of the list, so opening it from further down scrolls back up to show it.
+async function toggleFilters() {
+  filterOpen.value = !filterOpen.value;
+  if (filterOpen.value) {
+    await nextTick();
+    root.value?.scrollIntoView({ block: "start" });
+  }
+}
+
+const tickedCount = computed(() => Object.values(ticked.value).reduce((sum, values) => sum + values.length, 0));
+
 const shownItems = computed(() => {
   const query = searchTermDebounced.value.toLowerCase();
   return props.items.filter(
     (x) =>
       matchesEditionFilter(x.linkId ?? x.id, props.fourEIds, editionFilter.value) &&
+      (props.filter === undefined || props.filter.matches(x.linkId ?? x.id, ticked.value)) &&
       [x.name, x.description, x.note ?? ""].some((text) => text.toLowerCase().includes(query)),
   );
 });
@@ -70,7 +92,7 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
 </script>
 
 <template>
-  <div class="@container">
+  <div ref="root" class="@container">
     <!-- The search row stays at the top of the popup while the list scrolls. Search takes the spare width; when narrow
     the buttons wrap below it and their cell fills that line. -->
     <div class="sticky -top-3 z-10 -mt-3 pt-3 pb-2 bg-white">
@@ -90,7 +112,7 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
             class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-white"
           />
         </label>
-        <div v-if="routeName || fourEIds" class="flex flex-wrap grow items-center gap-1 p-1 bg-white">
+        <div v-if="routeName || fourEIds || filter" class="flex flex-wrap grow items-center gap-1 p-1 bg-white">
           <select
             v-if="fourEIds"
             v-model="editionFilter"
@@ -101,6 +123,15 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
               {{ option.text }}
             </option>
           </select>
+          <AppButton
+            v-if="filter"
+            icon="lucide:filter"
+            variant="neutral"
+            :aria-expanded="filterOpen"
+            @click="toggleFilters"
+          >
+            Filters<span v-if="tickedCount > 0"> ({{ tickedCount }})</span>
+          </AppButton>
           <ButtonLink
             v-if="routeName"
             icon="lucide:plus"
@@ -122,6 +153,22 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
           </AppButton>
         </div>
       </div>
+    </div>
+
+    <!-- Not sticky: open, it can be taller than the popup on small screens. -->
+    <div v-if="filter && filterOpen" class="mb-2 border border-neutral-400">
+      <div class="flex items-center gap-2 px-3 py-1 bg-neutral-100 border-b border-neutral-300 font-semibold">
+        <span class="flex-1">Filters</span>
+        <button
+          v-if="tickedCount > 0"
+          type="button"
+          class="text-sm font-normal text-neutral-600 hover:text-neutral-900 cursor-pointer"
+          @click="ticked = {}"
+        >
+          Clear
+        </button>
+      </div>
+      <FilterSections v-model="ticked" :sections="filterSections" />
     </div>
 
     <div v-if="loading && items.length === 0" class="flex justify-center">

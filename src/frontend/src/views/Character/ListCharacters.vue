@@ -9,7 +9,7 @@ import { useAuth } from "@/composables/auth.ts";
 import { useLocalStorage } from "@vueuse/core";
 import ContentListPage from "@/components/content/list/ContentListPage.vue";
 import CharacterRowActions from "@/components/character/CharacterRowActions.vue";
-import { FilterSection } from "@/components/content/list/filterSection.ts";
+import { FilterSection } from "@/components/filter/filterSection.ts";
 
 const { edition } = useEdition();
 const whList = useCharacterList(characterApi(authRequest), edition);

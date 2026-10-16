@@ -1,32 +1,21 @@
 <script setup lang="ts">
-import { useFilterModel, useListQuery, useSourceFilter, useWhList } from "@/composables/whList.ts";
+import { computed } from "vue";
+import { useWhList } from "@/composables/whList.ts";
+import { useListFilters } from "@/composables/listFilters.ts";
 import { useEdition } from "@/composables/edition.ts";
-import { Skill, skillApi, skillTypeList, printSkillType } from "@/services/wh/content/skill.ts";
-import { attributeNameList, printAttributeName } from "@/services/wh/core/attributes.ts";
+import { Skill, skillApi, printSkillType } from "@/services/wh/content/skill.ts";
+import { printAttributeName } from "@/services/wh/core/attributes.ts";
 import { authRequest } from "@/services/auth.ts";
 import ContentListPage from "@/components/content/list/ContentListPage.vue";
-import { computed } from "vue";
-import { FilterSection } from "@/components/content/list/filterSection.ts";
+import { skillFilters } from "@/components/filter/skillFilters.ts";
 
 const { edition } = useEdition();
 const whList = useWhList(skillApi(authRequest), edition);
 await whList.loadWhList();
 
 // The filters, kept in the query string.
-const source = useSourceFilter(whList.whList, edition, true);
-const typeTerm = useListQuery("type");
-const attributeTerm = useListQuery("attribute");
-
-const filters = useFilterModel({ type: typeTerm, attribute: attributeTerm, source: source.term });
-
-// In a section an entry matches any ticked value; the sections combine.
-const items = computed(() =>
-  whList.whList.value
-    .filter((wh) => source.matches(wh))
-    .filter((wh) => typeTerm.value.length === 0 || typeTerm.value.includes(wh.type.toString()))
-    .filter((wh) => attributeTerm.value.length === 0 || attributeTerm.value.includes(wh.attribute.toString()))
-    .map((x) => formatSkillRow(x)),
-);
+const { ticked: filters, sections, matches } = useListFilters(skillFilters, whList.whList);
+const items = computed(() => whList.whList.value.filter((wh) => matches(wh)).map((x) => formatSkillRow(x)));
 
 function formatSkillRow(skill: Skill) {
   return {
@@ -38,29 +27,6 @@ function formatSkillRow(skill: Skill) {
     visibility: skill.visibility,
   };
 }
-
-// Types, characteristics and sources are offered when some skill has them.
-const sections = computed<FilterSection[]>(() => {
-  const typesInData = new Set(whList.whList.value.map((wh) => wh.type));
-  const attributesInData = new Set(whList.whList.value.map((wh) => wh.attribute));
-  return [
-    {
-      key: "type",
-      title: "Type",
-      options: skillTypeList
-        .filter((x) => typesInData.has(x))
-        .map((x) => ({ text: printSkillType(x), value: x.toString() })),
-    },
-    {
-      key: "attribute",
-      title: "Characteristic",
-      options: attributeNameList
-        .filter((x) => attributesInData.has(x))
-        .map((x) => ({ text: printAttributeName(x), value: x.toString() })),
-    },
-    source.section.value,
-  ];
-});
 </script>
 
 <template>

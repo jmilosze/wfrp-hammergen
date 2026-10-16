@@ -11,7 +11,7 @@ import ButtonLink from "@/components/ui/ButtonLink.vue";
 import VisibilityIcon from "./VisibilityIcon.vue";
 import IconButton from "@/components/ui/IconButton.vue";
 import { BrowseRow } from "./browseRow.ts";
-import { FilterSection } from "./filterSection.ts";
+import { FilterSection } from "@/components/filter/filterSection.ts";
 import { useAuth } from "@/composables/auth.ts";
 import { LoadState } from "@/composables/whList.ts";
 
