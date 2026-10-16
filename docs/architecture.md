@@ -14,7 +14,7 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
 | `deployment` | GCP deploy config (`gcp/*/config.json` are gitignored) and Docker files |
 | `.github/workflows` | Lint/test on PRs; manual deploy of backend and frontend |
 | `books/` | Rulebooks as PDF and text (gitignored; see `AGENTS.md`) |
-| `docs/` | `issues.md` (backlog), `architecture.md` (this file), `operations.md` (running, data, deploying) |
+| `docs/` | `issues/` (backlog: functional, UI, technical), `architecture.md` (this file), `operations.md` (running, data, deploying) |
 | `roadmap.md`, `notes.md` | Long-term tech wishes; rules notes on magic |
 
 ## Backend (`src/api-go`)

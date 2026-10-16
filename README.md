@@ -45,7 +45,7 @@ The backend connects to MongoDB. You have a few options to run it:
 
 - [docs/architecture.md](docs/architecture.md): code layout, conventions, and the 4e/5e edition model
 - [docs/operations.md](docs/operations.md): local servers, tests, data scripts, databases, backups, deploying
-- [docs/issues.md](docs/issues.md): backlog of known issues and ideas
+- [docs/issues/](docs/issues/README.md): backlog of known issues and ideas (functional, UI, technical)
 
 ## Running tests
 

@@ -12,7 +12,7 @@ Hammergen (https://hammergen.net) is a Warhammer Fantasy Roleplay character gene
 Read these before working on something non-trivial:
 - `docs/architecture.md`: code layout, file organisation rules, the 4e/5e edition model and the 5e rule decisions.
 - `docs/operations.md`: local servers, tests, data scripts, databases, backups, deploying.
-- `docs/issues.md`: the backlog. Issues have IDs (`HG-<n>`); keep the file current when you finish or find something.
+- `docs/issues/`: the backlog, split into `functional.md`, `ui.md` and `technical.md` (rules and the next free ID in `README.md`). Issues have IDs (`HG-<n>`); keep the files current when you finish or find something.
 
 # Working rules
 
@@ -22,7 +22,7 @@ Read these before working on something non-trivial:
 - Take a production backup before every production data write (`docs/operations.md`).
 - Plan bigger changes first: describe the plan and the decisions to make, and agree them before writing code. When a decision is genuinely the owner's, stop and ask.
 - Validation stays light: basic per-field checks, no cross-reference or decision-tree validation.
-- Out-of-scope bugs and ideas go into `docs/issues.md`, not into the code.
+- Out-of-scope bugs and ideas go into `docs/issues/`, not into the code.
 - Content descriptions must not be copied from the rulebooks; rephrase (no run of 12+ words identical to the book).
 
 # Code conventions
