@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { RouteName } from "@/router.ts";
 import { NEW_ID } from "@/services/wh/core/entity.ts";
-import { computed, nextTick, ref, useTemplateRef } from "vue";
+import { computed, ref } from "vue";
 import { refDebounced } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
-import { EditionFilter, matchesEditionFilter } from "@/services/wh/core/edition.ts";
+import { matchesEditions } from "@/services/wh/core/edition.ts";
 import ChecklistRow from "./ChecklistRow.vue";
 import SheetTitle from "@/components/sheet/SheetTitle.vue";
 import { ChecklistItem } from "./checklistItem.ts";
@@ -13,18 +13,19 @@ import ButtonLink from "@/components/ui/ButtonLink.vue";
 import SpinnerAnimation from "@/components/ui/SpinnerAnimation.vue";
 import FilterSections from "@/components/filter/FilterSections.vue";
 import { IdFilter, untickUnoffered } from "@/components/filter/contentFilter.ts";
+import { FilterSection } from "@/components/filter/filterSection.ts";
 
 // The content of a picker popup, in the style of the character sheet: a search row, then the items as a checklist, each
 // row a checkbox with the name and description. The items picked when the popup opened (it is created afresh on each
 // opening) are listed first under "Selected", the rest under "Available"; ticking a row doesn't move it, so rows don't
-// jump. A repeatable item's row has Add at its end and is not ticked by clicking it. With a filter, a Filters button
-// opens a panel of the content type's filters (as on its list page) under the search row.
+// jump. A repeatable item's row has Add at its end and is not ticked by clicking it. With a filter or 4e content, a
+// Filters button opens a panel of the content type's filters (as on its list page) and the edition under the search row.
 const props = defineProps<{
   items: ChecklistItem[];
   // The items' page: names link to it and Create new and Reload are offered. Without it (e.g. sources) names are text.
   routeName?: RouteName;
   loading?: boolean;
-  // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
+  // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable by edition.
   fourEIds?: Set<string>;
   // The label and step of the number input of number items.
   numberLabel?: string;
@@ -48,22 +49,24 @@ const SEARCH_DEBOUNCE_MS = 250;
 
 const searchTerm = ref("");
 const searchTermDebounced = refDebounced(searchTerm, SEARCH_DEBOUNCE_MS);
-const editionFilter = ref<EditionFilter>("both");
 const pinned = new Set(props.items.filter((x) => x.selected).map((x) => x.id));
 
 const ticked = ref<Record<string, string[]>>({});
 const filterOpen = ref(false);
-const root = useTemplateRef("root");
-const filterSections = computed(() => props.filter?.sections(ticked.value) ?? []);
+// The edition is a section of the panel like the content type's filters, ahead of them.
+const EDITION_SECTION: FilterSection = {
+  key: "edition",
+  title: "Edition",
+  options: [
+    { text: "5e", value: "5e" },
+    { text: "4e", value: "4e" },
+  ],
+};
+const filterSections = computed(() => [
+  ...(props.fourEIds ? [EDITION_SECTION] : []),
+  ...(props.filter?.sections(ticked.value) ?? []),
+]);
 untickUnoffered(ticked, filterSections);
-// The panel is at the top of the list, so opening it from further down scrolls back up to show it.
-async function toggleFilters() {
-  filterOpen.value = !filterOpen.value;
-  if (filterOpen.value) {
-    await nextTick();
-    root.value?.scrollIntoView({ block: "start" });
-  }
-}
 
 const tickedCount = computed(() => Object.values(ticked.value).reduce((sum, values) => sum + values.length, 0));
 
@@ -71,7 +74,7 @@ const shownItems = computed(() => {
   const query = searchTermDebounced.value.toLowerCase();
   return props.items.filter(
     (x) =>
-      matchesEditionFilter(x.linkId ?? x.id, props.fourEIds, editionFilter.value) &&
+      matchesEditions(x.linkId ?? x.id, props.fourEIds, ticked.value.edition ?? []) &&
       (props.filter === undefined || props.filter.matches(x.linkId ?? x.id, ticked.value)) &&
       [x.name, x.description, x.note ?? ""].some((text) => text.toLowerCase().includes(query)),
   );
@@ -83,18 +86,13 @@ const bands = computed(() =>
     { title: "Available", items: shownItems.value.filter((x) => !pinned.has(x.id)) },
   ].filter((band) => band.items.length > 0),
 );
-
-const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
-  { text: "5e and 4e", value: "both" },
-  { text: "5e only", value: "5e" },
-  { text: "4e only", value: "4e" },
-];
 </script>
 
 <template>
-  <div ref="root" class="@container">
-    <!-- The search row stays at the top of the popup while the list scrolls. Search takes the spare width; when narrow
-    the buttons wrap below it and their cell fills that line. -->
+  <div class="@container">
+    <!-- The search row and the filter panel stay at the top of the popup while the list scrolls, so Filters always shows
+    or hides a panel in view. Search takes the spare width; when narrow the buttons wrap below it and their cell fills
+    that line. -->
     <div class="sticky -top-3 z-10 -mt-3 pt-3 pb-2 bg-white">
       <div class="flex flex-wrap gap-px border border-neutral-400 bg-neutral-300">
         <label
@@ -112,23 +110,13 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
             class="flex-1 min-w-0 min-h-9 px-2 outline-none bg-white"
           />
         </label>
-        <div v-if="routeName || fourEIds || filter" class="flex flex-wrap grow items-center gap-1 p-1 bg-white">
-          <select
-            v-if="fourEIds"
-            v-model="editionFilter"
-            aria-label="Show content of edition"
-            class="rounded border border-neutral-400 px-2 py-1 text-sm bg-white cursor-pointer"
-          >
-            <option v-for="option in EDITION_FILTER_OPTIONS" :key="option.value" :value="option.value">
-              {{ option.text }}
-            </option>
-          </select>
+        <div v-if="routeName || filterSections.length > 0" class="flex flex-wrap grow items-center gap-1 p-1 bg-white">
           <AppButton
-            v-if="filter"
+            v-if="filterSections.length > 0"
             icon="lucide:filter"
             variant="neutral"
             :aria-expanded="filterOpen"
-            @click="toggleFilters"
+            @click="filterOpen = !filterOpen"
           >
             Filters<span v-if="tickedCount > 0"> ({{ tickedCount }})</span>
           </AppButton>
@@ -153,22 +141,25 @@ const EDITION_FILTER_OPTIONS: { text: string; value: EditionFilter }[] = [
           </AppButton>
         </div>
       </div>
-    </div>
 
-    <!-- Not sticky: open, it can be taller than the popup on small screens. -->
-    <div v-if="filter && filterOpen" class="mb-2 border border-neutral-400">
-      <div class="flex items-center gap-2 px-3 py-1 bg-neutral-100 border-b border-neutral-300 font-semibold">
-        <span class="flex-1">Filters</span>
-        <button
-          v-if="tickedCount > 0"
-          type="button"
-          class="text-sm font-normal text-neutral-600 hover:text-neutral-900 cursor-pointer"
-          @click="ticked = {}"
+      <!-- Scrolls on its own when taller than half the screen, so the list stays in view under it; its title row with Clear
+      stays at its top. -->
+      <div v-if="filterOpen" class="mt-2 max-h-[50svh] overflow-y-auto border border-neutral-400">
+        <div
+          class="sticky top-0 z-10 flex items-center gap-2 px-3 py-1 bg-neutral-100 border-b border-neutral-300 font-semibold"
         >
-          Clear
-        </button>
+          <span class="sticky top-0 z-10 flex-1">Filters</span>
+          <button
+            v-if="tickedCount > 0"
+            type="button"
+            class="text-sm font-normal text-neutral-600 hover:text-neutral-900 cursor-pointer"
+            @click="ticked = {}"
+          >
+            Clear
+          </button>
+        </div>
+        <FilterSections v-model="ticked" :sections="filterSections" />
       </div>
-      <FilterSections v-model="ticked" :sections="filterSections" />
     </div>
 
     <div v-if="loading && items.length === 0" class="flex justify-center">

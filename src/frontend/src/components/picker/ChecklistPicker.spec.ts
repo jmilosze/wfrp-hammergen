@@ -70,13 +70,18 @@ describe("ChecklistPicker", () => {
     expect(wrapper.text()).toContain("×2");
   });
 
-  test("filters by edition when 4e content is offered", async () => {
+  test("filters by edition in the Filters panel when 4e content is offered", async () => {
     const wrapper = mountPicker({
       items: [item("a", "Alpha"), item("b", "Beta")],
       fourEIds: new Set(["b"]),
     });
 
-    await wrapper.find("select").setValue("4e");
+    await findButton(wrapper, "Filters").trigger("click");
+    await wrapper
+      .findAll("label")
+      .filter((x) => x.text() === "4e")[0]
+      .find("input")
+      .setValue(true);
 
     expect(rowNames(wrapper)).toEqual(["Beta"]);
   });

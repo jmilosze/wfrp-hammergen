@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { ApiResponse } from "./api.ts";
-import { contentEdition, variantFor, with4eMark, matchesEditionFilter } from "./edition.ts";
+import { contentEdition, variantFor, with4eMark, matchesEditions } from "./edition.ts";
 
 const both: ApiResponse<{ name: string }> = {
   id: "both",
@@ -23,12 +23,13 @@ test("with4eMark marks 4e content on a 5e character only", () => {
   expect(with4eMark(only4e, "4e", "Old")).toEqual("Old");
 });
 
-test("matchesEditionFilter", () => {
+test("matchesEditions", () => {
   const fourEIds = new Set(["only4e"]);
-  expect(matchesEditionFilter("only4e", fourEIds, "both")).toBe(true);
-  expect(matchesEditionFilter("only4e", fourEIds, "4e")).toBe(true);
-  expect(matchesEditionFilter("only4e", fourEIds, "5e")).toBe(false);
-  expect(matchesEditionFilter("both", fourEIds, "5e")).toBe(true);
-  expect(matchesEditionFilter("both", fourEIds, "4e")).toBe(false);
-  expect(matchesEditionFilter("both", undefined, "4e")).toBe(true);
+  expect(matchesEditions("only4e", fourEIds, [])).toBe(true);
+  expect(matchesEditions("only4e", fourEIds, ["4e"])).toBe(true);
+  expect(matchesEditions("only4e", fourEIds, ["5e"])).toBe(false);
+  expect(matchesEditions("both", fourEIds, ["5e"])).toBe(true);
+  expect(matchesEditions("both", fourEIds, ["4e"])).toBe(false);
+  expect(matchesEditions("both", fourEIds, ["4e", "5e"])).toBe(true);
+  expect(matchesEditions("both", undefined, ["4e"])).toBe(true);
 });

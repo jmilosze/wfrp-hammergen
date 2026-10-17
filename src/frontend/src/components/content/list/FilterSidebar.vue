@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { Icon } from "@iconify/vue";
+import AppButton from "@/components/ui/AppButton.vue";
 import FilterSections from "@/components/filter/FilterSections.vue";
 import { FilterSection } from "@/components/filter/filterSection.ts";
 
@@ -22,14 +23,9 @@ function clear() {
 <template>
   <!-- On narrow screens: the Filters button, with the page's actions (the slot, e.g. Create new) beside it on very small ones. -->
   <div class="flex items-stretch gap-2 @3xl/page:hidden">
-    <button
-      type="button"
-      class="inline-flex items-center gap-2 rounded border border-brand-dark bg-brand px-3 py-1.5 font-semibold text-parchment"
-      @click="drawerOpen = true"
-    >
-      <Icon icon="lucide:filter" class="size-4" />
+    <AppButton icon="lucide:filter" variant="dark" @click="drawerOpen = true">
       Filters<span v-if="activeCount > 0"> ({{ activeCount }})</span>
-    </button>
+    </AppButton>
     <!-- Only on very small screens; above that the page shows its actions elsewhere (e.g. beside the search). -->
     <div class="flex items-stretch gap-2 @md/page:hidden">
       <slot name="actions" />
