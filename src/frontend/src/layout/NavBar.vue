@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from "vue";
-import { onClickOutside, onKeyStroke } from "@vueuse/core";
+import { onClickOutside, onKeyStroke, useLocalStorage } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 import NavLink from "./NavLink.vue";
 import EditionSwitch from "@/components/edition/EditionSwitch.vue";
@@ -9,15 +9,19 @@ import { useEdition } from "@/composables/edition.ts";
 import { COMPENDIUM_SECTIONS } from "./navigation.ts";
 
 // The links (main bar and the secondary bar under it) are shown on large screens; smaller screens get the menu
-// button, which opens the sidebar.
+// button, which opens the sidebar. The Compendium dropdown can be pinned as a bar of its own between the two.
 const emit = defineEmits<{ openMenu: [] }>();
 
 const TOP_LINK =
   "block px-3 py-2 select-none whitespace-nowrap text-parchment transition-colors duration-150 hover:text-parchment-light";
 const SECONDARY_LINK =
   "block px-3 py-0.5 rounded select-none whitespace-nowrap text-neutral-600 hover:bg-neutral-300 hover:text-neutral-900";
+const PINNED_LINK =
+  "block px-2.5 py-0.5 rounded select-none whitespace-nowrap text-neutral-800 transition-colors duration-150 hover:bg-parchment-dark [&.router-link-active]:text-brand [&.router-link-active]:bg-parchment";
 const MENU_LINK =
   "block px-3 py-1.5 rounded select-none whitespace-nowrap transition-colors duration-150 hover:bg-neutral-200";
+
+const LOCAL_STORAGE_KEY_COMPENDIUM_PINNED = "navbarCompendiumPinned";
 
 const auth = useAuth();
 const { edition } = useEdition();
@@ -26,6 +30,14 @@ const showCompendiumMenu = ref(false);
 const compendiumMenu = useTemplateRef("compendiumMenu");
 onClickOutside(compendiumMenu, () => (showCompendiumMenu.value = false));
 onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
+
+// Remembered between visits.
+const compendiumPinned = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_PINNED, false);
+
+function togglePinned() {
+  compendiumPinned.value = !compendiumPinned.value;
+  showCompendiumMenu.value = false;
+}
 </script>
 
 <template>
@@ -84,6 +96,16 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
                     {{ link.text }}
                   </NavLink>
                 </div>
+                <div class="col-span-2 pt-2 border-t border-neutral-300 flex justify-end">
+                  <button
+                    type="button"
+                    class="flex items-center gap-1.5 px-3 py-1 rounded select-none text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-200 hover:text-neutral-900"
+                    @click="togglePinned"
+                  >
+                    <Icon :icon="compendiumPinned ? 'lucide:pin-off' : 'lucide:pin'" class="size-4" />
+                    {{ compendiumPinned ? "Unpin bar" : "Pin as bar" }}
+                  </button>
+                </div>
               </div>
             </Transition>
           </div>
@@ -106,6 +128,33 @@ onKeyStroke("Escape", () => (showCompendiumMenu.value = false));
         >
           <Icon icon="lucide:menu" class="size-8" />
         </button>
+      </div>
+    </nav>
+    <nav
+      v-if="compendiumPinned"
+      aria-label="Compendium"
+      class="hidden lg:block bg-parchment-light border-b border-parchment-dark text-sm"
+    >
+      <!-- Equal flex-1 sides keep the links centred. -->
+      <div class="max-w-7xl mx-auto h-8 px-4 flex items-center">
+        <div class="flex-1" />
+        <template v-for="(section, i) in COMPENDIUM_SECTIONS" :key="section.title">
+          <div v-if="i > 0" class="w-px h-4 mx-2 bg-parchment-dark" />
+          <NavLink v-for="link in section.links" :key="link.listRoute" :routeName="link.listRoute" :class="PINNED_LINK">
+            {{ link.text }}
+          </NavLink>
+        </template>
+        <div class="flex-1 flex justify-end">
+          <button
+            type="button"
+            class="p-1 rounded text-neutral-600 transition-colors duration-150 hover:bg-parchment-dark hover:text-neutral-900"
+            aria-label="Unpin the Compendium bar"
+            title="Unpin"
+            @click="compendiumPinned = false"
+          >
+            <Icon icon="lucide:pin-off" class="size-4" />
+          </button>
+        </div>
       </div>
     </nav>
     <nav class="hidden lg:block bg-neutral-200 border-b border-neutral-300 text-sm">

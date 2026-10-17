@@ -16,11 +16,6 @@ Frontend · 2026-10-03
 
 The pickers used to choose content (trappings, skills, talents, traits, qualities and flaws…) come in many variants that don't look good together: `SelectTable` (checkbox), `SelectIdNumberTable` (number in the modal), `SelectIdValueTable` (value in the page table, "Add" for repeatable entries), plus the character editor's `CharacterSkills`, `CharacterTalents`, `CharacterItems` and `CharacterCareer`. Goal: one convenient, better-looking pattern. Purely UX. The popups are already one component (`ChecklistPicker`, R5 of `docs/ui-refactoring.md`); what differs is the tables on the page.
 
-### HG-38 Pin the Compendium menu on large screens
-Frontend · 2026-10-16
-
-On large screens the Compendium links are a dropdown in the main bar (`layout/NavBar.vue`), so every jump between content lists takes two clicks. Add a pin button to the dropdown that keeps the links always visible, probably as a third bar under the two existing ones, with the four `COMPENDIUM_SECTIONS` groups (`layout/navigation.ts`) in one row. Remember the choice per browser (as `SideBar.vue` does for its Compendium section) and unpin from the bar itself. Smaller screens keep the side menu.
-
 ### HG-42 Trappings without a price
 Frontend · 2026-10-16
 
