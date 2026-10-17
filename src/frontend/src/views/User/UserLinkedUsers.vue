@@ -132,7 +132,7 @@ async function submitForm() {
       <li
         v-for="sharedAccount in user.sharedAccounts"
         :key="sharedAccount"
-        class="flex items-center gap-3 px-3 py-2 border-b border-neutral-200 last:border-b-0 hover:bg-neutral-100"
+        class="flex items-center gap-3 px-3 py-2 border-b border-neutral-200 last:border-b-0 transition-colors duration-100 hover:bg-neutral-100"
       >
         <Icon icon="lucide:user" class="hidden sm:block size-4 shrink-0 text-neutral-500" />
         <!-- A long email wraps after the "@" rather than anywhere; only a part too long for a line breaks inside. -->
@@ -141,7 +141,7 @@ async function submitForm() {
         </span>
         <button
           type="button"
-          class="rounded border border-neutral-400 bg-white p-1.5 text-neutral-800 hover:bg-neutral-200 cursor-pointer"
+          class="rounded border border-neutral-400 bg-white p-1.5 text-neutral-800 transition-colors duration-100 hover:bg-neutral-200 cursor-pointer"
           :title="`Remove ${sharedAccount}`"
           :aria-label="`Remove ${sharedAccount}`"
           @click="removeUsername(sharedAccount)"

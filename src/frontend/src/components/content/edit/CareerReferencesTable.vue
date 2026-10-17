@@ -84,7 +84,7 @@ watch(
           No careers have this {{ type === "skill" ? "skill" : "talent" }}.
         </td>
       </tr>
-      <tr v-for="match in careerMatches" :key="match.id" class="hover:bg-neutral-100">
+      <tr v-for="match in careerMatches" :key="match.id" class="transition-colors duration-100 hover:bg-neutral-100">
         <td class="py-2 px-2 border-b border-neutral-300 font-semibold">
           <TextLink routeName="career" :params="{ id: match.id }">
             {{ match.name }}

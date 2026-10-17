@@ -48,7 +48,7 @@ function showHeading(options: FilterSection["options"], index: number): boolean 
     <section v-for="section in shownSections" :key="section.key" class="border-b border-neutral-200 last:border-b-0">
       <button
         type="button"
-        class="flex w-full items-center gap-2 px-3 py-2 font-semibold hover:bg-neutral-100 cursor-pointer"
+        class="flex w-full items-center gap-2 px-3 py-2 font-semibold transition-colors duration-100 hover:bg-neutral-100 cursor-pointer"
         :aria-expanded="!collapsed.has(section.key)"
         @click="toggleSection(section.key)"
       >

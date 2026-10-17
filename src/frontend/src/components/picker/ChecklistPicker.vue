@@ -152,7 +152,7 @@ const bands = computed(() =>
           <button
             v-if="tickedCount > 0"
             type="button"
-            class="text-sm font-normal text-neutral-600 hover:text-neutral-900 cursor-pointer"
+            class="text-sm font-normal text-neutral-600 transition-colors duration-100 hover:text-neutral-900 cursor-pointer"
             @click="ticked = {}"
           >
             Clear

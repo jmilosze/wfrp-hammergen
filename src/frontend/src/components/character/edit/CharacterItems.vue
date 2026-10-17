@@ -192,7 +192,7 @@ const sections = computed(() => [
         <div
           v-for="item in section.items"
           :key="item.id"
-          class="flex flex-wrap items-center gap-x-2 gap-y-1 px-2 py-1 min-h-10 border-b border-neutral-300 bg-white hover:bg-neutral-100"
+          class="flex flex-wrap items-center gap-x-2 gap-y-1 px-2 py-1 min-h-10 border-b border-neutral-300 bg-white transition-colors duration-100 hover:bg-neutral-100"
         >
           <span class="flex-1 min-w-20">
             <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>

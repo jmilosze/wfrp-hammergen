@@ -9,10 +9,11 @@ export type ButtonVariant = "dark" | "neutral" | "danger" | "light";
 export type ButtonSize = "md" | "lg";
 
 export const BUTTON_VARIANT_CLASS: Record<ButtonVariant, string> = {
-  dark: "bg-brand border-brand-dark text-parchment transition-colors duration-150 hover:bg-brand-dark",
-  light: "bg-parchment border-parchment-dark text-brand-dark  transition-colors duration-150 hover:bg-parchment-dark",
-  neutral: "bg-neutral-100 border-neutral-400 text-neutral-800 font-medium hover:bg-neutral-200",
-  danger: "bg-white border-danger-border text-danger font-medium hover:bg-danger-hover",
+  dark: "bg-brand border-brand-dark text-parchment transition-colors duration-100 hover:bg-brand-dark",
+  light: "bg-parchment border-parchment-dark text-brand-dark  transition-colors duration-100 hover:bg-parchment-dark",
+  neutral:
+    "bg-neutral-100 border-neutral-400 text-neutral-800 font-medium transition-colors duration-100 hover:bg-neutral-200",
+  danger: "bg-white border-danger-border text-danger font-medium transition-colors duration-100 hover:bg-danger-hover",
 };
 
 export const BUTTON_SIZE_CLASS: Record<ButtonSize, string> = {

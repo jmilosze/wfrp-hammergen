@@ -78,7 +78,9 @@ onMounted(async () => {
     <footer v-if="!printing" class="flex-none bg-brand w-full print:hidden">
       <div class="text-center text-sm my-2 text-parchment">
         Contact:
-        <a class="hover:text-parchment-light" href="mailto:admin@hammergen.net">admin@hammergen.net</a>
+        <a class="transition-colors duration-100 hover:text-parchment-light" href="mailto:admin@hammergen.net">
+          admin@hammergen.net
+        </a>
       </div>
     </footer>
   </div>

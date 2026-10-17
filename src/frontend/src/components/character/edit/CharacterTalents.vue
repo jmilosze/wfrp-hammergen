@@ -97,7 +97,11 @@ const modalItems = computed(() =>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="src in selectedTalents" :key="src.id" class="bg-white hover:bg-neutral-100">
+          <tr
+            v-for="src in selectedTalents"
+            :key="src.id"
+            class="bg-white transition-colors duration-100 hover:bg-neutral-100"
+          >
             <td class="py-2 px-2 border-b border-neutral-300">
               <TextLink routeName="talent" :params="{ id: src.id }">
                 {{ src.name }}

@@ -63,7 +63,7 @@ function onGenerate() {
     <!-- Always in the top right corner, however the rest wraps. -->
     <button
       type="button"
-      class="absolute top-1.5 right-1.5 text-neutral-500 hover:bg-parchment hover:text-neutral-900 rounded p-1"
+      class="absolute top-1.5 right-1.5 text-neutral-500 transition-colors duration-100 hover:bg-parchment hover:text-neutral-900 rounded p-1"
       aria-label="Dismiss"
       @click="dismissed = true"
     >

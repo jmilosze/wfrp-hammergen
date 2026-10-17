@@ -9,7 +9,7 @@ import { COMPENDIUM_SECTIONS } from "./navigation.ts";
 
 const LOCAL_STORAGE_KEY_COMPENDIUM_OPEN = "sidebarCompendiumOpen";
 
-const LINK = "block w-full py-1 px-2 rounded select-none text-end transition-colors duration-150 hover:bg-neutral-200";
+const LINK = "block w-full py-1 px-2 rounded select-none text-end transition-colors duration-100 hover:bg-neutral-200";
 
 // Slide-in navigation for screens below lg; large screens use the links in NavBar.
 const open = defineModel<boolean>({ required: true });
@@ -33,7 +33,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
         Hammergen
       </RouterLink>
       <div class="flex-1 flex justify-end">
-        <button class="hover:bg-neutral-200 transition-colors duration-150 p-1 rounded mr-2" @click="open = false">
+        <button class="hover:bg-neutral-200 transition-colors duration-100 p-1 rounded mr-2" @click="open = false">
           <Icon icon="lucide:x" class="size-6" />
         </button>
       </div>
@@ -50,7 +50,7 @@ const compendiumOpen = useLocalStorage(LOCAL_STORAGE_KEY_COMPENDIUM_OPEN, false)
       <div class="py-2">
         <button
           type="button"
-          class="w-full flex items-center justify-end gap-1 py-1 px-2 rounded select-none text-xl transition-colors duration-150 hover:bg-neutral-200"
+          class="w-full flex items-center justify-end gap-1 py-1 px-2 rounded select-none text-xl transition-colors duration-100 hover:bg-neutral-200"
           :aria-expanded="compendiumOpen"
           @click="compendiumOpen = !compendiumOpen"
         >

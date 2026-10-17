@@ -13,13 +13,13 @@ import { COMPENDIUM_SECTIONS } from "./navigation.ts";
 const emit = defineEmits<{ openMenu: [] }>();
 
 const TOP_LINK =
-  "block px-3 py-2 select-none whitespace-nowrap text-parchment transition-colors duration-150 hover:text-parchment-light";
+  "block px-3 py-2 select-none whitespace-nowrap text-parchment transition-colors duration-100 hover:text-parchment-light";
 const SECONDARY_LINK =
-  "block px-3 py-0.5 rounded select-none whitespace-nowrap text-neutral-600 hover:bg-neutral-300 hover:text-neutral-900";
+  "block px-3 py-0.5 rounded select-none whitespace-nowrap text-neutral-600 transition-colors duration-100 hover:bg-neutral-300 hover:text-neutral-900";
 const PINNED_LINK =
-  "block px-2.5 py-0.5 rounded select-none whitespace-nowrap text-neutral-800 transition-colors duration-150 hover:bg-parchment-dark [&.router-link-active]:text-brand [&.router-link-active]:bg-parchment";
+  "block px-2.5 py-0.5 rounded select-none whitespace-nowrap text-neutral-800 transition-colors duration-100 hover:bg-parchment-dark [&.router-link-active]:text-brand [&.router-link-active]:bg-parchment";
 const MENU_LINK =
-  "block px-3 py-1.5 rounded select-none whitespace-nowrap transition-colors duration-150 hover:bg-neutral-200";
+  "block px-3 py-1.5 rounded select-none whitespace-nowrap transition-colors duration-100 hover:bg-neutral-200";
 
 const LOCAL_STORAGE_KEY_COMPENDIUM_PINNED = "navbarCompendiumPinned";
 
@@ -46,7 +46,7 @@ function togglePinned() {
       <div class="max-w-7xl mx-auto h-14 px-4 flex items-center gap-1">
         <RouterLink
           :to="{ name: 'home' }"
-          class="flex items-center gap-2 font-hammergen text-3xl mr-6 drop-shadow-md transition-colors duration-150 hover:text-parchment-light"
+          class="flex items-center gap-2 font-hammergen text-3xl mr-6 drop-shadow-md transition-colors duration-100 hover:text-parchment-light"
         >
           <Icon icon="game-icons:warhammer" class="size-8" />
           Hammergen
@@ -57,7 +57,7 @@ function togglePinned() {
           <div ref="compendiumMenu" class="relative">
             <button
               type="button"
-              class="flex items-center gap-1 px-3 py-2 select-none transition-colors duration-150 hover:text-parchment-light"
+              class="flex items-center gap-1 px-3 py-2 select-none transition-colors duration-100 hover:text-parchment-light"
               :class="{ 'text-parchment-light': showCompendiumMenu }"
               :aria-expanded="showCompendiumMenu"
               @click="showCompendiumMenu = !showCompendiumMenu"
@@ -99,7 +99,7 @@ function togglePinned() {
                 <div class="col-span-2 pt-2 border-t border-neutral-300 flex justify-end">
                   <button
                     type="button"
-                    class="flex items-center gap-1.5 px-3 py-1 rounded select-none text-sm text-neutral-600 transition-colors duration-150 hover:bg-neutral-200 hover:text-neutral-900"
+                    class="flex items-center gap-1.5 px-3 py-1 rounded select-none text-sm text-neutral-600 transition-colors duration-100 hover:bg-neutral-200 hover:text-neutral-900"
                     @click="togglePinned"
                   >
                     <Icon :icon="compendiumPinned ? 'lucide:pin-off' : 'lucide:pin'" class="size-4" />
@@ -122,7 +122,7 @@ function togglePinned() {
           </template>
         </div>
         <button
-          class="lg:hidden p-1 transition-colors duration-150 hover:text-parchment-light"
+          class="lg:hidden p-1 transition-colors duration-100 hover:text-parchment-light"
           aria-label="Menu"
           @click="emit('openMenu')"
         >
@@ -147,7 +147,7 @@ function togglePinned() {
         <div class="flex-1 flex justify-end">
           <button
             type="button"
-            class="p-1 rounded text-neutral-600 transition-colors duration-150 hover:bg-parchment-dark hover:text-neutral-900"
+            class="p-1 rounded text-neutral-600 transition-colors duration-100 hover:bg-parchment-dark hover:text-neutral-900"
             aria-label="Unpin the Compendium bar"
             title="Unpin"
             @click="compendiumPinned = false"

@@ -35,7 +35,7 @@ const buttonClass = computed(() =>
   props.variant === "light"
     ? [BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS.light, "p-1.5"]
     : [
-        "rounded cursor-pointer text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900",
+        "rounded cursor-pointer text-neutral-400 transition-colors duration-100 hover:bg-neutral-200 hover:text-neutral-900",
         props.size === "sm" ? "p-0.5" : "p-1",
       ],
 );

@@ -28,7 +28,7 @@ const emit = defineEmits<{
       <button
         type="button"
         aria-label="Close"
-        class="p-2 hover:text-neutral-900 rounded h-fit cursor-pointer"
+        class="p-2 transition-colors duration-100 hover:text-neutral-900 rounded h-fit cursor-pointer"
         :class="
           alertType === 'red'
             ? 'text-alert-error-text hover:bg-alert-error-hover'

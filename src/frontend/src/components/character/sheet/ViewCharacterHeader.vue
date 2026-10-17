@@ -30,7 +30,8 @@ onClickOutside(downloadGroup, () => (menuOpen.value = false));
 onKeyStroke("Escape", () => (menuOpen.value = false));
 
 const iconButtonClass = [BUTTON_BASE_CLASS, BUTTON_VARIANT_CLASS.neutral, "p-1.5"];
-const menuItemClass = "block w-full px-3 py-2 text-left text-sm hover:bg-neutral-200 cursor-pointer";
+const menuItemClass =
+  "block w-full px-3 py-2 text-left text-sm transition-colors duration-100 hover:bg-neutral-200 cursor-pointer";
 </script>
 
 <template>

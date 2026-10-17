@@ -145,7 +145,7 @@ onBeforeUnmount(() => {
             aria-haspopup="menu"
             :aria-expanded="menuOpen"
             :disabled="saving"
-            class="px-1 rounded-r border border-l-brand/20 border-parchment-dark bg-parchment text-brand-dark transition-colors duration-150 hover:bg-parchment-dark cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-1 rounded-r border border-l-brand/20 border-parchment-dark bg-parchment text-brand-dark transition-colors duration-100 hover:bg-parchment-dark cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             @click="menuOpen = !menuOpen"
           >
             <Icon icon="lucide:chevron-down" class="size-4" />
@@ -158,7 +158,7 @@ onBeforeUnmount(() => {
             <button
               type="button"
               role="menuitem"
-              class="block w-full px-3 py-2 text-left text-sm hover:bg-neutral-200 cursor-pointer"
+              class="block w-full px-3 py-2 text-left text-sm transition-colors duration-100 hover:bg-neutral-200 cursor-pointer"
               @click="onSave(true)"
             >
               Save and add another

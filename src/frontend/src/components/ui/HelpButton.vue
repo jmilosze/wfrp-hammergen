@@ -21,7 +21,7 @@ const open = ref(false);
     v-else
     type="button"
     :aria-label="modalHeader ? `Help: ${modalHeader}` : 'Help'"
-    class="text-brand bg-parchment hover:bg-parchment-dark rounded-full cursor-pointer"
+    class="text-brand bg-parchment transition-colors duration-100 hover:bg-parchment-dark rounded-full cursor-pointer"
     @click="open = true"
   >
     <Icon icon="lucide:circle-help" class="size-6" />

@@ -49,14 +49,14 @@ function clear() {
         <button
           v-if="activeCount > 0"
           type="button"
-          class="text-sm font-normal text-neutral-300 hover:text-white cursor-pointer"
+          class="text-sm font-normal text-neutral-300 transition-colors duration-100 hover:text-white cursor-pointer"
           @click="clear"
         >
           Clear
         </button>
         <button
           type="button"
-          class="@3xl/page:hidden p-0.5 rounded text-neutral-300 hover:text-white cursor-pointer"
+          class="@3xl/page:hidden p-0.5 rounded text-neutral-300 transition-colors duration-100 hover:text-white cursor-pointer"
           aria-label="Close filters"
           @click="drawerOpen = false"
         >

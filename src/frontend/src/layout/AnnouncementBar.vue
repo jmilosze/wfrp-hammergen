@@ -26,7 +26,7 @@ function markSeen() {
         </span>
         <RouterLink
           :to="{ name: 'about', query: { view: 'updates' } }"
-          class="underline underline-offset-2 whitespace-nowrap hover:text-brand-dark"
+          class="underline underline-offset-2 whitespace-nowrap transition-colors duration-100 hover:text-brand-dark"
           @click="markSeen"
         >
           Read more
@@ -34,7 +34,7 @@ function markSeen() {
       </div>
       <button
         type="button"
-        class="p-1 rounded hover:bg-parchment-dark"
+        class="p-1 rounded transition-colors duration-100 hover:bg-parchment-dark"
         aria-label="Dismiss announcement"
         @click="markSeen"
       >

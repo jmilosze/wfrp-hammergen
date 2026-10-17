@@ -50,7 +50,10 @@ function onTextInput(id: string, event: Event) {
   <component
     :is="clickable(item) ? 'label' : 'div'"
     class="flex items-start gap-3 px-2 py-2 border-b border-neutral-300 last:border-b-0 [content-visibility:auto] [contain-intrinsic-size:auto_4rem]"
-    :class="[item.selected ? 'bg-editable' : 'bg-white', { 'cursor-pointer hover:bg-neutral-100': clickable(item) }]"
+    :class="[
+      item.selected ? 'bg-editable' : 'bg-white',
+      { 'cursor-pointer transition-colors duration-100 hover:bg-neutral-100': clickable(item) },
+    ]"
   >
     <span class="pt-0.5">
       <!-- Repeatable and number rows keep the checkbox's space, so the names line up. -->
