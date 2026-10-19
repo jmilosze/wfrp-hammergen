@@ -6,6 +6,8 @@ Source: local `hammergenGo` (production snapshot), 2026-10-16. The per-entry map
 
 ## Current scope: 5e careers only
 
+Counts as first analysed, before decisions D2–D7; the current mapping is in [careers-5e.md](careers-5e.md) and [new-trappings.md](new-trappings.md).
+
 The first step converts only the 64 public 5e career variants (256 levels, 667 entries, 765 atoms). All 64 are 5e variants of 4e documents; their 4e variants keep the free text for now.
 
 | Status | Uses | Notes |
@@ -133,17 +135,27 @@ Judgement calls in the alias table (the owner should confirm or reject them):
 
 ## Format
 
-The class trappings format (`{"id1,id2": "1d10"}`, one option chosen at random) can't hold choices between bundles (19 entries, 11 of them in 5e: "Bow with 10 Arrows or Pistol with 10 Shots"). A format that covers all cases: each level has a list of entries; an entry has one or more options; an option has one or more trappings, each with a quantity ("2" or "1d10").
+The class trappings format (`{"id1,id2": "1d10"}`, one option chosen at random) can't hold choices between bundles (19 entries, 11 of them in 5e: "Bow with 10 Arrows or Pistol with 10 Shots"). Approved format (D1) of a career level, covering all cases and decisions D2, D3 and D10:
 
 ```json
 "trappings": [
   { "options": [[{ "id": "<writing kit>", "number": "1" }]] },
-  { "options": [[{ "id": "<bow>", "number": "1" }, { "id": "<arrow>", "number": "10" }],
+  { "options": [[{ "id": "<coach>", "number": "1", "note": "comes with a Footman" }]] },
+  { "selection": "choice",
+    "options": [[{ "id": "<bow>", "number": "1" }, { "id": "<arrow>", "number": "10" }],
                 [{ "id": "<pistol>", "number": "1" }, { "id": "<bullet and powder>", "number": "10" }]] }
-]
+],
+"money": [{ "coin": "gold", "number": "20" }, { "coin": "silver", "number": "3d10" }],
+"notes": ["Squire", "Large Unit of Knights or Several Small Units of Knights"],
+"items": ""
 ```
 
-A single trapping is an entry with one option. The generator picks one option per entry at random; the career page shows the options joined by "or".
+- `trappings`: entries; an entry has one or more options; an option has one or more trappings with a quantity ("2" or "1d10"). A single trapping is an entry with one option. `selection` (entries with more than one option): `choice` (the player picks, the default; every "A or B" and "Weapon (Any)" in the 5e book) or `random` (one option is rolled; none in the 5e book, for users' careers and later data). The generator picks one option at random either way; guided character creation (HG-44, career level 1 only) lets the player pick for `choice` and rolls for `random`. Dice quantities are always rolled. The career page shows the options joined by "or", and marks random ones.
+- A trapping in an option may have a `note` that describes it ("comes with a Footman", "worth 2d10 Pennies"); the career page shows it next to the trapping, the generator writes it into the character's notes prefixed with the trapping (D13).
+- `money`: coins (`gold`, `silver`, `brass`, as the character's coins) with a fixed or dice amount; the generator rolls them into the character's coins.
+- `notes`: stand-alone people, intangibles and other text, one item per book entry; shown on the career page and written into the character's notes by the generator (D13).
+- `items`: the old free text, kept for users' own careers; empty for converted and new careers.
+- Tracker ticks of a level (5e generator): number of entries + money items + notes.
 
 ## Decisions
 

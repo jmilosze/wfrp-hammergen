@@ -63,9 +63,19 @@ Today a 4e character is either filled in by hand or generated in one go (`genera
 ### HG-44 Guided character creation for 5e
 Frontend · 2026-10-16
 
-The 5e version of HG-43, following the 5e rulebook's character creation summary: species (choose or roll; keeping the first roll gives +1 Fortune), class and career, characteristics, career skills, talents, trappings and final details, personality and background. Reuse `generation/5e/generator5e.ts` and `generationProps5e` and the wizard frame from HG-43. Same limits as the 5e generator (5e content only, species list as in `docs/architecture.md`, HG-36 extends it).
+The 5e version of HG-43, following the 5e rulebook's character creation summary: species (choose or roll; keeping the first roll gives +1 Fortune), class and career, characteristics, career skills, talents, trappings and final details, personality and background. Reuse `generation/5e/generator5e.ts` and `generationProps5e` and the wizard frame from HG-43. Career trappings: the player picks the options of level 1 entries marked `choice` and rolls the `random` ones and dice quantities (HG-40 format, `docs/hg-40/analysis.md`). Same limits as the 5e generator (5e content only, species list as in `docs/architecture.md`, HG-36 extends it).
 
 ## Ideas
+
+### HG-52 Rune Axe for the 5e Daemon Slayer
+Data · 2026-10-19
+
+The 5e Daemon Slayer (Slayer 4) has a "Rune Axe" as a career trapping; HG-40 keeps it as a note for now, because 5e has no runes yet (82 public runes, all 4e only) and the 5e rulebook doesn't describe the axe further. Trappings can carry runes (`runes` on an item), so a proper version would be a 5e trapping based on Axe with a rune once 5e runes exist (from a 5e supplement, or 4e runes given 5e variants), or a plain "Rune Axe" trapping with its own description. Then replace the note in the career with the trapping.
+
+### HG-49 Notes per trapping on the character
+Frontend + Backend · 2026-10-19
+
+A character stores its trappings as ids with counts (`equippedItems`, `carriedItems`, `storedItems`), so there is no place for text about one trapping, e.g. "Coach: comes with a Footman" or "Jewellery: worth 50 GC" from the career trappings (HG-40), or "inherited from my father". Today such text goes into the character's free-text notes, prefixed with the trapping. Idea: an optional note per trapping (trapping id → text), editable in the character editor, shown next to the trapping in the sheet's trappings tables and in the CSV export; the generator would then put the career's trapping notes there instead of in the notes.
 
 ### HG-5 Translated content (e.g. Polish, Spanish)
 Feature · 2026-10-10

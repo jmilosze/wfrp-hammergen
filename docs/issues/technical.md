@@ -6,6 +6,21 @@ Everything users don't see directly: backend internals, code quality, tests, too
 
 ## Improvements
 
+### HG-50 Reduce data transfer between the API and Atlas
+Backend + Frontend · 2026-10-19
+
+On 2026-10-19 from about 15:25 UTC production slowed to 2–8 s per request: Cloud Run was idle, but responses came from Atlas at about 60 KB/s (`item?edition=4e`, 504 KB: 8.1 s). The API had read about 9.9 GB from Atlas in the previous 7 days (Cloud Run `received_bytes`), rising from 0.7–1.0 GB/day in early October to 1.3–2.0 GB/day; the free tier (M0) throttles after 10 GB per rolling 7 days. The owner upgraded the cluster (now a Flex tier) at about 15:59; the API instances started before the upgrade kept failing (no primary, TLS errors to one node) until a new Cloud Run revision restarted them at 16:10. After that the same request took 0.35 s. Lesson: restart the Cloud Run instances after an Atlas tier change.
+
+Transfer still grows with usage and costs money on a paid tier:
+- Return only the fields the list views need (projection, or a separate summary endpoint) and load the full document on open; list endpoints return whole documents, descriptions included, and the editors and generator fetch many full lists (up to 16 for a 5e character). The API does not gzip its responses either (this affects Cloud Run egress, not Atlas transfer).
+- Cache public content on the frontend (HG-32) and/or in the API (public content changes rarely); this removes most of the Atlas traffic.
+- Alert on the 7-day sum of Cloud Run `container/network/received_bytes_count`, or set an Atlas alert on network bytes out.
+
+### HG-51 Expire old logs in BigQuery
+Deployment · 2026-10-19
+
+The log sink `logs-to-big-query` copies all production Cloud Run logs into the BigQuery dataset `hammergen_logs` (location US). Nothing ever expires: on 2026-10-19 it held 4.0 GB (`run_googleapis_com_requests` 2.7 GB, `run_googleapis_com_stdout` 1.3 GB) in daily partitions back to 2024-11-24. BigQuery storage is free up to 10 GB, and the growth speeds up with traffic. Set a partition expiration on the dataset (default for new tables) and on the existing tables, e.g. `bq update --default_partition_expiration <seconds>` and `bq update --time_partitioning_expiration <seconds>` per table. Expiration deletes old partitions for good, so pick the retention first (e.g. 90 or 365 days): HG-2 may use these logs for usage metrics, so keep enough history for that or aggregate it into its own table before old partitions expire.
+
 ### HG-2 Usage metrics per edition (4e vs 5e)
 Feature · 2026-10-07
 
@@ -53,12 +68,17 @@ Review authentication and account handling end to end and file what is found as 
 - Password rules, bcrypt cost, HMAC secret strength and rotation.
 - Authorisation of the user endpoints (`dependencies/gin/user.go`): who may read, update, change claims of or delete which user.
 
+### HG-32 Cache public content on the frontend
+Frontend + Backend · 2026-10-15, agreed 2026-10-18
+
+Every visit to a list page, and every opening of an editor, fetches whole content lists again from the API and MongoDB (the 5e character editor up to 16 lists plus generation data). Public content (the compendium) is the same for every user and changes only when the admin edits it or a data script runs, and HG-40 adds about 95 trappings to the largest list. Cache it on the frontend instead of querying it every time:
+- The list endpoints return public, own and shared documents together (`WhService.Get`), so the public part needs its own request (e.g. a visibility filter), and the user's own and shared content is fetched separately and merged (small, and it changes with login/logout and saves).
+- Cache per content type and edition, in memory for the session and possibly in IndexedDB across visits; one request shared by simultaneous callers (`useWhList`, the editors, the generator).
+- Invalidation: a version of the public content (e.g. a counter or the latest `modifiedOn` per type, served by a cheap endpoint or with the generation data) that the frontend checks on start; admin saves and data scripts change it. Drop a type on the admin's own save, copy and delete.
+- Cached entries are shared mutable models, so pages must not change them (`copyWh` pushes into the list today).
+- Measure before and after: load time and size of the trappings list, opening a 5e character with 4e content.
+
 ## Ideas
-
-### HG-32 Cache content lists for the session
-Frontend · 2026-10-15
-
-Every visit to a list page, and every opening of an editor, fetches the content lists again (the 5e character editor up to 16 lists plus generation data). Idea: a shared store per content type and edition that `useWhList` reads through, with one request shared by simultaneous callers. Drop a type (both editions) on save, copy and delete, and everything on login/logout (lists depend on the user). Changes from other tabs or linked accounts then show only after a reload; a stale-while-revalidate variant keeps data fresh but saves no requests. Cached entries are shared mutable models, so pages must not change them (`copyWh` pushes into the list today). Measure first (load time and size of the trappings list, opening a 5e character with 4e content) and decide whether it is worth it.
 
 ### HG-35 Decide on end-to-end tests (Playwright)
 Tests · 2026-10-15

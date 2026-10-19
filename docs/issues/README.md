@@ -21,4 +21,4 @@ Entries:
 - When an issue is done, delete its entry (git history keeps it). When it is partly done, update the description.
 - Out-of-scope problems found while working on something else go here, not into the code as TODO comments.
 
-Next free ID: **HG-49**
+Next free ID: **HG-53**
