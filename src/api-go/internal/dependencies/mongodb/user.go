@@ -33,7 +33,7 @@ func NewUserDbService(db *DbService, createIndex bool) (*UserDbService, error) {
 	coll := db.Client.Database(db.DbName).Collection(userCollectionName)
 
 	if createIndex {
-		if err := createIndexOnField("username", coll); err != nil {
+		if err := createIndexOnField("username", true, coll); err != nil {
 			return nil, err
 		}
 	}

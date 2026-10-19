@@ -58,18 +58,26 @@ func NewWhDbService(db *DbService, createIndex bool) (*WhDbService, error) {
 	}
 	collections[warhammer.WhTypeOther] = db.Client.Database(db.DbName).Collection(warhammer.WhTypeOther)
 	if createIndex {
-		if err := createIndexOnField("name", collections[warhammer.WhTypeOther]); err != nil {
+		if err := createIndexOnField("name", true, collections[warhammer.WhTypeOther]); err != nil {
 			return nil, err
+		}
+		// Every list query filters on visibility (public) or ownerid (own and shared documents).
+		for _, whCoreType := range warhammer.WhCoreTypes {
+			for _, field := range []string{"ownerid", "visibility"} {
+				if err := createIndexOnField(field, false, collections[whCoreType]); err != nil {
+					return nil, err
+				}
+			}
 		}
 	}
 
 	return &WhDbService{Db: db, Collections: collections}, nil
 }
 
-func createIndexOnField(fieldName string, collection *mongo.Collection) error {
+func createIndexOnField(fieldName string, unique bool, collection *mongo.Collection) error {
 	mod := mongo.IndexModel{
 		Keys:    bson.D{{Key: fieldName, Value: 1}},
-		Options: options.Index().SetUnique(true),
+		Options: options.Index().SetUnique(unique),
 	}
 	_, err := collection.Indexes().CreateOne(context.TODO(), mod)
 	if err != nil {
@@ -201,7 +209,7 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 		}
 	}
 
-	cur, err := s.Collections[t].Find(ctx, bson.M{"$and": andConditions})
+	cur, err := s.Collections[t].Find(ctx, bson.M{"$and": andConditions}, retrieveOptions(t, filter.Edition))
 
 	if cur != nil {
 		defer cur.Close(ctx)
@@ -229,6 +237,15 @@ func (s *WhDbService) Retrieve(ctx context.Context, t warhammer.WhType, userIds 
 	}
 
 	return whList, nil
+}
+
+// retrieveOptions fetches only variant e of content documents, so the other edition's variant is not transferred.
+func retrieveOptions(t warhammer.WhType, e warhammer.Edition) *options.FindOptionsBuilder {
+	opts := options.Find()
+	if e != "" && warhammer.HasEditions(t) {
+		opts.SetProjection(bson.M{"ownerid": 1, "visibility": 1, "modifiedon": 1, variantPath(e): 1})
+	}
+	return opts
 }
 
 func idsQuery(whIds []string) (bson.M, error) {

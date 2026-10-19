@@ -84,3 +84,5 @@ Order for data changes: local first, then staging, then production. Run `--dry-r
 - When a change touches the API and the frontend, deploy the backend first, then the frontend. Data the new code needs (e.g. a new generation document) goes in before the deploy.
 - `deployment/gcp/deploy.py` is an older local deploy script (see HG-21).
 - Maintenance mode: `HAMMERGEN_MAINTENANCE_ENABLED` on Cloud Run; the frontend shows a maintenance page while it is on.
+- Indexes: the API creates its MongoDB indexes at startup when `HAMMERGEN_MONGODB_CREATE_USER_INDEXES` (unique `username`) and `HAMMERGEN_MONGODB_CREATE_WH_INDEXES` (unique `name` on `other`, `ownerid` and `visibility` on the content collections) are on. Creating an index that exists is a no-op, so they can stay on.
+- After an Atlas tier change, restart the Cloud Run instances (deploy a new revision): instances started before the change can keep failing to connect.

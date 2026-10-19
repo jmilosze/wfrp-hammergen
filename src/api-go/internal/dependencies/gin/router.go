@@ -2,6 +2,7 @@ package gin
 
 import (
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/vearne/gin-timeout"
 	"net/http"
@@ -19,6 +20,9 @@ func NewRouter(requestTimeout time.Duration, maintenance bool) *gin.Engine {
 	router.Use(cors.New(corsConfig))
 
 	router.Use(MaintenanceMode(maintenance))
+
+	// Before the timeout middleware, which writes the buffered response into the gzip writer.
+	router.Use(gzip.Gzip(gzip.DefaultCompression, gzip.WithMinLength(1024)))
 
 	router.Use(timeout.Timeout(
 		timeout.WithTimeout(requestTimeout),

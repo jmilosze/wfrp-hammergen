@@ -4,6 +4,7 @@ go 1.26.0
 
 require (
 	github.com/gin-contrib/cors v1.7.7
+	github.com/gin-contrib/gzip v1.2.8
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-playground/validator/v10 v10.30.3
 	github.com/golang-jwt/jwt/v5 v5.3.1
@@ -14,8 +15,7 @@ require (
 	github.com/stretchr/testify v1.12.1
 	github.com/vearne/gin-timeout v0.2.3
 	go.mongodb.org/mongo-driver/v2 v2.8.1
-	golang.org/x/crypto v0.55.0
-	golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa
+	golang.org/x/crypto v0.56.0
 )
 
 require (
