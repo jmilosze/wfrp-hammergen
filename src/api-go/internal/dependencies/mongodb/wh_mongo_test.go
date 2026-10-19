@@ -11,11 +11,13 @@ import (
 	"github.com/jmilosze/wfrp-hammergen-go/internal/domain/warhammer"
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 // These tests need a running MongoDB, e.g.
 // HAMMERGEN_TEST_MONGODB_URI=mongodb://admin:admin@localhost:27017 go test ./internal/dependencies/mongodb/
-func newTestWhDbService(t *testing.T) *WhDbService {
+func newTestDb(t *testing.T) *DbService {
 	uri := os.Getenv("HAMMERGEN_TEST_MONGODB_URI")
 	if uri == "" {
 		t.Skip("HAMMERGEN_TEST_MONGODB_URI not set")
@@ -27,8 +29,11 @@ func newTestWhDbService(t *testing.T) *WhDbService {
 		require.NoError(t, db.Client.Database(db.DbName).Drop(context.Background()))
 		require.NoError(t, db.Disconnect())
 	})
+	return db
+}
 
-	s, err := NewWhDbService(db, false)
+func newTestWhDbService(t *testing.T) *WhDbService {
+	s, err := NewWhDbService(newTestDb(t), false)
 	require.NoError(t, err)
 	return s
 }
@@ -391,4 +396,45 @@ func TestWhDbStoresValuesOnReferences(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, gotItems, 1)
 	require.Equal(t, properties, gotItems[0].Editions[warhammer.Edition4e].(*warhammer.Item).Properties)
+}
+
+func indexNames(t *testing.T, db *DbService, collection string) map[string]bool {
+	specs, err := db.Client.Database(db.DbName).Collection(collection).Indexes().ListSpecifications(context.Background())
+	require.NoError(t, err)
+	names := map[string]bool{}
+	for _, spec := range specs {
+		names[spec.Name] = true
+	}
+	return names
+}
+
+func TestWhDbCreateIndexesKeepsExistingIndexes(t *testing.T) {
+	db := newTestDb(t)
+	ctx := context.Background()
+	// Production has the unique name index under the name "name", not the default "name_1".
+	_, err := db.Client.Database(db.DbName).Collection(warhammer.WhTypeOther).Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys:    bson.D{{Key: "name", Value: 1}},
+		Options: options.Index().SetUnique(true).SetName("name"),
+	})
+	require.NoError(t, err)
+
+	_, err = NewWhDbService(db, true)
+	require.NoError(t, err)
+	// Running it again finds every index.
+	_, err = NewWhDbService(db, true)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]bool{"_id_": true, "name": true}, indexNames(t, db, warhammer.WhTypeOther))
+	require.Equal(t, map[string]bool{"_id_": true, "ownerid_1": true, "visibility_1": true}, indexNames(t, db, string(warhammer.WhTypeCharacter)))
+}
+
+func TestWhDbCreateIndexesRejectsUniquenessMismatch(t *testing.T) {
+	db := newTestDb(t)
+	_, err := db.Client.Database(db.DbName).Collection(warhammer.WhTypeOther).Indexes().CreateOne(context.Background(), mongo.IndexModel{
+		Keys: bson.D{{Key: "name", Value: 1}},
+	})
+	require.NoError(t, err)
+
+	_, err = NewWhDbService(db, true)
+	require.ErrorContains(t, err, "unique=false, want true")
 }

@@ -74,16 +74,48 @@ func NewWhDbService(db *DbService, createIndex bool) (*WhDbService, error) {
 	return &WhDbService{Db: db, Collections: collections}, nil
 }
 
+// createIndexOnField creates an ascending index on the field unless the collection has one already. Existing indexes are
+// matched by key, not name: MongoDB rejects a second index on the same key under another name (production has
+// some named after the field instead of the default "<field>_1").
 func createIndexOnField(fieldName string, unique bool, collection *mongo.Collection) error {
+	specs, err := collection.Indexes().ListSpecifications(context.TODO())
+	if err != nil {
+		return fmt.Errorf("failed to list indexes of %s: %w", collection.Name(), err)
+	}
+	for _, spec := range specs {
+		onField, err := isAscendingIndexOn(spec.KeysDocument, fieldName)
+		if err != nil {
+			return fmt.Errorf("failed to read keys of index %s of %s: %w", spec.Name, collection.Name(), err)
+		}
+		if !onField {
+			continue
+		}
+		if (spec.Unique != nil && *spec.Unique) != unique {
+			return fmt.Errorf("index %s on field %s of %s has unique=%t, want %t", spec.Name, fieldName, collection.Name(), !unique, unique)
+		}
+		return nil
+	}
+
 	mod := mongo.IndexModel{
 		Keys:    bson.D{{Key: fieldName, Value: 1}},
 		Options: options.Index().SetUnique(unique),
 	}
-	_, err := collection.Indexes().CreateOne(context.TODO(), mod)
-	if err != nil {
+	if _, err = collection.Indexes().CreateOne(context.TODO(), mod); err != nil {
 		return fmt.Errorf("failed to create index on field %s: %w", fieldName, err)
 	}
 	return nil
+}
+
+func isAscendingIndexOn(keys bson.Raw, fieldName string) (bool, error) {
+	elements, err := keys.Elements()
+	if err != nil {
+		return false, err
+	}
+	if len(elements) != 1 || elements[0].Key() != fieldName {
+		return false, nil
+	}
+	direction, ok := elements[0].Value().AsInt64OK()
+	return ok && direction == 1, nil
 }
 
 func newWhDocWrite(t warhammer.WhType, w *warhammer.Wh) (*whDocWrite, error) {
