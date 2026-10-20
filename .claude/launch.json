@@ -23,6 +23,15 @@
         "VITE_ROOT_API=http://127.0.0.1:8082 npm --prefix src/frontend run dev -- --port 5174 --strictPort"
       ],
       "port": 5174
+    },
+    {
+      "name": "api-walkthrough",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd src/api-go && HAMMERGEN_SERVER_PORT=8082 HAMMERGEN_SERVICES_EMAIL=mockemail HAMMERGEN_SERVICES_CAPTCHA=mockcaptcha go run ./cmd/wfrp"
+      ],
+      "port": 8082
     }
   ]
 }

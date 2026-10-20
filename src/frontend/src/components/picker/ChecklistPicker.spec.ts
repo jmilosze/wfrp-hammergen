@@ -70,6 +70,26 @@ describe("ChecklistPicker", () => {
     expect(wrapper.text()).toContain("×2");
   });
 
+  test("a repeatable row adds once when clicked anywhere or on Add, but not on its name", async () => {
+    const wrapper = mountPicker({ items: [item("b", "Beta", { repeatable: true })], routeName: "trait" });
+    const row = wrapper.findComponent(ChecklistRow);
+
+    await row.find("div").trigger("click");
+    await findButton(row, "Add Beta").trigger("click");
+    await row.find("a").trigger("click");
+
+    expect(wrapper.emitted("add")).toEqual([["b"], ["b"]]);
+  });
+
+  test("a plain row has its checkbox at the end, ticked by a click anywhere on the row", () => {
+    const wrapper = mountPicker({ items: [item("a", "Alpha", { text: "" })], textLabel: "Page" });
+    const row = wrapper.findComponent(ChecklistRow);
+    const inputs = row.findAll("input");
+
+    expect(inputs.map((x) => x.attributes("type"))).toEqual(["text", "checkbox"]);
+    expect(row.find("label").attributes("for")).toBe(inputs[1].attributes("id"));
+  });
+
   test("filters by edition in the Filters panel when 4e content is offered", async () => {
     const wrapper = mountPicker({
       items: [item("a", "Alpha"), item("b", "Beta")],

@@ -5,6 +5,7 @@ import AppButton from "@/components/ui/AppButton.vue";
 import TextLink from "@/components/ui/TextLink.vue";
 import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
 import { ChecklistItem } from "./checklistItem.ts";
+import { useId } from "vue";
 
 // A row of a ChecklistPicker. Rows are components of their own, so a change to one item (e.g. a typed quantity) redraws
 // only its row, not the whole list.
@@ -25,9 +26,24 @@ const emit = defineEmits<{
   (e: "choose", value: { id: string; key: string; checked: boolean }): void;
 }>();
 
-// A row is ticked by clicking anywhere on it, unless it has an Add button or several checkboxes.
-function clickable(item: ChecklistItem): boolean {
+// A row is a label, so a click anywhere on it ticks its checkbox (pointed at by for, as the checkbox is at the end, after a
+// text input) or focuses its number; rows with an Add button or several checkboxes aren't. A repeatable row adds one
+// when clicked anywhere, like its Add button; a click on the item's name opens its page instead.
+function isLabel(item: ChecklistItem): boolean {
   return !item.repeatable && !item.choices;
+}
+
+function hasCheckbox(item: ChecklistItem): boolean {
+  return isLabel(item) && item.number === undefined;
+}
+
+const checkboxId = useId();
+
+function onRowClick(item: ChecklistItem, event: MouseEvent) {
+  if (!item.repeatable || (event.target instanceof Element && event.target.closest("a"))) {
+    return;
+  }
+  emit("add", item.id);
 }
 
 // An emptied number input gives NaN, which validation then reports.
@@ -48,23 +64,15 @@ function onTextInput(id: string, event: Event) {
 
 <template>
   <component
-    :is="clickable(item) ? 'label' : 'div'"
+    :is="isLabel(item) ? 'label' : 'div'"
+    :for="hasCheckbox(item) ? checkboxId : undefined"
     class="flex items-start gap-3 px-2 py-2 border-b border-neutral-300 last:border-b-0 [content-visibility:auto] [contain-intrinsic-size:auto_4rem]"
     :class="[
       item.selected ? 'bg-editable' : 'bg-white',
-      { 'cursor-pointer transition-colors duration-100 hover:bg-neutral-100': clickable(item) },
+      { 'cursor-pointer transition-colors duration-100 hover:bg-neutral-100': isLabel(item) || item.repeatable },
     ]"
+    @click="onRowClick(item, $event)"
   >
-    <span class="pt-0.5">
-      <!-- Repeatable and number rows keep the checkbox's space, so the names line up. -->
-      <span v-if="item.repeatable || item.number !== undefined || item.choices" class="block size-5" />
-      <FormCheckbox
-        v-else
-        :checked="item.selected"
-        :aria-label="item.name"
-        @change="emit('toggle', { id: item.id, selected: !item.selected })"
-      />
-    </span>
     <span class="flex-1 min-w-0">
       <span class="block">
         <TextLink v-if="routeName" :routeName="routeName" :params="{ id: item.linkId ?? item.id }">{{
@@ -118,9 +126,19 @@ function onTextInput(id: string, event: Event) {
         {{ choice.label }}
       </label>
     </span>
-    <span v-if="item.repeatable" class="flex items-center gap-2 shrink-0">
+    <!-- The Add button is there for the keyboard; its click reaches the row, which adds. -->
+    <span v-if="item.repeatable" class="flex items-center gap-2 shrink-0 self-center">
       <span v-if="item.count" class="font-semibold">×{{ item.count }}</span>
-      <AppButton icon="lucide:plus" :aria-label="`Add ${item.name}`" @click="emit('add', item.id)"> Add </AppButton>
+      <AppButton icon="lucide:plus" :aria-label="`Add ${item.name}`"> Add </AppButton>
+    </span>
+    <!-- A plain row's checkbox sits at the end, as the Add button and a career level's checkboxes do. -->
+    <span v-if="hasCheckbox(item)" class="shrink-0 self-center">
+      <FormCheckbox
+        :id="checkboxId"
+        :checked="item.selected"
+        :aria-label="item.name"
+        @change="emit('toggle', { id: item.id, selected: !item.selected })"
+      />
     </span>
   </component>
 </template>

@@ -3,12 +3,13 @@ import { computed } from "vue";
 import { Item } from "@/services/wh/content/item.ts";
 import { encumbranceItems, getEncumbrance } from "@/services/wh/character/encumbrance.ts";
 import { ValidationStatus } from "@/utils/validation.ts";
+import { IdNumberValue } from "@/utils/idNumberValue.ts";
 import SheetTable from "@/components/sheet/SheetTable.vue";
 import SheetField from "@/components/sheet/SheetField.vue";
 import SheetCell from "@/components/sheet/SheetCell.vue";
 
-// The character editor's Wealth (typed in) and Encumbrance (of the equipped and carried trappings, id to quantity,
-// looked up in itemList), side by side once there is room. A total over maxEncumbrance is marked.
+// The character editor's Wealth (typed in) and Encumbrance (of the equipped and carried trappings, looked up in
+// itemList), side by side once there is room. A total over maxEncumbrance is marked.
 const gold = defineModel<number>("gold", { required: true });
 const silver = defineModel<number>("silver", { required: true });
 const brass = defineModel<number>("brass", { required: true });
@@ -17,8 +18,8 @@ const props = defineProps<{
   goldValidation: ValidationStatus;
   silverValidation: ValidationStatus;
   brassValidation: ValidationStatus;
-  equipped: Record<string, number>;
-  carried: Record<string, number>;
+  equipped: IdNumberValue[];
+  carried: IdNumberValue[];
   itemList: Item[];
   maxEncumbrance: number;
   disabled: boolean;

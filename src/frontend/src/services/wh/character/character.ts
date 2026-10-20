@@ -26,7 +26,8 @@ import { ValidationStatus } from "@/utils/validation.ts";
 import { updateSet } from "@/utils/set.ts";
 import { IdValue, validateValues } from "@/utils/idValue.ts";
 import { copyIdNumberArray, IdNumber, idNumberArrayToRecord, updateIdNumberRecord } from "@/utils/idNumber.ts";
-import { isEqualEntity } from "@/utils/equal.ts";
+import { addNumber, copyIdNumberValueArray, IdNumberValue, validateIdNumberValues } from "@/utils/idNumberValue.ts";
+import { DEFAULT_UNORDERED_KEYS, isEqualEntity } from "@/utils/equal.ts";
 import { Talent } from "@/services/wh/content/talent.ts";
 import { Mutation } from "@/services/wh/content/mutation.ts";
 import { Trait } from "@/services/wh/content/trait.ts";
@@ -60,9 +61,9 @@ export interface CharacterApiData {
   attributeAdvances: Attributes;
   skills: IdNumber[];
   talents: IdNumber[];
-  equippedItems: IdNumber[];
-  carriedItems: IdNumber[];
-  storedItems: IdNumber[];
+  equippedItems: IdNumberValue[];
+  carriedItems: IdNumberValue[];
+  storedItems: IdNumberValue[];
   spells: string[];
   prayers: string[];
   traits: IdValue[];
@@ -72,6 +73,14 @@ export interface CharacterApiData {
 }
 
 const CHARACTER_IGNORED_KEYS: ReadonlySet<string> = new Set(["modifiers"]);
+const CHARACTER_UNORDERED_KEYS: ReadonlySet<string> = new Set([
+  ...DEFAULT_UNORDERED_KEYS,
+  "equippedItems",
+  "carriedItems",
+  "storedItems",
+]);
+
+export type ItemLocation = "equipped" | "carried" | "stored";
 
 export class Character extends WhEntity {
   // Set by the API on save (RFC 3339); empty for a character that was never saved.
@@ -99,9 +108,9 @@ export class Character extends WhEntity {
   attributeAdvances: Attributes;
   skills: Record<string, number>;
   talents: Record<string, number>;
-  equippedItems: Record<string, number>;
-  carriedItems: Record<string, number>;
-  storedItems: Record<string, number>;
+  equippedItems: IdNumberValue[];
+  carriedItems: IdNumberValue[];
+  storedItems: IdNumberValue[];
   careerPath: IdNumber[];
   spells: Set<string>;
   prayers: Set<string>;
@@ -142,9 +151,9 @@ export class Character extends WhEntity {
     attributeAdvances = zeroAttributes(),
     skills = {} as Record<string, number>,
     talents = {} as Record<string, number>,
-    equippedItems = {} as Record<string, number>,
-    carriedItems = {} as Record<string, number>,
-    storedItems = {} as Record<string, number>,
+    equippedItems = [] as IdNumberValue[],
+    carriedItems = [] as IdNumberValue[],
+    storedItems = [] as IdNumberValue[],
     careerPath = [] as IdNumber[],
     spells = new Set<string>(),
     prayers = new Set<string>(),
@@ -195,7 +204,10 @@ export class Character extends WhEntity {
   }
 
   override isEqualTo(otherCharacter: unknown): boolean {
-    return isEqualEntity(this, otherCharacter, { ignoredKeys: CHARACTER_IGNORED_KEYS });
+    return isEqualEntity(this, otherCharacter, {
+      ignoredKeys: CHARACTER_IGNORED_KEYS,
+      unorderedKeys: CHARACTER_UNORDERED_KEYS,
+    });
   }
 
   validateName(): ValidationStatus {
@@ -275,15 +287,15 @@ export class Character extends WhEntity {
   }
 
   validateEquippedItems(): ValidationStatus {
-    return validateIdNumber("Equipped trappings number", this.equippedItems, 1, 1000);
+    return validateIdNumberValues("Equipped trappings", this.equippedItems);
   }
 
   validateCarriedItems(): ValidationStatus {
-    return validateIdNumber("Carried trappings number", this.carriedItems, 1, 1000);
+    return validateIdNumberValues("Carried trappings", this.carriedItems);
   }
 
   validateStoredItems(): ValidationStatus {
-    return validateIdNumber("Stored trappings number", this.storedItems, 1, 1000);
+    return validateIdNumberValues("Stored trappings", this.storedItems);
   }
 
   validateTraits(): ValidationStatus {
@@ -506,20 +518,43 @@ export class Character extends WhEntity {
     }
   }
 
-  updateItems(id: string, number: number, location: "equipped" | "carried" | "stored"): void {
+  items(location: ItemLocation): IdNumberValue[] {
     switch (location) {
       case "equipped":
-        updateIdNumberRecord(this.equippedItems, { id: id, number: number });
-        return;
+        return this.equippedItems;
       case "carried":
-        updateIdNumberRecord(this.carriedItems, { id: id, number: number });
-        return;
+        return this.carriedItems;
       case "stored":
-        updateIdNumberRecord(this.storedItems, { id: id, number: number });
-        return;
-      default:
-        return;
+        return this.storedItems;
     }
+  }
+
+  // addItem adds a new entry of one of the trapping, without a value, at the location; each added entry is a row of its
+  // own, also next to identical ones.
+  addItem(location: ItemLocation, id: string): void {
+    this.items(location).push({ id: id, number: 1, value: "" });
+  }
+
+  // updateItem changes one entry of the location's list, by its index.
+  updateItem(location: ItemLocation, index: number, change: { number?: number; value?: string }): void {
+    const list = this.items(location);
+    if (change.number === 0) {
+      list.splice(index, 1);
+      return;
+    }
+    if (change.number !== undefined) {
+      list[index].number = change.number;
+    }
+    if (change.value !== undefined) {
+      list[index].value = change.value;
+    }
+  }
+
+  // moveItem moves one of the entry at the index to another location, keeping its value.
+  moveItem(from: ItemLocation, index: number, to: ItemLocation): void {
+    const entry = this.items(from)[index];
+    addNumber(this.items(to), entry.id, entry.value, 1);
+    this.updateItem(from, index, { number: entry.number - 1 });
   }
 
   hydrateTalentModifiers(talents: Talent[]): void {
@@ -596,9 +631,9 @@ export function apiResponseToModel(characterApi: CharacterApiResponse<CharacterA
     attributeAdvances: copyAttributes(characterApi.object.attributeAdvances),
     skills: idNumberArrayToRecord(characterApi.object.skills),
     talents: idNumberArrayToRecord(characterApi.object.talents),
-    equippedItems: idNumberArrayToRecord(characterApi.object.equippedItems),
-    carriedItems: idNumberArrayToRecord(characterApi.object.carriedItems),
-    storedItems: idNumberArrayToRecord(characterApi.object.storedItems),
+    equippedItems: copyIdNumberValueArray(characterApi.object.equippedItems),
+    carriedItems: copyIdNumberValueArray(characterApi.object.carriedItems),
+    storedItems: copyIdNumberValueArray(characterApi.object.storedItems),
     careerPath: copyIdNumberArray(characterApi.object.careerPath),
     spells: new Set(characterApi.object.spells),
     prayers: new Set(characterApi.object.prayers),
@@ -636,9 +671,9 @@ export function modelToApi(character: Character): CharacterApiData {
     attributeAdvances: copyAttributes(character.attributeAdvances),
     skills: Object.entries(character.skills).map((x) => ({ id: x[0], number: x[1] })),
     talents: Object.entries(character.talents).map((x) => ({ id: x[0], number: x[1] })),
-    equippedItems: Object.entries(character.equippedItems).map((x) => ({ id: x[0], number: x[1] })),
-    carriedItems: Object.entries(character.carriedItems).map((x) => ({ id: x[0], number: x[1] })),
-    storedItems: Object.entries(character.storedItems).map((x) => ({ id: x[0], number: x[1] })),
+    equippedItems: copyIdNumberValueArray(character.equippedItems),
+    carriedItems: copyIdNumberValueArray(character.carriedItems),
+    storedItems: copyIdNumberValueArray(character.storedItems),
     careerPath: copyIdNumberArray(character.careerPath),
     spells: [...character.spells],
     prayers: [...character.prayers],

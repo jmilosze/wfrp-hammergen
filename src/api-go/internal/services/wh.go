@@ -308,6 +308,14 @@ func idNumbersToIds(items []wh.IdNumber) []string {
 	return ids
 }
 
+func idNumberValuesToIds(items []wh.IdNumberValue) []string {
+	ids := make([]string, len(items))
+	for i, item := range items {
+		ids[i] = item.Id
+	}
+	return ids
+}
+
 func idValuesToIds(items []wh.IdValue) []string {
 	ids := make([]string, len(items))
 	for i, item := range items {
@@ -362,7 +370,7 @@ func retrieveFullCharactersOfEdition(ctx context.Context, whService *WhService, 
 		}
 		allow4e = allow4e || (character.Edition == wh.Edition5e && character.Allow4e)
 		allSkillIds = deduplicate(allSkillIds, idNumbersToIds(character.Skills))
-		allItemIds = deduplicate(allItemIds, idNumbersToIds(character.EquippedItems), idNumbersToIds(character.CarriedItems), idNumbersToIds(character.StoredItems))
+		allItemIds = deduplicate(allItemIds, idNumberValuesToIds(character.EquippedItems), idNumberValuesToIds(character.CarriedItems), idNumberValuesToIds(character.StoredItems))
 		allTalentIds = deduplicate(allTalentIds, idNumbersToIds(character.Talents))
 		allCareerIds = deduplicate(allCareerIds, idNumbersToIds(character.CareerPath))
 		if character.Career != nil {

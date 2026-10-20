@@ -364,6 +364,7 @@ const characterFullApiData: CharacterFullApiData = {
   equippedItems: [
     {
       number: 1,
+      value: "Axe",
       wh: {
         id: "id9",
         ownerId: "owner",
@@ -431,6 +432,7 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       number: 2,
+      value: "",
       wh: {
         id: "id10",
         ownerId: "owner",
@@ -506,6 +508,7 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       number: 3,
+      value: "",
       wh: {
         id: "id11",
         ownerId: "owner",
@@ -546,6 +549,7 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       number: 3,
+      value: "",
       wh: {
         id: "id12",
         ownerId: "owner",
@@ -610,6 +614,7 @@ const characterFullApiData: CharacterFullApiData = {
   carriedItems: [
     {
       number: 1,
+      value: "",
       wh: {
         id: "id13",
         ownerId: "owner",
@@ -685,6 +690,7 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       number: 2,
+      value: "",
       wh: {
         id: "id14",
         ownerId: "owner",
@@ -725,6 +731,7 @@ const characterFullApiData: CharacterFullApiData = {
     },
     {
       number: 1,
+      value: "",
       wh: {
         id: "id14a",
         ownerId: "owner",
@@ -808,6 +815,7 @@ const characterFullApiData: CharacterFullApiData = {
   storedItems: [
     {
       number: 5,
+      value: "",
       wh: {
         id: "id15",
         ownerId: "owner",
@@ -1131,7 +1139,7 @@ const characterFull = {
   equippedWeapon: [
     {
       id: "id9",
-      name: "item_1",
+      name: "item_1 (Axe)",
       enc: 1.5,
       qualitiesFlaws: [{ id: "pid1", name: "item_1_property_1 (3)" }],
       runes: [{ name: "Rune1", id: "rune1", number: 1 }],

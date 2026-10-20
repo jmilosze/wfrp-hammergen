@@ -14,16 +14,17 @@ var character0 = wh.Wh{
 		Name:        "character 0",
 		Description: fmt.Sprintf("owned by %s", user1.Username),
 		Notes:       "some notes",
-		EquippedItems: []wh.IdNumber{
+		EquippedItems: []wh.IdNumberValue{
 			{Id: itemArmour.Id, Number: 1},
 			{Id: itemMelee.Id, Number: 2},
+			{Id: itemMelee.Id, Number: 1, Value: "Axe"},
 		},
-		CarriedItems: []wh.IdNumber{
+		CarriedItems: []wh.IdNumberValue{
 			{Id: itemRanged.Id, Number: 1},
 			{Id: itemArmour.Id, Number: 1},
 			{Id: itemAmmunition.Id, Number: 200},
 		},
-		StoredItems: []wh.IdNumber{
+		StoredItems: []wh.IdNumberValue{
 			{Id: itemGrimoire.Id, Number: 1},
 			{Id: itemOther.Id, Number: 100},
 		},
@@ -92,9 +93,9 @@ var character1 = wh.Wh{
 		Description:   fmt.Sprintf("owned by %s", user0.Username),
 		Species:       wh.CharacterSpeciesDwarfAltdorf,
 		Career:        &wh.IdNumber{Id: career0.Id, Number: 1},
-		EquippedItems: []wh.IdNumber{},
-		CarriedItems:  []wh.IdNumber{},
-		StoredItems:   []wh.IdNumber{},
+		EquippedItems: []wh.IdNumberValue{},
+		CarriedItems:  []wh.IdNumberValue{},
+		StoredItems:   []wh.IdNumberValue{},
 		Skills:        []wh.IdNumber{},
 		Talents:       []wh.IdNumber{},
 		CareerPath:    []wh.IdNumber{},

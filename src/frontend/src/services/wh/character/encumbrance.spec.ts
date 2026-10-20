@@ -41,12 +41,17 @@ describe("getEncumbrance", () => {
 });
 
 describe("encumbranceItems", () => {
-  test("pairs selected ids and quantities with the items, leaving out unknown ids", () => {
+  test("pairs the entries' quantities with the items, leaving out unknown ids", () => {
     const items = [
       { id: "a", type: ItemType.Melee, enc: 1 },
       { id: "b", type: ItemType.Other, enc: 2 },
     ];
-    expect(encumbranceItems({ a: 2, missing: 1, b: 1 }, items)).toEqual([
+    const selected = [
+      { id: "a", number: 2, value: "" },
+      { id: "missing", number: 1, value: "" },
+      { id: "b", number: 1, value: "Axe" },
+    ];
+    expect(encumbranceItems(selected, items)).toEqual([
       { type: ItemType.Melee, enc: 1, number: 2 },
       { type: ItemType.Other, enc: 2, number: 1 },
     ]);
