@@ -30,8 +30,6 @@ const props = defineProps<{
   // The label and step of the number input of number items.
   numberLabel?: string;
   numberStep?: number;
-  // The label of the text input of text items.
-  textLabel?: string;
   // The content type's filters over the items' entries (looked up by linkId, else id).
   filter?: IdFilter;
 }>();
@@ -40,7 +38,6 @@ const emit = defineEmits<{
   (e: "toggle", value: { id: string; selected: boolean }): void;
   (e: "add", id: string): void;
   (e: "setNumber", value: { id: string; number: number }): void;
-  (e: "setText", value: { id: string; text: string }): void;
   (e: "choose", value: { id: string; key: string; checked: boolean }): void;
   (e: "reload"): void;
 }>();
@@ -178,11 +175,9 @@ const bands = computed(() =>
           :fourEIds="fourEIds"
           :numberLabel="numberLabel"
           :numberStep="numberStep"
-          :textLabel="textLabel"
           @toggle="(e) => emit('toggle', e)"
           @add="(id) => emit('add', id)"
           @setNumber="(e) => emit('setNumber', e)"
-          @setText="(e) => emit('setText', e)"
           @choose="(e) => emit('choose', e)"
         />
       </template>

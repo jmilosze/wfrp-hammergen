@@ -21,7 +21,11 @@ describe("generateClassItems", () => {
   test("generateClassItems returns items for valid career class", () => {
     const career = new Career({ careerClass: 0 });
     const result = generateClassItems(career, dummyGenProps, () => 5);
-    expect(result).toEqual({ item1: 1, item2: 2, item3: 5 });
+    expect(result).toEqual([
+      { id: "item1", number: 1, value: "" },
+      { id: "item2", number: 2, value: "" },
+      { id: "item3", number: 5, value: "" },
+    ]);
   });
 });
 
@@ -45,12 +49,23 @@ describe("populateClassItems", () => {
     },
   };
 
-  test("populateClassItems adds all class items to carried items", () => {
+  test("populateClassItems fills up the carried trappings without a value", () => {
     const career = new Career({ id: "c1", careerClass: 0 });
-    const char = new Character({ career: { id: "c1", number: 1 }, carriedItems: { item1: 1 } });
+    const char = new Character({
+      career: { id: "c1", number: 1 },
+      carriedItems: [
+        { id: "item1", number: 1, value: "Axe" },
+        { id: "item2", number: 5, value: "" },
+      ],
+    });
 
     populateClassItems(char, [career], dummyGenProps, () => 3);
-    expect(char.equippedItems).toEqual({});
-    expect(char.carriedItems).toEqual({ item1: 1, item2: 2, item3: 3 });
+    expect(char.equippedItems).toEqual([]);
+    expect(char.carriedItems).toEqual([
+      { id: "item1", number: 1, value: "Axe" },
+      { id: "item2", number: 5, value: "" },
+      { id: "item1", number: 1, value: "" },
+      { id: "item3", number: 3, value: "" },
+    ]);
   });
 });

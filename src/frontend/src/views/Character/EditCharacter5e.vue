@@ -456,9 +456,9 @@ const modifierAttributes = computed(() => {
     :storedValidationStatus="validStored"
     class="flex-1"
     @reload="content.items.reload"
-    @equippedUpdated="(event) => wh.updateItems(event.id, event.number, 'equipped')"
-    @carriedUpdated="(event) => wh.updateItems(event.id, event.number, 'carried')"
-    @storedUpdated="(event) => wh.updateItems(event.id, event.number, 'stored')"
+    @addItem="(e) => wh.addItem(e.location, e.id)"
+    @updateItem="(e) => wh.updateItem(e.location, e.index, e)"
+    @move="(e) => wh.moveItem(e.from, e.index, e.to)"
     @addClassItems="
       populateClassItems(wh, content.careers.withAllowed.value, generationPropsUtils.generationProps.value)
     "

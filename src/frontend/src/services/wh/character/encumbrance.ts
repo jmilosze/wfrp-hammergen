@@ -1,5 +1,6 @@
 // Encumbrance of a character's equipped and carried trappings; the same rules in both editions.
 import { ItemType } from "@/services/wh/content/item.ts";
+import { IdNumberValue } from "@/utils/idNumberValue.ts";
 
 export interface EncumbranceItem {
   type: ItemType;
@@ -41,15 +42,15 @@ export function getEncumbrance(equipped: EncumbranceItem[], carried: Encumbrance
   };
 }
 
-// encumbranceItems pairs the selected item ids and quantities with the items' type and Enc. Ids missing from the list
-// (e.g. while it is still loading) are left out.
+// encumbranceItems pairs the character's trappings (entries with quantities) with the items' type and Enc. Ids missing
+// from the list (e.g. while it is still loading) are left out.
 export function encumbranceItems(
-  selected: Record<string, number>,
+  selected: IdNumberValue[],
   items: { id: string; type: ItemType; enc: number }[],
 ): EncumbranceItem[] {
   const byId = new Map(items.map((x) => [x.id, x]));
-  return Object.entries(selected).flatMap(([id, number]) => {
-    const item = byId.get(id);
-    return item ? [{ type: item.type, enc: item.enc, number: number }] : [];
+  return selected.flatMap((entry) => {
+    const item = byId.get(entry.id);
+    return item ? [{ type: item.type, enc: item.enc, number: entry.number }] : [];
   });
 }

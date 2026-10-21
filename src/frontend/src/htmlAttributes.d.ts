@@ -9,5 +9,7 @@ declare module "vue" {
     "data-print-desktop"?: boolean | string;
     // The browser's popover attribute (InfoTip).
     popover?: "auto" | "manual" | "";
+    // The id of the popover a button opens and closes (ActionMenu).
+    popovertarget?: string;
   }
 }

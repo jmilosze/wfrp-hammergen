@@ -21,7 +21,10 @@ const props = defineProps<{
   title: string;
   itemList: Entity[];
   selected: IdValue[];
-  routeName: RouteName;
+  // The entities' page: names link to it. Without it (e.g. sources) names are text.
+  routeName?: RouteName;
+  // The longest value (MAX_VALUE_LENGTH unless given, e.g. a source's notes are longer).
+  maxlength?: number;
   // Entities that take a value can be added more than once (each with its own value).
   allowRepeat?: boolean;
   disabled?: boolean;
@@ -127,9 +130,10 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
         class="bg-white transition-colors duration-100 hover:bg-neutral-100"
       >
         <td :class="tdClass">
-          <TextLink :routeName="routeName" :params="{ id: row.entity.id }">
+          <TextLink v-if="routeName" :routeName="routeName" :params="{ id: row.entity.id }">
             {{ row.entity.name }}
           </TextLink>
+          <template v-else>{{ row.entity.name }}</template>
           <Edition4eBadge v-if="fourEIds?.has(row.entity.id)" />
         </td>
         <td v-if="showValueColumn" :class="row.entity.hasValue && !disabled ? tdInputClass : tdClass">
@@ -137,7 +141,7 @@ const tdInputClass = ["p-0", "border-b", "border-neutral-300"];
             <FormInput
               v-if="!disabled"
               :modelValue="row.value"
-              :maxlength="MAX_VALUE_LENGTH"
+              :maxlength="maxlength ?? MAX_VALUE_LENGTH"
               bare
               class="min-w-24"
               @update:modelValue="

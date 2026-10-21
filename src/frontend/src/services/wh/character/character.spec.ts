@@ -42,17 +42,18 @@ const characterApiData: CharacterApiData = {
     { id: "talentId2", number: 2 },
   ],
   equippedItems: [
-    { id: "eItemId1", number: 7 },
-    { id: "eItemId2", number: 7 },
+    { id: "eItemId1", number: 7, value: "" },
+    { id: "eItemId1", number: 1, value: "Axe" },
+    { id: "eItemId2", number: 7, value: "" },
   ],
   carriedItems: [
-    { id: "cItemId1", number: 8 },
-    { id: "cItemId2", number: 9 },
-    { id: "cItemId3", number: 10 },
+    { id: "cItemId1", number: 8, value: "" },
+    { id: "cItemId2", number: 9, value: "" },
+    { id: "cItemId3", number: 10, value: "" },
   ],
   storedItems: [
-    { id: "sItemId1", number: 2 },
-    { id: "sItemId2", number: 3 },
+    { id: "sItemId1", number: 2, value: "" },
+    { id: "sItemId2", number: 3, value: "" },
   ],
   spells: ["spellId1", "spellId2"],
   prayers: ["prayerId1", "prayerId2"],
@@ -110,19 +111,20 @@ const character = new Character({
     talentId1: 1,
     talentId2: 2,
   },
-  equippedItems: {
-    eItemId1: 7,
-    eItemId2: 7,
-  },
-  carriedItems: {
-    cItemId1: 8,
-    cItemId2: 9,
-    cItemId3: 10,
-  },
-  storedItems: {
-    sItemId1: 2,
-    sItemId2: 3,
-  },
+  equippedItems: [
+    { id: "eItemId1", number: 7, value: "" },
+    { id: "eItemId1", number: 1, value: "Axe" },
+    { id: "eItemId2", number: 7, value: "" },
+  ],
+  carriedItems: [
+    { id: "cItemId1", number: 8, value: "" },
+    { id: "cItemId2", number: 9, value: "" },
+    { id: "cItemId3", number: 10, value: "" },
+  ],
+  storedItems: [
+    { id: "sItemId1", number: 2, value: "" },
+    { id: "sItemId2", number: 3, value: "" },
+  ],
   spells: new Set(["spellId1", "spellId2"]),
   prayers: new Set(["prayerId1", "prayerId2"]),
   traits: [
@@ -146,7 +148,10 @@ test("modelToApi returns expected api item data", () => {
 });
 
 // The modifiers come from the character's talents, mutations and traits, so they don't count.
-testIsEqualTo("character", character, { ignored: ["modifiers"], unordered: ["careerPath"] });
+testIsEqualTo("character", character, {
+  ignored: ["modifiers"],
+  unordered: ["careerPath", "equippedItems", "carriedItems", "storedItems"],
+});
 
 test("updateCurrentCareer sets the current career and clears it when unselected", () => {
   const otherCharacter = character.copy();
@@ -792,5 +797,64 @@ describe("Character traits", () => {
     character.updateTraitValue(0, "a".repeat(21));
     expect(character.validateTraits().valid).toBe(false);
     expect(character.isValid()).toBe(false);
+  });
+});
+
+describe("Character trappings", () => {
+  test("addItem adds a new row of one without a value each time", () => {
+    const character = new Character({ carriedItems: [{ id: "agurk", number: 2, value: "Axe" }] });
+    character.addItem("carried", "agurk");
+    character.addItem("carried", "agurk");
+    expect(character.carriedItems).toEqual([
+      { id: "agurk", number: 2, value: "Axe" },
+      { id: "agurk", number: 1, value: "" },
+      { id: "agurk", number: 1, value: "" },
+    ]);
+  });
+
+  test("updateItem changes the number and value of one entry and removes it at 0", () => {
+    const character = new Character({ carriedItems: [{ id: "hw", number: 2, value: "" }] });
+    character.updateItem("carried", 0, { value: "Axe" });
+    character.updateItem("carried", 0, { number: 3 });
+    expect(character.carriedItems).toEqual([{ id: "hw", number: 3, value: "Axe" }]);
+    character.updateItem("carried", 0, { number: 0 });
+    expect(character.carriedItems).toEqual([]);
+  });
+
+  test("moveItem moves one, keeps the value and joins an entry with the same value", () => {
+    const character = new Character({
+      carriedItems: [{ id: "hw", number: 2, value: "Axe" }],
+      equippedItems: [{ id: "hw", number: 1, value: "Axe" }],
+    });
+    character.moveItem("carried", 0, "equipped");
+    expect(character.carriedItems).toEqual([{ id: "hw", number: 1, value: "Axe" }]);
+    expect(character.equippedItems).toEqual([{ id: "hw", number: 2, value: "Axe" }]);
+    character.moveItem("carried", 0, "stored");
+    expect(character.carriedItems).toEqual([]);
+    expect(character.storedItems).toEqual([{ id: "hw", number: 1, value: "Axe" }]);
+  });
+
+  test("modelToApi and apiResponseToModel keep identical rows apart", () => {
+    const rows = [
+      { id: "agurk", number: 1, value: "" },
+      { id: "agurk", number: 1, value: "" },
+      { id: "agurk", number: 3, value: "Axe" },
+    ];
+    const character = new Character({ carriedItems: rows.map((x) => ({ ...x })) });
+    const apiData = modelToApi(character);
+    expect(apiData.carriedItems).toEqual(rows);
+    expect(apiResponseToModel({ ...characterApiResponse, object: apiData }).carriedItems).toEqual(rows);
+  });
+
+  test("validation checks numbers and values of 40 characters at most", () => {
+    const character = new Character({ storedItems: [{ id: "hw", number: 1, value: "a".repeat(40) }] });
+    expect(character.validateStoredItems().valid).toBe(true);
+    character.storedItems[0].value = "a".repeat(41);
+    expect(character.validateStoredItems().valid).toBe(false);
+    character.storedItems[0].value = "<b>";
+    expect(character.validateStoredItems().valid).toBe(false);
+    character.storedItems[0].value = "";
+    character.storedItems[0].number = 0;
+    expect(character.validateStoredItems().valid).toBe(false);
   });
 });

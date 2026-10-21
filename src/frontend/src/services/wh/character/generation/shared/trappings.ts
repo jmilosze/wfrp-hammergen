@@ -2,29 +2,30 @@
 import { Career } from "@/services/wh/content/career.ts";
 import { GenerationProps } from "./generationProps.ts";
 import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "@/utils/random.ts";
-import { fillUpIdNumberRecord } from "@/utils/idNumber.ts";
+import { fillUp, IdNumberValue, mergeEntries } from "@/utils/idNumberValue.ts";
 import { Character } from "@/services/wh/character/character.ts";
 
-// generateClassItems returns the class trappings as one list: they all start carried, and players equip them themselves.
-// The generation data still names some as equipped; a trapping named in both lists gets the sum of the quantities.
+// generateClassItems returns the class trappings as one list (without values): they all start carried, and players
+// equip them themselves. The generation data still names some as equipped; a trapping named in both lists gets the sum
+// of the quantities.
 export function generateClassItems(
   career: Career,
   generationProps: GenerationProps,
   rollDiceFn: RollDiceFn = rollDice,
   selectRandomFn: SelectRandomFn = selectRandom,
-): Record<string, number> {
+): IdNumberValue[] {
   if (generationProps.classItems.length === 0 || !(career.careerClass in generationProps.classItems)) {
-    return {};
+    return [];
   }
   const classItems = generationProps.classItems[career.careerClass];
-  const items: Record<string, number> = {};
-
-  for (const [itemIds, itemNumber] of [...Object.entries(classItems.equipped), ...Object.entries(classItems.carried)]) {
-    const id = selectIdFromCandidates(itemIds, selectRandomFn);
-    items[id] = (items[id] ?? 0) + parseQuantityOrRoll(itemNumber, rollDiceFn);
-  }
-
-  return items;
+  const items = [...Object.entries(classItems.equipped), ...Object.entries(classItems.carried)].map(
+    ([itemIds, itemNumber]) => ({
+      id: selectIdFromCandidates(itemIds, selectRandomFn),
+      number: parseQuantityOrRoll(itemNumber, rollDiceFn),
+      value: "",
+    }),
+  );
+  return mergeEntries(items);
 }
 
 function selectIdFromCandidates(itemIds: string, selectRandomFn: SelectRandomFn): string {
@@ -56,7 +57,5 @@ export function populateClassItems(
   if (!selectedCareer) {
     return;
   }
-  const newCarried = { ...character.carriedItems };
-  fillUpIdNumberRecord(newCarried, generateClassItems(selectedCareer, generationProps, rollDiceFn, selectRandomFn));
-  character.carriedItems = newCarried;
+  fillUp(character.carriedItems, generateClassItems(selectedCareer, generationProps, rollDiceFn, selectRandomFn));
 }

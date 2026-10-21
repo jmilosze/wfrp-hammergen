@@ -12,9 +12,9 @@ type Character struct {
 	Name              string           `json:"name" validate:"name_valid"`
 	Description       string           `json:"description" validate:"desc_valid"`
 	Notes             string           `json:"notes" validate:"desc_valid"`
-	EquippedItems     []IdNumber       `json:"equippedItems" validate:"dive"`
-	CarriedItems      []IdNumber       `json:"carriedItems" validate:"dive"`
-	StoredItems       []IdNumber       `json:"storedItems" validate:"dive"`
+	EquippedItems     []IdNumberValue  `json:"equippedItems" validate:"dive"`
+	CarriedItems      []IdNumberValue  `json:"carriedItems" validate:"dive"`
+	StoredItems       []IdNumberValue  `json:"storedItems" validate:"dive"`
 	Skills            []IdNumber       `json:"skills" validate:"dive"`
 	Talents           []IdNumber       `json:"talents" validate:"dive"`
 	Species           CharacterSpecies `json:"species" validate:"character_species_valid"`
@@ -67,13 +67,13 @@ func (character *Character) ValidateEdition(e Edition) error {
 
 func (character *Character) Init() {
 	if character.EquippedItems == nil {
-		character.EquippedItems = []IdNumber{}
+		character.EquippedItems = []IdNumberValue{}
 	}
 	if character.CarriedItems == nil {
-		character.CarriedItems = []IdNumber{}
+		character.CarriedItems = []IdNumberValue{}
 	}
 	if character.StoredItems == nil {
-		character.StoredItems = []IdNumber{}
+		character.StoredItems = []IdNumberValue{}
 	}
 	if character.Skills == nil {
 		character.Skills = []IdNumber{}
@@ -132,9 +132,9 @@ func (character *Character) ToFull(
 	}
 
 	allItemIdMap := whListToIdWhMap(allItems)
-	equippedItems := idNumberListToWhNumberList(character.EquippedItems, allItemIdMap)
-	carriedItems := idNumberListToWhNumberList(character.CarriedItems, allItemIdMap)
-	storedItems := idNumberListToWhNumberList(character.StoredItems, allItemIdMap)
+	equippedItems := idNumberValueListToWhNumberValueList(character.EquippedItems, allItemIdMap)
+	carriedItems := idNumberValueListToWhNumberValueList(character.CarriedItems, allItemIdMap)
+	storedItems := idNumberValueListToWhNumberValueList(character.StoredItems, allItemIdMap)
 
 	skills, err := skillIdNumberListToWhNumberList(e, character.Skills, allSkills)
 	if err != nil {
@@ -408,9 +408,9 @@ type CharacterFull struct {
 	Name              string           `json:"name"`
 	Description       string           `json:"description"`
 	Notes             string           `json:"notes"`
-	EquippedItems     []WhNumber       `json:"equippedItems"`
-	CarriedItems      []WhNumber       `json:"carriedItems"`
-	StoredItems       []WhNumber       `json:"storedItems"`
+	EquippedItems     []WhNumberValue  `json:"equippedItems"`
+	CarriedItems      []WhNumberValue  `json:"carriedItems"`
+	StoredItems       []WhNumberValue  `json:"storedItems"`
 	Skills            []WhNumber       `json:"skills"`
 	Talents           []WhNumber       `json:"talents"`
 	Species           CharacterSpecies `json:"species"`
@@ -441,13 +441,13 @@ type CharacterFull struct {
 
 func (c *CharacterFull) Init() {
 	if c.EquippedItems == nil {
-		c.EquippedItems = []WhNumber{}
+		c.EquippedItems = []WhNumberValue{}
 	}
 	if c.CarriedItems == nil {
-		c.CarriedItems = []WhNumber{}
+		c.CarriedItems = []WhNumberValue{}
 	}
 	if c.StoredItems == nil {
-		c.StoredItems = []WhNumber{}
+		c.StoredItems = []WhNumberValue{}
 	}
 	if c.Skills == nil {
 		c.Skills = []WhNumber{}

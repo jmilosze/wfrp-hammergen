@@ -586,3 +586,48 @@ func TestCreateValidatesValues(t *testing.T) {
 		})
 	}
 }
+
+func TestIdNumberValuesToIds(t *testing.T) {
+	items := []wh.IdNumberValue{{Id: "item-1", Number: 1, Value: "Axe"}, {Id: "item-1", Number: 2}, {Id: "item-2", Number: 1}}
+
+	want := []string{"item-1", "item-1", "item-2"}
+	got := idNumberValuesToIds(items)
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("idNumberValuesToIds() = %v, want %v", got, want)
+	}
+}
+
+func TestCreateValidatesCharacterTrappingValues(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+	itemId := mock_data.NewMockItems()[0].Id
+
+	newCharacter := func(items []wh.IdNumberValue) *wh.Wh {
+		character := newMockCharacter(wh.Edition4e)
+		character.CarriedItems = items
+		return &wh.Wh{Object: character}
+	}
+
+	for name, tc := range map[string]struct {
+		items   []wh.IdNumberValue
+		wantErr bool
+	}{
+		"no value":                    {[]wh.IdNumberValue{{Id: itemId, Number: 1}}, false},
+		"same item, different values": {[]wh.IdNumberValue{{Id: itemId, Number: 1}, {Id: itemId, Number: 2, Value: "Axe"}}, false},
+		"value of 40 characters":      {[]wh.IdNumberValue{{Id: itemId, Number: 1, Value: strings.Repeat("a", 40)}}, false},
+		"value too long":              {[]wh.IdNumberValue{{Id: itemId, Number: 1, Value: strings.Repeat("a", 41)}}, true},
+		"value with <>":               {[]wh.IdNumberValue{{Id: itemId, Number: 1, Value: "<b>"}}, true},
+		"number 0":                    {[]wh.IdNumberValue{{Id: itemId, Number: 0}}, true},
+		"invalid id":                  {[]wh.IdNumberValue{{Id: "bad", Number: 1}}, true},
+	} {
+		t.Run(name, func(t *testing.T) {
+			_, err := s.Create(context.Background(), wh.WhTypeCharacter, newCharacter(tc.items), &auth.Claims{Id: "user1"})
+			if tc.wantErr && !errors.Is(err, domain.ErrInvalidArguments) {
+				t.Errorf("expected validation error, got %v", err)
+			}
+			if !tc.wantErr && err != nil {
+				t.Errorf("expected no error, got %v", err)
+			}
+		})
+	}
+}

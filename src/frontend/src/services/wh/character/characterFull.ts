@@ -44,6 +44,7 @@ import { PrayerApiData } from "@/services/wh/content/prayer.ts";
 import { MutationApiData, printMutationType } from "@/services/wh/content/mutation.ts";
 import { Source } from "@/services/wh/core/source.ts";
 import { ItemPropertyApiData } from "@/services/wh/content/itemproperty.ts";
+import { printItemWithValue } from "@/utils/idNumberValue.ts";
 import { CharacterModifiersData, hasModifiers, ModifierEffect } from "@/services/wh/core/characterModifiers.ts";
 import { TraitApiData } from "@/services/wh/content/trait.ts";
 import { RuneApiData } from "@/services/wh/content/rune.ts";
@@ -72,6 +73,13 @@ export interface ItemFullApiData {
 export interface WhNumber<WhApiData> {
   wh: ApiResponse<WhApiData>;
   number: number;
+}
+
+// WhNumberValue is a character's trapping: the item, how many, and its value (a note, empty for none).
+export interface WhNumberValue<WhApiData> {
+  wh: ApiResponse<WhApiData>;
+  number: number;
+  value: string;
 }
 
 export interface WhValue<WhApiData> {
@@ -106,9 +114,9 @@ export interface CharacterFullApiData {
   career?: WhNumber<CareerApiData>;
   skills: WhNumber<SkillApiData>[];
   talents: WhNumber<TalentApiData>[];
-  equippedItems: WhNumber<ItemFullApiData>[];
-  carriedItems: WhNumber<ItemFullApiData>[];
-  storedItems: WhNumber<ItemFullApiData>[];
+  equippedItems: WhNumberValue<ItemFullApiData>[];
+  carriedItems: WhNumberValue<ItemFullApiData>[];
+  storedItems: WhNumberValue<ItemFullApiData>[];
   spells: ApiResponse<SpellApiData>[];
   prayers: ApiResponse<PrayerApiData>[];
   traits: WhValue<TraitApiData>[];
@@ -339,7 +347,7 @@ export function apiResponseToCharacterFull(
     [ItemType.Container, ItemType.Other].includes(variantFor(x.wh, e).type),
   );
 
-  const toEncumbranceItem = (x: WhNumber<ItemFullApiData>) => ({
+  const toEncumbranceItem = (x: WhNumberValue<ItemFullApiData>) => ({
     type: variantFor(x.wh, e).type,
     enc: variantFor(x.wh, e).enc,
     number: x.number,
@@ -519,7 +527,7 @@ function sortByName(x: { name: string }, y: { name: string }): -1 | 0 | 1 {
 
 function getItems(
   e: Edition,
-  characterItems: WhNumber<ItemFullApiData>[],
+  characterItems: WhNumberValue<ItemFullApiData>[],
   attributes: Attributes,
 ): CharacterFullItem[] {
   const SB = Math.floor(attributes.S / 10);
@@ -530,7 +538,7 @@ function getItems(
     const ie = contentEdition(charItem.wh, e);
     const item = {
       id: charItem.wh.id,
-      name: with4eMark(charItem.wh, e, variant(charItem.wh, ie).name),
+      name: with4eMark(charItem.wh, e, printItemWithValue(variant(charItem.wh, ie).name, charItem.value)),
       enc: variant(charItem.wh, ie).enc,
       qualitiesFlaws: variant(charItem.wh, ie).properties.map((x) => ({
         name: printWithValue(variant(x.wh, ie).name, variant(x.wh, ie).hasValue, x.value),

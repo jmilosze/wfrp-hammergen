@@ -90,3 +90,33 @@ func TestCharacterToFullKeepsTraitValues(t *testing.T) {
 		}
 	}
 }
+
+func TestCharacterToFullKeepsTrappingValues(t *testing.T) {
+	itemId := "eeeeeeeeeeeeeeeeeeeeeeee"
+	items := []*Wh{{Id: itemId, Editions: map[Edition]WhObject{Edition4e: &Item{Name: "Hand Weapon"}}}}
+	character := &Character{
+		Edition: Edition4e,
+		Career:  &IdNumber{Id: careerAId, Number: 1},
+		EquippedItems: []IdNumberValue{
+			{Id: itemId, Number: 1},
+			{Id: missingId, Number: 1, Value: "Axe"},
+			{Id: itemId, Number: 2, Value: "Axe"},
+		},
+	}
+	character.Init()
+
+	full, err := character.ToFull(items, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, []*Wh{}, testCareers())
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(full.EquippedItems) != 2 {
+		t.Fatalf("got %d equipped trappings, want 2 (the missing item is skipped)", len(full.EquippedItems))
+	}
+	for i, want := range []WhNumberValue{{Number: 1, Value: ""}, {Number: 2, Value: "Axe"}} {
+		got := full.EquippedItems[i]
+		if got.Wh.Id != itemId || got.Number != want.Number || got.Value != want.Value {
+			t.Errorf("trapping %d: got id %s number %d value %q, want id %s number %d value %q",
+				i, got.Wh.Id, got.Number, got.Value, itemId, want.Number, want.Value)
+		}
+	}
+}

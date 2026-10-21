@@ -77,7 +77,7 @@ function properties(item: CharacterFullItem): PropertyLink[] {
     </SheetCard>
     <SheetCard v-if="stored.length > 0" title="Stored/Assets">
       <p class="px-2 py-2">
-        <span v-for="(item, i) in stored" :key="item.id">
+        <span v-for="(item, i) in stored" :key="i">
           <TextLink routeName="item" :params="{ id: item.id }">{{ item.name }}</TextLink>
           <template v-if="item.number > 1"> x{{ item.number }}</template>
           <template v-if="i < stored.length - 1">, </template>

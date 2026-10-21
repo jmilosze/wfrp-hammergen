@@ -12,6 +12,7 @@ func GetCommonValidationAliases() map[string]string {
 		"medium_string_valid": "min=0,max=200,excludesall=<>",
 		"id_valid":            "hexadecimal,len=24",
 		"value_valid":         "max=20,excludesall=<>",
+		"item_value_valid":    "max=40,excludesall=<>",
 	}
 }
 
@@ -63,6 +64,30 @@ type IdValue struct {
 type WhValue struct {
 	Wh    *Wh    `json:"wh"`
 	Value string `json:"value"`
+}
+
+// IdNumberValue is a character's trapping: the item, how many and an optional value (a note), e.g. Hand Weapon with
+// "Axe". The same item can be listed more than once with different values.
+type IdNumberValue struct {
+	Id     string `json:"id" validate:"id_valid"`
+	Number int    `json:"number" validate:"gte=1,lte=1000"`
+	Value  string `json:"value" bson:"value,omitempty" validate:"item_value_valid"`
+}
+
+type WhNumberValue struct {
+	Wh     *Wh    `json:"wh"`
+	Number int    `json:"number"`
+	Value  string `json:"value"`
+}
+
+func idNumberValueListToWhNumberValueList(list []IdNumberValue, allIdWhMap map[string]*Wh) []WhNumberValue {
+	whList := make([]WhNumberValue, 0, len(list))
+	for _, v := range list {
+		if wh, ok := allIdWhMap[v.Id]; ok {
+			whList = append(whList, WhNumberValue{Wh: wh, Number: v.Number, Value: v.Value})
+		}
+	}
+	return whList
 }
 
 func idValueListToWhValueList(idValueList []IdValue, allIdWhMap map[string]*Wh) []WhValue {
