@@ -8,6 +8,25 @@ import UpdateEntry from "./UpdateEntry.vue";
   <PageHeader title="Updates" />
   <section>
     <h2 class="mt-6 mb-2 text-2xl font-semibold">2026</h2>
+    <UpdateEntry date="21 Oct 2026">
+      <p>
+        Character trappings can now have a note of up to 40 characters, for example a Hand Weapon noted as "Axe" or a
+        Coach "with a Footman". Use the Note button on a trapping to add or change it; the editor shows the note under
+        the trapping's name, and the character sheet and spreadsheet download show it after the name, as in "Hand Weapon
+        (Axe)". The same trapping can be listed more than once, each with its own note and quantity, and moving a
+        trapping between Equipped, Carried and Stored/Assets keeps its note.
+      </p>
+      <p>
+        In the trappings popup each Add puts a new row on the character, and the popup shows how many rows of a trapping
+        you have; quantities are changed in the trappings' rows. On narrow screens a trapping's buttons are gathered in
+        a ⋯ menu.
+      </p>
+      <p>
+        Popups for choosing content now have their checkboxes on the right, and rows with an Add button add when clicked
+        anywhere. In the content editors, a source's page notes are typed in the Sources table, as qualities and flaws
+        are.
+      </p>
+    </UpdateEntry>
     <UpdateEntry date="15 Oct 2026">
       <p>
         Hammergen has a refreshed look. Editors are laid out like a paper character sheet, with clearer section boxes
