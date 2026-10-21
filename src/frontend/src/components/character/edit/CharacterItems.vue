@@ -2,7 +2,7 @@
 import IconButton from "@/components/ui/IconButton.vue";
 import { computed, ref } from "vue";
 import ModalWindow from "@/components/ui/ModalWindow.vue";
-import FormInput from "@/components/form/FormInput.vue";
+import NoteModal from "./NoteModal.vue";
 import ActionMenu from "@/components/ui/ActionMenu.vue";
 import { ActionMenuItem } from "@/components/ui/actionMenu.ts";
 import AppButton from "@/components/ui/AppButton.vue";
@@ -207,20 +207,23 @@ function onQuantityInput(index: number, location: Location, event: Event) {
   emit("updateItem", { location: location, index: index, number: number });
 }
 
-// The note of a row is edited in a small popup: Save (or Enter) sets it, Cancel or closing leaves it as it was.
+// The note of a row is edited in a small popup.
+const NOTE_HINT = `At most ${MAX_ITEM_VALUE_LENGTH} characters, e.g. "Axe" or "with a Footman". Leave it empty for none.`;
 const noteOpen = ref(false);
-const noteRow = ref<{ location: Location; index: number; name: string }>({ location: "carried", index: 0, name: "" });
-const noteDraft = ref("");
+const noteRow = ref<{ location: Location; index: number; name: string; value: string }>({
+  location: "carried",
+  index: 0,
+  name: "",
+  value: "",
+});
 
 function onNoteClick(location: Location, index: number, name: string, value: string) {
-  noteRow.value = { location: location, index: index, name: name };
-  noteDraft.value = value;
+  noteRow.value = { location: location, index: index, name: name, value: value };
   noteOpen.value = true;
 }
 
-function saveNote() {
-  emit("updateItem", { location: noteRow.value.location, index: noteRow.value.index, value: noteDraft.value.trim() });
-  noteOpen.value = false;
+function saveNote(value: string) {
+  emit("updateItem", { location: noteRow.value.location, index: noteRow.value.index, value: value });
 }
 
 const sections = computed(() => [
@@ -314,21 +317,14 @@ const sections = computed(() => [
     <div class="text-sm text-error mt-1" :class="[storedValidationStatus.valid ? 'hidden' : '']">
       {{ storedValidationStatus.message }}
     </div>
-    <ModalWindow v-model:open="noteOpen" size="xs">
-      <template #header>Note for {{ noteRow.name }}</template>
-      <form @submit.prevent="saveNote">
-        <FormInput v-model="noteDraft" title="Note" :maxlength="MAX_ITEM_VALUE_LENGTH" />
-        <p class="mt-1 font-sans text-xs text-neutral-600">
-          At most {{ MAX_ITEM_VALUE_LENGTH }} characters, e.g. "Axe" or "with a Footman". Leave it empty for none.
-        </p>
-      </form>
-      <template #buttons>
-        <div class="flex justify-end gap-2">
-          <AppButton icon="lucide:x" variant="neutral" @click="noteOpen = false">Cancel</AppButton>
-          <AppButton icon="lucide:check" @click="saveNote">Save</AppButton>
-        </div>
-      </template>
-    </ModalWindow>
+    <NoteModal
+      v-model:open="noteOpen"
+      :name="noteRow.name"
+      :value="noteRow.value"
+      :maxlength="MAX_ITEM_VALUE_LENGTH"
+      :hint="NOTE_HINT"
+      @save="saveNote"
+    />
     <ModalWindow v-model:open="modalOpen" size="lg" fullHeight>
       <template #header>
         {{ PICKER_TITLES[pickerLocation] }}

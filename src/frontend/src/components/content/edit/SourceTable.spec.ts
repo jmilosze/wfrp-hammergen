@@ -18,14 +18,11 @@ function mountTable(sources: Record<string, string>) {
   });
 }
 
+// The sources listed in the table, by name, each with its notes field.
 function rows(wrapper: ReturnType<typeof mountTable>): string[] {
-  return wrapper.findAll("tbody tr").map((r) =>
-    r
-      .findAll("td")
-      .slice(0, 2)
-      .map((x) => x.text())
-      .join(" | "),
-  );
+  return wrapper
+    .findAll("tbody tr")
+    .map((r) => `${r.find("td").text()} | ${r.find<HTMLInputElement>("input").element.value}`);
 }
 
 function popupRow(wrapper: ReturnType<typeof mountTable>, name: string): DOMWrapper<Element> {
@@ -61,6 +58,19 @@ describe("SourceTable", () => {
 
     await checkbox.trigger("change");
     expect(wrapper.emitted("selected")?.at(-1)).toEqual([{ id: "1", notes: "p. 42", selected: true }]);
+  });
+
+  test("the popup only picks sources; notes of up to 25 characters are typed in the table", async () => {
+    const wrapper = mountTable({ "1": "p. 42" });
+
+    await findButton(wrapper, "Edit").trigger("click");
+    expect(popupRow(wrapper, "WFRP 4e").find("input[type=text]").exists()).toBe(false);
+
+    const notes = wrapper.find<HTMLInputElement>("tbody input");
+    expect(notes.attributes("maxlength")).toBe("25");
+    await notes.setValue("p. 43");
+
+    expect(wrapper.emitted("selected")).toEqual([[{ id: "1", notes: "p. 43", selected: true }]]);
   });
 
   test("reports invalid notes", () => {

@@ -81,13 +81,12 @@ describe("ChecklistPicker", () => {
     expect(wrapper.emitted("add")).toEqual([["b"], ["b"]]);
   });
 
-  test("a plain row has its checkbox at the end, ticked by a click anywhere on the row", () => {
-    const wrapper = mountPicker({ items: [item("a", "Alpha", { text: "" })], textLabel: "Page" });
+  test("a plain row has its checkbox at the end, the row is its label", () => {
+    const wrapper = mountPicker({ items: [item("a", "Alpha")], routeName: "spell" });
     const row = wrapper.findComponent(ChecklistRow);
-    const inputs = row.findAll("input");
 
-    expect(inputs.map((x) => x.attributes("type"))).toEqual(["text", "checkbox"]);
-    expect(row.find("label").attributes("for")).toBe(inputs[1].attributes("id"));
+    expect(row.element.tagName).toBe("LABEL");
+    expect(row.element.lastElementChild?.querySelector("input[type=checkbox]")).not.toBeNull();
   });
 
   test("filters by edition in the Filters panel when 4e content is offered", async () => {

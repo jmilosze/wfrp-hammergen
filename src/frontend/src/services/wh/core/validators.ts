@@ -2,7 +2,10 @@ import { setValidationStatus, ValidationStatus } from "@/utils/validation.ts";
 import { Attributes } from "./attributes.ts";
 import { isKey } from "@/utils/object.ts";
 
-export const VERY_SHORT_DESC_REGEX: RegExp = /^[^<>]{0,25}$/;
+// A very short text, e.g. the page notes of a source.
+export const VERY_SHORT_DESC_LENGTH = 25;
+
+export const VERY_SHORT_DESC_REGEX: RegExp = new RegExp(`^[^<>]{0,${VERY_SHORT_DESC_LENGTH}}$`);
 
 export const SHORT_DESC_LENGTH = 200;
 
