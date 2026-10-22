@@ -175,7 +175,14 @@ const CELL_CLASS = "block w-full h-10 px-2 bg-editable outline-neutral-700 focus
         </td>
       </tr>
     </SheetList>
-    <SheetList title="Money" :editable="!disabled" :titleColspan="disabled ? 1 : 3" class="-mt-px">
+    <!-- Read-only (the career page), a level without money shows no Money table. -->
+    <SheetList
+      v-if="!disabled || money.length > 0"
+      title="Money"
+      :editable="!disabled"
+      :titleColspan="disabled ? 1 : 3"
+      class="-mt-px"
+    >
       <template v-if="!disabled" #actions>
         <AppButton icon="lucide:plus" @click="addMoney">Add</AppButton>
       </template>

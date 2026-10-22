@@ -127,6 +127,13 @@ describe("CareerTrappings", () => {
     expect(links.map((x) => x[0])).toEqual(["Bow", "Arrow", "Hand Weapon (Sickle)"]);
   });
 
+  test("read-only, a level without money has no Money table", () => {
+    const wrapper = mountTrappings([bowOrWeapon], [], true);
+
+    expect(wrapper.text()).not.toContain("Money");
+    expect(mountTrappings([bowOrWeapon], [], false).text()).toContain("Money");
+  });
+
   test("read-only, shows trappings and money as text", () => {
     const wrapper = mountTrappings([bowOrWeapon], [{ coin: "brass", number: "2d10" }], true);
 
