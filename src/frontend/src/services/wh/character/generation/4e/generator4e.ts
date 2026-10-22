@@ -11,7 +11,13 @@ import { Character } from "@/services/wh/character/character.ts";
 import { generateName } from "@/services/wh/character/generation/shared/name.ts";
 import { generateDescription } from "@/services/wh/character/generation/shared/description.ts";
 import { generateRolls } from "@/services/wh/character/generation/shared/characteristics.ts";
-import { generateClassItems } from "@/services/wh/character/generation/shared/trappings.ts";
+import {
+  generateCareerCoins,
+  generateCareerItems,
+  generateClassItems,
+} from "@/services/wh/character/generation/shared/trappings.ts";
+import { Item } from "@/services/wh/content/item.ts";
+import { mergeEntries } from "@/utils/idNumberValue.ts";
 import { generateStatusAndStanding } from "@/services/wh/character/generation/shared/status.ts";
 import { generateSpeciesTalents } from "@/services/wh/character/generation/shared/talents.ts";
 import { resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
@@ -29,6 +35,7 @@ export interface CharacterGeneration4eContext {
   level: GenerationLevel;
   skills: Skill[];
   talents: Talent[];
+  items: Item[];
   generationProps: GenerationProps;
 }
 
@@ -53,6 +60,7 @@ export function generateCharacter4e(
   const exp = 50; // From random characteristics
 
   const classItems = generateClassItems(context.career, context.generationProps, rollDiceFn, selectRandomFn);
+  const careerItems = generateCareerItems(context.career, context.level, context.items, rollDiceFn, selectRandomFn);
 
   character.name = generateName(context.species);
   character.species = context.species;
@@ -69,14 +77,13 @@ export function generateCharacter4e(
   const { status, standing } = generateStatusAndStanding(context.career, context.level);
   character.status = status;
   character.standing = standing;
-  [character.brass, character.silver, character.gold] = generateCoins4e(
-    character.status,
-    character.standing,
-    rollDiceFn,
-  );
+  const startingCoins = generateCoins4e(character.status, character.standing, rollDiceFn);
+  const careerCoins = generateCareerCoins(context.career, context.level, rollDiceFn);
+  [character.brass, character.silver, character.gold] = startingCoins.map((x, i) => x + careerCoins[i]);
 
   character.attributeRolls = generateRolls(rollDiceFn);
-  character.carriedItems = classItems;
+  character.carriedItems = mergeEntries([...classItems, ...careerItems.carried]);
+  character.storedItems = careerItems.stored;
 
   const skillGroupMap = resolveEntityGroups(context.skills);
 

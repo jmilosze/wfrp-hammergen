@@ -1,6 +1,11 @@
 package warhammer
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+)
 
 func TestCareerValidateEdition(t *testing.T) {
 	const skillId = "dddddddddddddddddddddddd"
@@ -48,6 +53,56 @@ func TestCareerValidateEditionSpecies(t *testing.T) {
 			career := &Career{Species: tc.species}
 			if err := career.ValidateEdition(tc.edition); (err != nil) != tc.wantErr {
 				t.Errorf("got error %v, want error %v", err, tc.wantErr)
+			}
+		})
+	}
+}
+
+func TestCareerLevelBsonOmitsEmptyTrappings(t *testing.T) {
+	empty := CareerLevel{}
+	empty.Init()
+	withTrappings := CareerLevel{
+		Trappings: []CareerTrappingEntry{{Options: [][]CareerTrapping{{{Id: "dddddddddddddddddddddddd", Number: "1"}}}}},
+		Money:     []CareerMoney{{Coin: CareerCoinGold, Number: "20"}},
+	}
+	withTrappings.Init()
+
+	for name, tc := range map[string]struct {
+		level   CareerLevel
+		present [][]string
+		absent  [][]string
+	}{
+		"empty": {empty, nil, [][]string{{"trappings"}, {"money"}}},
+		"with trappings": {
+			withTrappings,
+			[][]string{{"trappings", "0", "options", "0", "0", "number"}, {"money", "0", "coin"}},
+			[][]string{{"trappings", "0", "options", "0", "0", "value"}},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			raw, err := bson.Marshal(tc.level)
+			if err != nil {
+				t.Fatal(err)
+			}
+			doc := bson.Raw(raw)
+			for _, path := range tc.present {
+				if _, err := doc.LookupErr(path...); err != nil {
+					t.Errorf("expected %v to be stored", path)
+				}
+			}
+			for _, path := range tc.absent {
+				if _, err := doc.LookupErr(path...); err == nil {
+					t.Errorf("expected %v not to be stored", path)
+				}
+			}
+
+			var back CareerLevel
+			if err := bson.Unmarshal(raw, &back); err != nil {
+				t.Fatal(err)
+			}
+			back.Init()
+			if !reflect.DeepEqual(back, tc.level) {
+				t.Errorf("round trip: got %+v, want %+v", back, tc.level)
 			}
 		})
 	}

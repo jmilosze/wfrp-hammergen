@@ -141,15 +141,14 @@ The class trappings format (`{"id1,id2": "1d10"}`, one option chosen at random) 
 "trappings": [
   { "options": [[{ "id": "<writing kit>", "number": "1" }]] },
   { "options": [[{ "id": "<coach>", "number": "1", "value": "with a Footman" }]] },
-  { "selection": "choice",
-    "options": [[{ "id": "<bow>", "number": "1" }, { "id": "<arrow>", "number": "10" }],
+  { "options": [[{ "id": "<bow>", "number": "1" }, { "id": "<arrow>", "number": "10" }],
                 [{ "id": "<pistol>", "number": "1" }, { "id": "<bullet and powder>", "number": "10" }]] }
 ],
 "money": [{ "coin": "gold", "number": "20" }, { "coin": "silver", "number": "3d10" }],
 "items": ""
 ```
 
-- `trappings`: entries; an entry has one or more options; an option has one or more trappings with a quantity ("2" or "1d10"). A single trapping is an entry with one option. `selection` (entries with more than one option): `choice` (the player picks, the default; every "A or B" and "Weapon (Any)" in the 5e book) or `random` (one option is rolled; none in the 5e book, for users' careers and later data). The generator picks one option at random either way; guided character creation (HG-44, career level 1 only) lets the player pick for `choice` and rolls for `random`. Dice quantities are always rolled. The career page shows the options joined by "or", and marks random ones.
+- `trappings`: entries; an entry has one or more options; an option has one or more trappings with a quantity ("2" or "1d10"). A single trapping is an entry with one option. An entry with several options is a choice (every "A or B" and "Weapon (Any)" in the 5e book): the generator picks one option at random, guided character creation (HG-44, career level 1 only) lets the player pick. Dice quantities are always rolled. The career page shows the options joined by "or".
 - A trapping in an option may have a `value`, a note that describes it ("with a Footman", "worth 2d10 Pennies"); the career page shows it next to the trapping, and the generator puts it into the value of the trapping on the character (D13, D17).
 - `money`: coins (`gold`, `silver`, `brass`, as the character's coins) with a fixed or dice amount; the generator rolls them into the character's coins.
 - There is no `notes` field (D20): people, groups, places and the like are generic trappings (Retainer, Command, Holding, …) with a value.

@@ -61,6 +61,9 @@ type CareerLevel struct {
 	Skills     []string    `json:"skills" validate:"dive,id_valid"`
 	Talents    []string    `json:"talents" validate:"dive,id_valid"`
 	Items      string      `json:"items" validate:"desc_valid"`
+	// Trappings and Money are the level's trappings as data (HG-40); Items is the free text of careers without them.
+	Trappings []CareerTrappingEntry `json:"trappings" bson:"trappings,omitempty" validate:"max=100,dive"`
+	Money     []CareerMoney         `json:"money" bson:"money,omitempty" validate:"max=100,dive"`
 }
 
 func (cl *CareerLevel) Init() {
@@ -73,6 +76,44 @@ func (cl *CareerLevel) Init() {
 	if cl.Talents == nil {
 		cl.Talents = []string{}
 	}
+	if cl.Trappings == nil {
+		cl.Trappings = []CareerTrappingEntry{}
+	}
+	if cl.Money == nil {
+		cl.Money = []CareerMoney{}
+	}
+}
+
+// CareerTrappingEntry is one trapping line of a career level: a single option, or several options the player chooses
+// from. An option is one or more trappings, e.g. Bow and 10 Arrows.
+type CareerTrappingEntry struct {
+	Options [][]CareerTrapping `json:"options" validate:"min=1,max=100,dive,min=1,max=100,dive"`
+}
+
+// CareerTrapping is a trapping of an option: the item, how many (a number or dice, e.g. "10" or "1d10+2") and an
+// optional value, the note the character's trapping gets, e.g. Coach with "with a Footman".
+type CareerTrapping struct {
+	Id     string `json:"id" validate:"id_valid"`
+	Number string `json:"number" validate:"dice_valid"`
+	Value  string `json:"value" bson:"value,omitempty" validate:"item_value_valid"`
+}
+
+// CareerMoney is money a career level gives: a coin and how many (a number or dice).
+type CareerMoney struct {
+	Coin   CareerCoin `json:"coin" validate:"career_coin_valid"`
+	Number string     `json:"number" validate:"dice_valid"`
+}
+
+type CareerCoin string
+
+const (
+	CareerCoinGold   = "gold"
+	CareerCoinSilver = "silver"
+	CareerCoinBrass  = "brass"
+)
+
+func careerCoinValues() string {
+	return formatStringValues([]CareerCoin{CareerCoinGold, CareerCoinSilver, CareerCoinBrass})
 }
 
 type Status int
@@ -182,5 +223,6 @@ func GetWhCareerValidationAliases() map[string]string {
 		"standing_valid":       fmt.Sprintf("oneof=%s", standingValues()),
 		"class_valid":          fmt.Sprintf("oneof=%s", classValues()),
 		"career_species_valid": fmt.Sprintf("oneof=%s", careerSpeciesValues()),
+		"career_coin_valid":    fmt.Sprintf("oneof=%s", careerCoinValues()),
 	}
 }

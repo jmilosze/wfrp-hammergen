@@ -11,7 +11,7 @@ export interface IdNumberValue {
 
 export const MAX_ITEM_VALUE_LENGTH = 40;
 
-const ITEM_VALUE_REGEX = new RegExp(`^[^<>]{0,${MAX_ITEM_VALUE_LENGTH}}$`);
+export const ITEM_VALUE_REGEX = new RegExp(`^[^<>]{0,${MAX_ITEM_VALUE_LENGTH}}$`);
 
 export function copyIdNumberValueArray(list: IdNumberValue[]): IdNumberValue[] {
   return list.map((x) => ({ id: x.id, number: x.number, value: x.value }));

@@ -288,7 +288,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Squire                     | Leather Jack, Mail Shirt, Riding Horse, Shield, Trade Tools (Farrier)              | Leather Jack; Mail Shirt; Riding Horse; Shield; **Trade Tools** (new) ("Farrier")                                                                             |
 | 2 Knight                     | Destrier, Melee Weapon (Any), Lance, Plate Armour, Sword                           | Destrier; Hand Weapon / Cavalry Hammer / Warhammer / Greataxe / Zweihänder / Flail / Military Flail; Lance; Breastplate, Bracers, Plate Leggings, Helm; Sword |
 | 3 First Knight               | Barding, Small Unit of Knights                                                     | **Barding** (new); **Command** (new) ("Small Unit of Knights")                                                                                                |
-| 4 Knight of the Inner Circle | Large Unit of Knights or Several Small Units of Knights, Plumed Great Helm, Squire | **Command** (new) ("Large Unit of Knights or Several Small Units of Knights"); Helm ("With a plume"); **Retainer** (new) ("Squire")                           |
+| 4 Knight of the Inner Circle | Large Unit of Knights or Several Small Units of Knights, Plumed Great Helm, Squire | **Command** (new) ("Large Unit of Knights or Several Small Units of Knights"); Helm ("With a Plume"); **Retainer** (new) ("Squire")                           |
 
 ## Lawyer
 

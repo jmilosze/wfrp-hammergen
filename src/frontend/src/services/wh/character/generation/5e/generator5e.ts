@@ -6,6 +6,7 @@ import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { Career, GenerationLevel, getCareerAttributesByLevel } from "@/services/wh/content/career.ts";
 import { Skill } from "@/services/wh/content/skill.ts";
 import { Talent } from "@/services/wh/content/talent.ts";
+import { Item } from "@/services/wh/content/item.ts";
 import { GenerationProps5e } from "@/services/wh/character/generation/shared/generationProps.ts";
 import { defaultSource } from "@/services/wh/core/source.ts";
 import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "@/utils/random.ts";
@@ -13,7 +14,12 @@ import { sumAttributes } from "@/services/wh/core/attributes.ts";
 import { getSpeciesAttributes5e } from "@/services/wh/character/rules/rules5e.ts";
 import { generateSpeciesTalents } from "@/services/wh/character/generation/shared/talents.ts";
 import { resolveEntityGroups } from "@/services/wh/character/generation/shared/groups.ts";
-import { generateClassItems } from "@/services/wh/character/generation/shared/trappings.ts";
+import {
+  generateCareerCoins,
+  generateCareerItems,
+  generateClassItems,
+} from "@/services/wh/character/generation/shared/trappings.ts";
+import { mergeEntries } from "@/utils/idNumberValue.ts";
 import { generateStatusAndStanding } from "@/services/wh/character/generation/shared/status.ts";
 import { generateName } from "@/services/wh/character/generation/shared/name.ts";
 import { generateDescription } from "@/services/wh/character/generation/shared/description.ts";
@@ -29,6 +35,7 @@ export interface CharacterGeneration5eContext {
   level: GenerationLevel;
   skills: Skill[];
   talents: Talent[];
+  items: Item[];
   generationProps: GenerationProps5e;
 }
 
@@ -67,12 +74,16 @@ export function generateCharacter5e(
   const { status, standing } = generateStatusAndStanding(career, level);
   character.status = status;
   character.standing = standing;
-  [character.brass, character.silver, character.gold] = generateCoins5e(status, standing, rollDiceFn);
+  const startingCoins = generateCoins5e(status, standing, rollDiceFn);
+  const careerCoins = generateCareerCoins(career, level, rollDiceFn);
+  [character.brass, character.silver, character.gold] = startingCoins.map((x, i) => x + careerCoins[i]);
 
   character.attributeRolls = generateRolls5e(getCareerAttributesByLevel(career)[0], rollDiceFn, selectRandomFn);
 
   const classItems = generateClassItems(career, generationProps, rollDiceFn, selectRandomFn);
-  character.carriedItems = classItems;
+  const careerItems = generateCareerItems(career, level, context.items, rollDiceFn, selectRandomFn);
+  character.carriedItems = mergeEntries([...classItems, ...careerItems.carried]);
+  character.storedItems = careerItems.stored;
 
   const skillGroupMap = resolveEntityGroups(context.skills);
   const talentGroupMap = resolveEntityGroups(context.talents);

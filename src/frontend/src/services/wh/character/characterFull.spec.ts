@@ -61,6 +61,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
             level2: {
               exists: true,
@@ -71,6 +73,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
             level3: {
               exists: true,
@@ -81,6 +85,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
             level4: {
               exists: true,
@@ -91,6 +97,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
             level5: {
               exists: false,
@@ -101,6 +109,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
           },
         },
@@ -127,6 +137,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
             level2: {
               exists: true,
@@ -137,6 +149,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
             level3: {
               exists: true,
@@ -147,6 +161,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
             level4: {
               exists: true,
@@ -157,6 +173,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
             level5: {
               exists: false,
@@ -167,6 +185,8 @@ const characterFullApiData: CharacterFullApiData = {
               talents: [],
               attributes: [],
               items: "",
+              trappings: [],
+              money: [],
             },
           },
         },
@@ -194,6 +214,8 @@ const characterFullApiData: CharacterFullApiData = {
             talents: [],
             attributes: [],
             items: "",
+            trappings: [],
+            money: [],
           },
           level2: {
             exists: true,
@@ -204,6 +226,8 @@ const characterFullApiData: CharacterFullApiData = {
             talents: [],
             attributes: [],
             items: "",
+            trappings: [],
+            money: [],
           },
           level3: {
             exists: true,
@@ -214,6 +238,8 @@ const characterFullApiData: CharacterFullApiData = {
             talents: [],
             attributes: [],
             items: "",
+            trappings: [],
+            money: [],
           },
           level4: {
             exists: true,
@@ -224,6 +250,8 @@ const characterFullApiData: CharacterFullApiData = {
             talents: [],
             attributes: [],
             items: "",
+            trappings: [],
+            money: [],
           },
           level5: {
             exists: false,
@@ -234,6 +262,8 @@ const characterFullApiData: CharacterFullApiData = {
             talents: [],
             attributes: [],
             items: "",
+            trappings: [],
+            money: [],
           },
         },
       },
