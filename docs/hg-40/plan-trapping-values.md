@@ -1,6 +1,6 @@
 # Plan: values on character trappings (HG-49, HG-40 D17–D19)
 
-A character's trappings get a value next to the id and the number, like traits (`IdValue`), shown as "Hand Weapon (Axe)". Needed by HG-40: career trappings carry notes ("Axe", "with a Footman", "Letter of Appointment") that the generator puts on the character. Work-plan step 2a in [README.md](README.md). Agreed and implemented 2026-10-20 (uncommitted).
+A character's trappings get a value next to the id and the number, like traits (`IdValue`), shown as "Hand Weapon (Axe)". Needed by HG-40: career trappings carry notes ("Axe", "with a Footman", "Letter of Appointment") that the generator puts on the character. Work-plan step 2a in [README.md](README.md). Agreed 2026-10-20, deployed 2026-10-21. The sections below describe the plan as written; where the result differs (rows are never merged, the Note popup, the ⋯ menu), the bullets marked "changed" and the "Decided" section say so.
 
 ## Today
 
@@ -46,7 +46,7 @@ Tests:
 - Go: validation (value length, `<>`), `ToFull` with values, a character without values.
 - Frontend: the helpers; `character.spec.ts` (API conversion both ways, merging, validation, `isEqualTo` with the option); `CharacterItems.spec.ts` (value field, moves keep the value, two Hand Weapons with different values, picker adds an entry without a value); `encumbrance.spec.ts`; `trappings.spec.ts`; CSV specs if they cover trappings; the sheet shows "Hand Weapon (Axe)".
 
-Docs: `docs/architecture.md` (characters: trapping values), HG-49 done.
+Docs: `docs/architecture.md` (characters: trapping values); HG-49 is done and removed from the backlog.
 
 ## Decided (2026-10-20)
 
