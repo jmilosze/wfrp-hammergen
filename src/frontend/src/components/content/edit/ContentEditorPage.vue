@@ -67,7 +67,6 @@ const loadStates: LoadState[] = [props.edit, ...(props.lists ?? [])];
     <slot />
     <SourceTable
       :key="edition"
-      :edition="edition"
       :disabled="!canEdit"
       :sources="wh.source"
       class="my-4"

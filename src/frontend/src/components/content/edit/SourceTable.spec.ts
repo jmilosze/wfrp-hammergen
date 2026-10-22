@@ -12,7 +12,7 @@ enableAutoUnmount(afterEach);
 
 function mountTable(sources: Record<string, string>) {
   return mount(SourceTable, {
-    props: { sources, edition: "4e" },
+    props: { sources },
     global: { stubs: componentStubs },
     attachTo: document.body,
   });

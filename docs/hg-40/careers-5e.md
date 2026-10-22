@@ -200,7 +200,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Penitent        | Flail, Tattered Robes                                                      | Flail; Robes                                                                                     |
 | 2 Flagellant      | Great Weapon (Military Flail), Religious Symbol                            | Military Flail; Religious Symbol                                                                 |
 | 3 Zealot          | Religious Relic                                                            | **Religious Relic** (new)                                                                        |
-| 4 Prophet of Doom | Book (Religion), Followers (including Penitents, Flagellants, and Zealots) | Book - Religion; **Command** (new) ("Followers (including Penitents, Flagellants, and Zealots)") |
+| 4 Prophet of Doom | Book (Religion), Followers (including Penitents, Flagellants, and Zealots) | Book - Religion; **Command** (new) ("Penitents, Flagellants and Zealots")                        |
 
 ## Grave Robber
 
@@ -288,7 +288,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Squire                     | Leather Jack, Mail Shirt, Riding Horse, Shield, Trade Tools (Farrier)              | Leather Jack; Mail Shirt; Riding Horse; Shield; **Trade Tools** (new) ("Farrier")                                                                             |
 | 2 Knight                     | Destrier, Melee Weapon (Any), Lance, Plate Armour, Sword                           | Destrier; Hand Weapon / Cavalry Hammer / Warhammer / Greataxe / Zweihänder / Flail / Military Flail; Lance; Breastplate, Bracers, Plate Leggings, Helm; Sword |
 | 3 First Knight               | Barding, Small Unit of Knights                                                     | **Barding** (new); **Command** (new) ("Small Unit of Knights")                                                                                                |
-| 4 Knight of the Inner Circle | Large Unit of Knights or Several Small Units of Knights, Plumed Great Helm, Squire | **Command** (new) ("Large Unit of Knights or Several Small Units of Knights"); Helm ("With a Plume"); **Retainer** (new) ("Squire")                           |
+| 4 Knight of the Inner Circle | Large Unit of Knights or Several Small Units of Knights, Plumed Great Helm, Squire | **Command** (new) ("Large Unit of Knights") / **Command** (new) ("Several Small Units of Knights"); Helm ("With a plume"); **Retainer** (new) ("Squire")      |
 
 ## Lawyer
 
@@ -330,7 +330,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | Level          | Book text                                                                                 | Proposed                                                                              |
 | -------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | 1 Prospector   | Charcoal Stick, Crude Map, Great Weapon (Two-handed Pick), Hand Weapon (Pick), Pan, Spade | Charcoal Stick; Map; Pick (the weapon variant); Hand Weapon ("Pick"); Pan; Spade      |
-| 2 Miner        | Davrich Lamp, Lamp Oil, Leather Jack, Open Helm (Miner’s Helm)                            | **Davrich Lamp** (add 5e variant); Lamp Oil; Leather Jack; Open Helm ("Miner’s Helm") |
+| 2 Miner        | Davrich Lamp, Lamp Oil, Leather Jack, Open Helm (Miner’s Helm)                            | Feinkopf Lamp; Lamp Oil; Leather Jack; Open Helm ("Miner’s Helm")                     |
 | 3 Master Miner | Trade Tools (Engineer)                                                                    | **Trade Tools** (new) ("Engineer")                                                    |
 | 4 Mine Foreman | Crew of Miners, Writing Kit                                                               | **Command** (new) ("Crew of Miners"); Writing Kit                                     |
 
@@ -618,7 +618,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Clerk        | Lodgings                                                                                         | **Holding** (new) ("Lodgings")                                                                                                                                      |
 | 2 Townsman     | Modest Shop                                                                                      | **Holding** (new) ("Modest Shop")                                                                                                                                   |
 | 3 Proprietor   | Blunderbuss with 10 Shots, Inn or Townhouse, Staff                                               | Blunderbuss, 10 × Small Shot and Powder; **Holding** (new) ("Inn") / **Holding** (new) ("Townhouse"); **Command** (new) ("Staff")                                   |
-| 4 Burgomeister | Chains of Office, Coach and Footman, Large Townhouse with Gardens and Servants, Quality Clothing | **Symbol of Rank** (new) ("Chains of Office"); Coach ("with a Footman"); **Holding** (new) ("Large Townhouse with Gardens and Servants"); **Clothing (Fine)** (new) |
+| 4 Burgomeister | Chains of Office, Coach and Footman, Large Townhouse with Gardens and Servants, Quality Clothing | **Symbol of Rank** (new) ("Chains of Office"); Coach ("with a Footman"); **Holding** (new) ("Large Townhouse, Gardens and Servants"); **Clothing (Fine)** (new)     |
 
 ## Villager
 

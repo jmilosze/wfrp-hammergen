@@ -1,4 +1,4 @@
-import { Source, sourceForEdition, updateSource } from "./source.ts";
+import { Source, updateSource } from "./source.ts";
 import { ValidationStatus } from "@/utils/validation.ts";
 import { cloneEntity } from "@/utils/clone.ts";
 import { isEqualEntity } from "@/utils/equal.ts";
@@ -70,12 +70,10 @@ export abstract class WhEntity implements WhProperty {
     return cloneEntity(this);
   }
 
-  // forEdition returns a copy to start the edition's variant from (pre-filled from this variant).
+  // forEdition returns a copy to start an edition's variant from (pre-filled from this variant, sources included).
   // Types with edition-specific rules adjust it further.
-  forEdition(edition: Edition): this {
-    const variant = this.copy();
-    variant.source = sourceForEdition(this.source, edition);
-    return variant;
+  forEdition(_edition: Edition): this {
+    return this.copy();
   }
 
   isEqualTo(other: unknown): boolean {

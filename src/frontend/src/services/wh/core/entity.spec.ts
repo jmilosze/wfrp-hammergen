@@ -9,11 +9,10 @@ import { AttributeName } from "./attributes.ts";
 import { CharacterModifiers, ModifierEffect } from "./characterModifiers.ts";
 
 describe("forEdition", () => {
-  test("keeps sources offered for the edition, otherwise uses Custom", () => {
+  test("keeps the sources, the 5e rulebook included, in both editions", () => {
     const skill = new Skill({ name: "Charm", source: { 11: "p. 50", 44: "p. 98" } });
     expect(skill.forEdition("5e").source).toEqual({ 11: "p. 50", 44: "p. 98" });
-    expect(skill.forEdition("4e").source).toEqual({ 11: "p. 50" });
-    expect(new Skill({ source: { 44: "p. 98" } }).forEdition("4e").source).toEqual({ 0: "" });
+    expect(skill.forEdition("4e").source).toEqual({ 11: "p. 50", 44: "p. 98" });
   });
 
   test("returns a copy and leaves the original unchanged", () => {
