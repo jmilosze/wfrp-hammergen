@@ -14,6 +14,13 @@ import {
   careerSpeciesByEdition,
   speciesWithRegionToSpecies,
 } from "@/services/wh/core/species.ts";
+import {
+  CareerMoney,
+  CareerTrappingEntry,
+  copyCareerMoney,
+  copyCareerTrappingEntries,
+  validateCareerTrappings,
+} from "./careerTrapping.ts";
 
 export const enum CareerClass {
   Academic = 0,
@@ -101,7 +108,10 @@ export type CareerLevel = {
   attributes: AttributeName[];
   skills: Set<string>;
   talents: Set<string>;
+  // The free text of careers whose trappings are not data (old and users' careers).
   items: string;
+  trappings: CareerTrappingEntry[];
+  money: CareerMoney[];
 };
 
 export type CareerLevelApiData = {
@@ -113,6 +123,8 @@ export type CareerLevelApiData = {
   skills: string[];
   talents: string[];
   items: string;
+  trappings: CareerTrappingEntry[];
+  money: CareerMoney[];
 };
 
 const API_BASE_PATH = "/api/wh/career";
@@ -141,6 +153,8 @@ export const zeroCareerLevel: CareerLevel = {
   skills: new Set<string>(),
   talents: new Set<string>(),
   items: "",
+  trappings: [],
+  money: [],
 };
 
 export function isLevel(x: number): x is 1 | 2 | 3 | 4 | 5 {
@@ -232,6 +246,11 @@ export class Career extends WhEntity {
     return validLongDescFn(this.level5.items);
   }
 
+  validateLevelTrappings(level: 1 | 2 | 3 | 4 | 5): ValidationStatus {
+    const careerLevel = this.getLevel(level);
+    return validateCareerTrappings(`Level ${level} trappings`, careerLevel.trappings, careerLevel.money);
+  }
+
   forEdition(edition: Edition): this {
     const variant = super.forEdition(edition);
     variant.species = variant.species.filter((s) => careerSpeciesByEdition[edition].includes(s));
@@ -252,7 +271,8 @@ export class Career extends WhEntity {
       this.validateLevel2Items().valid &&
       this.validateLevel3Items().valid &&
       this.validateLevel4Items().valid &&
-      this.validateLevel5Items().valid
+      this.validateLevel5Items().valid &&
+      ([1, 2, 3, 4, 5] as const).every((level) => this.validateLevelTrappings(level).valid)
     );
   }
 
@@ -358,6 +378,8 @@ function careerLevelApiDataToCareerLevel(apiData: CareerLevelApiData): CareerLev
     skills: new Set(apiData.skills),
     talents: new Set(apiData.talents),
     items: apiData.items,
+    trappings: copyCareerTrappingEntries(apiData.trappings),
+    money: copyCareerMoney(apiData.money),
   };
 }
 
@@ -387,6 +409,8 @@ function careerLevelToCareerLevelApiData(careerLevel: CareerLevel): CareerLevelA
     skills: [...careerLevel.skills],
     talents: [...careerLevel.talents],
     items: careerLevel.items,
+    trappings: copyCareerTrappingEntries(careerLevel.trappings),
+    money: copyCareerMoney(careerLevel.money),
   };
 }
 

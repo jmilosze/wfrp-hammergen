@@ -65,13 +65,6 @@ Frontend · 2026-10-16
 
 The 5e version of HG-43, following the 5e rulebook's character creation summary: species (choose or roll; keeping the first roll gives +1 Fortune), class and career, characteristics, career skills, talents, trappings and final details, personality and background. Reuse `generation/5e/generator5e.ts` and `generationProps5e` and the wizard frame from HG-43. Career trappings: the player picks the options of level 1 entries marked `choice` and rolls the `random` ones and dice quantities (HG-40 format, `docs/hg-40/analysis.md`). Same limits as the 5e generator (5e content only, species list as in `docs/architecture.md`, HG-36 extends it).
 
-### HG-49 Values on character trappings
-Frontend + Backend · 2026-10-19, agreed 2026-10-20
-
-A character stores its trappings as ids with counts (`equippedItems`, `carriedItems`, `storedItems`), so there is no place for text about one trapping. Give them a value like traits (`{id, number, value}`, shown as "Hand Weapon (Axe)"), editable in the character editor and shown on the sheet and in the CSV export; the same trapping can be listed more than once with different values. Needed by HG-40: career trappings carry notes ("Axe", "with a Footman", "Letter of Appointment") that the generator puts there. Implemented 2026-10-20 (HG-40 step 2a, uncommitted); delete this entry once it is deployed. Details in `docs/hg-40/plan-trapping-values.md`.
-
-## Ideas
-
 ### HG-53 "Magical Item" for the 5e Master Wizard
 Data · 2026-10-19
 

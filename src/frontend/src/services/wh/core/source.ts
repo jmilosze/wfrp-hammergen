@@ -1,5 +1,4 @@
 import { ValidationStatus } from "@/utils/validation.ts";
-import { Edition } from "./edition.ts";
 import { validVeryShortDescFn } from "./validators.ts";
 
 export const source: Record<string, string> = {
@@ -50,25 +49,7 @@ export const source: Record<string, string> = {
   44: "WFRP 5e",
 };
 
-// Sources offered when editing content of each edition: 5e content may come from any book, 4e content from any
-// but the 5e core rulebook.
-export const sourcesByEdition: Record<Edition, string[]> = {
-  "4e": Object.keys(source).filter((id) => id !== "44"),
-  "5e": Object.keys(source),
-};
-
 export type Source = Record<string, string>;
-
-// sourceForEdition keeps the sources offered for the edition, or Custom when none are left.
-export function sourceForEdition(source: Source, edition: Edition): Source {
-  const kept: Source = {};
-  for (const [id, notes] of Object.entries(source)) {
-    if (sourcesByEdition[edition].includes(id)) {
-      kept[id] = notes;
-    }
-  }
-  return Object.keys(kept).length > 0 ? kept : defaultSource();
-}
 
 export function copySource(source: Source): Source {
   return { ...source };

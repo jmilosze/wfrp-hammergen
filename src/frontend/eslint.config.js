@@ -18,6 +18,8 @@ export default [
       "vue/max-attributes-per-line": "off",
       "vue/singleline-html-element-content-newline": "off",
       "vue/html-self-closing": "off",
+      // As in TypeScript, an argument named with a leading underscore may be unused (e.g. a base method's parameter).
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     },
   },
   {

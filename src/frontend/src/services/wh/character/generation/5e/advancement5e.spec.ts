@@ -32,6 +32,27 @@ describe("generateCareerAdvances5e", () => {
     expect(result.spentExp).toBe(100 + 375 + 3450 + 100);
   });
 
+  test("level 2: the level 2 trappings tick the tracker, so fewer skill Advances are bought", () => {
+    const career = testCareer();
+    career.level2.trappings = [
+      { options: [[{ id: "rope", number: "1", value: "" }]] },
+      {
+        options: [
+          [
+            { id: "bow", number: "1", value: "" },
+            { id: "arrow", number: "10", value: "" },
+          ],
+          [{ id: "sword", number: "1", value: "" }],
+        ],
+      },
+    ];
+    career.level2.money = [{ coin: "gold", number: "20" }];
+    const result = generateCareerAdvances5e({ ...context, career: career, level: 2 }, selectFirst);
+    // talent, three characteristics and three trapping ticks leave three skill Advances: s1 from +15 to +30
+    expect(result.skills).toEqual({ s1: 30, s2: 15, s3: 10 });
+    expect(result.spentExp).toBe(100 + 375 + (150 + 250 + 400) + 100);
+  });
+
   test("level 4: 36 ticks over the career", () => {
     for (let i = 0; i < 20; ++i) {
       const result = generateCareerAdvances5e({ ...context, level: 4 });

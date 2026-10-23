@@ -23,6 +23,7 @@ import FormTextarea from "@/components/form/FormTextarea.vue";
 import { useWhList } from "@/composables/whList.ts";
 import { skillApi } from "@/services/wh/content/skill.ts";
 import { talentApi } from "@/services/wh/content/talent.ts";
+import { itemApi } from "@/services/wh/content/item.ts";
 import CareerLevel from "@/components/content/edit/CareerLevel.vue";
 
 const props = defineProps<{
@@ -45,6 +46,9 @@ skillListUtils.loadWhList();
 const talentListUtils = useWhList(talentApi(authRequest), edition);
 talentListUtils.loadWhList();
 
+const itemListUtils = useWhList(itemApi(authRequest), edition);
+itemListUtils.loadWhList();
+
 await editor.loadWh(props.id);
 
 const validName = computed(() => wh.value.validateName());
@@ -59,6 +63,7 @@ const validLevel2Items = computed(() => wh.value.validateLevel2Items());
 const validLevel3Items = computed(() => wh.value.validateLevel3Items());
 const validLevel4Items = computed(() => wh.value.validateLevel4Items());
 const validLevel5Items = computed(() => wh.value.validateLevel5Items());
+const validLevelTrappings = computed(() => ([1, 2, 3, 4, 5] as const).map((x) => wh.value.validateLevelTrappings(x)));
 
 const speciesOpts = computed(() =>
   careerSpeciesByEdition[edition.value].map((x) => ({ text: printSpeciesName(x), value: x })),
@@ -113,7 +118,7 @@ watchWh(
     :edit="editor"
     propertyName="Career"
     list="careers"
-    :lists="[skillListUtils, talentListUtils]"
+    :lists="[skillListUtils, talentListUtils, itemListUtils]"
   >
     <!-- Name, class and species in one column, the description in the other. -->
     <div class="flex flex-col @3xl:flex-row text-left gap-4 my-4">
@@ -135,6 +140,8 @@ watchWh(
         v-model:status="wh.level1.status"
         v-model:standing="wh.level1.standing"
         v-model:items="wh.level1.items"
+        v-model:trappings="wh.level1.trappings"
+        v-model:money="wh.level1.money"
         v-model:exists="wh.level1.exists"
         level="1"
         :canEdit="canEdit"
@@ -146,6 +153,10 @@ watchWh(
         :whTalentListLoading="talentListUtils.loading.value"
         :validName="validLevel1Name"
         :validItems="validLevel1Items"
+        :validTrappings="validLevelTrappings[0]"
+        :whItemList="itemListUtils.whList.value"
+        :whItemListLoading="itemListUtils.loading.value"
+        @reloadWhItemList="itemListUtils.loadWhList"
         @reloadWhSkillList="skillListUtils.loadWhList"
         @reloadWhTalentList="talentListUtils.loadWhList"
         @updateSkill="(e) => wh.updateLevelSkills(1, e.id, e.selected)"
@@ -157,6 +168,8 @@ watchWh(
         v-model:status="wh.level2.status"
         v-model:standing="wh.level2.standing"
         v-model:items="wh.level2.items"
+        v-model:trappings="wh.level2.trappings"
+        v-model:money="wh.level2.money"
         v-model:exists="wh.level2.exists"
         level="2"
         :canEdit="canEdit"
@@ -168,6 +181,10 @@ watchWh(
         :whTalentListLoading="talentListUtils.loading.value"
         :validName="validLevel2Name"
         :validItems="validLevel2Items"
+        :validTrappings="validLevelTrappings[1]"
+        :whItemList="itemListUtils.whList.value"
+        :whItemListLoading="itemListUtils.loading.value"
+        @reloadWhItemList="itemListUtils.loadWhList"
         @reloadWhSkillList="skillListUtils.loadWhList"
         @reloadWhTalentList="talentListUtils.loadWhList"
         @updateSkill="(e) => wh.updateLevelSkills(2, e.id, e.selected)"
@@ -179,6 +196,8 @@ watchWh(
         v-model:status="wh.level3.status"
         v-model:standing="wh.level3.standing"
         v-model:items="wh.level3.items"
+        v-model:trappings="wh.level3.trappings"
+        v-model:money="wh.level3.money"
         v-model:exists="wh.level3.exists"
         level="3"
         :canEdit="canEdit"
@@ -190,6 +209,10 @@ watchWh(
         :whTalentListLoading="talentListUtils.loading.value"
         :validName="validLevel3Name"
         :validItems="validLevel3Items"
+        :validTrappings="validLevelTrappings[2]"
+        :whItemList="itemListUtils.whList.value"
+        :whItemListLoading="itemListUtils.loading.value"
+        @reloadWhItemList="itemListUtils.loadWhList"
         @reloadWhSkillList="skillListUtils.loadWhList"
         @reloadWhTalentList="talentListUtils.loadWhList"
         @updateSkill="(e) => wh.updateLevelSkills(3, e.id, e.selected)"
@@ -201,6 +224,8 @@ watchWh(
         v-model:status="wh.level4.status"
         v-model:standing="wh.level4.standing"
         v-model:items="wh.level4.items"
+        v-model:trappings="wh.level4.trappings"
+        v-model:money="wh.level4.money"
         v-model:exists="wh.level4.exists"
         level="4"
         :canEdit="canEdit"
@@ -212,6 +237,10 @@ watchWh(
         :whTalentListLoading="talentListUtils.loading.value"
         :validName="validLevel4Name"
         :validItems="validLevel4Items"
+        :validTrappings="validLevelTrappings[3]"
+        :whItemList="itemListUtils.whList.value"
+        :whItemListLoading="itemListUtils.loading.value"
+        @reloadWhItemList="itemListUtils.loadWhList"
         @reloadWhSkillList="skillListUtils.loadWhList"
         @reloadWhTalentList="talentListUtils.loadWhList"
         @updateSkill="(e) => wh.updateLevelSkills(4, e.id, e.selected)"
@@ -223,6 +252,8 @@ watchWh(
         v-model:status="wh.level5.status"
         v-model:standing="wh.level5.standing"
         v-model:items="wh.level5.items"
+        v-model:trappings="wh.level5.trappings"
+        v-model:money="wh.level5.money"
         v-model:exists="wh.level5.exists"
         level="5"
         :canEdit="canEdit"
@@ -234,6 +265,10 @@ watchWh(
         :whTalentListLoading="talentListUtils.loading.value"
         :validName="validLevel5Name"
         :validItems="validLevel5Items"
+        :validTrappings="validLevelTrappings[4]"
+        :whItemList="itemListUtils.whList.value"
+        :whItemListLoading="itemListUtils.loading.value"
+        @reloadWhItemList="itemListUtils.loadWhList"
         @reloadWhSkillList="skillListUtils.loadWhList"
         @reloadWhTalentList="talentListUtils.loadWhList"
         @updateSkill="(e) => wh.updateLevelSkills(5, e.id, e.selected)"

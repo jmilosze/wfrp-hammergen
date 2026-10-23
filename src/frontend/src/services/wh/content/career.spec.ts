@@ -36,6 +36,22 @@ const careerApiData: CareerApiData = {
     skills: ["skill11", "skill12"],
     talents: ["talent11", "talent12"],
     items: "items1",
+    trappings: [
+      { options: [[{ id: "item11", number: "1", value: "with a Footman" }]] },
+      {
+        options: [
+          [
+            { id: "item12", number: "1", value: "" },
+            { id: "item13", number: "10", value: "" },
+          ],
+          [{ id: "item14", number: "1d10+2", value: "" }],
+        ],
+      },
+    ],
+    money: [
+      { coin: "gold", number: "20" },
+      { coin: "silver", number: "3d10" },
+    ],
   },
   level2: {
     exists: true,
@@ -46,6 +62,8 @@ const careerApiData: CareerApiData = {
     skills: ["skill21", "skill22"],
     talents: ["talent21", "talent22"],
     items: "items2",
+    trappings: [],
+    money: [],
   },
   level3: {
     exists: true,
@@ -56,6 +74,8 @@ const careerApiData: CareerApiData = {
     skills: ["skill31", "skill32"],
     talents: ["talent31", "talent32"],
     items: "items3",
+    trappings: [],
+    money: [],
   },
   level4: {
     exists: true,
@@ -66,6 +86,8 @@ const careerApiData: CareerApiData = {
     skills: ["skill41", "skill42"],
     talents: ["talent41", "talent42"],
     items: "items4",
+    trappings: [],
+    money: [],
   },
   level5: {
     exists: true,
@@ -76,6 +98,8 @@ const careerApiData: CareerApiData = {
     skills: ["skill51", "skill52"],
     talents: ["talent51", "talent52"],
     items: "items5",
+    trappings: [],
+    money: [],
   },
 };
 
@@ -103,6 +127,22 @@ const career = new Career({
     skills: new Set(["skill11", "skill12"]),
     talents: new Set(["talent11", "talent12"]),
     items: "items1",
+    trappings: [
+      { options: [[{ id: "item11", number: "1", value: "with a Footman" }]] },
+      {
+        options: [
+          [
+            { id: "item12", number: "1", value: "" },
+            { id: "item13", number: "10", value: "" },
+          ],
+          [{ id: "item14", number: "1d10+2", value: "" }],
+        ],
+      },
+    ],
+    money: [
+      { coin: "gold", number: "20" },
+      { coin: "silver", number: "3d10" },
+    ],
   },
   level2: {
     exists: true,
@@ -113,6 +153,8 @@ const career = new Career({
     skills: new Set(["skill21", "skill22"]),
     talents: new Set(["talent21", "talent22"]),
     items: "items2",
+    trappings: [],
+    money: [],
   },
   level3: {
     exists: true,
@@ -123,6 +165,8 @@ const career = new Career({
     skills: new Set(["skill31", "skill32"]),
     talents: new Set(["talent31", "talent32"]),
     items: "items3",
+    trappings: [],
+    money: [],
   },
   level4: {
     exists: true,
@@ -133,6 +177,8 @@ const career = new Career({
     skills: new Set(["skill41", "skill42"]),
     talents: new Set(["talent41", "talent42"]),
     items: "items4",
+    trappings: [],
+    money: [],
   },
   level5: {
     exists: true,
@@ -143,6 +189,8 @@ const career = new Career({
     skills: new Set(["skill51", "skill52"]),
     talents: new Set(["talent51", "talent52"]),
     items: "items5",
+    trappings: [],
+    money: [],
   },
 });
 
@@ -196,6 +244,8 @@ describe("findCareerMatches", () => {
             skills: ["skill-a", "group-1"],
             talents: ["talent-a"],
             items: "",
+            trappings: [],
+            money: [],
           },
           level2: {
             exists: false,
@@ -206,6 +256,8 @@ describe("findCareerMatches", () => {
             skills: ["skill-a"],
             talents: ["talent-a"],
             items: "",
+            trappings: [],
+            money: [],
           },
           level3: {
             exists: true,
@@ -216,6 +268,8 @@ describe("findCareerMatches", () => {
             skills: ["skill-b"],
             talents: ["talent-b", "talent-group-1"],
             items: "",
+            trappings: [],
+            money: [],
           },
           level4: {
             exists: false,
@@ -226,6 +280,8 @@ describe("findCareerMatches", () => {
             skills: [],
             talents: [],
             items: "",
+            trappings: [],
+            money: [],
           },
           level5: {
             exists: false,
@@ -236,6 +292,8 @@ describe("findCareerMatches", () => {
             skills: [],
             talents: [],
             items: "",
+            trappings: [],
+            money: [],
           },
         },
       },
@@ -384,5 +442,18 @@ describe("career level helpers", () => {
       [AttributeName.S],
       [AttributeName.T],
     ]);
+  });
+});
+
+describe("career trappings validation", () => {
+  test("isValid checks the trappings of every level", () => {
+    const valid = career.copy();
+    expect(valid.validateLevelTrappings(1).valid).toBe(true);
+    expect(valid.isValid()).toBe(true);
+
+    const invalid = career.copy();
+    invalid.level5.money = [{ coin: "gold", number: "0" }];
+    expect(invalid.validateLevelTrappings(5).message).toContain("Level 5 trappings");
+    expect(invalid.isValid()).toBe(false);
   });
 });

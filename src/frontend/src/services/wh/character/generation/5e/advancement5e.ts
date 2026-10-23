@@ -1,6 +1,7 @@
 // 5e career advancement: Career Advancement Tracker ticks and advances for levels 2–4.
 import {
   Career,
+  CareerLevel,
   GenerationLevel,
   getCareerAttributesByLevel,
   getCareerSkillsByLevel,
@@ -45,9 +46,15 @@ export interface CareerAdvances5e {
   spentExp: number;
 }
 
+// The ticks the trappings of a career level give when acquired (D10): one per entry and one per money item.
+function trappingTicks(level: CareerLevel): number {
+  return level.trappings.length + level.money.length;
+}
+
 // Level 1: eight career skill Advances and one level 1 career talent (free). Each higher level: at the current
-// level, one career talent, one Advance in each unlocked characteristic and career skill Advances until the
-// tracker reaches the next level's ticks, then 100 XP to move up.
+// level, one career talent, one Advance in each unlocked characteristic, the next level's trappings (D8; the
+// generator gives them, see generateCareerItems) and career skill Advances until the tracker reaches the next level's
+// ticks, then 100 XP to move up.
 export function generateCareerAdvances5e(
   context: CareerAdvances5eContext,
   selectRandomFn: SelectRandomFn = selectRandom,
@@ -66,6 +73,7 @@ export function generateCareerAdvances5e(
     resolveAvailableTalents(x, context.talentGroupMap, selectRandomFn),
   );
   const careerAttributesByLevel = getCareerAttributesByLevel(context.career);
+  const levels = [context.career.level1, context.career.level2, context.career.level3, context.career.level4];
 
   const maxRanks = () =>
     calculateMaxTalentRanks(talents, context.talentList, context.baseAttributes, attributeAdvances);
@@ -78,7 +86,7 @@ export function generateCareerAdvances5e(
     const unlockedTalents = [...new Set(careerTalentsByLevel.slice(0, current).flat())];
     const unlockedAttributes = [...new Set(careerAttributesByLevel.slice(0, current).flat())];
     const ticksNeeded = CAREER_TICKS_5E[current] - CAREER_TICKS_5E[current - 1];
-    let ticks = 0;
+    let ticks = trappingTicks(levels[current]);
 
     if (takeCareerTalent5e(talents, unlockedTalents, maxRanks(), selectRandomFn)) {
       spentExp += TALENT_COST_5E;

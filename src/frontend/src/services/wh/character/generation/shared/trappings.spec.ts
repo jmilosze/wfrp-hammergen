@@ -1,6 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { generateClassItems, populateClassItems } from "./trappings.ts";
-import { Career } from "@/services/wh/content/career.ts";
+import { generateCareerCoins, generateCareerItems, generateClassItems, populateClassItems } from "./trappings.ts";
+import { Career, copyCareerLevel, zeroCareerLevel } from "@/services/wh/content/career.ts";
+import { Item, ItemType } from "@/services/wh/content/item.ts";
+import { CareerMoney, CareerTrappingEntry } from "@/services/wh/content/careerTrapping.ts";
+import { getRollDiceTest, getSelectRandomTest } from "@/testing.ts";
 import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { GenerationProps } from "./generationProps.ts";
 import { Character } from "@/services/wh/character/character.ts";
@@ -67,5 +70,65 @@ describe("populateClassItems", () => {
       { id: "item1", number: 1, value: "" },
       { id: "item3", number: 3, value: "" },
     ]);
+  });
+});
+
+describe("career trappings and money", () => {
+  const items = [
+    new Item({ id: "bow", name: "Bow", type: ItemType.Ranged }),
+    new Item({ id: "arrow", name: "Arrow", type: ItemType.Ammunition }),
+    new Item({ id: "weapon", name: "Hand Weapon", type: ItemType.Melee }),
+    // An Other item is neither carried nor worn, e.g. a place or a retainer.
+    new Item({ id: "command", name: "Command", type: ItemType.Other }),
+  ];
+  const one = (id: string, number = "1", value = "") => ({ id: id, number: number, value: value });
+  const got = (id: string, number: number, value = "") => ({ id: id, number: number, value: value });
+  const level = (trappings: CareerTrappingEntry[], money: CareerMoney[] = []) => ({
+    ...copyCareerLevel(zeroCareerLevel),
+    exists: true,
+    trappings: trappings,
+    money: money,
+  });
+  const career = new Career({
+    level1: level(
+      [{ options: [[one("weapon", "1", "Sickle")]] }, { options: [[one("bow"), one("arrow", "10")], [one("weapon")]] }],
+      [{ coin: "silver", number: "2d10+1" }],
+    ),
+    level2: level(
+      [{ options: [[one("arrow", "1d10")]] }, { options: [[one("command", "1", "Crew of Miners")]] }],
+      [{ coin: "gold", number: "20" }],
+    ),
+    level3: level([{ options: [[one("unknown")]] }]),
+  });
+
+  test("gives one option of each entry, rolls quantities and keeps notes as values", () => {
+    const result = generateCareerItems(career, 1, items, getRollDiceTest(4), getSelectRandomTest(0));
+    expect(result).toEqual({
+      carried: [got("weapon", 1, "Sickle"), got("bow", 1), got("arrow", 10)],
+      stored: [],
+    });
+  });
+
+  test("gives the trappings of every level up to the character's; what can't be carried is stored", () => {
+    const result = generateCareerItems(career, 3, items, getRollDiceTest(4), getSelectRandomTest(1));
+    expect(result).toEqual({
+      carried: [
+        { id: "weapon", number: 1, value: "Sickle" },
+        { id: "weapon", number: 1, value: "" },
+        { id: "arrow", number: 4, value: "" },
+      ],
+      stored: [{ id: "command", number: 1, value: "Crew of Miners" }],
+    });
+  });
+
+  test("leaves out a trapping whose roll is below 1", () => {
+    const withModifier = new Career({ level1: level([{ options: [[one("arrow", "1d6-3")]] }]) });
+    expect(generateCareerItems(withModifier, 1, items, getRollDiceTest(2)).carried).toEqual([]);
+    expect(generateCareerItems(withModifier, 1, items, getRollDiceTest(5)).carried).toEqual([got("arrow", 2)]);
+  });
+
+  test("rolls the money of every level up to the character's into brass, silver and gold", () => {
+    expect(generateCareerCoins(career, 1, getRollDiceTest(7))).toEqual([0, 8, 0]);
+    expect(generateCareerCoins(career, 2, getRollDiceTest(7))).toEqual([0, 8, 20]);
   });
 });

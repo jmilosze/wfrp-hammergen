@@ -152,6 +152,7 @@ function rollCharacter() {
     level: selectedGenLevel.value,
     skills: content.skills.own.whList.value,
     talents: content.talents.own.whList.value,
+    items: content.items.own.whList.value,
     generationProps: generationPropsUtils.generationProps.value,
   });
 

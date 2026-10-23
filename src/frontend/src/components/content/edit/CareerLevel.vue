@@ -18,6 +18,10 @@ import {
 } from "@/services/wh/content/career.ts";
 import type { Skill } from "@/services/wh/content/skill.ts";
 import { Talent } from "@/services/wh/content/talent.ts";
+import { Item } from "@/services/wh/content/item.ts";
+import { CareerMoney, CareerTrappingEntry } from "@/services/wh/content/careerTrapping.ts";
+import CareerTrappings from "./CareerTrappings.vue";
+import CareerTrappingsHelp from "./CareerTrappingsHelp.vue";
 import { ValidationStatus } from "@/utils/validation.ts";
 
 const name = defineModel<string>("name", { required: true });
@@ -25,6 +29,8 @@ const attributes = defineModel<AttributeName[]>("attributes", { required: true }
 const status = defineModel<StatusTier>("status", { required: true });
 const standing = defineModel<StatusStanding>("standing", { required: true });
 const items = defineModel<string>("items", { required: true });
+const trappings = defineModel<CareerTrappingEntry[]>("trappings", { required: true });
+const money = defineModel<CareerMoney[]>("money", { required: true });
 const exists = defineModel<boolean>("exists", { required: true });
 
 defineProps<{
@@ -36,13 +42,17 @@ defineProps<{
   whSkillListLoading: boolean;
   whTalentList: Talent[];
   whTalentListLoading: boolean;
+  whItemList: Item[];
+  whItemListLoading: boolean;
   validName: ValidationStatus;
   validItems: ValidationStatus;
+  validTrappings: ValidationStatus;
 }>();
 
 const emit = defineEmits<{
   (e: "reloadWhSkillList"): void;
   (e: "reloadWhTalentList"): void;
+  (e: "reloadWhItemList"): void;
   (e: "updateSkill", value: { id: string; selected: boolean }): void;
   (e: "updateTalent", value: { id: string; selected: boolean }): void;
 }>();
@@ -90,8 +100,28 @@ const statusStandingOpts = statusStandingList.map((x) => ({ text: printStatusSta
               :disabled="!canEdit"
               inAddedOrder
             />
+            <!-- The level's trappings as data and, for careers whose trappings are not data yet, their text (it goes
+                 once emptied), straight in the card. Read-only, a level without trappings as data shows only its text. -->
             <SheetCard title="Trappings">
-              <FormTextarea v-model="items" :validationStatus="validItems" :disabled="!canEdit" bare size="sm" />
+              <template v-if="canEdit" #hint>
+                <CareerTrappingsHelp />
+              </template>
+              <div class="flex flex-col gap-4 p-2">
+                <CareerTrappings
+                  v-if="canEdit || trappings.length > 0 || money.length > 0"
+                  v-model:trappings="trappings"
+                  v-model:money="money"
+                  :itemList="whItemList"
+                  :loading="whItemListLoading"
+                  :disabled="!canEdit"
+                  :validationStatus="validTrappings"
+                  @reload="emit('reloadWhItemList')"
+                />
+                <template v-if="items !== ''">
+                  <FormTextarea v-if="canEdit" v-model="items" :validationStatus="validItems" size="sm" />
+                  <p v-else class="whitespace-pre-line">{{ items }}</p>
+                </template>
+              </div>
             </SheetCard>
           </div>
           <div class="flex-1 flex flex-col gap-4">

@@ -5,6 +5,7 @@ import { zeroAttributes } from "@/services/wh/core/attributes.ts";
 import { StatusTier } from "@/services/wh/content/career.ts";
 import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { generateCharacter5e } from "./generator5e.ts";
+import { Item, ItemType } from "@/services/wh/content/item.ts";
 
 describe("generateCharacter5e", () => {
   const context = {
@@ -12,6 +13,7 @@ describe("generateCharacter5e", () => {
     career: testCareer(),
     skills: testSkills5e,
     talents: testTalents5e,
+    items: [],
     generationProps: genProps5e,
   };
 
@@ -46,6 +48,27 @@ describe("generateCharacter5e", () => {
       expect(carriedIds.some((x) => x === "hood" || x === "mask")).toBe(true);
       expect(character.carriedItems.find((x) => x.id === "match")?.number).toBeGreaterThanOrEqual(1);
     }
+  });
+
+  test("gets the career trappings and money of levels 1 to its level, and their ticks", () => {
+    const career = testCareer();
+    career.level1.trappings = [{ options: [[{ id: "weapon", number: "1", value: "Sickle" }]] }];
+    career.level2.trappings = [{ options: [[{ id: "command", number: "1", value: "Crew of Miners" }]] }];
+    career.level2.money = [{ coin: "gold", number: "20" }];
+    career.level3.trappings = [{ options: [[{ id: "weapon", number: "2", value: "" }]] }];
+    const items = [
+      new Item({ id: "weapon", name: "Hand Weapon", type: ItemType.Melee }),
+      new Item({ id: "command", name: "Command", type: ItemType.Other }),
+    ];
+
+    const character = generateCharacter5e({ ...context, career: career, items: items, level: 2 });
+
+    expect(character.carriedItems).toContainEqual({ id: "weapon", number: 1, value: "Sickle" });
+    expect(character.carriedItems.some((x) => x.id === "weapon" && x.value === "")).toBe(false);
+    expect(character.storedItems).toEqual([{ id: "command", number: 1, value: "Crew of Miners" }]);
+    // Silver status starts without gold; the level 2 money adds 20.
+    expect(character.gold).toBe(20);
+    expect(character.careerTicks).toBe(10);
   });
 
   test("level 3 character", () => {

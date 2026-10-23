@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { source, sourcesByEdition, sourceIsValid } from "@/services/wh/core/source.ts";
-import { Edition } from "@/services/wh/core/edition.ts";
+import { source, sourceIsValid } from "@/services/wh/core/source.ts";
 import { VERY_SHORT_DESC_LENGTH } from "@/services/wh/core/validators.ts";
 import { setValidationStatus } from "@/utils/validation.ts";
 import SelectIdValueTable from "@/components/picker/SelectIdValueTable.vue";
@@ -9,7 +8,7 @@ import SelectIdValueTable from "@/components/picker/SelectIdValueTable.vue";
 // The entry's sources (source id to page notes), read directly (the parent changes them on the emitted events). Shown
 // as the qualities and flaws of a trapping are: the popup only picks sources, and a source's notes are typed in its
 // row of the table.
-const props = defineProps<{ sources: Record<string, string>; edition: Edition; disabled?: boolean }>();
+const props = defineProps<{ sources: Record<string, string>; disabled?: boolean }>();
 
 const emit = defineEmits<{
   (e: "selected", value: { id: string; notes: string; selected: boolean }): void;
@@ -18,10 +17,9 @@ const emit = defineEmits<{
 // The notes of sources unticked here, so ticking one again brings its notes back.
 const keptNotes = ref<Record<string, string>>({});
 
-// The edition's sources; every one takes notes.
-const sourceList = computed(() =>
-  sourcesByEdition[props.edition].map((id) => ({ id: id, name: source[id], description: "", hasValue: true })),
-);
+// Every source, in both editions (4e content may name the 5e rulebook too, e.g. a 5e career trapping); every one takes
+// notes.
+const sourceList = Object.keys(source).map((id) => ({ id: id, name: source[id], description: "", hasValue: true }));
 
 const selected = computed(() => Object.entries(props.sources).map(([id, notes]) => ({ id: id, value: notes })));
 

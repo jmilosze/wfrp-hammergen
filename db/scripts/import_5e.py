@@ -8,6 +8,8 @@ Entries without `id4e` create new public 5e-only documents, owned by the owner o
 Already imported 5e-only documents are found by their 5e name, so renaming such an entry in the data file
 after an import creates a new document (rename the existing one first). A 5e-only entry with an `id` is created
 with that id and found by it instead (used when other entries reference it before it exists, e.g. new skill groups).
+Such an entry may also have `variant4e` (the same fields, for the 4e variant): the document is then created with both
+editions, and both are compared and updated (used for trappings made for 5e careers that 4e gets too, HG-40).
 
 Idempotent: variants that are already imported unchanged are skipped.
 Already imported variants that differ from the data file are replaced only with --update.
@@ -139,7 +141,7 @@ def item_variant(entry):
             return [lower_keys(v) for v in value]
         return value
 
-    return lower_keys({k: v for k, v in entry.items() if k not in ("id4e", "descriptionFrom")})
+    return lower_keys({k: v for k, v in entry.items() if k not in ("id4e", "descriptionFrom", "variant4e")})
 
 
 def career_variant_builder(db):
@@ -211,20 +213,22 @@ DATA_FILES = {
 def plan(coll, to_variant, entries):
     """Returns (attach, create, update, skipped, errors, owner) without writing anything.
 
-    `update` lists already imported 5e variants that differ from the data file, as (document id, variant)."""
+    `update` lists already imported variants that differ from the data file, as (document id, editions), editions being
+    the 5e variant and, for an entry with `variant4e`, the 4e one; `create` lists (document id or None, editions)."""
     attach, create, update, skipped, errors = [], [], [], [], []
     owners = set()
 
     for entry in entries:
         variant = to_variant(entry)
         if entry["id4e"] is None and entry.get("id"):
+            editions = {"5e": variant, **({"4e": to_variant(entry["variant4e"])} if "variant4e" in entry else {})}
             doc = coll.find_one({"_id": ObjectId(entry["id"])})
             if doc is None:
-                create.append((ObjectId(entry["id"]), variant))
-            elif doc["visibility"] != VISIBILITY_PUBLIC or set(doc["editions"]) != {"5e"}:
-                errors.append(f"{variant['name']}: document {entry['id']} is not a public 5e-only document")
-            elif doc["editions"]["5e"] != variant:
-                update.append((doc["_id"], variant))
+                create.append((ObjectId(entry["id"]), editions))
+            elif doc["visibility"] != VISIBILITY_PUBLIC or set(doc["editions"]) != set(editions):
+                errors.append(f"{variant['name']}: document {entry['id']} is not a public document with the editions {sorted(editions)}")
+            elif doc["editions"] != editions:
+                update.append((doc["_id"], editions))
             else:
                 skipped.append(variant["name"])
             continue
@@ -233,11 +237,11 @@ def plan(coll, to_variant, entries):
             if len(existing) > 1:
                 errors.append(f"{variant['name']}: {len(existing)} public documents already have this 5e name")
             elif existing and existing[0]["editions"]["5e"] != variant:
-                update.append((existing[0]["_id"], variant))
+                update.append((existing[0]["_id"], {"5e": variant}))
             elif existing:
                 skipped.append(variant["name"])
             else:
-                create.append((None, variant))
+                create.append((None, {"5e": variant}))
             continue
 
         doc = coll.find_one({"_id": ObjectId(entry["id4e"])})
@@ -253,7 +257,7 @@ def plan(coll, to_variant, entries):
             if current == variant:
                 skipped.append(variant["name"])
             elif current is not None:
-                update.append((doc["_id"], variant))
+                update.append((doc["_id"], {"5e": variant}))
             else:
                 attach.append((doc["_id"], doc["editions"]["4e"]["name"], variant))
 
@@ -266,12 +270,12 @@ def plan(coll, to_variant, entries):
 def apply(coll, attach, create, update, owner):
     for doc_id, _, variant in attach:
         coll.update_one({"_id": doc_id}, {"$set": {"editions.5e": variant}})
-    for doc_id, variant in update:
-        coll.update_one({"_id": doc_id}, {"$set": {"editions.5e": variant}})
+    for doc_id, editions in update:
+        coll.update_one({"_id": doc_id}, {"$set": {f"editions.{e}": v for e, v in editions.items()}})
     if create:
         coll.insert_many([
-            {**({"_id": doc_id} if doc_id else {}), "ownerid": owner, "visibility": VISIBILITY_PUBLIC, "editions": {"5e": v}}
-            for doc_id, v in create
+            {**({"_id": doc_id} if doc_id else {}), "ownerid": owner, "visibility": VISIBILITY_PUBLIC, "editions": editions}
+            for doc_id, editions in create
         ])
 
 
@@ -320,12 +324,12 @@ def main():
     for doc_id, name4e, variant in attach:
         rename = "" if name4e == variant["name"] else f" (4e: {name4e})"
         print(f"  - {variant['name']}{rename} [{doc_id}]")
-    print(f"\nCreate 5e-only document: {len(create)}")
-    for _, variant in create:
-        print(f"  - {variant['name']}")
+    print(f"\nCreate document: {len(create)}")
+    for _, editions in create:
+        print(f"  - {editions['5e']['name']}" + (" (with a 4e variant)" if "4e" in editions else ""))
     print(f"\nAlready imported but different, replace with --update: {len(update)}")
-    for doc_id, variant in update:
-        print(f"  - {variant['name']} [{doc_id}]")
+    for doc_id, editions in update:
+        print(f"  - {editions['5e']['name']} [{doc_id}]")
     print(f"\nAlready imported, skipped: {len(skipped)}")
 
     if update and not args.update:

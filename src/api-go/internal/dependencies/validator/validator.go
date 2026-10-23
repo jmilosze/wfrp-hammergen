@@ -56,5 +56,8 @@ func configure(v *v.Validate) error {
 	if err := v.RegisterValidation("spell_classification_valid", warhammer.SpellClassificationValidator); err != nil {
 		return fmt.Errorf("failed to register spell_classification_valid validator: %w", err)
 	}
+	if err := v.RegisterValidation("dice_valid", warhammer.DiceValidator); err != nil {
+		return fmt.Errorf("failed to register dice_valid validator: %w", err)
+	}
 	return nil
 }

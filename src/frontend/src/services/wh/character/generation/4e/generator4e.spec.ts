@@ -11,6 +11,7 @@ describe("generateCharacter4e", () => {
     career: testCareer(),
     skills: testSkills4e,
     talents: testTalents4e,
+    items: [],
     generationProps: genProps4e,
   };
 

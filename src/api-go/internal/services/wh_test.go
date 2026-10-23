@@ -631,3 +631,60 @@ func TestCreateValidatesCharacterTrappingValues(t *testing.T) {
 		})
 	}
 }
+
+func TestCreateCareerValidatesTrappings(t *testing.T) {
+	s := newTestWhService(t, &fakeWhDb{})
+	bow := mock_data.NewMockItems()[0].Id
+	arrow := mock_data.NewMockItems()[1].Id
+	one := func(number string) []wh.CareerTrapping { return []wh.CareerTrapping{{Id: bow, Number: number}} }
+	entry := func(options ...[]wh.CareerTrapping) wh.CareerTrappingEntry {
+		return wh.CareerTrappingEntry{Options: options}
+	}
+	many := func(n int) []wh.CareerTrappingEntry {
+		entries := make([]wh.CareerTrappingEntry, n)
+		for i := range entries {
+			entries[i] = entry(one("1"))
+		}
+		return entries
+	}
+
+	for name, tc := range map[string]struct {
+		trappings []wh.CareerTrappingEntry
+		money     []wh.CareerMoney
+		wantErr   bool
+	}{
+		"none":                      {nil, nil, false},
+		"single trapping":           {[]wh.CareerTrappingEntry{entry(one("1"))}, nil, false},
+		"bundle":                    {[]wh.CareerTrappingEntry{entry([]wh.CareerTrapping{{Id: bow, Number: "1"}, {Id: arrow, Number: "10"}})}, nil, false},
+		"choice":                    {[]wh.CareerTrappingEntry{entry(one("1"), one("2"))}, nil, false},
+		"dice":                      {[]wh.CareerTrappingEntry{entry(one("1d10"))}, nil, false},
+		"dice with modifier":        {[]wh.CareerTrappingEntry{entry(one("2d6+3")), entry(one("1d10-1"))}, nil, false},
+		"value":                     {[]wh.CareerTrappingEntry{entry([]wh.CareerTrapping{{Id: bow, Number: "1", Value: strings.Repeat("a", 40)}})}, nil, false},
+		"money":                     {nil, []wh.CareerMoney{{Coin: wh.CareerCoinGold, Number: "20"}, {Coin: wh.CareerCoinBrass, Number: "3d10"}}, false},
+		"100 entries":               {many(100), nil, false},
+		"101 entries":               {many(101), nil, true},
+		"no options":                {[]wh.CareerTrappingEntry{entry()}, nil, true},
+		"empty option":              {[]wh.CareerTrappingEntry{entry([]wh.CareerTrapping{})}, nil, true},
+		"number 0":                  {[]wh.CareerTrappingEntry{entry(one("0"))}, nil, true},
+		"empty number":              {[]wh.CareerTrappingEntry{entry(one(""))}, nil, true},
+		"dice without count":        {[]wh.CareerTrappingEntry{entry(one("d10"))}, nil, true},
+		"number with modifier":      {[]wh.CareerTrappingEntry{entry(one("10+2"))}, nil, true},
+		"invalid id":                {[]wh.CareerTrappingEntry{entry([]wh.CareerTrapping{{Id: "bad", Number: "1"}})}, nil, true},
+		"value too long":            {[]wh.CareerTrappingEntry{entry([]wh.CareerTrapping{{Id: bow, Number: "1", Value: strings.Repeat("a", 41)}})}, nil, true},
+		"unknown coin":              {nil, []wh.CareerMoney{{Coin: "copper", Number: "1"}}, true},
+		"money with invalid number": {nil, []wh.CareerMoney{{Coin: wh.CareerCoinSilver, Number: "1x"}}, true},
+	} {
+		t.Run(name, func(t *testing.T) {
+			career := newMockCareer("")
+			career.Level2.Trappings = tc.trappings
+			career.Level2.Money = tc.money
+			_, err := s.Create(context.Background(), wh.WhTypeCareer, &wh.Wh{Editions: map[wh.Edition]wh.WhObject{wh.Edition5e: career}}, &auth.Claims{Id: "user1"})
+			if tc.wantErr && !errors.Is(err, domain.ErrInvalidArguments) {
+				t.Errorf("expected validation error, got %v", err)
+			}
+			if !tc.wantErr && err != nil {
+				t.Errorf("expected no error, got %v", err)
+			}
+		})
+	}
+}
