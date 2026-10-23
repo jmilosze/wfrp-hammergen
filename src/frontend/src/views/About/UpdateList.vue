@@ -8,6 +8,39 @@ import UpdateEntry from "./UpdateEntry.vue";
   <PageHeader title="Updates" />
   <section>
     <h2 class="mt-6 mb-2 text-2xl font-semibold">2026</h2>
+    <UpdateEntry date="23 Oct 2026" title="Career trappings">
+      <p>5th Edition careers now come with their trappings, and generated characters get them.</p>
+      <ul class="ml-5 list-disc space-y-1.5">
+        <li>
+          <b>Careers</b> no longer describe their trappings in a block of text: every level now lists its trappings and
+          money one by one, each a link to the trapping's page, and choices such as "Bow with 10 Arrows or Pistol with
+          10 Shots" are spelled out as options.
+        </li>
+        <li>
+          <b>Generated characters</b> get the trappings and money of every career level up to the one you chose: choices
+          are made for you, quantities are rolled and money is added to your coins. Things you can't carry, such as a
+          workshop or a servant, go under Stored/Assets, and next-level trappings count towards the Career Advancement
+          Tracker.
+        </li>
+        <li>
+          <b>New trappings</b> for what careers give:
+          <TextLink routeName="item" :params="{ id: '6ada53182819377735c8e78a' }" sameWindow>Retainer</TextLink> (a
+          servant or apprentice),
+          <TextLink routeName="item" :params="{ id: '6ada53182819377735c8e785' }" sameWindow>Command</TextLink> (a gang
+          or a unit you lead),
+          <TextLink routeName="item" :params="{ id: '6ada53182819377735c8e787' }" sameWindow>Holding</TextLink> (a house
+          or a library),
+          <TextLink routeName="item" :params="{ id: '6ada53182819377735c8e78c' }" sameWindow>Workshop</TextLink>, and
+          Fine versions of weapons and clothing. They are in both editions.
+        </li>
+        <li>
+          <b>Your own careers</b> can list trappings the same way; the question mark next to a level's Trappings
+          explains how. Trappings written as text stay, but the generator can't use them, so add them as entries if you
+          want generated characters to get them.
+        </li>
+      </ul>
+      <p>4th Edition careers keep their trappings as text for now; they will get trappings the same way later on.</p>
+    </UpdateEntry>
     <UpdateEntry date="21 Oct 2026">
       <p>
         Character trappings can now have a note of up to 40 characters, for example a Hand Weapon noted as "Axe" or a

@@ -57,7 +57,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Apprentice Artist | Brush or Chisel or Writing Kit                        | Paint Brush / Chisel / Writing Kit                                                                              |
 | 2 Artist            | Sling Bag containing Trade Tools (Artist)             | Sling Bag, **Trade Tools** (new) ("Artist")                                                                     |
 | 3 Master Artist     | Apprentice, Patron, Workshop (Artist)                 | **Retainer** (new) ("Apprentice"); **Contact** (new) ("Patron"); **Workshop** (new) ("Artist")                  |
-| 4 Maestro           | 3 Apprentices, Large Workshop (Artist), Library (Art) | 3 × **Retainer** (new) ("Apprentice"); **Large Workshop** (new) ("Artist"); **Holding** (new) ("Library (Art)") |
+| 4 Maestro           | 3 Apprentices, Large Workshop (Artist), Library (Art) | 3 × **Retainer** (new) ("Apprentice"); **Large Workshop** (new) ("Artist"); **Holding** (new) ("Library - Art") |
 
 ## Bailiff
 
@@ -68,7 +68,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Tax Collector | Hand Weapon, Small Lock Box                  | Hand Weapon; **Lock Box** (new)                                            |
 | 2 Bailiff       | Leather Jack, 3 Tax Collectors               | Leather Jack; 3 × **Retainer** (new) ("Tax Collector")                                           |
 | 3 Reeve         | Bailiff, Breastplate, Riding Horse           | **Retainer** (new) ("Bailiff"); Breastplate; Riding Horse                                        |
-| 4 Magistrate    | Library (Law), Quality Robes, Seal of Office | **Holding** (new) ("Library (Law)"); **Robes (Fine)** (new); Stamp - Engraved ("Seal of Office") |
+| 4 Magistrate    | Library (Law), Quality Robes, Seal of Office | **Holding** (new) ("Library - Law"); **Robes (Fine)** (new); Stamp - Engraved ("Seal of Office") |
 
 ## Beggar
 
@@ -156,7 +156,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Student Engineer   | Book (Engineer), Hammer and Spikes                                               | Book - Engineer; Hammer, 1d6 × Spike                                                                                               |
 | 2 Engineer           | Guild Licence, Trade Tools (Engineer)                                            | Guild Licence ("Engineer"); **Trade Tools** (new) ("Engineer")                                                                     |
 | 3 Master Engineer    | Workshop (Engineer)                                                              | **Workshop** (new) ("Engineer")                                                                                                    |
-| 4 Chartered Engineer | Library (Engineering), Quality Trade Tools (Engineer), Large Workshop (Engineer) | **Holding** (new) ("Library (Engineering)"); **Trade Tools (Practical)** (new) ("Engineer"); **Large Workshop** (new) ("Engineer") |
+| 4 Chartered Engineer | Library (Engineering), Quality Trade Tools (Engineer), Large Workshop (Engineer) | **Holding** (new) ("Library - Engineering"); **Trade Tools (Practical)** (new) ("Engineer"); **Large Workshop** (new) ("Engineer") |
 
 ## Entertainer
 
@@ -294,12 +294,12 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 
 - [x] reviewed
 
-| Level            | Book text                               | Proposed                                                                            |
-| ---------------- | --------------------------------------- | ----------------------------------------------------------------------------------- |
-| 1 Student Lawyer | Book (Law), Magnifying Glass            | Book - Law; Reading Lens ("Magnifying Glass")                                       |
-| 2 Lawyer         | Court Robes, Guild Licence, Writing Kit | Robes ("Court Robes"); Guild Licence; Writing Kit                                   |
-| 3 Barrister      | Assistant (Student or Servant), Office  | **Retainer** (new) ("Assistant (Student or Servant)"); **Holding** (new) ("Office") |
-| 4 Judge          | Gavel, Ostentatious Wig                 | Gavel; **Wig** (new)                                                                |
+| Level            | Book text                               | Proposed                                                                                      |
+| ---------------- | --------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 1 Student Lawyer | Book (Law), Magnifying Glass            | Book - Law; Reading Lens ("Magnifying Glass")                                                 |
+| 2 Lawyer         | Court Robes, Guild Licence, Writing Kit | Robes ("Court Robes"); Guild Licence; Writing Kit                                             |
+| 3 Barrister      | Assistant (Student or Servant), Office  | **Retainer** (new) ("Student") / **Retainer** (new) ("Servant"); **Holding** (new) ("Office") |
+| 4 Judge          | Gavel, Ostentatious Wig                 | Gavel; **Wig** (new)                                                                          |
 
 ## Merchant
 
@@ -364,7 +364,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | ------------------ | -------------------------------- | --------------------------------------------------------------------- |
 | 1 Novice           | Religious Symbol, Robes          | Religious Symbol; Robes                                               |
 | 2 Nun              | Book (Religion), Religious Relic | Book - Religion; **Religious Relic** (new)                            |
-| 3 Abbess           | Abbey, Library (Theology)        | **Command** (new) ("Abbey"); **Holding** (new) ("Library (Theology)") |
+| 3 Abbess           | Abbey, Library (Theology)        | **Command** (new) ("Abbey"); **Holding** (new) ("Library - Theology") |
 | 4 Prioress General | Religious Order                  | **Command** (new) ("Religious Order")                                 |
 
 ## Outlaw
@@ -431,7 +431,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Initiate    | Religious Symbol, Robes                                     | Religious Symbol; Robes                                                                                                    |
 | 2 Priest      | Book (Religion), Ceremonial Robes                           | Book - Religion; Robes ("Ceremonial Robes")                                                                                |
 | 3 High Priest | Quality Robes, Religious Relic, Subordinate Priests, Temple | **Robes (Fine)** (new); **Religious Relic** (new); **Command** (new) ("Subordinate Priests"); **Command** (new) ("Temple") |
-| 4 Lector      | Library (Theology), Subordinate High Priests                | **Holding** (new) ("Library (Theology)"); **Command** (new) ("Subordinate High Priests")                                   |
+| 4 Lector      | Library (Theology), Subordinate High Priests                | **Holding** (new) ("Library - Theology"); **Command** (new) ("Subordinate High Priests")                                   |
 
 ## Protagonist
 
@@ -673,7 +673,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Dabbler   | Notes Stuffed in Locked Drawer, Writing Kit              | Parchment ("Notes Stuffed in Locked Drawer"); Writing Kit                                               |
 | 2 Witch     | Grimoire, Hand Weapon or Quarterstaff                    | **Grimoire** (new); Hand Weapon / Quarterstaff                                                          |
 | 3 Enchanter | Assistant, Enchanted Staff, Tomes of Forbidden Knowledge | **Retainer** (new) ("Assistant"); Enchanted Staff; Book - Magic ("Tomes of Forbidden Knowledge")        |
-| 4 Warlock   | Minions, Library (Magic), Remote Lair                    | **Command** (new) ("Minions"); **Holding** (new) ("Library (Magic)"); **Holding** (new) ("Remote Lair") |
+| 4 Warlock   | Minions, Library (Magic), Remote Lair                    | **Command** (new) ("Minions"); **Holding** (new) ("Library - Magic"); **Holding** (new) ("Remote Lair") |
 
 ## Witch Hunter
 
@@ -695,7 +695,7 @@ Tick a career when its mapping is reviewed. Corrections go into the alias table 
 | 1 Wizard’s Apprentice | Grimoire, Quarterstaff                   | **Grimoire** (new); Quarterstaff                                                               |
 | 2 Wizard              | Enchanted Staff, Magic Licence, Robes    | Enchanted Staff; **Magic Licence** (new); Robes                                                |
 | 3 Master Wizard       | Apprentice, Light Warhorse, Magical Item | **Retainer** (new) ("Apprentice"); Light Warhorse; **Magic Item** (new) ("chosen with the GM") |
-| 4 Wizard Lord         | Library (Magic), Workshop (Magic)        | **Holding** (new) ("Library (Magic)"); **Workshop** (new) ("Magic")                            |
+| 4 Wizard Lord         | Library (Magic), Workshop (Magic)        | **Holding** (new) ("Library - Magic"); **Workshop** (new) ("Magic")                            |
 
 ## Wrecker
 

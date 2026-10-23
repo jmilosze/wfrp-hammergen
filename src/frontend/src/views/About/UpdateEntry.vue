@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // One dated entry on the Updates timeline. The date sits left of the line on wider screens and above the card on
-// narrow ones.
-defineProps<{ date: string }>();
+// narrow ones. An optional title heads the card.
+defineProps<{ date: string; title?: string }>();
 </script>
 
 <template>
@@ -16,6 +16,7 @@ defineProps<{ date: string }>();
     <div class="pb-5">
       <div class="md:hidden pt-3 pb-1 text-sm font-semibold text-neutral-600">{{ date }}</div>
       <div class="rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-3 space-y-2">
+        <h3 v-if="title" class="text-lg font-semibold text-neutral-900">{{ title }}</h3>
         <slot />
       </div>
     </div>
