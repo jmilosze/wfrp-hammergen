@@ -16,10 +16,10 @@ export function generateClassItems(
   rollDiceFn: RollDiceFn = rollDice,
   selectRandomFn: SelectRandomFn = selectRandom,
 ): IdNumberValue[] {
-  if (generationProps.classItems.length === 0 || !(career.careerClass in generationProps.classItems)) {
+  const classItems = generationProps.classItems[career.careerClass];
+  if (classItems === undefined) {
     return [];
   }
-  const classItems = generationProps.classItems[career.careerClass];
   const items = [...Object.entries(classItems.equipped), ...Object.entries(classItems.carried)].map(
     ([itemIds, itemNumber]) => ({
       id: selectIdFromCandidates(itemIds, selectRandomFn),

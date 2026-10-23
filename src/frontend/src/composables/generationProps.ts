@@ -41,14 +41,14 @@ function useLoadedGenerationProps<T>(initial: T, load: () => Promise<T>) {
 
 export function useGenerationProps(axiosInstance: AxiosInstance) {
   return useLoadedGenerationProps<GenerationProps>(
-    { classItems: [], randomTalents: [], speciesTalents: {}, speciesSkills: {} },
+    { classItems: {}, randomTalents: [], speciesTalents: {}, speciesSkills: {} },
     () => getGenerationProps(axiosInstance),
   );
 }
 
 export function useGenerationProps5e(axiosInstance: AxiosInstance) {
   return useLoadedGenerationProps<GenerationProps5e>(
-    { classItems: [], randomTalents: [], speciesTalents: {}, speciesSkills: {}, speciesLanguages: {} },
+    { classItems: {}, randomTalents: [], speciesTalents: {}, speciesSkills: {}, speciesLanguages: {} },
     () => getGenerationProps5e(axiosInstance),
   );
 }

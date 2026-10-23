@@ -14,12 +14,16 @@ import SpinnerAnimation from "@/components/ui/SpinnerAnimation.vue";
 import FilterSections from "@/components/filter/FilterSections.vue";
 import { IdFilter, untickUnoffered } from "@/components/filter/contentFilter.ts";
 import { FilterSection } from "@/components/filter/filterSection.ts";
+import { filterMark, Marks, markList, printMark } from "@/services/wh/character/marks.ts";
 
 // The content of a picker popup, in the style of the character sheet: a search row, then the items as a checklist, each
 // row a checkbox with the name and description. The items picked when the popup opened (it is created afresh on each
 // opening) are listed first under "Selected", the rest under "Available"; ticking a row doesn't move it, so rows don't
-// jump. A repeatable item's row has Add at its end and is not ticked by clicking it. With a filter or 4e content, a
-// Filters button opens a panel of the content type's filters (as on its list page) and the edition under the search row.
+// jump. A repeatable item's row has Add at its end and is not ticked by clicking it. With a filter, 4e content or marks, a
+// Filters button opens a panel of the content type's filters (as on its list page), the edition and the marks under the
+// search row. The marks (what the character's career, species or class give) are shown in the rows' notes by the caller;
+// their filter section also offers Selected (the "Selected" band), so the character's items and e.g. its career's show
+// together.
 const props = defineProps<{
   items: ChecklistItem[];
   // The items' page: names link to it and Create new and Reload are offered. Without it (e.g. sources) names are text.
@@ -32,6 +36,8 @@ const props = defineProps<{
   numberStep?: number;
   // The content type's filters over the items' entries (looked up by linkId, else id).
   filter?: IdFilter;
+  // What the character's career, species or class give, by item (looked up by linkId, else id).
+  marks?: Marks;
 }>();
 
 const emit = defineEmits<{
@@ -59,19 +65,51 @@ const EDITION_SECTION: FilterSection = {
     { text: "4e", value: "4e" },
   ],
 };
+// The marks section offers Selected and the marks some item has (Species for Species (Random) too), after the edition.
+const SELECTED_OPTION = "selected";
+const marksSection = computed((): FilterSection[] => {
+  const marks = props.marks;
+  if (marks === undefined) {
+    return [];
+  }
+  const present = new Set(props.items.flatMap((x) => [...(marks.get(x.linkId ?? x.id) ?? [])].map(filterMark)));
+  const shown = markList.filter((mark) => present.has(mark));
+  return [
+    {
+      key: "marks",
+      title: "Character",
+      options: [
+        { text: "Selected", value: SELECTED_OPTION },
+        ...shown.map((mark) => ({ text: printMark(mark), value: mark })),
+      ],
+    },
+  ];
+});
 const filterSections = computed(() => [
   ...(props.fourEIds ? [EDITION_SECTION] : []),
+  ...marksSection.value,
   ...(props.filter?.sections(ticked.value) ?? []),
 ]);
 untickUnoffered(ticked, filterSections);
 
 const tickedCount = computed(() => Object.values(ticked.value).reduce((sum, values) => sum + values.length, 0));
 
+function matchesMarks(item: ChecklistItem): boolean {
+  const values = ticked.value.marks ?? [];
+  const itemMarks = props.marks?.get(item.linkId ?? item.id);
+  return (
+    values.length === 0 ||
+    (values.includes(SELECTED_OPTION) && pinned.has(item.id)) ||
+    (itemMarks !== undefined && [...itemMarks].some((mark) => values.includes(filterMark(mark))))
+  );
+}
+
 const shownItems = computed(() => {
   const query = searchTermDebounced.value.toLowerCase();
   return props.items.filter(
     (x) =>
       matchesEditions(x.linkId ?? x.id, props.fourEIds, ticked.value.edition ?? []) &&
+      matchesMarks(x) &&
       (props.filter === undefined || props.filter.matches(x.linkId ?? x.id, ticked.value)) &&
       [x.name, x.description, x.note ?? ""].some((text) => text.toLowerCase().includes(query)),
   );

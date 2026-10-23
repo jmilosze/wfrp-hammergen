@@ -11,6 +11,9 @@ import { ValidationStatus } from "@/utils/validation.ts";
 import { truncate } from "@/utils/string.ts";
 import TextLink from "@/components/ui/TextLink.vue";
 import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
+import MarksHelp from "./MarksHelp.vue";
+import { Edition } from "@/services/wh/core/edition.ts";
+import { Marks, printMarks } from "@/services/wh/character/marks.ts";
 
 const DESC_CHARS = 100;
 
@@ -24,6 +27,10 @@ const props = defineProps<{
   validationStatus: ValidationStatus;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
+  // What the character's career, species or class give, marked in the popup.
+  marks: Marks;
+  // The character's edition, for the popup's help on the marks.
+  edition: Edition;
 }>();
 
 const emit = defineEmits<{
@@ -73,7 +80,8 @@ const modalItems = computed(() =>
       },
       get note() {
         const maxRank = x.getMaxRank(props.attributes);
-        return `Max rank ${maxRank}` + (maxRankFormula.includes("Bonus") ? ` (${maxRankFormula})` : "");
+        const maxRankNote = `Max rank ${maxRank}` + (maxRankFormula.includes("Bonus") ? ` (${maxRankFormula})` : "");
+        return [maxRankNote, ...printMarks(props.marks, x.id)].join(" · ");
       },
     };
   }),
@@ -124,12 +132,15 @@ const modalItems = computed(() =>
       {{ validationStatus.message }}
     </div>
     <ModalWindow v-model:open="modalOpen" fullHeight>
-      <template #header> Edit talents </template>
+      <template #header>
+        <span class="flex items-center gap-2">Edit talents <MarksHelp kind="talents" :edition="edition" /></span>
+      </template>
       <ChecklistPicker
         :items="modalItems"
         routeName="talent"
         :loading="props.loading"
         :fourEIds="fourEIds"
+        :marks="marks"
         numberLabel="Rank"
         @setNumber="(e) => emit('updated', e)"
         @reload="emit('reload')"

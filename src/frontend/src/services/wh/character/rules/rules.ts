@@ -11,6 +11,8 @@ export interface CharacterRules {
   getSize(mods: number): number;
   getWounds(size: number, T: number, WP: number, S: number, hardyRanks: number): number;
   getMaxEncumbrance(S: number, T: number, strongBackRanks: number, sturdyRanks: number): number;
+  // Whether the talents of the current career's lower levels can be bought (4e: only the current level's, p. 48).
+  careerTalentsFromLowerLevels: boolean;
 }
 
 export function rulesFor(edition: Edition): CharacterRules {

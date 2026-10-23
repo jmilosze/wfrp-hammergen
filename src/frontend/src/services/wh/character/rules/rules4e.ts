@@ -99,4 +99,5 @@ export const rules4e: CharacterRules = {
   getSize: getSize4e,
   getWounds: getWounds4e,
   getMaxEncumbrance: getMaxEncumbrance4e,
+  careerTalentsFromLowerLevels: false,
 };

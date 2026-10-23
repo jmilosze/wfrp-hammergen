@@ -92,4 +92,12 @@ describe("CharacterCareer", () => {
     const apprentice = await openRow(wrapper, "Apothecary", "Apprentice");
     expect(apprentice.current?.attributes("disabled")).toBeDefined();
   });
+
+  test("asks to tick the earlier levels of the current career when none is a past career", () => {
+    const hint = "Tick the earlier levels of Witch";
+
+    expect(mountCareer({ id: "w", number: 2 }, [{ id: "a", number: 1 }]).text()).toContain(hint);
+    expect(mountCareer({ id: "w", number: 2 }, [{ id: "w", number: 1 }]).text()).not.toContain(hint);
+    expect(mountCareer({ id: "w", number: 1 }, []).text()).not.toContain(hint);
+  });
 });

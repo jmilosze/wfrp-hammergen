@@ -11,6 +11,9 @@ import { ValidationStatus } from "@/utils/validation.ts";
 import { truncate } from "@/utils/string.ts";
 import TextLink from "@/components/ui/TextLink.vue";
 import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
+import MarksHelp from "./MarksHelp.vue";
+import { Edition } from "@/services/wh/core/edition.ts";
+import { Marks, printMarks } from "@/services/wh/character/marks.ts";
 import { idFilter } from "@/components/filter/contentFilter.ts";
 import { skillFilters } from "@/components/filter/skillFilters.ts";
 
@@ -27,6 +30,10 @@ const props = defineProps<{
   step?: number;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
+  // What the character's career, species or class give, marked in the popup.
+  marks: Marks;
+  // The character's edition, for the popup's help on the marks.
+  edition: Edition;
 }>();
 
 const emit = defineEmits<{
@@ -74,7 +81,7 @@ const modalItems = computed(() =>
     id: x.id,
     name: x.name,
     description: truncate(x.description, DESC_CHARS),
-    note: `${printSkillType(x.type)} · ${printAttributeName(x.attribute)}`,
+    note: [printSkillType(x.type), printAttributeName(x.attribute), ...printMarks(props.marks, x.id)].join(" · "),
     get selected() {
       return advancesOf(x.id) !== 0;
     },
@@ -134,13 +141,16 @@ const modalItems = computed(() =>
       {{ validationStatus.message }}
     </div>
     <ModalWindow v-model:open="modalOpen" fullHeight>
-      <template #header> Edit skills </template>
+      <template #header>
+        <span class="flex items-center gap-2">Edit skills <MarksHelp kind="skills" :edition="edition" /></span>
+      </template>
       <ChecklistPicker
         :items="modalItems"
         routeName="skill"
         :loading="props.loading"
         :fourEIds="fourEIds"
         :filter="filter"
+        :marks="marks"
         numberLabel="Adv"
         :numberStep="step"
         @setNumber="(e) => emit('updated', e)"

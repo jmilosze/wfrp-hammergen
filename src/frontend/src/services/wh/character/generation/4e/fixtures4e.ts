@@ -11,7 +11,7 @@ export const testTalents4e = ["t1a", "t1b", "t2a", "t2b", "t3a", "t3b", "t4a", "
 );
 
 export const genProps4e: GenerationProps = {
-  classItems: [{ equipped: { clothing: "1", "hood,mask": "1" }, carried: { match: "1d10" } }],
+  classItems: { 0: { equipped: { clothing: "1", "hood,mask": "1" }, carried: { match: "1d10" } } },
   randomTalents: [
     { id: "rand1", minRoll: 1, maxRoll: 50 },
     { id: "rand2", minRoll: 50, maxRoll: 101 },

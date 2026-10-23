@@ -72,6 +72,17 @@ const filter = computed(() => idFilter({ species: careerFilters.species }, props
 const selectedCurrentCareer = computed(() => levelRows.value.find((x) => isCurrent(x)));
 const selectedPastCareers = computed(() => levelRows.value.filter((x) => isPast(x)));
 
+// The pickers mark the skills and talents of the current career's lower levels only when they are past careers, so a
+// character above level 1 with none of them there is told to tick them.
+const noEarlierLevels = computed(() => {
+  const current = selectedCurrentCareer.value;
+  return (
+    current !== undefined &&
+    current.level > 1 &&
+    !props.pastCareers.some((x) => x.id === current.careerId && x.number < current.level)
+  );
+});
+
 const modalOpen = ref(false);
 
 function onEditClick() {
@@ -130,6 +141,10 @@ function onChoose(id: string, key: string) {
               {{ selectedCurrentCareer.name }} {{ selectedCurrentCareer.level }}
             </TextLink>
             <Edition4eBadge v-if="fourEIds?.has(selectedCurrentCareer.careerId)" />
+            <div v-if="!disabled && noEarlierLevels" class="text-sm text-neutral-600">
+              Tick the earlier levels of {{ selectedCurrentCareer.name }} you went through as past careers, so the
+              skills and talents pickers mark their skills and talents.
+            </div>
           </div>
         </SheetCell>
         <SheetCell title="Past" :editable="!disabled">

@@ -7,6 +7,7 @@ import ChecklistRow from "./ChecklistRow.vue";
 import SheetTitle from "@/components/sheet/SheetTitle.vue";
 import { componentStubs, findButton } from "@/testing.ts";
 import { IdFilter } from "@/components/filter/contentFilter.ts";
+import { Mark } from "@/services/wh/character/marks.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 
@@ -133,6 +134,67 @@ describe("ChecklistPicker", () => {
     expect(findButton(wrapper, "Filters (1)").attributes("aria-expanded")).toBe("true");
 
     await findButton(wrapper, "Clear").trigger("click");
+    expect(rowNames(wrapper)).toEqual(["Alpha", "Beta"]);
+  });
+
+  test("filters by the marks the rows have", async () => {
+    const wrapper = mountPicker({
+      items: [item("a", "Alpha"), item("b", "Beta"), item("c", "Gamma")],
+      marks: new Map([
+        ["a", new Set(["career", "species"] as const)],
+        ["b", new Set(["species"] as const)],
+      ]),
+    });
+
+    await findButton(wrapper, "Filters").trigger("click");
+    // Only the marks some row has are offered.
+    expect(wrapper.findAll("label").map((x) => x.text())).not.toContain("Class");
+    await wrapper
+      .findAll("label")
+      .filter((x) => x.text() === "Career")[0]
+      .find("input")
+      .setValue(true);
+
+    expect(rowNames(wrapper)).toEqual(["Alpha"]);
+  });
+
+  test("filters Species (Random) rows by Species", async () => {
+    const wrapper = mountPicker({
+      items: [item("a", "Alpha"), item("b", "Beta"), item("c", "Gamma")],
+      marks: new Map<string, Set<Mark>>([
+        ["a", new Set(["species"])],
+        ["b", new Set(["randomSpecies"])],
+      ]),
+    });
+
+    await findButton(wrapper, "Filters").trigger("click");
+    const labels = wrapper.findAll("label").map((x) => x.text());
+    expect(labels).toContain("Species");
+    expect(labels).not.toContain("Species (Random)");
+    await wrapper
+      .findAll("label")
+      .filter((x) => x.text() === "Species")[0]
+      .find("input")
+      .setValue(true);
+
+    expect(rowNames(wrapper)).toEqual(["Alpha", "Beta"]);
+  });
+
+  test("filters by Selected with the marks, so selected and marked rows show together", async () => {
+    const wrapper = mountPicker({
+      items: [item("a", "Alpha", { selected: true }), item("b", "Beta"), item("c", "Gamma")],
+      marks: new Map<string, Set<Mark>>([["b", new Set(["career"])]]),
+    });
+
+    await findButton(wrapper, "Filters").trigger("click");
+    for (const option of ["Selected", "Career"]) {
+      await wrapper
+        .findAll("label")
+        .filter((x) => x.text() === option)[0]
+        .find("input")
+        .setValue(true);
+    }
+
     expect(rowNames(wrapper)).toEqual(["Alpha", "Beta"]);
   });
 });

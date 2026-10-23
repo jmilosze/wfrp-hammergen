@@ -35,6 +35,8 @@ function mountItems(equipped: Entry[], carried: Entry[], stored: Entry[], disabl
       equippedValidationStatus: valid,
       carriedValidationStatus: valid,
       storedValidationStatus: valid,
+      marks: new Map(),
+      edition: "5e",
     },
     global: { stubs: componentStubs },
     attachTo: document.body,

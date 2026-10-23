@@ -48,6 +48,13 @@ import SheetTable from "@/components/sheet/SheetTable.vue";
 import SheetCell from "@/components/sheet/SheetCell.vue";
 import EditionBadge from "@/components/edition/EditionBadge.vue";
 import { useGenerationProps } from "@/composables/generationProps.ts";
+import {
+  careerAttributes,
+  findCurrentCareer,
+  itemMarks,
+  skillMarks,
+  talentMarks,
+} from "@/services/wh/character/marks.ts";
 import CharacterSkills from "@/components/character/edit/CharacterSkills.vue";
 import CharacterTalents from "@/components/character/edit/CharacterTalents.vue";
 import CharacterItems from "@/components/character/edit/CharacterItems.vue";
@@ -77,6 +84,29 @@ const { wh, canEdit, submitForm, deleteItem, hasChanged, submissionState, resetF
 const content = useCharacterContent(wh, EDITION);
 const generationPropsUtils = useGenerationProps(authRequest);
 generationPropsUtils.loadGenerationProps();
+
+// What the current career, species and class give, marked in the skills, talents and trappings pickers.
+const currentCareer = computed(() => findCurrentCareer(wh.value, content.careers.own.whList.value));
+const careerAttributesOfCharacter = computed(() => careerAttributes(wh.value, currentCareer.value));
+const skillMarksOfCharacter = computed(() =>
+  skillMarks(
+    wh.value,
+    currentCareer.value,
+    content.skills.own.whList.value,
+    generationPropsUtils.generationProps.value,
+  ),
+);
+const talentMarksOfCharacter = computed(() =>
+  talentMarks(
+    wh.value,
+    currentCareer.value,
+    content.talents.own.whList.value,
+    generationPropsUtils.generationProps.value,
+  ),
+);
+const itemMarksOfCharacter = computed(() =>
+  itemMarks(wh.value, currentCareer.value, generationPropsUtils.generationProps.value),
+);
 
 const referenceDataLoading = computed(() => content.loading.value || generationPropsUtils.loading.value);
 
@@ -378,6 +408,7 @@ const modifierAttributes = computed(() => {
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
     v-model:attributeAdvances="wh.attributeAdvances"
+    :careerAttributes="careerAttributesOfCharacter"
     :otherAttributes="modifierAttributes"
     :speciesAttributes="wh.getRacialAttributes()"
     title="Attributes"
@@ -387,6 +418,8 @@ const modifierAttributes = computed(() => {
   />
   <div class="flex flex-col @2xl:flex-row justify-between text-left gap-4 my-4">
     <CharacterSkills
+      :marks="skillMarksOfCharacter"
+      :edition="EDITION"
       :disabled="!canEdit"
       :skills="wh.skills"
       :skillList="content.skills.own.whList.value"
@@ -401,6 +434,8 @@ const modifierAttributes = computed(() => {
       "
     />
     <CharacterTalents
+      :marks="talentMarksOfCharacter"
+      :edition="EDITION"
       :disabled="!canEdit"
       :talents="wh.talents"
       :talentList="content.talents.own.whList.value"
@@ -430,6 +465,8 @@ const modifierAttributes = computed(() => {
     :disabled="!canEdit"
   />
   <CharacterItems
+    :marks="itemMarksOfCharacter"
+    :edition="EDITION"
     :disabled="!canEdit"
     :equipped="wh.equippedItems"
     :carried="wh.carriedItems"

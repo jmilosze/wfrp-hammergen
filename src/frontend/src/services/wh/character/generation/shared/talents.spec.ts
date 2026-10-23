@@ -509,12 +509,12 @@ describe("resolveAvailableTalents", () => {
 
 describe("populateSpeciesTalents", () => {
   const dummyGenProps: GenerationProps = {
-    classItems: [
-      {
+    classItems: {
+      0: {
         equipped: { item1: "1", item2: "2" },
         carried: { item3: "1d10" },
       },
-    ],
+    },
     randomTalents: [
       { id: "rand1", minRoll: 1, maxRoll: 50 },
       { id: "rand2", minRoll: 50, maxRoll: 101 },

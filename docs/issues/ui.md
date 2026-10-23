@@ -23,6 +23,11 @@ Some trappings have no price (e.g. an asset like a servant). The data already al
 
 ## Ideas
 
+### HG-55 Career and species marks in the character editor's tables
+Frontend · 2026-10-23
+
+The skills, talents and trappings popups show what the current career, species and class give in the rows' notes (`services/wh/character/marks.ts`), and the characteristics table highlights the career characteristics. The editor's own Skills, Talents and Trappings tables (the character's items) don't show these marks yet. Showing them there too (e.g. a short "Career" / "Species" note under the name) would let players see at a glance which of their skills and talents they can still advance at career cost. Left for later when the popup marks were added.
+
 ### HG-41 Faster rendering of long picker lists
 Frontend · 2026-10-16
 

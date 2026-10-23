@@ -13,6 +13,9 @@ import { ValidationStatus } from "@/utils/validation.ts";
 import { truncate } from "@/utils/string.ts";
 import TextLink from "@/components/ui/TextLink.vue";
 import Edition4eBadge from "@/components/edition/Edition4eBadge.vue";
+import MarksHelp from "./MarksHelp.vue";
+import { Edition } from "@/services/wh/core/edition.ts";
+import { Marks, printMarks } from "@/services/wh/character/marks.ts";
 import { idFilter } from "@/components/filter/contentFilter.ts";
 import { itemFilters } from "@/components/filter/itemFilters.ts";
 import { IdNumberValue, MAX_ITEM_VALUE_LENGTH, printItemWithValue } from "@/utils/idNumberValue.ts";
@@ -45,6 +48,10 @@ const props = defineProps<{
   loading?: boolean;
   // Ids of 4e content offered to a 5e character that allows 4e content: badged and filterable.
   fourEIds?: Set<string>;
+  // What the character's career, species or class give, marked in the popup.
+  marks: Marks;
+  // The character's edition, for the popup's help on the marks.
+  edition: Edition;
 }>();
 
 // addItem adds a new row of the trapping, quantity 1 without a note (the popup); updateItem changes one entry of a list, by its index
@@ -136,7 +143,7 @@ const pickerItems = computed(() => {
       id: x.id,
       name: x.name,
       description: x.description,
-      note: x.itemType,
+      note: [x.itemType, ...printMarks(props.marks, x.id)].join(" · "),
       repeatable: true,
       get count() {
         return record.filter((entry) => entry.id === x.id).length;
@@ -327,7 +334,9 @@ const sections = computed(() => [
     />
     <ModalWindow v-model:open="modalOpen" size="lg" fullHeight>
       <template #header>
-        {{ PICKER_TITLES[pickerLocation] }}
+        <span class="flex items-center gap-2">
+          {{ PICKER_TITLES[pickerLocation] }} <MarksHelp kind="trappings" :edition="edition" />
+        </span>
       </template>
       <ChecklistPicker
         :items="pickerItems"
@@ -335,6 +344,7 @@ const sections = computed(() => [
         :loading="props.loading"
         :fourEIds="fourEIds"
         :filter="filter"
+        :marks="marks"
         @add="(id) => emit('addItem', { location: pickerLocation, id: id })"
         @reload="emit('reload')"
       />

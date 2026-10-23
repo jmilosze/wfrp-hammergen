@@ -1,9 +1,11 @@
 // Generation data (species skills/talents, Random Talents, class trappings) served by the API per edition.
 import { RandomTalents } from "./talents.ts";
 import { AxiosInstance } from "axios";
+import { CareerClass } from "@/services/wh/content/career.ts";
 
 export interface GenerationProps {
-  classItems: { equipped: Record<string, string>; carried: Record<string, string> }[];
+  // By career class; not every class has class trappings.
+  classItems: Partial<Record<CareerClass, { equipped: Record<string, string>; carried: Record<string, string> }>>;
   randomTalents: RandomTalents;
   // Not every species has generation data, so lookups may return undefined.
   speciesTalents: Partial<Record<string, string[]>>;

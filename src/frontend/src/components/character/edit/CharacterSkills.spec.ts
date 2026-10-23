@@ -6,6 +6,7 @@ import ChecklistPicker from "@/components/picker/ChecklistPicker.vue";
 import { Skill } from "@/services/wh/content/skill.ts";
 import { AttributeName, Attributes } from "@/services/wh/core/attributes.ts";
 import { componentStubs, findButton } from "@/testing.ts";
+import { Marks } from "@/services/wh/character/marks.ts";
 
 vi.mock("@iconify/vue", () => ({ Icon: { render: () => null } }));
 
@@ -19,9 +20,9 @@ const skillList = [
 
 const attributes: Attributes = { WS: 30, BS: 30, S: 30, T: 30, I: 30, Ag: 40, Dex: 30, Int: 30, WP: 30, Fel: 25 };
 
-function mountSkills(skills: Record<string, number>) {
+function mountSkills(skills: Record<string, number>, marks: Marks = new Map()) {
   return mount(CharacterSkills, {
-    props: { skillList, skills, attributes, validationStatus: { valid: true, message: "" } },
+    props: { skillList, skills, attributes, validationStatus: { valid: true, message: "" }, marks, edition: "5e" },
     global: { stubs: componentStubs },
     attachTo: document.body,
   });
@@ -77,5 +78,18 @@ describe("CharacterSkills", () => {
     ]);
     picker.vm.$emit("setNumber", { id: "charm", number: 3 });
     expect(wrapper.emitted("updated")).toEqual([[{ id: "charm", number: 3 }]]);
+  });
+
+  test("adds the career, species and class marks to the type and characteristic", async () => {
+    const wrapper = mountSkills({}, new Map([["charm", new Set(["species", "career"] as const)]]));
+
+    await findButton(wrapper, "Edit").trigger("click");
+
+    expect(
+      wrapper
+        .findComponent(ChecklistPicker)
+        .props("items")
+        .map((x) => x.note),
+    ).toEqual(["Basic · Fel · Career · Species", "Basic · Ag"]);
   });
 });

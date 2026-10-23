@@ -39,6 +39,13 @@ import FormCheckbox from "@/components/form/FormCheckbox.vue";
 import SheetCell from "@/components/sheet/SheetCell.vue";
 import EditionBadge from "@/components/edition/EditionBadge.vue";
 import { useGenerationProps5e } from "@/composables/generationProps.ts";
+import {
+  careerAttributes,
+  findCurrentCareer,
+  itemMarks,
+  skillMarks,
+  talentMarks,
+} from "@/services/wh/character/marks.ts";
 import { generateCharacter5e } from "@/services/wh/character/generation/5e/generator5e.ts";
 import { populateFateFortune5e } from "@/services/wh/character/generation/5e/fate5e.ts";
 import { populateSpeciesSkills5e } from "@/services/wh/character/generation/5e/skills5e.ts";
@@ -75,6 +82,29 @@ const { wh, canEdit, submitForm, deleteItem, hasChanged, submissionState, resetF
 const content = useCharacterContent(wh, EDITION);
 const generationPropsUtils = useGenerationProps5e(authRequest);
 generationPropsUtils.loadGenerationProps();
+
+// What the current career, species and class give, marked in the skills, talents and trappings pickers.
+const currentCareer = computed(() => findCurrentCareer(wh.value, content.careers.withAllowed.value));
+const careerAttributesOfCharacter = computed(() => careerAttributes(wh.value, currentCareer.value));
+const skillMarksOfCharacter = computed(() =>
+  skillMarks(
+    wh.value,
+    currentCareer.value,
+    content.skills.withAllowed.value,
+    generationPropsUtils.generationProps.value,
+  ),
+);
+const talentMarksOfCharacter = computed(() =>
+  talentMarks(
+    wh.value,
+    currentCareer.value,
+    content.talents.withAllowed.value,
+    generationPropsUtils.generationProps.value,
+  ),
+);
+const itemMarksOfCharacter = computed(() =>
+  itemMarks(wh.value, currentCareer.value, generationPropsUtils.generationProps.value),
+);
 
 // The generator uses 5e content only, whether or not 4e content is allowed.
 const generationDataLoading = computed(
@@ -389,6 +419,7 @@ const modifierAttributes = computed(() => {
   <CharacterAttributes
     v-model:attributeRolls="wh.attributeRolls"
     v-model:attributeAdvances="wh.attributeAdvances"
+    :careerAttributes="careerAttributesOfCharacter"
     :otherAttributes="modifierAttributes"
     :speciesAttributes="wh.getRacialAttributes()"
     :advanceStep="ADVANCE_STEP"
@@ -399,6 +430,8 @@ const modifierAttributes = computed(() => {
   />
   <div class="flex flex-col @2xl:flex-row justify-between text-left gap-4 my-4">
     <CharacterSkills
+      :marks="skillMarksOfCharacter"
+      :edition="EDITION"
       :disabled="!canEdit"
       :skills="wh.skills"
       :skillList="content.skills.withAllowed.value"
@@ -415,6 +448,8 @@ const modifierAttributes = computed(() => {
       "
     />
     <CharacterTalents
+      :marks="talentMarksOfCharacter"
+      :edition="EDITION"
       :disabled="!canEdit"
       :talents="wh.talents"
       :talentList="content.talents.withAllowed.value"
@@ -445,6 +480,8 @@ const modifierAttributes = computed(() => {
     :disabled="!canEdit"
   />
   <CharacterItems
+    :marks="itemMarksOfCharacter"
+    :edition="EDITION"
     :disabled="!canEdit"
     :equipped="wh.equippedItems"
     :carried="wh.carriedItems"

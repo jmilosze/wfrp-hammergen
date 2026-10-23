@@ -97,4 +97,5 @@ export const rules5e: CharacterRules = {
   getSize: getSize5e,
   getWounds: getWounds5e,
   getMaxEncumbrance: getMaxEncumbrance5e,
+  careerTalentsFromLowerLevels: true,
 };
