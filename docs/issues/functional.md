@@ -49,11 +49,9 @@ Frontend + Backend + Data · 2026-10-16
 ### HG-40 Career trappings as a list of trappings
 Frontend + Backend + Data · 2026-10-16
 
-Career level trappings are a free-text field (`CareerLevel.Items`, `items` in `content/career.ts`), so the generator can only add class trappings (`generateClassItems`, from the generation data), never the career's own. Make each level's trappings a list of trapping ids with quantities, edited with a picker, shown on the career page and added by the generator (both editions). Big data part: go through all public careers, list their trappings per level, create the missing ones in the trapping list (descriptions rephrased, not copied from the books) and fill in the new field with a migration script.
+Done for 5e (in production 2026-10-23): career levels have trappings and money as data (format in `docs/architecture.md`), edited per level, shown on the career page and given by the generator; the 64 public 5e careers were converted and 77 trappings added (in both editions). Left: the 4e careers. Their trappings are still text: the 4e variants of the public careers that have a 5e version, and the 113 4e-only careers (core and supplements). Convert them the same way: map each level's text to trappings (reusing the 5e mapping's rules and the new generic trappings, e.g. Magic Item for "Magical Item" of Master Alchemist, Master Druid, Grand Astromancer), create the 4e trappings that are missing, and fill the fields with a migration script; 4e quality versions use the 4e qualities. Open with it: how 5e characters in 4e-only careers ("Allow 4e content") should use those careers' trappings, skills and talents (ideas in `docs/hg-40/README.md`, D22).
 
-Decided: no "group" trappings; choices ("A or B") and rolled quantities ("1d10") are stored in the list itself. Only public careers are converted, and their free text is removed; the first step converts the 64 public 5e career variants only, and 4e variants keep their text for now. Users' own careers keep their free text, still shown and editable; new careers have no free-text field.
-
-Tracking folder (scope, decisions, work plan, data analysis, per-career mappings, new trappings): `docs/hg-40/`.
+Tracking folder (decisions, mapping pipeline in `db/data/hg-40/`, per-career mappings, new trappings): `docs/hg-40/`; delete it when the 4e part is done.
 
 ### HG-43 Guided character creation for 4e
 Frontend · 2026-10-16
@@ -63,17 +61,12 @@ Today a 4e character is either filled in by hand or generated in one go (`genera
 ### HG-44 Guided character creation for 5e
 Frontend · 2026-10-16
 
-The 5e version of HG-43, following the 5e rulebook's character creation summary: species (choose or roll; keeping the first roll gives +1 Fortune), class and career, characteristics, career skills, talents, trappings and final details, personality and background. Reuse `generation/5e/generator5e.ts` and `generationProps5e` and the wizard frame from HG-43. Career trappings: the player picks the options of level 1 entries marked `choice` and rolls the `random` ones and dice quantities (HG-40 format, `docs/hg-40/analysis.md`). Same limits as the 5e generator (5e content only, species list as in `docs/architecture.md`, HG-36 extends it).
-
-### HG-53 "Magical Item" for the 5e Master Wizard
-Data · 2026-10-19
-
-The 5e Master Wizard (Wizard 3) has "Magical Item" as a career trapping; HG-40 keeps it as a note for now, because the book doesn't say which item. Options: a choice of the 5e magical items that exist as trappings (the Consumer Guide's Magical Items table: Enchanted Staff, Practical, Standard and Elaborate Wizard's Robes; Wizard 2 already gets an Enchanted Staff), a generic "Magical Item" trapping with a description saying the GM decides, or magic items from a later 5e book. Same question for 4e careers when they are converted (e.g. "Magical Item" for Master Alchemist, Master Druid, Grand Astromancer).
+The 5e version of HG-43, following the 5e rulebook's character creation summary: species (choose or roll; keeping the first roll gives +1 Fortune), class and career, characteristics, career skills, talents, trappings and final details, personality and background. Reuse `generation/5e/generator5e.ts` and `generationProps5e` and the wizard frame from HG-43. Career trappings: the player picks one option of each level 1 entry with several options, and dice quantities are rolled (format in `docs/architecture.md`). Same limits as the 5e generator (5e content only, species list as in `docs/architecture.md`, HG-36 extends it).
 
 ### HG-52 Rune Axe for the 5e Daemon Slayer
 Data · 2026-10-19
 
-The 5e Daemon Slayer (Slayer 4) has a "Rune Axe" as a career trapping; HG-40 keeps it as a note for now, because 5e has no runes yet (82 public runes, all 4e only) and the 5e rulebook doesn't describe the axe further. Trappings can carry runes (`runes` on an item), so a proper version would be a 5e trapping based on Axe with a rune once 5e runes exist (from a 5e supplement, or 4e runes given 5e variants), or a plain "Rune Axe" trapping with its own description. Then replace the note in the career with the trapping.
+The 5e Daemon Slayer (Slayer 4) has a "Rune Axe" as a career trapping; HG-40 gives it as Magic Item ("Rune Axe") for now, because 5e has no runes yet (82 public runes, all 4e only) and the 5e rulebook doesn't describe the axe further. Trappings can carry runes (`runes` on an item), so a proper version would be a 5e trapping based on Axe with a rune once 5e runes exist (from a 5e supplement, or 4e runes given 5e variants), or a plain "Rune Axe" trapping with its own description. Then give the career that trapping instead.
 
 ### HG-5 Translated content (e.g. Polish, Spanish)
 Feature · 2026-10-10

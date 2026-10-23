@@ -39,7 +39,7 @@ Every script that writes follows the same pattern:
 - it aborts without writing when something is unexpected (missing id, wrong name).
 
 Main scripts:
-- `import_5e.py --type <trait|mutation|property|prayer|spell|talent|skill|item|career> [--update]`: imports 5e content from `db/data/5e/<type>s-5e.json`. Entries with `id4e` add a 5e variant to that public 4e document; entries without it create 5e-only documents. `--update` replaces variants that differ from the data file.
+- `import_5e.py --type <trait|mutation|property|prayer|spell|talent|skill|item|career> [--update]`: imports 5e content from `db/data/5e/<type>s-5e.json`. Entries with `id4e` add a 5e variant to that public 4e document; entries without it create 5e-only documents. `--update` replaces variants that differ from the data file. A 5e-only entry with a fixed `id` may carry `variant4e`, the same fields for a 4e variant: the document is then created, compared and updated with both editions (used for trappings made for 5e careers).
 
 The data files in `db/data/` are gitignored and exist only locally; keep them, they are the source for re-imports.
 
