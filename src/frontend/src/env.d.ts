@@ -8,3 +8,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// Google Analytics, loaded and configured in index.html. It leaves out undefined parameters.
+declare function gtag(
+  command: "event",
+  eventName: string,
+  params: Record<string, string | number | boolean | undefined>,
+): void;

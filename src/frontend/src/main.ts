@@ -5,6 +5,7 @@ import router from "./router";
 import { setupAuthInterceptor } from "./composables/auth.ts";
 import { checkMaintenance, setupMaintenanceInterceptor } from "./composables/maintenance.ts";
 import { anonRequest, authRequest } from "./services/auth.ts";
+import { reportWebVitals } from "./services/webVitals.ts";
 window.addEventListener("vite:preloadError", () => {
   window.location.reload();
 });
@@ -24,6 +25,8 @@ VueReCaptcha.install(app, {
 });
 
 app.mount("#app");
+
+reportWebVitals();
 
 checkMaintenance(anonRequest).catch((error) => {
   console.error("Failed to check maintenance status:", error);
