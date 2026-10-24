@@ -1,5 +1,6 @@
 // Generation data (species skills/talents, Random Talents, class trappings) served by the API per edition.
 import { RandomTalents } from "./talents.ts";
+import { RollTable } from "./rollTables.ts";
 import { AxiosInstance } from "axios";
 import { CareerClass } from "@/services/wh/content/career.ts";
 
@@ -12,9 +13,11 @@ export interface GenerationProps {
   speciesSkills: Partial<Record<string, string[]>>;
 }
 
-// 5e generation data adds each species' fluent languages (+30 each).
+// 5e generation data adds each species' fluent languages (+30 each) and each species' Random Class and Career Table
+// (ids are careers).
 export interface GenerationProps5e extends GenerationProps {
   speciesLanguages: Partial<Record<string, string[]>>;
+  careerTable: Partial<Record<string, RollTable>>;
 }
 
 export async function getGenerationProps(axiosInstance: AxiosInstance): Promise<GenerationProps> {

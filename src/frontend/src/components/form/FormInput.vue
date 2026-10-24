@@ -5,6 +5,7 @@ import { useId } from "vue";
 const props = defineProps<{
   type?: "text" | "password" | "number";
   title?: string;
+  placeholder?: string;
   disabled?: boolean;
   validationStatus?: ValidationStatus;
   centerText?: boolean;
@@ -36,6 +37,7 @@ const value = defineModel<T>({
           :type="type ?? 'text'"
           :disabled="disabled"
           :maxlength="maxlength"
+          :placeholder="placeholder"
           :step="step"
           :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
           :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"

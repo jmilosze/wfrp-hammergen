@@ -43,6 +43,11 @@ export const attributeNameList = [
   AttributeName.Various,
 ];
 
+// The ten characteristics, without None and Various.
+export const characteristicList = attributeNameList.filter(
+  (x) => x !== AttributeName.None && x !== AttributeName.Various,
+);
+
 export function printAttributeName(attributeName: AttributeName) {
   switch (attributeName) {
     case AttributeName.None:

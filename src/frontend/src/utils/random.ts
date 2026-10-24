@@ -5,6 +5,16 @@ export function selectRandom<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+// randomOptions picks one option of each entry at random: the index of the option, 0 for an entry without a choice.
+export function randomOptions(
+  entries: { options: unknown[] }[],
+  selectRandomFn: SelectRandomFn = selectRandom,
+): number[] {
+  return entries.map((entry) =>
+    entry.options.length === 1 ? 0 : selectRandomFn(entry.options.map((_, index) => index)),
+  );
+}
+
 export function rollInTable<T>(sides: number, rolls: number, table: [T, number, number][]): T {
   const roll = rollDice(sides, rolls);
   for (const element of table) {

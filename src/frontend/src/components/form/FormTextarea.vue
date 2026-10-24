@@ -14,6 +14,7 @@ const heightClasses: Record<BoxHeight, string> = {
 
 defineProps<{
   title?: string;
+  placeholder?: string;
   disabled?: boolean;
   validationStatus: ValidationStatus;
   size?: BoxHeight;
@@ -45,6 +46,7 @@ const value = defineModel<string>({ required: true });
           ? 'block focus:-outline-offset-2 bg-editable disabled:bg-white disabled:text-neutral-900 disabled:opacity-100'
           : 'border border-neutral-300 rounded focus:border-transparent bg-white disabled:bg-neutral-200',
       ]"
+      :placeholder="placeholder"
       :disabled="disabled"
       :aria-invalid="validationStatus && !validationStatus.valid ? 'true' : undefined"
       :aria-describedby="validationStatus && !validationStatus.valid ? errorId : undefined"

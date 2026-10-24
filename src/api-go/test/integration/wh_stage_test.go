@@ -629,7 +629,7 @@ func (s *whTestStage) already_present_generation_props() *whTestStage {
 				Stored:   warhammer.IdStringMap{"400000000000000000000006": "2"},
 			},
 		},
-		RandomTalents: []*warhammer.GenRandomTalent{
+		RandomTalents: []*warhammer.GenTableEntry{
 			{
 				Id:      "500000000000000000000001",
 				MinRoll: 1,

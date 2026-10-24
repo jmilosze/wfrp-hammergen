@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { GroupPicker, resolveEntityGroups } from "./groups.ts";
+import { availableMembers, expandGroups, GroupPicker, resolveEntityGroups } from "./groups.ts";
 import { getSelectRandomTest } from "@/testing.ts";
 import { Skill } from "@/services/wh/content/skill.ts";
 import { Talent } from "@/services/wh/content/talent.ts";
@@ -53,6 +53,21 @@ describe("resolveEntityGroups", () => {
       catA: ["item1", "item2"],
       catB: ["item1"],
     });
+  });
+});
+
+describe("availableMembers", () => {
+  test("gives the members not excluded", () => {
+    expect(availableMembers({ lore: ["history", "law", "magic"] }, "lore", ["law", "other"])).toEqual([
+      "history",
+      "magic",
+    ]);
+  });
+});
+
+describe("expandGroups", () => {
+  test("replaces groups with their members, without repeats", () => {
+    expect(expandGroups(["lore", "law", "s1"], { lore: ["history", "law"] })).toEqual(["history", "law", "s1"]);
   });
 });
 

@@ -1,6 +1,6 @@
-export type RollTable = [string, number, number][];
+export type DescriptionTable = [string, number, number][];
 
-export const HUMAN_EYE_ROLLS: RollTable = [
+export const HUMAN_EYE_ROLLS: DescriptionTable = [
   ["Green", 2, 3],
   ["Green", 3, 4],
   ["Pale Blue", 4, 5],
@@ -13,7 +13,7 @@ export const HUMAN_EYE_ROLLS: RollTable = [
   ["Black", 20, 21],
 ];
 
-export const HALFLING_EYE_ROLLS: RollTable = [
+export const HALFLING_EYE_ROLLS: DescriptionTable = [
   ["Light Grey", 2, 3],
   ["Grey", 3, 4],
   ["Pale Blue", 4, 5],
@@ -26,7 +26,7 @@ export const HALFLING_EYE_ROLLS: RollTable = [
   ["Dark Brown", 20, 21],
 ];
 
-export const DWARF_EYE_ROLLS: RollTable = [
+export const DWARF_EYE_ROLLS: DescriptionTable = [
   ["Coal", 2, 3],
   ["Lead", 3, 4],
   ["Steel", 4, 5],
@@ -39,7 +39,7 @@ export const DWARF_EYE_ROLLS: RollTable = [
   ["Gold", 20, 21],
 ];
 
-export const HIGH_ELF_EYE_ROLLS: RollTable = [
+export const HIGH_ELF_EYE_ROLLS: DescriptionTable = [
   ["Jet", 2, 3],
   ["Amethyst", 3, 4],
   ["Aquamarine", 4, 5],
@@ -52,7 +52,7 @@ export const HIGH_ELF_EYE_ROLLS: RollTable = [
   ["Gold", 20, 21],
 ];
 
-export const WOOD_ELF_EYE_ROLLS: RollTable = [
+export const WOOD_ELF_EYE_ROLLS: DescriptionTable = [
   ["Ivory", 2, 3],
   ["Charcoal", 3, 4],
   ["Ivy Green", 4, 5],
@@ -65,7 +65,7 @@ export const WOOD_ELF_EYE_ROLLS: RollTable = [
   ["Violet", 20, 21],
 ];
 
-export const GNOME_EYE_ROLLS: RollTable = [
+export const GNOME_EYE_ROLLS: DescriptionTable = [
   ["Pale Blue", 2, 3],
   ["Blue", 3, 4],
   ["Deep Blue", 4, 5],
@@ -78,7 +78,7 @@ export const GNOME_EYE_ROLLS: RollTable = [
   ["Violet", 20, 21],
 ];
 
-export const OGRE_EYE_ROLLS: RollTable = [
+export const OGRE_EYE_ROLLS: DescriptionTable = [
   ["Grey", 2, 3],
   ["Green", 3, 4],
   ["Amber", 4, 5],
@@ -91,7 +91,7 @@ export const OGRE_EYE_ROLLS: RollTable = [
   ["Blue Black", 20, 21],
 ];
 
-export const HUMAN_HAIR_ROLLS: RollTable = [
+export const HUMAN_HAIR_ROLLS: DescriptionTable = [
   ["White Blond", 2, 3],
   ["Golden Blond", 3, 4],
   ["Red Blond", 4, 5],
@@ -104,7 +104,7 @@ export const HUMAN_HAIR_ROLLS: RollTable = [
   ["Grey", 20, 21],
 ];
 
-export const HALFLING_HAIR_ROLLS: RollTable = [
+export const HALFLING_HAIR_ROLLS: DescriptionTable = [
   ["Grey", 2, 3],
   ["Flaxen", 3, 4],
   ["Russet", 4, 5],
@@ -117,7 +117,7 @@ export const HALFLING_HAIR_ROLLS: RollTable = [
   ["Liquorice", 20, 21],
 ];
 
-export const DWARF_HAIR_ROLLS: RollTable = [
+export const DWARF_HAIR_ROLLS: DescriptionTable = [
   ["White", 2, 3],
   ["Grey", 3, 4],
   ["Pale Blond", 4, 5],
@@ -130,7 +130,7 @@ export const DWARF_HAIR_ROLLS: RollTable = [
   ["Black", 20, 21],
 ];
 
-export const HIGH_ELF_HAIR_ROLLS: RollTable = [
+export const HIGH_ELF_HAIR_ROLLS: DescriptionTable = [
   ["Silver", 2, 3],
   ["White", 3, 4],
   ["Pale Blond", 4, 5],
@@ -143,7 +143,7 @@ export const HIGH_ELF_HAIR_ROLLS: RollTable = [
   ["Black", 20, 21],
 ];
 
-export const WOOD_ELF_HAIR_ROLLS: RollTable = [
+export const WOOD_ELF_HAIR_ROLLS: DescriptionTable = [
   ["Birch Silver", 2, 3],
   ["Ash Blond", 3, 4],
   ["Rose Gold", 4, 5],
@@ -156,7 +156,7 @@ export const WOOD_ELF_HAIR_ROLLS: RollTable = [
   ["Blue-Black", 20, 21],
 ];
 
-export const GNOME_HAIR_ROLLS: RollTable = [
+export const GNOME_HAIR_ROLLS: DescriptionTable = [
   ["Black", 2, 3],
   ["Dark Brown", 3, 4],
   ["Auburn", 4, 5],
@@ -169,7 +169,7 @@ export const GNOME_HAIR_ROLLS: RollTable = [
   ["White", 20, 21],
 ];
 
-export const OGRE_HAIR_ROLLS: RollTable = [
+export const OGRE_HAIR_ROLLS: DescriptionTable = [
   ["Brown", 2, 3],
   ["Red Brown", 3, 4],
   ["Terracotta", 4, 5],

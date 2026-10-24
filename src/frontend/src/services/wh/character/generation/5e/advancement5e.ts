@@ -4,16 +4,12 @@ import {
   CareerLevel,
   GenerationLevel,
   getCareerAttributesByLevel,
-  getCareerSkillsByLevel,
-  getCareerTalentsByLevel,
   PerGenerationLevel,
 } from "@/services/wh/content/career.ts";
 import { Talent } from "@/services/wh/content/talent.ts";
 import { selectRandom, SelectRandomFn } from "@/utils/random.ts";
 import { Attributes, getAttributeValue, setAttributeValue, zeroAttributes } from "@/services/wh/core/attributes.ts";
-import { calculateMaxTalentRanks, resolveAvailableTalents } from "@/services/wh/character/generation/shared/talents.ts";
-import { EntityGroupMap } from "@/services/wh/character/generation/shared/groups.ts";
-import { chooseConcreteCareerSkills } from "@/services/wh/character/generation/shared/skills.ts";
+import { calculateMaxTalentRanks } from "@/services/wh/character/generation/shared/talents.ts";
 import {
   ADVANCE_POINTS_5E,
   CAREER_LEVEL_COST_5E,
@@ -21,7 +17,6 @@ import {
   skillCost5e,
   TALENT_COST_5E,
 } from "./experience5e.ts";
-import { allocateCreationCareerAdvances5e } from "./skills5e.ts";
 import { takeCareerTalent5e } from "./talents5e.ts";
 
 // Career Advancement Tracker ticks at each career level (p. 196): 10 for level 2, 12 more for level 3, 14 more
@@ -33,8 +28,10 @@ export interface CareerAdvances5eContext {
   level: GenerationLevel;
   baseAttributes: Attributes;
   talentList: Talent[];
-  skillGroupMap: EntityGroupMap;
-  talentGroupMap: EntityGroupMap;
+  // The career skills and talents of levels 1 to 4, with their groups settled (the same as at creation).
+  careerSkillsByLevel: string[][];
+  careerTalentsByLevel: string[][];
+  // The skills and talents of the level 1 character.
   startingSkills: Record<string, number>;
   startingTalents: Record<string, number>;
 }
@@ -51,10 +48,9 @@ function trappingTicks(level: CareerLevel): number {
   return level.trappings.length + level.money.length;
 }
 
-// Level 1: eight career skill Advances and one level 1 career talent (free). Each higher level: at the current
-// level, one career talent, one Advance in each unlocked characteristic, the next level's trappings (D8; the
-// generator gives them, see generateCareerItems) and career skill Advances until the tracker reaches the next level's
-// ticks, then 100 XP to move up.
+// Starts from a level 1 character. Each higher level: at the current level, one career talent, one Advance in each
+// unlocked characteristic, the next level's trappings (D8; the generator gives them) and career skill Advances until
+// the tracker reaches the next level's ticks, then 100 XP to move up.
 export function generateCareerAdvances5e(
   context: CareerAdvances5eContext,
   selectRandomFn: SelectRandomFn = selectRandom,
@@ -64,22 +60,12 @@ export function generateCareerAdvances5e(
   const attributeAdvances = zeroAttributes();
   let spentExp = 0;
 
-  const careerSkillsByLevel = chooseConcreteCareerSkills(
-    getCareerSkillsByLevel(context.career),
-    context.skillGroupMap,
-    selectRandomFn,
-  );
-  const careerTalentsByLevel = getCareerTalentsByLevel(context.career).map((x) =>
-    resolveAvailableTalents(x, context.talentGroupMap, selectRandomFn),
-  );
+  const { careerSkillsByLevel, careerTalentsByLevel } = context;
   const careerAttributesByLevel = getCareerAttributesByLevel(context.career);
   const levels = [context.career.level1, context.career.level2, context.career.level3, context.career.level4];
 
   const maxRanks = () =>
     calculateMaxTalentRanks(talents, context.talentList, context.baseAttributes, attributeAdvances);
-
-  allocateCreationCareerAdvances5e(skills, careerSkillsByLevel[0], selectRandomFn);
-  takeCareerTalent5e(talents, careerTalentsByLevel[0], maxRanks(), selectRandomFn);
 
   for (let current = 1; current < context.level; ++current) {
     const unlockedSkills = [...new Set(careerSkillsByLevel.slice(0, current).flat())];

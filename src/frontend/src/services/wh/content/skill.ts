@@ -3,7 +3,7 @@ import { defineContentApi, ApiResponse } from "@/services/wh/core/api.ts";
 import { Edition, variant } from "@/services/wh/core/edition.ts";
 import { validLongDescFn, validShortDescFn } from "@/services/wh/core/validators.ts";
 import { Visibility, WhEntity } from "@/services/wh/core/entity.ts";
-import { AttributeName, attributeNameList } from "@/services/wh/core/attributes.ts";
+import { AttributeName, attributeNameList, characteristicList } from "@/services/wh/core/attributes.ts";
 import { ValidationStatus } from "@/utils/validation.ts";
 import { updateSet } from "@/utils/set.ts";
 
@@ -122,7 +122,7 @@ export function getSkillAttributeNameList(isGroup: boolean): AttributeName[] {
   if (isGroup) {
     return attributeNameList.filter((x) => x !== AttributeName.None);
   } else {
-    return attributeNameList.filter((x) => x !== AttributeName.None && x !== AttributeName.Various);
+    return characteristicList;
   }
 }
 

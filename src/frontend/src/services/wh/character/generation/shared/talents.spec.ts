@@ -6,6 +6,9 @@ import {
   calculateMaxTalentRanks,
   resolveAvailableTalents,
   populateSpeciesTalents,
+  rollRandomTalent,
+  rollRandomTalentRow,
+  speciesTalentEntries,
 } from "./talents.ts";
 import { EntityGroupMap } from "./groups.ts";
 import { rollDice, selectRandom } from "@/utils/random.ts";
@@ -386,6 +389,18 @@ describe("generateSpeciesTalents never loses a talent the species gets by name",
     expect(result).toEqual({ savvy: 1, acute_sight: 1 });
   });
 
+  test("two random picks never land on the same group row", () => {
+    // Roll 60 lands on the Acute Sense group both times; the second roll may not use the group again and gets Hardy.
+    const result = generateSpeciesTalents(
+      ["random", "random"],
+      groupTalents,
+      randomTalents,
+      getSelectRandomTest(0),
+      getRollDiceTest(60),
+    );
+    expect(result).toEqual({ acute_sight: 1, hardy: 1 });
+  });
+
   test("always gives one talent per species entry, whatever the order", () => {
     for (let i = 0; i < 200; ++i) {
       const result = generateSpeciesTalents(
@@ -398,6 +413,64 @@ describe("generateSpeciesTalents never loses a talent the species gets by name",
       expect(Object.keys(result).length).toBe(4);
       expect(result.luck).toBe(1);
     }
+  });
+});
+
+describe("speciesTalentEntries", () => {
+  test("splits choices into options", () => {
+    expect(speciesTalentEntries(["doomed", "savvy, suave", "random"])).toEqual([
+      { options: ["doomed"] },
+      { options: ["savvy", "suave"] },
+      { options: ["random"] },
+    ]);
+  });
+});
+
+describe("rollRandomTalent", () => {
+  const randomTalents: RandomTalents = [
+    { id: "luck", minRoll: 1, maxRoll: 26 },
+    { id: "savvy", minRoll: 26, maxRoll: 51 },
+    { id: "acute_sense", minRoll: 51, maxRoll: 101 },
+  ];
+  const groupTalents: EntityGroupMap = { acute_sense: ["acute_sight", "acute_taste"] };
+
+  test("gives the rolled talent", () => {
+    expect(rollRandomTalent(randomTalents, [], [], groupTalents, getRollDiceTest(30))).toBe("savvy");
+  });
+
+  test("rolls again on a talent already taken", () => {
+    // Without Luck the table is Savvy 25 and Acute Sense 50: 30 lands on Acute Sense.
+    expect(
+      rollRandomTalent(randomTalents, ["luck"], [], groupTalents, getRollDiceTest(30), getSelectRandomTest(1)),
+    ).toBe("acute_taste");
+  });
+
+  test("a group gives a member not taken", () => {
+    expect(rollRandomTalent(randomTalents, ["acute_sight"], [], groupTalents, getRollDiceTest(80))).toBe("acute_taste");
+  });
+
+  test("a group row an earlier roll landed on is not rolled again", () => {
+    // The group row comes first: 10 lands on it while it is in the table, on Luck once it is left out.
+    const groupFirst: RandomTalents = [
+      { id: "acute_sense", minRoll: 1, maxRoll: 51 },
+      { id: "luck", minRoll: 51, maxRoll: 76 },
+      { id: "savvy", minRoll: 76, maxRoll: 101 },
+    ];
+    expect(rollRandomTalent(groupFirst, ["acute_sight"], [], groupTalents, getRollDiceTest(10))).toBe("acute_taste");
+    expect(rollRandomTalent(groupFirst, ["acute_sight"], ["acute_sight"], groupTalents, getRollDiceTest(10))).toBe(
+      "luck",
+    );
+  });
+
+  test("rollRandomTalentRow gives the row, a group included, and skips a group an earlier roll gave", () => {
+    expect(rollRandomTalentRow(randomTalents, [], [], groupTalents, getRollDiceTest(80))).toBe("acute_sense");
+    // With Acute Sense rolled before, the table is Luck 25 and Savvy 25: 30 lands on Savvy.
+    expect(rollRandomTalentRow(randomTalents, [], ["acute_sense"], groupTalents, getRollDiceTest(30))).toBe("savvy");
+  });
+
+  test("gives null when the whole table is taken", () => {
+    const taken = ["luck", "savvy", "acute_sight", "acute_taste"];
+    expect(rollRandomTalent(randomTalents, taken, [], groupTalents, getRollDiceTest(30))).toBeNull();
   });
 });
 

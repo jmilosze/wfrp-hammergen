@@ -23,7 +23,7 @@ import {
   HUMAN_HAIR_ROLLS,
   OGRE_EYE_ROLLS,
   OGRE_HAIR_ROLLS,
-  RollTable,
+  DescriptionTable,
   WOOD_ELF_EYE_ROLLS,
   WOOD_ELF_HAIR_ROLLS,
 } from "./data/descriptions.ts";
@@ -71,7 +71,7 @@ function generateHeight(species: SpeciesWithRegion): number[] {
   return [Math.floor(heightInches / 12), heightInches % 12];
 }
 
-function rollElfEyes(table: RollTable): string {
+function rollElfEyes(table: DescriptionTable): string {
   const color1 = rollInTable(10, 2, table);
   if (rollDice(2, 1) === 1) {
     let color2 = color1;

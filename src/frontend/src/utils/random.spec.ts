@@ -1,8 +1,15 @@
 import { describe, expect, test } from "vitest";
-import { rollDice, rollInTable, selectRandom, selectWeighted } from "./random.ts";
-import { getRollDiceTest } from "@/testing.ts";
+import { randomOptions, rollDice, rollInTable, selectRandom, selectWeighted } from "./random.ts";
+import { getRollDiceTest, getSelectRandomTest } from "@/testing.ts";
 
 describe("random utilities", () => {
+  describe("randomOptions", () => {
+    test("picks an option of each choice and 0 for an entry without one", () => {
+      const entries = [{ options: ["a"] }, { options: ["a", "b", "c"] }];
+      expect(randomOptions(entries, getSelectRandomTest(2))).toEqual([0, 2]);
+    });
+  });
+
   describe("selectRandom", () => {
     test("selects an element from array", () => {
       const items = ["a", "b", "c"];
