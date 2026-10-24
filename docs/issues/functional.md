@@ -63,6 +63,8 @@ Frontend · 2026-10-16
 
 The 5e version of HG-43, following the 5e rulebook's character creation summary: species (choose or roll; keeping the first roll gives +1 Fortune), class and career, characteristics, career skills, talents, trappings and final details, personality and background. Reuse `generation/5e/generator5e.ts` and `generationProps5e` and the wizard frame from HG-43. Career trappings: the player picks one option of each level 1 entry with several options, and dice quantities are rolled (format in `docs/architecture.md`). Same limits as the 5e generator (5e content only, species list as in `docs/architecture.md`, HG-36 extends it).
 
+Tracking folder (rules with pages, decisions, plan): `docs/hg-44/`; delete it when HG-44 is done.
+
 ### HG-52 Rune Axe for the 5e Daemon Slayer
 Data · 2026-10-19
 

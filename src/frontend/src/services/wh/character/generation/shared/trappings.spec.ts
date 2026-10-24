@@ -1,5 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { generateCareerCoins, generateCareerItems, generateClassItems, populateClassItems } from "./trappings.ts";
+import {
+  classTrappingEntries,
+  generateCareerCoins,
+  generateCareerItems,
+  generateClassItems,
+  populateClassItems,
+  rollCareerTrappings,
+  rollClassTrappings,
+} from "./trappings.ts";
 import { Career, copyCareerLevel, zeroCareerLevel } from "@/services/wh/content/career.ts";
 import { Item, ItemType } from "@/services/wh/content/item.ts";
 import { CareerMoney, CareerTrappingEntry } from "@/services/wh/content/careerTrapping.ts";
@@ -28,6 +36,31 @@ describe("generateClassItems", () => {
       { id: "item1", number: 1, value: "" },
       { id: "item2", number: 2, value: "" },
       { id: "item3", number: 5, value: "" },
+    ]);
+  });
+
+  test("classTrappingEntries lists the choices of the class trappings", () => {
+    const career = new Career({ careerClass: 0 });
+    const props = {
+      ...dummyGenProps,
+      classItems: { 0: { equipped: { "hood,mask": "1" }, carried: { match: "1d10" } } },
+    };
+    expect(classTrappingEntries(career, props)).toEqual([
+      { options: ["hood", "mask"], number: "1" },
+      { options: ["match"], number: "1d10" },
+    ]);
+    expect(classTrappingEntries(new Career({ careerClass: 1 }), props)).toEqual([]);
+  });
+
+  test("rollClassTrappings gives the chosen options with quantities rolled", () => {
+    const entries = [
+      { options: ["hood", "mask"], number: "1" },
+      { options: ["match"], number: "1d10" },
+      { options: ["mask"], number: "1" },
+    ];
+    expect(rollClassTrappings(entries, [1, 0, 0], () => 4)).toEqual([
+      { id: "mask", number: 2, value: "" },
+      { id: "match", number: 4, value: "" },
     ]);
   });
 });
@@ -119,6 +152,11 @@ describe("career trappings and money", () => {
       ],
       stored: [{ id: "command", number: 1, value: "Crew of Miners" }],
     });
+  });
+
+  test("rollCareerTrappings gives the chosen option of each entry", () => {
+    const result = rollCareerTrappings(career.level1.trappings, [0, 1], items, getRollDiceTest(4));
+    expect(result).toEqual({ carried: [got("weapon", 1, "Sickle"), got("weapon", 1)], stored: [] });
   });
 
   test("leaves out a trapping whose roll is below 1", () => {

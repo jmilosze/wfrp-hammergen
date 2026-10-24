@@ -64,6 +64,7 @@ const generationProps: GenerationProps5e = {
   speciesTalents: { [SpeciesWithRegion.HumanReikland]: ["doomed", "savvy,suave", "random", "t2"] },
   speciesSkills: { [SpeciesWithRegion.HumanReikland]: ["sp1", "sp2", "s1"] },
   speciesLanguages: { [SpeciesWithRegion.HumanReikland]: ["lang"] },
+  careerTable: {},
 };
 
 function character(edition: Edition, career: [string, number] | undefined, careerPath: [string, number][] = []) {

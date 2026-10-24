@@ -1,8 +1,9 @@
 // Talents shared by both editions: species and Random Talents, career talent picks and maximum ranks.
-import { rollDice, RollDiceFn, selectRandom, SelectRandomFn, selectWeighted } from "@/utils/random.ts";
-import { EntityGroupMap, GroupPicker, resolveEntityGroups } from "./groups.ts";
+import { randomOptions, rollDice, RollDiceFn, selectRandom, SelectRandomFn, selectWeighted } from "@/utils/random.ts";
+import { availableMembers, EntityGroupMap, GroupPicker, resolveEntityGroups } from "./groups.ts";
 import { Talent } from "@/services/wh/content/talent.ts";
 import { GenerationProps } from "./generationProps.ts";
+import { RollTable, rollTableValid } from "./rollTables.ts";
 import {
   Attributes,
   copyAttributes,
@@ -13,15 +14,18 @@ import {
 import { fillUpIdNumberRecord } from "@/utils/idNumber.ts";
 import { Character } from "@/services/wh/character/character.ts";
 
-const RANDOM_TALENTS_ROLL = 100;
-
-export type RandomTalents = Array<{
-  id: string;
-  minRoll: number;
-  maxRoll: number;
-}>;
+export type RandomTalents = RollTable;
 
 export type SpeciesTalents = string[];
+
+// The option of a species talent entry that means a roll on the Random Talents table.
+export const RANDOM_TALENT = "random";
+
+// speciesTalentEntries splits the species talents into entries: one option, or several the player chooses from
+// ("A,B"). An option is a talent, a group (one of its members) or RANDOM_TALENT.
+export function speciesTalentEntries(speciesTalents: SpeciesTalents): { options: string[] }[] {
+  return speciesTalents.map((entry) => ({ options: entry.split(",").map((s) => s.trim()) }));
+}
 
 export function generateSpeciesTalents(
   speciesTalents: SpeciesTalents | undefined,
@@ -34,7 +38,7 @@ export function generateSpeciesTalents(
     return {};
   }
 
-  if (!randomTalentsValid(randomTalents)) {
+  if (!rollTableValid(randomTalents)) {
     throw new Error("invalid random talents table");
   }
 
@@ -43,13 +47,13 @@ export function generateSpeciesTalents(
   }
 
   const groupPicker = new GroupPicker(groupTalents, selectRandomFn);
-  const randomTalentPicker = new RandomTalentPicker(randomTalents, rollDiceFn, groupPicker);
 
   // Settle every "A,B" choice first, then add named talents before group and random picks.
   // Group and random picks skip talents already taken, so they can never take a talent
   // the species gets by name, whatever order the species talents are listed in.
-  const chosenTalents = speciesTalents.map((speciesTalent) => chooseTalent(speciesTalent, selectRandomFn));
-  const talents = chosenTalents.filter((talent) => talent !== "random" && !groupPicker.isGroup(talent));
+  const entries = speciesTalentEntries(speciesTalents);
+  const chosenTalents = randomOptions(entries, selectRandomFn).map((option, index) => entries[index].options[option]);
+  const talents = chosenTalents.filter((talent) => talent !== RANDOM_TALENT && !groupPicker.isGroup(talent));
 
   for (const group of chosenTalents.filter((talent) => groupPicker.isGroup(talent))) {
     const pickedTalent = groupPicker.pick(group, talents);
@@ -58,11 +62,20 @@ export function generateSpeciesTalents(
     }
   }
 
-  const randomTalentCount = chosenTalents.filter((talent) => talent === "random").length;
+  const randomTalentCount = chosenTalents.filter((talent) => talent === RANDOM_TALENT).length;
+  const rolledTalents: string[] = [];
   for (let i = 0; i < randomTalentCount; ++i) {
-    const pickedTalent = randomTalentPicker.pickFromRandom(talents);
+    const pickedTalent = rollRandomTalent(
+      randomTalents,
+      talents,
+      rolledTalents,
+      groupTalents,
+      rollDiceFn,
+      selectRandomFn,
+    );
     if (pickedTalent !== null) {
       talents.push(pickedTalent);
+      rolledTalents.push(pickedTalent);
     }
   }
 
@@ -73,33 +86,31 @@ export function generateSpeciesTalents(
   return generatedTalents;
 }
 
-function chooseTalent(speciesTalent: string, selectRandomFn: SelectRandomFn): string {
-  const options = speciesTalent.split(",").map((s) => s.trim());
-  return options.length === 1 ? options[0] : selectRandomFn(options);
-}
-
-function randomTalentsValid(randomTalents: RandomTalents): boolean {
-  if (randomTalents.length === 0) {
-    return true;
+// rollRandomTalent rolls once on the Random Talents table, given the talents the character has (taken) and those its
+// earlier Random Talent rolls gave (rolled). A talent already taken is rolled again, so only the rest of the table is
+// rolled on; a group row gives one of its members not taken yet, and is rolled at most once (no second Artistic). Null
+// when nothing is left.
+export function rollRandomTalent(
+  randomTalents: RandomTalents,
+  taken: string[],
+  rolled: string[],
+  groupTalents: EntityGroupMap,
+  rollDiceFn: RollDiceFn = rollDice,
+  selectRandomFn: SelectRandomFn = selectRandom,
+): string | null {
+  const remaining = randomTalents
+    .filter((x) => !(x.id in groupTalents && groupTalents[x.id].some((member) => rolled.includes(member))))
+    .map((x) => ({
+      options:
+        x.id in groupTalents ? availableMembers(groupTalents, x.id, taken) : [x.id].filter((id) => !taken.includes(id)),
+      weight: x.maxRoll - x.minRoll,
+    }))
+    .filter((x) => x.options.length > 0);
+  if (remaining.length === 0) {
+    return null;
   }
-
-  const uniqueTalents = new Set(randomTalents.map((x) => x.id));
-  if (uniqueTalents.size !== randomTalents.length) {
-    return false;
-  }
-
-  const sortedRanges = randomTalents.map((x) => [x.minRoll, x.maxRoll]);
-  sortedRanges.sort((a, b) => a[0] - b[0]);
-
-  let prevMax = 1;
-  for (let i = 0; i < sortedRanges.length; i++) {
-    const [start, end] = sortedRanges[i];
-    if (start !== prevMax || end > RANDOM_TALENTS_ROLL + 1) {
-      return false;
-    }
-    prevMax = end;
-  }
-  return prevMax === RANDOM_TALENTS_ROLL + 1;
+  const row = selectWeighted(remaining, (x) => x.weight, rollDiceFn);
+  return row.options.length === 1 ? row.options[0] : selectRandomFn(row.options);
 }
 
 function speciesTalentsValid(speciesTalents: string[], talentGroups: EntityGroupMap): boolean {
@@ -110,38 +121,9 @@ function speciesTalentsValid(speciesTalents: string[], talentGroups: EntityGroup
     }
   }
 
-  allTalents = allTalents.filter((x) => x !== "random" && !(x in talentGroups));
+  allTalents = allTalents.filter((x) => x !== RANDOM_TALENT && !(x in talentGroups));
 
   return new Set(allTalents).size === allTalents.length;
-}
-
-class RandomTalentPicker {
-  private remainingTalents: Array<{ id: string; weight: number }>;
-  private readonly rollDiceFn: RollDiceFn;
-  private readonly groupPicker: GroupPicker;
-
-  constructor(randomTalents: RandomTalents, rollDiceFn: RollDiceFn, groupPicker: GroupPicker) {
-    this.remainingTalents = randomTalents.map((t) => ({ id: t.id, weight: t.maxRoll - t.minRoll }));
-    this.rollDiceFn = rollDiceFn;
-    this.groupPicker = groupPicker;
-  }
-
-  pickFromRandom(selectedTalents: string[]): string | null {
-    while (this.remainingTalents.length > 0) {
-      const rolled = selectWeighted(this.remainingTalents, (t) => t.weight, this.rollDiceFn);
-      this.remainingTalents = this.remainingTalents.filter((t) => t.id !== rolled.id);
-
-      if (this.groupPicker.isGroup(rolled.id)) {
-        const pickedTalent = this.groupPicker.pick(rolled.id, selectedTalents);
-        if (pickedTalent !== null) {
-          return pickedTalent;
-        }
-      } else if (!selectedTalents.includes(rolled.id)) {
-        return rolled.id;
-      }
-    }
-    return null;
-  }
 }
 
 /**

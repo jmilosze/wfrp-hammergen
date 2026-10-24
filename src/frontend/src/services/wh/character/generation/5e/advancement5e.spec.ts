@@ -2,6 +2,7 @@ import { selectFirst, sumValues, testCareer } from "@/services/wh/character/gene
 import { testTalents5e } from "./fixtures5e.ts";
 import { describe, expect, test } from "vitest";
 import { zeroAttributes } from "@/services/wh/core/attributes.ts";
+import { getCareerSkillsByLevel, getCareerTalentsByLevel } from "@/services/wh/content/career.ts";
 import { CAREER_TICKS_5E, generateCareerAdvances5e } from "./advancement5e.ts";
 
 describe("generateCareerAdvances5e", () => {
@@ -9,13 +10,14 @@ describe("generateCareerAdvances5e", () => {
     career: testCareer(),
     baseAttributes: zeroAttributes(),
     talentList: testTalents5e,
-    skillGroupMap: {},
-    talentGroupMap: {},
-    startingSkills: {},
-    startingTalents: {},
+    careerSkillsByLevel: getCareerSkillsByLevel(testCareer()),
+    careerTalentsByLevel: getCareerTalentsByLevel(testCareer()),
+    // A level 1 character: eight career skill Advances and one career talent.
+    startingSkills: { s1: 15, s2: 15, s3: 10 },
+    startingTalents: { t1a: 1 },
   };
 
-  test("level 1: eight free skill Advances and one free talent", () => {
+  test("level 1: nothing more", () => {
     const result = generateCareerAdvances5e({ ...context, level: 1 }, selectFirst);
     expect(result.skills).toEqual({ s1: 15, s2: 15, s3: 10 });
     expect(result.talents).toEqual({ t1a: 1 });

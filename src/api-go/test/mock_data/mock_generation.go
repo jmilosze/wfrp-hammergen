@@ -14,7 +14,7 @@ func NewMockGenProps() *wh.GenProps {
 				Stored:   wh.IdStringMap{itemOther.Id: "2"},
 			},
 		},
-		RandomTalents: []*wh.GenRandomTalent{
+		RandomTalents: []*wh.GenTableEntry{
 			{
 				Id:      talent1.Id,
 				MinRoll: 1,
