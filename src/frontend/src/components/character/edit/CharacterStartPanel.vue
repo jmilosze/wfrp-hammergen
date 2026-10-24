@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 import AppButton from "@/components/ui/AppButton.vue";
 import ModalWindow from "@/components/ui/ModalWindow.vue";
+import HelpButton from "@/components/ui/HelpButton.vue";
 
 // The ways to start a new character, as a slim strip above the character sheet: Generate opens a popup with the
 // generator (its fields and explanation come from the editor), Guided is not there yet, and filling in the sheet needs
@@ -71,14 +72,17 @@ function onGenerate() {
     </button>
   </div>
   <ModalWindow v-model:open="modalOpen" size="md">
-    <template #header>Generate character</template>
+    <template #header>
+      <span class="flex items-center gap-2">
+        Generate character
+        <HelpButton modalHeader="How generation works">
+          <slot name="hint" />
+        </HelpButton>
+      </span>
+    </template>
     <div class="@container flex flex-col gap-3">
       <p>Roll a complete character of level 1 to 4. Generating replaces everything on the sheet.</p>
       <slot name="fields" />
-      <details class="text-sm">
-        <summary class="cursor-pointer font-semibold">How it works</summary>
-        <slot name="hint" />
-      </details>
     </div>
     <template #buttons>
       <div class="flex justify-end">
