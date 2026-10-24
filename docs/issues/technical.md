@@ -77,6 +77,11 @@ Every visit to a list page, and every opening of an editor, fetches whole conten
 - Cached entries are shared mutable models, so pages must not change them (`copyWh` pushes into the list today).
 - Measure before and after: load time and size of the trappings list, opening a 5e character with 4e content.
 
+### HG-56 reCAPTCHA check passes when Google can't be reached
+Backend · 2026-10-24
+
+`recaptcha.CaptchaService.Verify` (`dependencies/recaptcha/captcha.go`) returns `true` when the siteverify request can't be built, fails, returns a non-200 status or can't be decoded. So registration and the reset e-mail aren't protected while Google is unreachable. Decide whether to reject instead (users then can't register during a Google outage). Also: both pages send the action `register` (the reset page should send its own), and `Verify` doesn't compare the returned `action` or `hostname` with the expected ones.
+
 ## Ideas
 
 ### HG-35 Decide on end-to-end tests (Playwright)

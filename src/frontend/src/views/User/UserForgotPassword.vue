@@ -2,21 +2,21 @@
 import AppButton from "@/components/ui/AppButton.vue";
 import AccountCard from "@/components/account/AccountCard.vue";
 import TextLink from "@/components/ui/TextLink.vue";
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import { IReCaptchaComposition, useReCaptcha } from "vue-recaptcha-v3";
+import { computed, ref } from "vue";
 import FormInput from "@/components/form/FormInput.vue";
 import { anonRequest } from "@/services/auth.ts";
 import { User, UserApi } from "@/services/user.ts";
 import { SubmissionState } from "@/utils/submission.ts";
 import AfterSubmit from "@/components/account/AfterSubmit.vue";
 import { setValidationStatus } from "@/utils/validation.ts";
+import { useRecaptcha } from "@/composables/recaptcha.ts";
 
 const user = ref(new User());
 const submissionState = ref(new SubmissionState());
 const showAfterSubmit = ref(false);
 const userApi = new UserApi(anonRequest);
 
-const recaptcha = useReCaptcha() as IReCaptchaComposition;
+const { getToken } = useRecaptcha();
 
 const validEmail = computed(() => {
   if (submissionState.value.notStartedOrSubmitted()) {
@@ -24,15 +24,6 @@ const validEmail = computed(() => {
   } else {
     return user.value.validateEmail();
   }
-});
-
-onMounted(async () => {
-  await recaptcha.recaptchaLoaded();
-  recaptcha.instance.value?.showBadge();
-});
-
-onUnmounted(() => {
-  recaptcha.instance.value?.hideBadge();
 });
 
 async function submitForm() {
@@ -43,13 +34,7 @@ async function submitForm() {
     return;
   }
 
-  let token: string;
-  if (import.meta.env.VITE_BYPASS_RECAPTCHA === "true") {
-    token = "success";
-  } else {
-    await recaptcha.recaptchaLoaded();
-    token = await recaptcha.executeRecaptcha("register");
-  }
+  const token = await getToken("register");
 
   showAfterSubmit.value = true;
 
