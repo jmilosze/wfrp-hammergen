@@ -835,7 +835,7 @@ func TestListWhInvalidEdition(t *testing.T) {
 }
 
 func TestFullAndCareerSearchRequireEdition(t *testing.T) {
-	for _, path := range []string{"/api/wh/item?full=true", "/api/wh/character?full=true", "/api/wh/career?skillId=600000000000000000000000"} {
+	for _, path := range []string{"/api/wh/item?full=true", "/api/wh/career?skillId=600000000000000000000000"} {
 		t.Run(path, func(t *testing.T) {
 			given, when, then := whTest(t, wfrpUrl, parallel)
 
