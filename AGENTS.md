@@ -4,6 +4,7 @@
 - Always avoid using defensive fallbacks. We do not add code "just in case".
 - Avoid TypeScript type assertions (such as `as any`, `as Type`, or non-null assertion `!`) that are not absolutely needed. Prefer proper type definitions, narrowing, or adjusted function signatures.
 - Do not care about backwards compatibility. Never keep deprecated aliases, shims, or fallback code around for backwards compatibility.
+- Comment only when necessary: the why (rulebook page references, decision tags, non-obvious constraints), never what the code does. No file headers or paragraphs narrating the code, even where nearby code has them; when changing code, remove or fix the comments it makes stale.
 
 # Project
 

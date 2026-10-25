@@ -48,7 +48,14 @@ export function useGenerationProps(axiosInstance: AxiosInstance) {
 
 export function useGenerationProps5e(axiosInstance: AxiosInstance) {
   return useLoadedGenerationProps<GenerationProps5e>(
-    { classItems: {}, randomTalents: [], speciesTalents: {}, speciesSkills: {}, speciesLanguages: {} },
+    {
+      classItems: {},
+      randomTalents: [],
+      speciesTalents: {},
+      speciesSkills: {},
+      speciesLanguages: {},
+      careerTable: {},
+    },
     () => getGenerationProps5e(axiosInstance),
   );
 }

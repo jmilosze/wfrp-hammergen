@@ -6,13 +6,21 @@ import ModalWindow from "@/components/ui/ModalWindow.vue";
 import HelpButton from "@/components/ui/HelpButton.vue";
 
 // The ways to start a new character, as a slim strip above the character sheet: Generate opens a popup with the
-// generator (its fields and explanation come from the editor), Guided is not there yet, and filling in the sheet needs
-// nothing. After generating, the strip shows what was generated, with Generate again (same options) and a way back to
-// the options. The strip can be dismissed.
-const props = defineProps<{ generateDisabled?: boolean; generationSummary: string }>();
+// generator (its fields and explanation come from the editor), Guided opens guided creation where the editor has it
+// (guidedAvailable), and filling in the sheet needs nothing. After generating, the strip shows what was generated, with
+// Generate again (same options) and a way back to the options. After guided creation (guidedSummary, set by the editor
+// and cleared when it generates), it shows what was created and a way back into it. generateDisabled: what Generate and
+// Guided need is not loaded yet. The strip can be dismissed.
+const props = defineProps<{
+  generateDisabled?: boolean;
+  generationSummary: string;
+  guidedAvailable?: boolean;
+  guidedSummary?: string;
+}>();
 
 const emit = defineEmits<{
   (e: "generate"): void;
+  (e: "guided"): void;
 }>();
 
 const modalOpen = ref(false);
@@ -32,8 +40,18 @@ function onGenerate() {
     v-if="!dismissed"
     class="relative flex flex-wrap items-center gap-3 my-4 pl-3 pr-11 py-2 bg-parchment-light border border-dashed border-brand-rule rounded-lg print:hidden"
   >
-    <Icon icon="lucide:sparkles" class="size-5 text-brand" />
-    <template v-if="generatedSummary">
+    <Icon icon="lucide:sparkles" class="hidden @md:block size-5 text-brand" />
+    <template v-if="guidedSummary">
+      <div class="flex-1 min-w-48">
+        <div class="font-semibold">Character created with guided creation</div>
+        <div class="text-sm text-neutral-700">{{ guidedSummary }}</div>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <AppButton icon="lucide:route" @click="emit('guided')">Back to guided creation</AppButton>
+        <AppButton icon="lucide:dices" variant="neutral" @click="modalOpen = true">Generate…</AppButton>
+      </div>
+    </template>
+    <template v-else-if="generatedSummary">
       <div class="flex-1 min-w-48">
         <div class="font-semibold">Character generated</div>
         <div class="text-sm text-neutral-700">{{ generatedSummary }}</div>
@@ -50,15 +68,37 @@ function onGenerate() {
       <div class="flex-1 min-w-48">
         <div class="font-semibold">Quick start</div>
         <!-- Left out on small screens, where the strip should stay short. -->
-        <div class="hidden @md:block text-sm text-neutral-700">
-          Generate new character randomly or fill in the sheet below yourself.
+        <div class="text-sm text-neutral-700">
+          {{
+            guidedAvailable
+              ? "Use guided creation to build a character step by step, following the Rulebook, generate a random one, or fill in the sheet below yourself."
+              : "Generate new character randomly or fill in the sheet below yourself."
+          }}
         </div>
       </div>
-      <div class="flex flex-wrap gap-2">
-        <AppButton icon="lucide:dices" @click="modalOpen = true">Generate…</AppButton>
-        <AppButton icon="lucide:route" variant="neutral" disabled title="Guided creation isn't available yet">
+      <!-- Below the text, on a line of their own, in line with it (the icon's width and the gap). -->
+      <div class="flex flex-wrap gap-2 w-full @md:pl-8">
+        <AppButton
+          v-if="guidedAvailable"
+          size="md"
+          icon="lucide:route"
+          variant="dark"
+          :disabled="generateDisabled"
+          @click="emit('guided')"
+        >
+          Guided…
+        </AppButton>
+        <AppButton
+          v-else
+          size="md"
+          icon="lucide:route"
+          variant="neutral"
+          disabled
+          title="Guided creation isn't available yet"
+        >
           Guided (soon)
         </AppButton>
+        <AppButton size="md" icon="lucide:dices" @click="modalOpen = true">Generate…</AppButton>
       </div>
     </template>
     <!-- Always in the top right corner, however the rest wraps. -->
@@ -80,7 +120,7 @@ function onGenerate() {
         </HelpButton>
       </span>
     </template>
-    <div class="@container flex flex-col gap-3">
+    <div class="@container flex flex-col gap-3 [&_.font-sheet]:!font-sans">
       <p>Roll a complete character of level 1 to 4. Generating replaces everything on the sheet.</p>
       <slot name="fields" />
     </div>

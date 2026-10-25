@@ -2,37 +2,56 @@
 // money from the career levels (HG-40).
 import { Career, CareerLevel, GenerationLevel } from "@/services/wh/content/career.ts";
 import { Item } from "@/services/wh/content/item.ts";
+import { CareerMoney, CareerTrappingEntry } from "@/services/wh/content/careerTrapping.ts";
 import { GenerationProps } from "./generationProps.ts";
-import { rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "@/utils/random.ts";
+import { randomOptions, rollDice, RollDiceFn, selectRandom, SelectRandomFn } from "@/utils/random.ts";
 import { fillUp, IdNumberValue, mergeEntries } from "@/utils/idNumberValue.ts";
 import { Character } from "@/services/wh/character/character.ts";
 
-// generateClassItems returns the class trappings as one list (without values): they all start carried, and players
-// equip them themselves. The generation data still names some as equipped; a trapping named in both lists gets the sum
-// of the quantities.
+// A class trapping from the generation data: one trapping, or a choice of trappings ("hood,mask"), with a quantity.
+export interface ClassTrappingEntry {
+  options: string[];
+  number: string;
+}
+
+// classTrappingEntries lists the class trappings of the career's class. The generation data still names some as
+// equipped; they all start carried, and players equip them themselves.
+export function classTrappingEntries(career: Career, generationProps: GenerationProps): ClassTrappingEntry[] {
+  const classItems = generationProps.classItems[career.careerClass];
+  if (classItems === undefined) {
+    return [];
+  }
+  return [...Object.entries(classItems.equipped), ...Object.entries(classItems.carried)].map(([ids, number]) => ({
+    options: ids.split(","),
+    number: number,
+  }));
+}
+
+// rollClassTrappings gives the chosen option of each entry (chosen: option index per entry), quantities rolled, as one
+// list without values; a trapping named twice gets the sum of the quantities.
+export function rollClassTrappings(
+  entries: ClassTrappingEntry[],
+  chosen: number[],
+  rollDiceFn: RollDiceFn = rollDice,
+): IdNumberValue[] {
+  return mergeEntries(
+    entries.map((entry, index) => ({
+      id: entry.options[chosen[index]],
+      number: rollQuantity(entry.number, rollDiceFn),
+      value: "",
+    })),
+  );
+}
+
+// generateClassItems gives the class trappings, with one option of each choice picked at random.
 export function generateClassItems(
   career: Career,
   generationProps: GenerationProps,
   rollDiceFn: RollDiceFn = rollDice,
   selectRandomFn: SelectRandomFn = selectRandom,
 ): IdNumberValue[] {
-  const classItems = generationProps.classItems[career.careerClass];
-  if (classItems === undefined) {
-    return [];
-  }
-  const items = [...Object.entries(classItems.equipped), ...Object.entries(classItems.carried)].map(
-    ([itemIds, itemNumber]) => ({
-      id: selectIdFromCandidates(itemIds, selectRandomFn),
-      number: rollQuantity(itemNumber, rollDiceFn),
-      value: "",
-    }),
-  );
-  return mergeEntries(items);
-}
-
-function selectIdFromCandidates(itemIds: string, selectRandomFn: SelectRandomFn): string {
-  const ids = itemIds.split(",");
-  return ids.length === 1 ? ids[0] : selectRandomFn(ids);
+  const entries = classTrappingEntries(career, generationProps);
+  return rollClassTrappings(entries, randomOptions(entries, selectRandomFn), rollDiceFn);
 }
 
 // rollQuantity gives a quantity: a number ("10"), or dice with an optional modifier ("1d10", "2d6+3") rolled.
@@ -52,10 +71,32 @@ function careerLevels(career: Career, level: GenerationLevel): CareerLevel[] {
   return [career.level1, career.level2, career.level3, career.level4].slice(0, level);
 }
 
-// generateCareerItems gives the trappings of career levels 1 to level (D8): of each entry one option, picked at random
-// when there are several; quantities are rolled and a trapping's note becomes its value. Trappings that can be carried
-// start carried, the others (places, retainers…) stored. Trappings not in items, and those whose roll is below 1, are
-// left out.
+// rollCareerTrappings gives the chosen option of each entry (chosen: option index per entry); quantities are rolled
+// and a trapping's note becomes its value. Trappings that can be carried start carried, the others (places,
+// retainers…) stored. Trappings not in items, and those whose roll is below 1, are left out.
+export function rollCareerTrappings(
+  entries: CareerTrappingEntry[],
+  chosen: number[],
+  items: Item[],
+  rollDiceFn: RollDiceFn = rollDice,
+): { carried: IdNumberValue[]; stored: IdNumberValue[] } {
+  const itemMap = new Map(items.map((x) => [x.id, x]));
+  const carried: IdNumberValue[] = [];
+  const stored: IdNumberValue[] = [];
+  entries.forEach((entry, index) => {
+    for (const trapping of entry.options[chosen[index]]) {
+      const item = itemMap.get(trapping.id);
+      const number = rollQuantity(trapping.number, rollDiceFn);
+      if (item === undefined || number < 1) {
+        continue;
+      }
+      (item.canBeCarried() ? carried : stored).push({ id: trapping.id, number: number, value: trapping.value });
+    }
+  });
+  return { carried: mergeEntries(carried), stored: mergeEntries(stored) };
+}
+
+// generateCareerItems gives the trappings of career levels 1 to level, with one option of each choice picked at random.
 export function generateCareerItems(
   career: Career,
   level: GenerationLevel,
@@ -63,23 +104,17 @@ export function generateCareerItems(
   rollDiceFn: RollDiceFn = rollDice,
   selectRandomFn: SelectRandomFn = selectRandom,
 ): { carried: IdNumberValue[]; stored: IdNumberValue[] } {
-  const itemMap = new Map(items.map((x) => [x.id, x]));
-  const carried: IdNumberValue[] = [];
-  const stored: IdNumberValue[] = [];
-  for (const careerLevel of careerLevels(career, level)) {
-    for (const entry of careerLevel.trappings) {
-      const option = entry.options.length === 1 ? entry.options[0] : selectRandomFn(entry.options);
-      for (const trapping of option) {
-        const item = itemMap.get(trapping.id);
-        const number = rollQuantity(trapping.number, rollDiceFn);
-        if (item === undefined || number < 1) {
-          continue;
-        }
-        (item.canBeCarried() ? carried : stored).push({ id: trapping.id, number: number, value: trapping.value });
-      }
-    }
+  const entries = careerLevels(career, level).flatMap((x) => x.trappings);
+  return rollCareerTrappings(entries, randomOptions(entries, selectRandomFn), items, rollDiceFn);
+}
+
+// rollCareerMoney rolls career money items into coins: [brass, silver, gold].
+export function rollCareerMoney(money: CareerMoney[], rollDiceFn: RollDiceFn = rollDice): [number, number, number] {
+  const coins = { brass: 0, silver: 0, gold: 0 };
+  for (const item of money) {
+    coins[item.coin] += Math.max(rollQuantity(item.number, rollDiceFn), 0);
   }
-  return { carried: mergeEntries(carried), stored: mergeEntries(stored) };
+  return [coins.brass, coins.silver, coins.gold];
 }
 
 // generateCareerCoins gives the money of career levels 1 to level (D3), rolled: [brass, silver, gold].
@@ -88,13 +123,10 @@ export function generateCareerCoins(
   level: GenerationLevel,
   rollDiceFn: RollDiceFn = rollDice,
 ): [number, number, number] {
-  const coins = { brass: 0, silver: 0, gold: 0 };
-  for (const careerLevel of careerLevels(career, level)) {
-    for (const money of careerLevel.money) {
-      coins[money.coin] += Math.max(rollQuantity(money.number, rollDiceFn), 0);
-    }
-  }
-  return [coins.brass, coins.silver, coins.gold];
+  return rollCareerMoney(
+    careerLevels(career, level).flatMap((x) => x.money),
+    rollDiceFn,
+  );
 }
 
 export function populateClassItems(

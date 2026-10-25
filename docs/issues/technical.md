@@ -82,6 +82,11 @@ Backend · 2026-10-24
 
 `recaptcha.CaptchaService.Verify` (`dependencies/recaptcha/captcha.go`) returns `true` when the siteverify request can't be built, fails, returns a non-200 status or can't be decoded. So registration and the reset e-mail aren't protected while Google is unreachable. Decide whether to reject instead (users then can't register during a Google outage). Also: both pages send the action `register` (the reset page should send its own), and `Verify` doesn't compare the returned `action` or `hostname` with the expected ones.
 
+### HG-58 Replace Mailjet as the email provider
+Backend + Deployment · 2026-10-24
+
+The API sends its only email, the password reset link (`UserService` in `internal/services/user.go`), through Mailjet (`internal/dependencies/mailjet/email.go`, selected by the `Email` config value `mailjet`). Mailjet saves every recipient as a contact, and the free tier allows only a small number of contacts, so the limit fills up with users who once reset their password. Move to a transactional email provider whose free tier doesn't keep or cap recipients: add an implementation of `domain.EmailService` for it, switch the config, delete the Mailjet package and the `mailjet-apiv3-go` dependency, and set up the sender domain (SPF/DKIM) and the API keys in the deployment config. Pick the provider first (free volume, sender verification, Go client or plain HTTP API). While there: `NewEmailService` never sets `FromName`, so emails go out with an empty sender name.
+
 ## Ideas
 
 ### HG-35 Decide on end-to-end tests (Playwright)

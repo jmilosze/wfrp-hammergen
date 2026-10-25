@@ -28,6 +28,16 @@ export function resolveEntityGroups<T extends GroupableEntity>(entities: T[]): E
   return resolvedGroups;
 }
 
+// availableMembers gives the members of a group that are not in excluded.
+export function availableMembers(groupMap: EntityGroupMap, group: string, excluded: string[]): string[] {
+  return groupMap[group].filter((member) => !excluded.includes(member));
+}
+
+// expandGroups replaces each group in ids with all its members, without repeats.
+export function expandGroups(ids: string[], groupMap: EntityGroupMap): string[] {
+  return [...new Set(ids.flatMap((id) => (id in groupMap ? groupMap[id] : [id])))];
+}
+
 /**
  * Picks concrete members of groups (e.g. 'melee' -> 'melee_basic').
  * Each picker owns a copy of the group map, and every member it draws is removed from that copy,

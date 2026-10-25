@@ -9,11 +9,11 @@ import CareerTrappingsHelp from "./CareerTrappingsHelp.vue";
 import CareerTrappingEntryModal from "./CareerTrappingEntryModal.vue";
 import { Item, printItemType } from "@/services/wh/content/item.ts";
 import {
-  CareerCoin,
   careerCoinList,
   CareerMoney,
   CareerTrapping,
   CareerTrappingEntry,
+  printCareerCoin,
   printCareerTrappingEntry,
 } from "@/services/wh/content/careerTrapping.ts";
 import { truncate } from "@/utils/string.ts";
@@ -40,8 +40,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{ (e: "reload"): void }>();
-
-const COIN_NAMES: Record<CareerCoin, string> = { gold: "Gold", silver: "Silver", brass: "Brass" };
 
 const itemNames = computed(() => new Map(props.itemList.map((x) => [x.id, x.name])));
 
@@ -191,7 +189,7 @@ const CELL_CLASS = "block w-full h-10 px-2 bg-editable outline-neutral-700 focus
       </tr>
       <tr v-for="(coins, index) in money" :key="index">
         <td v-if="disabled" class="px-2 py-1 h-10 border-b border-neutral-300">
-          {{ coins.number }} {{ COIN_NAMES[coins.coin] }}
+          {{ coins.number }} {{ printCareerCoin(coins.coin) }}
         </td>
         <td v-if="!disabled" class="p-0 w-32 border-b border-r border-neutral-300">
           <select
@@ -200,7 +198,7 @@ const CELL_CLASS = "block w-full h-10 px-2 bg-editable outline-neutral-700 focus
             :class="CELL_CLASS"
             @change="onCoinChange(index, $event)"
           >
-            <option v-for="coin in careerCoinList" :key="coin" :value="coin">{{ COIN_NAMES[coin] }}</option>
+            <option v-for="coin in careerCoinList" :key="coin" :value="coin">{{ printCareerCoin(coin) }}</option>
           </select>
         </td>
         <td v-if="!disabled" class="p-0 border-b border-r border-neutral-300">
@@ -216,7 +214,7 @@ const CELL_CLASS = "block w-full h-10 px-2 bg-editable outline-neutral-700 focus
           <IconButton
             icon="lucide:x"
             size="lg"
-            :label="`Remove ${coins.number} ${COIN_NAMES[coins.coin]}`"
+            :label="`Remove ${coins.number} ${printCareerCoin(coins.coin)}`"
             @click="removeMoney(index)"
           />
         </td>

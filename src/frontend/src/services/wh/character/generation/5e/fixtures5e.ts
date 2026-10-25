@@ -3,6 +3,7 @@ import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { Skill } from "@/services/wh/content/skill.ts";
 import { Talent } from "@/services/wh/content/talent.ts";
 import { GenerationProps5e } from "@/services/wh/character/generation/shared/generationProps.ts";
+import { GuidedContext5e } from "./guided5e.ts";
 
 export const testSkills5e = [
   ...ids("s", 1, 22),
@@ -29,4 +30,17 @@ export const genProps5e: GenerationProps5e = {
   speciesTalents: { [SpeciesWithRegion.HumanReikland]: ["doomed", "random", "random"] },
   speciesSkills: { [SpeciesWithRegion.HumanReikland]: [...ids("sp", 1, 8), "stealth"] },
   speciesLanguages: { [SpeciesWithRegion.HumanReikland]: ["lang1", "lang2"] },
+  careerTable: {},
 };
+
+// A guided creation context with the test skills, talents and generation data; careers and items as given.
+export function testGuidedContext5e(context: Partial<GuidedContext5e> = {}): GuidedContext5e {
+  return {
+    careers: [],
+    skills: testSkills5e,
+    talents: testTalents5e,
+    items: [],
+    generationProps: genProps5e,
+    ...context,
+  };
+}

@@ -19,6 +19,12 @@ export type CareerCoin = "gold" | "silver" | "brass";
 
 export const careerCoinList: CareerCoin[] = ["gold", "silver", "brass"];
 
+const COIN_NAMES: Record<CareerCoin, string> = { gold: "Gold", silver: "Silver", brass: "Brass" };
+
+export function printCareerCoin(coin: CareerCoin): string {
+  return COIN_NAMES[coin];
+}
+
 export interface CareerMoney {
   coin: CareerCoin;
   number: string;

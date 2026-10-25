@@ -6,6 +6,7 @@ import { StatusTier } from "@/services/wh/content/career.ts";
 import { SpeciesWithRegion } from "@/services/wh/core/species.ts";
 import { generateCharacter5e } from "./generator5e.ts";
 import { Item, ItemType } from "@/services/wh/content/item.ts";
+import { Talent } from "@/services/wh/content/talent.ts";
 
 describe("generateCharacter5e", () => {
   const context = {
@@ -47,6 +48,33 @@ describe("generateCharacter5e", () => {
       expect(carriedIds).toContain("clothing");
       expect(carriedIds.some((x) => x === "hood" || x === "mask")).toBe(true);
       expect(character.carriedItems.find((x) => x.id === "match")?.number).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  test("level 1: rolls kept in order, six points on the level 1 characteristics, no creation bonuses", () => {
+    for (let i = 0; i < 20; ++i) {
+      const character = generateCharacter5e({ ...context, level: 1 }, { rollDiceFn: () => 10 });
+      const rolls = character.attributeRolls;
+      expect(rolls.WS + rolls.BS + rolls.S).toBe(36);
+      expect([rolls.T, rolls.I, rolls.Ag, rolls.Dex, rolls.Int, rolls.WP, rolls.Fel]).toEqual(Array(7).fill(10));
+      expect([character.fate, character.fortune, character.careerTicks]).toEqual([4, 3, 0]);
+    }
+  });
+
+  test("higher levels keep the specialisations settled at level 1", () => {
+    const career = testCareer();
+    career.level1.talents = new Set(["etiquette"]);
+    const talents = [
+      ...testTalents5e,
+      new Talent({ id: "etiquette", name: "Etiquette", isGroup: true }),
+      ...["etiquetteNobles", "etiquetteGuilds"].map(
+        (id) => new Talent({ id, name: id, maxRank: 1, group: new Set(["etiquette"]) }),
+      ),
+    ];
+    for (let i = 0; i < 20; ++i) {
+      const character = generateCharacter5e({ ...context, career: career, talents: talents, level: 4 });
+      const etiquette = Object.keys(character.talents).filter((x) => x.startsWith("etiquette"));
+      expect(etiquette.length).toBe(1);
     }
   });
 
