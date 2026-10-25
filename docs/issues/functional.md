@@ -46,12 +46,14 @@ Frontend + Backend + Data · 2026-10-16
 
 5e characters can only be Human, Dwarf, Halfling, High Elf or Wood Elf. The 5e rulebook has Gnome and Ogre only as Bestiary profiles (p. 323–324), and suggests building player characters from such species by giving them a career (p. 318). Allow both species for 5e characters (species values, species skills/talents/Fate/Fortune in `generationProps5e`, the generator). For now they may only take careers from the 5e rulebook, not 4e supplement careers. Open: which careers are allowed (e.g. tick Gnome/Ogre on the chosen 5e careers), and how to handle the Ogre's Size (Large) beyond the Wounds multiplier already modelled (e.g. weapons, armour, encumbrance, movement).
 
-### HG-40 Career trappings as a list of trappings
-Frontend + Backend + Data · 2026-10-16
+### HG-59 Career trappings as data for 4e careers
+Data · 2026-10-25
 
-Done for 5e (in production 2026-10-23): career levels have trappings and money as data (format in `docs/architecture.md`), edited per level, shown on the career page and given by the generator; the 64 public 5e careers were converted and 77 trappings added (in both editions). Left: the 4e careers. Their trappings are still text: the 4e variants of the public careers that have a 5e version, and the 113 4e-only careers (core and supplements). Convert them the same way: map each level's text to trappings (reusing the 5e mapping's rules and the new generic trappings, e.g. Magic Item for "Magical Item" of Master Alchemist, Master Druid, Grand Astromancer), create the 4e trappings that are missing, and fill the fields with a migration script; 4e quality versions use the 4e qualities. Open with it: how 5e characters in 4e-only careers ("Allow 4e content") should use those careers' trappings, skills and talents (ideas in `docs/hg-40/README.md`, D22).
+Career levels have trappings and money as data since HG-40 (format and trapping content rules in `docs/architecture.md`); the 64 public 5e careers were converted, and the 77 trappings made for them have 4e variants too. The 4e careers still have their trappings as text: the 4e variants of those 64 careers and the 113 4e-only careers (core and supplements), 177 public 4e careers in all. Convert them the same way, with no code changes expected: map each level's text to trappings with the 5e rules (generic trappings such as Magic Item for "Magical Item" of Master Alchemist, Master Druid, Grand Astromancer; quality versions with 4e qualities; explicit choice lists for generic weapons; book names kept as notes where the trapping's name doesn't say what it is), add the missing 4e trappings to the data, and fill the fields with a migration script (local, staging, production). The mapping scripts of the 5e conversion (`dump.py`, `parse.py`, `norm.py`, `final.py` with `alias.py`, `gen_docs.py`) are in `db/data/hg-40/` (gitignored, owner's machine only); how they were run and the decisions behind the mapping are in `docs/hg-40/README.md` in git history.
 
-Tracking folder (decisions, mapping pipeline in `db/data/hg-40/`, per-career mappings, new trappings): `docs/hg-40/`; delete it when the 4e part is done.
+Open: how 5e characters in 4e-only careers ("Allow 4e content") use those careers' trappings, skills and talents, e.g. lookups by shared document, a "5e equivalent" link, 5e versions of popular 4e careers.
+
+Also decide what happens to the 20 public per-trade 4e trappings ("Trade Tools - …", "Workshop - …", "Library - Magic"): their 5e variants were removed in all environments on 2026-10-25 (HG-60; 5e characters got Trade Tools or Workshop with the trade as value), and 4e characters use them (674 entries in the local snapshot, 2026-10-25).
 
 ### HG-43 Guided character creation for 4e
 Frontend · 2026-10-16
@@ -61,7 +63,7 @@ Today a 4e character is either filled in by hand or generated in one go (`genera
 ### HG-52 Rune Axe for the 5e Daemon Slayer
 Data · 2026-10-19
 
-The 5e Daemon Slayer (Slayer 4) has a "Rune Axe" as a career trapping; HG-40 gives it as Magic Item ("Rune Axe") for now, because 5e has no runes yet (82 public runes, all 4e only) and the 5e rulebook doesn't describe the axe further. Trappings can carry runes (`runes` on an item), so a proper version would be a 5e trapping based on Axe with a rune once 5e runes exist (from a 5e supplement, or 4e runes given 5e variants), or a plain "Rune Axe" trapping with its own description. Then give the career that trapping instead.
+The 5e Daemon Slayer (Slayer 4) has a "Rune Axe" as a career trapping; HG-40 gave it as Magic Item ("Rune Axe") for now, because 5e has no runes yet (82 public runes, all 4e only) and the 5e rulebook doesn't describe the axe further. Trappings can carry runes (`runes` on an item), so a proper version would be a 5e trapping based on Axe with a rune once 5e runes exist (from a 5e supplement, or 4e runes given 5e variants), or a plain "Rune Axe" trapping with its own description. Then give the career that trapping instead.
 
 ### HG-5 Translated content (e.g. Polish, Spanish)
 Feature · 2026-10-10
