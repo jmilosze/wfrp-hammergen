@@ -4,6 +4,11 @@ Everything users don't see directly: backend internals, code quality, tests, too
 
 ## Bugs
 
+### HG-68 Career import would remove the 5e career trappings
+Data scripts · 2026-10-29
+
+`import_5e.py --type career --update` builds each level from `db/data/5e/careers-import-5e.json`, which has only the old trappings text (`items`) and no `trappings` or `money`. The public 5e careers in the databases have their trappings as data (HG-40) and an empty `items`, so every career would count as changed and the update would replace those trappings with the text. Until fixed, career changes go through one-off fix scripts (as for the 27_10_26 rulebook changes). Fix: keep `trappings` and `money` in the data file (exported from the database), or have the career import leave them untouched.
+
 ## Improvements
 
 ### HG-50 Reduce data transfer between the API and Atlas

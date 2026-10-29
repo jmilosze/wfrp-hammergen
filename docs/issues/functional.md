@@ -72,6 +72,23 @@ Data · 2026-10-19
 
 The 5e Daemon Slayer (Slayer 4) has a "Rune Axe" as a career trapping; HG-40 gave it as Magic Item ("Rune Axe") for now, because 5e has no runes yet (82 public runes, all 4e only) and the 5e rulebook doesn't describe the axe further. Trappings can carry runes (`runes` on an item), so a proper version would be a 5e trapping based on Axe with a rune once 5e runes exist (from a 5e supplement, or 4e runes given 5e variants), or a plain "Rune Axe" trapping with its own description. Then give the career that trapping instead.
 
+### HG-66 Dwarf trapping swaps in the Dwarf careers
+Data · 2026-10-29
+
+The Dwarf Player's Guide (p. 53) lets a Dwarf swap career trappings that suit Dwarfs badly: a Hand Weapon for a Dwarf Axe or Dwarf Warhammer; a Cavalry, Fencing or Parry weapon for a Shield or a Pistol with ammunition; a bow and its ammunition for a Dwarf Crossbow or Dwarf Handgun with ammunition; a Riding Horse or warhorse for full plate armour and a helm. The weapon skill specialisations may be swapped to match. Apply this only to the public 4e careers that are Dwarf versions (the "Dwarf …" and "Slayer - …" variants and the Dwarf Player's Guide careers), not to the general careers: add the swaps as further options of the trapping's entry. From the HG-59 mapping (2026-10-29):
+
+- Light Warhorse with Saddle and Harness (level 4 of Dwarf Artillerist - Guild Engineer, Dwarf Artillerist - Outcast Engineer, Dwarf Handgunner - Thunderer and the three Dwarf Soldiers): add Breastplate, Bracers, Plate Leggings, Helm (full plate as in HG-59 S4).
+- Hand Weapon: Thane 1 and 2 (already Dwarf Axe / Dwarf Hammer options), Slayer 1 of the three Slayer variants (Hand Weapon ("Axe")), Dwarf Miner - Lodefinder 2 (Hand Weapon ("Pick")), Thane 3 (Hand Weapon (Fine)): add Dwarf Axe / Dwarf Warhammer where they fit; decide whether the Pick and the Chainaxes (Doom Priest 3) count.
+- Bow, Longbow, Sword in Dwarf Artillerist - Outcast Engineer 2 ("Weapon (Any)"): add the Dwarf Crossbow and Dwarf Handgun with ammunition, and Shield / Pistol for the Sword if it counts as Fencing.
+- Skills: no Dwarf career has a Cavalry, Fencing, Parry or Bow specialisation; Ride - Horse (level 3 of Dwarf Engineer - Guild Engineer, Dwarf Artillerist - Guild Engineer, Dwarf Handgunner - Thunderer) is not covered by the rule.
+
+Batch 1 of HG-59 (Dwarf Soldiers, Slayers, Dwarf Miner) is migrated in all environments, so those levels need a data fix; batch 2 (the Dwarf Player's Guide careers) can take the swaps into its mapping before its migration. Also decide between "Dwarf Hammer" (`6370fb370c40139be515affc`, Archives I p. 92) and "Dwarf Warhammer" (`671aaa2f49960d0001fac3ae`, Dwarf Player's Guide p. 93): the HG-59 mapping gives the Dwarf careers Dwarf Hammer.
+
+### HG-67 Artillery and war vehicles as trappings
+Data · 2026-10-29
+
+No public trapping is an artillery piece or a war vehicle (2026-10-29; the closest are hand-held weapons such as Hand Mortar and Doomrocket Launcher). Up in Arms has rules for artillery (cannons, mortars, organ guns, bolt throwers and others), and other books add more (e.g. the Dwarf and High Elf Player's Guides, Sea of Claws for ship guns). Add them as 4e trappings with their book values, and where their rules fit, decide how vehicles (wagons, war wagons, ships) are described. HG-59 gives the Master Artillerist (Artillerist 4 and its Dwarf and High Elf variants) a single generic Artillery Piece ("with Limber") for now; once the specific pieces exist, those levels could offer them as options instead.
+
 ### HG-5 Translated content (e.g. Polish, Spanish)
 Feature · 2026-10-10
 
