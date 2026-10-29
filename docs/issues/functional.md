@@ -4,6 +4,11 @@ What users can do and how values are calculated: rules, the generator, character
 
 ## Bugs
 
+### HG-65 Misnamed Gromril helms
+Data · 2026-10-29
+
+The public 4e Gromril helms have confusing names: "Gromril Helm " (`652012db49960d0001346eb5`, trailing space) and "Gromril Helm  - v2" (`6520142249960d0001346eb7`), both Middenheim p. 71, are open helms by their description ("Gromil Open Helm"), while the Dwarf Player's Guide's closed helm (p. 95) is "Gromril Gromril Helm - v3" (`671811a949960d0001f45743`) next to its "Gromril Open Helm". Rename them so the name says which helm it is (e.g. the Dwarf Player's Guide one "Gromril Helm"), and decide whether the two Middenheim documents are duplicates to merge. HG-59 career trappings refer to the Dwarf Player's Guide helm by its id, so a rename doesn't affect them once migrated; before that, the HG-59 mapping (`GROMRIL_HELM` in `db/data/hg-59/supp_map.py`) uses the current name.
+
 ### HG-30 Content list misses an edition switch during loading
 Frontend · 2026-10-15
 
@@ -50,6 +55,8 @@ Frontend + Backend + Data · 2026-10-16
 Data · 2026-10-25
 
 Career levels have trappings and money as data since HG-40 (format and trapping content rules in `docs/architecture.md`); the 64 public 5e careers were converted, and the 77 trappings made for them have 4e variants too. The 4e careers still have their trappings as text: the 4e variants of those 64 careers and the 113 4e-only careers (core and supplements), 177 public 4e careers in all. Convert them the same way, with no code changes expected: map each level's text to trappings with the 5e rules (generic trappings such as Magic Item for "Magical Item" of Master Alchemist, Master Druid, Grand Astromancer; quality versions with 4e qualities; explicit choice lists for generic weapons; book names kept as notes where the trapping's name doesn't say what it is), add the missing 4e trappings to the data, and fill the fields with a migration script (local, staging, production). The mapping scripts of the 5e conversion (`dump.py`, `parse.py`, `norm.py`, `final.py` with `alias.py`, `gen_docs.py`) are in `db/data/hg-40/` (gitignored, owner's machine only); how they were run and the decisions behind the mapping are in `docs/hg-40/README.md` in git history.
+
+Progress and decisions: `docs/hg-59/README.md` (2026-10-27: the mapping of the 64 core careers in `docs/hg-59/careers-4e.md` is reviewed, their missing trappings are added and their 4e variants have trappings as data in all environments; 2026-10-29: the 113 supplement careers go in eight review batches, batch 1 (25 variants of rulebook careers, with HG-63 and HG-64) is done in all environments; scripts in `db/data/hg-59/` and `db/scripts/fix_career_trappings_4e.py`).
 
 Open: how 5e characters in 4e-only careers ("Allow 4e content") use those careers' trappings, skills and talents, e.g. lookups by shared document, a "5e equivalent" link, 5e versions of popular 4e careers.
 

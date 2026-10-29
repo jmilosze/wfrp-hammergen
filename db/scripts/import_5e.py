@@ -10,6 +10,8 @@ after an import creates a new document (rename the existing one first). A 5e-onl
 with that id and found by it instead (used when other entries reference it before it exists, e.g. new skill groups).
 Such an entry may also have `variant4e` (the same fields, for the 4e variant): the document is then created with both
 editions, and both are compared and updated (used for trappings made for 5e careers that 4e gets too, HG-40).
+An entry found by its 5e name may have `variant4e` too: the document then gets that 4e variant (5e-only trappings
+that 4e careers have, HG-59).
 
 Idempotent: variants that are already imported unchanged are skipped.
 Already imported variants that differ from the data file are replaced only with --update.
@@ -141,7 +143,7 @@ def item_variant(entry):
             return [lower_keys(v) for v in value]
         return value
 
-    return lower_keys({k: v for k, v in entry.items() if k not in ("id4e", "descriptionFrom", "variant4e")})
+    return lower_keys({k: v for k, v in entry.items() if k not in ("id", "id4e", "descriptionFrom", "variant4e")})
 
 
 def career_variant_builder(db):
@@ -220,8 +222,8 @@ def plan(coll, to_variant, entries):
 
     for entry in entries:
         variant = to_variant(entry)
+        editions = {"5e": variant, **({"4e": to_variant(entry["variant4e"])} if "variant4e" in entry else {})}
         if entry["id4e"] is None and entry.get("id"):
-            editions = {"5e": variant, **({"4e": to_variant(entry["variant4e"])} if "variant4e" in entry else {})}
             doc = coll.find_one({"_id": ObjectId(entry["id"])})
             if doc is None:
                 create.append((ObjectId(entry["id"]), editions))
@@ -236,12 +238,12 @@ def plan(coll, to_variant, entries):
             existing = list(coll.find({"visibility": VISIBILITY_PUBLIC, "editions.5e.name": variant["name"]}))
             if len(existing) > 1:
                 errors.append(f"{variant['name']}: {len(existing)} public documents already have this 5e name")
-            elif existing and existing[0]["editions"]["5e"] != variant:
-                update.append((existing[0]["_id"], {"5e": variant}))
+            elif existing and {e: existing[0]["editions"].get(e) for e in editions} != editions:
+                update.append((existing[0]["_id"], editions))
             elif existing:
                 skipped.append(variant["name"])
             else:
-                create.append((None, {"5e": variant}))
+                create.append((None, editions))
             continue
 
         doc = coll.find_one({"_id": ObjectId(entry["id4e"])})

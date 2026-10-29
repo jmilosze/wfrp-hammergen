@@ -40,7 +40,6 @@ Backend + Frontend · 2026-10-01
 
 Talents, traits and mutations share one `modifiers` block (size, movement, characteristics, effects). Everything that doesn't fit the linear "per take" numbers is a hard-coded effect (Hardy, Strong Back, Sturdy) with its own calculation, and the effect enum and per-edition lists are duplicated in Go and TypeScript. Non-linear effects (Strong Back) and effects Hammergen doesn't model (Luck/Fortune, Fear) show the limits.
 
-
 ### HG-24 HTTP integration tests only cover properties
 Tests · 2026-09-30
 
@@ -76,11 +75,6 @@ Every visit to a list page, and every opening of an editor, fetches whole conten
 - Invalidation: a version of the public content (e.g. a counter or the latest `modifiedOn` per type, served by a cheap endpoint or with the generation data) that the frontend checks on start; admin saves and data scripts change it. Drop a type on the admin's own save, copy and delete.
 - Cached entries are shared mutable models, so pages must not change them (`copyWh` pushes into the list today).
 - Measure before and after: load time and size of the trappings list, opening a 5e character with 4e content.
-
-### HG-56 reCAPTCHA check passes when Google can't be reached
-Backend · 2026-10-24
-
-`recaptcha.CaptchaService.Verify` (`dependencies/recaptcha/captcha.go`) returns `true` when the siteverify request can't be built, fails, returns a non-200 status or can't be decoded. So registration and the reset e-mail aren't protected while Google is unreachable. Decide whether to reject instead (users then can't register during a Google outage). Also: both pages send the action `register` (the reset page should send its own), and `Verify` doesn't compare the returned `action` or `hostname` with the expected ones.
 
 ### HG-58 Replace Mailjet as the email provider
 Backend + Deployment · 2026-10-24
