@@ -4,38 +4,40 @@ import SheetTable from "@/components/sheet/SheetTable.vue";
 import { CharacterFull } from "@/services/wh/character/characterFull.ts";
 
 // The character view's Wealth and Encumbrance boxes; the total is marked when over the limit, and a line under
-// Encumbrance shows how much the containers hold. The wrapper is display: contents, so the two boxes are laid out by the
-// page (side by side in its grid or flex row).
+// Encumbrance shows how much the containers hold. Side by side once there is room, Wealth in one column while
+// Encumbrance takes two rows.
 defineProps<{ character: CharacterFull }>();
 </script>
 
 <template>
-  <div class="contents text-left">
-    <SheetTable title="Wealth" columns="short" class="grow basis-80">
-      <SheetCell title="Gold">{{ character.gold }}</SheetCell>
-      <SheetCell title="Silver">{{ character.silver }}</SheetCell>
-      <SheetCell title="Brass">{{ character.brass }}</SheetCell>
-    </SheetTable>
-    <div class="flex flex-col gap-1 grow basis-80">
-      <SheetTable title="Encumbrance" columns="short-6">
-        <SheetCell title="Weapons">{{ character.encWeapon }}</SheetCell>
-        <SheetCell title="Armour">{{ character.encArmor }}</SheetCell>
-        <SheetCell title="Other">{{ character.encOther }}</SheetCell>
-        <SheetCell title="Carried">{{ character.encCarried }}</SheetCell>
-        <SheetCell title="Total">
-          <span
-            :class="{ 'text-error font-semibold': character.encTotal > character.encMax }"
-            :title="character.encTotal > character.encMax ? 'Over the Encumbrance limit' : undefined"
-          >
-            {{ character.encTotal }}
-          </span>
-        </SheetCell>
-        <SheetCell title="Max">{{ character.encMax }}</SheetCell>
+  <div class="@container/sheet-row text-left">
+    <div class="grid @3xl/sheet-row:grid-cols-[1fr_2fr] items-start gap-4">
+      <SheetTable title="Wealth" columns="short-beside-6">
+        <SheetCell title="Gold">{{ character.gold }}</SheetCell>
+        <SheetCell title="Silver">{{ character.silver }}</SheetCell>
+        <SheetCell title="Brass">{{ character.brass }}</SheetCell>
       </SheetTable>
-      <p v-if="character.encContainerCapacity > 0" class="text-sm text-neutral-700">
-        In containers: {{ character.encInContainers }} of {{ character.encContainerCapacity }} Enc, not counted towards
-        Carried.
-      </p>
+      <div class="flex flex-col gap-1">
+        <SheetTable title="Encumbrance" columns="short-6">
+          <SheetCell title="Weapons">{{ character.encWeapon }}</SheetCell>
+          <SheetCell title="Armour">{{ character.encArmor }}</SheetCell>
+          <SheetCell title="Other">{{ character.encOther }}</SheetCell>
+          <SheetCell title="Carried">{{ character.encCarried }}</SheetCell>
+          <SheetCell title="Total">
+            <span
+              :class="{ 'text-error font-semibold': character.encTotal > character.encMax }"
+              :title="character.encTotal > character.encMax ? 'Over the Encumbrance limit' : undefined"
+            >
+              {{ character.encTotal }}
+            </span>
+          </SheetCell>
+          <SheetCell title="Max">{{ character.encMax }}</SheetCell>
+        </SheetTable>
+        <p v-if="character.encContainerCapacity > 0" class="text-sm text-neutral-700">
+          In containers: {{ character.encInContainers }} of {{ character.encContainerCapacity }} Enc, not counted
+          towards Carried.
+        </p>
+      </div>
     </div>
   </div>
 </template>

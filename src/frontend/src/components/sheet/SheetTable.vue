@@ -8,8 +8,11 @@ import SheetTitle from "./SheetTitle.vue";
 // An optional title is a small header row above the cells; actions fill a cell on the right.
 // Columns "short" and "short-6": short read-only cells (values of a few characters, e.g. Wealth) in three columns from a
 // narrower width; "short-6" makes a single row of six cells once there is room (e.g. Encumbrance).
+// Column "short-beside-6": "short" for a table placed left of a "short-6" table in a parent @container/sheet-row whose
+// grid is 1fr 2fr from @3xl; it is one column while the "short-6" table beside it has two rows (below @5xl), so both
+// keep a similar height.
 
-type Columns = 1 | 2 | 3 | "short" | "short-6";
+type Columns = 1 | 2 | 3 | "short" | "short-6" | "short-beside-6";
 
 withDefaults(defineProps<{ title?: string; columns?: Columns }>(), { title: "", columns: 1 });
 
@@ -20,6 +23,9 @@ const COLUMNS_CLASS: Record<Columns, string> = {
   3: "@md:grid-cols-3 @md:[&_[data-sheet-label]]:min-w-0",
   short: "@xs:grid-cols-3 @xs:[&_[data-sheet-label]]:min-w-0",
   "short-6": "@xs:grid-cols-3 @2xl:grid-cols-6 @xs:[&_[data-sheet-label]]:min-w-0",
+  "short-beside-6":
+    "@max-3xl/sheet-row:@xs:grid-cols-3 @max-3xl/sheet-row:@xs:[&_[data-sheet-label]]:min-w-0 " +
+    "@5xl/sheet-row:grid-cols-3 @5xl/sheet-row:[&_[data-sheet-label]]:min-w-0",
 };
 </script>
 
