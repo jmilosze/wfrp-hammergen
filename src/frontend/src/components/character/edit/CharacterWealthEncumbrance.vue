@@ -9,8 +9,7 @@ import SheetField from "@/components/sheet/SheetField.vue";
 import SheetCell from "@/components/sheet/SheetCell.vue";
 
 // The character editor's Wealth (typed in) and Encumbrance (of the equipped and carried trappings, looked up in
-// itemList), side by side once there is room. A total over maxEncumbrance is marked; hovering Carried shows how much
-// of the containers' Carries is used.
+// itemList), side by side once there is room. A total over maxEncumbrance is marked.
 const gold = defineModel<number>("gold", { required: true });
 const silver = defineModel<number>("silver", { required: true });
 const brass = defineModel<number>("brass", { required: true });
@@ -50,24 +49,32 @@ const encumbrance = computed(() =>
         :disabled="disabled"
       />
     </SheetTable>
-    <SheetTable title="Encumbrance" :columns="3" class="grow basis-80">
-      <SheetCell title="Weapons">{{ encumbrance.weapons }}</SheetCell>
-      <SheetCell title="Armour">{{ encumbrance.armour }}</SheetCell>
-      <SheetCell title="Other">{{ encumbrance.otherEquipped }}</SheetCell>
-      <SheetCell title="Carried">
-        <span :title="`${encumbrance.inContainers} of ${encumbrance.containerCapacity} container Carries used`">
-          {{ encumbrance.carried }}
-        </span>
-      </SheetCell>
-      <SheetCell title="Total">
-        <span
-          :class="{ 'text-error font-semibold': encumbrance.total > maxEncumbrance }"
-          :title="encumbrance.total > maxEncumbrance ? 'Over the Encumbrance limit' : undefined"
-        >
-          {{ encumbrance.total }}
-        </span>
-      </SheetCell>
-      <SheetCell title="Max">{{ maxEncumbrance }}</SheetCell>
-    </SheetTable>
+    <div class="flex flex-col gap-1 grow basis-80">
+      <SheetTable title="Encumbrance" :columns="3">
+        <SheetCell title="Weapons">{{ encumbrance.weapons }}</SheetCell>
+        <SheetCell title="Armour">{{ encumbrance.armour }}</SheetCell>
+        <SheetCell title="Other">{{ encumbrance.otherEquipped }}</SheetCell>
+        <SheetCell title="Carried">{{ encumbrance.carried }}</SheetCell>
+        <SheetCell title="Total">
+          <span
+            :class="{ 'text-error font-semibold': encumbrance.total > maxEncumbrance }"
+            :title="encumbrance.total > maxEncumbrance ? 'Over the Encumbrance limit' : undefined"
+          >
+            {{ encumbrance.total }}
+          </span>
+        </SheetCell>
+        <SheetCell title="Max">{{ maxEncumbrance }}</SheetCell>
+      </SheetTable>
+      <p class="text-sm text-neutral-700">
+        <template v-if="encumbrance.containerCapacity > 0">
+          In containers: {{ encumbrance.inContainers }} of {{ encumbrance.containerCapacity }} Enc. Carried trappings in
+          containers don't count towards Carried; only the containers' own Enc does.
+        </template>
+        <template v-else>
+          No containers. Equip or carry a pouch, sling bag or backpack, and the trappings it carries stop counting
+          towards Carried.
+        </template>
+      </p>
+    </div>
   </div>
 </template>

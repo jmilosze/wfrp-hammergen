@@ -17,7 +17,8 @@ const showAll = ref(false);
       <p>
         Pouches, sling bags, backpacks and other containers now count towards Encumbrance as the rulebooks say: carried
         trappings that fit in your equipped and carried containers no longer add to your Encumbrance, only the
-        containers themselves do. Hover over Carried in the character editor to see how much container space is used.
+        containers themselves do. The character editor shows how much of your containers' space is used under
+        Encumbrance.
       </p>
     </UpdateEntry>
     <UpdateEntry date="25 Oct 2026" title="Guided character creation">

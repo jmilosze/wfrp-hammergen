@@ -270,6 +270,8 @@ export interface CharacterFull {
   encArmor: number;
   encOther: number;
   encCarried: number;
+  encInContainers: number;
+  encContainerCapacity: number;
   encTotal: number;
   encMax: number;
 }
@@ -422,6 +424,8 @@ export function apiResponseToCharacterFull(
     encArmor: encumbrance.armour,
     encOther: encumbrance.otherEquipped,
     encCarried: encumbrance.carried,
+    encInContainers: encumbrance.inContainers,
+    encContainerCapacity: encumbrance.containerCapacity,
     encTotal: encumbrance.total,
     encMax: rules.getMaxEncumbrance(
       attributes.S,
