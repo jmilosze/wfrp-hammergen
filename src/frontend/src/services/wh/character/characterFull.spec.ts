@@ -1334,8 +1334,8 @@ const characterFull = {
   encWeapon: 5,
   encArmor: 3,
   encOther: 0,
-  encCarried: 3,
-  encTotal: 11,
+  encCarried: 2,
+  encTotal: 10,
   encMax: 7,
 } as CharacterFull;
 

@@ -350,6 +350,7 @@ export function apiResponseToCharacterFull(
   const toEncumbranceItem = (x: WhNumberValue<ItemFullApiData>) => ({
     type: variantFor(x.wh, e).type,
     enc: variantFor(x.wh, e).enc,
+    capacity: variantFor(x.wh, e).container.capacity,
     number: x.number,
   });
   const encumbrance = getEncumbrance(

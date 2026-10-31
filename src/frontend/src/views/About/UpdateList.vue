@@ -13,6 +13,13 @@ const showAll = ref(false);
   <PageHeader title="Updates" />
   <section>
     <h2 class="mt-6 mb-2 text-2xl font-semibold">2026</h2>
+    <UpdateEntry date="31 Oct 2026" title="Containers lighten your load">
+      <p>
+        Pouches, sling bags, backpacks and other containers now count towards Encumbrance as the rulebooks say: carried
+        trappings that fit in your equipped and carried containers no longer add to your Encumbrance, only the
+        containers themselves do. Hover over Carried in the character editor to see how much container space is used.
+      </p>
+    </UpdateEntry>
     <UpdateEntry date="25 Oct 2026" title="Guided character creation">
       <p>
         5th Edition characters can now be created step by step, following the rulebook's character creation chapter.

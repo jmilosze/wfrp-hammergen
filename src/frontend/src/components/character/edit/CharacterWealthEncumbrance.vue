@@ -9,7 +9,8 @@ import SheetField from "@/components/sheet/SheetField.vue";
 import SheetCell from "@/components/sheet/SheetCell.vue";
 
 // The character editor's Wealth (typed in) and Encumbrance (of the equipped and carried trappings, looked up in
-// itemList), side by side once there is room. A total over maxEncumbrance is marked.
+// itemList), side by side once there is room. A total over maxEncumbrance is marked; hovering Carried shows how much
+// of the containers' Carries is used.
 const gold = defineModel<number>("gold", { required: true });
 const silver = defineModel<number>("silver", { required: true });
 const brass = defineModel<number>("brass", { required: true });
@@ -53,7 +54,11 @@ const encumbrance = computed(() =>
       <SheetCell title="Weapons">{{ encumbrance.weapons }}</SheetCell>
       <SheetCell title="Armour">{{ encumbrance.armour }}</SheetCell>
       <SheetCell title="Other">{{ encumbrance.otherEquipped }}</SheetCell>
-      <SheetCell title="Carried">{{ encumbrance.carried }}</SheetCell>
+      <SheetCell title="Carried">
+        <span :title="`${encumbrance.inContainers} of ${encumbrance.containerCapacity} container Carries used`">
+          {{ encumbrance.carried }}
+        </span>
+      </SheetCell>
       <SheetCell title="Total">
         <span
           :class="{ 'text-error font-semibold': encumbrance.total > maxEncumbrance }"

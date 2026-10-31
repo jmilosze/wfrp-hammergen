@@ -5,46 +5,84 @@ import { ItemType } from "@/services/wh/content/item.ts";
 describe("getEncumbrance", () => {
   test("sums each group and the total", () => {
     const equipped = [
-      { type: ItemType.Melee, enc: 1, number: 2 },
-      { type: ItemType.Ranged, enc: 2, number: 1 },
-      { type: ItemType.Ammunition, enc: 0, number: 12 },
-      { type: ItemType.Armour, enc: 3, number: 1 },
-      { type: ItemType.Armour, enc: 1, number: 2 },
-      { type: ItemType.Other, enc: 2, number: 1 },
-      { type: ItemType.Container, enc: 0, number: 1 },
+      { type: ItemType.Melee, enc: 1, capacity: 0, number: 2 },
+      { type: ItemType.Ranged, enc: 2, capacity: 0, number: 1 },
+      { type: ItemType.Ammunition, enc: 0, capacity: 0, number: 12 },
+      { type: ItemType.Armour, enc: 3, capacity: 0, number: 1 },
+      { type: ItemType.Armour, enc: 1, capacity: 0, number: 2 },
+      { type: ItemType.Other, enc: 2, capacity: 0, number: 1 },
+      { type: ItemType.Container, enc: 0, capacity: 0, number: 1 },
     ];
     const carried = [
-      { type: ItemType.Other, enc: 1, number: 3 },
-      { type: ItemType.Armour, enc: 2, number: 1 },
+      { type: ItemType.Other, enc: 1, capacity: 0, number: 3 },
+      { type: ItemType.Armour, enc: 2, capacity: 0, number: 1 },
     ];
     expect(getEncumbrance(equipped, carried)).toEqual({
       weapons: 4,
       armour: 2,
       otherEquipped: 1,
       carried: 5,
+      inContainers: 0,
+      containerCapacity: 0,
       total: 12,
     });
   });
 
   test("worn items count one less but never below zero", () => {
     const equipped = [
-      { type: ItemType.Armour, enc: 0, number: 1 },
-      { type: ItemType.Other, enc: 0.5, number: 2 },
+      { type: ItemType.Armour, enc: 0, capacity: 0, number: 1 },
+      { type: ItemType.Other, enc: 0.5, capacity: 0, number: 2 },
     ];
-    expect(getEncumbrance(equipped, [])).toEqual({ weapons: 0, armour: 0, otherEquipped: 0, carried: 0, total: 0 });
+    expect(getEncumbrance(equipped, [])).toEqual({
+      weapons: 0,
+      armour: 0,
+      otherEquipped: 0,
+      carried: 0,
+      inContainers: 0,
+      containerCapacity: 0,
+      total: 0,
+    });
   });
 
   test("carried items count their full Enc", () => {
-    const carried = [{ type: ItemType.Armour, enc: 3, number: 1 }];
+    const carried = [{ type: ItemType.Armour, enc: 3, capacity: 0, number: 1 }];
     expect(getEncumbrance([], carried).carried).toBe(3);
+  });
+
+  test("carried trappings up to the containers' capacity count 0", () => {
+    const equipped = [
+      { type: ItemType.Container, enc: 1, capacity: 2, number: 1 },
+      { type: ItemType.Melee, enc: 1, capacity: 1, number: 1 },
+    ];
+    const carried = [
+      { type: ItemType.Container, enc: 0, capacity: 1, number: 2 },
+      { type: ItemType.Other, enc: 1, capacity: 1, number: 6 },
+    ];
+    expect(getEncumbrance(equipped, carried)).toEqual({
+      weapons: 1,
+      armour: 0,
+      otherEquipped: 0,
+      carried: 2,
+      inContainers: 4,
+      containerCapacity: 4,
+      total: 3,
+    });
+  });
+
+  test("unused container capacity does not reduce the containers' own Enc", () => {
+    const carried = [
+      { type: ItemType.Container, enc: 2, capacity: 4, number: 1 },
+      { type: ItemType.Other, enc: 1, capacity: 0, number: 1 },
+    ];
+    expect(getEncumbrance([], carried)).toMatchObject({ carried: 2, inContainers: 1, containerCapacity: 4 });
   });
 });
 
 describe("encumbranceItems", () => {
   test("pairs the entries' quantities with the items, leaving out unknown ids", () => {
     const items = [
-      { id: "a", type: ItemType.Melee, enc: 1 },
-      { id: "b", type: ItemType.Other, enc: 2 },
+      { id: "a", type: ItemType.Melee, enc: 1, container: { capacity: 1 } },
+      { id: "b", type: ItemType.Container, enc: 2, container: { capacity: 4 } },
     ];
     const selected = [
       { id: "a", number: 2, value: "" },
@@ -52,8 +90,8 @@ describe("encumbranceItems", () => {
       { id: "b", number: 1, value: "Axe" },
     ];
     expect(encumbranceItems(selected, items)).toEqual([
-      { type: ItemType.Melee, enc: 1, number: 2 },
-      { type: ItemType.Other, enc: 2, number: 1 },
+      { type: ItemType.Melee, enc: 1, capacity: 1, number: 2 },
+      { type: ItemType.Container, enc: 2, capacity: 4, number: 1 },
     ]);
   });
 });

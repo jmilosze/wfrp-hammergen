@@ -95,6 +95,7 @@ Both editions exist side by side permanently; 4e behaviour stays as it was befor
 - Parameterised qualities are one entity per value, as in 4e (e.g. *Inflict (Prone)*).
 - Talent max rank 999 means unlimited. 5e talents use only `maxRank` (no characteristic bonuses) and have no `tests`.
 - Modifier effects: Hardy, Strong Back and Sturdy in both editions, with each edition's rules (4e Encumbrance limit: Strong Back +1 and Sturdy +2 per rank; 5e: Strong Back +1, or +3 when taken twice, and Sturdy doubles SB). Luck and Fear are not modelled.
+- Encumbrance (both editions): containers' Carries form one pool; carried non-container trappings up to the summed Carries of equipped and carried containers count 0, and containers keep their own Enc (worn ones 1 less). Trappings are not assigned to a specific container, so which ones fit is up to the player.
 - 5e sheet: Language skills in their own Known Languages block; a Shield row in armour.
 - Ambitions and Appearance use the description and notes for now (HG-7).
 
