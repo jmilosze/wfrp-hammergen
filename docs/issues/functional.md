@@ -4,11 +4,6 @@ What users can do and how values are calculated: rules, the generator, character
 
 ## Bugs
 
-### HG-72 High Magic talent follows Lustria, not the High Elf Player's Guide
-Data · 2026-11-11
-
-The public 4e High Magic talent (`6523159049960d00019a7f8f`, Lustria p. 127 and High Elf Player's Guide p. 83) follows Lustria: max Intelligence Bonus, each rank teaches one High Magic spell. The High Elf Player's Guide (4 June 2025) gives it Max 1 and has High Magic spells bought with XP (200 XP each up to Intelligence Bonus spells, 400 up to twice that, and so on); both books let your High Magic level add to the overcasting SL, and both let you cast the eight Colour lores without access to their Wind. The current description mentions none of this. In production 15 characters have rank 1 and 9 have rank 2 or more (up to 11), so Max 1 would put them over the limit. Decide which rules the talent follows: the guide's, Lustria's (with a full description), or two talents (Lustria/Slann and a High Elf one for the level 3 talents of Mage, Loremaster of Hoeth, Smith-priest of Vaul and Storm Weaver).
-
 ### HG-65 Misnamed Gromril helms
 Data · 2026-10-29
 
@@ -61,7 +56,7 @@ Data · 2026-10-25
 
 Career levels have trappings and money as data since HG-40 (format and trapping content rules in `docs/architecture.md`); the 64 public 5e careers were converted, and the 77 trappings made for them have 4e variants too. The 4e careers still have their trappings as text: the 4e variants of those 64 careers and the 113 4e-only careers (core and supplements), 177 public 4e careers in all. Convert them the same way, with no code changes expected: map each level's text to trappings with the 5e rules (generic trappings such as Magic Item for "Magical Item" of Master Alchemist, Master Druid, Grand Astromancer; quality versions with 4e qualities; explicit choice lists for generic weapons; book names kept as notes where the trapping's name doesn't say what it is), add the missing 4e trappings to the data, and fill the fields with a migration script (local, staging, production). The mapping scripts of the 5e conversion (`dump.py`, `parse.py`, `norm.py`, `final.py` with `alias.py`, `gen_docs.py`) are in `db/data/hg-40/` (gitignored, owner's machine only); how they were run and the decisions behind the mapping are in `docs/hg-40/README.md` in git history.
 
-Progress and decisions: `docs/hg-59/README.md` (2026-10-27: the mapping of the 64 core careers in `docs/hg-59/careers-4e.md` is reviewed, their missing trappings are added and their 4e variants have trappings as data in all environments; 2026-10-29: the 113 supplement careers go in eight review batches, batch 1 (25 variants of rulebook careers, with HG-63 and HG-64) is done in all environments; 2026-11-11: batches 2 and 3 (Dwarf and High Elf Player's Guides) too, 113 of 177 public 4e careers have trappings as data; scripts in `db/data/hg-59/` and `db/scripts/fix_career_trappings_4e.py`).
+Progress and decisions: `docs/hg-59/README.md` (2026-10-27: the mapping of the 64 core careers in `docs/hg-59/careers-4e.md` is reviewed, their missing trappings are added and their 4e variants have trappings as data in all environments; 2026-10-29: the 113 supplement careers go in eight review batches, batch 1 (25 variants of rulebook careers, with HG-63 and HG-64) is done in all environments; 2026-11-11: batches 2 and 3 (Dwarf and High Elf Player's Guides) too, 113 of 177 public 4e careers have trappings as data; 2026-11-12: batch 4 (Up in Arms) too, 128 of 177; batch 5 (Winds of Magic) too, 141 of 177; scripts in `db/data/hg-59/` and `db/scripts/fix_career_trappings_4e.py`).
 
 Open: how 5e characters in 4e-only careers ("Allow 4e content") use those careers' trappings, skills and talents, e.g. lookups by shared document, a "5e equivalent" link, 5e versions of popular 4e careers.
 
