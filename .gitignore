@@ -17,3 +17,5 @@ src/frontend/pnpm-lock.yaml
 books/
 .obsidian/
 db/data/
+docs/hg-*/
+db/scripts/fix*

@@ -20,7 +20,7 @@ Read these before working on something non-trivial:
 - **Never commit, create branches or deploy.** Leave changes uncommitted; the owner commits and deploys.
 - **Ask before:** using `gcloud`, running integration tests, restarting or stopping the owner's local servers (API on :8080, Vite on :5173), and every write to staging or production data.
 - Never print secrets (e.g. values from `deployment/gcp/*/config.json`).
-- Take a production backup before every production data write (`docs/operations.md`).
+- **Every data import, data fix and data a deploy needs follows "Changing data: required procedure" in `docs/operations.md`**: local first (start MongoDB if it isn't running), with the type check (`go run ./cmd/checkdata`) and the API checks passing locally before staging or production is touched; the same checks after each environment; a production backup before the production write.
 - Plan bigger changes first: describe the plan and the decisions to make, and agree them before writing code. When a decision is genuinely the owner's, stop and ask.
 - Validation stays light: basic per-field checks, no cross-reference or decision-tree validation.
 - Out-of-scope bugs and ideas go into `docs/issues/`, not into the code.
