@@ -4,15 +4,15 @@ What users can do and how values are calculated: rules, the generator, character
 
 ## Bugs
 
-### HG-72 High Magic talent follows Lustria, not the High Elf Player's Guide
-Data · 2026-11-11
-
-The public 4e High Magic talent (`6523159049960d00019a7f8f`, Lustria p. 127 and High Elf Player's Guide p. 83) follows Lustria: max Intelligence Bonus, each rank teaches one High Magic spell. The High Elf Player's Guide (4 June 2025) gives it Max 1 and has High Magic spells bought with XP (200 XP each up to Intelligence Bonus spells, 400 up to twice that, and so on); both books let your High Magic level add to the overcasting SL, and both let you cast the eight Colour lores without access to their Wind. The current description mentions none of this. In production 15 characters have rank 1 and 9 have rank 2 or more (up to 11), so Max 1 would put them over the limit. Decide which rules the talent follows: the guide's, Lustria's (with a full description), or two talents (Lustria/Slann and a High Elf one for the level 3 talents of Mage, Loremaster of Hoeth, Smith-priest of Vaul and Storm Weaver).
-
 ### HG-65 Misnamed Gromril helms
 Data · 2026-10-29
 
 The public 4e Gromril helms have confusing names: "Gromril Helm " (`652012db49960d0001346eb5`, trailing space) and "Gromril Helm  - v2" (`6520142249960d0001346eb7`), both Middenheim p. 71, are open helms by their description ("Gromil Open Helm"), while the Dwarf Player's Guide's closed helm (p. 93) is "Gromril Gromril Helm - v3" (`671811a949960d0001f45743`) next to its "Gromril Open Helm". Rename them so the name says which helm it is (e.g. the Dwarf Player's Guide one "Gromril Helm"), and decide whether the two Middenheim documents are duplicates to merge. HG-59 career trappings refer to the Dwarf Player's Guide helm by its id, so a rename doesn't affect them once migrated; before that, the HG-59 mapping (`GROMRIL_HELM` in `db/data/hg-59/supp_map.py`) uses the current name.
+
+### HG-73 Wrong level 4 names of two 4e careers
+Data · 2026-11-13
+
+Found while checking HG-59 against the books. Shaman (Winds of Magic p. 141) has level 4 "New level 4"; the book calls it Shaman Lord. Oracle (Lustria p. 197) has level 4 "Will the Old Ones"; the book calls it Speaker of Truth. Rename both levels in all environments.
 
 ### HG-30 Content list misses an edition switch during loading
 Frontend · 2026-10-15
@@ -30,6 +30,11 @@ Let a user share a character or custom content (careers, items, …) with anyone
 Feature · 2026-10-10
 
 Check how 4e supplement careers, species and qualities map to 5e (5e rulebook appendix on compatibility) and whether some should get 5e versions. Today 5e characters can use them through "Allow 4e content". Rule for adding 5e versions: link (add a 5e variant to the 4e document) only when the match is clearly 1-to-1; otherwise create a new 5e-only document.
+
+### HG-75 5e variants for Temple of Spite content
+Feature · 2026-11-17
+
+The 8 Sep 2026 edition of Temple of Spite (`books/4ed/Warhammer_Fantasy_Roleplay_Temple_of_Spite.pdf`) is the 5e version of the book; the 19 Feb 2026 edition (`TOS_Book_260219.pdf`) stays the 4e reference. Hammergen's 48 public documents from it (source 42: 24 spells, 2 talents, 16 items, 4 traits, 2 qualities) are 4e variants from the February edition. Add 5e variants from the September edition (via `import_5e.py`, following HG-3's linking rule), and replace the existing 5e variants of the poisons, Barvalk, Hushalta, Black Lotus, Many Heads and Mark of Slaanesh, which are copies of the 4e text. The differences between the editions are listed in `docs/Temple_of_Spite_changelog_260219_to_260908.md`.
 
 ### HG-6 Career income skill in the editor
 Feature · 2026-09-30
@@ -56,16 +61,10 @@ Frontend + Backend + Data · 2026-10-16
 
 5e characters can only be Human, Dwarf, Halfling, High Elf or Wood Elf. The 5e rulebook has Gnome and Ogre only as Bestiary profiles (p. 323–324), and suggests building player characters from such species by giving them a career (p. 318). Allow both species for 5e characters (species values, species skills/talents/Fate/Fortune in `generationProps5e`, the generator). For now they may only take careers from the 5e rulebook, not 4e supplement careers. Open: which careers are allowed (e.g. tick Gnome/Ogre on the chosen 5e careers), and how to handle the Ogre's Size (Large) beyond the Wounds multiplier already modelled (e.g. weapons, armour, encumbrance, movement).
 
-### HG-59 Career trappings as data for 4e careers
-Data · 2026-10-25
+### HG-74 Migrate the old per-trade 4e trappings
+Data · 2026-11-16
 
-Career levels have trappings and money as data since HG-40 (format and trapping content rules in `docs/architecture.md`); the 64 public 5e careers were converted, and the 77 trappings made for them have 4e variants too. The 4e careers still have their trappings as text: the 4e variants of those 64 careers and the 113 4e-only careers (core and supplements), 177 public 4e careers in all. Convert them the same way, with no code changes expected: map each level's text to trappings with the 5e rules (generic trappings such as Magic Item for "Magical Item" of Master Alchemist, Master Druid, Grand Astromancer; quality versions with 4e qualities; explicit choice lists for generic weapons; book names kept as notes where the trapping's name doesn't say what it is), add the missing 4e trappings to the data, and fill the fields with a migration script (local, staging, production). The mapping scripts of the 5e conversion (`dump.py`, `parse.py`, `norm.py`, `final.py` with `alias.py`, `gen_docs.py`) are in `db/data/hg-40/` (gitignored, owner's machine only); how they were run and the decisions behind the mapping are in `docs/hg-40/README.md` in git history.
-
-Progress and decisions: `docs/hg-59/README.md` (2026-10-27: the mapping of the 64 core careers in `docs/hg-59/careers-4e.md` is reviewed, their missing trappings are added and their 4e variants have trappings as data in all environments; 2026-10-29: the 113 supplement careers go in eight review batches, batch 1 (25 variants of rulebook careers, with HG-63 and HG-64) is done in all environments; 2026-11-11: batches 2 and 3 (Dwarf and High Elf Player's Guides) too, 113 of 177 public 4e careers have trappings as data; scripts in `db/data/hg-59/` and `db/scripts/fix_career_trappings_4e.py`).
-
-Open: how 5e characters in 4e-only careers ("Allow 4e content") use those careers' trappings, skills and talents, e.g. lookups by shared document, a "5e equivalent" link, 5e versions of popular 4e careers.
-
-Also decide what happens to the 20 public per-trade 4e trappings ("Trade Tools - …", "Workshop - …", "Library - Magic"): their 5e variants were removed in all environments on 2026-10-25 (HG-60; 5e characters got Trade Tools or Workshop with the trade as value), and 4e characters use them (674 entries in the local snapshot, 2026-10-25).
+The 20 public per-trade 4e trappings ("Trade Tools - …", "Workshop - …", "Library - Magic") are replaced by the generic Trade Tools, Workshop and Holding with the trade as note (HG-40, HG-59; their 5e variants were removed on 2026-10-25, HG-60). No public career refers to them any more, but 459 characters of 214 users still have them (675 entries in the local snapshot, 2026-11-16). Migrate those character entries to the generic trapping with the trade as value (keeping number, place and any existing note), then delete the 20 documents. Writes to users' characters: plan it first, back up production.
 
 ### HG-43 Guided character creation for 4e
 Frontend · 2026-10-16

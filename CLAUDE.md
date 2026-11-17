@@ -20,11 +20,21 @@ Read these before working on something non-trivial:
 - **Never commit, create branches or deploy.** Leave changes uncommitted; the owner commits and deploys.
 - **Ask before:** using `gcloud`, running integration tests, restarting or stopping the owner's local servers (API on :8080, Vite on :5173), and every write to staging or production data.
 - Never print secrets (e.g. values from `deployment/gcp/*/config.json`).
-- Take a production backup before every production data write (`docs/operations.md`).
+- **Every data import, data fix and data a deploy needs follows "Changing data: required procedure" in `docs/operations.md`**: local first (start MongoDB if it isn't running), with the type check (`go run ./cmd/checkdata`) and the API checks passing locally before staging or production is touched; the same checks after each environment; a production backup before the production write.
 - Plan bigger changes first: describe the plan and the decisions to make, and agree them before writing code. When a decision is genuinely the owner's, stop and ask.
 - Validation stays light: basic per-field checks, no cross-reference or decision-tree validation.
 - Out-of-scope bugs and ideas go into `docs/issues/`, not into the code.
-- Content descriptions must not be copied from the rulebooks; rephrase (no run of 12+ words identical to the book).
+- Content descriptions (skills, talents, spells, items and the like) are brief and mechanics only: no flavour, no completeness. Keep the most important rules and point to the book page for details (tables, costs, lists). Never copy from the rulebooks; always rephrase (no run of 12+ words identical to the book).
+
+# Delegation
+
+The main session orchestrates. You may delegate without being asked to the cheaper subagents in `.claude/agents/` when a task is self-contained and needs little judgement:
+- `checker` (Haiku): run the frontend/backend checks after code changes and get back only the failures.
+- `book-lookup` (Haiku): find rules, tables and entries in `books/`.
+- `data-compare` (Sonnet): compare database records with the books in data reviews.
+- `Explore` (built-in): broad searches across the codebase.
+
+Keep in the main session: design and rule decisions, code and data edits, anything touching staging or production, and anything the owner has to approve. Check a subagent's result before relying on it; don't delegate a task that is quicker to do directly.
 
 # Code conventions
 
@@ -36,8 +46,9 @@ Read these before working on something non-trivial:
 # Reference Materials
 
 The `books/` folder contains rulebooks and errata for Warhammer Fantasy Roleplay (WFRP), with both PDF and converted plain text (`.txt`) versions available for easy reading and searching by AI agents:
-- **WFRP 4th Edition**: `books/Warhammer_Fantasy_Roleplay_PDF_version4.pdf` and `books/Warhammer_Fantasy_Roleplay_PDF_version4.txt`
-- **WFRP 5th Edition**: `books/WFRP5_Core_Rulebook_06_10_26.pdf` and `books/WFRP5_Core_Rulebook_06_10_26.txt` (2026-10-01 update; the older `01_09_26` version is kept for comparison)
-- **WFRP Errata**: `books/WFRP_Errata_28_Feb.pdf` and `books/WFRP_Errata_28_Feb.txt`
+- **WFRP 4th Edition**: `books/4ed/wfrp/Warhammer_Fantasy_Roleplay_PDF_version4.pdf` and `.txt`
+- **WFRP 5th Edition**: `books/5ed/WFRP_5th_ed/WFRP5_Core_Rulebook_06_10_26.pdf` and `.txt` (2026-10-01 update; the older `01_09_26` version is kept for comparison)
+- **WFRP Errata**: `books/4ed/wfrp/WFRP_Errata_28_Feb.pdf` and `.txt`
+- **4e supplements**: PDFs only, in `books/4ed/<book>/` and directly in `books/4ed/`
 
 Text extraction of tables can be garbled; `pdftotext -layout -f <page> -l <page>` on the PDF gives readable tables.

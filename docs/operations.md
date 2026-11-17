@@ -24,6 +24,7 @@ Frontend (`src/frontend`):
 Backend (`src/api-go`):
 - `go test ./internal/...`: unit tests. Don't run `go test ./...`: it also runs `test/integration` against `:8081` by default (it writes junk users into local `hammergenGo`). Use `make test` (own stack on `:8083`) and run integration tests only when asked.
 - `gofmt -l internal test`, `go vet ./internal/...`
+- The MongoDB tests in `internal/dependencies/mongodb/*_mongo_test.go` are skipped unless `HAMMERGEN_TEST_MONGODB_URI` is set (e.g. `mongodb://admin:admin@localhost:27017`); each creates and drops its own database.
 
 CI (`.github/workflows/lint.yml`) runs the frontend lint and tests on pull requests.
 
@@ -43,6 +44,8 @@ Main scripts:
 
 The data files in `db/data/` are gitignored and exist only locally; keep them, they are the source for re-imports.
 
+Field types must be the ones the API reads (the Go types in `src/api-go/internal/domain/warhammer/` and `internal/dependencies/mongodb/`): a single document of the wrong type makes every list request that includes it fail. Scripts that create documents copy each field's type from an existing document of the same kind, checked with Python's `type()` or MongoDB's `$type`, never from a printed JSON (`json.dumps(default=str)` shows dates as strings). Dates such as `modifiedon` are `datetime`.
+
 Content text: descriptions must not be copied from the books. Rephrase; an occasional copied sentence is fine. Check rephrased text by making sure no run of 12 or more words matches the book.
 
 ## Environments and databases
@@ -60,7 +63,21 @@ export MONGO_URI="$(.venv/bin/python -c "import json;print(json.load(open('deplo
 export DB_NAME="$(.venv/bin/python -c "import json;print(json.load(open('deployment/gcp/staging/config.json'))['env_variables']['HAMMERGEN_MONGODB_NAME'])")"
 ```
 
-Order for data changes: local first, then staging, then production. Run `--dry-run` in each environment before writing. Ask before using `gcloud`.
+Ask before using `gcloud`.
+
+## Changing data: required procedure
+
+Every write to a database (fix scripts, imports, manual updates, data a deploy needs) goes local → staging → production, and each environment must pass its checks before the next one is touched. **Staging and production are not written until the local checks pass.** If a check fails anywhere, stop, fix the cause and start again from local.
+
+1. **Local**
+   - MongoDB must be running: `docker ps --filter name=src-mongodb-1`. If it isn't, start it (`docker start src-mongodb-1`, or `docker compose -f src/docker-compose.yaml up -d mongodb` if the container doesn't exist). Local data should be a recent production snapshot (`db/restore_to_local.sh`); a script that finds unexpected values locally usually means the snapshot is old.
+   - Run the script with `--dry-run`, then for real.
+   - Type check: from `src/api-go`, `go run ./cmd/checkdata` must end with "0 the API cannot read". It decodes every document with the API's own types (read only).
+   - API check: start the API on `:8082` (see "Local environment"; the owner's API on `:8080` may not be running), then for every type the change touched and each edition it has, `curl -s "http://localhost:8082/api/wh/<type>?edition=<4e|5e>"` must return 200 and show the changed documents with their new values. Stop the `:8082` API afterwards.
+2. **Staging** (`MONGO_URI`/`DB_NAME` from the staging config): `--dry-run`, write, `go run ./cmd/checkdata` (it reads `MONGO_URI` and `DB_NAME`), then the same `curl` checks against the staging API (`VITE_ROOT_API` in `src/frontend/.env.gcp_staging`).
+3. **Production**: take the backup ("Backups and restore"), `--dry-run`, write, `go run ./cmd/checkdata`, then the `curl` checks against the production API (`src/frontend/.env.gcp_production`). If a check fails, fix it at once or restore the backup.
+
+A script's own "Verification passed" only re-reads the values the script wrote; it does not replace the type and API checks.
 
 ## Backups and restore
 
@@ -81,7 +98,7 @@ Order for data changes: local first, then staging, then production. Run `--dry-r
 - GitHub Actions, started by hand (`workflow_dispatch`) with the environment (staging or production):
   - `deploy-backend`: builds `src/Dockerfile` (base images from `mirror.gcr.io` to avoid Docker Hub rate limits), pushes to Artifact Registry and deploys Cloud Run `hammergen-<env>`.
   - `deploy-frontend`: builds with `npm run build_gcp_<env>` and deploys to Firebase Hosting.
-- When a change touches the API and the frontend, deploy the backend first, then the frontend. Data the new code needs (e.g. a new generation document) goes in before the deploy.
+- When a change touches the API and the frontend, deploy the backend first, then the frontend. Data the new code needs (e.g. a new generation document) goes in before the deploy, following "Changing data: required procedure".
 - `deployment/gcp/deploy.py` is an older local deploy script (see HG-21).
 - Maintenance mode: `HAMMERGEN_MAINTENANCE_ENABLED` on Cloud Run; the frontend shows a maintenance page while it is on.
 - Indexes: the API creates its MongoDB indexes at startup when `HAMMERGEN_MONGODB_CREATE_USER_INDEXES` (unique `username`) and `HAMMERGEN_MONGODB_CREATE_WH_INDEXES` (unique `name` on `other`, `ownerid` and `visibility` on the content collections) are on. It skips a field that already has an index, whatever its name (production names some after the field, e.g. `name`), and stops if that index differs in uniqueness, so they can stay on. Cloud Run deploys keep the service's environment variables, so a flag set once stays set.

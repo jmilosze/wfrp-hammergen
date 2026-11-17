@@ -13,13 +13,13 @@ Hammergen is a Warhammer Fantasy Roleplay (WFRP) character generator and content
 | `db/*.sh` | Backup and restore helpers (`mongodump`/`mongorestore`) |
 | `deployment` | GCP deploy config (`gcp/*/config.json` are gitignored) and Docker files |
 | `.github/workflows` | Lint/test on PRs; manual deploy of backend and frontend |
-| `books/` | Rulebooks as PDF and text (gitignored; see `AGENTS.md`) |
+| `books/` | Rulebooks as PDF and text (gitignored; see `CLAUDE.md`) |
 | `docs/` | `issues/` (backlog: functional, UI, technical), `architecture.md` (this file), `operations.md` (running, data, deploying) |
 | `roadmap.md`, `notes.md` | Long-term tech wishes; rules notes on magic |
 
 ## Backend (`src/api-go`)
 
-- `cmd/wfrp`: entry point. `internal/config/config.go`: settings from `HAMMERGEN_*` env vars (envconfig, with defaults).
+- `cmd/wfrp`: entry point. `cmd/checkdata`: read-only check that the API can decode every document of a database (`internal/dependencies/mongodb/check.go`), part of the data-change procedure in `docs/operations.md`. `internal/config/config.go`: settings from `HAMMERGEN_*` env vars (envconfig, with defaults).
 - `internal/http`, `internal/dependencies/gin`: HTTP server and routes (gin). Content endpoints are `api/wh/<type>`; characters `api/wh/character`; generation data `api/wh/generation`.
 - `internal/services`: business logic (`wh.go` for all content and characters, `user.go`).
 - `internal/domain/warhammer`: domain types (one file per type), validation (`go-playground/validator` tags plus per-edition `ValidateEdition`), conversion of characters to full characters (`ToFull`).
