@@ -31,6 +31,11 @@ Feature · 2026-10-10
 
 Check how 4e supplement careers, species and qualities map to 5e (5e rulebook appendix on compatibility) and whether some should get 5e versions. Today 5e characters can use them through "Allow 4e content". Rule for adding 5e versions: link (add a 5e variant to the 4e document) only when the match is clearly 1-to-1; otherwise create a new 5e-only document.
 
+### HG-75 5e variants for Temple of Spite content
+Feature · 2026-11-17
+
+The 8 Sep 2026 edition of Temple of Spite (`books/4ed/Warhammer_Fantasy_Roleplay_Temple_of_Spite.pdf`) is the 5e version of the book; the 19 Feb 2026 edition (`TOS_Book_260219.pdf`) stays the 4e reference. Hammergen's 48 public documents from it (source 42: 24 spells, 2 talents, 16 items, 4 traits, 2 qualities) are 4e variants from the February edition. Add 5e variants from the September edition (via `import_5e.py`, following HG-3's linking rule), and replace the existing 5e variants of the poisons, Barvalk, Hushalta, Black Lotus, Many Heads and Mark of Slaanesh, which are copies of the 4e text. The differences between the editions are listed in `docs/Temple_of_Spite_changelog_260219_to_260908.md`.
+
 ### HG-6 Career income skill in the editor
 Feature · 2026-09-30
 
